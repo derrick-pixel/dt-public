@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELIX ONBOARDING — ANALYTICS & Corp Intelligence</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/sitrep.css" />
+  <link rel="stylesheet" href="css/hr-pages.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ANALYTICS-specific overrides for tab system */
+    .sitrep-tab-bar {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: var(--bg-deep);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      overflow-x: auto;
+    }
+    .sitrep-tab {
+      padding: 11px 18px;
+      font-family: var(--font-ui);
+      font-size: 0.58rem;
+      letter-spacing: 0.12em;
+      color: var(--text-dim);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      margin-bottom: -1px;
+      transition: all 0.2s;
+    }
+    .sitrep-tab:hover { color: var(--text-primary); }
+    .sitrep-tab.active { color: var(--text-bright); border-bottom-color: var(--protoss); }
+
+    .sitrep-tab-content { display: none; }
+    .sitrep-tab-content.active { display: block; }
+
+    /* Corp Overview styles */
+    .corp-stat-row {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      padding: 20px 24px 0;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .corp-stat-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 14px 16px;
+    }
+    .corp-stat-label {
+      font-family: var(--font-ui);
+      font-size: 0.48rem;
+      letter-spacing: 0.15em;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .corp-stat-val {
+      font-family: var(--font-ui);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      line-height: 1;
+    }
+    .corp-stat-delta { font-size: 0.65rem; color: var(--text-dim); margin-top: 4px; }
+    .corp-stat-delta.up { color: var(--success); }
+    .corp-stat-delta.down { color: var(--danger); }
+
+    .corp-fn-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      padding: 16px 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .corp-fn-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 18px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .corp-fn-card:hover { border-color: var(--border-glow); transform: translateY(-2px); }
+    .corp-fn-card-arrow { position: absolute; top: 14px; right: 14px; font-size: 0.7rem; color: var(--text-dim); }
+    .corp-fn-card-icon { font-size: 1.3rem; margin-bottom: 8px; }
+    .corp-fn-card-title { font-family: var(--font-ui); font-size: 0.62rem; letter-spacing: 0.1em; color: var(--text-primary); margin-bottom: 3px; }
+    .corp-fn-card-sub { font-size: 0.63rem; color: var(--text-dim); margin-bottom: 10px; }
+    .corp-fn-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-bottom: 10px; }
+    .corp-fn-stat-val { font-family: var(--font-ui); font-size: 0.85rem; font-weight: 700; color: var(--text-bright); display: block; }
+    .corp-fn-stat-lbl { font-size: 0.58rem; color: var(--text-dim); }
+    .corp-fn-alert {
+      font-size: 0.66rem;
+      padding: 6px 8px;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .corp-fn-alert.warn { color: var(--warning); background: rgba(255,167,38,0.06); border: 1px solid rgba(255,167,38,0.2); }
+    .corp-fn-alert.info { color: var(--terran); background: rgba(74,158,255,0.06); border: 1px solid rgba(74,158,255,0.2); }
+    .corp-fn-alert.success { color: var(--success); background: rgba(0,230,118,0.06); border: 1px solid rgba(0,230,118,0.2); }
+    .corp-fn-alert.danger { color: var(--danger); background: rgba(239,83,80,0.06); border: 1px solid rgba(239,83,80,0.2); }
+
+    .corp-bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 16px;
+      padding: 0 24px 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Analytics tab common content area */
+    .analytics-content {
+      padding: 20px 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Bar chart visual */
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      height: 140px;
+      padding: 0 8px;
+    }
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+    .bar-col-bar {
+      width: 100%;
+      border-radius: 2px 2px 0 0;
+      min-height: 4px;
+    }
+    .bar-col-label { font-size: 0.6rem; color: var(--text-dim); text-align: center; }
+    .bar-col-val { font-family: var(--font-ui); font-size: 0.58rem; color: var(--text-primary); }
+
+    /* Donut visual (CSS only) */
+    .donut-chart {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .donut-legend { display: flex; flex-direction: column; gap: 7px; }
+    .donut-legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.72rem; }
+    .donut-legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  </style>
+</head>
+<body class="sitrep-screen">
+
+  <div class="sitrep-wrapper">
+
+    <!-- HUD -->
+    <div class="sitrep-hud">
+      <a href="dashboard.html" class="hud-back" data-tooltip="Return to Dashboard">← DASHBOARD</a>
+      <div class="sitrep-hud-title">
+        <span class="sitrep-icon">📊</span>
+        INTELLIGENCE HUB
+        <span class="sitrep-icon">📊</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="hr-ai-badge" style="font-size:0.45rem">⚡ AI INSIGHTS ACTIVE</div>
+        <div class="sitrep-hud-right" id="sitrep-clock"></div>
+      </div>
+    </div>
+
+    <!-- TAB BAR -->
+    <div class="sitrep-tab-bar">
+      <button class="sitrep-tab active" onclick="switchAnalyticsTab('corp-overview', this)">CORP OVERVIEW</button>
+      <button class="sitrep-tab" onclick="switchAnalyticsTab('my-sitrep', this)">MY ANALYTICS</button>
+      <button class="sitrep-tab" onclick="switchAnalyticsTab('workforce-cost', this)" id="tab-cost">WORKFORCE COST</button>
+      <button class="sitrep-tab" onclick="switchAnalyticsTab('demographics', this)" id="tab-demographics">DEMOGRAPHICS</button>
+      <button class="sitrep-tab" onclick="switchAnalyticsTab('engagement', this)" id="tab-engagement">ENGAGEMENT</button>
+      <button class="sitrep-tab" onclick="switchAnalyticsTab('talent', this)" id="tab-talent">TALENT PIPELINE</button>
+      <button class="sitrep-tab" onclick="switchAnalyticsTab('risk', this)" id="tab-risk">RISK ANALYSIS</button>
+      <button class="sitrep-tab" onclick="switchAnalyticsTab('onboarding', this)" id="tab-onboarding" style="color:var(--success);border-bottom-color:transparent">⚡ ONBOARDING</button>
+    </div>
+
+    <!-- ══════════ CORP OVERVIEW TAB ══════════ -->
+    <div class="sitrep-tab-content active" id="stab-corp-overview">
+
+      <!-- Top KPI Row -->
+      <div class="corp-stat-row">
+        <div class="corp-stat-card">
+          <div class="corp-stat-label">👥 TOTAL HEADCOUNT</div>
+          <div class="corp-stat-val">73</div>
+          <div class="corp-stat-delta up">+8 YTD</div>
+        </div>
+        <div class="corp-stat-card">
+          <div class="corp-stat-label">⚡ AVG ENGAGEMENT</div>
+          <div class="corp-stat-val">74<span style="font-size:0.7rem;color:var(--text-dim)">/100</span></div>
+          <div class="corp-stat-delta up">+3 pts Q1</div>
+        </div>
+        <div class="corp-stat-card">
+          <div class="corp-stat-label">⭐ AVG PERFORMANCE</div>
+          <div class="corp-stat-val">4.1<span style="font-size:0.7rem;color:var(--text-dim)">/5</span></div>
+          <div class="corp-stat-delta">FY2025 cycle</div>
+        </div>
+        <div class="corp-stat-card">
+          <div class="corp-stat-label">↑ ATTRITION (TTM)</div>
+          <div class="corp-stat-val">11.2<span style="font-size:0.7rem;color:var(--text-dim)">%</span></div>
+          <div class="corp-stat-delta up">Below 13% avg</div>
+        </div>
+        <div class="corp-stat-card">
+          <div class="corp-stat-label">💎 MANPOWER COST</div>
+          <div class="corp-stat-val" style="font-size:1.1rem">S$15M</div>
+          <div class="corp-stat-delta down">+8% YoY</div>
+        </div>
+        <div class="corp-stat-card" style="border-color:rgba(239,83,80,0.3)">
+          <div class="corp-stat-label">⚠ FLIGHT RISK</div>
+          <div class="corp-stat-val" style="color:var(--danger)">8</div>
+          <div class="corp-stat-delta down">AI flagged</div>
+        </div>
+      </div>
+
+      <!-- Function Cards -->
+      <div class="corp-fn-cards">
+
+        <div class="corp-fn-card" onclick="switchAnalyticsTab('my-sitrep', document.querySelector('.sitrep-tab:nth-child(2)'))">
+          <div class="corp-fn-card-arrow">→</div>
+          <div class="corp-fn-card-icon">⚔️</div>
+          <div class="corp-fn-card-title">OPERATIONS</div>
+          <div class="corp-fn-card-sub">Hiring · Appraisals · Leave · Salaries</div>
+          <div class="corp-fn-stats">
+            <div><span class="corp-fn-stat-val">14</span><span class="corp-fn-stat-lbl">Open Roles</span></div>
+            <div><span class="corp-fn-stat-val">3</span><span class="corp-fn-stat-lbl">Pending Leave</span></div>
+            <div><span class="corp-fn-stat-val">8</span><span class="corp-fn-stat-lbl">Appraisals Due</span></div>
+          </div>
+          <div class="corp-fn-alert warn">⚠ OT cost up 12% — review headcount</div>
+        </div>
+
+        <div class="corp-fn-card" onclick="switchAnalyticsTab('workforce-cost', document.getElementById('tab-cost'))">
+          <div class="corp-fn-card-arrow">→</div>
+          <div class="corp-fn-card-icon">🏛️</div>
+          <div class="corp-fn-card-title">DEPARTMENTS</div>
+          <div class="corp-fn-card-sub">Team structure · Budget · Headcount</div>
+          <div class="corp-fn-stats">
+            <div><span class="corp-fn-stat-val">6</span><span class="corp-fn-stat-lbl">Departments</span></div>
+            <div><span class="corp-fn-stat-val" style="font-size:0.7rem">S$15M</span><span class="corp-fn-stat-lbl">Total Budget</span></div>
+            <div><span class="corp-fn-stat-val">73</span><span class="corp-fn-stat-lbl">Headcount</span></div>
+          </div>
+          <div class="corp-fn-alert info">ℹ Sales engagement lowest at 64/100</div>
+        </div>
+
+        <div class="corp-fn-card" onclick="window.location='employee-directory.html'">
+          <div class="corp-fn-card-arrow">→</div>
+          <div class="corp-fn-card-icon">👥</div>
+          <div class="corp-fn-card-title">INDIVIDUALS</div>
+          <div class="corp-fn-card-sub">Profiles · KPIs · Appraisals · Leave</div>
+          <div class="corp-fn-stats">
+            <div><span class="corp-fn-stat-val">73</span><span class="corp-fn-stat-lbl">Employees</span></div>
+            <div><span class="corp-fn-stat-val">4.1</span><span class="corp-fn-stat-lbl">Avg Perf</span></div>
+            <div><span class="corp-fn-stat-val" style="color:var(--danger)">8</span><span class="corp-fn-stat-lbl">At Risk</span></div>
+          </div>
+          <div class="corp-fn-alert danger">🚨 8 flight risk employees flagged by AI</div>
+        </div>
+
+        <div class="corp-fn-card" onclick="switchAnalyticsTab('engagement', document.getElementById('tab-engagement'))">
+          <div class="corp-fn-card-arrow">→</div>
+          <div class="corp-fn-card-icon">📈</div>
+          <div class="corp-fn-card-title">ANALYTICS</div>
+          <div class="corp-fn-card-sub">Cost · Demographics · Risk · Talent</div>
+          <div class="corp-fn-stats">
+            <div><span class="corp-fn-stat-val">74/100</span><span class="corp-fn-stat-lbl">Engagement</span></div>
+            <div><span class="corp-fn-stat-val">11.2%</span><span class="corp-fn-stat-lbl">Attrition</span></div>
+            <div><span class="corp-fn-stat-val" style="color:var(--danger)">8</span><span class="corp-fn-stat-lbl">Flight Risk</span></div>
+          </div>
+          <div class="corp-fn-alert success">✓ Revenue/employee 9.6% above benchmark</div>
+        </div>
+
+      </div>
+
+      <!-- Recent Activity + AI Priorities -->
+      <div class="corp-bottom-grid">
+
+        <div class="sr-panel">
+          <div class="sr-panel-title">◈ RECENT ACTIVITY</div>
+          <div class="activity-item">
+            <div class="activity-dot info"></div>
+            <div class="activity-text">Daniel Lee submitted leave reobjective (2 days)</div>
+            <div class="activity-time">2h ago</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot warn"></div>
+            <div class="activity-text">Sales dept engagement dropped 4 pts this quarter</div>
+            <div class="activity-time">1d ago</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot success"></div>
+            <div class="activity-text">Q1 appraisal cycle opens for Engineering team</div>
+            <div class="activity-time">2d ago</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot success"></div>
+            <div class="activity-text">Alice Johnson promoted to G5 — approved</div>
+            <div class="activity-time">3d ago</div>
+          </div>
+          <div class="activity-item" style="border-bottom:none">
+            <div class="activity-dot neutral"></div>
+            <div class="activity-text">New hire Henry Chow onboarding next week</div>
+            <div class="activity-time">4d ago</div>
+          </div>
+        </div>
+
+        <div class="sr-panel">
+          <div class="sr-panel-title">⚡ AI PRIORITIES</div>
+          <div class="priority-item">
+            <div class="priority-level high">HIGH</div>
+            <div class="priority-text">Review Sales team engagement plan</div>
+          </div>
+          <div class="priority-item">
+            <div class="priority-level critical">CRITICAL</div>
+            <div class="priority-text">3 succession gaps in G7+ roles need attention</div>
+          </div>
+          <div class="priority-item">
+            <div class="priority-level high">HIGH</div>
+            <div class="priority-text">G4→G5 bottleneck: 12 employees overdue</div>
+          </div>
+          <div class="priority-item">
+            <div class="priority-level medium">MEDIUM</div>
+            <div class="priority-text">OT trend in Engineering — consider hiring</div>
+          </div>
+          <div class="priority-item" style="border-bottom:none">
+            <div class="priority-level low">LOW</div>
+            <div class="priority-text">Learning budget 38% utilised — push comms</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════ MY ANALYTICS TAB (existing content) ══════════ -->
+    <div class="sitrep-tab-content" id="stab-my-sitrep">
+    <!-- MAIN GRID -->
+    <div class="sitrep-grid">
+
+      <!-- ── COL LEFT ── -->
+      <div class="sitrep-col sitrep-col-left">
+
+        <!-- My Profile -->
+        <section class="sr-panel" id="sr-profile">
+          <div class="sr-panel-title">◈ MY PROFILE</div>
+          <div class="sr-profile-inner">
+            <div class="sr-avatar" id="sr-avatar">??</div>
+            <div class="sr-profile-data">
+              <div class="sr-player-name" id="sr-name">Loading…</div>
+              <div class="sr-player-role" id="sr-role">—</div>
+              <div class="sr-level-row">
+                <span class="sr-level-label">LVL</span>
+                <span class="sr-level-val" id="sr-level">1</span>
+                <div class="sr-xp-outer">
+                  <div class="sr-xp-fill" id="sr-xp-fill" style="width:0%"></div>
+                </div>
+                <span class="sr-xp-text" id="sr-xp-text">0 XP</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stats radar text -->
+          <div class="sr-stats-grid" id="sr-stats-grid">
+            <!-- populated by JS -->
+          </div>
+        </section>
+
+        <!-- Resources -->
+        <section class="sr-panel" id="sr-resources">
+          <div class="sr-panel-title">⚡ RESOURCE STATUS</div>
+          <div class="sr-res-list" id="sr-res-list">
+            <!-- populated by JS -->
+          </div>
+        </section>
+
+        <!-- Skill Loadout -->
+        <section class="sr-panel" id="sr-skills">
+          <div class="sr-panel-title">🎯 SKILL LOADOUT</div>
+          <div class="sr-skill-list" id="sr-skill-list">
+            <!-- populated by JS -->
+          </div>
+        </section>
+
+      </div>
+
+      <!-- ── COL CENTER ── -->
+      <div class="sitrep-col sitrep-col-center">
+
+        <!-- Objective Performance -->
+        <section class="sr-panel" id="sr-objectives">
+          <div class="sr-panel-title">⚔️ OBJECTIVE PERFORMANCE</div>
+          <div class="sr-objective-summary" id="sr-objective-summary">
+            <!-- stats row populated by JS -->
+          </div>
+          <div class="sr-objective-list" id="sr-objective-list">
+            <!-- populated by JS -->
+          </div>
+        </section>
+
+        <!-- Review History -->
+        <section class="sr-panel" id="sr-battles">
+          <div class="sr-panel-title">🏆 REVIEW HISTORY</div>
+          <div class="sr-battle-list" id="sr-battle-list">
+            <!-- populated by JS -->
+          </div>
+        </section>
+
+      </div>
+
+      <!-- ── COL RIGHT ── -->
+      <div class="sitrep-col sitrep-col-right">
+
+        <!-- Sector Coverage -->
+        <section class="sr-panel" id="sr-sectors">
+          <div class="sr-panel-title">🌐 SECTOR COVERAGE</div>
+          <div class="sr-sector-grid" id="sr-sector-grid">
+            <!-- 4×4 grid populated by JS -->
+          </div>
+        </section>
+
+        <!-- Team Roster -->
+        <section class="sr-panel" id="sr-roster">
+          <div class="sr-panel-title">👥 TEAM ROSTER</div>
+          <div class="sr-roster-table" id="sr-roster-table">
+            <!-- populated by JS -->
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+
+    <!-- FOOTER for My ANALYTICS -->
+    <div class="sitrep-footer">
+      <span>ELIX ANALYTICS HUB v2.0</span>
+      <span id="sr-save-date">—</span>
+      <button class="sr-reset-btn" onclick="confirmReset()" data-tooltip="Reset all data and return to department select">⚠ RESET PROFILE</button>
+    </div>
+
+    </div><!-- end stab-my-sitrep -->
+
+    <!-- ══════════ WORKFORCE COST TAB ══════════ -->
+    <div class="sitrep-tab-content" id="stab-workforce-cost">
+      <div class="analytics-content">
+        <div class="hr-page-header">
+          <div><div class="hr-page-title">Workforce Cost Analytics</div><div class="hr-page-sub">Company-wide spending, overtime analysis & market benchmarks</div></div>
+          <div class="hr-ai-badge">⚡ AI BENCHMARKS ACTIVE</div>
+        </div>
+
+        <div class="hr-stat-row" style="grid-template-columns:repeat(5,1fr)">
+          <div class="hr-stat-card"><div class="hr-stat-label">💎 TOTAL MANPOWER COST</div><div class="hr-stat-value" style="font-size:1.2rem">S$15.0M</div><div class="hr-stat-delta down">+8% YoY</div></div>
+          <div class="hr-stat-card"><div class="hr-stat-label">💰 AVG COST/EMPLOYEE</div><div class="hr-stat-value" style="font-size:1.2rem">S$205k</div><div class="hr-stat-delta up">vs S$192k market avg</div></div>
+          <div class="hr-stat-card"><div class="hr-stat-label">⏱ OT EXPENDITURE</div><div class="hr-stat-value" style="color:var(--warning)">S$820k</div><div class="hr-stat-delta down">+12% vs Q1 2025</div></div>
+          <div class="hr-stat-card"><div class="hr-stat-label">📈 REVENUE/EMPLOYEE</div><div class="hr-stat-value">S$347k</div><div class="hr-stat-delta up">+9.6% above benchmark</div></div>
+          <div class="hr-stat-card"><div class="hr-stat-label">🏦 CPF CONTRIBUTION</div><div class="hr-stat-value">S$2.6M</div><div class="hr-stat-delta">17% ER · 20% EE</div></div>
+        </div>
+
+        <div class="hr-grid-2">
+          <div class="hr-card">
+            <div class="hr-card-header"><div class="hr-card-title"><span class="card-icon">💎</span> COST BY DEPARTMENT</div></div>
+            <div class="bar-chart" style="height:160px;align-items:flex-end;border-bottom:1px solid var(--border);padding-bottom:8px">
+              <div class="bar-col">
+                <div class="bar-col-bar" style="height:100%;background:var(--protoss);opacity:0.8"></div>
+                <div class="bar-col-label">ENG</div>
+                <div class="bar-col-val">S$6.2M</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-col-bar" style="height:64%;background:var(--zerg);opacity:0.8"></div>
+                <div class="bar-col-label">SALES</div>
+                <div class="bar-col-val">S$4.0M</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-col-bar" style="height:37%;background:var(--terran);opacity:0.8"></div>
+                <div class="bar-col-label">OPS</div>
+                <div class="bar-col-val">S$2.3M</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-col-bar" style="height:22%;background:var(--success);opacity:0.7"></div>
+                <div class="bar-col-label">PRODUCT</div>
+                <div class="bar-col-val">S$1.4M</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-col-bar" style="height:14%;background:var(--text-dim);opacity:0.7"></div>
+                <div class="bar-col-label">HR</div>
+                <div class="bar-col-val">S$0.9M</div>
+              </div>
+              <div class="bar-col">
+                <div class="bar-col-bar" style="height:24%;background:var(--warning);opacity:0.7"></div>
+                <div class="bar-col-label">FINANCE</div>
+                <div class="bar-col-val">S$1.5M</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hr-card">
+            <div class="hr-card-header"><div class="hr-card-title"><span class="card-icon">⏱</span> OVERTIME TREND (MONTHLY)</div></div>
+            <table class="hr-table">
+              <thead><tr><th>DEPT</th><th>AVG OT/HEAD</th><th>TOTAL OT COST</th><th>TREND</th></tr></thead>
+              <tbody>
+                <tr><td style="font-weight:600">Engineering</td><td>18.4 hrs</td><td style="color:var(--warning)">S$340k</td><td><span class="status-badge at-risk">↑ 18%</span></td></tr>
+                <tr><td style="font-weight:600">Sales</td><td>12.1 hrs</td><td>S$210k</td><td><span class="status-badge on-track">↓ 4%</span></td></tr>
+                <tr><td style="font-weight:600">Operations</td><td>8.3 hrs</td><td>S$130k</td><td><span class="status-badge on-track">Stable</span></td></tr>
+                <tr><td style="font-weight:600">Product</td><td>6.2 hrs</td><td>S$80k</td><td><span class="status-badge on-track">↓ 2%</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="hr-card">
+          <div class="hr-card-header"><div class="hr-card-title"><span class="card-icon">📊</span> SALARY COST vs MARKET BENCHMARK</div></div>
+          <table class="hr-table">
+            <thead><tr><th>GRADE</th><th>YOUR MID</th><th>MARKET P50</th><th>VARIANCE</th><th>POSITION</th></tr></thead>
+            <tbody>
+              <tr><td style="font-family:var(--font-ui)">G1</td><td>S$4,275</td><td>S$4,100</td><td style="color:var(--success)">+4.3%</td><td><span class="status-badge on-track">ABOVE MKT</span></td></tr>
+              <tr><td style="font-family:var(--font-ui)">G2</td><td>S$6,000</td><td>S$5,800</td><td style="color:var(--success)">+3.4%</td><td><span class="status-badge on-track">ABOVE MKT</span></td></tr>
+              <tr><td style="font-family:var(--font-ui)">G3</td><td>S$8,250</td><td>S$8,400</td><td style="color:var(--warning)">−1.8%</td><td><span class="status-badge at-risk">AT RISK</span></td></tr>
+              <tr><td style="font-family:var(--font-ui)">G4</td><td>S$11,250</td><td>S$11,000</td><td style="color:var(--success)">+2.3%</td><td><span class="status-badge on-track">ABOVE MKT</span></td></tr>
+              <tr><td style="font-family:var(--font-ui)">G5</td><td>S$15,500</td><td>S$16,200</td><td style="color:var(--danger)">−4.3%</td><td><span class="status-badge critical">BELOW MKT</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ DEMOGRAPHICS TAB ══════════ -->
+    <div class="sitrep-tab-content" id="stab-demographics">
+      <div class="analytics-content">
+        <div class="hr-page-header">
+          <div><div class="hr-page-title">Demographics Analysis</div><div class="hr-page-sub">Age distribution, gender breakdown & nationality statistics across all units</div></div>
+        </div>
+
+        <div class="hr-stat-row" style="grid-template-columns:repeat(4,1fr)">
+          <div class="hr-stat-card"><div class="hr-stat-label">👥 TOTAL HEADCOUNT</div><div class="hr-stat-value">73</div><div class="hr-stat-delta">6 departments</div></div>
+          <div class="hr-stat-card"><div class="hr-stat-label">🎂 MEDIAN AGE</div><div class="hr-stat-value">31</div><div class="hr-stat-delta">Range: 22–56 years</div></div>
+          <div class="hr-stat-card"><div class="hr-stat-label">⚡ GENDER RATIO</div><div class="hr-stat-value">62/38</div><div class="hr-stat-delta">M/F — target 55/45</div></div>
+          <div class="hr-stat-card"><div class="hr-stat-label">🌏 NATIONALITIES</div><div class="hr-stat-value">11</div><div class="hr-stat-delta">68% Singapore Citizens/PR</div></div>
+        </div>
+
+        <div class="hr-grid-3">
+          <div class="hr-card">
+            <div class="hr-card-header"><div class="hr-card-title"><span class="card-icon">🎂</span> AGE DISTRIBUTION</div></div>
+            <div class="kpi-item"><div class="kpi-info"><div class="kpi-name">22–28 (Early Career)</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill success" style="width:32%"></div></div></div><div style="min-width:40px;text-align:right;font-size:0.75rem">23</div></div>
+            <div class="kpi-item"><div class="kpi-info"><div class="kpi-name">29–35 (Mid Career)</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill achieved" style="width:45%"></div></div></div><div style="min-width:40px;text-align:right;font-size:0.75rem">33</div></div>
+            <div class="kpi-item"><div class="kpi-info"><div class="kpi-name">36–45 (Senior)</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill warning" style="width:18%"></div></div></div><div style="min-width:40px;text-align:right;font-size:0.75rem">13</div></div>
+            <div class="kpi-item" style="border-bottom:none"><div class="kpi-info"><div class="kpi-name">46+ (Leadership)</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill" style="width:5%;background:var(--text-dim)"></div></div></div><div style="min-width:40px;text-align:right;font-size:0.75rem">4</div></div>
+          </div>
+
+          <div class="hr-card">
+            <div class="hr-card-header"><div class="hr-card-title"><span class="card-icon">⚡</span> GENDER BY DEPARTMENT</div></div>
+            <table class="hr-table">
+              <thead><tr><th>DEPT</th><th>M</th><th>F</th><th>RATIO</th></tr></thead>
+              <tbody>
+                <tr><td>Engineering</td><td>18</td><td>6</td><td><span style="color:var(--warning)">75/25</span></td></tr>
+                <tr><td>Sales</td><td>9</td><td>6</td><td><span style="color:var(--success)">60/40</span></td></tr>
+                <tr><td>Product</td><td>4</td><td>4</td><td><span style="color:var(--terran)">50/50</span></td></tr>
+                <tr><td>HR</td><td>1</td><td>5</td><td><span style="color:var(--success)">17/83</span></td></tr>
+                <tr><td>Finance</td><td>5</td><td>4</td><td><span style="color:var(--success)">56/44</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="hr-card">
+            <div class="hr-card-header"><div class="hr-card-title"><span class="card-icon">🌏</span> NATIONALITY MIX</div></div>
+            <div class="kpi-item"><div class="kpi-info"><div class="kpi-name">Singapore Citizen</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill success" style="width:55%"></div></div></div><div style="min-width:40px;text-align:right;font-size:0.75rem">40</div></div>
+            <div class="kpi-item"><div class="kpi-info"><div class="kpi-name">Permanent Resident</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill achieved" style="width:18%"></div></div></div><div style="min-width:40px;text-align:right;font-size:0.75rem">10 (EP/DP)</div></div>
+            <div class="kpi-item"><div class="kpi-info"><div class="kpi-name">EP / S-Pass Holders</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill warning" style="width:21%"></div></div></div><div style="min-width:40px;text-align:right;font-size:0.75rem">16</div></div>
+            <div class="kpi-item" style="border-bottom:none"><div class="kpi-info"><div class="kpi-name">Others (WP / LOC)</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill" style="width:5%;background:var(--text-dim)"></div></div></div><div style="min-width:40px;text-align:right;font-size:0.75rem">7</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ ENGAGEMENT TAB ══════════ -->
+    <div class="sitrep-tab-content" id="stab-engagement">
+      <div class="analytics-content">
+        <div class="hr-page-header">
+          <div><div class="hr-page-title">Engagement Tracking</div><div class="hr-page-sub">Morale scores, burnout risk indicators & meeting cadence statistics</div></div>
+          <div class="hr-ai-badge">⚡ PULSE SURVEY ACTIVE</div>
+        </div>
+
+        <div class="hr-stat-row" style="grid-template-columns:repeat(4,1fr)">
+          <div class="hr-stat-card"><div class="hr-stat-label">⚡ AVG ENGAGEMENT SCORE</div><div class="hr-stat-value" style="color:var(--success)">74/100</div><div class="hr-stat-delta up">+3 pts since Q4</div></div>
+          <div class="hr-stat-card"><div class="hr-stat-label">🔥 BURNOUT RISK (HIGH)</div><div class="hr-stat-value" style="color:var(--danger)">11</div><div class="hr-stat-delta down">Employees flagged</div></div>
+          <div class="hr-stat-card"><div class="hr-stat-label">📅 1:1 COMPLETION</div><div class="hr-stat-value">84%</div><div class="hr-stat-delta up">Target: 90%</div></div>
+          <div class="hr-stat-card"><div class="hr-stat-label">🏆 RECOGNITION EVENTS</div><div class="hr-stat-value">38</div><div class="hr-stat-delta">Q1 2026 YTD</div></div>
+        </div>
+
+        <div class="hr-grid-2">
+          <div class="hr-card">
+            <div class="hr-card-header"><div class="hr-card-title"><span class="card-icon">⚡</span> ENGAGEMENT BY DEPARTMENT</div></div>
+            <div class="kpi-item"><div class="kpi-dot achieved"></div><div class="kpi-info"><div class="kpi-name">Engineering</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill achieved" style="width:80%"></div></div></div><div class="kpi-pct"><div class="kpi-pct-num">80/100</div></div></div>
+            <div class="kpi-item"><div class="kpi-dot warning"></div><div class="kpi-info"><div class="kpi-name">Sales</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill warning" style="width:64%"></div></div></div><div class="kpi-pct"><div class="kpi-pct-num">64/100</div></div></div>
+            <div class="kpi-item"><div class="kpi-dot success"></div><div class="kpi-info"><div class="kpi-name">Product</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill success" style="width:82%"></div></div></div><div class="kpi-pct"><div class="kpi-pct-num">82/100</div></div></div>
+            <div class="kpi-item"><div class="kpi-dot success"></div><div class="kpi-info"><div class="kpi-name">HR</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill success" style="width:79%"></div></div></div><div class="kpi-pct"><div class="kpi-pct-num">79/100</div></div></div>
+            <div class="kpi-item" style="border-bottom:none"><div class="kpi-dot success"></div><div class="kpi-info"><div class="kpi-name">Finance</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill success" style="width:72%"></div></div></div><div class="kpi-pct"><div class="kpi-pct-num">72/100</div></div></div>
+          </div>
+
+          <div class="hr-card">
+            <div class="hr-card-header"><div class="hr-card-title"><span class="card-icon">🔥</span> BURNOUT RISK FLAGS</div></div>
+            <table class="hr-table">
+              <thead><tr><th>EMPLOYEE</th><th>DEPT</th><th>RISK LEVEL</th><th>SIGNAL</th></tr></thead>
+              <tbody>
+                <tr><td style="font-weight:600">Sam Rivera</td><td style="color:var(--text-dim)">Engineering</td><td><span class="status-badge critical">HIGH</span></td><td style="font-size:0.68rem;color:var(--text-dim)">OT >25h/wk × 6wk</td></tr>
+                <tr><td style="font-weight:600">Ben Tan</td><td style="color:var(--text-dim)">Sales</td><td><span class="status-badge critical">HIGH</span></td><td style="font-size:0.68rem;color:var(--text-dim)">Quota pressure + 0 days off</td></tr>
+                <tr><td style="font-weight:600">Rajan Pillai</td><td style="color:var(--text-dim)">Finance</td><td><span class="status-badge at-risk">MEDIUM</span></td><td style="font-size:0.68rem;color:var(--text-dim)">Engagement drop 12 pts</td></tr>
+                <tr><td style="font-weight:600">Jordan Kim</td><td style="color:var(--text-dim)">Engineering</td><td><span class="status-badge at-risk">MEDIUM</span></td><td style="font-size:0.68rem;color:var(--text-dim)">Missed 3 last 1:1s</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ TALENT PIPELINE TAB ══════════ -->
+    <div class="sitrep-tab-content" id="stab-talent">
+      <div class="analytics-content">
+        <div class="hr-page-header">
+          <div><div class="hr-page-title">Talent Pipeline</div><div class="hr-page-sub">Promotions pending, internal mobility & succession planning across all grades</div></div>
+        </div>
+
+        <div class="hr-stat-row" style="grid-template-columns:repeat(4,1fr)">
+          <div class="hr-stat-card"><div class="hr-stat-label">↑ PROMOTIONS PENDING</div><div class="hr-stat-value" style="color:var(--warning)">12</div><div class="hr-stat-delta warn">G4→G5 bottleneck</div></div>
+          <div class="hr-stat-card"><div class="hr-stat-label">⇄ INTERNAL MOBILITY</div><div class="hr-stat-value">5</div><div class="hr-stat-delta">Cross-dept transfers YTD</div></div>
+          <div class="hr-stat-card"><div class="hr-stat-label">⚠ SUCCESSION GAPS</div><div class="hr-stat-value" style="color:var(--danger)">3</div><div class="hr-stat-delta down">G7+ critical roles</div></div>
+          <div class="hr-stat-card"><div class="hr-stat-label">🎯 HIGH POTENTIALS</div><div class="hr-stat-value" style="color:var(--success)">9</div><div class="hr-stat-delta up">Identified for fast-track</div></div>
+        </div>
+
+        <div class="hr-grid-2">
+          <div class="hr-card">
+            <div class="hr-card-header"><div class="hr-card-title"><span class="card-icon">↑</span> PROMOTION PIPELINE — Q2 2026</div></div>
+            <table class="hr-table">
+              <thead><tr><th>EMPLOYEE</th><th>CURRENT GRADE</th><th>TARGET</th><th>READINESS</th><th>STATUS</th></tr></thead>
+              <tbody>
+                <tr><td style="font-weight:600">Alice Johnson</td><td>G4 (Sr. AE)</td><td>G5 (Lead AE)</td><td><div class="kpi-bar" style="width:80px"><div class="kpi-bar-fill success" style="width:95%"></div></div></td><td><span class="status-badge achieved">APPROVED</span></td></tr>
+                <tr><td style="font-weight:600">Alex Chen</td><td>G4 (Staff Eng)</td><td>G5 (Principal)</td><td><div class="kpi-bar" style="width:80px"><div class="kpi-bar-fill success" style="width:85%"></div></div></td><td><span class="status-badge on-track">IN REVIEW</span></td></tr>
+                <tr><td style="font-weight:600">Maya Patel</td><td>G4 (PM)</td><td>G5 (Sr. PM)</td><td><div class="kpi-bar" style="width:80px"><div class="kpi-bar-fill success" style="width:80%"></div></div></td><td><span class="status-badge pending">PENDING</span></td></tr>
+                <tr><td style="font-weight:600">Sam Rivera</td><td>G3 (Sr. Eng)</td><td>G4 (Staff Eng)</td><td><div class="kpi-bar" style="width:80px"><div class="kpi-bar-fill warning" style="width:65%"></div></div></td><td><span class="status-badge at-risk">BLOCKED</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="hr-card">
+            <div class="hr-card-header"><div class="hr-card-title"><span class="card-icon">⚠</span> SUCCESSION GAPS — G7+ ROLES</div></div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div style="padding:12px;background:rgba(239,83,80,0.06);border:1px solid rgba(239,83,80,0.2);border-radius:3px">
+                <div style="font-size:0.78rem;font-weight:600;color:var(--text-primary);margin-bottom:4px">VP Engineering (G7)</div>
+                <div style="font-size:0.7rem;color:var(--text-dim);margin-bottom:8px">Current: David Chen (retirement 2027) · No identified successor</div>
+                <span class="status-badge critical">CRITICAL GAP</span>
+              </div>
+              <div style="padding:12px;background:rgba(239,83,80,0.06);border:1px solid rgba(239,83,80,0.2);border-radius:3px">
+                <div style="font-size:0.78rem;font-weight:600;color:var(--text-primary);margin-bottom:4px">VP Sales (G7)</div>
+                <div style="font-size:0.7rem;color:var(--text-dim);margin-bottom:8px">Current: Lena Toh (potential external move) · 1 candidate at 60% readiness</div>
+                <span class="status-badge critical">CRITICAL GAP</span>
+              </div>
+              <div style="padding:12px;background:rgba(255,167,38,0.06);border:1px solid rgba(255,167,38,0.2);border-radius:3px">
+                <div style="font-size:0.78rem;font-weight:600;color:var(--text-primary);margin-bottom:4px">Head of Finance (G6)</div>
+                <div style="font-size:0.7rem;color:var(--text-dim);margin-bottom:8px">Current: Rajan Pillai · 2 candidates being developed</div>
+                <span class="status-badge at-risk">IN PROGRESS</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ RISK ANALYSIS TAB ══════════ -->
+    <div class="sitrep-tab-content" id="stab-risk">
+      <div class="analytics-content">
+        <div class="hr-page-header">
+          <div><div class="hr-page-title">HR Risk Analysis</div><div class="hr-page-sub">Flight risk scoring, pay compression indicators & attrition forecasting</div></div>
+          <div class="hr-ai-badge">⚡ AI RISK MODEL v2.4</div>
+        </div>
+
+        <div class="hr-stat-row" style="grid-template-columns:repeat(4,1fr)">
+          <div class="hr-stat-card" style="border-color:rgba(239,83,80,0.3)"><div class="hr-stat-label">✈ FLIGHT RISK (HIGH)</div><div class="hr-stat-value" style="color:var(--danger)">8</div><div class="hr-stat-delta down">AI-flagged units</div></div>
+          <div class="hr-stat-card"><div class="hr-stat-label">📉 PREDICTED ATTRITION</div><div class="hr-stat-value">14.2%</div><div class="hr-stat-delta warn">Next 12 months</div></div>
+          <div class="hr-stat-card"><div class="hr-stat-label">💢 PAY COMPRESSION</div><div class="hr-stat-value" style="color:var(--warning)">7</div><div class="hr-stat-delta warn">Employees affected</div></div>
+          <div class="hr-stat-card"><div class="hr-stat-label">📊 RETENTION RATE</div><div class="hr-stat-value" style="color:var(--success)">88.8%</div><div class="hr-stat-delta up">TTM · above 87% target</div></div>
+        </div>
+
+        <div class="hr-grid-2">
+          <div class="hr-card">
+            <div class="hr-card-header"><div class="hr-card-title"><span class="card-icon">✈</span> FLIGHT RISK REGISTER</div></div>
+            <table class="hr-table">
+              <thead><tr><th>EMPLOYEE</th><th>DEPT</th><th>RISK SCORE</th><th>SIGNALS</th><th>ACTION</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:600">Sam Rivera</td>
+                  <td style="color:var(--text-dim)">Engineering</td>
+                  <td>
+                    <div class="risk-bar-wrap"><div class="risk-bar"><div class="risk-bar-fill" style="width:85%"></div></div></div>
+                    <span style="font-family:var(--font-ui);font-size:0.65rem;color:var(--danger)">85/100</span>
+                  </td>
+                  <td style="font-size:0.65rem;color:var(--text-dim)">Below mkt pay · Burnout</td>
+                  <td><span class="status-badge critical">URGENT</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600">Ben Tan</td>
+                  <td style="color:var(--text-dim)">Sales</td>
+                  <td>
+                    <div class="risk-bar-wrap"><div class="risk-bar"><div class="risk-bar-fill" style="width:72%"></div></div></div>
+                    <span style="font-family:var(--font-ui);font-size:0.65rem;color:var(--warning)">72/100</span>
+                  </td>
+                  <td style="font-size:0.65rem;color:var(--text-dim)">Missed quota · Low engage</td>
+                  <td><span class="status-badge at-risk">HIGH</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600">Jordan Kim</td>
+                  <td style="color:var(--text-dim)">Engineering</td>
+                  <td>
+                    <div class="risk-bar-wrap"><div class="risk-bar"><div class="risk-bar-fill" style="width:58%"></div></div></div>
+                    <span style="font-family:var(--font-ui);font-size:0.65rem;color:var(--warning)">58/100</span>
+                  </td>
+                  <td style="font-size:0.65rem;color:var(--text-dim)">Blocked promotion · Disengaged</td>
+                  <td><span class="status-badge at-risk">MEDIUM</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600">Rajan Pillai</td>
+                  <td style="color:var(--text-dim)">Finance</td>
+                  <td>
+                    <div class="risk-bar-wrap"><div class="risk-bar"><div class="risk-bar-fill" style="width:45%"></div></div></div>
+                    <span style="font-family:var(--font-ui);font-size:0.65rem;color:var(--text-primary)">45/100</span>
+                  </td>
+                  <td style="font-size:0.65rem;color:var(--text-dim)">Engagement drop</td>
+                  <td><span class="status-badge pending">MONITOR</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="hr-card">
+            <div class="hr-card-header"><div class="hr-card-title"><span class="card-icon">📊</span> ATTRITION BY DEPT (TTM)</div></div>
+            <div class="kpi-item"><div class="kpi-dot warning"></div><div class="kpi-info"><div class="kpi-name">Sales</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill warning" style="width:18%"></div></div></div><div class="kpi-pct"><div class="kpi-pct-num">18%</div><div><span class="status-badge at-risk">HIGH</span></div></div></div>
+            <div class="kpi-item"><div class="kpi-dot success"></div><div class="kpi-info"><div class="kpi-name">Engineering</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill success" style="width:10%"></div></div></div><div class="kpi-pct"><div class="kpi-pct-num">10%</div><div><span class="status-badge on-track">NORMAL</span></div></div></div>
+            <div class="kpi-item"><div class="kpi-dot success"></div><div class="kpi-info"><div class="kpi-name">Operations</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill success" style="width:8%"></div></div></div><div class="kpi-pct"><div class="kpi-pct-num">8%</div><div><span class="status-badge on-track">NORMAL</span></div></div></div>
+            <div class="kpi-item"><div class="kpi-dot success"></div><div class="kpi-info"><div class="kpi-name">Product</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill success" style="width:6%"></div></div></div><div class="kpi-pct"><div class="kpi-pct-num">6%</div><div><span class="status-badge on-track">LOW</span></div></div></div>
+            <div class="kpi-item" style="border-bottom:none"><div class="kpi-dot success"></div><div class="kpi-info"><div class="kpi-name">HR</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill success" style="width:5%"></div></div></div><div class="kpi-pct"><div class="kpi-pct-num">5%</div><div><span class="status-badge on-track">LOW</span></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ ONBOARDING COHORT TAB ══════════ -->
+    <div class="sitrep-tab-content" id="stab-onboarding">
+      <div class="analytics-content">
+        <div class="hr-page-header">
+          <div>
+            <div class="hr-page-title">⚡ ONBOARDING INTELLIGENCE</div>
+            <div class="hr-page-subtitle">D30 / D60 / D90 cohort tracking · at-risk alerts · ramp analytics</div>
+          </div>
+          <a href="preboarding.html" class="hr-action-btn" style="background:rgba(0,230,118,0.12);border-color:rgba(0,230,118,0.4);color:var(--success)">+ NEW BRIEFING</a>
+        </div>
+
+        <!-- KPI row -->
+        <div class="hr-stats-row" style="grid-template-columns:repeat(5,1fr);margin-bottom:20px">
+          <div class="hr-stat-card">
+            <div class="hr-stat-value" style="color:var(--success)">8</div>
+            <div class="hr-stat-label">ACTIVE COHORT</div>
+            <div class="hr-stat-sub">In first 90 days</div>
+          </div>
+          <div class="hr-stat-card">
+            <div class="hr-stat-value" style="color:var(--protoss)">76%</div>
+            <div class="hr-stat-label">AVG TASK COMPLETION</div>
+            <div class="hr-stat-sub">Pre-boarding + D30</div>
+          </div>
+          <div class="hr-stat-card">
+            <div class="hr-stat-value" style="color:var(--terran)">22</div>
+            <div class="hr-stat-label">DAYS AVG RAMP TIME</div>
+            <div class="hr-stat-sub">To first deliverable</div>
+          </div>
+          <div class="hr-stat-card">
+            <div class="hr-stat-value" style="color:var(--warn)">2</div>
+            <div class="hr-stat-label">AT-RISK MEMBERS</div>
+            <div class="hr-stat-sub">Behind on milestones</div>
+          </div>
+          <div class="hr-stat-card">
+            <div class="hr-stat-value" style="color:var(--success)">4.3</div>
+            <div class="hr-stat-label">ONBOARDING NPS</div>
+            <div class="hr-stat-sub">Post D90 survey avg</div>
+          </div>
+        </div>
+
+        <!-- At-risk alerts -->
+        <div class="hr-card" style="margin-bottom:16px;border-color:rgba(255,167,38,0.35)">
+          <div class="hr-card-header" style="background:rgba(255,167,38,0.08)">
+            <div class="hr-card-title"><span class="card-icon">⚠️</span> AT-RISK MEMBERS — INTERVENTION REQUIRED</div>
+            <span class="status-badge at-risk">2 ALERTS</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0">
+            <div style="display:flex;align-items:center;gap:16px;padding:14px 16px;border-bottom:1px solid var(--border)">
+              <div style="width:34px;height:34px;border-radius:50%;background:rgba(180,79,255,0.2);border:1px solid var(--zerg);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:var(--zerg)">RK</div>
+              <div style="flex:1">
+                <div style="font-family:var(--font-ui);font-size:0.65rem;color:var(--text-bright);margin-bottom:2px">Ravi Kumar · SDR · ZERG</div>
+                <div style="font-size:0.68rem;color:var(--text-secondary)">D14 objective <strong style="color:var(--warn)">overdue by 3 days</strong> — "Log First 10 Outbound Contacts in CRM" not completed</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-family:var(--font-ui);font-size:0.5rem;letter-spacing:0.1em;color:var(--text-dim);margin-bottom:4px">PREBOARDING</div>
+                <div style="width:80px;height:5px;background:var(--border);border-radius:3px;overflow:hidden"><div style="width:60%;height:100%;background:var(--warn)"></div></div>
+                <div style="font-family:var(--font-ui);font-size:0.5rem;color:var(--warn);margin-top:2px">60% — D14 DAY 17</div>
+              </div>
+              <a href="employee-directory.html" style="font-family:var(--font-ui);font-size:0.5rem;letter-spacing:0.1em;padding:6px 12px;border:1px solid var(--warn);border-radius:3px;color:var(--warn);text-decoration:none">INTERVENE</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;padding:14px 16px">
+              <div style="width:34px;height:34px;border-radius:50%;background:rgba(74,158,255,0.2);border:1px solid var(--terran);display:flex;align-items:center;justify-content:justify;font-size:0.7rem;font-weight:700;color:var(--terran)">LP</div>
+              <div style="flex:1">
+                <div style="font-family:var(--font-ui);font-size:0.65rem;color:var(--text-bright);margin-bottom:2px">Lin Pei · Coordinator · TERRAN</div>
+                <div style="font-size:0.68rem;color:var(--text-secondary)">Pre-boarding <strong style="color:var(--warn)">incomplete</strong> — 3 of 7 tasks done. Start date was 3 days ago.</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-family:var(--font-ui);font-size:0.5rem;letter-spacing:0.1em;color:var(--text-dim);margin-bottom:4px">PREBOARDING</div>
+                <div style="width:80px;height:5px;background:var(--border);border-radius:3px;overflow:hidden"><div style="width:43%;height:100%;background:var(--warn)"></div></div>
+                <div style="font-family:var(--font-ui);font-size:0.5rem;color:var(--warn);margin-top:2px">43% — OVERDUE</div>
+              </div>
+              <a href="preboarding.html" style="font-family:var(--font-ui);font-size:0.5rem;letter-spacing:0.1em;padding:6px 12px;border:1px solid var(--warn);border-radius:3px;color:var(--warn);text-decoration:none">INTERVENE</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cohort table -->
+        <div class="hr-card">
+          <div class="hr-card-header">
+            <div class="hr-card-title"><span class="card-icon">📊</span> APRIL 2026 COHORT — D90 TRACKER</div>
+            <span style="font-family:var(--font-ui);font-size:0.48rem;letter-spacing:0.1em;color:var(--text-dim)">8 MEMBERS · START DATE APR 7, 2026</span>
+          </div>
+          <table class="hr-table" style="font-size:0.7rem">
+            <thead>
+              <tr>
+                <th>MEMBER</th>
+                <th>DEPARTMENT</th>
+                <th>ROLE</th>
+                <th>PRE-BOARD</th>
+                <th>D30 REVIEW</th>
+                <th>D60 REVIEW</th>
+                <th>D90 REVIEW</th>
+                <th>BUDDY</th>
+                <th>STATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div style="font-weight:600;color:var(--text-bright)">Alex Chen</div></td>
+                <td><span style="color:var(--protoss)">⚡ Protoss</span></td>
+                <td>Staff Engineer</td>
+                <td><span class="status-badge on-track">✓ 100%</span></td>
+                <td><span class="status-badge on-track">✓ PASSED</span></td>
+                <td><span class="status-badge at-risk">UPCOMING</span></td>
+                <td><span class="status-badge" style="background:rgba(90,122,154,0.15);color:var(--text-dim)">LOCKED</span></td>
+                <td style="color:var(--text-secondary)">Jamie T.</td>
+                <td><span class="status-badge on-track">ON TRACK</span></td>
+              </tr>
+              <tr>
+                <td><div style="font-weight:600;color:var(--text-bright)">Sam Rivera</div></td>
+                <td><span style="color:var(--protoss)">⚡ Protoss</span></td>
+                <td>Senior Engineer</td>
+                <td><span class="status-badge on-track">✓ 100%</span></td>
+                <td><span class="status-badge at-risk">IN PROGRESS</span></td>
+                <td><span class="status-badge" style="background:rgba(90,122,154,0.15);color:var(--text-dim)">LOCKED</span></td>
+                <td><span class="status-badge" style="background:rgba(90,122,154,0.15);color:var(--text-dim)">LOCKED</span></td>
+                <td style="color:var(--text-secondary)">Kevin N.</td>
+                <td><span class="status-badge on-track">ON TRACK</span></td>
+              </tr>
+              <tr>
+                <td><div style="font-weight:600;color:var(--text-bright)">Marcus Lim</div></td>
+                <td><span style="color:var(--terran)">🏗️ Terran</span></td>
+                <td>Ops Lead</td>
+                <td><span class="status-badge on-track">✓ 100%</span></td>
+                <td><span class="status-badge on-track">✓ PASSED</span></td>
+                <td><span class="status-badge on-track">✓ PASSED</span></td>
+                <td><span class="status-badge at-risk">UPCOMING</span></td>
+                <td style="color:var(--text-secondary)">Sophie H.</td>
+                <td><span class="status-badge on-track">ON TRACK</span></td>
+              </tr>
+              <tr>
+                <td><div style="font-weight:600;color:var(--text-bright)">Priya Wong</div></td>
+                <td><span style="color:var(--zerg)">🦾 Zerg</span></td>
+                <td>Sales Executive</td>
+                <td><span class="status-badge on-track">✓ 100%</span></td>
+                <td><span class="status-badge on-track">✓ PASSED</span></td>
+                <td><span class="status-badge at-risk">IN PROGRESS</span></td>
+                <td><span class="status-badge" style="background:rgba(90,122,154,0.15);color:var(--text-dim)">LOCKED</span></td>
+                <td style="color:var(--text-secondary)">Marcus L.</td>
+                <td><span class="status-badge on-track">ON TRACK</span></td>
+              </tr>
+              <tr>
+                <td><div style="font-weight:600;color:var(--text-bright)">Ravi Kumar</div></td>
+                <td><span style="color:var(--zerg)">🦾 Zerg</span></td>
+                <td>SDR</td>
+                <td><span class="status-badge on-track">✓ 100%</span></td>
+                <td><span class="status-badge at-risk" style="background:rgba(255,167,38,0.15);border-color:rgba(255,167,38,0.4);color:var(--warn)">⚠ OVERDUE</span></td>
+                <td><span class="status-badge" style="background:rgba(90,122,154,0.15);color:var(--text-dim)">LOCKED</span></td>
+                <td><span class="status-badge" style="background:rgba(90,122,154,0.15);color:var(--text-dim)">LOCKED</span></td>
+                <td style="color:var(--text-secondary)">Priya W.</td>
+                <td><span class="status-badge at-risk" style="background:rgba(255,167,38,0.15);border-color:rgba(255,167,38,0.4);color:var(--warn)">AT RISK</span></td>
+              </tr>
+              <tr>
+                <td><div style="font-weight:600;color:var(--text-bright)">Jordan Kim</div></td>
+                <td><span style="color:var(--protoss)">⚡ Protoss</span></td>
+                <td>Engineer II</td>
+                <td><span class="status-badge on-track">✓ 100%</span></td>
+                <td><span class="status-badge at-risk">IN PROGRESS</span></td>
+                <td><span class="status-badge" style="background:rgba(90,122,154,0.15);color:var(--text-dim)">LOCKED</span></td>
+                <td><span class="status-badge" style="background:rgba(90,122,154,0.15);color:var(--text-dim)">LOCKED</span></td>
+                <td style="color:var(--text-secondary)">Sam R.</td>
+                <td><span class="status-badge on-track">ON TRACK</span></td>
+              </tr>
+              <tr>
+                <td><div style="font-weight:600;color:var(--text-bright)">Lin Pei</div></td>
+                <td><span style="color:var(--terran)">🏗️ Terran</span></td>
+                <td>Coordinator</td>
+                <td><span class="status-badge at-risk" style="background:rgba(255,167,38,0.15);border-color:rgba(255,167,38,0.4);color:var(--warn)">⚠ 43%</span></td>
+                <td><span class="status-badge" style="background:rgba(90,122,154,0.15);color:var(--text-dim)">LOCKED</span></td>
+                <td><span class="status-badge" style="background:rgba(90,122,154,0.15);color:var(--text-dim)">LOCKED</span></td>
+                <td><span class="status-badge" style="background:rgba(90,122,154,0.15);color:var(--text-dim)">LOCKED</span></td>
+                <td style="color:var(--text-secondary)">Marcus L.</td>
+                <td><span class="status-badge at-risk" style="background:rgba(255,167,38,0.15);border-color:rgba(255,167,38,0.4);color:var(--warn)">AT RISK</span></td>
+              </tr>
+              <tr>
+                <td><div style="font-weight:600;color:var(--text-bright)">Sophie Ho</div></td>
+                <td><span style="color:var(--terran)">🏗️ Terran</span></td>
+                <td>HR Business Partner</td>
+                <td><span class="status-badge on-track">✓ 100%</span></td>
+                <td><span class="status-badge on-track">✓ PASSED</span></td>
+                <td><span class="status-badge on-track">✓ PASSED</span></td>
+                <td><span class="status-badge on-track">✓ PASSED</span></td>
+                <td style="color:var(--text-secondary)">Kevin N.</td>
+                <td><span class="status-badge on-track" style="background:rgba(0,230,118,0.2);border-color:rgba(0,230,118,0.5)">✓ COMPLETE</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Faction ramp breakdown -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+          <div class="hr-card">
+            <div class="hr-card-header"><div class="hr-card-title"><span class="card-icon">📈</span> RAMP TIME BY DEPARTMENT</div></div>
+            <div class="kpi-item"><div class="kpi-dot" style="background:var(--protoss)"></div><div class="kpi-info"><div class="kpi-name">⚡ Protoss — Engineering</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill" style="width:55%;background:var(--protoss)"></div></div></div><div class="kpi-pct"><div class="kpi-pct-num">27d</div></div></div>
+            <div class="kpi-item"><div class="kpi-dot" style="background:var(--terran)"></div><div class="kpi-info"><div class="kpi-name">🏗️ Terran — Operations</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill" style="width:40%;background:var(--terran)"></div></div></div><div class="kpi-pct"><div class="kpi-pct-num">20d</div></div></div>
+            <div class="kpi-item" style="border-bottom:none"><div class="kpi-dot" style="background:var(--zerg)"></div><div class="kpi-info"><div class="kpi-name">🦾 Zerg — Sales</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill" style="width:36%;background:var(--zerg)"></div></div></div><div class="kpi-pct"><div class="kpi-pct-num">18d</div></div></div>
+          </div>
+          <div class="hr-card">
+            <div class="hr-card-header"><div class="hr-card-title"><span class="card-icon">⭐</span> ONBOARDING NPS TREND</div></div>
+            <div class="kpi-item"><div class="kpi-dot success"></div><div class="kpi-info"><div class="kpi-name">Q1 2026 Cohort</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill success" style="width:76%"></div></div></div><div class="kpi-pct"><div class="kpi-pct-num">4.1★</div></div></div>
+            <div class="kpi-item"><div class="kpi-dot success"></div><div class="kpi-info"><div class="kpi-name">Q4 2025 Cohort</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill success" style="width:71%"></div></div></div><div class="kpi-pct"><div class="kpi-pct-num">3.8★</div></div></div>
+            <div class="kpi-item" style="border-bottom:none"><div class="kpi-dot warning"></div><div class="kpi-info"><div class="kpi-name">Q3 2025 Cohort</div></div><div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill warning" style="width:62%"></div></div></div><div class="kpi-pct"><div class="kpi-pct-num">3.3★</div></div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- FOOTER (always visible) -->
+    <div class="sitrep-footer">
+      <span>ELIX ANALYTICS HUB v2.0</span>
+      <span id="sr-save-date-2">—</span>
+      <div style="display:flex;gap:12px;align-items:center">
+        <a href="kpi-tracking.html" style="font-family:var(--font-ui);font-size:0.5rem;letter-spacing:0.1em;color:var(--text-dim);text-decoration:none">◎ MISSIONS</a>
+        <a href="leave-management.html" style="font-family:var(--font-ui);font-size:0.5rem;letter-spacing:0.1em;color:var(--text-dim);text-decoration:none">🛡 LEAVE</a>
+        <a href="employee-directory.html" style="font-family:var(--font-ui);font-size:0.5rem;letter-spacing:0.1em;color:var(--text-dim);text-decoration:none">👥 REGISTRY</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/game-state.js"></script>
+  <script src="data/elixcraft-data.js"></script>
+  <!-- starfield removed -->
+  <script src="js/sitrep.js"></script>
+  <script>
+    function switchAnalyticsTab(id, btn) {
+      document.querySelectorAll('.sitrep-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.sitrep-tab-content').forEach(p => p.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      const panel = document.getElementById('stab-' + id);
+      if (panel) panel.classList.add('active');
+    }
+
+    // Handle hash-based navigation from other pages
+    window.addEventListener('DOMContentLoaded', () => {
+      const hash = window.location.hash.replace('#', '');
+      const hashMap = { cost: 'workforce-cost', demographics: 'demographics', engagement: 'engagement', talent: 'talent', risk: 'risk' };
+      if (hash && hashMap[hash]) {
+        const tabId = hashMap[hash];
+        const btn = document.getElementById('tab-' + hash);
+        switchAnalyticsTab(tabId, btn);
+      }
+    });
+  </script>
+</body>
+</html>

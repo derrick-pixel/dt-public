@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — The Commons</title>
+  <meta name="description" content="Manage your events, track payments, and monitor attendees from your organiser dashboard.">
+  <meta property="og:title" content="Dashboard — The Commons">
+  <meta property="og:description" content="Manage your events, track escrow payments, and monitor attendees.">
+  <meta property="og:image" content="https://derrick-pixel.github.io/the-commons/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">TC</div>
+        The Commons
+      </a>
+      <ul class="nav-links">
+        <li><a href="events.html">Discover</a></li>
+        <li><a href="create.html">Create Event</a></li>
+        <li><a href="marketplace.html">Marketplace</a></li>
+        <li><a href="dashboard.html" class="active">Dashboard</a></li>
+        <li><a href="admin.html">Admin</a></li>
+        <li><a href="admin-competitors.html">Competitors</a></li>
+        <li><a href="admin-insights.html">Insights</a></li>
+      </ul>
+      <div class="nav-actions">
+        <div class="avatar" style="background: var(--sunset-gradient); font-size: 0.8rem;">JT</div>
+      </div>
+      <button class="mobile-toggle" onclick="toggleMobileMenu()">&#9776;</button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="events.html">Discover Events</a>
+    <a href="create.html">Create Event</a>
+    <a href="marketplace.html">Marketplace</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="admin.html">Admin Panel</a>
+    <a href="admin-competitors.html">Competitors</a>
+    <a href="admin-insights.html">Market Insights</a>
+  </div>
+
+  <!-- Dashboard Layout -->
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div style="margin-bottom: 32px;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 4px;">
+          <div class="avatar" style="background: var(--sunset-gradient);">JT</div>
+          <div>
+            <strong style="font-size: 0.95rem;">Jason Tan</strong>
+            <div style="font-size: 0.75rem; color: var(--slate);">Organiser</div>
+          </div>
+        </div>
+      </div>
+
+      <ul class="sidebar-nav">
+        <li><a href="#" class="active" onclick="switchTab('overview')">&#128202; Overview</a></li>
+        <li><a href="#" onclick="switchTab('my-events')">&#127881; My Events</a></li>
+        <li><a href="#" onclick="switchTab('payments')">&#128176; Payments</a></li>
+        <li><a href="#" onclick="switchTab('attendees')">&#128101; Attendees</a></li>
+        <li><a href="#" onclick="switchTab('providers')">&#127775; Booked Providers</a></li>
+      </ul>
+
+      <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--sand-dark);">
+        <ul class="sidebar-nav">
+          <li><a href="#">&#9881; Settings</a></li>
+          <li><a href="index.html">&#128682; Log Out</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Overview Tab -->
+      <div id="tab-overview">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+          <div>
+            <h2 style="margin-bottom: 4px;">Welcome back, Jason! &#128075;</h2>
+            <p>Here's how your events are doing.</p>
+          </div>
+          <a href="create.html" class="btn btn-primary">+ Create Event</a>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid-4" style="margin-bottom: 32px;">
+          <div class="stat-card" style="border-left: 4px solid var(--coral);">
+            <div class="stat-value text-gradient">3</div>
+            <div class="stat-label">Active Events</div>
+          </div>
+          <div class="stat-card" style="border-left: 4px solid var(--ocean);">
+            <div class="stat-value" style="color: var(--deep-ocean);">$4,820</div>
+            <div class="stat-label">Total Collected</div>
+          </div>
+          <div class="stat-card" style="border-left: 4px solid var(--palm);">
+            <div class="stat-value" style="color: #059669;">78</div>
+            <div class="stat-label">Total Attendees</div>
+          </div>
+          <div class="stat-card" style="border-left: 4px solid var(--pink);">
+            <div class="stat-value" style="color: var(--pink);">96%</div>
+            <div class="stat-label">Payment Rate</div>
+          </div>
+        </div>
+
+        <!-- Active Events -->
+        <div style="margin-bottom: 32px;">
+          <h3 style="margin-bottom: 20px;">Active Events</h3>
+          <div style="display: grid; gap: 16px;">
+            <!-- Event Row 1 -->
+            <div class="card" style="padding: 24px;">
+              <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                <div class="event-date-badge" style="position: static;">
+                  <div class="month">Apr</div>
+                  <div class="day">26</div>
+                </div>
+                <div style="flex: 1; min-width: 200px;">
+                  <h4 style="margin-bottom: 4px;">Sunset Yacht Party</h4>
+                  <p style="font-size: 0.85rem; margin: 0;">&#128205; Marina Bay &middot; 18/25 attendees</p>
+                </div>
+                <div style="min-width: 200px;">
+                  <div class="progress-label" style="font-size: 0.8rem;">
+                    <span>Funded</span>
+                    <span>72%</span>
+                  </div>
+                  <div class="progress-bar" style="height: 8px;">
+                    <div class="progress-fill" style="width: 72%;"></div>
+                  </div>
+                </div>
+                <div style="text-align: right; min-width: 100px;">
+                  <div style="font-weight: 800; font-size: 1.1rem;" class="text-gradient">$2,340</div>
+                  <div style="font-size: 0.75rem; color: var(--slate);">collected</div>
+                </div>
+                <a href="event.html" class="btn btn-secondary btn-sm">View</a>
+              </div>
+            </div>
+
+            <!-- Event Row 2 -->
+            <div class="card" style="padding: 24px;">
+              <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                <div class="event-date-badge" style="position: static;">
+                  <div class="month">May</div>
+                  <div class="day">10</div>
+                </div>
+                <div style="flex: 1; min-width: 200px;">
+                  <h4 style="margin-bottom: 4px;">Neon Nights Festival</h4>
+                  <p style="font-size: 0.85rem; margin: 0;">&#128205; Sentosa &middot; 42/50 attendees</p>
+                </div>
+                <div style="min-width: 200px;">
+                  <div class="progress-label" style="font-size: 0.8rem;">
+                    <span>Funded</span>
+                    <span>85%</span>
+                  </div>
+                  <div class="progress-bar" style="height: 8px;">
+                    <div class="progress-fill" style="width: 85%;"></div>
+                  </div>
+                </div>
+                <div style="text-align: right; min-width: 100px;">
+                  <div style="font-weight: 800; font-size: 1.1rem;" class="text-gradient">$1,780</div>
+                  <div style="font-size: 0.75rem; color: var(--slate);">collected</div>
+                </div>
+                <a href="event.html" class="btn btn-secondary btn-sm">View</a>
+              </div>
+            </div>
+
+            <!-- Event Row 3 -->
+            <div class="card" style="padding: 24px;">
+              <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                <div class="event-date-badge" style="position: static; background: rgba(0,230,118,0.1);">
+                  <div class="month" style="color: #059669;">May</div>
+                  <div class="day">17</div>
+                </div>
+                <div style="flex: 1; min-width: 200px;">
+                  <h4 style="margin-bottom: 4px;">MacRitchie Hike + Brunch</h4>
+                  <p style="font-size: 0.85rem; margin: 0;">&#128205; MacRitchie &middot; 12/15 attendees</p>
+                </div>
+                <div style="min-width: 200px;">
+                  <div class="progress-label" style="font-size: 0.8rem;">
+                    <span>Funded</span>
+                    <span style="color: #059669;">100%</span>
+                  </div>
+                  <div class="progress-bar" style="height: 8px;">
+                    <div class="progress-fill" style="width: 100%; background: linear-gradient(90deg, #10B981, #34D399);"></div>
+                  </div>
+                </div>
+                <div style="text-align: right; min-width: 100px;">
+                  <div style="font-weight: 800; font-size: 1.1rem; color: #059669;">$700</div>
+                  <div style="font-size: 0.75rem; color: var(--slate);">collected</div>
+                </div>
+                <a href="event.html" class="btn btn-secondary btn-sm">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Payment Activity -->
+        <h3 style="margin-bottom: 20px;">Recent Payment Activity</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Attendee</th>
+                <th>Event</th>
+                <th>Amount</th>
+                <th>Milestone</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <div class="avatar avatar-sm" style="background: var(--party-gradient);">KL</div>
+                    Karen L.
+                  </div>
+                </td>
+                <td>Yacht Party</td>
+                <td><strong>$65.00</strong></td>
+                <td>Final Payment</td>
+                <td><span class="badge badge-green">Paid</span></td>
+                <td>Apr 8</td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <div class="avatar avatar-sm" style="background: var(--ocean-gradient);">SL</div>
+                    Sarah L.
+                  </div>
+                </td>
+                <td>Yacht Party</td>
+                <td><strong>$65.00</strong></td>
+                <td>Final Payment</td>
+                <td><span class="badge badge-green">Paid</span></td>
+                <td>Apr 7</td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <div class="avatar avatar-sm" style="background: var(--sunset-gradient);">AM</div>
+                    Amir M.
+                  </div>
+                </td>
+                <td>Yacht Party</td>
+                <td><strong>$65.00</strong></td>
+                <td>2nd Payment</td>
+                <td><span class="badge badge-coral">Overdue</span></td>
+                <td>Due Apr 5</td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <div class="avatar avatar-sm" style="background: linear-gradient(135deg, #F59E0B, #F97316);">NN</div>
+                    Nadia N.
+                  </div>
+                </td>
+                <td>Neon Nights</td>
+                <td><strong>$50.00</strong></td>
+                <td>Deposit</td>
+                <td><span class="badge badge-green">Paid</span></td>
+                <td>Apr 6</td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <div class="avatar avatar-sm" style="background: linear-gradient(135deg, #10B981, #34D399);">WC</div>
+                    Wei C.
+                  </div>
+                </td>
+                <td>Hike + Brunch</td>
+                <td><strong>$35.00</strong></td>
+                <td>Full Payment</td>
+                <td><span class="badge badge-green">Paid</span></td>
+                <td>Apr 5</td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <div class="avatar avatar-sm" style="background: linear-gradient(135deg, #8B5CF6, #A855F7);">RD</div>
+                    Raj D.
+                  </div>
+                </td>
+                <td>Yacht Party</td>
+                <td><strong>$65.00</strong></td>
+                <td>2nd Payment</td>
+                <td><span class="badge badge-ocean">Pending</span></td>
+                <td>Due Apr 20</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Quick Actions -->
+        <div style="margin-top: 32px;">
+          <h3 style="margin-bottom: 20px;">Quick Actions</h3>
+          <div class="grid-3">
+            <a href="create.html" class="card" style="padding: 28px; text-align: center; cursor: pointer;">
+              <div style="font-size: 2rem; margin-bottom: 12px;">&#127881;</div>
+              <h4>Create Event</h4>
+              <p style="font-size: 0.85rem;">Start a new event and invite your crew</p>
+            </a>
+            <a href="marketplace.html" class="card" style="padding: 28px; text-align: center; cursor: pointer;">
+              <div style="font-size: 2rem; margin-bottom: 12px;">&#127775;</div>
+              <h4>Book a Provider</h4>
+              <p style="font-size: 0.85rem;">Find DJs, chefs, photographers & more</p>
+            </a>
+            <div class="card" style="padding: 28px; text-align: center; cursor: pointer;" onclick="showToast('Reminders sent to 4 attendees!')">
+              <div style="font-size: 2rem; margin-bottom: 12px;">&#128276;</div>
+              <h4>Send Reminders</h4>
+              <p style="font-size: 0.85rem;">Nudge attendees with pending payments</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payments Tab -->
+      <div id="tab-payments" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+          <h2>Payments & Escrow</h2>
+          <button class="btn btn-secondary btn-sm" onclick="showToast('Report downloaded!')">&#128196; Export Report</button>
+        </div>
+
+        <!-- Escrow Summary -->
+        <div class="grid-3" style="margin-bottom: 32px;">
+          <div class="stat-card" style="border-left: 4px solid var(--palm);">
+            <div class="stat-value" style="color: #059669;">$4,820</div>
+            <div class="stat-label">Total in Escrow</div>
+          </div>
+          <div class="stat-card" style="border-left: 4px solid var(--coral);">
+            <div class="stat-value text-gradient">$1,680</div>
+            <div class="stat-label">Pending Collection</div>
+          </div>
+          <div class="stat-card" style="border-left: 4px solid var(--ocean);">
+            <div class="stat-value" style="color: var(--deep-ocean);">$700</div>
+            <div class="stat-label">Ready to Release</div>
+          </div>
+        </div>
+
+        <!-- Per-event breakdown -->
+        <div style="display: grid; gap: 20px;">
+          <div class="card" style="padding: 28px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+              <h4>Sunset Yacht Party</h4>
+              <span class="badge badge-coral">Milestone 3 Active</span>
+            </div>
+            <div class="grid-3" style="margin-bottom: 20px;">
+              <div style="text-align: center; padding: 16px; background: var(--sand); border-radius: var(--radius-sm);">
+                <div style="font-size: 1.3rem; font-weight: 800; color: #059669;">$2,340</div>
+                <div style="font-size: 0.75rem; color: var(--slate);">Collected</div>
+              </div>
+              <div style="text-align: center; padding: 16px; background: var(--sand); border-radius: var(--radius-sm);">
+                <div style="font-size: 1.3rem; font-weight: 800; color: var(--coral);">$910</div>
+                <div style="font-size: 0.75rem; color: var(--slate);">Outstanding</div>
+              </div>
+              <div style="text-align: center; padding: 16px; background: var(--sand); border-radius: var(--radius-sm);">
+                <div style="font-size: 1.3rem; font-weight: 800;">14/18</div>
+                <div style="font-size: 0.75rem; color: var(--slate);">Up to date</div>
+              </div>
+            </div>
+            <div class="milestone-track" style="position: relative;">
+              <div class="milestone-line"><div class="milestone-line-fill" style="width: 60%;"></div></div>
+              <div class="milestone-node completed">
+                <div class="milestone-dot">&#10003;</div>
+                <div class="milestone-label">Deposit</div>
+              </div>
+              <div class="milestone-node completed">
+                <div class="milestone-dot">&#10003;</div>
+                <div class="milestone-label">2nd Pay</div>
+              </div>
+              <div class="milestone-node current">
+                <div class="milestone-dot">3</div>
+                <div class="milestone-label">Final</div>
+              </div>
+              <div class="milestone-node">
+                <div class="milestone-dot">&#127881;</div>
+                <div class="milestone-label">Release</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="padding: 28px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+              <h4>MacRitchie Hike + Brunch</h4>
+              <span class="badge badge-green">Fully Funded</span>
+            </div>
+            <div class="grid-3">
+              <div style="text-align: center; padding: 16px; background: var(--sand); border-radius: var(--radius-sm);">
+                <div style="font-size: 1.3rem; font-weight: 800; color: #059669;">$700</div>
+                <div style="font-size: 0.75rem; color: var(--slate);">Collected</div>
+              </div>
+              <div style="text-align: center; padding: 16px; background: var(--sand); border-radius: var(--radius-sm);">
+                <div style="font-size: 1.3rem; font-weight: 800; color: #059669;">$0</div>
+                <div style="font-size: 0.75rem; color: var(--slate);">Outstanding</div>
+              </div>
+              <div style="text-align: center; padding: 16px; background: var(--sand); border-radius: var(--radius-sm);">
+                <div style="font-size: 1.3rem; font-weight: 800; color: #059669;">20/20</div>
+                <div style="font-size: 0.75rem; color: var(--slate);">All paid</div>
+              </div>
+            </div>
+            <div style="margin-top: 16px; text-align: center;">
+              <div class="escrow-badge">&#128274; Funds release on May 17 (Event Day)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Attendees Tab -->
+      <div id="tab-attendees" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+          <h2>Attendee Management</h2>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-secondary btn-sm" onclick="showToast('Payment reminders sent!')">&#128276; Send Reminders</button>
+            <button class="btn btn-secondary btn-sm" onclick="showToast('CSV exported!')">&#128196; Export</button>
+          </div>
+        </div>
+
+        <div class="tabs" style="margin-bottom: 24px;">
+          <button class="tab active">All (78)</button>
+          <button class="tab">Fully Paid (62)</button>
+          <button class="tab">Partial (12)</button>
+          <button class="tab">Overdue (4)</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Event</th>
+                <th>Paid</th>
+                <th>Remaining</th>
+                <th>Next Due</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div style="display: flex; align-items: center; gap: 10px;"><div class="avatar avatar-sm" style="background: var(--party-gradient);">KL</div> Karen L.</div></td>
+                <td>Yacht Party</td>
+                <td><strong>$180</strong></td>
+                <td>$0</td>
+                <td>—</td>
+                <td><span class="badge badge-green">Paid in Full</span></td>
+                <td><button class="btn btn-sm btn-secondary">Message</button></td>
+              </tr>
+              <tr>
+                <td><div style="display: flex; align-items: center; gap: 10px;"><div class="avatar avatar-sm" style="background: var(--ocean-gradient);">SL</div> Sarah L.</div></td>
+                <td>Yacht Party</td>
+                <td><strong>$180</strong></td>
+                <td>$0</td>
+                <td>—</td>
+                <td><span class="badge badge-green">Paid in Full</span></td>
+                <td><button class="btn btn-sm btn-secondary">Message</button></td>
+              </tr>
+              <tr>
+                <td><div style="display: flex; align-items: center; gap: 10px;"><div class="avatar avatar-sm" style="background: var(--sunset-gradient);">AM</div> Amir M.</div></td>
+                <td>Yacht Party</td>
+                <td><strong>$50</strong></td>
+                <td style="color: var(--coral);">$130</td>
+                <td style="color: var(--coral);">Apr 5 (overdue)</td>
+                <td><span class="badge badge-coral">Overdue</span></td>
+                <td><button class="btn btn-sm btn-primary" onclick="showToast('Reminder sent to Amir!')">Remind</button></td>
+              </tr>
+              <tr>
+                <td><div style="display: flex; align-items: center; gap: 10px;"><div class="avatar avatar-sm" style="background: linear-gradient(135deg, #10B981, #34D399);">RD</div> Raj D.</div></td>
+                <td>Yacht Party</td>
+                <td><strong>$115</strong></td>
+                <td style="color: var(--deep-ocean);">$65</td>
+                <td>Apr 20</td>
+                <td><span class="badge badge-ocean">On Track</span></td>
+                <td><button class="btn btn-sm btn-secondary">Message</button></td>
+              </tr>
+              <tr>
+                <td><div style="display: flex; align-items: center; gap: 10px;"><div class="avatar avatar-sm" style="background: linear-gradient(135deg, #F59E0B, #F97316);">NN</div> Nadia N.</div></td>
+                <td>Neon Nights</td>
+                <td><strong>$50</strong></td>
+                <td style="color: var(--deep-ocean);">$45</td>
+                <td>Apr 25</td>
+                <td><span class="badge badge-ocean">On Track</span></td>
+                <td><button class="btn btn-sm btn-secondary">Message</button></td>
+              </tr>
+              <tr>
+                <td><div style="display: flex; align-items: center; gap: 10px;"><div class="avatar avatar-sm" style="background: linear-gradient(135deg, #8B5CF6, #A855F7);">WC</div> Wei C.</div></td>
+                <td>Hike + Brunch</td>
+                <td><strong>$35</strong></td>
+                <td>$0</td>
+                <td>—</td>
+                <td><span class="badge badge-green">Paid in Full</span></td>
+                <td><button class="btn btn-sm btn-secondary">Message</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- My Events Tab -->
+      <div id="tab-my-events" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+          <h2>My Events</h2>
+          <a href="create.html" class="btn btn-primary">+ Create Event</a>
+        </div>
+
+        <div class="tabs" style="margin-bottom: 24px;">
+          <button class="tab active">Upcoming (3)</button>
+          <button class="tab">Past (5)</button>
+          <button class="tab">Drafts (1)</button>
+        </div>
+
+        <div class="grid-3">
+          <a href="event.html" class="event-card">
+            <div class="event-card-img">
+              <div class="img-placeholder bg-yacht">&#128674;</div>
+              <div class="event-date-badge"><div class="month">Apr</div><div class="day">26</div></div>
+              <span class="badge badge-ocean event-category">Yacht</span>
+            </div>
+            <div class="event-card-body">
+              <h4>Sunset Yacht Party</h4>
+              <div class="event-card-meta"><span>18/25 joined</span></div>
+              <div style="margin-bottom: 12px;">
+                <div class="progress-label"><span>Funded</span><span>72%</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 72%;"></div></div>
+              </div>
+              <div class="event-card-footer">
+                <div class="price">$2,340</div>
+                <span class="badge badge-coral">Active</span>
+              </div>
+            </div>
+          </a>
+          <a href="event.html" class="event-card">
+            <div class="event-card-img">
+              <div class="img-placeholder bg-festival">&#127917;</div>
+              <div class="event-date-badge"><div class="month">May</div><div class="day">10</div></div>
+              <span class="badge badge-coral event-category">Festival</span>
+            </div>
+            <div class="event-card-body">
+              <h4>Neon Nights Festival</h4>
+              <div class="event-card-meta"><span>42/50 joined</span></div>
+              <div style="margin-bottom: 12px;">
+                <div class="progress-label"><span>Funded</span><span>85%</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 85%;"></div></div>
+              </div>
+              <div class="event-card-footer">
+                <div class="price">$1,780</div>
+                <span class="badge badge-coral">Active</span>
+              </div>
+            </div>
+          </a>
+          <a href="event.html" class="event-card">
+            <div class="event-card-img">
+              <div class="img-placeholder bg-hike">&#127956;</div>
+              <div class="event-date-badge"><div class="month">May</div><div class="day">17</div></div>
+              <span class="badge badge-green event-category">Outdoor</span>
+            </div>
+            <div class="event-card-body">
+              <h4>MacRitchie Hike + Brunch</h4>
+              <div class="event-card-meta"><span>12/15 joined</span></div>
+              <div style="margin-bottom: 12px;">
+                <div class="progress-label"><span>Funded</span><span style="color: #059669;">100%</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width: 100%; background: linear-gradient(90deg, #10B981, #34D399);"></div></div>
+              </div>
+              <div class="event-card-footer">
+                <div class="price" style="color: #059669;">$700</div>
+                <span class="badge badge-green">Fully Funded</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Booked Providers Tab -->
+      <div id="tab-providers" style="display: none;">
+        <h2 style="margin-bottom: 32px;">Booked Providers</h2>
+
+        <div style="display: grid; gap: 16px;">
+          <div class="card" style="padding: 24px;">
+            <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+              <div class="avatar avatar-lg" style="background: var(--party-gradient); font-size: 1.5rem;">&#127911;</div>
+              <div style="flex: 1;">
+                <h4>DJ Maxine</h4>
+                <p style="font-size: 0.85rem; margin: 0;">DJ & Music Producer &middot; Sunset Yacht Party</p>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-weight: 700;">$300</div>
+                <div style="font-size: 0.75rem; color: var(--slate);">Event fund</div>
+              </div>
+              <span class="badge badge-green">Confirmed</span>
+              <button class="btn btn-secondary btn-sm">Message</button>
+            </div>
+          </div>
+
+          <div class="card" style="padding: 24px;">
+            <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+              <div class="avatar avatar-lg" style="background: linear-gradient(135deg, #EC4899, #F43F5E); font-size: 1.5rem;">&#128247;</div>
+              <div style="flex: 1;">
+                <h4>Studio Lens</h4>
+                <p style="font-size: 0.85rem; margin: 0;">Event Photography &middot; Sunset Yacht Party</p>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-weight: 700;">$350</div>
+                <div style="font-size: 0.75rem; color: var(--slate);">Event fund</div>
+              </div>
+              <span class="badge badge-green">Confirmed</span>
+              <button class="btn btn-secondary btn-sm">Message</button>
+            </div>
+          </div>
+
+          <div class="card" style="padding: 24px;">
+            <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+              <div class="avatar avatar-lg" style="background: var(--ocean-gradient); font-size: 1.5rem;">&#127860;</div>
+              <div style="flex: 1;">
+                <h4>Grill Masters SG</h4>
+                <p style="font-size: 0.85rem; margin: 0;">BBQ Catering &middot; Neon Nights Festival</p>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-weight: 700;">$1,500</div>
+                <div style="font-size: 0.75rem; color: var(--slate);">50 pax @ $30</div>
+              </div>
+              <span class="badge badge-ocean">Pending Confirmation</span>
+              <button class="btn btn-secondary btn-sm">Message</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+          <a href="marketplace.html" class="btn btn-ocean btn-lg">Browse More Providers &#8594;</a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Auth Modal -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="authTitle">Welcome Back</h3>
+        <button class="modal-close" onclick="closeAuthModal()">&times;</button>
+      </div>
+      <div id="loginForm">
+        <div class="form-group"><label>Email</label><input type="email" placeholder="you@example.com"></div>
+        <div class="form-group"><label>Password</label><input type="password" placeholder="Enter password"></div>
+        <button class="btn btn-primary btn-lg" style="width: 100%;" onclick="handleAuth()">Log In</button>
+      </div>
+      <div id="signupForm" style="display: none;">
+        <div class="form-group"><label>Full Name</label><input type="text" placeholder="Your full name"></div>
+        <div class="form-group"><label>Email</label><input type="email" placeholder="you@example.com"></div>
+        <div class="form-group"><label>Password</label><input type="password" placeholder="Create a password"></div>
+        <button class="btn btn-primary btn-lg" style="width: 100%;" onclick="handleAuth()">Create Account</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Competitor Analytics — Elitez Security Admin</title>
+  <meta name="description" content="Competitor analytics dashboard for Elitez Security. Market intelligence on 30+ Singapore security companies.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+    .summary-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; }
+    .summary-card .big { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 2rem; color: var(--accent); }
+    .summary-card .sub { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+
+    .comp-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; transition: border-color 0.3s; }
+    .comp-card:hover { border-color: var(--border2); }
+    .comp-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+    .comp-header h3 { margin: 0; }
+    .comp-header a { font-size: 0.7rem; color: var(--accent); word-break: break-all; }
+    .comp-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+
+    .score-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .score-label { font-size: 0.68rem; text-transform: uppercase; color: var(--muted); width: 80px; flex-shrink: 0; }
+    .score-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+    .score-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+    .score-fill.design { background: var(--accent); }
+    .score-fill.mobile { background: #4ade80; }
+    .score-val { font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: var(--muted); width: 28px; text-align: right; }
+
+    .comp-lists { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px; }
+    .comp-lists h4 { font-family: 'Barlow Condensed', sans-serif; font-size: 0.78rem; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+    .comp-lists ul { list-style: none; padding: 0; }
+    .comp-lists li { font-size: 0.78rem; color: var(--muted); padding: 2px 0; }
+    .comp-lists li::before { content: ''; display: inline-block; width: 4px; height: 4px; border-radius: 50%; margin-right: 8px; vertical-align: middle; }
+    .str-list li::before { background: #4ade80; }
+    .weak-list li::before { background: #f87171; }
+
+    .tier-badge { display: inline-block; padding: 2px 10px; border-radius: 100px; font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+    .tier-premium { background: rgba(234,179,8,0.15); color: #facc15; }
+    .tier-mid { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .tier-budget { background: rgba(255,255,255,0.08); color: var(--muted); }
+
+    .chart-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 32px; max-width: 600px; margin-left: auto; margin-right: auto; }
+
+    .landscape-section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 28px; margin-bottom: 32px; }
+    .landscape-section h3 { margin-bottom: 12px; }
+    .landscape-section p, .landscape-section li { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
+    .landscape-section ul { padding-left: 18px; list-style: disc; }
+    .landscape-section ul li { margin-bottom: 4px; }
+    .landscape-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px; }
+
+    .rationale-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .rationale-card h4 { font-family: 'Barlow Condensed', sans-serif; font-size: 0.85rem; margin-bottom: 8px; }
+    .rationale-card li { font-size: 0.82rem; color: var(--muted); margin-bottom: 4px; }
+
+    #competitor-grid { min-height: 200px; }
+
+    @media (max-width: 768px) {
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .comp-lists { grid-template-columns: 1fr; }
+      .landscape-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .summary-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <a href="index.html" class="nav-logo">Elitez Security</a>
+  <div class="nav-links">
+    <a href="services.html">Core Services</a>
+    <a href="command-center.html">Command Center</a>
+    <a href="robotics.html">Robotics</a>
+    <a href="index.html#why">Why Elitez</a>
+    <a href="index.html#contact">Contact</a>
+    <a href="admin.html" class="active">Analytics</a>
+  </div>
+  <a href="index.html#contact" class="nav-cta">Get Assessment</a>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div id="mobile-menu">
+  <a href="services.html" onclick="toggleMenu()">Core Services</a>
+  <a href="command-center.html">Command Center</a>
+  <a href="robotics.html">Robotics</a>
+  <a href="index.html#why" onclick="toggleMenu()">Why Elitez</a>
+  <a href="index.html#contact" onclick="toggleMenu()">Contact</a>
+  <a href="admin.html">Analytics</a>
+  <a href="admin-insights.html">Insights</a>
+</div>
+
+<!-- Admin Sub-Nav -->
+<div class="admin-nav container" style="margin-top:80px; padding-top:16px;">
+  <a href="admin.html" class="active">Competitor Analytics</a>
+  <a href="admin-insights.html">Market &amp; Pricing Insights</a>
+</div>
+
+<!-- Summary Stats -->
+<section style="padding-top: 0;">
+  <div class="container">
+    <div class="text-center animate">
+      <div class="label">Intelligence Dashboard</div>
+      <h2>Competitor Analytics</h2>
+      <p class="section-subtitle">Market intelligence on 30+ Singapore security companies — design, positioning, and competitive landscape.</p>
+    </div>
+
+    <div class="summary-grid" id="summary-stats" style="margin-top: 32px;">
+      <div class="summary-card animate">
+        <div class="big" id="stat-total">--</div>
+        <div class="sub">Competitors Analyzed</div>
+      </div>
+      <div class="summary-card animate animate-delay-1">
+        <div class="big" id="stat-design">--</div>
+        <div class="sub">Avg Design Score</div>
+      </div>
+      <div class="summary-card animate animate-delay-2">
+        <div class="big" id="stat-breakdown">--</div>
+        <div class="sub">Premium / Mid / Budget</div>
+      </div>
+      <div class="summary-card animate animate-delay-3">
+        <div class="big" id="stat-cta">--</div>
+        <div class="sub">Top CTA Pattern</div>
+      </div>
+    </div>
+
+    <!-- Tab Filter -->
+    <div data-tab-group="competitors">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="tab-all" onclick="filterCompetitors('all')">All</button>
+        <button class="tab-btn" data-tab="tab-premium" onclick="filterCompetitors('premium')">Premium</button>
+        <button class="tab-btn" data-tab="tab-mid" onclick="filterCompetitors('mid')">Mid-Market</button>
+        <button class="tab-btn" data-tab="tab-budget" onclick="filterCompetitors('budget')">Budget</button>
+      </div>
+    </div>
+
+    <!-- Competitor Cards -->
+    <div id="competitor-grid"></div>
+
+    <!-- Radar Chart -->
+    <div style="margin-top: 48px;" class="animate">
+      <div class="text-center" style="margin-bottom: 24px;">
+        <div class="label">Benchmarking</div>
+        <h2>Top 5 Competitor Comparison</h2>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="radarChart"></canvas>
+      </div>
+    </div>
+
+    <!-- SG & SEA Landscape -->
+    <div style="margin-top: 48px;" class="animate">
+      <div class="text-center" style="margin-bottom: 24px;">
+        <div class="label">Market Context</div>
+        <h2>SG &amp; SEA Security Landscape</h2>
+      </div>
+      <div class="landscape-section">
+        <div class="landscape-grid">
+          <div>
+            <h3>Market Overview</h3>
+            <p>Singapore's physical security services market is valued at approximately <strong>SGD 3.5 billion</strong>, growing at <strong>5-6% annually</strong>. Over 300 licensed agencies compete, but the top 5 control roughly 60% of revenue.</p>
+            <p style="margin-top:8px;">The industry employs 60,000+ security officers, governed by PLRD under the Private Security Industry Act. The Progressive Wage Model mandates annual salary increases, pushing agencies toward technology to maintain margins.</p>
+          </div>
+          <div>
+            <h3>Key Trends</h3>
+            <ul id="landscape-trends"></ul>
+          </div>
+        </div>
+        <div class="landscape-grid" style="margin-top: 20px;">
+          <div>
+            <h3>Regulatory Environment</h3>
+            <ul id="landscape-regs"></ul>
+          </div>
+          <div>
+            <h3>SEA Context</h3>
+            <p>Singapore is the most regulated security market in Southeast Asia. Malaysia, Thailand, and Indonesia have larger workforces but lower technology adoption. Leading Singapore agencies are increasingly expanding regionally, bringing tech-enabled models to less mature markets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Design Rationale -->
+    <div style="margin-top: 48px; margin-bottom: 48px;" class="animate">
+      <div class="text-center" style="margin-bottom: 24px;">
+        <div class="label">Design Intelligence</div>
+        <h2>Why Our Site Beats the Competition</h2>
+      </div>
+      <div class="landscape-section">
+        <div class="landscape-grid">
+          <div class="rationale-card">
+            <h4>What We Studied</h4>
+            <ul id="rationale-borrowed"></ul>
+          </div>
+          <div class="rationale-card">
+            <h4>How We Beat Them</h4>
+            <ul id="rationale-improved"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <p>&copy; 2026 Elitez Security Pte Ltd. A business unit of Elitez Group. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="js/main.js"></script>
+<script>
+  let competitorData = null;
+
+  function badgeClass(type) {
+    if (type === 'tech') return 'badge badge-blue';
+    if (type === 'guard') return 'badge badge-green';
+    if (type === 'consulting') return 'badge badge-gold';
+    return 'badge';
+  }
+
+  function tierClass(tier) {
+    return 'tier-badge tier-' + tier;
+  }
+
+  function classifyService(svcName) {
+    var s = svcName.toLowerCase();
+    if (s.match(/consult|audit|risk|investigation|advisory|training/)) return 'consulting';
+    if (s.match(/cctv|tech|electronic|iot|analytics|robot|surveillance|cyber|systems|access control|command|smart|video|unified|intrusion|operations|fire|intercom|sensor/)) return 'tech';
+    return 'guard';
+  }
+
+  function buildCard(c) {
+    var card = document.createElement('div');
+    card.className = 'comp-card';
+    card.setAttribute('data-tier', c.tier);
+
+    // Header
+    var header = document.createElement('div');
+    header.className = 'comp-header';
+    var headerLeft = document.createElement('div');
+    var h3 = document.createElement('h3');
+    h3.textContent = c.name;
+    headerLeft.appendChild(h3);
+    var link = document.createElement('a');
+    link.href = c.url;
+    link.target = '_blank';
+    link.rel = 'noopener';
+    link.textContent = c.url;
+    headerLeft.appendChild(link);
+    var tierSpan = document.createElement('span');
+    tierSpan.className = tierClass(c.tier);
+    tierSpan.textContent = c.tier;
+    header.appendChild(headerLeft);
+    header.appendChild(tierSpan);
+    card.appendChild(header);
+
+    // Service badges
+    var badges = document.createElement('div');
+    badges.className = 'comp-badges';
+    c.services.forEach(function(s) {
+      var span = document.createElement('span');
+      span.className = badgeClass(classifyService(s));
+      span.textContent = s;
+      badges.appendChild(span);
+    });
+    card.appendChild(badges);
+
+    // Design score
+    var dr = document.createElement('div');
+    dr.className = 'score-row';
+    dr.appendChild(makeEl('span', 'score-label', 'Design'));
+    var dBar = document.createElement('div');
+    dBar.className = 'score-bar';
+    var dFill = document.createElement('div');
+    dFill.className = 'score-fill design';
+    dFill.style.width = (c.designScore * 10) + '%';
+    dBar.appendChild(dFill);
+    dr.appendChild(dBar);
+    dr.appendChild(makeEl('span', 'score-val', c.designScore + '/10'));
+    card.appendChild(dr);
+
+    // Mobile score
+    var mr = document.createElement('div');
+    mr.className = 'score-row';
+    mr.appendChild(makeEl('span', 'score-label', 'Mobile'));
+    var mBar = document.createElement('div');
+    mBar.className = 'score-bar';
+    var mFill = document.createElement('div');
+    mFill.className = 'score-fill mobile';
+    mFill.style.width = (c.mobileScore * 10) + '%';
+    mBar.appendChild(mFill);
+    mr.appendChild(mBar);
+    mr.appendChild(makeEl('span', 'score-val', c.mobileScore + '/10'));
+    card.appendChild(mr);
+
+    // Strengths and weaknesses
+    var lists = document.createElement('div');
+    lists.className = 'comp-lists';
+
+    var strDiv = document.createElement('div');
+    strDiv.className = 'str-list';
+    strDiv.appendChild(makeEl('h4', '', 'Strengths'));
+    var strUl = document.createElement('ul');
+    c.strengths.forEach(function(s) {
+      var li = document.createElement('li');
+      li.textContent = s;
+      strUl.appendChild(li);
+    });
+    strDiv.appendChild(strUl);
+
+    var weakDiv = document.createElement('div');
+    weakDiv.className = 'weak-list';
+    weakDiv.appendChild(makeEl('h4', '', 'Weaknesses'));
+    var weakUl = document.createElement('ul');
+    c.weaknesses.forEach(function(w) {
+      var li = document.createElement('li');
+      li.textContent = w;
+      weakUl.appendChild(li);
+    });
+    weakDiv.appendChild(weakUl);
+
+    lists.appendChild(strDiv);
+    lists.appendChild(weakDiv);
+    card.appendChild(lists);
+
+    return card;
+  }
+
+  function makeEl(tag, cls, text) {
+    var el = document.createElement(tag);
+    if (cls) el.className = cls;
+    if (text) el.textContent = text;
+    return el;
+  }
+
+  function renderCompetitors(filter) {
+    if (!competitorData) return;
+    var grid = document.getElementById('competitor-grid');
+    grid.textContent = '';
+    var filtered = filter === 'all' ? competitorData.competitors : competitorData.competitors.filter(function(c) { return c.tier === filter; });
+    filtered.forEach(function(c) {
+      grid.appendChild(buildCard(c));
+    });
+  }
+
+  function filterCompetitors(tier) {
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+      btn.classList.toggle('active', btn.dataset.tab === 'tab-' + tier);
+    });
+    renderCompetitors(tier);
+  }
+
+  function renderStats() {
+    var comps = competitorData.competitors;
+    document.getElementById('stat-total').textContent = comps.length;
+    var avgDesign = (comps.reduce(function(sum, c) { return sum + c.designScore; }, 0) / comps.length).toFixed(1);
+    document.getElementById('stat-design').textContent = avgDesign + '/10';
+    var premium = comps.filter(function(c) { return c.tier === 'premium'; }).length;
+    var mid = comps.filter(function(c) { return c.tier === 'mid'; }).length;
+    var budget = comps.filter(function(c) { return c.tier === 'budget'; }).length;
+    document.getElementById('stat-breakdown').textContent = premium + ' / ' + mid + ' / ' + budget;
+    document.getElementById('stat-cta').textContent = competitorData.insights.topCTAs[0] || '--';
+  }
+
+  function renderLandscape() {
+    var ls = competitorData.landscape;
+    var ins = competitorData.insights;
+    var trendsUl = document.getElementById('landscape-trends');
+    trendsUl.textContent = '';
+    ls.keyTrends.forEach(function(t) { var li = document.createElement('li'); li.textContent = t; trendsUl.appendChild(li); });
+    var regsUl = document.getElementById('landscape-regs');
+    regsUl.textContent = '';
+    ls.regulatoryNotes.forEach(function(r) { var li = document.createElement('li'); li.textContent = r; regsUl.appendChild(li); });
+    var borrowedUl = document.getElementById('rationale-borrowed');
+    borrowedUl.textContent = '';
+    ins.designRationale.borrowed.forEach(function(b) { var li = document.createElement('li'); li.textContent = b; borrowedUl.appendChild(li); });
+    var improvedUl = document.getElementById('rationale-improved');
+    improvedUl.textContent = '';
+    ins.designRationale.improved.forEach(function(i) { var li = document.createElement('li'); li.textContent = i; improvedUl.appendChild(li); });
+  }
+
+  function renderRadar() {
+    var top5 = competitorData.competitors
+      .filter(function(c) { return c.tier === 'premium'; })
+      .sort(function(a, b) { return b.designScore - a.designScore; })
+      .slice(0, 5);
+
+    function techScore(c) {
+      if (c.serviceTypes.indexOf('tech') !== -1) {
+        return Math.min(c.services.filter(function(s) { return s.toLowerCase().match(/tech|cctv|iot|robot|ai|analytics|cyber|smart|surveillance|command|video|systems/); }).length * 2, 10);
+      }
+      return 2;
+    }
+    function serviceRange(c) { return Math.min(c.services.length, 10); }
+    function brandScore(c) {
+      var emp = parseInt(c.employees) || 500;
+      if (emp >= 10000) return 10;
+      if (emp >= 5000) return 9;
+      if (emp >= 2000) return 7;
+      if (emp >= 500) return 5;
+      return 3;
+    }
+
+    var colors = [
+      'rgba(52,211,153,0.75)',
+      'rgba(96,165,250,0.7)',
+      'rgba(234,179,8,0.7)',
+      'rgba(248,113,113,0.7)',
+      'rgba(168,85,247,0.7)'
+    ];
+
+    var datasets = top5.map(function(c, i) {
+      return {
+        label: c.name,
+        data: [c.designScore, c.mobileScore, techScore(c), serviceRange(c), brandScore(c)],
+        borderColor: colors[i],
+        backgroundColor: colors[i].replace('0.7', '0.1'),
+        pointBackgroundColor: colors[i],
+        pointRadius: 3,
+        borderWidth: 2
+      };
+    });
+
+    new Chart(document.getElementById('radarChart'), {
+      type: 'radar',
+      data: {
+        labels: ['Design Quality', 'Mobile UX', 'Tech Innovation', 'Service Range', 'Brand Recognition'],
+        datasets: datasets
+      },
+      options: {
+        responsive: true,
+        scales: {
+          r: {
+            beginAtZero: true,
+            max: 10,
+            ticks: { stepSize: 2, color: 'rgba(255,255,255,0.4)', backdropColor: 'transparent', font: { size: 10 } },
+            grid: { color: 'rgba(255,255,255,0.06)' },
+            angleLines: { color: 'rgba(255,255,255,0.06)' },
+            pointLabels: { color: 'rgba(255,255,255,0.6)', font: { size: 11 } }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: { color: 'rgba(255,255,255,0.7)', font: { size: 11 }, boxWidth: 12, padding: 12 },
+            position: 'bottom'
+          }
+        }
+      }
+    });
+  }
+
+  // Fetch and render
+  fetch('data/competitors.json')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      competitorData = data;
+      renderStats();
+      renderCompetitors('all');
+      renderLandscape();
+      renderRadar();
+    })
+    .catch(function(err) {
+      console.error('Failed to load competitors data:', err);
+      var grid = document.getElementById('competitor-grid');
+      var p = document.createElement('p');
+      p.style.cssText = 'color:var(--muted); text-align:center; padding:32px;';
+      p.textContent = 'Failed to load competitor data. Ensure data/competitors.json exists.';
+      grid.appendChild(p);
+    });
+</script>
+
+</body>
+</html>

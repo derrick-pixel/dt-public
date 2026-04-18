@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Event — The Commons</title>
+  <meta name="description" content="Create your event in minutes. Set pricing, payment milestones, and book professional services.">
+  <meta property="og:title" content="Create Event — The Commons">
+  <meta property="og:description" content="Create your event in minutes with built-in escrow payments and pro services.">
+  <meta property="og:image" content="https://derrick-pixel.github.io/the-commons/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    input[type="range"] {
+      position: relative;
+      z-index: 2;
+      -webkit-appearance: none;
+      appearance: none;
+      background: transparent;
+      height: 24px;
+      margin: 0;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: white;
+      border: 3px solid currentColor;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      cursor: grab;
+      position: relative;
+      z-index: 3;
+    }
+    input[type="range"]::-webkit-slider-thumb:active {
+      cursor: grabbing;
+      transform: scale(1.15);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: white;
+      border: 3px solid currentColor;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      cursor: grab;
+    }
+    #slider1 { color: var(--coral); }
+    #slider2 { color: var(--deep-ocean); }
+    #slider3 { color: var(--pink); }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">TC</div>
+        The Commons
+      </a>
+      <ul class="nav-links">
+        <li><a href="events.html">Discover</a></li>
+        <li><a href="create.html" class="active">Create Event</a></li>
+        <li><a href="marketplace.html">Marketplace</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="admin.html">Admin</a></li>
+        <li><a href="admin-competitors.html">Competitors</a></li>
+        <li><a href="admin-insights.html">Insights</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="btn btn-secondary btn-sm" onclick="openAuthModal('login')">Log In</button>
+        <button class="btn btn-primary btn-sm" onclick="openAuthModal('signup')">Sign Up</button>
+      </div>
+      <button class="mobile-toggle" onclick="toggleMobileMenu()">&#9776;</button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="events.html">Discover Events</a>
+    <a href="create.html">Create Event</a>
+    <a href="marketplace.html">Marketplace</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="admin.html">Admin Panel</a>
+    <a href="admin-competitors.html">Competitors</a>
+    <a href="admin-insights.html">Market Insights</a>
+  </div>
+
+  <!-- Create Event Form -->
+  <section style="padding-top: calc(var(--nav-height) + 48px); padding-bottom: 80px; background: var(--sand); min-height: 100vh;">
+    <div class="container" style="max-width: 800px;">
+      <div style="text-align: center; margin-bottom: 40px;">
+        <h1>Create Your Event</h1>
+        <p style="font-size: 1.1rem;">Set it up in minutes. Collect payments automatically.</p>
+      </div>
+
+      <!-- Step Indicator -->
+      <div class="steps" id="stepIndicator">
+        <div class="step active" data-step="1">
+          <div class="step-number">1</div>
+          <div class="step-label">Details</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step" data-step="2">
+          <div class="step-number">2</div>
+          <div class="step-label">Pricing & Payments</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step" data-step="3">
+          <div class="step-number">3</div>
+          <div class="step-label">Services & Review</div>
+        </div>
+      </div>
+
+      <!-- Step 1: Event Details -->
+      <div class="card" style="padding: 40px;" id="step1">
+        <h3 style="margin-bottom: 28px;">&#127881; Event Details</h3>
+
+        <div class="form-group">
+          <label>Event Name</label>
+          <input type="text" placeholder="e.g. Sunset Yacht Party — Marina Bay" id="eventName">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Category</label>
+            <select id="eventCategory">
+              <option value="yacht">&#128674; Yacht</option>
+              <option value="party" selected>&#127881; Party</option>
+              <option value="hike">&#127956; Outdoor Adventure</option>
+              <option value="travel">&#9992;&#65039; Group Travel</option>
+              <option value="festival">&#127917; Festival</option>
+              <option value="food">&#127859; Food & Drink</option>
+              <option value="learn">&#127891; Learn Together</option>
+              <option value="sport">&#127942; Sports</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Max Attendees</label>
+            <input type="number" placeholder="e.g. 25" id="maxAttendees" value="20">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Event Date</label>
+            <input type="date" id="eventDate">
+          </div>
+          <div class="form-group">
+            <label>Event Time</label>
+            <input type="time" id="eventTime" value="20:00" step="900">
+            <div class="form-hint">Time selectable in 15-min blocks</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Location</label>
+          <input type="text" placeholder="e.g. Marina Bay Sands, Singapore" id="eventLocation">
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea placeholder="Tell people what this event is about, what's included, what to bring..." id="eventDesc" rows="5"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Cover Image URL (optional)</label>
+          <input type="url" placeholder="https://example.com/image.jpg" id="eventImage">
+          <div class="form-hint">Paste a link to an image, or leave blank for a default cover</div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; margin-top: 32px;">
+          <button class="btn btn-primary btn-lg" onclick="goToStep(2)">Next: Pricing & Payments &#8594;</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Pricing & Payment Milestones -->
+      <div class="card" style="padding: 40px; display: none;" id="step2">
+        <h3 style="margin-bottom: 28px;">&#128176; Pricing & Payment Schedule</h3>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Total Cost Per Person</label>
+            <div style="position: relative;">
+              <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--slate);">$</span>
+              <input type="number" placeholder="180" id="totalCost" style="padding-left: 36px;" oninput="updateMilestonePreview()">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Currency</label>
+            <select id="currency">
+              <option>SGD</option>
+              <option>USD</option>
+              <option>EUR</option>
+              <option>GBP</option>
+              <option>MYR</option>
+              <option>THB</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="background: var(--sand); border-radius: var(--radius-md); padding: 24px; margin: 24px 0;">
+          <div style="margin-bottom: 16px;">
+            <label style="font-weight: 700; margin: 0;">Payment Milestones</label>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--slate); margin-bottom: 8px;">Drag the sliders to split the total cost across 3 milestones (rounded to nearest 5%). Dates auto-calculate based on your event date.</p>
+          <p style="font-size: 0.8rem; color: var(--coral); margin-bottom: 20px; font-weight: 600;" id="eventDateReminder">Set your event date in Step 1 to auto-fill milestone deadlines.</p>
+
+          <div id="milestoneSliders">
+            <!-- Milestone 1 — Deposit -->
+            <div style="background: white; border-radius: var(--radius-sm); padding: 20px; margin-bottom: 12px; border-left: 4px solid var(--coral);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <div>
+                  <strong>Milestone 1 — Deposit</strong>
+                  <span class="badge badge-coral" style="margin-left: 8px;">Required</span>
+                </div>
+                <div style="text-align: right;">
+                  <span style="font-size: 1.3rem; font-weight: 800;" class="text-gradient" id="m1Pct">30%</span>
+                  <div style="font-size: 0.8rem; color: var(--slate);" id="m1Amt">$0.00</div>
+                </div>
+              </div>
+              <div style="position: relative; margin-bottom: 8px;">
+                <input type="range" min="0" max="100" value="30" step="5" id="slider1" oninput="syncSliders(1)" style="width: 100%; accent-color: var(--coral); height: 6px; cursor: pointer; -webkit-appearance: none; appearance: none; background: transparent;">
+                <div style="height: 8px; border-radius: 100px; background: var(--sand-dark); position: absolute; top: 50%; left: 0; right: 0; transform: translateY(-50%); z-index: 0; pointer-events: none;">
+                  <div style="height: 100%; border-radius: 100px; background: var(--sunset-gradient); transition: width 0.15s;" id="m1Fill"></div>
+                </div>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.75rem; color: var(--slate);">Due: 21 days before event</span>
+                <span style="font-size: 0.85rem; font-weight: 600; color: var(--navy);" id="m1Date">—</span>
+              </div>
+            </div>
+
+            <!-- Milestone 2 — Second Payment -->
+            <div style="background: white; border-radius: var(--radius-sm); padding: 20px; margin-bottom: 12px; border-left: 4px solid var(--ocean);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <strong>Milestone 2 — Second Payment</strong>
+                <div style="text-align: right;">
+                  <span style="font-size: 1.3rem; font-weight: 800; color: var(--deep-ocean);" id="m2Pct">35%</span>
+                  <div style="font-size: 0.8rem; color: var(--slate);" id="m2Amt">$0.00</div>
+                </div>
+              </div>
+              <div style="position: relative; margin-bottom: 8px;">
+                <input type="range" min="0" max="100" value="35" step="5" id="slider2" oninput="syncSliders(2)" style="width: 100%; accent-color: var(--deep-ocean); height: 6px; cursor: pointer; -webkit-appearance: none; appearance: none; background: transparent;">
+                <div style="height: 8px; border-radius: 100px; background: var(--sand-dark); position: absolute; top: 50%; left: 0; right: 0; transform: translateY(-50%); z-index: 0; pointer-events: none;">
+                  <div style="height: 100%; border-radius: 100px; background: var(--ocean-gradient); transition: width 0.15s;" id="m2Fill"></div>
+                </div>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.75rem; color: var(--slate);">Due: 14 days before event</span>
+                <span style="font-size: 0.85rem; font-weight: 600; color: var(--navy);" id="m2Date">—</span>
+              </div>
+            </div>
+
+            <!-- Milestone 3 — Final Payment -->
+            <div style="background: white; border-radius: var(--radius-sm); padding: 20px; margin-bottom: 12px; border-left: 4px solid var(--pink);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <strong>Milestone 3 — Final Payment</strong>
+                <div style="text-align: right;">
+                  <span style="font-size: 1.3rem; font-weight: 800; color: var(--pink);" id="m3Pct">35%</span>
+                  <div style="font-size: 0.8rem; color: var(--slate);" id="m3Amt">$0.00</div>
+                </div>
+              </div>
+              <div style="position: relative; margin-bottom: 8px;">
+                <input type="range" min="0" max="100" value="35" step="5" id="slider3" oninput="syncSliders(3)" style="width: 100%; accent-color: var(--pink); height: 6px; cursor: pointer; -webkit-appearance: none; appearance: none; background: transparent;">
+                <div style="height: 8px; border-radius: 100px; background: var(--sand-dark); position: absolute; top: 50%; left: 0; right: 0; transform: translateY(-50%); z-index: 0; pointer-events: none;">
+                  <div style="height: 100%; border-radius: 100px; background: var(--party-gradient); transition: width 0.15s;" id="m3Fill"></div>
+                </div>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.75rem; color: var(--slate);">Due: 7 days before event</span>
+                <span style="font-size: 0.85rem; font-weight: 600; color: var(--navy);" id="m3Date">—</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Visual Breakdown Bar -->
+          <div style="margin-top: 20px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; margin-bottom: 6px;">
+              <span>Payment Split</span>
+              <span id="sliderTotalLabel" style="color: #059669;">100% allocated</span>
+            </div>
+            <div style="display: flex; height: 14px; border-radius: 100px; overflow: hidden; gap: 2px;">
+              <div style="background: var(--sunset-gradient); transition: flex 0.2s;" id="bar1"></div>
+              <div style="background: var(--ocean-gradient); transition: flex 0.2s;" id="bar2"></div>
+              <div style="background: var(--party-gradient); transition: flex 0.2s;" id="bar3"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--slate); margin-top: 6px;">
+              <span>Deposit</span>
+              <span>2nd Payment</span>
+              <span>Final</span>
+            </div>
+          </div>
+
+          <!-- Dollar Summary -->
+          <div style="display: flex; justify-content: space-between; padding: 16px 0 0; margin-top: 16px; border-top: 2px solid var(--sand-dark);">
+            <span style="font-weight: 700;">Total Per Person:</span>
+            <span style="font-weight: 700;" id="milestoneTotal">$0.00</span>
+          </div>
+        </div>
+
+        <div style="background: rgba(0, 210, 255, 0.06); border: 1px solid rgba(0, 210, 255, 0.2); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 24px;">
+          <div style="display: flex; align-items: start; gap: 12px;">
+            <span style="font-size: 1.2rem;">&#128274;</span>
+            <div>
+              <strong style="font-size: 0.9rem;">Escrow Protection</strong>
+              <p style="font-size: 0.8rem; margin-top: 4px;">All milestone payments are held in escrow until event day. If you cancel, attendees are automatically refunded. Funds release progressively as milestones pass.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" checked>
+            Enable automatic payment reminders (48h before each deadline)
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox">
+            Allow late joiners (with catch-up payment required)
+          </label>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; margin-top: 32px;">
+          <button class="btn btn-secondary btn-lg" onclick="goToStep(1)">&#8592; Back</button>
+          <button class="btn btn-primary btn-lg" onclick="goToStep(3)">Next: Services & Review &#8594;</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Services & Review -->
+      <div class="card" style="padding: 40px; display: none;" id="step3">
+        <h3 style="margin-bottom: 28px;">&#127775; Services & Review</h3>
+
+        <div style="background: var(--sand); border-radius: var(--radius-md); padding: 24px; margin-bottom: 28px;">
+          <h4 style="margin-bottom: 12px;">Need Professional Services?</h4>
+          <p style="font-size: 0.9rem; margin-bottom: 20px;">Add service providers to elevate your event. Their fees can be included in the per-person cost or paid separately.</p>
+
+          <div class="form-group">
+            <label>What services do you need?</label>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+              <button class="category-tag service-tag" onclick="toggleService(this)">&#127911; DJ</button>
+              <button class="category-tag service-tag" onclick="toggleService(this)">&#127908; Live Band</button>
+              <button class="category-tag service-tag" onclick="toggleService(this)">&#127860; Catering</button>
+              <button class="category-tag service-tag" onclick="toggleService(this)">&#127908; Emcee</button>
+              <button class="category-tag service-tag" onclick="toggleService(this)">&#127913; Magician</button>
+              <button class="category-tag service-tag" onclick="toggleService(this)">&#128247; Photographer</button>
+              <button class="category-tag service-tag" onclick="toggleService(this)">&#127916; Videographer</button>
+              <button class="category-tag service-tag" onclick="toggleService(this)">&#128139; Decorator</button>
+            </div>
+          </div>
+
+          <p style="font-size: 0.85rem; color: var(--slate);">Selected providers will receive your event brief. You can browse and book specific providers from the <a href="marketplace.html" style="color: var(--coral); font-weight: 600;">Marketplace</a> after creation.</p>
+        </div>
+
+        <!-- Review Summary -->
+        <div style="background: white; border: 2px solid var(--sand-dark); border-radius: var(--radius-md); padding: 28px;">
+          <h4 style="margin-bottom: 20px;">&#128203; Event Summary</h4>
+          <div id="reviewSummary" style="display: grid; gap: 16px;">
+            <div style="display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid var(--sand-dark);">
+              <span style="color: var(--slate);">Event Name</span>
+              <strong id="reviewName">—</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid var(--sand-dark);">
+              <span style="color: var(--slate);">Category</span>
+              <strong id="reviewCategory">—</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid var(--sand-dark);">
+              <span style="color: var(--slate);">Date & Time</span>
+              <strong id="reviewDate">—</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid var(--sand-dark);">
+              <span style="color: var(--slate);">Location</span>
+              <strong id="reviewLocation">—</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid var(--sand-dark);">
+              <span style="color: var(--slate);">Cost Per Person</span>
+              <strong id="reviewCost" class="text-gradient">—</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid var(--sand-dark);">
+              <span style="color: var(--slate);">Max Attendees</span>
+              <strong id="reviewMax">—</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: var(--slate);">Payment Milestones</span>
+              <strong id="reviewMilestones">—</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 24px;">
+          <label class="checkbox-label">
+            <input type="checkbox" id="agreeTerms">
+            I agree to The Commons <a href="#" style="color: var(--coral);">Terms of Service</a> and <a href="#" style="color: var(--coral);">Escrow Policy</a>
+          </label>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; margin-top: 32px;">
+          <button class="btn btn-secondary btn-lg" onclick="goToStep(2)">&#8592; Back</button>
+          <button class="btn btn-primary btn-lg" onclick="publishEvent()">&#127881; Publish Event</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Success Modal -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal" style="text-align: center;">
+      <div style="font-size: 4rem; margin-bottom: 16px;">&#127881;</div>
+      <h2>Event Published!</h2>
+      <p style="margin: 16px 0 24px;">Your event is live. Share the link with friends to start collecting RSVPs and payments.</p>
+      <div style="background: var(--sand); border-radius: var(--radius-sm); padding: 16px; display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+        <input type="text" value="https://thecommons.app/event/sunset-yacht-party" readonly style="font-size: 0.85rem; border: none; background: transparent;" id="shareLink">
+        <button class="btn btn-primary btn-sm" onclick="copyShareLink()">Copy</button>
+      </div>
+      <div style="display: flex; gap: 12px; justify-content: center;">
+        <a href="event.html" class="btn btn-primary">View Event</a>
+        <a href="dashboard.html" class="btn btn-secondary">Go to Dashboard</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auth Modal -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="authTitle">Welcome Back</h3>
+        <button class="modal-close" onclick="closeAuthModal()">&times;</button>
+      </div>
+      <div id="loginForm">
+        <div class="form-group"><label>Email</label><input type="email" placeholder="you@example.com"></div>
+        <div class="form-group"><label>Password</label><input type="password" placeholder="Enter password"></div>
+        <button class="btn btn-primary btn-lg" style="width: 100%;" onclick="handleAuth()">Log In</button>
+      </div>
+      <div id="signupForm" style="display: none;">
+        <div class="form-group"><label>Full Name</label><input type="text" placeholder="Your full name"></div>
+        <div class="form-group"><label>Email</label><input type="email" placeholder="you@example.com"></div>
+        <div class="form-group"><label>Password</label><input type="password" placeholder="Create a password"></div>
+        <button class="btn btn-primary btn-lg" style="width: 100%;" onclick="handleAuth()">Create Account</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+  <script>
+    // ── Milestone Slider Logic ─────────────────────────────────────────────
+
+    function roundTo5(n) {
+      return Math.round(n / 5) * 5;
+    }
+
+    function syncSliders(changed) {
+      const s1 = document.getElementById('slider1');
+      const s2 = document.getElementById('slider2');
+      const s3 = document.getElementById('slider3');
+
+      let v1 = parseInt(s1.value);
+      let v2 = parseInt(s2.value);
+      let v3 = parseInt(s3.value);
+
+      // When one slider moves, distribute the remainder across the other two
+      if (changed === 1) {
+        v1 = roundTo5(v1);
+        const remainder = 100 - v1;
+        const ratio = (v2 + v3) > 0 ? v2 / (v2 + v3) : 0.5;
+        v2 = roundTo5(remainder * ratio);
+        v3 = 100 - v1 - v2;
+        // Ensure v3 rounds to 5
+        v3 = roundTo5(v3);
+        // Fix rounding overflow
+        if (v1 + v2 + v3 !== 100) v3 = 100 - v1 - v2;
+      } else if (changed === 2) {
+        v2 = roundTo5(v2);
+        const remainder = 100 - v2;
+        const ratio = (v1 + v3) > 0 ? v1 / (v1 + v3) : 0.5;
+        v1 = roundTo5(remainder * ratio);
+        v3 = 100 - v1 - v2;
+        v3 = roundTo5(v3);
+        if (v1 + v2 + v3 !== 100) v1 = 100 - v2 - v3;
+      } else if (changed === 3) {
+        v3 = roundTo5(v3);
+        const remainder = 100 - v3;
+        const ratio = (v1 + v2) > 0 ? v1 / (v1 + v2) : 0.5;
+        v1 = roundTo5(remainder * ratio);
+        v2 = 100 - v1 - v3;
+        v2 = roundTo5(v2);
+        if (v1 + v2 + v3 !== 100) v2 = 100 - v1 - v3;
+      }
+
+      // Clamp to 0-100
+      v1 = Math.max(0, Math.min(100, v1));
+      v2 = Math.max(0, Math.min(100, v2));
+      v3 = Math.max(0, Math.min(100, v3));
+
+      s1.value = v1;
+      s2.value = v2;
+      s3.value = v3;
+
+      updateMilestoneDisplay(v1, v2, v3);
+    }
+
+    function updateMilestoneDisplay(v1, v2, v3) {
+      const totalCost = parseFloat(document.getElementById('totalCost')?.value) || 0;
+
+      // Update percentages
+      document.getElementById('m1Pct').textContent = v1 + '%';
+      document.getElementById('m2Pct').textContent = v2 + '%';
+      document.getElementById('m3Pct').textContent = v3 + '%';
+
+      // Update dollar amounts
+      const a1 = (totalCost * v1 / 100).toFixed(2);
+      const a2 = (totalCost * v2 / 100).toFixed(2);
+      const a3 = (totalCost * v3 / 100).toFixed(2);
+      document.getElementById('m1Amt').textContent = '$' + a1;
+      document.getElementById('m2Amt').textContent = '$' + a2;
+      document.getElementById('m3Amt').textContent = '$' + a3;
+
+      // Update fill bars
+      document.getElementById('m1Fill').style.width = v1 + '%';
+      document.getElementById('m2Fill').style.width = v2 + '%';
+      document.getElementById('m3Fill').style.width = v3 + '%';
+
+      // Update stacked breakdown bar
+      document.getElementById('bar1').style.flex = v1;
+      document.getElementById('bar2').style.flex = v2;
+      document.getElementById('bar3').style.flex = v3;
+
+      // Total label
+      const sum = v1 + v2 + v3;
+      const lbl = document.getElementById('sliderTotalLabel');
+      if (sum === 100) {
+        lbl.textContent = '100% allocated';
+        lbl.style.color = '#059669';
+      } else {
+        lbl.textContent = sum + '% allocated (' + (100 - sum) + '% remaining)';
+        lbl.style.color = '#EF4444';
+      }
+
+      // Total dollar
+      document.getElementById('milestoneTotal').textContent = '$' + totalCost.toFixed(2);
+
+      // Update dates
+      updateMilestoneDates();
+    }
+
+    function updateMilestoneDates() {
+      const eventDateInput = document.getElementById('eventDate');
+      const reminder = document.getElementById('eventDateReminder');
+
+      if (!eventDateInput || !eventDateInput.value) {
+        document.getElementById('m1Date').textContent = '—';
+        document.getElementById('m2Date').textContent = '—';
+        document.getElementById('m3Date').textContent = '—';
+        if (reminder) {
+          reminder.style.display = 'block';
+          reminder.textContent = 'Set your event date in Step 1 to auto-fill milestone deadlines.';
+        }
+        return;
+      }
+
+      if (reminder) reminder.style.display = 'none';
+
+      const eventDate = new Date(eventDateInput.value + 'T00:00:00');
+      const fmt = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+
+      const d1 = new Date(eventDate);
+      d1.setDate(d1.getDate() - 21);
+      const d2 = new Date(eventDate);
+      d2.setDate(d2.getDate() - 14);
+      const d3 = new Date(eventDate);
+      d3.setDate(d3.getDate() - 7);
+
+      document.getElementById('m1Date').textContent = d1.toLocaleDateString('en-SG', fmt);
+      document.getElementById('m2Date').textContent = d2.toLocaleDateString('en-SG', fmt);
+      document.getElementById('m3Date').textContent = d3.toLocaleDateString('en-SG', fmt);
+    }
+
+    // Listen for event date changes to auto-update milestones
+    document.addEventListener('DOMContentLoaded', function() {
+      const eventDateInput = document.getElementById('eventDate');
+      if (eventDateInput) {
+        // Default to today's date
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        eventDateInput.value = `${yyyy}-${mm}-${dd}`;
+
+        eventDateInput.addEventListener('change', function() {
+          updateMilestoneDates();
+        });
+      }
+
+      // Listen for total cost changes to update dollar amounts
+      const totalCostInput = document.getElementById('totalCost');
+      if (totalCostInput) {
+        totalCostInput.addEventListener('input', function() {
+          const s1 = parseInt(document.getElementById('slider1').value);
+          const s2 = parseInt(document.getElementById('slider2').value);
+          const s3 = parseInt(document.getElementById('slider3').value);
+          updateMilestoneDisplay(s1, s2, s3);
+        });
+      }
+
+      // Initialize display
+      syncSliders(1);
+    });
+  </script>
+</body>
+</html>

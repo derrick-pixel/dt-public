@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Passage — Admin</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #32332d;
+      --secondary: #596060;
+      --gold: #725b3f;
+      --surface: #fcf9f5;
+      --surface-1: #f0ece4;
+      --surface-2: #e4e0d8;
+      --border: #d8d4cc;
+      --muted: #7b7b74;
+      --white: #ffffff;
+      --green: #3a7a50;
+      --amber: #b07020;
+      --blue: #2a5080;
+      --red: #8b2020;
+      --purple: #5a3878;
+      --radius: 8px;
+      --radius-lg: 14px;
+      --font: 'Segoe UI', system-ui, sans-serif;
+      --serif: Georgia, 'Times New Roman', serif;
+    }
+    body { font-family: var(--font); background: var(--surface); color: var(--primary); min-height: 100vh; }
+
+    /* ── LOGIN ── */
+    #login-screen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: var(--primary);
+    }
+    .login-box {
+      background: var(--white); border-radius: var(--radius-lg);
+      padding: 48px 40px; width: 100%; max-width: 380px;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.3);
+    }
+    .login-logo { font-family: var(--serif); font-size: 1.8rem; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; margin-bottom: 4px; }
+    .login-logo span { color: var(--gold); }
+    .login-sub { font-size: 0.8rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 32px; }
+    .login-box label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; margin-top: 16px; }
+    .login-box input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--radius); font-size: 0.95rem; font-family: var(--font); outline: none; transition: border-color 0.2s; background: var(--surface); }
+    .login-box input:focus { border-color: var(--secondary); }
+    .login-btn { width: 100%; margin-top: 24px; padding: 12px; background: var(--primary); color: var(--white); border: none; border-radius: var(--radius); font-size: 0.9rem; font-weight: 600; letter-spacing: 0.06em; cursor: pointer; transition: background 0.2s; }
+    .login-btn:hover { background: var(--secondary); }
+    .login-error { color: var(--red); font-size: 0.82rem; margin-top: 12px; display: none; }
+
+    /* ── DASHBOARD ── */
+    #dashboard { display: none; }
+    .admin-topbar {
+      background: var(--primary); padding: 0 28px; height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .admin-topbar__logo { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; color: var(--white); letter-spacing: 0.08em; }
+    .admin-topbar__logo span { color: var(--gold); }
+    .admin-topbar__right { display: flex; align-items: center; gap: 16px; }
+    .admin-topbar__user { font-size: 0.8rem; color: rgba(255,255,255,0.6); }
+    .logout-btn { font-size: 0.78rem; padding: 6px 14px; background: rgba(255,255,255,0.1); color: var(--white); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; cursor: pointer; transition: background 0.2s; }
+    .logout-btn:hover { background: rgba(255,255,255,0.2); }
+
+    .admin-body { max-width: 1200px; margin: 0 auto; padding: 32px 28px 80px; }
+
+    /* Stats bar */
+    .stats-bar { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 40px; }
+    .stat-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px 22px; }
+    .stat-card__val { font-family: var(--serif); font-size: 2rem; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+    .stat-card__label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .stat-pending { color: var(--amber); }
+    .stat-prod { color: var(--blue); }
+    .stat-done { color: var(--green); }
+    .stat-total { color: var(--primary); }
+
+    /* Section headings */
+    .section-heading { font-family: var(--serif); font-size: 1.3rem; font-weight: 700; margin-bottom: 4px; }
+    .section-sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 20px; }
+    .section-divider { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+    /* Subcontractor cards */
+    .sub-region { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--secondary); margin-bottom: 12px; margin-top: 28px; }
+    .sub-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 8px; }
+    .sub-card {
+      background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg);
+      padding: 20px; transition: box-shadow 0.2s;
+    }
+    .sub-card:hover { box-shadow: 0 4px 16px rgba(50,51,45,0.1); }
+    .sub-card__header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+    .sub-card__name { font-size: 0.95rem; font-weight: 700; color: var(--primary); }
+    .sub-card__type { font-size: 0.7rem; background: var(--surface-1); color: var(--muted); padding: 3px 8px; border-radius: 12px; }
+    .sub-card__location { font-size: 0.78rem; color: var(--muted); margin-bottom: 8px; }
+    .sub-card__specialty { font-size: 0.82rem; color: var(--secondary); line-height: 1.5; margin-bottom: 12px; }
+    .sub-card__cost { background: var(--surface-1); border-radius: 6px; padding: 8px 12px; margin-bottom: 12px; }
+    .sub-card__cost-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+    .sub-card__cost-val { font-size: 0.88rem; font-weight: 700; color: var(--gold); margin-top: 2px; }
+    .sub-card__links { display: flex; flex-wrap: wrap; gap: 6px; }
+    .sub-link { font-size: 0.75rem; color: var(--secondary); text-decoration: none; background: var(--surface-1); padding: 4px 10px; border-radius: 12px; border: 1px solid var(--border); transition: background 0.15s; }
+    .sub-link:hover { background: var(--surface-2); }
+    .sub-card__note { font-size: 0.75rem; color: var(--muted); margin-top: 10px; line-height: 1.5; border-top: 1px solid var(--border); padding-top: 10px; font-style: italic; }
+
+    /* Order tracker */
+    .new-order-form {
+      background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg);
+      padding: 24px; margin-bottom: 24px;
+    }
+    .form-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group label { font-size: 0.72rem; font-weight: 600; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.08em; }
+    .form-group input, .form-group select, .form-group textarea {
+      padding: 8px 11px; border: 1.5px solid var(--border); border-radius: var(--radius);
+      font-size: 0.875rem; font-family: var(--font); outline: none; transition: border-color 0.2s; background: var(--surface);
+    }
+    .form-group input:focus, .form-group select:focus { border-color: var(--secondary); }
+    .form-group.span2 { grid-column: span 2; }
+    .form-group.span3 { grid-column: span 3; }
+    .add-btn { margin-top: 16px; padding: 10px 24px; background: var(--primary); color: var(--white); border: none; border-radius: var(--radius); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .add-btn:hover { background: var(--secondary); }
+
+    /* Orders table */
+    .orders-table-wrap { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .orders-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .orders-table th { background: var(--primary); color: var(--white); padding: 12px 14px; text-align: left; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+    .orders-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .orders-table tr:last-child td { border-bottom: none; }
+    .orders-table tr:hover td { background: var(--surface); }
+    .orders-empty { text-align: center; padding: 40px; color: var(--muted); font-size: 0.9rem; }
+
+    /* Status badges */
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+    .badge-pending  { background: #fff3cd; color: var(--amber); }
+    .badge-production { background: #dbeafe; color: var(--blue); }
+    .badge-quality  { background: #ede9fe; color: var(--purple); }
+    .badge-delivered { background: #dcfce7; color: var(--green); }
+    .badge-issue    { background: #fee2e2; color: var(--red); }
+
+    .action-btn { font-size: 0.72rem; padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; background: var(--surface); color: var(--secondary); transition: all 0.15s; }
+    .action-btn:hover { background: var(--surface-2); }
+    .action-btn.del { color: var(--red); border-color: #fca5a5; }
+    .action-btn.del:hover { background: #fee2e2; }
+
+    .status-select { font-size: 0.78rem; padding: 4px 8px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; background: var(--surface); font-family: var(--font); }
+
+    /* ── ADMIN TABS ── */
+    .admin-tabs { display: flex; gap: 4px; margin-bottom: 32px; border-bottom: 2px solid var(--border); padding-bottom: 0; }
+    .admin-tab {
+      padding: 10px 22px; font-size: 0.82rem; font-weight: 600; letter-spacing: 0.06em;
+      text-transform: uppercase; border: none; background: none; cursor: pointer;
+      color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -2px;
+      transition: color 0.2s, border-color 0.2s; font-family: var(--font);
+    }
+    .admin-tab:hover { color: var(--primary); }
+    .admin-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+    .admin-panel { display: none; }
+    .admin-panel.active { display: block; }
+
+    /* ── MISSION PAGE ── */
+    .mission-hero {
+      background: var(--primary); border-radius: var(--radius-lg);
+      padding: 48px 52px; margin-bottom: 32px; position: relative; overflow: hidden;
+    }
+    .mission-hero::before {
+      content: '\201C'; position: absolute; top: -20px; left: 36px;
+      font-family: var(--serif); font-size: 12rem; color: rgba(255,255,255,0.04);
+      line-height: 1; pointer-events: none;
+    }
+    .mission-hero__label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+    .mission-hero__quote {
+      font-family: var(--serif); font-size: 1.55rem; font-weight: 400; color: var(--white);
+      line-height: 1.65; max-width: 700px; margin-bottom: 24px;
+    }
+    .mission-hero__quote em { color: var(--gold); font-style: normal; }
+    .mission-hero__attr { font-size: 0.82rem; color: rgba(255,255,255,0.45); }
+
+    .mission-story {
+      background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg);
+      padding: 36px 40px; margin-bottom: 24px;
+    }
+    .mission-story__title { font-family: var(--serif); font-size: 1.15rem; font-weight: 700; color: var(--primary); margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+    .mission-story p { font-size: 0.93rem; line-height: 1.82; color: var(--secondary); margin-bottom: 16px; }
+    .mission-story p:last-child { margin-bottom: 0; }
+    .mission-story strong { color: var(--primary); }
+
+    .mission-timeline {
+      display: flex; flex-direction: column; gap: 0; margin: 24px 0;
+      border-left: 2px solid var(--border); padding-left: 24px;
+    }
+    .mission-tl-item { position: relative; padding-bottom: 24px; }
+    .mission-tl-item:last-child { padding-bottom: 0; }
+    .mission-tl-item::before {
+      content: ''; position: absolute; left: -31px; top: 4px;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--gold); border: 2px solid var(--white);
+      box-shadow: 0 0 0 2px var(--gold);
+    }
+    .mission-tl-year { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
+    .mission-tl-text { font-size: 0.9rem; color: var(--secondary); line-height: 1.6; }
+
+    .mission-pillars { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 24px; }
+    .mission-pillar {
+      background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg);
+      padding: 24px 22px;
+    }
+    .mission-pillar__icon { font-size: 1.6rem; margin-bottom: 12px; }
+    .mission-pillar__title { font-family: var(--serif); font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+    .mission-pillar__text { font-size: 0.85rem; color: var(--secondary); line-height: 1.6; }
+
+    .mission-charity {
+      background: linear-gradient(135deg, #3a7a50 0%, #2a5a3a 100%);
+      border-radius: var(--radius-lg); padding: 28px 32px;
+      display: flex; align-items: center; gap: 24px;
+    }
+    .mission-charity__pct { font-family: var(--serif); font-size: 3.5rem; font-weight: 700; color: var(--white); line-height: 1; white-space: nowrap; }
+    .mission-charity__pct span { font-size: 1.5rem; }
+    .mission-charity__text h3 { font-size: 0.95rem; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+    .mission-charity__text p { font-size: 0.85rem; color: rgba(255,255,255,0.7); line-height: 1.6; }
+
+    /* Employee guide banner */
+    .employee-guide-banner {
+      background: var(--surface-1); border: 1px solid var(--border); border-left: 4px solid var(--gold);
+      border-radius: var(--radius); padding: 16px 20px; margin-bottom: 28px;
+      display: flex; align-items: flex-start; gap: 14px;
+    }
+    .employee-guide-banner__icon { font-size: 1.2rem; margin-top: 1px; flex-shrink: 0; }
+    .employee-guide-banner__text { font-size: 0.85rem; color: var(--secondary); line-height: 1.6; }
+    .employee-guide-banner__text strong { color: var(--primary); }
+
+    /* Giving vote section */
+    .giving-section {
+      background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg);
+      padding: 32px 36px; margin-top: 24px;
+    }
+    .giving-section__title { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
+    .giving-section__sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 24px; }
+    .giving-how { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+    .giving-step {
+      flex: 1; min-width: 160px; background: var(--surface-1); border-radius: var(--radius);
+      padding: 16px 18px; border: 1px solid var(--border);
+    }
+    .giving-step__num { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; color: var(--gold); margin-bottom: 6px; }
+    .giving-step__text { font-size: 0.82rem; color: var(--secondary); line-height: 1.55; }
+    .giving-focus { margin-bottom: 0; }
+    .giving-focus__label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--secondary); margin-bottom: 12px; }
+    .giving-ecosystem { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+    .ecosystem-card {
+      border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px;
+      background: var(--surface);
+    }
+    .ecosystem-card__icon { font-size: 1.2rem; margin-bottom: 6px; }
+    .ecosystem-card__name { font-size: 0.85rem; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+    .ecosystem-card__desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+    .ecosystem-card.preferred { border-color: var(--gold); background: #fdf8f1; }
+    .ecosystem-card.preferred .ecosystem-card__name::after { content: ' ★'; color: var(--gold); font-size: 0.7rem; }
+    .giving-note {
+      margin-top: 20px; padding: 14px 18px; background: var(--surface-1);
+      border-radius: var(--radius); border-left: 3px solid var(--secondary);
+      font-size: 0.83rem; color: var(--secondary); line-height: 1.65;
+    }
+
+    @media (max-width: 768px) {
+      .stats-bar { grid-template-columns: repeat(2,1fr); }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-group.span2, .form-group.span3 { grid-column: span 1; }
+      .orders-table { font-size: 0.78rem; }
+      .mission-hero { padding: 32px 24px; }
+      .mission-hero__quote { font-size: 1.2rem; }
+      .mission-story { padding: 24px 20px; }
+      .mission-pillars { grid-template-columns: 1fr; }
+      .mission-charity { flex-direction: column; text-align: center; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="login-screen">
+  <div class="login-box">
+    <p class="login-logo">PASS<span>AGE</span></p>
+    <p class="login-sub">Admin Portal</p>
+    <form onsubmit="doLogin(event)">
+      <label for="un">Username</label>
+      <input id="un" type="text" placeholder="Username" autocomplete="off" />
+      <label for="pw">Password</label>
+      <input id="pw" type="password" placeholder="Password" />
+      <button class="login-btn" type="submit">Sign In</button>
+      <p class="login-error" id="login-err">Incorrect username or password.</p>
+    </form>
+  </div>
+</div>
+
+<!-- ── DASHBOARD ── -->
+<div id="dashboard">
+  <div class="admin-topbar">
+    <span class="admin-topbar__logo">PASS<span>AGE</span> &nbsp;·&nbsp; <span style="font-family:sans-serif; font-size:0.7rem; color:rgba(255,255,255,0.5); font-weight:400; letter-spacing:0.1em;">ADMIN</span></span>
+    <div class="admin-topbar__right">
+      <span class="admin-topbar__user">Signed in</span>
+      <button class="logout-btn" onclick="doLogout()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="admin-body">
+
+    <!-- Tab Nav -->
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchAdminTab('operations')">Operations</button>
+      <button class="admin-tab" onclick="switchAdminTab('mission')">Our Mission</button>
+    </div>
+
+    <!-- ── OPERATIONS PANEL ── -->
+    <div id="admin-panel-operations" class="admin-panel active">
+
+    <!-- Stats -->
+    <div class="stats-bar" id="stats-bar">
+      <div class="stat-card"><div class="stat-card__val stat-total" id="stat-total">0</div><div class="stat-card__label">Total Orders</div></div>
+      <div class="stat-card"><div class="stat-card__val stat-pending" id="stat-pending">0</div><div class="stat-card__label">Pending</div></div>
+      <div class="stat-card"><div class="stat-card__val stat-prod" id="stat-prod">0</div><div class="stat-card__label">In Production</div></div>
+      <div class="stat-card"><div class="stat-card__val stat-done" id="stat-done">0</div><div class="stat-card__label">Delivered</div></div>
+    </div>
+
+    <!-- ── SUBCONTRACTORS ── -->
+    <div class="section-heading">Subcontractor Directory</div>
+    <p class="section-sub">Researched suppliers and carpenters. Estimated costs are wholesale/subcontract rates — confirm directly before committing orders.</p>
+
+    <div class="sub-region">🇲🇾 Malaysia — JB & Regional</div>
+    <div class="sub-grid">
+
+      <div class="sub-card">
+        <div class="sub-card__header">
+          <span class="sub-card__name">Millennium Casket Sdn. Bhd.</span>
+          <span class="sub-card__type">Casket Mfr</span>
+        </div>
+        <div class="sub-card__location">📍 Johor Bahru, Johor, Malaysia</div>
+        <div class="sub-card__specialty">Custom wood caskets for Buddhist, Taoist, Christian & Indian traditions. 20+ years in business. Supply to Singapore funeral homes.</div>
+        <div class="sub-card__cost">
+          <div class="sub-card__cost-label">Est. Wholesale / Unit</div>
+          <div class="sub-card__cost-val">RM 400 – RM 900 &nbsp;(≈ S$130 – S$295)</div>
+        </div>
+        <div class="sub-card__links">
+          <a href="https://www.millenniumcasket.com/" target="_blank" rel="noopener" class="sub-link">🌐 millenniumcasket.com</a>
+          <a href="https://www.instagram.com/millenniumcasket.jb/" target="_blank" rel="noopener" class="sub-link">📷 Instagram</a>
+          <a href="tel:+601271732020" class="sub-link">📞 +60 12-717 3202</a>
+        </div>
+        <p class="sub-card__note">Closest JB supplier. Recommend visiting in person to inspect joinery and finish. Ask for MOQ and OEM (Passage branding) pricing.</p>
+      </div>
+
+      <div class="sub-card">
+        <div class="sub-card__header">
+          <span class="sub-card__name">TSTee Wood Industry (Sinseeseng)</span>
+          <span class="sub-card__type">Wholesale Mfr</span>
+        </div>
+        <div class="sub-card__location">📍 Sungai Petani, Kedah, Malaysia (ships nationally)</div>
+        <div class="sub-card__specialty">Major international casket manufacturer since 1978. Full range: pine, hardwood, mahogany, European & American styles. Ships to Singapore distributors.</div>
+        <div class="sub-card__cost">
+          <div class="sub-card__cost-label">Est. Wholesale / Unit (MOQ 5+)</div>
+          <div class="sub-card__cost-val">RM 350 – RM 1,200 &nbsp;(≈ S$115 – S$395)</div>
+        </div>
+        <div class="sub-card__links">
+          <a href="http://www.sinseeseng.com/" target="_blank" rel="noopener" class="sub-link">🌐 sinseeseng.com</a>
+          <a href="https://tstee.en.ec21.com/" target="_blank" rel="noopener" class="sub-link">🛒 EC21 Profile</a>
+          <a href="https://www.facebook.com/tsteewood/" target="_blank" rel="noopener" class="sub-link">📘 Facebook</a>
+        </div>
+        <p class="sub-card__note">Best for volume and consistent quality. Not JB-based but ships. International OEM experience — can put Passage branding. Request catalogue and minimum order terms.</p>
+      </div>
+
+      <div class="sub-card">
+        <div class="sub-card__header">
+          <span class="sub-card__name">The Eco Casket</span>
+          <span class="sub-card__type">Eco / Paper</span>
+        </div>
+        <div class="sub-card__location">📍 Salak Tinggi, Selangor, Malaysia</div>
+        <div class="sub-card__specialty">Biodegradable caskets from patented ISO-certified Finoboard (recycled corrugated paper). Supports up to 700kg. FSC-aligned. Strong ESG story.</div>
+        <div class="sub-card__cost">
+          <div class="sub-card__cost-label">Est. Wholesale / Unit</div>
+          <div class="sub-card__cost-val">RM 300 – RM 650 &nbsp;(≈ S$100 – S$215)</div>
+        </div>
+        <div class="sub-card__links">
+          <a href="https://www.theecocasket.com/" target="_blank" rel="noopener" class="sub-link">🌐 theecocasket.com</a>
+          <a href="mailto:myecocasket@gmail.com" class="sub-link">✉️ myecocasket@gmail.com</a>
+          <a href="tel:+60163199391" class="sub-link">📞 +60 16-319 9391</a>
+        </div>
+        <p class="sub-card__note">Strong differentiator for eco-conscious families. Consider as a 4th product tier (Passage Green). Check if suitable for Buddhist/Taoist cremation requirements.</p>
+      </div>
+
+      <div class="sub-card">
+        <div class="sub-card__header">
+          <span class="sub-card__name">PK Furniture System Sdn Bhd</span>
+          <span class="sub-card__type">Carpentry</span>
+        </div>
+        <div class="sub-card__location">📍 Johor Bahru, Johor, Malaysia</div>
+        <div class="sub-card__specialty">General carpentry and custom woodworking. Suitable for custom casket assembly if provided with Passage specification drawings and materials.</div>
+        <div class="sub-card__cost">
+          <div class="sub-card__cost-label">Est. Labour / Unit (assembly only)</div>
+          <div class="sub-card__cost-val">RM 250 – RM 600 &nbsp;(≈ S$80 – S$200)</div>
+        </div>
+        <div class="sub-card__links">
+          <a href="https://m.pk2u.com.my/" target="_blank" rel="noopener" class="sub-link">🌐 pk2u.com.my</a>
+        </div>
+        <p class="sub-card__note">Use as assembly-only subcontractor if you supply timber and hardware separately. Lower per-unit cost but requires more coordination from your side.</p>
+      </div>
+
+    </div>
+
+    <div class="sub-region">🇸🇬 Singapore — Local Carpenter Workshops</div>
+    <div class="sub-grid">
+
+      <div class="sub-card">
+        <div class="sub-card__header">
+          <span class="sub-card__name">White Artz Carpentry</span>
+          <span class="sub-card__type">SG Carpenter</span>
+        </div>
+        <div class="sub-card__location">📍 61 Woodlands Industrial Park E9 #02-28, S757047</div>
+        <div class="sub-card__specialty">Direct-factory custom carpentry. Publishes transparent pricing. Suitable for premium Eternal tier local finishing and custom woodwork.</div>
+        <div class="sub-card__cost">
+          <div class="sub-card__cost-label">Est. Labour + Materials / Unit</div>
+          <div class="sub-card__cost-val">S$350 – S$700</div>
+        </div>
+        <div class="sub-card__links">
+          <a href="https://whiteartz.com/" target="_blank" rel="noopener" class="sub-link">🌐 whiteartz.com</a>
+          <a href="tel:+6585404303" class="sub-link">📞 8540-4303</a>
+          <a href="tel:+6564819103" class="sub-link">📞 6481-9103</a>
+        </div>
+        <p class="sub-card__note">Transparent pricing model aligns with Passage values. Recommend for Eternal tier "assembled in Singapore" positioning. Visit workshop to assess bench skills.</p>
+      </div>
+
+      <div class="sub-card">
+        <div class="sub-card__header">
+          <span class="sub-card__name">Soon Teck WoodWorks</span>
+          <span class="sub-card__type">SG Carpenter</span>
+        </div>
+        <div class="sub-card__location">📍 Woodlands Industrial Park E1, Singapore</div>
+        <div class="sub-card__specialty">Established furniture contractor with own workshop. Capable of custom production work. Experienced with hardwood joinery and finishing.</div>
+        <div class="sub-card__cost">
+          <div class="sub-card__cost-label">Est. Labour + Materials / Unit</div>
+          <div class="sub-card__cost-val">S$300 – S$600</div>
+        </div>
+        <div class="sub-card__links">
+          <a href="https://carpentrydirect.sg/" target="_blank" rel="noopener" class="sub-link">🌐 carpentrydirect.sg</a>
+        </div>
+        <p class="sub-card__note">Strong production capacity. Contact to discuss custom piece-rate pricing for casket assembly. Ask for a trial unit.</p>
+      </div>
+
+      <div class="sub-card">
+        <div class="sub-card__header">
+          <span class="sub-card__name">Roger & Sons</span>
+          <span class="sub-card__type">SG Carpenter</span>
+        </div>
+        <div class="sub-card__location">📍 Woodlands, Singapore (workshop + Jalan Besar showroom)</div>
+        <div class="sub-card__specialty">21-person team of designers and craftspeople. FSC-aligned, sustainable sourcing. Made-in-Singapore positioning. Premium finish quality.</div>
+        <div class="sub-card__cost">
+          <div class="sub-card__cost-label">Est. Labour + Materials / Unit</div>
+          <div class="sub-card__cost-val">S$500 – S$900</div>
+        </div>
+        <div class="sub-card__links">
+          <a href="https://www.rogersons.com.sg/" target="_blank" rel="noopener" class="sub-link">🌐 rogersons.com.sg</a>
+        </div>
+        <p class="sub-card__note">Higher cost but strong brand alignment — both FSC, Singapore-made, ethical. Best suited for Eternal tier. Approach as a partnership, not just subcontract.</p>
+      </div>
+
+      <div class="sub-card">
+        <div class="sub-card__header">
+          <span class="sub-card__name">Zhen Feng Object Workshop</span>
+          <span class="sub-card__type">SG Carpenter</span>
+        </div>
+        <div class="sub-card__location">📍 3024 Ubi Road 3 #03-77, Kampong Ubi Industrial Estate, S408652</div>
+        <div class="sub-card__specialty">CNC router + carpentry. Processes bamboo composite, plywood, solid wood. Est. 2016. Good for precision custom parts and finishing work.</div>
+        <div class="sub-card__cost">
+          <div class="sub-card__cost-label">Est. Labour + Materials / Unit</div>
+          <div class="sub-card__cost-val">S$200 – S$500</div>
+        </div>
+        <div class="sub-card__links">
+          <a href="https://www.zhenfengobjectworkshop.com/" target="_blank" rel="noopener" class="sub-link">🌐 zhenfengobjectworkshop.com</a>
+          <a href="tel:+6587909732" class="sub-link">📞 +65 8790 9732</a>
+          <a href="mailto:zhenfengobjectworkshop@gmail.com" class="sub-link">✉️ Email</a>
+        </div>
+        <p class="sub-card__note">Most competitive SG rate. CNC capability useful for nameplates and precise joinery. Best for Serene/Tranquil tiers if local assembly required.</p>
+      </div>
+
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── ORDER TRACKER ── -->
+    <div class="section-heading">Order Tracker</div>
+    <p class="section-sub">Track all subcontractor job orders. Data is saved locally in your browser.</p>
+
+    <div class="new-order-form">
+      <p style="font-size:0.82rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--secondary); margin-bottom:16px;">+ New Order</p>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Subcontractor</label>
+          <select id="o-sub">
+            <option value="">Select supplier</option>
+            <optgroup label="Malaysia">
+              <option>Millennium Casket (JB)</option>
+              <option>TSTee Wood Industry (Kedah)</option>
+              <option>The Eco Casket (Selangor)</option>
+              <option>PK Furniture System (JB)</option>
+            </optgroup>
+            <optgroup label="Singapore">
+              <option>White Artz Carpentry (SG)</option>
+              <option>Soon Teck WoodWorks (SG)</option>
+              <option>Roger & Sons (SG)</option>
+              <option>Zhen Feng Object Workshop (SG)</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Casket Model</label>
+          <select id="o-model">
+            <option value="">Select model</option>
+            <option>Serene (Pine)</option>
+            <option>Tranquil (Hardwood)</option>
+            <option>Eternal (Mahogany)</option>
+            <option>Eco Green</option>
+            <option>Custom</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Quantity (units)</label>
+          <input id="o-qty" type="number" min="1" placeholder="e.g. 5" />
+        </div>
+        <div class="form-group">
+          <label>Unit Cost (S$)</label>
+          <input id="o-unit" type="number" min="0" placeholder="e.g. 250" />
+        </div>
+        <div class="form-group">
+          <label>Order Date</label>
+          <input id="o-date" type="date" />
+        </div>
+        <div class="form-group">
+          <label>Expected Delivery</label>
+          <input id="o-delivery" type="date" />
+        </div>
+        <div class="form-group span3">
+          <label>Notes</label>
+          <input id="o-notes" type="text" placeholder="e.g. FSC pine, natural lacquer, Passage nameplate, deliver to StorHub Woodlands unit B12" />
+        </div>
+      </div>
+      <button class="add-btn" onclick="addOrder()">Add Order</button>
+    </div>
+
+    <div class="orders-table-wrap">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Date</th>
+            <th>Subcontractor</th>
+            <th>Model</th>
+            <th>Qty</th>
+            <th>Unit Cost</th>
+            <th>Total</th>
+            <th>Delivery</th>
+            <th>Status</th>
+            <th>Notes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="orders-tbody">
+          <tr><td colspan="11" class="orders-empty">No orders yet. Add your first order above.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    </div><!-- end #admin-panel-operations -->
+
+    <!-- ── MISSION PANEL ── -->
+    <div id="admin-panel-mission" class="admin-panel">
+
+      <div class="employee-guide-banner">
+        <div class="employee-guide-banner__icon">📋</div>
+        <div class="employee-guide-banner__text">
+          <strong>For all PASSAGE team members — current and new.</strong><br>
+          This page exists so every person on the team understands not just what we do, but <em>why</em> we do it.
+          Read this when you join. Return to it when things feel unclear. The decisions we make daily — from
+          how we answer a customer's call to which supplier we choose — all trace back to what is written here.
+        </div>
+      </div>
+
+      <div class="mission-hero">
+        <p class="mission-hero__label">Founder's Note</p>
+        <p class="mission-hero__quote">
+          Grief is heavy enough on its own.<br>
+          No family should carry the <em>added weight</em> of confusion,<br>
+          pressure, and hidden costs on top of it.
+        </p>
+        <p class="mission-hero__attr">— The reason PASSAGE exists</p>
+      </div>
+
+      <div class="mission-story">
+        <p class="mission-story__title">Why I Built This</p>
+        <p>
+          Between 2021 and today, I lost <strong>four family members</strong>. Each passing was painful in its own way.
+          But what compounded that pain — what I did not expect and was not prepared for — was what happened
+          the moment we stepped into a funeral home.
+        </p>
+        <p>
+          Every time, my family and I were met with time pressure. Decisions about caskets, packages, and add-ons
+          were pushed on us <strong>within hours of a death</strong>, while we were still in shock. Prices were not displayed.
+          Itemised breakdowns were not offered. When we asked, we were given vague bundle quotes that made it
+          impossible to compare or question. We felt the quiet, suffocating pressure to say yes — because
+          saying no felt disrespectful to the person we had just lost.
+        </p>
+        <p>
+          This happened not once. Not twice. <strong>Four times.</strong>
+          And I know from speaking to others that this is not an unusual experience — it is the norm.
+        </p>
+        <div class="mission-timeline">
+          <div class="mission-tl-item">
+            <div class="mission-tl-year">2021</div>
+            <div class="mission-tl-text">First loss. First encounter with opaque funeral pricing and emotional pressure sales.</div>
+          </div>
+          <div class="mission-tl-item">
+            <div class="mission-tl-year">2022 – 2023</div>
+            <div class="mission-tl-text">Two more family members passed. Each time, the same pattern — no price transparency, no breathing room.</div>
+          </div>
+          <div class="mission-tl-item">
+            <div class="mission-tl-year">2024</div>
+            <div class="mission-tl-text">A fourth loss. By now, I had begun researching casket supply chains, manufacturing costs, and consumer protection law in Singapore.</div>
+          </div>
+          <div class="mission-tl-item">
+            <div class="mission-tl-year">2025 — PASSAGE is born</div>
+            <div class="mission-tl-text">Launched as a social enterprise to sell quality caskets at transparent, published prices — so no grieving family is exploited again.</div>
+          </div>
+        </div>
+        <p>
+          PASSAGE is not just a casket company. It is the answer to a personal question I kept asking:
+          <strong>why can't buying a casket be as straightforward as buying anything else?</strong>
+          The price should be visible. The materials should be honest. The process should be calm.
+        </p>
+      </div>
+
+      <div class="mission-pillars">
+        <div class="mission-pillar">
+          <div class="mission-pillar__icon">🪟</div>
+          <div class="mission-pillar__title">Radical Transparency</div>
+          <div class="mission-pillar__text">Every product is priced publicly, with full material and dimension information. No bundles. No hidden fees. What you see is what you pay.</div>
+        </div>
+        <div class="mission-pillar">
+          <div class="mission-pillar__icon">🌱</div>
+          <div class="mission-pillar__title">Sustainable by Default</div>
+          <div class="mission-pillar__text">FSC-certified timber, low-VOC finishes, and responsibly sourced materials — not as a premium option, but as the standard across all tiers.</div>
+        </div>
+        <div class="mission-pillar">
+          <div class="mission-pillar__icon">🤝</div>
+          <div class="mission-pillar__title">Cost-Efficient with Purpose</div>
+          <div class="mission-pillar__text">By routing production to vetted subcontractors and selling direct, we keep prices low — and direct savings back to families and the community.</div>
+        </div>
+      </div>
+
+      <div class="mission-charity">
+        <div class="mission-charity__pct">30<span>%</span></div>
+        <div class="mission-charity__text">
+          <h3>30% of Profits Back to the Community</h3>
+          <p>Every quarter, 30% of PASSAGE's net profit is allocated to causes chosen by our team leaders through a structured vote. Because dignity in death should not be a privilege.</p>
+        </div>
+      </div>
+
+      <div class="giving-section">
+        <p class="giving-section__title">How the 30% Giving Works</p>
+        <p class="giving-section__sub">Employee leaders — not just management — have a voice in where this goes. Here is the process and the guiding principle.</p>
+
+        <div class="giving-how">
+          <div class="giving-step">
+            <div class="giving-step__num">01</div>
+            <div class="giving-step__text"><strong>Quarterly cadence.</strong> At the end of each quarter, team leaders are invited to nominate a cause or organisation.</div>
+          </div>
+          <div class="giving-step">
+            <div class="giving-step__num">02</div>
+            <div class="giving-step__text"><strong>Team vote.</strong> All nominated causes go to a simple majority vote among participating team leaders. Every leader gets one equal vote.</div>
+          </div>
+          <div class="giving-step">
+            <div class="giving-step__num">03</div>
+            <div class="giving-step__text"><strong>Allocation & transparency.</strong> The chosen cause receives the quarter's 30% share. The amount and recipient are shared with the whole team.</div>
+          </div>
+          <div class="giving-step">
+            <div class="giving-step__num">04</div>
+            <div class="giving-step__text"><strong>Reinvest the ecosystem.</strong> The strong preference is to give back to the same circle of care that our customers live in.</div>
+          </div>
+        </div>
+
+        <div class="giving-focus">
+          <p class="giving-focus__label">Preferred Giving Ecosystem — causes we lean towards</p>
+          <div class="giving-ecosystem">
+            <div class="ecosystem-card preferred">
+              <div class="ecosystem-card__icon">🏥</div>
+              <div class="ecosystem-card__name">Hospice Care</div>
+              <div class="ecosystem-card__desc">Palliative support for the terminally ill. The closest link to the families we serve.</div>
+            </div>
+            <div class="ecosystem-card preferred">
+              <div class="ecosystem-card__icon">👴</div>
+              <div class="ecosystem-card__name">Eldercare</div>
+              <div class="ecosystem-card__desc">Day care, befriending, and welfare services for elderly Singaporeans, especially the isolated.</div>
+            </div>
+            <div class="ecosystem-card preferred">
+              <div class="ecosystem-card__icon">💰</div>
+              <div class="ecosystem-card__name">Casket Subsidies</div>
+              <div class="ecosystem-card__desc">Directly subsidising PASSAGE caskets for low-income families who cannot afford end-of-life costs.</div>
+            </div>
+            <div class="ecosystem-card preferred">
+              <div class="ecosystem-card__icon">🧠</div>
+              <div class="ecosystem-card__name">Grief Counselling</div>
+              <div class="ecosystem-card__desc">Funding free or subsidised grief support for bereaved families in Singapore.</div>
+            </div>
+            <div class="ecosystem-card">
+              <div class="ecosystem-card__icon">🍱</div>
+              <div class="ecosystem-card__name">Food Aid</div>
+              <div class="ecosystem-card__desc">Meal support programmes for elderly or low-income households. Adjacent to our care ecosystem.</div>
+            </div>
+            <div class="ecosystem-card">
+              <div class="ecosystem-card__icon">📚</div>
+              <div class="ecosystem-card__name">Death Literacy</div>
+              <div class="ecosystem-card__desc">Programmes that help Singaporeans plan ahead — advance care planning, wills, and CPF nomination awareness.</div>
+            </div>
+          </div>
+        </div>
+
+        <p class="giving-note">
+          <strong>The guiding principle:</strong> Our 30% should flow back into the same ecosystem our customers live in —
+          people facing the end of life, those left behind, and those who care for them.
+          A vote that strays far from this (e.g. unrelated causes) should prompt a conversation, not a veto —
+          but the spirit of this fund is to <em>close the circle of care</em> that PASSAGE is part of.
+        </p>
+      </div>
+
+    </div><!-- end #admin-panel-mission -->
+
+  </div>
+</div>
+
+<script>
+  // ── Admin Tab Switcher ──
+  function switchAdminTab(tab) {
+    document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('admin-panel-' + tab).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+
+  // ── Auth ──
+  // WARNING: This is a client-side gate only. Anyone can view source
+  // and see the structure. The gate password is stored as a SHA-256
+  // hash so it does not appear in plain text. For real production use,
+  // this admin panel MUST be moved behind a server-side session
+  // (the page itself should not be publicly reachable).
+  // Current demo creds: username "elitez", password "passage-admin-2026"
+  const ADMIN_USER_HASH = '7719857f86d8940e4eff5791871b30eb537c677997aa3c51266521163ddc65fb';
+  const ADMIN_PASS_HASH = 'bbb01725722616ecefc899d9638e338dbbf38b26427bfd4d557d77e87c1a5b21';
+
+  async function _sha256Hex(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  async function doLogin(e) {
+    e.preventDefault();
+    const un = document.getElementById('un').value.trim();
+    const pw = document.getElementById('pw').value;
+    const [unH, pwH] = await Promise.all([_sha256Hex(un), _sha256Hex(pw)]);
+    if (unH === ADMIN_USER_HASH && pwH === ADMIN_PASS_HASH) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      sessionStorage.setItem('admin_auth', '1');
+      renderOrders();
+      updateStats();
+    } else {
+      document.getElementById('login-err').style.display = 'block';
+    }
+  }
+  function doLogout() {
+    sessionStorage.removeItem('admin_auth');
+    window.location.href = 'index.html';
+  }
+  // Auth removed — dashboard is open access.
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  sessionStorage.setItem('admin_auth', '1');
+  renderOrders();
+  updateStats();
+
+  // ── Orders ──
+  function getOrders() {
+    return JSON.parse(localStorage.getItem('passage_orders') || '[]');
+  }
+  function saveOrders(orders) {
+    localStorage.setItem('passage_orders', JSON.stringify(orders));
+  }
+  function nextId() {
+    const orders = getOrders();
+    const num = orders.length ? Math.max(...orders.map(o => parseInt(o.id.replace('ORD-','')))) + 1 : 1;
+    return 'ORD-' + String(num).padStart(3, '0');
+  }
+
+  function addOrder() {
+    const sub   = document.getElementById('o-sub').value;
+    const model = document.getElementById('o-model').value;
+    const qty   = parseInt(document.getElementById('o-qty').value) || 0;
+    const unit  = parseFloat(document.getElementById('o-unit').value) || 0;
+    const date  = document.getElementById('o-date').value;
+    const del   = document.getElementById('o-delivery').value;
+    const notes = document.getElementById('o-notes').value.trim();
+    if (!sub || !model || !qty || !date) { alert('Please fill in Subcontractor, Model, Quantity and Order Date.'); return; }
+    const order = { id: nextId(), date, sub, model, qty, unit, total: qty*unit, delivery: del, status: 'pending', notes };
+    const orders = getOrders();
+    orders.unshift(order);
+    saveOrders(orders);
+    // reset form
+    ['o-sub','o-model','o-qty','o-unit','o-date','o-delivery','o-notes'].forEach(id => {
+      const el = document.getElementById(id);
+      el.value = el.tagName === 'SELECT' ? '' : '';
+    });
+    renderOrders();
+    updateStats();
+  }
+
+  function deleteOrder(id) {
+    if (!confirm('Delete order ' + id + '?')) return;
+    saveOrders(getOrders().filter(o => o.id !== id));
+    renderOrders();
+    updateStats();
+  }
+
+  function changeStatus(id, val) {
+    const orders = getOrders();
+    const o = orders.find(o => o.id === id);
+    if (o) { o.status = val; saveOrders(orders); updateStats(); renderOrders(); }
+  }
+
+  const STATUS_LABELS = {
+    pending:    ['Pending',     'badge-pending'],
+    production: ['In Production','badge-production'],
+    quality:    ['Quality Check','badge-quality'],
+    delivered:  ['Delivered',   'badge-delivered'],
+    issue:      ['Issue',       'badge-issue'],
+  };
+
+  // Escape any string that gets interpolated into innerHTML to prevent
+  // stored-XSS from notes / subcontractor names pasted by the admin.
+  function escHtml(s) {
+    return String(s ?? '').replace(/[&<>"'`=\/]/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;','=':'&#61;','/':'&#47;'
+    }[c]));
+  }
+
+  function renderOrders() {
+    const orders = getOrders();
+    const tbody = document.getElementById('orders-tbody');
+    if (!orders.length) {
+      tbody.innerHTML = '<tr><td colspan="11" class="orders-empty">No orders yet. Add your first order above.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = orders.map(o => {
+      const [label, cls] = STATUS_LABELS[o.status] || ['Unknown',''];
+      const fmtCost = v => v ? 'S$' + parseFloat(v).toLocaleString('en-SG', {minimumFractionDigits:2}) : '—';
+      const idSafe = escHtml(o.id);
+      return `<tr>
+        <td><strong>${idSafe}</strong></td>
+        <td>${escHtml(o.date || '—')}</td>
+        <td style="font-size:0.82rem;">${escHtml(o.sub)}</td>
+        <td>${escHtml(o.model)}</td>
+        <td style="text-align:center;">${parseInt(o.qty) || 0}</td>
+        <td>${fmtCost(o.unit)}</td>
+        <td><strong>${fmtCost(o.total)}</strong></td>
+        <td style="font-size:0.82rem;">${escHtml(o.delivery || '—')}</td>
+        <td>
+          <select class="status-select" onchange="changeStatus('${idSafe}', this.value)">
+            ${Object.entries(STATUS_LABELS).map(([v,[l]])=>`<option value="${v}"${o.status===v?' selected':''}>${l}</option>`).join('')}
+          </select>
+        </td>
+        <td style="font-size:0.78rem; color:var(--muted); max-width:160px;">${escHtml(o.notes || '—')}</td>
+        <td><button class="action-btn del" onclick="deleteOrder('${idSafe}')">Delete</button></td>
+      </tr>`;
+    }).join('');
+  }
+
+  function updateStats() {
+    const orders = getOrders();
+    document.getElementById('stat-total').textContent   = orders.length;
+    document.getElementById('stat-pending').textContent = orders.filter(o=>o.status==='pending').length;
+    document.getElementById('stat-prod').textContent    = orders.filter(o=>o.status==='production').length;
+    document.getElementById('stat-done').textContent    = orders.filter(o=>o.status==='delivered').length;
+  }
+
+  // Seed demo orders if none exist
+  const SEED_ORDERS = [
+    { id:'ORD-001', date:'2025-03-05', sub:'Millennium Casket (JB)', model:'Serene (Pine)', qty:5, unit:220, total:1100, delivery:'2025-03-12', status:'delivered', notes:'FSC pine, natural lacquer, Passage brass nameplate. Delivered to StorHub Woodlands unit B12. All 5 units passed QC.' },
+    { id:'ORD-002', date:'2025-03-05', sub:'Millennium Casket (JB)', model:'Tranquil (Hardwood)', qty:3, unit:310, total:930, delivery:'2025-03-12', status:'delivered', notes:'Satin walnut stain, ivory velvet lining. Delivered with ORD-001. Minor surface scratch on unit 2 — rectified on-site.' },
+    { id:'ORD-003', date:'2025-03-18', sub:'Zhen Feng Object Workshop (SG)', model:'Eternal (Mahogany)', qty:2, unit:480, total:960, delivery:'2025-03-25', status:'delivered', notes:'Hand-polished dark mahogany, brass 8-point handles. Local SG assembly. Both units passed QC. Customer (Tan family, Bedok) satisfied.' },
+    { id:'ORD-004', date:'2025-03-22', sub:'The Eco Casket (Selangor)', model:'Eco Green', qty:2, unit:155, total:310, delivery:'2025-03-29', status:'delivered', notes:'Trial order for eco tier. Finoboard construction. Confirmed cremation-compatible. Good feedback — consider adding to product catalogue.' },
+    { id:'ORD-005', date:'2025-04-01', sub:'Millennium Casket (JB)', model:'Serene (Pine)', qty:8, unit:215, total:1720, delivery:'2025-04-08', status:'production', notes:'Restocking buffer. Revised unit cost negotiated down from S$220. Confirm FSC certificate batch number before delivery.' },
+    { id:'ORD-006', date:'2025-04-01', sub:'Millennium Casket (JB)', model:'Tranquil (Hardwood)', qty:4, unit:300, total:1200, delivery:'2025-04-08', status:'production', notes:'Restocking. Same batch as ORD-005. Request velvet lining in ivory only — previous batch had one off-white unit.' },
+    { id:'ORD-007', date:'2025-04-03', sub:'White Artz Carpentry (SG)', model:'Eternal (Mahogany)', qty:1, unit:520, total:520, delivery:'2025-04-10', status:'quality', notes:'Custom order — Lim family, Toa Payoh. Extra hand-engraving on nameplate. QC in progress at workshop. Collect Thursday.' },
+    { id:'ORD-008', date:'2025-04-04', sub:'TSTee Wood Industry (Kedah)', model:'Serene (Pine)', qty:10, unit:195, total:1950, delivery:'2025-04-18', status:'pending', notes:'Bulk trial with TSTee. MOQ met. Awaiting OEM agreement sign-off and FSC batch documentation. Lower unit cost — evaluate vs Millennium quality.' },
+  ];
+  if (!getOrders().length) saveOrders(SEED_ORDERS);
+
+  // Init if already logged in
+  if (sessionStorage.getItem('admin_auth') === '1') {
+    renderOrders();
+    updateStats();
+  }
+
+  // Set today's date as default for order date
+  document.getElementById('o-date').value = new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>

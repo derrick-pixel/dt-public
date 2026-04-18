@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELIXCRAFT — Tactical Advisor AI (HR Policy Q&A)</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/hr-pages.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet" />
+</head>
+<body class="hr-screen">
+  <canvas id="starfield"></canvas>
+
+  <!-- TOP BAR -->
+  <div class="hr-topbar">
+    <a href="dashboard.html" class="hr-topbar-logo">
+      <span class="logo-hex">⬡</span>
+      <span class="logo-text">ELIXCRAFT</span>
+    </a>
+    <div class="hr-topbar-breadcrumb">
+      <span>EMPLOYEE PORTAL</span>
+      <span class="bc-sep">›</span>
+      <span class="bc-active">TACTICAL ADVISOR</span>
+    </div>
+    <div class="hr-topbar-right">
+      <a href="sitrep.html" class="hr-topbar-btn">📊 SITREP</a>
+      <a href="dashboard.html" class="hr-topbar-btn">⬡ COMMAND CENTER</a>
+      <div class="hr-faction-badge" id="top-faction-badge">PROTOSS · LVL 7</div>
+    </div>
+  </div>
+
+  <div class="hr-body">
+
+    <!-- SIDEBAR -->
+    <aside class="hr-sidebar">
+      <div class="hr-nav-section">
+        <div class="hr-nav-label">OVERVIEW</div>
+        <a href="dashboard.html" class="hr-nav-item"><span class="nav-icon">⬡</span> Command Center</a>
+      </div>
+      <div class="hr-nav-divider"></div>
+      <div class="hr-nav-section">
+        <div class="hr-nav-label">EMPLOYEE PORTAL</div>
+        <a href="dashboard.html" class="hr-nav-item"><span class="nav-icon">⊞</span> Dashboard & AI</a>
+        <a href="kpi-tracking.html" class="hr-nav-item"><span class="nav-icon">◎</span> Mission Objectives</a>
+        <a href="leave-management.html" class="hr-nav-item"><span class="nav-icon">🛡</span> PTO Shield</a>
+        <a href="claims.html" class="hr-nav-item"><span class="nav-icon">💎</span> Resource Requisition</a>
+        <a href="policy-qa.html" class="hr-nav-item active"><span class="nav-icon">🤖</span> Tactical Advisor <span class="nav-dot" style="margin-left:auto"></span></a>
+      </div>
+      <div class="hr-nav-divider"></div>
+      <div class="hr-nav-section">
+        <div class="hr-nav-label">EMPLOYER PORTAL</div>
+        <a href="employee-directory.html" class="hr-nav-item"><span class="nav-icon">👥</span> Unit Registry</a>
+      </div>
+      <div class="hr-nav-divider"></div>
+      <div class="hr-nav-section">
+        <div class="hr-nav-label">COMMAND CONFIG</div>
+        <a href="hr-settings.html" class="hr-nav-item"><span class="nav-icon">⚙</span> HR Settings</a>
+      </div>
+      <div class="hr-nav-divider"></div>
+      <div class="hr-nav-section">
+        <div class="hr-nav-label">INTELLIGENCE</div>
+        <a href="sitrep.html" class="hr-nav-item"><span class="nav-icon">📊</span> Corp Overview</a>
+        <a href="sitrep.html#cost" class="hr-nav-item"><span class="nav-icon">💰</span> Workforce Cost</a>
+        <a href="sitrep.html#demographics" class="hr-nav-item"><span class="nav-icon">👤</span> Demographics</a>
+        <a href="sitrep.html#engagement" class="hr-nav-item"><span class="nav-icon">⚡</span> Engagement</a>
+        <a href="career-map.html" class="hr-nav-item"><span class="nav-icon">🗺</span> Workforce Planning</a>
+        <a href="sitrep.html#talent" class="hr-nav-item"><span class="nav-icon">↑</span> Talent Pipeline</a>
+        <a href="sitrep.html#risk" class="hr-nav-item"><span class="nav-icon">⚠</span> Risk Analysis</a>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="hr-content">
+
+      <div class="hr-page-header">
+        <div>
+          <div class="hr-page-title">ELIX Tactical Advisor</div>
+          <div class="hr-page-sub">AI-powered HR intelligence — ask about policies, benefits, entitlements & career paths</div>
+        </div>
+        <div class="hr-page-actions">
+          <div class="hr-ai-badge">⚡ POWERED BY ELITEZ AI</div>
+        </div>
+      </div>
+
+      <div class="hr-grid-2" style="grid-template-columns:1fr 360px;align-items:start">
+
+        <!-- Chat Interface -->
+        <div class="hr-card" style="padding:0;overflow:hidden">
+          <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
+            <div style="width:32px;height:32px;border-radius:50%;background:rgba(0,230,118,0.15);border:1px solid rgba(0,230,118,0.4);display:flex;align-items:center;justify-content:center;font-size:0.85rem">🤖</div>
+            <div>
+              <div style="font-family:var(--font-ui);font-size:0.62rem;letter-spacing:0.1em;color:var(--text-primary)">ELIX TACTICAL ADVISOR</div>
+              <div style="font-size:0.65rem;color:var(--success)">● Online · AI-powered · Singapore MOM compliant</div>
+            </div>
+          </div>
+
+          <div class="chat-messages" id="chat-messages" style="border:none;border-radius:0;height:420px">
+
+            <!-- AI greeting -->
+            <div class="chat-msg">
+              <div class="chat-avatar ai">🤖</div>
+              <div class="chat-bubble ai">
+                <strong>Welcome, Commander.</strong><br><br>
+                I'm your ELIX Tactical Advisor — an AI assistant trained on Singapore's Employment Act, MOM guidelines, SkillsFuture frameworks, and Elitez's internal HR policies.<br><br>
+                Ask me anything about leave entitlements, CPF contributions, appraisal cycles, claims, or your career progression. I'm here to help.
+              </div>
+            </div>
+
+            <div class="chat-msg">
+              <div class="chat-avatar ai">🤖</div>
+              <div class="chat-bubble ai">
+                <strong>Quick topics you can ask about:</strong><br>
+                • Leave entitlements & MOM rules<br>
+                • CPF contribution rates 2026<br>
+                • Performance appraisal cycle<br>
+                • SkillsFuture credits & eligibility<br>
+                • Salary increment & bonus structure<br>
+                • Flexible work arrangements
+              </div>
+            </div>
+
+          </div>
+
+          <div class="chat-input-row">
+            <input class="chat-input" id="chat-input" type="text"
+              placeholder="Ask about HR policy, benefits, leave, CPF…"
+              onkeydown="if(event.key==='Enter') sendMessage()" />
+            <button class="chat-send" onclick="sendMessage()">TRANSMIT</button>
+          </div>
+        </div>
+
+        <!-- Right Panel: Quick Topics -->
+        <div style="display:flex;flex-direction:column;gap:14px">
+
+          <div class="hr-card">
+            <div class="hr-card-header">
+              <div class="hr-card-title"><span class="card-icon">⚡</span> QUICK INTEL QUERIES</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <button class="hr-chip" style="text-align:left;border-radius:4px;padding:9px 12px" onclick="askQuestion('What is my annual leave entitlement?')">
+                🏖 What is my annual leave entitlement?
+              </button>
+              <button class="hr-chip" style="text-align:left;border-radius:4px;padding:9px 12px" onclick="askQuestion('How does CPF work for my age group?')">
+                🏦 How does CPF work for my age group?
+              </button>
+              <button class="hr-chip" style="text-align:left;border-radius:4px;padding:9px 12px" onclick="askQuestion('When is the next appraisal cycle?')">
+                ⭐ When is the next appraisal cycle?
+              </button>
+              <button class="hr-chip" style="text-align:left;border-radius:4px;padding:9px 12px" onclick="askQuestion('How do I use my SkillsFuture credits?')">
+                📚 How do I use SkillsFuture credits?
+              </button>
+              <button class="hr-chip" style="text-align:left;border-radius:4px;padding:9px 12px" onclick="askQuestion('What is the flexible work arrangement policy?')">
+                🏠 What is the flexible work policy?
+              </button>
+              <button class="hr-chip" style="text-align:left;border-radius:4px;padding:9px 12px" onclick="askQuestion('How do I apply for a promotion?')">
+                ↑ How do I apply for a promotion?
+              </button>
+              <button class="hr-chip" style="text-align:left;border-radius:4px;padding:9px 12px" onclick="askQuestion('What benefits are included in my package?')">
+                💎 What benefits are in my package?
+              </button>
+            </div>
+          </div>
+
+          <div class="hr-card">
+            <div class="hr-card-header">
+              <div class="hr-card-title"><span class="card-icon">📋</span> POLICY DOCUMENTS</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div class="setting-row" style="padding:8px 0">
+                <div>
+                  <div class="setting-label" style="font-size:0.75rem">Employee Handbook 2026</div>
+                  <div class="setting-sub">Version 4.1 · Updated Jan 2026</div>
+                </div>
+                <button class="btn-hr-ghost" style="font-size:0.65rem;padding:4px 10px">VIEW</button>
+              </div>
+              <div class="setting-row" style="padding:8px 0">
+                <div>
+                  <div class="setting-label" style="font-size:0.75rem">Leave Policy Guidelines</div>
+                  <div class="setting-sub">MOM-aligned · All leave types</div>
+                </div>
+                <button class="btn-hr-ghost" style="font-size:0.65rem;padding:4px 10px">VIEW</button>
+              </div>
+              <div class="setting-row" style="padding:8px 0">
+                <div>
+                  <div class="setting-label" style="font-size:0.75rem">CPF Contribution Table 2026</div>
+                  <div class="setting-sub">MOM / CPF Board official rates</div>
+                </div>
+                <button class="btn-hr-ghost" style="font-size:0.65rem;padding:4px 10px">VIEW</button>
+              </div>
+              <div class="setting-row" style="padding:8px 0;border-bottom:none">
+                <div>
+                  <div class="setting-label" style="font-size:0.75rem">Appraisal Framework</div>
+                  <div class="setting-sub">Performance bands & criteria</div>
+                </div>
+                <button class="btn-hr-ghost" style="font-size:0.65rem;padding:4px 10px">VIEW</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="hr-card" style="background:rgba(0,230,118,0.04);border-color:rgba(0,230,118,0.2)">
+            <div style="font-family:var(--font-ui);font-size:0.55rem;letter-spacing:0.15em;color:var(--success);margin-bottom:8px">⚡ AI DISCLAIMER</div>
+            <div style="font-size:0.7rem;color:var(--text-dim);line-height:1.6">
+              ELIX Tactical Advisor provides guidance based on current HR policy and Singapore employment law. For formal HR matters, always verify with your HR Business Partner. This AI assistant does not constitute legal advice.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="js/game-state.js"></script>
+  <script src="js/starfield.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const badge = sessionStorage.getItem('elixcraft_faction_badge') || 'COMMANDER';
+      document.getElementById('top-faction-badge').textContent = badge;
+    });
+
+    const responses = {
+      'leave': `Based on Singapore's Employment Act and your current tenure (2+ years):<br><br>
+        <strong>Annual Leave:</strong> 14 days/year (increases to 15 days at 3 years)<br>
+        <strong>Medical Leave:</strong> 14 days/year outpatient + 60 days hospitalisation<br>
+        <strong>Childcare Leave:</strong> 6 days/year per child (up to age 7)<br>
+        <strong>Paternity Leave:</strong> 4 weeks (Government-Paid for Singapore citizens)<br>
+        <strong>Maternity Leave:</strong> 16 weeks (Government-Paid for Singapore citizens)<br><br>
+        Your current balances are visible in the PTO Shield module.`,
+
+      'cpf': `CPF contribution rates for 2026 (Age 35 and below):<br><br>
+        <strong>Employee contribution:</strong> 20% of gross salary<br>
+        <strong>Employer contribution:</strong> 17% of gross salary<br>
+        <strong>Total:</strong> 37% of gross salary<br><br>
+        <strong>CPF allocation:</strong><br>
+        • Ordinary Account (OA): 23% — housing, investment, education<br>
+        • Special Account (SA): 6% — retirement, CPF LIFE<br>
+        • MediSave Account (MA): 8% — hospitalisation, medical insurance<br><br>
+        Applies to Singapore Citizens and PRs. CPF ceiling: S$7,400/month (2026).`,
+
+      'appraisal': `The next appraisal cycle:<br><br>
+        <strong>Q2 2026 Mid-Year Review</strong><br>
+        • Self-assessment window: Apr 15 – Apr 30, 2026<br>
+        • Manager review: May 1 – May 15, 2026<br>
+        • 1:1 calibration sessions: May 20 – Jun 5, 2026<br>
+        • Results communicated: Jun 15, 2026<br><br>
+        Rating scale: 1.0 – 5.0 (5 = Outstanding, 4 = Exceeds, 3 = Meets, 2 = Developing, 1 = Below)<br><br>
+        Your current score: <strong>4.2 (Exceeds Expectations)</strong>`,
+
+      'skillsfuture': `SkillsFuture Credit for eligible Singaporeans:<br><br>
+        <strong>Your balance:</strong> S$500 (initial) + S$200 top-up (if 40+)<br><br>
+        <strong>How to use:</strong><br>
+        1. Find an approved course on <em>skillsfuture.gov.sg</em><br>
+        2. Register and select "SkillsFuture Credit" at checkout<br>
+        3. Submit proof to HR for company co-funding eligibility<br><br>
+        <strong>Elitez co-funds:</strong> Up to S$1,000/year for pre-approved technical certifications. Requires manager endorsement before enrolment.`,
+
+      'flexible': `Elitez Flexible Work Arrangement (FWA) Policy:<br><br>
+        <strong>Work-from-home:</strong> Up to 3 days/week (Engineering & Product teams)<br>
+        <strong>Core hours:</strong> 10am – 4pm SGT (required in-office or available)<br>
+        <strong>Flexi-hours:</strong> Total 45 hours/week, schedule self-managed<br><br>
+        <strong>To apply for formal FWA:</strong> Submit FWA form to HR > manager endorsement > HR approval (SLA: 10 business days)<br><br>
+        Per MOM's FWA Tripartite guidelines effective Dec 2024, employers must consider all FWA requests in good faith.`,
+
+      'promotion': `Promotion pathway at Elitez (Engineering track):<br><br>
+        <strong>Eligibility criteria:</strong><br>
+        • Minimum 12 months in current grade<br>
+        • Last appraisal rating ≥ 3.5<br>
+        • Manager nomination required<br>
+        • Skills gap assessment completed<br><br>
+        <strong>Your status:</strong> LVL 7 (Staff Engineer) — eligible for Principal Engineer promotion at LVL 9+<br><br>
+        <strong>Current bottleneck:</strong> G4→G5 promotion cycle is active. 12 pending cases being reviewed. Speak to your manager to be nominated for the next cycle (Jun 2026).`,
+
+      'benefits': `Your current benefits package (Protoss · Engineering):<br><br>
+        <strong>Medical:</strong> Gold Integrated Shield Plan — full inpatient, no co-pay<br>
+        <strong>Dental & Optical:</strong> S$500/year combined allowance<br>
+        <strong>Annual Leave:</strong> 14 days (+ public holidays)<br>
+        <strong>CPF:</strong> 17% employer contribution<br>
+        <strong>Learning Budget:</strong> S$1,000/year for certifications<br>
+        <strong>Claim Allowance:</strong> S$3,000/year<br>
+        <strong>Equity/RSU:</strong> Unlocked at LVL 8 milestone<br>
+        <strong>Phone Allowance:</strong> S$50/month<br>
+        <strong>Gym Subsidy:</strong> S$600/year`,
+
+      'default': `I understand you're asking about <em>"{query}"</em>.<br><br>
+        I'm processing your query against Elitez's HR policy database and Singapore MOM guidelines...<br><br>
+        For detailed guidance on this topic, I recommend:<br>
+        1. Checking the policy documents panel →<br>
+        2. Contacting your HR Business Partner at <strong>hr@elitez.sg</strong><br>
+        3. Visiting the MOM self-help portal at mom.gov.sg<br><br>
+        Is there anything else I can help clarify?`
+    };
+
+    function getResponse(query) {
+      const q = query.toLowerCase();
+      if (q.includes('leave') || q.includes('pto') || q.includes('holiday') || q.includes('annual')) return responses.leave;
+      if (q.includes('cpf') || q.includes('contribution') || q.includes('provident')) return responses.cpf;
+      if (q.includes('appraisal') || q.includes('performance') || q.includes('review') || q.includes('rating')) return responses.appraisal;
+      if (q.includes('skillsfuture') || q.includes('skills future') || q.includes('training') || q.includes('course')) return responses.skillsfuture;
+      if (q.includes('flexible') || q.includes('wfh') || q.includes('work from home') || q.includes('remote')) return responses.flexible;
+      if (q.includes('promotion') || q.includes('promot') || q.includes('career') || q.includes('level up')) return responses.promotion;
+      if (q.includes('benefit') || q.includes('package') || q.includes('medical') || q.includes('dental')) return responses.benefits;
+      return responses.default.replace('{query}', query);
+    }
+
+    function addMessage(text, isUser) {
+      const container = document.getElementById('chat-messages');
+      const msg = document.createElement('div');
+      msg.className = `chat-msg${isUser ? ' user' : ''}`;
+      msg.innerHTML = `
+        <div class="chat-avatar ${isUser ? 'user' : 'ai'}">${isUser ? 'AC' : '🤖'}</div>
+        <div class="chat-bubble ${isUser ? 'user' : 'ai'}">${text}</div>
+      `;
+      container.appendChild(msg);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function addTypingIndicator() {
+      const container = document.getElementById('chat-messages');
+      const msg = document.createElement('div');
+      msg.className = 'chat-msg';
+      msg.id = 'typing-indicator';
+      msg.innerHTML = `
+        <div class="chat-avatar ai">🤖</div>
+        <div class="chat-bubble ai" style="color:var(--text-dim)">Analysing policy database…</div>
+      `;
+      container.appendChild(msg);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+      const el = document.getElementById('typing-indicator');
+      if (el) el.remove();
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('chat-input');
+      const query = input.value.trim();
+      if (!query) return;
+
+      addMessage(query, true);
+      input.value = '';
+      addTypingIndicator();
+
+      setTimeout(() => {
+        removeTypingIndicator();
+        addMessage(getResponse(query), false);
+      }, 800 + Math.random() * 600);
+    }
+
+    function askQuestion(question) {
+      document.getElementById('chat-input').value = question;
+      sendMessage();
+    }
+  </script>
+</body>
+</html>

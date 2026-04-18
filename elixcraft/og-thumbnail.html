@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OG Thumbnail — 1200×630</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      width: 1200px;
+      height: 630px;
+      overflow: hidden;
+      background: #04080f;
+      font-family: 'Exo 2', sans-serif;
+    }
+
+    .thumb {
+      width: 1200px;
+      height: 630px;
+      position: relative;
+      overflow: hidden;
+      background: #04080f;
+    }
+
+    /* ── Hex grid background ── */
+    .hex-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 50%, rgba(255,215,0,0.06) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(74,158,255,0.05) 0%, transparent 40%),
+        radial-gradient(circle at 60% 80%, rgba(180,79,255,0.04) 0%, transparent 35%);
+    }
+
+    .hex-pattern {
+      position: absolute;
+      inset: 0;
+      opacity: 0.18;
+      background-image:
+        repeating-linear-gradient(60deg, rgba(255,215,0,0.08) 0, rgba(255,215,0,0.08) 1px, transparent 1px, transparent 80px),
+        repeating-linear-gradient(-60deg, rgba(255,215,0,0.08) 0, rgba(255,215,0,0.08) 1px, transparent 1px, transparent 80px),
+        repeating-linear-gradient(0deg, rgba(255,215,0,0.04) 0, rgba(255,215,0,0.04) 1px, transparent 1px, transparent 80px);
+    }
+
+    /* ── Glowing edge strip ── */
+    .edge-top {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #ffd700, #ffd700 40%, #4a9eff 60%, #b44fff, transparent);
+    }
+    .edge-bottom {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255,215,0,0.4), transparent);
+    }
+
+    /* ── Corner marks ── */
+    .corner { position: absolute; width: 24px; height: 24px; }
+    .corner-tl { top: 18px; left: 18px; border-top: 1.5px solid #6b5300; border-left: 1.5px solid #6b5300; }
+    .corner-tr { top: 18px; right: 18px; border-top: 1.5px solid #6b5300; border-right: 1.5px solid #6b5300; }
+    .corner-bl { bottom: 18px; left: 18px; border-bottom: 1.5px solid #6b5300; border-left: 1.5px solid #6b5300; }
+    .corner-br { bottom: 18px; right: 18px; border-bottom: 1.5px solid #6b5300; border-right: 1.5px solid #6b5300; }
+
+    /* ── Layout ── */
+    .content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: 44px 60px 36px;
+    }
+
+    /* ── Top row: logo + badge ── */
+    .top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+    .logo-group { display: flex; align-items: center; gap: 14px; }
+    .logo-hex {
+      font-size: 2.2rem;
+      color: #ffd700;
+      filter: drop-shadow(0 0 12px rgba(255,215,0,0.6));
+      line-height: 1;
+    }
+    .logo-text-block {}
+    .logo-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.05rem;
+      font-weight: 900;
+      letter-spacing: 0.22em;
+      color: #ffffff;
+    }
+    .logo-sub {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.42rem;
+      letter-spacing: 0.3em;
+      color: #5a7a9a;
+      margin-top: 3px;
+    }
+    .sg-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      border: 1px solid rgba(255,215,0,0.25);
+      border-radius: 3px;
+      background: rgba(255,215,0,0.05);
+    }
+    .sg-badge-text {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.45rem;
+      letter-spacing: 0.18em;
+      color: #5a7a9a;
+      line-height: 1.6;
+    }
+    .sg-badge-text span { color: #ffd700; display: block; }
+
+    /* ── Hero title ── */
+    .hero-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 5.2rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      line-height: 0.95;
+      margin-bottom: 16px;
+    }
+    .hero-title .elix { color: #ffd700; text-shadow: 0 0 40px rgba(255,215,0,0.45); }
+    .hero-title .craft { color: #ffffff; }
+
+    .hero-sub {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.28em;
+      color: #5a7a9a;
+      margin-bottom: 28px;
+    }
+
+    /* ── Tagline ── */
+    .tagline {
+      font-size: 1.05rem;
+      font-weight: 300;
+      color: #c8d8e8;
+      font-style: italic;
+      letter-spacing: 0.02em;
+      margin-bottom: 36px;
+      max-width: 540px;
+      line-height: 1.5;
+    }
+    .tagline em { color: #ffd700; font-style: normal; font-weight: 600; }
+
+    /* ── Faction pills row ── */
+    .factions-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: auto;
+    }
+
+    .faction-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-radius: 4px;
+      border: 1px solid;
+    }
+    .faction-pill.protoss { border-color: rgba(255,215,0,0.35); background: rgba(255,215,0,0.07); }
+    .faction-pill.terran  { border-color: rgba(74,158,255,0.35); background: rgba(74,158,255,0.07); }
+    .faction-pill.zerg    { border-color: rgba(180,79,255,0.35); background: rgba(180,79,255,0.07); }
+
+    .pill-icon { font-size: 1.3rem; }
+    .pill-text {}
+    .pill-name {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+    }
+    .faction-pill.protoss .pill-name { color: #ffd700; }
+    .faction-pill.terran  .pill-name { color: #4a9eff; }
+    .faction-pill.zerg    .pill-name { color: #b44fff; }
+    .pill-dept {
+      font-size: 0.62rem;
+      color: #5a7a9a;
+      margin-top: 1px;
+    }
+
+    /* ── Bottom row ── */
+    .bottom-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 20px;
+      border-top: 1px solid rgba(26,48,80,0.6);
+      margin-top: 20px;
+    }
+    .feature-chips { display: flex; gap: 10px; flex-wrap: wrap; }
+    .chip {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.42rem;
+      letter-spacing: 0.14em;
+      padding: 5px 11px;
+      border: 1px solid rgba(26,48,80,0.8);
+      border-radius: 2px;
+      color: #5a7a9a;
+    }
+    .url {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.12em;
+      color: rgba(255,215,0,0.5);
+    }
+
+    /* ── Right side decorative panel ── */
+    .side-panel {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 310px;
+      background: linear-gradient(180deg, rgba(10,22,40,0.8) 0%, rgba(4,8,15,0.4) 100%);
+      border-left: 1px solid rgba(26,48,80,0.5);
+      display: flex;
+      flex-direction: column;
+      padding: 44px 32px 36px;
+      gap: 18px;
+    }
+
+    .side-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.44rem;
+      letter-spacing: 0.25em;
+      color: #5a7a9a;
+      margin-bottom: 2px;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .fi-icon {
+      width: 30px; height: 30px; flex-shrink: 0;
+      border: 1px solid rgba(255,215,0,0.2);
+      border-radius: 3px;
+      background: rgba(255,215,0,0.06);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+    }
+    .fi-body {}
+    .fi-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.1em;
+      color: #c8d8e8;
+      margin-bottom: 2px;
+    }
+    .fi-desc { font-size: 0.62rem; color: #5a7a9a; line-height: 1.5; }
+
+    .side-divider { height: 1px; background: rgba(26,48,80,0.6); }
+
+    .side-stat-row { display: flex; justify-content: space-between; gap: 8px; }
+    .side-stat { text-align: center; flex: 1; }
+    .side-stat-val {
+      font-family: 'Orbitron', monospace;
+      font-size: 1rem;
+      font-weight: 900;
+      color: #ffd700;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .side-stat-lbl { font-family: 'Orbitron', monospace; font-size: 0.38rem; letter-spacing: 0.15em; color: #5a7a9a; }
+  </style>
+</head>
+<body>
+<div class="thumb">
+
+  <!-- Background -->
+  <div class="hex-grid"></div>
+  <div class="hex-pattern"></div>
+  <div class="edge-top"></div>
+  <div class="edge-bottom"></div>
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+
+  <!-- Right decorative panel -->
+  <div class="side-panel">
+    <div>
+      <div class="side-label">SYSTEM MODULES</div>
+    </div>
+    <div class="feature-item">
+      <div class="fi-icon">⚔️</div>
+      <div class="fi-body">
+        <div class="fi-title">COMMAND CENTER</div>
+        <div class="fi-desc">Quest board, tech tree, org map & career progression</div>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="fi-icon">📊</div>
+      <div class="fi-body">
+        <div class="fi-title">INTELLIGENCE HUB</div>
+        <div class="fi-desc">Workforce analytics, engagement & risk analysis</div>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="fi-icon">🛡️</div>
+      <div class="fi-body">
+        <div class="fi-title">HR PORTAL</div>
+        <div class="fi-desc">Leave, claims, KPIs, policy AI & unit registry</div>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="fi-icon">🚀</div>
+      <div class="fi-body">
+        <div class="fi-title">ONBOARDING ENGINE</div>
+        <div class="fi-desc">Pre-boarding briefing, D30/D60/D90 milestones</div>
+      </div>
+    </div>
+    <div class="side-divider"></div>
+    <div class="side-stat-row">
+      <div class="side-stat">
+        <div class="side-stat-val">3</div>
+        <div class="side-stat-lbl">FACTIONS</div>
+      </div>
+      <div class="side-stat">
+        <div class="side-stat-val">16</div>
+        <div class="side-stat-lbl">SECTORS</div>
+      </div>
+      <div class="side-stat">
+        <div class="side-stat-val">∞</div>
+        <div class="side-stat-lbl">QUESTS</div>
+      </div>
+    </div>
+    <div style="font-family:'Orbitron',monospace;font-size:0.38rem;letter-spacing:0.18em;color:rgba(90,122,154,0.6);text-align:center;margin-top:auto">SG MOM · SKILLSFUTURE · CPF ALIGNED</div>
+  </div>
+
+  <!-- Main content (left 890px) -->
+  <div class="content" style="width:890px">
+
+    <!-- Top row -->
+    <div class="top-row">
+      <div class="logo-group">
+        <div class="logo-hex">⬡</div>
+        <div class="logo-text-block">
+          <div class="logo-title">ELIXCRAFT</div>
+          <div class="logo-sub">EMPLOYEE LIFECYCLE COMMAND SYSTEM</div>
+        </div>
+      </div>
+      <div class="sg-badge">
+        <div style="font-size:1.1rem">🇸🇬</div>
+        <div class="sg-badge-text">
+          <span>BUILD 2026 · v1.0</span>
+          SINGAPORE EDITION
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero-title">
+      <span class="elix">ELIX</span><span class="craft">CRAFT</span>
+    </div>
+    <div class="hero-sub">GAMIFIED HR — YOUR CAREER IS YOUR COMMAND</div>
+
+    <div class="tagline">
+      The <em>first gamified HR platform</em> built on Singapore's SkillsFuture & MOM frameworks.<br>
+      Choose your faction. Deploy your Commander. Level up your career.
+    </div>
+
+    <!-- Factions -->
+    <div class="factions-row">
+      <div class="faction-pill protoss">
+        <span class="pill-icon">⚡</span>
+        <div class="pill-text">
+          <div class="pill-name">PROTOSS</div>
+          <div class="pill-dept">Engineering</div>
+        </div>
+      </div>
+      <div class="faction-pill terran">
+        <span class="pill-icon">🏗️</span>
+        <div class="pill-text">
+          <div class="pill-name">TERRAN</div>
+          <div class="pill-dept">Operations</div>
+        </div>
+      </div>
+      <div class="faction-pill zerg">
+        <span class="pill-icon">🦾</span>
+        <div class="pill-text">
+          <div class="pill-name">ZERG</div>
+          <div class="pill-dept">Sales & Growth</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="bottom-row">
+      <div class="feature-chips">
+        <span class="chip">CAREER MAP</span>
+        <span class="chip">BOSS BATTLE</span>
+        <span class="chip">SKILLSFUTURE</span>
+        <span class="chip">AI ADVISOR</span>
+        <span class="chip">CPF COMPLIANCE</span>
+      </div>
+      <div class="url">derrick-pixel.github.io/ElixCraft</div>
+    </div>
+
+  </div>
+
+</div>
+</body>
+</html>

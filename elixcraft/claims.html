@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELIXCRAFT — Resource Requisition (Claims & Expenses)</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/hr-pages.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet" />
+</head>
+<body class="hr-screen">
+  <canvas id="starfield"></canvas>
+
+  <!-- TOP BAR -->
+  <div class="hr-topbar">
+    <a href="dashboard.html" class="hr-topbar-logo">
+      <span class="logo-hex">⬡</span>
+      <span class="logo-text">ELIXCRAFT</span>
+    </a>
+    <div class="hr-topbar-breadcrumb">
+      <span>EMPLOYEE PORTAL</span>
+      <span class="bc-sep">›</span>
+      <span class="bc-active">RESOURCE REQUISITION</span>
+    </div>
+    <div class="hr-topbar-right">
+      <a href="sitrep.html" class="hr-topbar-btn">📊 SITREP</a>
+      <a href="dashboard.html" class="hr-topbar-btn">⬡ COMMAND CENTER</a>
+      <div class="hr-faction-badge" id="top-faction-badge">PROTOSS · LVL 7</div>
+    </div>
+  </div>
+
+  <div class="hr-body">
+
+    <!-- SIDEBAR -->
+    <aside class="hr-sidebar">
+      <div class="hr-nav-section">
+        <div class="hr-nav-label">OVERVIEW</div>
+        <a href="dashboard.html" class="hr-nav-item"><span class="nav-icon">⬡</span> Command Center</a>
+      </div>
+      <div class="hr-nav-divider"></div>
+      <div class="hr-nav-section">
+        <div class="hr-nav-label">EMPLOYEE PORTAL</div>
+        <a href="dashboard.html" class="hr-nav-item"><span class="nav-icon">⊞</span> Dashboard & AI</a>
+        <a href="kpi-tracking.html" class="hr-nav-item"><span class="nav-icon">◎</span> Mission Objectives</a>
+        <a href="leave-management.html" class="hr-nav-item"><span class="nav-icon">🛡</span> PTO Shield</a>
+        <a href="claims.html" class="hr-nav-item active"><span class="nav-icon">💎</span> Resource Requisition <span class="nav-dot" style="margin-left:auto"></span></a>
+        <a href="policy-qa.html" class="hr-nav-item"><span class="nav-icon">🤖</span> Tactical Advisor</a>
+      </div>
+      <div class="hr-nav-divider"></div>
+      <div class="hr-nav-section">
+        <div class="hr-nav-label">EMPLOYER PORTAL</div>
+        <a href="employee-directory.html" class="hr-nav-item"><span class="nav-icon">👥</span> Unit Registry</a>
+      </div>
+      <div class="hr-nav-divider"></div>
+      <div class="hr-nav-section">
+        <div class="hr-nav-label">COMMAND CONFIG</div>
+        <a href="hr-settings.html" class="hr-nav-item"><span class="nav-icon">⚙</span> HR Settings</a>
+      </div>
+      <div class="hr-nav-divider"></div>
+      <div class="hr-nav-section">
+        <div class="hr-nav-label">INTELLIGENCE</div>
+        <a href="sitrep.html" class="hr-nav-item"><span class="nav-icon">📊</span> Corp Overview</a>
+        <a href="sitrep.html#cost" class="hr-nav-item"><span class="nav-icon">💰</span> Workforce Cost</a>
+        <a href="sitrep.html#demographics" class="hr-nav-item"><span class="nav-icon">👤</span> Demographics</a>
+        <a href="sitrep.html#engagement" class="hr-nav-item"><span class="nav-icon">⚡</span> Engagement</a>
+        <a href="career-map.html" class="hr-nav-item"><span class="nav-icon">🗺</span> Workforce Planning</a>
+        <a href="sitrep.html#talent" class="hr-nav-item"><span class="nav-icon">↑</span> Talent Pipeline</a>
+        <a href="sitrep.html#risk" class="hr-nav-item"><span class="nav-icon">⚠</span> Risk Analysis</a>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="hr-content">
+
+      <div class="hr-page-header">
+        <div>
+          <div class="hr-page-title">Resource Requisition</div>
+          <div class="hr-page-sub">Submit expense claims for reimbursement — upload receipts & track claim status</div>
+        </div>
+        <div class="hr-page-actions">
+          <button class="btn-hr-primary" onclick="scrollToForm()">+ NEW CLAIM</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="hr-stat-row" style="grid-template-columns:repeat(4,1fr)">
+        <div class="hr-stat-card">
+          <div class="hr-stat-label"><span class="stat-icon">💎</span> YTD CLAIMED</div>
+          <div class="hr-stat-value">S$1,840</div>
+          <div class="hr-stat-delta">Jan – Apr 2026</div>
+        </div>
+        <div class="hr-stat-card">
+          <div class="hr-stat-label"><span class="stat-icon">⏳</span> PENDING</div>
+          <div class="hr-stat-value" style="color:var(--warning)">S$320</div>
+          <div class="hr-stat-delta warn">2 claims awaiting approval</div>
+        </div>
+        <div class="hr-stat-card">
+          <div class="hr-stat-label"><span class="stat-icon">✓</span> APPROVED</div>
+          <div class="hr-stat-value" style="color:var(--success)">S$1,520</div>
+          <div class="hr-stat-delta up">Paid to account</div>
+        </div>
+        <div class="hr-stat-card">
+          <div class="hr-stat-label"><span class="stat-icon">📋</span> CLAIM BUDGET</div>
+          <div class="hr-stat-value">S$3,000</div>
+          <div class="hr-stat-delta">Annual allowance · S$1,160 left</div>
+        </div>
+      </div>
+
+      <div class="hr-grid-2">
+
+        <!-- Submit New Claim -->
+        <div class="hr-card" id="claim-form">
+          <div class="hr-card-header">
+            <div class="hr-card-title"><span class="card-icon">📋</span> SUBMIT NEW REQUISITION</div>
+          </div>
+
+          <div class="hr-form-group">
+            <label class="hr-form-label">EXPENSE CATEGORY</label>
+            <select class="hr-form-select">
+              <option>— Select category —</option>
+              <option>Training & Certification</option>
+              <option>Transport (Client / Site)</option>
+              <option>Meals & Entertainment</option>
+              <option>Equipment & Hardware</option>
+              <option>Conference / Event</option>
+              <option>Software Subscription</option>
+              <option>Medical (Out-of-Pocket)</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="hr-form-row">
+            <div class="hr-form-group">
+              <label class="hr-form-label">AMOUNT (SGD)</label>
+              <input type="number" class="hr-form-input" placeholder="0.00" min="0" step="0.01" />
+            </div>
+            <div class="hr-form-group">
+              <label class="hr-form-label">EXPENSE DATE</label>
+              <input type="date" class="hr-form-input" value="2026-04-05" />
+            </div>
+          </div>
+
+          <div class="hr-form-group">
+            <label class="hr-form-label">DESCRIPTION</label>
+            <input type="text" class="hr-form-input" placeholder="e.g. AWS Certification exam fee" />
+          </div>
+
+          <div class="hr-form-group">
+            <label class="hr-form-label">PROJECT / COST CENTRE</label>
+            <select class="hr-form-select">
+              <option>Engineering — General</option>
+              <option>Project Nexus</option>
+              <option>AI/ML Initiative</option>
+              <option>Client: Elitez SG</option>
+              <option>Business Development</option>
+            </select>
+          </div>
+
+          <div class="hr-form-group">
+            <label class="hr-form-label">RECEIPT / DOCUMENTATION</label>
+            <div class="upload-zone" onclick="triggerUpload()">
+              <div class="upload-icon">📎</div>
+              <div class="upload-label">Click to upload receipt</div>
+              <div class="upload-sub">PDF, JPG, PNG — max 5MB</div>
+            </div>
+            <input type="file" id="file-input" style="display:none" />
+          </div>
+
+          <div style="display:flex;gap:10px">
+            <button class="btn-hr-primary" onclick="submitClaim()">SUBMIT REQUISITION</button>
+            <button class="btn-hr-secondary">SAVE DRAFT</button>
+          </div>
+        </div>
+
+        <!-- Budget Breakdown -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+
+          <div class="hr-card">
+            <div class="hr-card-header">
+              <div class="hr-card-title"><span class="card-icon">💰</span> ANNUAL CLAIM BUDGET</div>
+            </div>
+            <div style="margin-bottom:14px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:0.78rem">
+                <span style="color:var(--text-primary)">Utilised</span>
+                <span style="color:var(--warning)">S$1,840 of S$3,000</span>
+              </div>
+              <div class="leave-bar" style="height:10px">
+                <div class="leave-bar-fill" style="width:61%;background:linear-gradient(90deg,var(--success),var(--warning))"></div>
+              </div>
+              <div style="font-size:0.65rem;color:var(--text-dim);margin-top:4px">61% utilised · S$1,160 remaining</div>
+            </div>
+
+            <div class="kpi-item" style="padding:8px 0">
+              <div class="kpi-info"><div class="kpi-name" style="font-size:0.74rem">Training & Certification</div></div>
+              <div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill success" style="width:80%"></div></div></div>
+              <div style="font-size:0.72rem;color:var(--text-dim);min-width:80px;text-align:right">S$800 / S$1,000</div>
+            </div>
+            <div class="kpi-item" style="padding:8px 0">
+              <div class="kpi-info"><div class="kpi-name" style="font-size:0.74rem">Transport</div></div>
+              <div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill warning" style="width:95%"></div></div></div>
+              <div style="font-size:0.72rem;color:var(--text-dim);min-width:80px;text-align:right">S$380 / S$400</div>
+            </div>
+            <div class="kpi-item" style="padding:8px 0">
+              <div class="kpi-info"><div class="kpi-name" style="font-size:0.74rem">Meals & Entertainment</div></div>
+              <div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill success" style="width:40%"></div></div></div>
+              <div style="font-size:0.72rem;color:var(--text-dim);min-width:80px;text-align:right">S$240 / S$600</div>
+            </div>
+            <div class="kpi-item" style="padding:8px 0;border-bottom:none">
+              <div class="kpi-info"><div class="kpi-name" style="font-size:0.74rem">Equipment</div></div>
+              <div class="kpi-bar-wrap"><div class="kpi-bar"><div class="kpi-bar-fill success" style="width:35%"></div></div></div>
+              <div style="font-size:0.72rem;color:var(--text-dim);min-width:80px;text-align:right">S$420 / S$1,000 (cap)</div>
+            </div>
+          </div>
+
+          <!-- Quick Tips -->
+          <div class="hr-card">
+            <div class="hr-card-header">
+              <div class="hr-card-title"><span class="card-icon">⚡</span> CLAIM INTEL</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;font-size:0.74rem;color:var(--text-dim)">
+              <div style="display:flex;gap:8px"><span style="color:var(--success)">✓</span> Claims must be submitted within 30 days of expense date.</div>
+              <div style="display:flex;gap:8px"><span style="color:var(--success)">✓</span> Original receipts required for claims above S$50.</div>
+              <div style="display:flex;gap:8px"><span style="color:var(--warning)">⚠</span> Training claims require manager pre-approval before enrolment.</div>
+              <div style="display:flex;gap:8px"><span style="color:var(--success)">✓</span> SkillsFuture credits can offset eligible training costs.</div>
+              <div style="display:flex;gap:8px"><span style="color:var(--terran)">ℹ</span> Approval SLA: 5 business days from submission.</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Claims History -->
+      <div class="hr-card">
+        <div class="hr-card-header">
+          <div class="hr-card-title"><span class="card-icon">📋</span> REQUISITION LOG</div>
+          <div style="display:flex;gap:8px">
+            <select class="hr-form-select" style="width:auto;padding:5px 10px;font-size:0.72rem">
+              <option>All Status</option>
+              <option>Pending</option>
+              <option>Approved</option>
+              <option>Rejected</option>
+            </select>
+          </div>
+        </div>
+
+        <table class="hr-table">
+          <thead>
+            <tr>
+              <th>REF</th>
+              <th>CATEGORY</th>
+              <th>DESCRIPTION</th>
+              <th>DATE</th>
+              <th>AMOUNT</th>
+              <th>STATUS</th>
+              <th>PAID</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-family:var(--font-ui);font-size:0.62rem;color:var(--text-dim)">CLM-0047</td>
+              <td style="font-size:0.72rem;color:var(--text-dim)">Training</td>
+              <td>
+                <div style="font-size:0.78rem">AWS Solutions Architect Exam</div>
+              </td>
+              <td style="color:var(--text-dim);font-size:0.72rem">Apr 1, 2026</td>
+              <td style="font-family:var(--font-ui);font-size:0.78rem;color:var(--text-primary)">S$320</td>
+              <td><span class="status-badge at-risk">PENDING</span></td>
+              <td style="color:var(--text-dim);font-size:0.72rem">—</td>
+            </tr>
+            <tr>
+              <td style="font-family:var(--font-ui);font-size:0.62rem;color:var(--text-dim)">CLM-0041</td>
+              <td style="font-size:0.72rem;color:var(--text-dim)">Equipment</td>
+              <td>
+                <div style="font-size:0.78rem">Mechanical keyboard (home office)</div>
+              </td>
+              <td style="color:var(--text-dim);font-size:0.72rem">Mar 15, 2026</td>
+              <td style="font-family:var(--font-ui);font-size:0.78rem;color:var(--text-primary)">S$189</td>
+              <td><span class="status-badge achieved">APPROVED</span></td>
+              <td style="color:var(--success);font-size:0.72rem">Mar 22, 2026</td>
+            </tr>
+            <tr>
+              <td style="font-family:var(--font-ui);font-size:0.62rem;color:var(--text-dim)">CLM-0038</td>
+              <td style="font-size:0.72rem;color:var(--text-dim)">Conference</td>
+              <td>
+                <div style="font-size:0.78rem">AWS re:Invent Singapore registration</div>
+              </td>
+              <td style="color:var(--text-dim);font-size:0.72rem">Feb 20, 2026</td>
+              <td style="font-family:var(--font-ui);font-size:0.78rem;color:var(--text-primary)">S$650</td>
+              <td><span class="status-badge achieved">APPROVED</span></td>
+              <td style="color:var(--success);font-size:0.72rem">Feb 27, 2026</td>
+            </tr>
+            <tr>
+              <td style="font-family:var(--font-ui);font-size:0.62rem;color:var(--text-dim)">CLM-0031</td>
+              <td style="font-size:0.72rem;color:var(--text-dim)">Transport</td>
+              <td>
+                <div style="font-size:0.78rem">Grab to client site (x6 trips)</div>
+              </td>
+              <td style="color:var(--text-dim);font-size:0.72rem">Feb 5, 2026</td>
+              <td style="font-family:var(--font-ui);font-size:0.78rem;color:var(--text-primary)">S$87</td>
+              <td><span class="status-badge achieved">APPROVED</span></td>
+              <td style="color:var(--success);font-size:0.72rem">Feb 12, 2026</td>
+            </tr>
+            <tr>
+              <td style="font-family:var(--font-ui);font-size:0.62rem;color:var(--text-dim)">CLM-0028</td>
+              <td style="font-size:0.72rem;color:var(--text-dim)">Meals</td>
+              <td>
+                <div style="font-size:0.78rem">Client lunch — Q1 business dev</div>
+              </td>
+              <td style="color:var(--text-dim);font-size:0.72rem">Jan 22, 2026</td>
+              <td style="font-family:var(--font-ui);font-size:0.78rem;color:var(--text-primary)">S$145</td>
+              <td><span class="status-badge critical">REJECTED</span></td>
+              <td style="color:var(--text-dim);font-size:0.72rem">Exceeded meal cap</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="js/game-state.js"></script>
+  <script src="js/starfield.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const badge = sessionStorage.getItem('elixcraft_faction_badge') || 'COMMANDER';
+      document.getElementById('top-faction-badge').textContent = badge;
+    });
+
+    function scrollToForm() {
+      document.getElementById('claim-form').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function triggerUpload() {
+      document.getElementById('file-input').click();
+    }
+
+    function submitClaim() {
+      const btn = event.target;
+      btn.textContent = '✓ SUBMITTED';
+      btn.style.background = 'var(--success)';
+      setTimeout(() => { btn.textContent = 'SUBMIT REQUISITION'; btn.style.background = ''; }, 2500);
+    }
+  </script>
+</body>
+</html>

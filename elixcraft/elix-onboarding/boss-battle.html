@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELIX ONBOARDING — Performance Review</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/boss-battle.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body class="battle-screen">
+
+  <!-- ARENA -->
+  <div class="battle-wrapper">
+
+    <!-- TOP: HUD Bar -->
+    <div class="battle-hud">
+      <div class="hud-left">
+        <a href="dashboard.html" class="hud-back" data-tooltip="Return to Dashboard">← DASHBOARD</a>
+      </div>
+      <div class="hud-title">
+        <span class="hud-icon">⚔️</span>
+        ANNUAL PERFORMANCE REVIEW
+        <span class="hud-icon">⚔️</span>
+      </div>
+      <div class="hud-right">
+        <span class="hud-quarter" id="review-period">Q4 2025 REVIEW</span>
+      </div>
+    </div>
+
+    <!-- COMBATANTS -->
+    <div class="arena">
+
+      <!-- EMPLOYEE (Player) -->
+      <div class="combatant player-side">
+        <div class="combatant-portrait player-portrait">
+          <div class="portrait-frame protoss-frame">
+            <div class="portrait-inner" id="player-avatar">AC</div>
+          </div>
+          <div class="portrait-glow protoss-glow-ring"></div>
+        </div>
+        <div class="combatant-info">
+          <div class="c-name" id="player-name">Alex Chen</div>
+          <div class="c-class" id="player-class">Staff Engineer · LVL 7</div>
+          <div class="hp-row">
+            <span class="hp-label">PERFORMANCE</span>
+            <div class="hp-bar-outer">
+              <div class="hp-bar-fill player-hp-fill" id="player-hp" style="width:80%"></div>
+              <span class="hp-text" id="player-hp-text">80</span>
+            </div>
+          </div>
+          <div class="hp-row">
+            <span class="hp-label">MORALE</span>
+            <div class="hp-bar-outer">
+              <div class="hp-bar-fill morale-fill" id="player-morale" style="width:90%"></div>
+              <span class="hp-text" id="player-morale-text">90</span>
+            </div>
+          </div>
+        </div>
+        <div class="status-chips" id="player-status">
+          <span class="chip chip-green">▲ MEETS TARGETS</span>
+        </div>
+      </div>
+
+      <!-- VS -->
+      <div class="vs-block">
+        <div class="vs-text">VS</div>
+        <div class="round-label" id="round-label">ROUND 1 / 5</div>
+        <div class="vs-divider"></div>
+        <div class="outcome-preview" id="outcome-preview">
+          <span class="op-label">OUTCOME TRACK:</span>
+          <div class="outcome-track">
+            <div class="ot-item" id="ot-pip">PIP</div>
+            <div class="ot-item" id="ot-maintain">MAINTAIN</div>
+            <div class="ot-item ot-active" id="ot-meets">MEETS</div>
+            <div class="ot-item" id="ot-exceeds">EXCEEDS</div>
+            <div class="ot-item" id="ot-promote">PROMOTE</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MANAGER (Boss) -->
+      <div class="combatant boss-side">
+        <div class="combatant-portrait boss-portrait">
+          <div class="portrait-frame boss-frame">
+            <div class="portrait-inner boss-inner" id="boss-avatar">MG</div>
+          </div>
+          <div class="portrait-glow boss-glow-ring"></div>
+        </div>
+        <div class="combatant-info combatant-info-right">
+          <div class="c-name" id="boss-name">Sarah Lim</div>
+          <div class="c-class" id="boss-class">Engineering Director · BOSS</div>
+          <div class="hp-row">
+            <span class="hp-label">SCRUTINY</span>
+            <div class="hp-bar-outer">
+              <div class="hp-bar-fill boss-hp-fill" id="boss-hp" style="width:100%"></div>
+              <span class="hp-text" id="boss-hp-text">100</span>
+            </div>
+          </div>
+          <div class="hp-row">
+            <span class="hp-label">REVIEW SCORE</span>
+            <div class="hp-bar-outer">
+              <div class="hp-bar-fill boss-morale-fill" id="boss-morale" style="width:60%"></div>
+              <span class="hp-text" id="boss-morale-text">60</span>
+            </div>
+          </div>
+        </div>
+        <div class="status-chips boss-chips" id="boss-status">
+          <span class="chip chip-orange">⚡ EVALUATING</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BATTLE LOG -->
+    <div class="battle-log-wrap">
+      <div class="battle-log" id="battle-log">
+        <div class="log-entry log-system">▶ Annual Performance Review initiated. Q4 2025.</div>
+        <div class="log-entry log-system">▶ Prepare your arguments. Choose your moves wisely.</div>
+      </div>
+    </div>
+
+    <!-- ACTION BAR -->
+    <div class="action-bar" id="action-bar">
+      <div class="action-bar-label">CHOOSE YOUR MOVE:</div>
+      <div class="actions" id="actions">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+    <!-- RESULT OVERLAY -->
+    <div class="result-overlay hidden" id="result-overlay">
+      <div class="result-box" id="result-box">
+        <div class="result-icon" id="result-icon">🏆</div>
+        <div class="result-title" id="result-title">PROMOTED!</div>
+        <div class="result-sub" id="result-sub">Staff Engineer → Principal Engineer</div>
+        <div class="result-rewards" id="result-rewards"></div>
+        <div class="result-actions">
+          <button onclick="window.location='dashboard.html'" class="btn-select protoss-btn" data-tooltip="Go back to your Dashboard">RETURN TO DASHBOARD</button>
+          <button onclick="restartBattle()" class="btn-select" style="background:var(--bg-panel);border:1px solid var(--border);color:var(--text-dim)" data-tooltip="Run the performance review again from the start">RETRY</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/game-state.js"></script>
+  <!-- starfield removed -->
+  <script src="js/boss-battle.js"></script>
+</body>
+</html>

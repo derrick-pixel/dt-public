@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELIX EOR — Employer of Record for Singapore Micro Businesses</title>
+  <meta name="description" content="ELIX EOR handles CPF, WICA, IR8A and payroll for micro businesses with 1-3 employees. Just $30/month. Turn your payroll into airline miles." />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://derrick-pixel.github.io/elix-eor/" />
+  <meta property="og:title" content="ELIX EOR — $30/mo Employer of Record" />
+  <meta property="og:description" content="Stop drowning in CPF, WICA & IR8A paperwork. Park your employees with us and earn business class flights." />
+  <meta property="og:image" content="https://derrick-pixel.github.io/elix-eor/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── CSS Variables ──────────────────────────────────────────────────── */
+    :root {
+      --bg:       #FDF9F7;
+      --surface:  #FFFFFF;
+      --card:     #FFFFFF;
+      --surface-warm: #FBF5F2;
+      --border:   #E8E0DA;
+      --border2:  #D4CBC4;
+      --text:     #191919;
+      --muted:    #6B6B6B;
+      --muted2:   #4A4A4A;
+      --accent:   #E04E2B;
+      --accent2:  #3D3B8E;
+      --accent-glow: rgba(224,78,43,0.08);
+      --accent2-glow: rgba(61,59,142,0.08);
+      --red:      #E04E2B;
+      --red-glow: rgba(224,78,43,0.06);
+      --card-shadow: 0 2px 12px rgba(140,100,80,0.06);
+      --card-shadow-hover: 0 12px 32px rgba(140,100,80,0.12);
+    }
+
+    /* ── Reset ─────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ── Layout ────────────────────────────────────────────────────────── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 80px 0; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .text-center { text-align: center; }
+
+    /* ── Typography ────────────────────────────────────────────────────── */
+    h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; letter-spacing: -0.03em; line-height: 1.08; }
+    h2 { font-size: clamp(1.5rem, 3.5vw, 2.4rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; }
+    h3 { font-size: clamp(1.1rem, 2vw, 1.5rem); font-weight: 700; }
+    .label {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--accent); display: inline-block;
+      margin-bottom: 12px;
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Navigation ────────────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 800; font-size: 1.1rem; color: var(--text);
+    }
+    .nav-logo .logo-elix { color: var(--accent); }
+    .nav-logo .logo-eor { color: var(--muted); font-weight: 500; font-size: 0.8rem; }
+    .nav-links { display: flex; gap: 28px; align-items: center; }
+    .nav-links a {
+      font-size: 0.72rem; font-weight: 500; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.04em; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta {
+      background: var(--accent); color: #fff !important; padding: 8px 18px;
+      border-radius: 8px; font-weight: 700 !important; font-size: 0.72rem !important;
+      letter-spacing: 0.02em;
+    }
+    .nav-cta:hover { filter: brightness(1.15); transform: translateY(-1px); }
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px; cursor: pointer;
+      background: none; border: none; padding: 4px;
+    }
+    .hamburger span {
+      display: block; width: 20px; height: 2px; background: var(--text); transition: 0.3s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .mobile-menu {
+      display: none; position: fixed; top: 64px; left: 0; right: 0;
+      background: rgba(255,255,255,0.97); backdrop-filter: blur(16px);
+      padding: 24px; border-bottom: 1px solid var(--border);
+      flex-direction: column; gap: 16px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-size: 0.85rem; font-weight: 500; color: var(--muted2);
+      padding: 8px 0; border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Buttons ───────────────────────────────────────────────────────── */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent); color: #fff; padding: 14px 28px;
+      border: none; border-radius: 10px; font-weight: 700; font-size: 0.85rem;
+      letter-spacing: 0.02em; cursor: pointer; transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-primary:hover { filter: brightness(1.1); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(224,78,43,0.25); }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; border: 1.5px solid var(--border2); color: var(--muted2);
+      padding: 14px 28px; border-radius: 10px; font-weight: 600; font-size: 0.85rem;
+      cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Cards ─────────────────────────────────────────────────────────── */
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 28px; transition: all 0.2s ease;
+      box-shadow: var(--card-shadow);
+    }
+    .card:hover {
+      transform: translateY(-4px); border-color: var(--border2);
+      box-shadow: var(--card-shadow-hover);
+    }
+
+    /* ── Badges ────────────────────────────────────────────────────────── */
+    .badge {
+      display: inline-block; padding: 4px 12px; border-radius: 100px;
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .badge-green { background: var(--accent-glow); color: var(--accent); }
+    .badge-gold { background: var(--accent2-glow); color: var(--accent2); }
+    .badge-red { background: var(--red-glow); color: var(--red); }
+
+    /* ── Hero ──────────────────────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center;
+      padding-top: 64px; position: relative; overflow: hidden;
+      background: linear-gradient(160deg, var(--bg) 0%, #FFF5F1 40%, #F4F0FB 70%, var(--bg) 100%);
+    }
+    .hero-content { max-width: 640px; position: relative; z-index: 2; }
+    .hero-content h1 { margin-bottom: 20px; }
+    .hero-content p { font-size: 1.05rem; color: var(--muted2); margin-bottom: 32px; line-height: 1.7; }
+    .hero-buttons { display: flex; gap: 14px; flex-wrap: wrap; }
+    .hero-glow {
+      position: absolute; width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(224,78,43,0.06) 0%, transparent 70%);
+      right: -100px; top: 50%; transform: translateY(-50%); z-index: 0;
+    }
+    .hero-stats {
+      display: flex; gap: 40px; margin-top: 48px; padding-top: 28px;
+      border-top: 1px solid var(--border);
+    }
+    .hero-stat-value { font-size: 1.8rem; font-weight: 800; color: var(--accent); }
+    .hero-stat-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+
+    /* ── Powered By ───────────────────────────────────────────────────── */
+    .powered-by {
+      display: flex; align-items: center; gap: 12px; margin-top: 20px;
+      font-size: 0.72rem; color: var(--muted);
+    }
+    .powered-by img { height: 22px; opacity: 0.85; }
+
+    /* ── Pain Section ─────────────────────────────────────────────────── */
+    .pain-section { background: var(--surface-warm); }
+    .pain-card { text-align: center; padding: 32px 24px; }
+    .pain-icon {
+      width: 56px; height: 56px; border-radius: 14px; margin: 0 auto 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; background: var(--red-glow); border: 1px solid rgba(224,78,43,0.1);
+    }
+    .pain-card h3 { margin-bottom: 8px; font-size: 1rem; }
+    .pain-card p { color: var(--muted2); font-size: 0.85rem; }
+    .pain-hours {
+      display: inline-block; margin-top: 12px; padding: 4px 12px;
+      background: var(--red-glow); border-radius: 100px;
+      font-size: 0.7rem; font-weight: 700; color: var(--red);
+    }
+
+    /* ── Solution Section ─────────────────────────────────────────────── */
+    .solution-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;
+    }
+    .solution-steps { display: flex; flex-direction: column; gap: 20px; }
+    .solution-step {
+      display: flex; gap: 16px; align-items: flex-start;
+      padding: 20px; border-radius: 12px; border: 1px solid var(--border);
+      background: var(--surface); transition: all 0.2s;
+    }
+    .solution-step:hover { border-color: var(--accent); background: #FFF5F2; }
+    .step-num {
+      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.85rem;
+      background: linear-gradient(135deg, var(--accent), #C43A1A);
+      color: #fff;
+    }
+    .solution-step h3 { font-size: 0.95rem; margin-bottom: 4px; }
+    .solution-step p { font-size: 0.82rem; color: var(--muted2); }
+
+    .solution-visual {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 32px; box-shadow: var(--card-shadow);
+    }
+    .before-after { display: flex; flex-direction: column; gap: 24px; }
+    .scenario { padding: 20px; border-radius: 12px; }
+    .scenario-before {
+      background: rgba(220,38,38,0.04); border: 1px solid rgba(224,78,43,0.12);
+    }
+    .scenario-after {
+      background: rgba(13,150,104,0.04); border: 1px solid rgba(224,78,43,0.12);
+    }
+    .scenario-label {
+      font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; margin-bottom: 12px;
+    }
+    .scenario-before .scenario-label { color: var(--red); }
+    .scenario-after .scenario-label { color: var(--accent); }
+    .task-list { list-style: none; }
+    .task-list li {
+      font-size: 0.82rem; padding: 6px 0; color: var(--muted2);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .task-list .icon-x { color: var(--red); font-weight: 700; }
+    .task-list .icon-check { color: var(--accent); font-weight: 700; }
+
+    /* ── Pricing Section ──────────────────────────────────────────────── */
+    .pricing-section { background: var(--surface-warm); }
+    .pricing-card {
+      max-width: 480px; margin: 0 auto; padding: 40px;
+      background: var(--card); border: 2px solid var(--accent);
+      border-radius: 20px; text-align: center;
+      box-shadow: 0 4px 40px rgba(224,78,43,0.1), 0 2px 16px rgba(140,100,80,0.06);
+    }
+    .pricing-amount {
+      font-size: clamp(3rem, 8vw, 5rem); font-weight: 900;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; line-height: 1;
+    }
+    .pricing-period { font-size: 1rem; color: var(--muted2); margin-top: 4px; }
+    .pricing-includes { margin-top: 28px; text-align: left; list-style: none; }
+    .pricing-includes li {
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+      font-size: 0.88rem; display: flex; align-items: center; gap: 10px;
+    }
+    .pricing-includes .check { color: var(--accent); font-weight: 700; flex-shrink: 0; }
+    .pricing-cta { margin-top: 28px; width: 100%; justify-content: center; }
+
+    /* ── Miles Section ────────────────────────────────────────────────── */
+    .miles-section { position: relative; overflow: hidden; }
+    .miles-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+    .miles-visual {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 32px; box-shadow: var(--card-shadow);
+    }
+    .miles-breakdown { display: flex; flex-direction: column; gap: 16px; }
+    .miles-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; border-radius: 10px; background: var(--bg);
+      border: 1px solid var(--border);
+    }
+    .miles-row-label { font-size: 0.82rem; color: var(--muted2); }
+    .miles-row-value { font-weight: 700; font-size: 0.95rem; }
+    .miles-row-value.gold { color: var(--accent2); }
+    .miles-total {
+      text-align: center; padding: 20px; border-radius: 12px;
+      background: linear-gradient(135deg, rgba(224,78,43,0.06), rgba(61,59,142,0.06));
+      border: 1px solid rgba(13,150,104,0.15);
+    }
+    .miles-total-num { font-size: 2.4rem; font-weight: 900; color: var(--accent2); }
+    .miles-total-label { font-size: 0.72rem; color: var(--muted2); text-transform: uppercase; letter-spacing: 0.08em; }
+    .ticket-value {
+      margin-top: 16px; padding: 16px; border-radius: 12px;
+      background: var(--bg); border: 1px solid var(--border);
+      text-align: center;
+    }
+    .ticket-value-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .ticket-value-amount { font-size: 1.6rem; font-weight: 800; color: var(--accent2); margin: 4px 0; }
+    .ticket-value-desc { font-size: 0.78rem; color: var(--muted2); }
+
+    .roi-comparison {
+      margin-top: 16px; padding: 24px; border-radius: 14px;
+      background: var(--card); border: 1px solid var(--border);
+    }
+    .roi-vs {
+      display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: center;
+      text-align: center;
+    }
+    .roi-side h4 { font-size: 0.95rem; margin-bottom: 4px; }
+    .roi-amount { font-size: 1.8rem; font-weight: 900; }
+    .roi-amount.cost { color: var(--red); }
+    .roi-amount.value { color: var(--accent); }
+    .roi-label { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+    .roi-divider { font-size: 1.4rem; color: var(--muted); font-weight: 300; }
+
+    /* ── Calculator Section ───────────────────────────────────────────── */
+    .calc-section { background: var(--surface-warm); }
+    .calc-card {
+      max-width: 800px; margin: 0 auto; padding: 40px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; box-shadow: var(--card-shadow);
+    }
+    .calc-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .calc-group { display: flex; flex-direction: column; gap: 6px; }
+    .calc-group label {
+      font-size: 0.72rem; font-weight: 600; color: var(--muted2);
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .calc-group input, .calc-group select {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 12px 14px; color: var(--text);
+      font-family: 'Inter', sans-serif; font-size: 0.9rem;
+      transition: border-color 0.2s;
+    }
+    .calc-group input:focus, .calc-group select:focus {
+      outline: none; border-color: var(--accent);
+    }
+    .calc-group select option { background: var(--bg); color: var(--text); }
+    .calc-results {
+      margin-top: 28px; padding: 24px; border-radius: 12px;
+      background: var(--bg); border: 1px solid var(--border);
+    }
+    .calc-result-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+    .calc-result-row:last-child { border-bottom: none; }
+    .calc-result-row .row-label { color: var(--muted2); }
+    .calc-result-row .row-value { font-weight: 700; }
+
+    /* ── FAQ Section ──────────────────────────────────────────────────── */
+    .faq-list { max-width: 720px; margin: 0 auto; }
+    .accordion-item { border-bottom: 1px solid var(--border); }
+    .accordion-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 0; cursor: pointer; font-weight: 600; font-size: 0.95rem;
+      color: var(--text); transition: color 0.2s;
+    }
+    .accordion-header:hover { color: var(--accent); }
+    .accordion-header .arrow {
+      transition: transform 0.2s; font-size: 0.8rem; color: var(--muted);
+    }
+    .accordion-item.open .arrow { transform: rotate(180deg); }
+    .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    .accordion-body-inner {
+      padding-bottom: 18px; font-size: 0.88rem; color: var(--muted2); line-height: 1.7;
+    }
+    .accordion-item.open .accordion-body { max-height: 500px; }
+
+    /* ── CTA Section ──────────────────────────────────────────────────── */
+    .cta-section {
+      background: linear-gradient(135deg, #FFF0EB, #F0EDF8);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .cta-inner { max-width: 600px; margin: 0 auto; text-align: center; }
+    .cta-inner h2 { margin-bottom: 16px; }
+    .cta-inner p { color: var(--muted2); margin-bottom: 28px; font-size: 1rem; }
+    .cta-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+    /* ── Footer ────────────────────────────────────────────────────────── */
+    footer {
+      padding: 40px 0; border-top: 1px solid var(--border);
+      text-align: center; background: var(--surface-warm);
+    }
+    .footer-brand { font-weight: 800; font-size: 1rem; margin-bottom: 8px; }
+    .footer-brand .logo-elix { color: var(--accent); }
+    .footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 16px; }
+    .footer-links a { font-size: 0.78rem; color: var(--muted2); transition: color 0.2s; }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-copy { font-size: 0.7rem; color: var(--muted); }
+    .footer-powered {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: 12px; font-size: 0.68rem; color: var(--muted);
+    }
+    .footer-powered img { height: 18px; opacity: 0.75; }
+
+    /* ── Toast ─────────────────────────────────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--surface); border: 1px solid var(--border2);
+      padding: 10px 20px; border-radius: 8px;
+      font-size: 0.78rem; color: var(--text);
+      opacity: 0; transition: all 0.3s; z-index: 600; pointer-events: none;
+      box-shadow: 0 4px 16px rgba(140,100,80,0.1);
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── Animations ────────────────────────────────────────────────────── */
+    .animate {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .animate.visible { opacity: 1; transform: translateY(0); }
+    .delay-1 { transition-delay: 0.1s; }
+    .delay-2 { transition-delay: 0.2s; }
+    .delay-3 { transition-delay: 0.3s; }
+
+    /* ── Effort Cost Visualization ────────────────────────────────────── */
+    .effort-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 40px; }
+    .effort-card { padding: 24px; border-radius: 14px; box-shadow: var(--card-shadow); }
+    .effort-monthly, .effort-annual {
+      background: rgba(224,78,43,0.03); border: 1px solid rgba(224,78,43,0.1);
+    }
+    .effort-title {
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--red); margin-bottom: 16px;
+    }
+    .effort-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0; font-size: 0.85rem;
+    }
+    .effort-item span:first-child { color: var(--muted2); }
+    .effort-item span:last-child { font-weight: 600; color: var(--red); }
+    .effort-total {
+      margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(224,78,43,0.12);
+      display: flex; justify-content: space-between; align-items: center;
+      font-weight: 700;
+    }
+    .effort-total span:last-child { color: var(--red); font-size: 1.1rem; }
+
+    /* ── Benefits Section ─────────────────────────────────────────────── */
+    .benefit-card { text-align: center; }
+    .benefit-icon {
+      width: 56px; height: 56px; border-radius: 14px; margin: 0 auto 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; background: var(--accent-glow);
+      border: 1px solid rgba(13,150,104,0.1);
+    }
+    .benefit-card h3 { margin-bottom: 6px; font-size: 1rem; }
+    .benefit-card p { color: var(--muted2); font-size: 0.85rem; }
+    .benefit-price { margin-top: 10px; font-weight: 700; color: var(--accent); font-size: 1.1rem; }
+
+    /* ── Section Header ───────────────────────────────────────────────── */
+    .section-header { max-width: 600px; margin: 0 auto 48px; text-align: center; }
+    .section-header p { margin-top: 12px; color: var(--muted2); font-size: 0.95rem; }
+
+    /* ── CardUp Partner Banner ────────────────────────────────────────── */
+    .cardup-banner {
+      margin-top: 24px; padding: 16px 20px; border-radius: 12px;
+      background: linear-gradient(135deg, rgba(61,59,142,0.06), rgba(224,78,43,0.03));
+      border: 1px solid rgba(217,119,6,0.15);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .cardup-banner-icon { font-size: 1.3rem; }
+    .cardup-banner-text { font-size: 0.82rem; color: var(--muted2); }
+    .cardup-banner-text strong { color: var(--accent2); }
+
+    /* ── Responsive ────────────────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .grid-3 { grid-template-columns: repeat(2, 1fr); }
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      section { padding: 48px 0; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .solution-grid { grid-template-columns: 1fr; }
+      .miles-grid { grid-template-columns: 1fr; }
+      .calc-inputs { grid-template-columns: 1fr; }
+      .effort-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 24px; flex-wrap: wrap; }
+      .roi-vs { grid-template-columns: 1fr; gap: 8px; }
+      .roi-divider { transform: rotate(90deg); }
+    }
+    @media (max-width: 640px) {
+      .hero-stats { gap: 16px; }
+      .hero-stat-value { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Navigation ──────────────────────────────────────────────────── -->
+  <nav>
+    <div class="nav-logo">
+      <span class="logo-elix">ELIX</span>
+      <span class="logo-eor">EOR</span>
+    </div>
+    <div class="nav-links">
+      <a href="#pain">The Problem</a>
+      <a href="#solution">Solution</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#miles">Miles Bonus</a>
+      <a href="#calculator">Calculator</a>
+      <a href="#faq">FAQ</a>
+      <a href="admin.html">Competitors</a>
+      <a href="admin-insights.html">Insights</a>
+      <a href="#cta" class="nav-cta">Get Started</a>
+    </div>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#pain" onclick="toggleMenu()">The Problem</a>
+    <a href="#solution" onclick="toggleMenu()">Solution</a>
+    <a href="#pricing" onclick="toggleMenu()">Pricing</a>
+    <a href="#miles" onclick="toggleMenu()">Miles Bonus</a>
+    <a href="#calculator" onclick="toggleMenu()">Calculator</a>
+    <a href="#faq" onclick="toggleMenu()">FAQ</a>
+    <a href="admin.html" onclick="toggleMenu()">Competitors</a>
+    <a href="admin-insights.html" onclick="toggleMenu()">Insights</a>
+    <a href="#cta" onclick="toggleMenu()">Get Started</a>
+  </div>
+
+  <main>
+
+    <!-- ── Hero ────────────────────────────────────────────────────────── -->
+    <section class="hero" id="hero">
+      <div class="hero-glow"></div>
+      <div class="container">
+        <div class="hero-content">
+          <span class="badge badge-green">For micro businesses with 1-3 employees</span>
+          <h1>Stop Drowning in<br><span class="gradient-text">CPF, WICA &amp; IR8A</span><br>Paperwork</h1>
+          <p>You started a business to do what you love — not to wrestle with statutory submissions every month. ELIX EOR handles all your employment compliance for just <strong style="color:var(--accent)">$30/month</strong>.</p>
+          <div class="hero-buttons">
+            <a href="#cta" class="btn-primary">Get Started &rarr;</a>
+            <a href="#calculator" class="btn-outline">Try the Calculator</a>
+          </div>
+          <div class="hero-stats">
+            <div>
+              <div class="hero-stat-value">$30</div>
+              <div class="hero-stat-label">Per month, flat</div>
+            </div>
+            <div>
+              <div class="hero-stat-value">~92K</div>
+              <div class="hero-stat-label">KrisFlyer miles/year</div>
+            </div>
+            <div>
+              <div class="hero-stat-value">0</div>
+              <div class="hero-stat-label">Hours on payroll admin</div>
+            </div>
+          </div>
+          <div class="powered-by">
+            <span>Powered by</span>
+            <img src="https://www.elitez.asia/wp-content/uploads/2022/03/logo_on-1-1.png" alt="Elitez Group" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Pain Points ─────────────────────────────────────────────────── -->
+    <section class="pain-section" id="pain">
+      <div class="container">
+        <div class="section-header animate">
+          <span class="label" style="color: var(--red);">The problem</span>
+          <h2>Running a Micro Business <span style="color:var(--red)">Shouldn't</span> Mean Running Payroll</h2>
+          <p>You have 1-3 employees. No HR department. No finance team. But the government expects the same compliance as a 500-person company.</p>
+        </div>
+
+        <div class="grid-4 animate">
+          <div class="card pain-card">
+            <div class="pain-icon">&#128203;</div>
+            <h3>Monthly CPF Submissions</h3>
+            <p>Calculate employer (17%) and employee (20%) contributions, file via CPF Board portal every month</p>
+            <div class="pain-hours">~2 hrs/month</div>
+          </div>
+          <div class="card pain-card delay-1">
+            <div class="pain-icon">&#128737;</div>
+            <h3>WICA Insurance</h3>
+            <p>Source and renew Work Injury Compensation Act coverage. Overpay because you can't get group rates</p>
+            <div class="pain-hours">~1.5% solo vs 0.5% group</div>
+          </div>
+          <div class="card pain-card delay-2">
+            <div class="pain-icon">&#127973;</div>
+            <h3>Health Benefits</h3>
+            <p>No bargaining power for hospital &amp; surgery or outpatient plans. Individual premiums are steep</p>
+            <div class="pain-hours">$80-120/mo per head</div>
+          </div>
+          <div class="card pain-card delay-3">
+            <div class="pain-icon">&#128202;</div>
+            <h3>Annual IR8A Filing</h3>
+            <p>Prepare IR8A, Appendix 8A/8B for every employee. One mistake = penalties from IRAS</p>
+            <div class="pain-hours">~4 hrs/year per employee</div>
+          </div>
+        </div>
+
+        <div class="effort-grid animate">
+          <div class="effort-card effort-monthly">
+            <div class="effort-title">Monthly time drain</div>
+            <div class="effort-item"><span>CPF calculation &amp; submission</span><span>2 hrs</span></div>
+            <div class="effort-item"><span>Payslip preparation</span><span>1 hr</span></div>
+            <div class="effort-item"><span>SDL &amp; FWL tracking</span><span>0.5 hrs</span></div>
+            <div class="effort-item"><span>Leave &amp; benefits admin</span><span>1 hr</span></div>
+            <div class="effort-total"><span>Total per month</span><span>4.5 hrs</span></div>
+          </div>
+          <div class="effort-card effort-annual">
+            <div class="effort-title">Annual time drain</div>
+            <div class="effort-item"><span>IR8A preparation</span><span>4 hrs</span></div>
+            <div class="effort-item"><span>WICA renewal &amp; sourcing</span><span>3 hrs</span></div>
+            <div class="effort-item"><span>Health insurance admin</span><span>2 hrs</span></div>
+            <div class="effort-item"><span>Year-end reconciliation</span><span>3 hrs</span></div>
+            <div class="effort-total"><span>Total per year</span><span>66 hrs</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Solution ────────────────────────────────────────────────────── -->
+    <section id="solution">
+      <div class="container">
+        <div class="section-header animate">
+          <span class="label">The solution</span>
+          <h2>Park Your Employees With Us.<br><span class="gradient-text">We Handle Everything.</span></h2>
+          <p>Your employees legally sit under the Elitez Group umbrella. You retain full operational control. We handle all statutory obligations.</p>
+        </div>
+
+        <div class="solution-grid">
+          <div class="solution-steps animate">
+            <div class="solution-step">
+              <div class="step-num">1</div>
+              <div>
+                <h3>Sign a 12-month agreement</h3>
+                <p>Simple onboarding. We transfer your employees into our group payroll within 5 business days.</p>
+              </div>
+            </div>
+            <div class="solution-step">
+              <div class="step-num">2</div>
+              <div>
+                <h3>We run payroll monthly</h3>
+                <p>CPF submissions, SDL, payslips — all done. You just approve the salary amount each month.</p>
+              </div>
+            </div>
+            <div class="solution-step">
+              <div class="step-num">3</div>
+              <div>
+                <h3>Group-rate benefits kick in</h3>
+                <p>Your employees get WICA at ~0.5%, health coverage at $25/mo — rates only possible at scale.</p>
+              </div>
+            </div>
+            <div class="solution-step">
+              <div class="step-num">4</div>
+              <div>
+                <h3>Year-end is on us</h3>
+                <p>IR8A, tax filings, reconciliation — we handle everything come March. Zero stress for you.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="solution-visual animate delay-1">
+            <div class="before-after">
+              <div class="scenario scenario-before">
+                <div class="scenario-label">&#10007; Without ELIX</div>
+                <ul class="task-list">
+                  <li><span class="icon-x">&#10005;</span> Calculate CPF manually each month</li>
+                  <li><span class="icon-x">&#10005;</span> File CPF via portal before 14th</li>
+                  <li><span class="icon-x">&#10005;</span> Source WICA insurance alone (1.5%+)</li>
+                  <li><span class="icon-x">&#10005;</span> Manage individual health plans ($80+/mo)</li>
+                  <li><span class="icon-x">&#10005;</span> Prepare IR8A for each employee</li>
+                  <li><span class="icon-x">&#10005;</span> Track SDL, leave, deductions</li>
+                  <li><span class="icon-x">&#10005;</span> Risk penalties for late/wrong filings</li>
+                </ul>
+              </div>
+              <div class="scenario scenario-after">
+                <div class="scenario-label">&#10003; With ELIX</div>
+                <ul class="task-list">
+                  <li><span class="icon-check">&#10003;</span> Approve salary — we do the rest</li>
+                  <li><span class="icon-check">&#10003;</span> WICA at group rate (~0.5%)</li>
+                  <li><span class="icon-check">&#10003;</span> Health coverage at $25/mo</li>
+                  <li><span class="icon-check">&#10003;</span> All statutory filings handled</li>
+                  <li><span class="icon-check">&#10003;</span> Pay via credit card, earn miles</li>
+                  <li><span class="icon-check">&#10003;</span> Peace of mind, zero admin</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Benefits ────────────────────────────────────────────────────── -->
+    <section style="background:var(--surface-warm);">
+      <div class="container">
+        <div class="section-header animate">
+          <span class="label">Economy of scale</span>
+          <h2>Big Company Benefits.<br><span class="gradient-text">Micro Business Price.</span></h2>
+        </div>
+        <div class="grid-3 animate">
+          <div class="card benefit-card">
+            <div class="benefit-icon">&#128737;</div>
+            <h3>WICA Insurance</h3>
+            <p>Group-rate Work Injury Compensation for office-based employees</p>
+            <div class="benefit-price">~0.5% of salary</div>
+            <div style="font-size:0.72rem;color:var(--muted);margin-top:4px;">vs 1.5%+ buying solo</div>
+          </div>
+          <div class="card benefit-card delay-1">
+            <div class="benefit-icon">&#127973;</div>
+            <h3>Healthcare Benefits</h3>
+            <p>Hospital &amp; surgery insurance + outpatient clinic visits included</p>
+            <div class="benefit-price">$25/mo per employee</div>
+            <div style="font-size:0.72rem;color:var(--muted);margin-top:4px;">vs $80-120/mo individual</div>
+          </div>
+          <div class="card benefit-card delay-2">
+            <div class="benefit-icon">&#128203;</div>
+            <h3>Full Compliance</h3>
+            <p>CPF, SDL, IR8A, payslips — everything statutory, on time, every time</p>
+            <div class="benefit-price">Included</div>
+            <div style="font-size:0.72rem;color:var(--muted);margin-top:4px;">66 hrs/year saved</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Pricing ─────────────────────────────────────────────────────── -->
+    <section class="pricing-section" id="pricing">
+      <div class="container">
+        <div class="section-header animate">
+          <span class="label">Simple pricing</span>
+          <h2>One Flat Fee. <span class="gradient-text">No Hidden Costs.</span></h2>
+          <p>No per-transaction charges. No percentage cuts. Just a simple monthly fee per employee.</p>
+        </div>
+        <div class="pricing-card animate">
+          <span class="badge badge-gold">Per employee / month</span>
+          <div class="pricing-amount" style="margin-top:12px;">$30</div>
+          <div class="pricing-period">flat fee, billed monthly</div>
+          <ul class="pricing-includes">
+            <li><span class="check">&#10003;</span> Monthly CPF calculation &amp; submission</li>
+            <li><span class="check">&#10003;</span> SDL contribution management</li>
+            <li><span class="check">&#10003;</span> Payslip generation &amp; distribution</li>
+            <li><span class="check">&#10003;</span> Annual IR8A preparation &amp; filing</li>
+            <li><span class="check">&#10003;</span> Access to group WICA rates (~0.5%)</li>
+            <li><span class="check">&#10003;</span> Access to group healthcare ($25/mo)</li>
+            <li><span class="check">&#10003;</span> Leave &amp; benefits administration</li>
+            <li><span class="check">&#10003;</span> Dedicated account support</li>
+          </ul>
+          <button class="btn-primary pricing-cta" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Start Now &rarr;</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Miles Section ──────────────────────────────────────────────── -->
+    <section class="miles-section" id="miles">
+      <div class="container">
+        <div class="section-header animate">
+          <span class="label" style="color:var(--accent2);">The icing on the cake</span>
+          <h2>Turn Your Payroll Into<br><span class="gradient-text">Business Class Flights</span></h2>
+          <p>We work with <a href="https://www.cardup.co/" target="_blank" rel="noopener">CardUp</a> to let you pay your monthly ELIX invoice by credit card at a preferential 1.7% fee. Stack that with the right miles card and watch the miles pile up.</p>
+        </div>
+
+        <div class="miles-grid">
+          <div class="animate">
+            <h3 style="margin-bottom:16px;">How the maths works</h3>
+            <p style="color:var(--muted2);font-size:0.88rem;margin-bottom:24px;">For an employee with $4,000 gross salary, your total monthly invoice is approximately $4,800 (including CPF, WICA, healthcare, SDL, and ELIX fee).</p>
+
+            <div class="miles-visual">
+              <div class="miles-breakdown">
+                <div class="miles-row">
+                  <span class="miles-row-label">Monthly invoice via CardUp</span>
+                  <span class="miles-row-value">$4,800</span>
+                </div>
+                <div class="miles-row">
+                  <span class="miles-row-label">Annual spend on card</span>
+                  <span class="miles-row-value">$57,600</span>
+                </div>
+                <div class="miles-row">
+                  <span class="miles-row-label">CardUp fee (1.7%)</span>
+                  <span class="miles-row-value">$81.60/mo</span>
+                </div>
+                <div class="miles-row">
+                  <span class="miles-row-label">Best card earn rate</span>
+                  <span class="miles-row-value gold">~1.6 mpd</span>
+                </div>
+              </div>
+              <div class="miles-total" style="margin-top:16px;">
+                <div class="miles-total-label">Annual KrisFlyer miles earned</div>
+                <div class="miles-total-num">92,160</div>
+              </div>
+            </div>
+
+            <div class="cardup-banner">
+              <span class="cardup-banner-icon">&#127873;</span>
+              <div class="cardup-banner-text">
+                <strong>First 6 months FREE:</strong> Sign a 12-month contract and we absorb the CardUp fee for the first 6 months — that's ~$490 in savings.
+              </div>
+            </div>
+          </div>
+
+          <div class="animate delay-1">
+            <h3 style="margin-bottom:16px;">What can 92,000 miles get you?</h3>
+            <p style="color:var(--muted2);font-size:0.88rem;margin-bottom:24px;">Singapore Airlines KrisFlyer Saver award redemptions:</p>
+
+            <div class="card" style="margin-bottom:16px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                  <div style="font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;">Business Class Return</div>
+                  <div style="font-size:1.3rem;font-weight:800;margin:4px 0;">Singapore &#8594; Perth</div>
+                  <div style="font-size:0.82rem;color:var(--muted2);">~5.5 hr flight each way</div>
+                </div>
+                <div style="text-align:right;">
+                  <div style="font-size:1.6rem;font-weight:900;color:var(--accent2);">85,000</div>
+                  <div style="font-size:0.7rem;color:var(--muted);">miles needed</div>
+                </div>
+              </div>
+              <div class="ticket-value" style="margin-top:16px;">
+                <div class="ticket-value-label">Retail ticket value</div>
+                <div class="ticket-value-amount">~$3,500 - $5,000</div>
+                <div class="ticket-value-desc">SQ Business Class SIN-PER return</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                  <div style="font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;">Business Class Return</div>
+                  <div style="font-size:1.3rem;font-weight:800;margin:4px 0;">Singapore &#8594; Shanghai</div>
+                  <div style="font-size:0.82rem;color:var(--muted2);">~5 hr flight each way</div>
+                </div>
+                <div style="text-align:right;">
+                  <div style="font-size:1.6rem;font-weight:900;color:var(--accent2);">90,000</div>
+                  <div style="font-size:0.7rem;color:var(--muted);">miles needed</div>
+                </div>
+              </div>
+              <div class="ticket-value" style="margin-top:16px;">
+                <div class="ticket-value-label">Retail ticket value</div>
+                <div class="ticket-value-amount">~$3,800 - $5,500</div>
+                <div class="ticket-value-desc">SQ Business Class SIN-PVG return</div>
+              </div>
+            </div>
+
+            <div class="roi-comparison" style="margin-top:16px;">
+              <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px;text-align:center;">Your annual ROI</div>
+              <div class="roi-vs">
+                <div class="roi-side">
+                  <h4>Your cost</h4>
+                  <div class="roi-amount cost">~$850</div>
+                  <div class="roi-label">6mo CardUp fee + 12mo ELIX fee</div>
+                </div>
+                <div class="roi-divider">&#8594;</div>
+                <div class="roi-side">
+                  <h4>Your reward</h4>
+                  <div class="roi-amount value">~$4,000+</div>
+                  <div class="roi-label">Business class ticket value</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Calculator ──────────────────────────────────────────────────── -->
+    <section class="calc-section" id="calculator">
+      <div class="container">
+        <div class="section-header animate">
+          <span class="label">Interactive calculator</span>
+          <h2>See Your <span class="gradient-text">True Employment Cost</span></h2>
+          <p>Enter your employee's gross salary to see the full statutory breakdown — CPF, SDL, WICA, and more.</p>
+        </div>
+
+        <div class="calc-card animate">
+          <div class="calc-inputs">
+            <div class="calc-group">
+              <label for="calc-salary">Gross Monthly Salary (SGD)</label>
+              <input type="number" id="calc-salary" value="4000" min="500" max="50000" />
+            </div>
+            <div class="calc-group">
+              <label for="calc-age">Employee Age Group</label>
+              <select id="calc-age">
+                <option value="55below" selected>55 and below</option>
+                <option value="55to60">Above 55 to 60</option>
+                <option value="60to65">Above 60 to 65</option>
+                <option value="65above">Above 65</option>
+              </select>
+            </div>
+            <div class="calc-group">
+              <label for="calc-count">Number of Employees</label>
+              <input type="number" id="calc-count" value="1" min="1" max="3" />
+            </div>
+            <div class="calc-group">
+              <label for="calc-wica">WICA Rate</label>
+              <select id="calc-wica">
+                <option value="solo">Solo (1.5% est.)</option>
+                <option value="elix" selected>ELIX Group (0.5%)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="calc-results" id="calc-results"></div>
+        </div>
+
+        <div style="max-width:800px;margin:20px auto 0;text-align:center;">
+          <p style="font-size:0.78rem;color:var(--muted);">* CPF rates based on 2025 contribution rates. OW ceiling of $7,400/month applies. SDL is 0.25% of monthly wages (min $2, max $11.25). WICA rates are estimates for office-based work.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── FAQ ─────────────────────────────────────────────────────────── -->
+    <section id="faq">
+      <div class="container">
+        <div class="section-header animate">
+          <span class="label">FAQ</span>
+          <h2>Common Questions</h2>
+        </div>
+
+        <div class="faq-list animate">
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+              <span>What exactly is an Employer of Record (EOR)?</span>
+              <span class="arrow">&#9660;</span>
+            </div>
+            <div class="accordion-body">
+              <div class="accordion-body-inner">
+                An EOR legally employs your workers on your behalf. Your employees are technically on our payroll (under Elitez Group), but they work exclusively for you and you retain full operational control — same workspace, same reporting lines, same day-to-day. We handle all the legal and statutory obligations: CPF, WICA, IR8A, payslips, SDL, and benefits administration.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+              <span>Will my employees know they're under a different company?</span>
+              <span class="arrow">&#9660;</span>
+            </div>
+            <div class="accordion-body">
+              <div class="accordion-body-inner">
+                Yes, legally their employment contract will be with Elitez Group. However, this is standard practice for EOR arrangements. Many employees appreciate the enhanced benefits (better healthcare, lower WICA costs) that come with being part of a larger group. Their day-to-day work, reporting line, and workspace remain entirely with you.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+              <span>Who is ELIX EOR best for?</span>
+              <span class="arrow">&#9660;</span>
+            </div>
+            <div class="accordion-body">
+              <div class="accordion-body-inner">
+                ELIX EOR is designed specifically for micro businesses and sole proprietors in Singapore who employ 1-3 local Singaporean employees and have no foreign workers. If you're a small business owner spending hours each month on CPF submissions and payroll admin — instead of growing your business — we're built for you.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+              <span>How does the CardUp credit card payment work?</span>
+              <span class="arrow">&#9660;</span>
+            </div>
+            <div class="accordion-body">
+              <div class="accordion-body-inner">
+                Each month, we invoice you for the total employment cost (salary + CPF + WICA + healthcare + SDL + ELIX fee). Instead of paying by bank transfer, you can pay this invoice through <a href="https://www.cardup.co/" target="_blank" rel="noopener">CardUp</a> using your credit card at a preferential 1.7% processing fee. If you use a miles-earning credit card (like DBS Altitude or OCBC 90&#176;N), you'll earn KrisFlyer miles on the entire invoice amount. We absorb the CardUp fee for your first 6 months when you sign a 12-month contract.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+              <span>What's the contract commitment?</span>
+              <span class="arrow">&#9660;</span>
+            </div>
+            <div class="accordion-body">
+              <div class="accordion-body-inner">
+                We require a minimum 12-month contract. This allows us to offer the 6-month free CardUp fee promotion and ensures stable employment arrangements for your staff. After the initial 12 months, the contract auto-renews on a month-to-month basis with a 1-month notice period.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+              <span>Can I still manage my employees' work and schedule?</span>
+              <span class="arrow">&#9660;</span>
+            </div>
+            <div class="accordion-body">
+              <div class="accordion-body-inner">
+                Absolutely. You retain 100% operational control. You set their tasks, schedule, workspace, performance goals — everything. We only handle the administrative and statutory employment obligations. Think of us as your outsourced HR back-office, not a staffing agency.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+              <span>What about the $25/month healthcare — what does it cover?</span>
+              <span class="arrow">&#9660;</span>
+            </div>
+            <div class="accordion-body">
+              <div class="accordion-body-inner">
+                The $25/month healthcare package includes hospital &amp; surgery insurance and outpatient clinic visits. This is a group plan rate that's only possible because your employees are pooled with the wider Elitez Group workforce. An equivalent individual plan would typically cost $80-120/month.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <div class="accordion-header" onclick="toggleAccordion(this)">
+              <span>How quickly can I get started?</span>
+              <span class="arrow">&#9660;</span>
+            </div>
+            <div class="accordion-body">
+              <div class="accordion-body-inner">
+                Onboarding typically takes 5 business days. We handle the employment letter transfer, benefits enrollment, CPF account setup, and WICA coverage — all you need to do is provide your employee details and sign the agreement.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CTA ─────────────────────────────────────────────────────────── -->
+    <section class="cta-section" id="cta">
+      <div class="container">
+        <div class="cta-inner animate">
+          <span class="badge badge-green">Ready to simplify?</span>
+          <h2 style="margin-top:12px;">Pay <span class="gradient-text">$850/year</span>.<br>Fly Business Class.</h2>
+          <p>Stop wasting 66 hours a year on payroll admin. Let ELIX handle your compliance while you earn enough miles for a business class ticket worth $3,500-5,000.</p>
+          <div class="cta-buttons">
+            <a href="mailto:eor@elitez.asia?subject=ELIX%20EOR%20Enquiry" class="btn-primary">Get Started &rarr;</a>
+            <a href="#calculator" class="btn-outline">Try the Calculator</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── Footer ──────────────────────────────────────────────────────── -->
+  <footer>
+    <div class="container">
+      <div class="footer-brand">
+        <span class="logo-elix" style="color:var(--accent);">ELIX</span> <span style="color:var(--muted2);font-weight:500;font-size:0.8rem;">EOR</span>
+      </div>
+      <div class="footer-links">
+        <a href="#pain">The Problem</a>
+        <a href="#solution">Solution</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#miles">Miles Bonus</a>
+        <a href="#calculator">Calculator</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div class="footer-copy">&copy; 2026 ELIX EOR. All rights reserved. A brand of Elitez Group.</div>
+      <div class="footer-powered">
+        <span>Powered by</span>
+        <img src="https://www.elitez.asia/wp-content/uploads/2022/03/logo_on-1-1.png" alt="Elitez Group" />
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ── Utilities ──────────────────────────────────────────────────────────
+    function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    function toggleMenu() {
+      document.getElementById('mobile-menu').classList.toggle('open');
+      document.getElementById('hamburger').classList.toggle('open');
+    }
+
+    function showToast(msg, duration) {
+      duration = duration || 2200;
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(function() { t.classList.remove('show'); }, duration);
+    }
+
+    // ── Smooth Scroll ─────────────────────────────────────────────────────
+    document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        var target = document.querySelector(a.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    // ── Scroll Reveal ─────────────────────────────────────────────────────
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.animate').forEach(function(el) { observer.observe(el); });
+
+    // ── Accordion ─────────────────────────────────────────────────────────
+    function toggleAccordion(header) {
+      var item = header.parentElement;
+      var wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.accordion-item').forEach(function(i) { i.classList.remove('open'); });
+      if (!wasOpen) item.classList.add('open');
+    }
+
+    // ── Employment Cost Calculator ────────────────────────────────────────
+    var CPF_RATES = {
+      '55below':  { employer: 0.17, employee: 0.20 },
+      '55to60':   { employer: 0.15, employee: 0.16 },
+      '60to65':   { employer: 0.115, employee: 0.105 },
+      '65above':  { employer: 0.085, employee: 0.075 }
+    };
+    var OW_CEILING = 7400;
+    var SDL_RATE = 0.0025;
+    var SDL_MIN = 2;
+    var SDL_MAX = 11.25;
+
+    function fmt(n) { return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+    function calculateCost() {
+      var salary = parseFloat(document.getElementById('calc-salary').value) || 0;
+      var ageGroup = document.getElementById('calc-age').value;
+      var count = parseInt(document.getElementById('calc-count').value) || 1;
+      var wicaMode = document.getElementById('calc-wica').value;
+
+      var rates = CPF_RATES[ageGroup];
+      var cappedSalary = Math.min(salary, OW_CEILING);
+
+      var cpfEmployer = Math.round(cappedSalary * rates.employer * 100) / 100;
+      var cpfEmployee = Math.round(cappedSalary * rates.employee * 100) / 100;
+
+      var sdl = Math.round(salary * SDL_RATE * 100) / 100;
+      sdl = Math.max(SDL_MIN, Math.min(SDL_MAX, sdl));
+
+      var wicaRate = wicaMode === 'elix' ? 0.005 : 0.015;
+      var wicaMonthly = Math.round(salary * wicaRate / 12 * 100) / 100;
+
+      var healthCost = wicaMode === 'elix' ? 25 : 100;
+      var elixFee = wicaMode === 'elix' ? 30 : 0;
+
+      var totalPerEmployee = salary + cpfEmployer + sdl + wicaMonthly + healthCost + elixFee;
+      var totalAll = totalPerEmployee * count;
+
+      var annualSpend = totalAll * 12;
+      var annualMiles = Math.round(annualSpend * 1.6);
+      var cardUpMonthly = totalAll * 0.017;
+      var sixMonthCardUp = cardUpMonthly * 6;
+      var annualElixFee = 30 * 12 * count;
+      var totalAnnualCost = sixMonthCardUp + annualElixFee;
+
+      var container = document.getElementById('calc-results');
+
+      // Build DOM safely instead of innerHTML
+      container.textContent = '';
+
+      var rows = [
+        { label: 'Gross Salary', value: fmt(salary) },
+        { label: 'CPF \u2014 Employer (' + (rates.employer * 100).toFixed(1) + '%)', value: fmt(cpfEmployer) },
+        { label: 'CPF \u2014 Employee (' + (rates.employee * 100).toFixed(1) + '%)', value: fmt(cpfEmployee) + ' (deducted from salary)', muted: true },
+        { label: 'SDL (0.25%)', value: fmt(sdl) },
+        { label: 'WICA (' + (wicaRate * 100).toFixed(1) + '% annualised)', value: fmt(wicaMonthly) },
+        { label: 'Healthcare Benefits', value: fmt(healthCost) + '/mo' }
+      ];
+
+      if (wicaMode === 'elix') {
+        rows.push({ label: 'ELIX EOR Fee', value: fmt(elixFee) + '/mo', accent: true });
+      }
+
+      rows.forEach(function(r) {
+        var row = document.createElement('div');
+        row.className = 'calc-result-row';
+        var lbl = document.createElement('span');
+        lbl.className = 'row-label';
+        lbl.textContent = r.label;
+        var val = document.createElement('span');
+        val.className = 'row-value';
+        val.textContent = r.value;
+        if (r.muted) val.style.color = 'var(--muted2)';
+        if (r.accent) val.style.color = 'var(--accent)';
+        row.appendChild(lbl);
+        row.appendChild(val);
+        container.appendChild(row);
+      });
+
+      // Total row
+      var totalRow = document.createElement('div');
+      totalRow.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:16px 0;margin-top:8px;border-top:2px solid var(--accent);font-size:1.1rem;font-weight:800;';
+      var totalLabel = document.createElement('span');
+      totalLabel.textContent = 'Total Monthly Cost (per employee)';
+      var totalVal = document.createElement('span');
+      totalVal.textContent = fmt(totalPerEmployee);
+      totalVal.style.cssText = 'color:var(--accent);font-size:1.3rem;';
+      totalRow.appendChild(totalLabel);
+      totalRow.appendChild(totalVal);
+      container.appendChild(totalRow);
+
+      if (count > 1) {
+        var multiRow = document.createElement('div');
+        multiRow.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid var(--border);font-weight:700;';
+        var mLabel = document.createElement('span');
+        mLabel.textContent = 'Total for ' + count + ' employees';
+        var mVal = document.createElement('span');
+        mVal.textContent = fmt(totalAll);
+        mVal.style.cssText = 'color:var(--accent);font-size:1.1rem;';
+        multiRow.appendChild(mLabel);
+        multiRow.appendChild(mVal);
+        container.appendChild(multiRow);
+      }
+
+      // Miles banner
+      var milesBanner = document.createElement('div');
+      milesBanner.style.cssText = 'margin-top:16px;padding:12px 16px;border-radius:10px;background:rgba(224,78,43,0.06);border:1px solid rgba(224,78,43,0.12);font-size:0.82rem;color:var(--accent);font-weight:600;';
+      milesBanner.textContent = '\uD83D\uDCB3 Pay via CardUp \u2014 earn ~' + annualMiles.toLocaleString() + ' KrisFlyer miles/year';
+      container.appendChild(milesBanner);
+
+      // ROI summary
+      if (wicaMode === 'elix') {
+        var roiBox = document.createElement('div');
+        roiBox.style.cssText = 'margin-top:12px;padding:12px 16px;border-radius:10px;background:rgba(61,59,142,0.06);border:1px solid rgba(61,59,142,0.12);';
+
+        var roiRow1 = document.createElement('div');
+        roiRow1.style.cssText = 'display:flex;justify-content:space-between;font-size:0.82rem;';
+        var roiL1 = document.createElement('span');
+        roiL1.style.color = 'var(--accent2)';
+        roiL1.textContent = 'Your total annual cost (ELIX + 6mo CardUp)';
+        var roiV1 = document.createElement('span');
+        roiV1.style.cssText = 'color:var(--accent2);font-weight:700;';
+        roiV1.textContent = fmt(totalAnnualCost);
+        roiRow1.appendChild(roiL1);
+        roiRow1.appendChild(roiV1);
+
+        var roiRow2 = document.createElement('div');
+        roiRow2.style.cssText = 'display:flex;justify-content:space-between;font-size:0.82rem;margin-top:4px;';
+        var roiL2 = document.createElement('span');
+        roiL2.style.color = 'var(--muted2)';
+        roiL2.textContent = 'Potential business class ticket value';
+        var roiV2 = document.createElement('span');
+        roiV2.style.cssText = 'color:var(--accent);font-weight:700;';
+        roiV2.textContent = '$3,500 \u2014 $5,000';
+        roiRow2.appendChild(roiL2);
+        roiRow2.appendChild(roiV2);
+
+        roiBox.appendChild(roiRow1);
+        roiBox.appendChild(roiRow2);
+        container.appendChild(roiBox);
+      }
+    }
+
+    // Attach calculator events
+    document.getElementById('calc-salary').addEventListener('input', calculateCost);
+    document.getElementById('calc-age').addEventListener('change', calculateCost);
+    document.getElementById('calc-count').addEventListener('input', calculateCost);
+    document.getElementById('calc-wica').addEventListener('change', calculateCost);
+
+    // Run calculator on load
+    calculateCost();
+  </script>
+</body>
+</html>

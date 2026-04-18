@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Competitor Analytics — The Commons Admin</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .admin-nav-bar {
+      display: flex;
+      gap: 8px;
+      background: var(--navy);
+      padding: 10px 24px;
+      margin-top: var(--nav-height);
+      position: sticky;
+      top: var(--nav-height);
+      z-index: 100;
+    }
+    .admin-nav-bar a {
+      color: rgba(255,255,255,0.6);
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .admin-nav-bar a:hover { background: rgba(255,255,255,0.08); color: white; }
+    .admin-nav-bar a.active { background: rgba(255,107,107,0.2); color: var(--coral); }
+
+    .comp-card {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+    .comp-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+    .score-bar {
+      height: 8px;
+      background: var(--sand-dark);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 100px;
+      transition: width 0.6s var(--ease-out);
+    }
+    .score-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .score-row .label {
+      width: 70px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--slate);
+      text-align: right;
+    }
+    .score-row .value {
+      width: 24px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .radar-svg { max-width: 300px; margin: 0 auto; }
+
+    .cat-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 100px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .cat-events { background: rgba(255,107,107,0.1); color: var(--coral); }
+    .cat-payments { background: rgba(0,210,255,0.1); color: var(--deep-ocean); }
+    .cat-escrow { background: rgba(139,92,246,0.1); color: #7C3AED; }
+    .cat-marketplace { background: rgba(245,158,11,0.1); color: #D97706; }
+    .cat-sea { background: rgba(16,185,129,0.1); color: #059669; }
+
+    .market-stat {
+      text-align: center;
+      padding: 24px;
+      background: white;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+    }
+    .market-stat .value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .market-stat .label {
+      font-size: 0.8rem;
+      color: var(--slate);
+    }
+
+    .gap-card {
+      background: linear-gradient(135deg, rgba(255,107,107,0.05), rgba(0,210,255,0.05));
+      border: 1px solid rgba(255,107,107,0.15);
+      border-radius: var(--radius-md);
+      padding: 24px;
+    }
+
+    .reg-item {
+      padding: 16px;
+      background: white;
+      border-radius: var(--radius-sm);
+      border-left: 4px solid var(--coral);
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .admin-nav-bar { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">TC</div>
+        The Commons
+      </a>
+      <ul class="nav-links">
+        <li><a href="events.html">Discover</a></li>
+        <li><a href="create.html">Create Event</a></li>
+        <li><a href="marketplace.html">Marketplace</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="admin.html">Admin</a></li>
+        <li><a href="admin-competitors.html" class="active">Competitors</a></li>
+        <li><a href="admin-insights.html">Insights</a></li>
+      </ul>
+      <div class="nav-actions">
+        <span class="badge badge-coral">Research</span>
+      </div>
+      <button class="mobile-toggle" onclick="toggleMobileMenu()">&#9776;</button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="events.html">Discover Events</a>
+    <a href="marketplace.html">Marketplace</a>
+    <a href="admin.html">Admin Panel</a>
+    <a href="admin-competitors.html">Competitors</a>
+    <a href="admin-insights.html">Market Insights</a>
+  </div>
+
+  <!-- Admin Sub-Nav -->
+  <div class="admin-nav-bar">
+    <a href="admin.html">&#128202; Platform Admin</a>
+    <a href="admin-competitors.html" class="active">&#128269; Competitor Analytics</a>
+    <a href="admin-insights.html">&#128176; Market & Pricing</a>
+  </div>
+
+  <!-- Page Content -->
+  <section style="padding: 40px 0 80px; background: var(--sand);">
+    <div class="container-wide">
+
+      <!-- Header -->
+      <div style="margin-bottom: 40px;">
+        <h1 style="margin-bottom: 8px;">Competitor Analytics Dashboard</h1>
+        <p style="font-size: 1.05rem;">38 competitors analyzed across 5 categories. Research completed Apr 2026.</p>
+      </div>
+
+      <!-- Summary KPIs -->
+      <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 40px;">
+        <div class="market-stat" style="border-top: 4px solid var(--coral);">
+          <div class="value text-gradient">38</div>
+          <div class="label">Competitors Analyzed</div>
+        </div>
+        <div class="market-stat" style="border-top: 4px solid var(--ocean);">
+          <div class="value" style="color: var(--deep-ocean);">5</div>
+          <div class="label">Categories Covered</div>
+        </div>
+        <div class="market-stat" style="border-top: 4px solid #7C3AED;">
+          <div class="value" style="color: #7C3AED;">0</div>
+          <div class="label">Combine All 3 Features</div>
+        </div>
+        <div class="market-stat" style="border-top: 4px solid #059669;">
+          <div class="value" style="color: #059669;">$45B</div>
+          <div class="label">SEA Events Market</div>
+        </div>
+        <div class="market-stat" style="border-top: 4px solid #D97706;">
+          <div class="value" style="color: #D97706;">12-15%</div>
+          <div class="label">Market CAGR</div>
+        </div>
+      </div>
+
+      <!-- WHY THE COMMONS WINS -->
+      <div style="background: var(--sunset-gradient); border-radius: var(--radius-xl); padding: 48px; color: white; margin-bottom: 40px;">
+        <h2 style="margin-bottom: 16px;">&#127942; Why The Commons Wins</h2>
+        <p style="color: rgba(255,255,255,0.9); font-size: 1.05rem; margin-bottom: 24px;">No competitor combines all three pillars. We're building the first platform that unifies event organizing, escrow group payments, and a professional services marketplace.</p>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+          <div style="background: rgba(255,255,255,0.15); border-radius: var(--radius-md); padding: 24px; backdrop-filter: blur(10px);">
+            <h4 style="margin-bottom: 8px;">&#127881; Event Organizing</h4>
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.85);">Partiful has great social UX but zero payments. Eventbrite has tools but terrible group support. We combine the best of both.</p>
+          </div>
+          <div style="background: rgba(255,255,255,0.15); border-radius: var(--radius-md); padding: 24px; backdrop-filter: blur(10px);">
+            <h4 style="margin-bottom: 8px;">&#128274; Escrow Payments</h4>
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.85);">Splitwise tracks but doesn't collect. Escrow.com is not event-friendly. No platform offers progressive milestone escrow for group events in SEA.</p>
+          </div>
+          <div style="background: rgba(255,255,255,0.15); border-radius: var(--radius-md); padding: 24px; backdrop-filter: blur(10px);">
+            <h4 style="margin-bottom: 8px;">&#127775; Pro Marketplace</h4>
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.85);">GigSalad and Thumbtack are US-only. No SEA marketplace integrates service booking with event payment collection.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Filter -->
+      <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px;">
+        <button class="category-tag active" onclick="filterCompetitors(this, 'all')">All (38)</button>
+        <button class="category-tag" onclick="filterCompetitors(this, 'events')">&#127881; P2P Events (10)</button>
+        <button class="category-tag" onclick="filterCompetitors(this, 'payments')">&#128176; Group Payments (7)</button>
+        <button class="category-tag" onclick="filterCompetitors(this, 'escrow')">&#128274; Escrow/Crowd (6)</button>
+        <button class="category-tag" onclick="filterCompetitors(this, 'marketplace')">&#127775; Marketplaces (7)</button>
+        <button class="category-tag" onclick="filterCompetitors(this, 'sea')">&#127758; SG/SEA (8)</button>
+      </div>
+
+      <!-- Competitor Table -->
+      <div class="table-wrapper" style="margin-bottom: 40px; overflow-x: auto;">
+        <table id="compTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Competitor</th>
+              <th>Category</th>
+              <th>Design</th>
+              <th>Features</th>
+              <th>Payments</th>
+              <th>Mobile</th>
+              <th>Social</th>
+              <th>Avg</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-cat="events"><td>1</td><td><strong>Eventbrite</strong><br><span style="font-size:0.7rem;color:var(--slate)">eventbrite.com</span></td><td><span class="cat-badge cat-events">Events</span></td><td>6</td><td>8</td><td>7</td><td>6</td><td>4</td><td><strong>6.2</strong></td></tr>
+            <tr data-cat="events"><td>2</td><td><strong>Luma</strong><br><span style="font-size:0.7rem;color:var(--slate)">lu.ma</span></td><td><span class="cat-badge cat-events">Events</span></td><td>9</td><td>7</td><td>6</td><td>8</td><td>7</td><td><strong style="color:#059669">7.4</strong></td></tr>
+            <tr data-cat="events"><td>3</td><td><strong>Partiful</strong><br><span style="font-size:0.7rem;color:var(--slate)">partiful.com</span></td><td><span class="cat-badge cat-events">Events</span></td><td>9</td><td>5</td><td>1</td><td>9</td><td>9</td><td><strong>6.6</strong></td></tr>
+            <tr data-cat="events"><td>4</td><td><strong>Splash</strong><br><span style="font-size:0.7rem;color:var(--slate)">splashthat.com</span></td><td><span class="cat-badge cat-events">Events</span></td><td>9</td><td>7</td><td>5</td><td>6</td><td>3</td><td><strong>6.0</strong></td></tr>
+            <tr data-cat="events"><td>5</td><td><strong>IRL</strong><br><span style="font-size:0.7rem;color:var(--slate)">irl.com (shut down)</span></td><td><span class="cat-badge cat-events">Events</span></td><td>6</td><td>5</td><td>2</td><td>7</td><td>7</td><td><strong>5.4</strong></td></tr>
+            <tr data-cat="events"><td>6</td><td><strong>Fever</strong><br><span style="font-size:0.7rem;color:var(--slate)">feverup.com</span></td><td><span class="cat-badge cat-events">Events</span></td><td>8</td><td>6</td><td>7</td><td>8</td><td>5</td><td><strong>6.8</strong></td></tr>
+            <tr data-cat="events"><td>7</td><td><strong>Hopin</strong><br><span style="font-size:0.7rem;color:var(--slate)">hopin.com</span></td><td><span class="cat-badge cat-events">Events</span></td><td>6</td><td>7</td><td>6</td><td>5</td><td>6</td><td><strong>6.0</strong></td></tr>
+            <tr data-cat="events"><td>8</td><td><strong>Meetup</strong><br><span style="font-size:0.7rem;color:var(--slate)">meetup.com</span></td><td><span class="cat-badge cat-events">Events</span></td><td>4</td><td>6</td><td>4</td><td>5</td><td>7</td><td><strong>5.2</strong></td></tr>
+            <tr data-cat="events"><td>9</td><td><strong>Airmeet</strong><br><span style="font-size:0.7rem;color:var(--slate)">airmeet.com</span></td><td><span class="cat-badge cat-events">Events</span></td><td>7</td><td>7</td><td>5</td><td>6</td><td>7</td><td><strong>6.4</strong></td></tr>
+            <tr data-cat="events"><td>10</td><td><strong>AllEvents.in</strong><br><span style="font-size:0.7rem;color:var(--slate)">allevents.in</span></td><td><span class="cat-badge cat-events">Events</span></td><td>5</td><td>5</td><td>5</td><td>5</td><td>4</td><td><strong>4.8</strong></td></tr>
+            <tr data-cat="payments"><td>11</td><td><strong>Splitwise</strong><br><span style="font-size:0.7rem;color:var(--slate)">splitwise.com</span></td><td><span class="cat-badge cat-payments">Payments</span></td><td>7</td><td>7</td><td>5</td><td>8</td><td>6</td><td><strong>6.6</strong></td></tr>
+            <tr data-cat="payments"><td>12</td><td><strong>Settle Up</strong><br><span style="font-size:0.7rem;color:var(--slate)">settleup.io</span></td><td><span class="cat-badge cat-payments">Payments</span></td><td>5</td><td>5</td><td>3</td><td>6</td><td>3</td><td><strong>4.4</strong></td></tr>
+            <tr data-cat="payments"><td>13</td><td><strong>Tricount</strong><br><span style="font-size:0.7rem;color:var(--slate)">tricount.com</span></td><td><span class="cat-badge cat-payments">Payments</span></td><td>6</td><td>5</td><td>3</td><td>7</td><td>3</td><td><strong>4.8</strong></td></tr>
+            <tr data-cat="payments"><td>14</td><td><strong>PayUp SG</strong><br><span style="font-size:0.7rem;color:var(--slate)">payup.com.sg</span></td><td><span class="cat-badge cat-payments">Payments</span></td><td>6</td><td>4</td><td>7</td><td>6</td><td>3</td><td><strong>5.2</strong></td></tr>
+            <tr data-cat="payments"><td>15</td><td><strong>Collabpay</strong><br><span style="font-size:0.7rem;color:var(--slate)">collabpay.com</span></td><td><span class="cat-badge cat-payments">Payments</span></td><td>6</td><td>5</td><td>7</td><td>6</td><td>4</td><td><strong>5.6</strong></td></tr>
+            <tr data-cat="payments"><td>16</td><td><strong>Braid</strong><br><span style="font-size:0.7rem;color:var(--slate)">bfrnd.com</span></td><td><span class="cat-badge cat-payments">Payments</span></td><td>7</td><td>6</td><td>7</td><td>6</td><td>5</td><td><strong>6.2</strong></td></tr>
+            <tr data-cat="payments"><td>17</td><td><strong>Cino SG</strong><br><span style="font-size:0.7rem;color:var(--slate)">cino.app</span></td><td><span class="cat-badge cat-payments">Payments</span></td><td>6</td><td>4</td><td>7</td><td>6</td><td>3</td><td><strong>5.2</strong></td></tr>
+            <tr data-cat="escrow"><td>18</td><td><strong>Kickstarter</strong><br><span style="font-size:0.7rem;color:var(--slate)">kickstarter.com</span></td><td><span class="cat-badge cat-escrow">Escrow</span></td><td>7</td><td>6</td><td>7</td><td>6</td><td>7</td><td><strong>6.6</strong></td></tr>
+            <tr data-cat="escrow"><td>19</td><td><strong>GoFundMe</strong><br><span style="font-size:0.7rem;color:var(--slate)">gofundme.com</span></td><td><span class="cat-badge cat-escrow">Escrow</span></td><td>6</td><td>4</td><td>7</td><td>6</td><td>6</td><td><strong>5.8</strong></td></tr>
+            <tr data-cat="escrow"><td>20</td><td><strong>Escrow.com</strong><br><span style="font-size:0.7rem;color:var(--slate)">escrow.com</span></td><td><span class="cat-badge cat-escrow">Escrow</span></td><td>5</td><td>4</td><td>9</td><td>4</td><td>1</td><td><strong>4.6</strong></td></tr>
+            <tr data-cat="escrow"><td>21</td><td><strong>Indiegogo</strong><br><span style="font-size:0.7rem;color:var(--slate)">indiegogo.com</span></td><td><span class="cat-badge cat-escrow">Escrow</span></td><td>6</td><td>5</td><td>6</td><td>5</td><td>5</td><td><strong>5.4</strong></td></tr>
+            <tr data-cat="escrow"><td>22</td><td><strong>Patreon</strong><br><span style="font-size:0.7rem;color:var(--slate)">patreon.com</span></td><td><span class="cat-badge cat-escrow">Escrow</span></td><td>7</td><td>6</td><td>7</td><td>7</td><td>7</td><td><strong style="color:#059669">6.8</strong></td></tr>
+            <tr data-cat="escrow"><td>23</td><td><strong>Givebutter</strong><br><span style="font-size:0.7rem;color:var(--slate)">givebutter.com</span></td><td><span class="cat-badge cat-escrow">Escrow</span></td><td>7</td><td>7</td><td>7</td><td>6</td><td>6</td><td><strong>6.6</strong></td></tr>
+            <tr data-cat="marketplace"><td>24</td><td><strong>GigSalad</strong><br><span style="font-size:0.7rem;color:var(--slate)">gigsalad.com</span></td><td><span class="cat-badge cat-marketplace">Marketplace</span></td><td>6</td><td>6</td><td>6</td><td>5</td><td>4</td><td><strong>5.4</strong></td></tr>
+            <tr data-cat="marketplace"><td>25</td><td><strong>The Bash</strong><br><span style="font-size:0.7rem;color:var(--slate)">thebash.com</span></td><td><span class="cat-badge cat-marketplace">Marketplace</span></td><td>5</td><td>6</td><td>6</td><td>5</td><td>3</td><td><strong>5.0</strong></td></tr>
+            <tr data-cat="marketplace"><td>26</td><td><strong>Thumbtack</strong><br><span style="font-size:0.7rem;color:var(--slate)">thumbtack.com</span></td><td><span class="cat-badge cat-marketplace">Marketplace</span></td><td>7</td><td>7</td><td>6</td><td>7</td><td>4</td><td><strong>6.2</strong></td></tr>
+            <tr data-cat="marketplace"><td>27</td><td><strong>Bark</strong><br><span style="font-size:0.7rem;color:var(--slate)">bark.com</span></td><td><span class="cat-badge cat-marketplace">Marketplace</span></td><td>6</td><td>6</td><td>5</td><td>6</td><td>3</td><td><strong>5.2</strong></td></tr>
+            <tr data-cat="marketplace"><td>28</td><td><strong>Peerspace</strong><br><span style="font-size:0.7rem;color:var(--slate)">peerspace.com</span></td><td><span class="cat-badge cat-marketplace">Marketplace</span></td><td>8</td><td>6</td><td>7</td><td>7</td><td>3</td><td><strong>6.2</strong></td></tr>
+            <tr data-cat="marketplace"><td>29</td><td><strong>Tagvenue</strong><br><span style="font-size:0.7rem;color:var(--slate)">tagvenue.com</span></td><td><span class="cat-badge cat-marketplace">Marketplace</span></td><td>7</td><td>5</td><td>5</td><td>6</td><td>2</td><td><strong>5.0</strong></td></tr>
+            <tr data-cat="marketplace"><td>30</td><td><strong>Honeybook</strong><br><span style="font-size:0.7rem;color:var(--slate)">honeybook.com</span></td><td><span class="cat-badge cat-marketplace">Marketplace</span></td><td>8</td><td>8</td><td>7</td><td>7</td><td>3</td><td><strong>6.6</strong></td></tr>
+            <tr data-cat="sea"><td>31</td><td><strong>Peatix</strong><br><span style="font-size:0.7rem;color:var(--slate)">peatix.com</span></td><td><span class="cat-badge cat-sea">SG/SEA</span></td><td>6</td><td>6</td><td>6</td><td>5</td><td>5</td><td><strong>5.6</strong></td></tr>
+            <tr data-cat="sea"><td>32</td><td><strong>EventNook</strong><br><span style="font-size:0.7rem;color:var(--slate)">eventnook.com</span></td><td><span class="cat-badge cat-sea">SG/SEA</span></td><td>5</td><td>6</td><td>6</td><td>5</td><td>3</td><td><strong>5.0</strong></td></tr>
+            <tr data-cat="sea"><td>33</td><td><strong>Klook</strong><br><span style="font-size:0.7rem;color:var(--slate)">klook.com</span></td><td><span class="cat-badge cat-sea">SG/SEA</span></td><td>8</td><td>7</td><td>8</td><td>9</td><td>5</td><td><strong style="color:#059669">7.4</strong></td></tr>
+            <tr data-cat="sea"><td>34</td><td><strong>Sistic</strong><br><span style="font-size:0.7rem;color:var(--slate)">sistic.com.sg</span></td><td><span class="cat-badge cat-sea">SG/SEA</span></td><td>3</td><td>4</td><td>6</td><td>3</td><td>1</td><td><strong style="color:#EF4444">3.4</strong></td></tr>
+            <tr data-cat="sea"><td>35</td><td><strong>Eventbrite SG</strong><br><span style="font-size:0.7rem;color:var(--slate)">eventbrite.sg</span></td><td><span class="cat-badge cat-sea">SG/SEA</span></td><td>6</td><td>8</td><td>6</td><td>6</td><td>4</td><td><strong>6.0</strong></td></tr>
+            <tr data-cat="sea"><td>36</td><td><strong>GrabPay</strong><br><span style="font-size:0.7rem;color:var(--slate)">grab.com</span></td><td><span class="cat-badge cat-sea">SG/SEA</span></td><td>7</td><td>3</td><td>9</td><td>8</td><td>4</td><td><strong>6.2</strong></td></tr>
+            <tr data-cat="sea"><td>37</td><td><strong>Zaloha</strong><br><span style="font-size:0.7rem;color:var(--slate)">zaloha.co</span></td><td><span class="cat-badge cat-sea">SG/SEA</span></td><td>5</td><td>4</td><td>4</td><td>4</td><td>2</td><td><strong style="color:#EF4444">3.8</strong></td></tr>
+            <tr data-cat="sea"><td>38</td><td><strong>BackerKit</strong><br><span style="font-size:0.7rem;color:var(--slate)">backerkit.com</span></td><td><span class="cat-badge cat-escrow">Escrow</span></td><td>6</td><td>6</td><td>6</td><td>5</td><td>4</td><td><strong>5.4</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Market Gap Analysis -->
+      <h2 style="margin-bottom: 24px;">&#128161; Key Market Gaps</h2>
+      <div class="grid-3" style="margin-bottom: 40px;">
+        <div class="gap-card">
+          <h4 style="margin-bottom: 8px;">&#10060; No All-in-One Platform</h4>
+          <p style="font-size: 0.85rem;">No single competitor combines event organizing + group payments + vendor marketplace. They all solve only 1 of 3 problems.</p>
+        </div>
+        <div class="gap-card">
+          <h4 style="margin-bottom: 8px;">&#10060; No Event Escrow in SEA</h4>
+          <p style="font-size: 0.85rem;">Escrow.com exists for transactions but isn't event-friendly. No platform offers progressive milestone escrow for group events in Southeast Asia.</p>
+        </div>
+        <div class="gap-card">
+          <h4 style="margin-bottom: 8px;">&#10060; Social UX vs Payments</h4>
+          <p style="font-size: 0.85rem;">Partiful has incredible social UX (9/10) but zero payment capability (1/10). Eventbrite has payments but terrible social features (4/10).</p>
+        </div>
+        <div class="gap-card">
+          <h4 style="margin-bottom: 8px;">&#10060; No SEA Service Marketplace</h4>
+          <p style="font-size: 0.85rem;">GigSalad, Thumbtack, The Bash are US-only. Zaloha in SG is tiny. No credible event services marketplace exists for Singapore/SEA.</p>
+        </div>
+        <div class="gap-card">
+          <h4 style="margin-bottom: 8px;">&#10060; PayNow Underutilized</h4>
+          <p style="font-size: 0.85rem;">PayNow is ubiquitous in Singapore but no event platform deeply integrates it. People still do awkward bank transfers for group events.</p>
+        </div>
+        <div class="gap-card">
+          <h4 style="margin-bottom: 8px;">&#10060; Mobile-First is Rare</h4>
+          <p style="font-size: 0.85rem;">Most event management tools are desktop-first. Only Klook (9/10) and Partiful (9/10) have truly great mobile UX.</p>
+        </div>
+      </div>
+
+      <!-- SG/SEA Landscape -->
+      <h2 style="margin-bottom: 24px;">&#127758; Singapore & SEA Landscape</h2>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px;">
+        <div class="market-stat">
+          <div class="value text-gradient">$45B</div>
+          <div class="label">SEA Events Industry</div>
+        </div>
+        <div class="market-stat">
+          <div class="value" style="color: var(--deep-ocean);">$4-5B</div>
+          <div class="label">Singapore Events Market</div>
+        </div>
+        <div class="market-stat">
+          <div class="value" style="color: #059669;">$3-4B</div>
+          <div class="label">SEA Online Ticketing</div>
+        </div>
+        <div class="market-stat">
+          <div class="value" style="color: #7C3AED;">$15B+</div>
+          <div class="label">SG Digital Payments</div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom: 40px;">
+        <!-- Key Players -->
+        <div class="card" style="padding: 28px;">
+          <h4 style="margin-bottom: 16px;">Key Regional Players</h4>
+          <div style="display: grid; gap: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--sand); border-radius: var(--radius-sm);">
+              <div><strong>Klook</strong> <span style="font-size: 0.75rem; color: var(--slate);">Hong Kong</span></div>
+              <span style="font-size: 0.8rem;">Dominant in SEA experiences</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--sand); border-radius: var(--radius-sm);">
+              <div><strong>Peatix</strong> <span style="font-size: 0.75rem; color: var(--slate);">Japan/SG</span></div>
+              <span style="font-size: 0.8rem;">Strong in JP/SG community events</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--sand); border-radius: var(--radius-sm);">
+              <div><strong>Sistic</strong> <span style="font-size: 0.75rem; color: var(--slate);">Singapore</span></div>
+              <span style="font-size: 0.8rem;">Dominant SG arts/entertainment</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--sand); border-radius: var(--radius-sm);">
+              <div><strong>GrabPay</strong> <span style="font-size: 0.75rem; color: var(--slate);">Singapore</span></div>
+              <span style="font-size: 0.8rem;">Ubiquitous SEA payments</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--sand); border-radius: var(--radius-sm);">
+              <div><strong>Fever</strong> <span style="font-size: 0.75rem; color: var(--slate);">Spain (global)</span></div>
+              <span style="font-size: 0.8rem;">Expanding in SG curated events</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Regulatory -->
+        <div class="card" style="padding: 28px;">
+          <h4 style="margin-bottom: 16px;">&#9878;&#65039; SG Regulatory Considerations</h4>
+          <div style="display: grid; gap: 10px;">
+            <div class="reg-item">
+              <strong style="font-size: 0.85rem;">Payment Services Act (PSA) 2019</strong>
+              <p style="font-size: 0.8rem; margin: 4px 0 0;">MAS licensing required for handling payments. Escrow needs specific licensing.</p>
+            </div>
+            <div class="reg-item" style="border-left-color: var(--ocean);">
+              <strong style="font-size: 0.85rem;">PDPA</strong>
+              <p style="font-size: 0.8rem; margin: 4px 0 0;">Strict data protection for attendee info collection, use, storage.</p>
+            </div>
+            <div class="reg-item" style="border-left-color: #7C3AED;">
+              <strong style="font-size: 0.85rem;">GST (9%)</strong>
+              <p style="font-size: 0.8rem; margin: 4px 0 0;">Applies to event services. GST registration required if revenue >S$1M.</p>
+            </div>
+            <div class="reg-item" style="border-left-color: #D97706;">
+              <strong style="font-size: 0.85rem;">Public Entertainment License</strong>
+              <p style="font-size: 0.8rem; margin: 4px 0 0;">Events with 150+ people or serving alcohol need SPF license.</p>
+            </div>
+            <div class="reg-item" style="border-left-color: #059669;">
+              <strong style="font-size: 0.85rem;">AML/CFT Compliance</strong>
+              <p style="font-size: 0.8rem; margin: 4px 0 0;">Group payment/escrow platforms must comply with anti-money laundering rules.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Design Rationale -->
+      <h2 style="margin-bottom: 24px;">&#127912; Design Rationale — What We Borrowed & Improved</h2>
+      <div class="grid-2" style="margin-bottom: 40px;">
+        <div class="card" style="padding: 28px;">
+          <h4 style="margin-bottom: 16px; color: #059669;">&#10003; Ideas Borrowed</h4>
+          <ul style="padding-left: 20px; line-height: 2; font-size: 0.9rem; color: var(--slate);">
+            <li><strong>Partiful's</strong> fun, social-first event UX and playful tone</li>
+            <li><strong>Luma's</strong> clean, minimal event page design</li>
+            <li><strong>Klook's</strong> mobile-first approach and SEA localization</li>
+            <li><strong>Peerspace's</strong> marketplace UX with add-on services</li>
+            <li><strong>Escrow.com's</strong> milestone-based payment release model</li>
+            <li><strong>Splitwise's</strong> intuitive group balance tracking</li>
+            <li><strong>Honeybook's</strong> vendor management tools</li>
+            <li><strong>Kickstarter's</strong> progress bar and social proof mechanics</li>
+          </ul>
+        </div>
+        <div class="card" style="padding: 28px;">
+          <h4 style="margin-bottom: 16px; color: var(--coral);">&#128293; Weaknesses We Improved</h4>
+          <ul style="padding-left: 20px; line-height: 2; font-size: 0.9rem; color: var(--slate);">
+            <li><strong>Eventbrite's</strong> terrible group payment support &#8594; built-in escrow</li>
+            <li><strong>Partiful's</strong> zero payment capability &#8594; progressive milestones</li>
+            <li><strong>Splitwise's</strong> tracking-only approach &#8594; actual collection + escrow</li>
+            <li><strong>Sistic's</strong> dated, legacy technology &#8594; modern, vibrant design</li>
+            <li><strong>GigSalad's</strong> US-only limitation &#8594; SEA-first marketplace</li>
+            <li><strong>Meetup's</strong> clunky, outdated UX &#8594; mobile-first, beautiful interface</li>
+            <li><strong>EventNook's</strong> corporate-only focus &#8594; social events for friends</li>
+            <li><strong>WhatsApp group chaos</strong> &#8594; structured event + payment flow</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border-top: none; padding-top: 0;">
+        <span>&copy; 2026 The Commons. Competitor research for internal use.</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+  <script>
+    function filterCompetitors(btn, cat) {
+      document.querySelectorAll('.category-tag').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('#compTable tbody tr').forEach(row => {
+        row.style.display = (cat === 'all' || row.dataset.cat === cat) ? '' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>

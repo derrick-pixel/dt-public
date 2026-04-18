@@ -1,0 +1,652 @@
+/* ═══════════════════════════════════════════════
+   ELIXCRAFT — SITREP / Analytics Page
+   Light Professional Theme
+   ═══════════════════════════════════════════════ */
+
+.sitrep-screen {
+  min-height: 100vh;
+  background: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+}
+
+/* ─── HUD ─────────────────────────────────────────── */
+.sitrep-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.sitrep-hud-title {
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  letter-spacing: 0.25em;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sitrep-icon { font-size: 1rem; }
+
+.sitrep-hud-right {
+  font-family: var(--font-ui);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+}
+
+/* ─── Wrapper & Grid ─────────────────────────────── */
+.sitrep-wrapper {
+  position: relative;
+  z-index: 1;
+  padding: 0 0 40px;
+  min-height: 100vh;
+}
+
+.sitrep-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr 300px;
+  gap: 16px;
+  padding: 20px 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.sitrep-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ─── Panel base ─────────────────────────────────── */
+.sr-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 16px;
+}
+
+.sr-panel-title {
+  font-family: var(--font-ui);
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ─── Commander Profile ──────────────────────────── */
+.sr-profile-inner {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.sr-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(37,99,235,0.06);
+  border: 2px solid var(--technology);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--technology);
+  flex-shrink: 0;
+}
+
+.sr-profile-data { flex: 1; min-width: 0; }
+
+.sr-player-name {
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin-bottom: 4px;
+}
+
+.sr-player-role {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
+
+.sr-level-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sr-level-label {
+  font-family: var(--font-ui);
+  font-size: 0.45rem;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+}
+
+.sr-level-val {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: var(--technology);
+  min-width: 20px;
+}
+
+.sr-xp-outer {
+  flex: 1;
+  height: 5px;
+  background: var(--bg-panel-alt);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.sr-xp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(37,99,235,0.5), var(--technology));
+  border-radius: 3px;
+  transition: width 0.8s ease;
+}
+
+.sr-xp-text {
+  font-family: var(--font-ui);
+  font-size: 0.45rem;
+  color: var(--technology);
+  white-space: nowrap;
+}
+
+/* Stats grid */
+.sr-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.sr-stat-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.sr-stat-label {
+  font-family: var(--font-ui);
+  font-size: 0.45rem;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+}
+
+.sr-stat-bar-outer {
+  height: 5px;
+  background: var(--bg-panel-alt);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.sr-stat-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+.sr-stat-bar-fill.stat-str { background: linear-gradient(90deg, #f87171, #ef4444); }
+.sr-stat-bar-fill.stat-int { background: linear-gradient(90deg, rgba(37,99,235,0.5), var(--technology)); }
+.sr-stat-bar-fill.stat-cha { background: linear-gradient(90deg, #60a5fa, var(--operations)); }
+.sr-stat-bar-fill.stat-dex { background: linear-gradient(90deg, #34d399, var(--success)); }
+
+.sr-stat-num {
+  font-family: var(--font-ui);
+  font-size: 0.5rem;
+  color: var(--text-primary);
+  text-align: right;
+}
+
+/* ─── Resources ──────────────────────────────────── */
+.sr-res-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sr-res-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sr-res-icon { font-size: 1rem; flex-shrink: 0; }
+
+.sr-res-info { flex: 1; }
+
+.sr-res-name {
+  font-family: var(--font-ui);
+  font-size: 0.45rem;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  margin-bottom: 3px;
+}
+
+.sr-res-bar-outer {
+  height: 5px;
+  background: var(--bg-panel-alt);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.sr-res-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.8s ease;
+}
+.sr-res-bar-fill.res-minerals { background: linear-gradient(90deg, #84cc16, #a3e635); }
+.sr-res-bar-fill.res-gas      { background: linear-gradient(90deg, #14b8a6, #2dd4bf); }
+.sr-res-bar-fill.res-supply   { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+
+.sr-res-val {
+  font-family: var(--font-ui);
+  font-size: 0.6rem;
+  color: var(--text-primary);
+  min-width: 50px;
+  text-align: right;
+}
+
+/* ─── Skills ─────────────────────────────────────── */
+.sr-skill-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sr-skill-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+
+.sr-skill-icon { font-size: 1rem; flex-shrink: 0; }
+
+.sr-skill-info { flex: 1; }
+
+.sr-skill-name {
+  font-size: 0.75rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.sr-skill-xp {
+  font-family: var(--font-ui);
+  font-size: 0.45rem;
+  color: var(--xp-color);
+}
+
+.sr-no-data {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  text-align: center;
+  padding: 16px;
+  opacity: 0.6;
+}
+
+/* ─── Quest Performance ──────────────────────────── */
+.sr-quest-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.sr-quest-stat {
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 10px;
+  text-align: center;
+}
+
+.sr-quest-stat-val {
+  font-family: var(--font-ui);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.sr-quest-stat-label {
+  font-family: var(--font-ui);
+  font-size: 0.42rem;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+}
+
+.sr-quest-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sr-quest-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  border-left: 3px solid transparent;
+  border-radius: 3px;
+}
+
+.sr-quest-item.status-complete  { border-left-color: var(--operations); }
+.sr-quest-item.status-active    { border-left-color: var(--technology); }
+.sr-quest-item.status-available { border-left-color: var(--success); }
+
+.sr-quest-name {
+  flex: 1;
+  font-size: 0.72rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.sr-quest-type {
+  font-family: var(--font-ui);
+  font-size: 0.42rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+}
+
+.sr-quest-progress-outer {
+  width: 80px;
+  height: 5px;
+  background: var(--bg-panel);
+  border-radius: 3px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.sr-quest-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--technology);
+  transition: width 0.6s ease;
+}
+
+.sr-quest-pct {
+  font-family: var(--font-ui);
+  font-size: 0.45rem;
+  color: var(--text-dim);
+  width: 28px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.sr-quest-status-badge {
+  font-family: var(--font-ui);
+  font-size: 0.4rem;
+  letter-spacing: 0.1em;
+  padding: 2px 6px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.sq-complete  { background: rgba(8,145,178,0.08); color: var(--operations); }
+.sq-active    { background: rgba(37,99,235,0.08); color: var(--technology); }
+.sq-available { background: rgba(5,150,105,0.08); color: var(--success); }
+
+/* ─── Battle History ─────────────────────────────── */
+.sr-battle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sr-battle-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-size: 0.7rem;
+}
+
+.sr-battle-icon { font-size: 1rem; flex-shrink: 0; }
+.sr-battle-info { flex: 1; }
+.sr-battle-opponent { color: var(--text-primary); font-weight: 600; }
+.sr-battle-date {
+  font-size: 0.55rem;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+.sr-battle-outcome {
+  font-family: var(--font-ui);
+  font-size: 0.45rem;
+  padding: 3px 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.outcome-win  { background: rgba(5,150,105,0.08); color: var(--success); }
+.outcome-loss { background: rgba(220,38,38,0.08); color: var(--danger); }
+.outcome-draw { background: rgba(37,99,235,0.06); color: var(--technology); }
+
+.sr-battle-xp {
+  font-family: var(--font-ui);
+  font-size: 0.5rem;
+  color: var(--technology);
+  flex-shrink: 0;
+}
+
+/* ─── Sector Coverage ────────────────────────────── */
+.sr-sector-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.sr-sector-pip {
+  aspect-ratio: 1;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  background: var(--bg-panel-alt);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 4px;
+  cursor: default;
+  transition: border-color 0.2s;
+}
+
+.sr-sector-pip.deployed {
+  border-color: rgba(5,150,105,0.3);
+  background: rgba(5,150,105,0.04);
+}
+
+.sr-sector-pip-icon { font-size: 1rem; }
+
+.sr-sector-pip-name {
+  font-family: var(--font-ui);
+  font-size: 0.35rem;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+  text-align: center;
+  line-height: 1.2;
+}
+
+.sr-sector-pip.deployed .sr-sector-pip-name { color: var(--success); }
+
+.sr-sector-coverage-bar {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sr-coverage-label {
+  font-family: var(--font-ui);
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.sr-coverage-outer {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-panel);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.sr-coverage-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #059669, #34d399);
+  border-radius: 3px;
+  transition: width 0.8s ease;
+}
+
+.sr-coverage-pct {
+  font-family: var(--font-ui);
+  font-size: 0.55rem;
+  color: var(--success);
+  flex-shrink: 0;
+}
+
+/* ─── Roster Table ───────────────────────────────── */
+.sr-roster-table {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.sr-roster-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  background: var(--bg-panel-alt);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-size: 0.7rem;
+}
+
+.sr-roster-init {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-ui);
+  font-size: 0.5rem;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.sr-roster-info { flex: 1; min-width: 0; }
+
+.sr-roster-name {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.72rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sr-roster-role {
+  font-size: 0.55rem;
+  color: var(--text-dim);
+  margin-top: 1px;
+}
+
+.sr-roster-lvl {
+  font-family: var(--font-ui);
+  font-size: 0.5rem;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.sr-roster-status {
+  font-family: var(--font-ui);
+  font-size: 0.4rem;
+  letter-spacing: 0.08em;
+  padding: 2px 5px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.rs-active   { background: rgba(5,150,105,0.08); color: var(--success); }
+.rs-quest    { background: rgba(37,99,235,0.06); color: var(--technology); }
+.rs-training { background: rgba(8,145,178,0.08); color: var(--operations); }
+.rs-ghost    { background: rgba(107,114,128,0.06); color: var(--text-dim); }
+
+/* ─── Footer ─────────────────────────────────────── */
+.sitrep-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 24px;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-ui);
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  margin-top: 8px;
+}
+
+.sr-reset-btn {
+  font-family: var(--font-ui);
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  padding: 6px 14px;
+  background: transparent;
+  color: var(--warning);
+  border: 1px solid var(--warning);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.sr-reset-btn:hover { background: rgba(217,119,6,0.06); }
+
+/* ─── Responsive ─────────────────────────────────── */
+@media (max-width: 1100px) {
+  .sitrep-grid {
+    grid-template-columns: 260px 1fr;
+  }
+  .sitrep-col-right {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .sitrep-grid {
+    grid-template-columns: 1fr;
+    padding: 12px 14px;
+  }
+  .sitrep-col-right { grid-template-columns: 1fr; }
+  .sr-quest-summary { grid-template-columns: repeat(2, 1fr); }
+  .sr-sector-grid   { grid-template-columns: repeat(4, 1fr); }
+}

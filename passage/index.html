@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <title>Passage — Because Grief Is Burden Enough</title>
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://derrick-pixel.github.io/Passage/images/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:title" content="PASSAGE — Transparent Caskets for Singapore">
+  <meta property="og:description" content="Because grief is burden enough. Quality caskets from S$800. Island-wide delivery in 3 hours. No hidden fees. 30% to charity.">
+  <meta property="og:url" content="https://derrick-pixel.github.io/Passage/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://derrick-pixel.github.io/Passage/images/og-image.jpg">
+  <meta name="description" content="Transparent, dignified caskets delivered across Singapore within 3 hours. No hidden fees. No emotional exploitation. From S$800." />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .page-body { padding-top: 108px; }
+
+    /* ── Hero ── */
+    .hero {
+      background: var(--primary);
+      padding: 100px 0 88px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(114,91,63,0.12) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .hero__grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 64px; align-items: center;
+    }
+    .hero__label {
+      font-family: var(--font-sans); font-size: 0.72rem;
+      font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--secondary-fixed-dim); margin-bottom: 20px;
+    }
+    .hero__title { color: var(--primary-on); margin-bottom: 22px; }
+    .hero__title em { color: var(--secondary-fixed-dim); font-style: normal; }
+    .hero__body {
+      color: rgba(242,249,249,0.75);
+      font-size: 1.05rem; line-height: 1.8; margin-bottom: 36px;
+    }
+    .hero__actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* Price comparison card */
+    .hero__visual {
+      background: rgba(252,249,245,0.08);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(242,249,249,0.1);
+      border-radius: var(--radius-xl);
+      padding: 36px 32px;
+    }
+    .hero__visual-title {
+      font-family: var(--font-serif); font-size: 1rem;
+      color: rgba(242,249,249,0.85); margin-bottom: 24px; text-align: center;
+    }
+    .price-compare { display: flex; flex-direction: column; gap: 20px; }
+    .price-compare__label {
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; color: rgba(242,249,249,0.45); margin-bottom: 8px;
+    }
+    .bar-track {
+      background: rgba(242,249,249,0.08);
+      border-radius: 4px; height: 44px;
+      position: relative; overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%; border-radius: 4px;
+      display: flex; align-items: center; padding: 0 16px;
+      font-family: var(--font-sans); font-weight: 700;
+      font-size: 0.875rem; color: #fff;
+      transition: width 1.4s cubic-bezier(0.16,1,0.3,1);
+      width: 0;
+    }
+    .bar-fill.animate-bar { width: var(--target-w); }
+    .price-compare__them .bar-fill { background: var(--error); }
+    .price-compare__us   .bar-fill {
+      background: linear-gradient(135deg, var(--secondary) 0%, #8c6a47 100%);
+    }
+    .price-compare__note {
+      font-size: 0.75rem; color: rgba(242,249,249,0.35);
+      text-align: center; margin-top: 10px; line-height: 1.5;
+    }
+
+    /* ── Trust bar ── */
+    .trust-bar {
+      background: var(--surface-1);
+      border-bottom: 1px solid var(--surface-3);
+    }
+    .trust-bar__inner {
+      display: flex; justify-content: center;
+      flex-wrap: wrap;
+    }
+    .trust-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 20px 28px;
+      border-right: 1px solid var(--surface-3);
+    }
+    .trust-item:last-child { border-right: none; }
+    .trust-item__icon { font-size: 1.25rem; }
+    .trust-item__text { font-size: 0.8rem; color: var(--on-surface-v); }
+    .trust-item__text strong { display: block; color: var(--on-surface); font-size: 0.875rem; margin-bottom: 1px; }
+
+    /* ── Problem section ── */
+    .problem-quote {
+      background: var(--secondary-fixed-dim);
+      border-left: 3px solid var(--secondary);
+      border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+      padding: 22px 28px; margin: 36px 0;
+    }
+    .problem-quote p {
+      font-family: var(--font-serif); font-size: 1.1rem;
+      color: var(--on-surface); line-height: 1.65;
+    }
+    .problem-quote cite {
+      display: block; margin-top: 10px;
+      font-size: 0.8rem; color: var(--on-surface-v); font-style: normal;
+    }
+    .problem-cards {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 2px; margin-top: 48px;
+      background: var(--surface-3); border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .problem-card {
+      background: var(--surface-1); padding: 32px;
+      transition: var(--transition);
+    }
+    .problem-card:hover { background: var(--surface-0); }
+    .problem-card__icon { font-size: 1.6rem; margin-bottom: 14px; }
+    .problem-card__title { font-size: 0.95rem; font-weight: 700; margin-bottom: 10px; color: var(--on-surface); }
+    .problem-card p { font-size: 0.875rem; }
+
+    /* ── Mission ── */
+    .mission-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+    .mission-values { display: flex; flex-direction: column; gap: 16px; margin-top: 28px; }
+    .mission-value {
+      display: flex; gap: 16px; align-items: flex-start;
+      padding: 18px 20px;
+      background: var(--surface-2); border-radius: var(--radius-lg);
+      transition: var(--transition);
+    }
+    .mission-value:hover { background: var(--surface-3); }
+    .mission-value__icon {
+      width: 42px; height: 42px; flex-shrink: 0;
+      background: var(--secondary-fixed-dim);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+    .mission-value__text h4 { margin-bottom: 4px; font-size: 0.9rem; }
+    .mission-value__text p { font-size: 0.83rem; }
+
+    /* Mission visual — dark panel */
+    .mission-visual {
+      background: var(--inverse-surface);
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      color: #fff;
+    }
+    .mission-visual__title {
+      font-family: var(--font-serif); font-size: 1.2rem;
+      color: #fff; margin-bottom: 24px;
+    }
+    .charity-meter { margin-bottom: 28px; }
+    .charity-meter__label {
+      font-size: 0.83rem; color: rgba(255,255,255,0.55);
+      margin-bottom: 8px; display: flex; justify-content: space-between;
+    }
+    .charity-meter__bar { background: rgba(255,255,255,0.08); border-radius: 4px; height: 8px; }
+    .charity-meter__fill {
+      background: linear-gradient(90deg, var(--secondary) 0%, var(--secondary-fixed-dim) 100%);
+      height: 100%; border-radius: 4px; width: 30%;
+    }
+    .csr-stat { display: flex; justify-content: space-between; gap: 12px; margin-top: 8px; }
+    .csr-item { text-align: center; flex: 1; }
+    .csr-item__num {
+      font-family: var(--font-serif); font-size: 1.5rem;
+      color: var(--secondary-fixed-dim); font-weight: 700;
+    }
+    .csr-item__label { font-size: 0.72rem; color: rgba(255,255,255,0.45); margin-top: 4px; }
+
+    /* ── Product preview ── */
+    .product-preview-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; }
+    .product-cards-wrap {
+      background: var(--surface-3); border-radius: var(--radius-xl);
+      overflow: hidden;
+    }
+    .product-card {
+      background: var(--surface-0);
+      transition: var(--transition);
+    }
+    .product-card:hover { background: var(--surface-1); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .product-card.featured { background: var(--surface-1); }
+    .product-card__badge-row { padding: 14px 20px 0; min-height: 34px; }
+    .product-card__image {
+      height: 210px;
+      overflow: hidden;
+    }
+    .product-card__image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .product-card:hover .product-card__image img { transform: scale(1.03); }
+    .product-card__body { padding: 24px; }
+    .product-card__name { font-family: var(--font-serif); font-size: 1.25rem; margin-bottom: 6px; }
+    .product-card__desc { font-size: 0.85rem; color: var(--on-surface-v); margin-bottom: 18px; line-height: 1.6; }
+    .product-card__price-row { display: flex; align-items: flex-end; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+    .product-card__price {
+      font-family: var(--font-serif); font-size: 1.7rem;
+      font-weight: 700; color: var(--secondary);
+    }
+    .product-card__old { font-size: 0.85rem; color: var(--outline); text-decoration: line-through; }
+    .product-card__saving { font-size: 0.72rem; color: var(--green); font-weight: 700; background: #e8f5e9; padding: 3px 8px; border-radius: 20px; }
+
+    /* ── Testimonials ── */
+    .testimonials { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; }
+    .testimonials-wrap { background: var(--surface-3); border-radius: var(--radius-xl); overflow: hidden; }
+    .testimonial { background: var(--surface-1); padding: 28px; }
+    .testimonial__stars { color: var(--secondary); font-size: 0.9rem; margin-bottom: 14px; letter-spacing: 2px; }
+    .testimonial__body {
+      font-size: 0.875rem; line-height: 1.75;
+      color: var(--on-surface-v); font-style: italic; margin-bottom: 20px;
+    }
+    .testimonial__author { display: flex; align-items: center; gap: 12px; }
+    .testimonial__avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--secondary-fixed-dim);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-sans); font-weight: 700;
+      font-size: 0.875rem; color: var(--secondary-dim); flex-shrink: 0;
+    }
+    .testimonial__name { font-size: 0.875rem; font-weight: 600; color: var(--on-surface); }
+    .testimonial__date { font-size: 0.75rem; color: var(--outline); }
+
+    /* ── Reflection module (Stitch custom) ── */
+    .reflection-module {
+      background: var(--secondary-fixed-dim);
+      border-radius: var(--radius-xl);
+      padding: 56px 48px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 48px; align-items: center;
+    }
+    .reflection-module h2 {
+      font-family: var(--font-serif); font-size: clamp(1.8rem, 3vw, 2.6rem);
+      color: var(--on-surface); line-height: 1.3; margin-bottom: 20px;
+    }
+    .reflection-module p { font-size: 1rem; color: var(--secondary-dim); margin-bottom: 28px; }
+    .reflection-visual {
+      position: relative; height: 280px; border-radius: var(--radius-lg);
+      overflow: hidden; background: var(--secondary-container);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .reflection-visual img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* ── Casket image strip ── */
+    .casket-strip {
+      background: var(--inverse-surface);
+      overflow: hidden;
+    }
+    .casket-strip__inner {
+      display: flex;
+      height: 420px;
+    }
+    .casket-strip__item {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .casket-strip__item img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease, filter 0.4s ease;
+      filter: brightness(0.82) saturate(0.9);
+    }
+    .casket-strip__item:hover img {
+      transform: scale(1.05);
+      filter: brightness(0.95) saturate(1);
+    }
+    .casket-strip__item--featured img {
+      filter: brightness(0.88) saturate(1);
+    }
+    .casket-strip__label {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 48px 28px 28px;
+      background: linear-gradient(to top, rgba(14,14,12,0.75) 0%, transparent 100%);
+      display: flex; justify-content: space-between; align-items: flex-end;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .casket-strip__item:hover .casket-strip__label {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .casket-strip__name {
+      font-family: var(--font-serif);
+      font-size: 1.5rem; font-weight: 600;
+      color: #fff; letter-spacing: 0.02em;
+    }
+    .casket-strip__price {
+      font-family: var(--font-sans);
+      font-size: 1rem; font-weight: 700;
+      color: var(--secondary-fixed-dim);
+      background: rgba(14,14,12,0.4);
+      padding: 6px 14px; border-radius: 20px;
+      backdrop-filter: blur(8px);
+    }
+    .casket-strip__divider {
+      width: 1px;
+      background: rgba(255,255,255,0.12);
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 900px) {
+      .hero__grid, .mission-grid, .reflection-module { grid-template-columns: 1fr; }
+      .problem-cards, .product-preview-cards, .testimonials { grid-template-columns: 1fr; }
+      .trust-item { padding: 14px 20px; }
+      .casket-strip__inner { height: auto; flex-direction: column; }
+      .casket-strip__item { height: 260px; }
+      .casket-strip__divider { width: 100%; height: 1px; }
+      .casket-strip__label { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body class="page-body">
+
+  <!-- NAV -->
+  <nav class="nav">
+  <div class="hotline-strip">
+    24-Hour Helpline &nbsp;|&nbsp; <a href="tel:+6598479776">+65 9847 9776</a> &nbsp;·&nbsp; Delivery within 3 hours across Singapore &nbsp;·&nbsp; No hidden fees. Ever.
+  </div>
+    <div class="nav__inner">
+      <a href="index.html" class="nav__logo">PASS<span>AGE</span></a>
+      <ul class="nav__links">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="products.html">Our Caskets</a></li>
+        <li><a href="knowledge.html">Funeral Guide</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="accreditation.html">Our Commitments</a></li>
+        <li><a href="admin.html">Admin</a></li>
+      </ul>
+      <a href="products.html" class="btn btn--primary nav__cta">View Prices</a>
+      <button class="nav__hamburger" onclick="toggleMobileNav()"><span></span><span></span><span></span></button>
+    </div>
+    <div class="nav__mobile" id="mobileNav">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="products.html">Our Caskets</a></li>
+        <li><a href="knowledge.html">Funeral Guide</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="accreditation.html">Our Commitments</a></li>
+        <li><a href="admin.html">Admin</a></li>
+      </ul>
+      <a href="products.html" class="btn btn--primary">View Prices</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero__grid">
+        <div>
+          <p class="hero__label">Singapore's Transparent Casket Provider</p>
+          <h1 class="hero__title">
+            Because grief is<br><em>burden enough.</em>
+          </h1>
+          <p class="hero__body">
+            Funeral packages routinely hide casket costs between S$2,000–S$4,000. You have every right to choose your own. We deliver dignified, locally assembled caskets from <strong style="color:var(--secondary-fixed-dim)">S$800</strong> — anywhere in Singapore within 3 hours.
+          </p>
+          <div class="hero__actions">
+            <a href="products.html" class="btn btn--secondary">See Our Caskets & Prices</a>
+            <a href="knowledge.html" class="btn btn--ghost">Funeral Guide</a>
+          </div>
+        </div>
+        <div class="hero__visual animate">
+          <p class="hero__visual-title">What you're actually paying for a casket</p>
+          <div class="price-compare">
+            <div class="price-compare__them">
+              <p class="price-compare__label">Typical funeral package (hidden casket cost)</p>
+              <div class="bar-track">
+                <div class="bar-fill" style="--target-w:92%">S$2,000 – S$4,000</div>
+              </div>
+            </div>
+            <div class="price-compare__us">
+              <p class="price-compare__label">Passage — fully transparent pricing</p>
+              <div class="bar-track">
+                <div class="bar-fill" style="--target-w:28%">S$800 – S$1,200</div>
+              </div>
+            </div>
+          </div>
+          <p class="price-compare__note">* Based on published funeral package estimates. Passage prices are all-in, no hidden fees.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST BAR -->
+  <section class="trust-bar">
+    <div class="trust-bar__inner">
+      <div class="trust-item"><span class="trust-item__icon">⏱</span><div class="trust-item__text"><strong>3-Hour Delivery</strong>Any address in Singapore</div></div>
+      <div class="trust-item"><span class="trust-item__icon">🔖</span><div class="trust-item__text"><strong>Full Transparency</strong>No hidden markups</div></div>
+      <div class="trust-item"><span class="trust-item__icon">🌿</span><div class="trust-item__text"><strong>Sustainably Made</strong>FSC-certified, locally assembled</div></div>
+      <div class="trust-item"><span class="trust-item__icon">🤝</span><div class="trust-item__text"><strong>30% to Charity</strong>Free caskets for the needy</div></div>
+      <div class="trust-item"><span class="trust-item__icon">📞</span><div class="trust-item__text"><strong>24/7 Support</strong>Calm, judgment-free</div></div>
+    </div>
+  </section>
+
+  <!-- THE PROBLEM -->
+  <section class="section">
+    <div class="container">
+      <div class="animate">
+        <p class="section-label">The Problem We're Solving</p>
+        <h2 class="section-title">Grief should not be exploited.</h2>
+        <div class="divider"></div>
+        <p style="max-width:700px; font-size:1.05rem; line-height:1.8;">When a loved one passes, families in Singapore are often thrust into negotiations with funeral directors within hours — exhausted, emotional, and unfamiliar with true costs. Casket pricing is deliberately opaque, buried inside all-inclusive packages impossible to break down.</p>
+
+        <div class="problem-quote">
+          <p>"We were quoted S$3,800 as part of the 'standard package'. We only found out afterwards that the casket alone was marked up from a S$600 cost price. We had no time, no energy to question it. We just paid."</p>
+          <cite>— Testimonial from a bereaved family in Tampines, 2023</cite>
+        </div>
+      </div>
+
+      <div class="problem-cards animate">
+        <div class="problem-card">
+          <div class="problem-card__icon">🪄</div>
+          <p class="problem-card__title">Opaque Package Pricing</p>
+          <p>Caskets are bundled into funeral packages with no itemised breakdown, making it impossible to compare prices or exercise consumer choice.</p>
+        </div>
+        <div class="problem-card">
+          <div class="problem-card__icon">⏳</div>
+          <p class="problem-card__title">Emotional Time Pressure</p>
+          <p>Arrangements must often be made within hours of a death. Directors know families are in no state to research alternatives. Pressure tactics are common.</p>
+        </div>
+        <div class="problem-card">
+          <div class="problem-card__icon">🚪</div>
+          <p class="problem-card__title">Service Withdrawal Threats</p>
+          <p>Some directors threaten to withhold services if families decline their in-house casket. Families deserve to know they can and should challenge this.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MISSION -->
+  <section class="section section--surface1">
+    <div class="container">
+      <div class="mission-grid">
+        <div class="animate">
+          <p class="section-label">Our Mission</p>
+          <h2 class="section-title">Dignity is not a luxury. It is a right.</h2>
+          <div class="divider"></div>
+          <p style="margin-bottom:10px;">We started Passage because every family — regardless of income — deserves a dignified farewell without being taken advantage of at their most vulnerable.</p>
+          <p>We publish every price. We assemble locally. We employ Singaporeans at fair wages. And we give back.</p>
+          <div class="mission-values">
+            <div class="mission-value">
+              <div class="mission-value__icon">🔍</div>
+              <div class="mission-value__text"><h4>Full Transparency</h4><p>Every price is published. No packages. No hidden fees. What you see is what you pay.</p></div>
+            </div>
+            <div class="mission-value">
+              <div class="mission-value__icon">🇸🇬</div>
+              <div class="mission-value__text"><h4>Assembled in Singapore</h4><p>We support local employment through the Progressive Wage Model and fair hiring practices.</p></div>
+            </div>
+            <div class="mission-value">
+              <div class="mission-value__icon">🌱</div>
+              <div class="mission-value__text"><h4>Sustainable Materials</h4><p>FSC-certified timber and eco-responsible materials — every casket is kind to the earth.</p></div>
+            </div>
+          </div>
+        </div>
+        <div class="mission-visual animate">
+          <p class="mission-visual__title">Our Social Impact Commitment</p>
+          <div class="charity-meter">
+            <div class="charity-meter__label">
+              <span>Net profit donated to charity</span>
+              <span style="color:var(--secondary-fixed-dim); font-weight:700;">30%</span>
+            </div>
+            <div class="charity-meter__bar"><div class="charity-meter__fill"></div></div>
+          </div>
+          <div class="csr-stat">
+            <div class="csr-item">
+              <div class="csr-item__num count-up" data-target="30" data-suffix="%">0%</div>
+              <div class="csr-item__label">Profit to charity</div>
+            </div>
+            <div class="csr-item">
+              <div class="csr-item__num count-up" data-target="47">0</div>
+              <div class="csr-item__label">Free caskets given</div>
+            </div>
+            <div class="csr-item">
+              <div class="csr-item__num count-up" data-target="100" data-suffix="%">0%</div>
+              <div class="csr-item__label">Local workforce</div>
+            </div>
+          </div>
+          <div style="margin-top:28px; border-top:1px solid rgba(255,255,255,0.08); padding-top:20px;">
+            <p style="color:rgba(255,255,255,0.6); font-size:0.85rem; line-height:1.7;">We provide <strong style="color:#fff;">free caskets</strong> to needy Singaporeans and those who pass without next-of-kin. This is not charity marketing — it is a founding obligation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CASKET STRIP -->
+  <section class="casket-strip">
+    <div class="casket-strip__inner">
+      <div class="casket-strip__item">
+        <img src="images/casket-pine.jpg" alt="Serene — FSC pine casket" />
+        <div class="casket-strip__label">
+          <span class="casket-strip__name">Serene</span>
+          <span class="casket-strip__price">S$800</span>
+        </div>
+      </div>
+      <div class="casket-strip__divider"></div>
+      <div class="casket-strip__item casket-strip__item--featured">
+        <img src="images/casket-bamboo.jpg" alt="Tranquil — hardwood casket" />
+        <div class="casket-strip__label">
+          <span class="casket-strip__name">Tranquil</span>
+          <span class="casket-strip__price">S$1,000</span>
+        </div>
+      </div>
+      <div class="casket-strip__divider"></div>
+      <div class="casket-strip__item">
+        <img src="images/casket-teak.jpg" alt="Eternal — solid mahogany casket" />
+        <div class="casket-strip__label">
+          <span class="casket-strip__name">Eternal</span>
+          <span class="casket-strip__price">S$1,200</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCT PREVIEW -->
+  <section class="section">
+    <div class="container">
+      <div class="text-center animate" style="margin-bottom:40px;">
+        <p class="section-label">Our Caskets</p>
+        <h2 class="section-title">Three models. All prices shown.</h2>
+        <div class="divider divider--center"></div>
+        <p class="section-subtitle">Every casket is locally assembled, sustainably sourced, and delivered within 3 hours of your order.</p>
+      </div>
+      <div class="product-cards-wrap">
+        <div class="product-preview-cards">
+          <div class="product-card animate">
+            <div class="product-card__badge-row"></div>
+            <div class="product-card__image"><img src="images/casket-pine.jpg" alt="Serene casket — FSC pine" /></div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Serene</h3>
+              <p class="product-card__desc">Simple, dignified, and honest. FSC-certified pine with natural linen lining.</p>
+              <div class="product-card__price-row">
+                <span class="product-card__price">S$800</span>
+                <span class="product-card__old">vs S$2,000+</span>
+                <span class="product-card__saving">Save ~60%</span>
+              </div>
+              <a href="products.html#serene" class="btn btn--outline" style="width:100%; justify-content:center;">View Details</a>
+            </div>
+          </div>
+          <div class="product-card featured animate">
+            <div class="product-card__badge-row"><span class="badge badge--warm">Most Popular</span></div>
+            <div class="product-card__image"><img src="images/casket-bamboo.jpg" alt="Tranquil casket — premium hardwood" /></div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Tranquil</h3>
+              <p class="product-card__desc">Our most chosen casket. Premium hardwood, elegant lining, refined joinery.</p>
+              <div class="product-card__price-row">
+                <span class="product-card__price">S$1,000</span>
+                <span class="product-card__old">vs S$3,000+</span>
+                <span class="product-card__saving">Save ~67%</span>
+              </div>
+              <a href="products.html#tranquil" class="btn btn--primary" style="width:100%; justify-content:center;">View Details</a>
+            </div>
+          </div>
+          <div class="product-card animate">
+            <div class="product-card__badge-row"><span class="badge badge--dark">Premium</span></div>
+            <div class="product-card__image"><img src="images/casket-teak.jpg" alt="Eternal casket — solid mahogany" /></div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Eternal</h3>
+              <p class="product-card__desc">Solid mahogany, hand-finished interiors, brass fittings. A lasting tribute.</p>
+              <div class="product-card__price-row">
+                <span class="product-card__price">S$1,200</span>
+                <span class="product-card__old">vs S$4,000+</span>
+                <span class="product-card__saving">Save ~70%</span>
+              </div>
+              <a href="products.html#eternal" class="btn btn--outline" style="width:100%; justify-content:center;">View Details</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REFLECTION MODULE -->
+  <section class="section section--surface1">
+    <div class="container">
+      <div class="reflection-module animate">
+        <div>
+          <p class="section-label">What PASSAGE Means</p>
+          <h2>Pass. Age.<br>The time we spend,<br>and the leaving of it.</h2>
+          <p>Every life deserves a dignified farewell. Not a transaction. Not a sales pitch at your most vulnerable moment. A passage — quietly, with grace, at a cost that does not add to your grief.</p>
+          <a href="products.html" class="btn btn--primary">See Our Caskets →</a>
+        </div>
+        <div class="reflection-visual">
+          <img src="images/casket-bamboo.jpg" alt="Tranquil casket — crafted with care in Singapore" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section">
+    <div class="container">
+      <div class="text-center animate" style="margin-bottom:36px;">
+        <p class="section-label">Families We've Served</p>
+        <h2>Trusted by Singaporeans when it matters most.</h2>
+        <div class="divider divider--center"></div>
+      </div>
+      <div class="testimonials-wrap">
+        <div class="testimonials">
+          <div class="testimonial animate">
+            <div class="testimonial__stars">★★★★★</div>
+            <p class="testimonial__body">"The casket arrived within 2.5 hours. Clean, dignified, exactly as described. At a moment like that, you need people who just make things simple."</p>
+            <div class="testimonial__author">
+              <div class="testimonial__avatar">LW</div>
+              <div><p class="testimonial__name">Lim Wei Ling</p><p class="testimonial__date">Ang Mo Kio · March 2025</p></div>
+            </div>
+          </div>
+          <div class="testimonial animate">
+            <div class="testimonial__stars">★★★★★</div>
+            <p class="testimonial__body">"We told our funeral director we had our own casket. He tried to refuse. Using the script from the Passage FAQ, he had no choice. We saved nearly S$2,000."</p>
+            <div class="testimonial__author">
+              <div class="testimonial__avatar">RT</div>
+              <div><p class="testimonial__name">Ramesh Tamilarasan</p><p class="testimonial__date">Woodlands · January 2025</p></div>
+            </div>
+          </div>
+          <div class="testimonial animate">
+            <div class="testimonial__stars">★★★★★</div>
+            <p class="testimonial__body">"My mother always said she didn't want us to overspend. Passage let us honour that wish. The Tranquil casket was genuinely beautiful."</p>
+            <div class="testimonial__author">
+              <div class="testimonial__avatar">SC</div>
+              <div><p class="testimonial__name">Susan Chew</p><p class="testimonial__date">Bedok · December 2024</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS BAR -->
+  <section class="section section--primary">
+    <div class="container">
+      <div class="grid-4 text-center">
+        <div class="stat animate"><div class="stat__num count-up" data-target="3" data-suffix="hrs">0hrs</div><p class="stat__label">Max delivery time, island-wide</p></div>
+        <div class="stat animate"><div class="stat__num count-up" data-target="800" data-prefix="S$">S$0</div><p class="stat__label">Starting price, all-in</p></div>
+        <div class="stat animate"><div class="stat__num count-up" data-target="47">0</div><p class="stat__label">Free caskets donated to date</p></div>
+        <div class="stat animate"><div class="stat__num count-up" data-target="100" data-suffix="%">0%</div><p class="stat__label">Singapore-assembled, local workforce</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section section--surface2">
+    <div class="container text-center animate">
+      <p class="section-label">Need guidance right now?</p>
+      <h2 class="section-title">We're here. Any hour, any day.</h2>
+      <div class="divider divider--center"></div>
+      <p class="section-subtitle" style="margin-bottom:32px;">Call our 24-hour line for calm, no-obligation guidance — or browse our complete Funeral Guide to understand your rights and options.</p>
+      <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+        <a href="tel:+6598479776" class="btn btn--primary">Call +65 9847 9776</a>
+        <a href="knowledge.html" class="btn btn--outline">Read the Funeral Guide</a>
+        <a href="faq.html" class="btn btn--secondary">Know Your Rights →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <p class="footer__brand">PASS<span>AGE</span></p>
+          <p class="footer__tagline">"Because grief is burden enough."</p>
+          <p style="font-size:0.8rem; line-height:1.7; color:rgba(255,255,255,0.5);">Assembled in Singapore. Sustainably sourced. A social enterprise — 30% of net profits donated to charity. Free caskets for the needy.</p>
+        </div>
+        <div class="footer__col"><h5>Products</h5>
+          <a href="products.html#serene">Serene — S$800</a>
+          <a href="products.html#tranquil">Tranquil — S$1,000</a>
+          <a href="products.html#eternal">Eternal — S$1,200</a>
+        </div>
+        <div class="footer__col"><h5>Information</h5>
+          <a href="knowledge.html">Funeral Guide</a>
+          <a href="faq.html">FAQ & Your Rights</a>
+          <a href="accreditation.html">Certifications</a>
+        </div>
+        <div class="footer__col"><h5>Contact</h5>
+          <a href="tel:+6598479776">+65 9847 9776</a>
+          <a href="mailto:care@passage.sg">care@passage.sg</a>
+          <a href="#">WhatsApp Us</a>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <p>© 2025 Passage Caskets Pte. Ltd. · Singapore</p>
+        <div class="footer__badge">
+          <span>Progressive Wage Model</span>
+          <span>Tripartite Standards</span>
+          <span>FSC Certified</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="scripts.js"></script>
+  <script>
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('animate-bar');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('.bar-fill').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>

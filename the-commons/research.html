@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Market Research — The Commons</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Research Dashboard Layout */
+    .research-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+      padding-top: var(--nav-height);
+    }
+
+    /* Sidebar */
+    .research-sidebar {
+      background: var(--navy);
+      color: white;
+      padding: 32px 16px;
+      position: sticky;
+      top: var(--nav-height);
+      height: calc(100vh - var(--nav-height));
+      overflow-y: auto;
+    }
+    .research-sidebar h3 {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 12px;
+      padding: 0 12px;
+    }
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.6);
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+    .sidebar-link:hover { background: rgba(255,255,255,0.08); color: white; }
+    .sidebar-link.active { background: rgba(255,107,107,0.2); color: var(--coral); }
+    .sidebar-link .link-icon { font-size: 1rem; width: 24px; text-align: center; }
+    .sidebar-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 16px 0; }
+
+    /* Main */
+    .research-main {
+      padding: 32px 40px;
+      background: var(--sand);
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    .research-main h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 4px;
+    }
+    .research-main .subtitle {
+      color: var(--slate);
+      font-size: 0.9rem;
+      margin-bottom: 32px;
+    }
+
+    /* Section */
+    .research-section {
+      margin-bottom: 48px;
+      scroll-margin-top: calc(var(--nav-height) + 20px);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .section-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .section-header h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .section-header p {
+      font-size: 0.8rem;
+      color: var(--slate);
+    }
+
+    /* Cards */
+    .card {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 16px;
+    }
+    .card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .card-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .card-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    /* Competitor Table */
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .comp-table th {
+      text-align: left;
+      padding: 12px 16px;
+      background: var(--sand);
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--slate);
+      border-bottom: 2px solid var(--sand-dark);
+    }
+    .comp-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f0ebe4;
+      vertical-align: top;
+    }
+    .comp-table tr:last-child td { border-bottom: none; }
+    .comp-table tr:hover td { background: #fefcf8; }
+
+    /* Tags */
+    .tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      margin: 2px 4px 2px 0;
+    }
+    .tag-coral { background: rgba(255,107,107,0.12); color: #e05555; }
+    .tag-ocean { background: rgba(0,210,255,0.12); color: #0891b2; }
+    .tag-pink { background: rgba(255,64,129,0.12); color: #d63384; }
+    .tag-green { background: rgba(0,230,118,0.12); color: #059669; }
+    .tag-navy { background: rgba(26,26,46,0.08); color: var(--navy); }
+    .tag-mango { background: rgba(255,142,83,0.12); color: #c2590a; }
+
+    /* Bar Charts */
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .bar-label {
+      width: 130px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-align: right;
+      color: var(--slate);
+      flex-shrink: 0;
+    }
+    .bar-track {
+      flex: 1;
+      height: 26px;
+      background: var(--sand);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      padding-left: 10px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: white;
+      transition: width 0.8s var(--ease-out);
+    }
+    .bar-value {
+      font-size: 0.8rem;
+      font-weight: 700;
+      width: 60px;
+      flex-shrink: 0;
+    }
+
+    /* Segment Cards */
+    .segment-card {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      border-left: 4px solid var(--coral);
+    }
+    .segment-card.ocean { border-left-color: var(--ocean); }
+    .segment-card.pink { border-left-color: var(--pink); }
+    .segment-card.green { border-left-color: var(--palm); }
+    .segment-card.mango { border-left-color: var(--mango); }
+    .segment-card.navy { border-left-color: var(--navy); }
+    .segment-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .segment-card .segment-demo {
+      font-size: 0.78rem;
+      color: var(--slate);
+      margin-bottom: 12px;
+    }
+    .segment-card .segment-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-size: 0.82rem;
+    }
+    .segment-card .segment-row strong {
+      min-width: 110px;
+      color: var(--slate);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    /* Stat Pill */
+    .stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--sand);
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin: 4px 4px 4px 0;
+    }
+    .stat-pill .stat-num {
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+
+    /* KPI Row */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .kpi-card {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .kpi-card .kpi-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+    .kpi-card .kpi-value {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+    .kpi-card .kpi-label {
+      font-size: 0.78rem;
+      color: var(--slate);
+      margin-top: 2px;
+    }
+    .kpi-card .kpi-sub {
+      font-size: 0.72rem;
+      color: #059669;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    /* Recommendation Box */
+    .rec-box {
+      background: linear-gradient(135deg, rgba(255,107,107,0.06), rgba(255,142,83,0.06));
+      border: 1px solid rgba(255,107,107,0.15);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin-top: 12px;
+    }
+    .rec-box h4 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--coral);
+      margin-bottom: 10px;
+    }
+    .rec-box ul {
+      list-style: none;
+      padding: 0;
+    }
+    .rec-box li {
+      padding: 6px 0;
+      font-size: 0.85rem;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .rec-box li::before {
+      content: "\2713";
+      color: var(--coral);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* Alt Cards */
+    .alt-card {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .alt-card h4 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .alt-card p {
+      font-size: 0.82rem;
+      color: var(--slate);
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .alt-card .strengths { color: #059669; font-size: 0.78rem; font-weight: 600; }
+    .alt-card .weaknesses { color: #EF4444; font-size: 0.78rem; font-weight: 600; }
+
+    /* Donut placeholder */
+    .donut-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .donut-item {
+      text-align: center;
+      padding: 20px;
+      background: white;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+    }
+    .donut-ring {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 800;
+      position: relative;
+    }
+    .donut-ring::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 8px solid var(--sand);
+    }
+    .donut-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+    .donut-sub {
+      font-size: 0.72rem;
+      color: var(--slate);
+      margin-top: 2px;
+    }
+
+    /* Regulatory cards */
+    .reg-card {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      border-top: 3px solid var(--coral);
+    }
+    .reg-card.warn { border-top-color: #F59E0B; }
+    .reg-card.safe { border-top-color: #059669; }
+    .reg-card h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; }
+    .reg-card p { font-size: 0.82rem; color: var(--slate); line-height: 1.5; }
+    .reg-card .reg-tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-top: 10px;
+    }
+    .reg-tag.critical { background: rgba(239,68,68,0.1); color: #EF4444; }
+    .reg-tag.important { background: rgba(245,158,11,0.1); color: #D97706; }
+    .reg-tag.info { background: rgba(59,130,246,0.1); color: #3B82F6; }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .research-layout { grid-template-columns: 1fr; }
+      .research-sidebar { display: none; }
+      .research-main { padding: 24px 20px; }
+      .card-grid-3 { grid-template-columns: 1fr; }
+      .card-grid-2 { grid-template-columns: 1fr; }
+      .kpi-row { grid-template-columns: repeat(2, 1fr); }
+      .donut-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .kpi-row { grid-template-columns: 1fr; }
+      .donut-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">TC</div>
+        The Commons
+      </a>
+      <ul class="nav-links">
+        <li><a href="events.html">Discover</a></li>
+        <li><a href="create.html">Create Event</a></li>
+        <li><a href="marketplace.html">Marketplace</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openAuthModal('login')">Log In</button>
+        <button class="btn btn-primary btn-sm" onclick="openAuthModal('signup')">Sign Up</button>
+      </div>
+      <button class="mobile-toggle" onclick="toggleMobileMenu()">&#9776;</button>
+    </div>
+  </nav>
+
+  <div class="research-layout">
+    <!-- Sidebar -->
+    <aside class="research-sidebar">
+      <h3>Market Research</h3>
+      <a href="#pricing" class="sidebar-link active">
+        <span class="link-icon">&#128176;</span> Pricing Strategies
+      </a>
+      <a href="#competitors" class="sidebar-link">
+        <span class="link-icon">&#9878;</span> Competitor Fees
+      </a>
+      <a href="#payment-infra" class="sidebar-link">
+        <span class="link-icon">&#128179;</span> Payment Infrastructure
+      </a>
+      <div class="sidebar-divider"></div>
+      <h3>Users & Segments</h3>
+      <a href="#segments" class="sidebar-link">
+        <span class="link-icon">&#128101;</span> Target Segments
+      </a>
+      <a href="#willingness" class="sidebar-link">
+        <span class="link-icon">&#128200;</span> Willingness to Pay
+      </a>
+      <div class="sidebar-divider"></div>
+      <h3>Competitive Landscape</h3>
+      <a href="#alternatives" class="sidebar-link">
+        <span class="link-icon">&#128260;</span> Next Best Alternatives
+      </a>
+      <a href="#switching" class="sidebar-link">
+        <span class="link-icon">&#128275;</span> Switching Costs
+      </a>
+      <div class="sidebar-divider"></div>
+      <h3>SG/SEA Context</h3>
+      <a href="#market-size" class="sidebar-link">
+        <span class="link-icon">&#127758;</span> Market Size
+      </a>
+      <a href="#payments-sg" class="sidebar-link">
+        <span class="link-icon">&#127480;&#127468;</span> SG Payments
+      </a>
+      <a href="#regulatory" class="sidebar-link">
+        <span class="link-icon">&#9878;</span> Regulatory
+      </a>
+      <div class="sidebar-divider"></div>
+      <a href="#recommendation" class="sidebar-link">
+        <span class="link-icon">&#127919;</span> <strong>Recommendation</strong>
+      </a>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="research-main">
+      <h1>Market Research Dashboard</h1>
+      <p class="subtitle">Pricing, segments, and competitive landscape for The Commons -- peer-to-peer event organisation in Singapore/SEA. Data as of April 2026.</p>
+
+      <!-- KPI Overview -->
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:rgba(255,107,107,0.12);">&#128176;</div>
+          <div class="kpi-value">US$5.46B</div>
+          <div class="kpi-label">SG Events Market (2025)</div>
+          <div class="kpi-sub">11.1% CAGR to US$14.2B by 2034</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:rgba(0,210,255,0.12);">&#128101;</div>
+          <div class="kpi-value">1.2M</div>
+          <div class="kpi-label">SG Young Professionals (25-35)</div>
+          <div class="kpi-sub">Core addressable segment</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:rgba(255,64,129,0.12);">&#9878;</div>
+          <div class="kpi-value">5-10%</div>
+          <div class="kpi-label">Optimal Platform Take Rate</div>
+          <div class="kpi-sub">Blended organiser + vendor fee</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background:rgba(0,230,118,0.12);">&#128179;</div>
+          <div class="kpi-value">0.4-3.4%</div>
+          <div class="kpi-label">SG Payment Processing Range</div>
+          <div class="kpi-sub">PayNow (low) to Cards (high)</div>
+        </div>
+      </div>
+
+      <!-- ===== SECTION 1: PRICING STRATEGIES ===== -->
+      <section class="research-section" id="pricing">
+        <div class="section-header">
+          <div class="section-icon" style="background:rgba(255,107,107,0.12);">&#128176;</div>
+          <div>
+            <h2>Pricing Strategies for Event Platforms</h2>
+            <p>Revenue models ranked by fit for The Commons</p>
+          </div>
+        </div>
+
+        <div class="card-grid-2">
+          <!-- Model 1 -->
+          <div class="card">
+            <h3>&#9733; Freemium + Transaction Fee (Recommended)</h3>
+            <p style="font-size:0.85rem;color:var(--slate);margin-bottom:12px;">
+              Free to create events and invite friends. Take a small percentage only when money flows through the platform (payment collection, escrow, vendor bookings).
+            </p>
+            <div style="margin-bottom:8px;">
+              <span class="tag tag-green">Low barrier</span>
+              <span class="tag tag-green">Viral growth</span>
+              <span class="tag tag-green">Aligned incentives</span>
+            </div>
+            <div style="font-size:0.82rem;">
+              <strong>Organiser fee:</strong> 0-3% on collected funds<br>
+              <strong>Vendor marketplace:</strong> 10-15% commission on bookings<br>
+              <strong>Who uses this:</strong> Partiful (free), Luma (free + 5%), Airbnb Experiences
+            </div>
+          </div>
+
+          <!-- Model 2 -->
+          <div class="card">
+            <h3>Percentage-Based Commission</h3>
+            <p style="font-size:0.85rem;color:var(--slate);margin-bottom:12px;">
+              Charge a percentage of every transaction processed. Simple to understand, scales with event size. Risk: price sensitivity for large events.
+            </p>
+            <div style="margin-bottom:8px;">
+              <span class="tag tag-ocean">Scales with GMV</span>
+              <span class="tag tag-mango">Price sensitive for big events</span>
+            </div>
+            <div style="font-size:0.82rem;">
+              <strong>Typical range:</strong> 3.7-6.6% of ticket/payment value<br>
+              <strong>Plus per-txn fee:</strong> $0.99-$1.79 per transaction<br>
+              <strong>Who uses this:</strong> Eventbrite (3.7% + $1.79), Peatix (4.9% + $0.99)
+            </div>
+          </div>
+
+          <!-- Model 3 -->
+          <div class="card">
+            <h3>Tiered Subscription</h3>
+            <p style="font-size:0.85rem;color:var(--slate);margin-bottom:12px;">
+              Monthly/annual plans unlocking features (analytics, branding, priority vendor access). Best for repeat organisers and corporate accounts.
+            </p>
+            <div style="margin-bottom:8px;">
+              <span class="tag tag-ocean">Predictable revenue</span>
+              <span class="tag tag-pink">Harder cold-start</span>
+            </div>
+            <div style="font-size:0.82rem;">
+              <strong>Typical tiers:</strong> Free / $25-59/mo / $99-199/mo / Enterprise<br>
+              <strong>Reduces per-txn fee:</strong> Luma Plus ($59/mo) drops commission to 0%<br>
+              <strong>Who uses this:</strong> Luma, Eventbrite (Pro), Splash
+            </div>
+          </div>
+
+          <!-- Model 4 -->
+          <div class="card">
+            <h3>Vendor Marketplace Commission</h3>
+            <p style="font-size:0.85rem;color:var(--slate);margin-bottom:12px;">
+              Charge service providers (DJs, caterers, photographers) for leads and bookings. Organisers pay little or nothing -- vendors absorb platform cost.
+            </p>
+            <div style="margin-bottom:8px;">
+              <span class="tag tag-green">Organiser-friendly</span>
+              <span class="tag tag-ocean">B2B revenue</span>
+              <span class="tag tag-mango">Needs supply liquidity</span>
+            </div>
+            <div style="font-size:0.82rem;">
+              <strong>Service marketplace standard:</strong> 15-20% of booking value<br>
+              <strong>Lead fee model:</strong> $5-25 per qualified lead<br>
+              <strong>Who uses this:</strong> Thumbtack (15-20%), GigSalad, Bark
+            </div>
+          </div>
+        </div>
+
+        <div class="rec-box">
+          <h4>Recommended Hybrid Model for The Commons</h4>
+          <ul>
+            <li>Free for organisers to create events and collect money from friends (drives adoption)</li>
+            <li>2.5% platform fee on escrow/payment collection (covers payment processing margin)</li>
+            <li>12-15% commission on vendor marketplace bookings (DJs, caterers, photographers)</li>
+            <li>Premium tier at S$19/mo for power organisers (0% payment fee, analytics, priority support)</li>
+            <li>Pass payment processing costs through transparently (PayNow ~0.4%, Cards ~3.4%)</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ===== SECTION 2: COMPETITOR FEES ===== -->
+      <section class="research-section" id="competitors">
+        <div class="section-header">
+          <div class="section-icon" style="background:rgba(0,210,255,0.12);">&#9878;</div>
+          <div>
+            <h2>Competitor Fee Comparison</h2>
+            <p>What event platforms charge in 2026</p>
+          </div>
+        </div>
+
+        <div class="card" style="overflow-x:auto;">
+          <table class="comp-table">
+            <thead>
+              <tr>
+                <th>Platform</th>
+                <th>Type</th>
+                <th>Platform Fee</th>
+                <th>Payment Processing</th>
+                <th>Per-Ticket / Per-Txn</th>
+                <th>Effective Total (on $50 ticket)</th>
+                <th>Free Tier</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Eventbrite</strong></td>
+                <td>Ticketing</td>
+                <td>3.7%</td>
+                <td>2.9%</td>
+                <td>$1.79/ticket</td>
+                <td><strong>~$5.09 (10.2%)</strong></td>
+                <td>Free events only</td>
+              </tr>
+              <tr>
+                <td><strong>Peatix</strong></td>
+                <td>Ticketing (Asia-focused)</td>
+                <td>4.9%</td>
+                <td>Included</td>
+                <td>$0.99/ticket</td>
+                <td><strong>~$3.44 (6.9%)</strong></td>
+                <td>Free events free</td>
+              </tr>
+              <tr>
+                <td><strong>Luma</strong></td>
+                <td>Events + CRM</td>
+                <td>5% (0% on Plus)</td>
+                <td>Stripe pass-through</td>
+                <td>None</td>
+                <td><strong>~$2.50 (5%) + Stripe</strong></td>
+                <td>Yes, unlimited</td>
+              </tr>
+              <tr>
+                <td><strong>Partiful</strong></td>
+                <td>Social / Casual</td>
+                <td>0% (VC-funded)</td>
+                <td>N/A (no payments)</td>
+                <td>None</td>
+                <td><strong>$0 (free)</strong></td>
+                <td>Fully free</td>
+              </tr>
+              <tr>
+                <td><strong>Splash</strong></td>
+                <td>Corporate Events</td>
+                <td>Subscription-based</td>
+                <td>Included</td>
+                <td>N/A</td>
+                <td><strong>$99-999/mo plans</strong></td>
+                <td>Limited free</td>
+              </tr>
+              <tr>
+                <td><strong>Airbnb Experiences</strong></td>
+                <td>Activities Marketplace</td>
+                <td>20% host commission</td>
+                <td>Included</td>
+                <td>None</td>
+                <td><strong>20% of price</strong></td>
+                <td>No</td>
+              </tr>
+              <tr style="background:rgba(255,107,107,0.04);">
+                <td><strong style="color:var(--coral);">The Commons (proposed)</strong></td>
+                <td>P2P Events + Marketplace</td>
+                <td>2.5% (0% on Premium)</td>
+                <td>Pass-through</td>
+                <td>None</td>
+                <td><strong style="color:var(--coral);">~$1.25 (2.5%) + processing</strong></td>
+                <td>Yes, full features</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="margin-top:16px;">
+          <h3 style="font-size:0.95rem;font-weight:700;margin-bottom:12px;">Marketplace Commission Benchmarks (Service Providers)</h3>
+          <div class="card">
+            <div class="bar-row">
+              <div class="bar-label">Airbnb</div>
+              <div class="bar-track"><div class="bar-fill" style="width:57%;background:var(--sunset-gradient);">14-20%</div></div>
+              <div class="bar-value">14-20%</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Thumbtack</div>
+              <div class="bar-track"><div class="bar-fill" style="width:53%;background:var(--ocean-gradient);">15-20%</div></div>
+              <div class="bar-value">15-20%</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Fiverr</div>
+              <div class="bar-track"><div class="bar-fill" style="width:60%;background:var(--party-gradient);">20%</div></div>
+              <div class="bar-value">20%</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Upwork</div>
+              <div class="bar-track"><div class="bar-fill" style="width:30%;background:linear-gradient(135deg,#059669,#34d399);">5-10%</div></div>
+              <div class="bar-value">5-10%</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">GigSalad</div>
+              <div class="bar-track"><div class="bar-fill" style="width:25%;background:linear-gradient(135deg,#F59E0B,#FBBF24);">5-8%</div></div>
+              <div class="bar-value">5-8%</div>
+            </div>
+            <div class="bar-row" style="background:rgba(255,107,107,0.04);border-radius:6px;padding:4px 0;">
+              <div class="bar-label" style="color:var(--coral);"><strong>The Commons</strong></div>
+              <div class="bar-track"><div class="bar-fill" style="width:40%;background:var(--sunset-gradient);">12-15%</div></div>
+              <div class="bar-value" style="color:var(--coral);"><strong>12-15%</strong></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SECTION 3: PAYMENT INFRASTRUCTURE ===== -->
+      <section class="research-section" id="payment-infra">
+        <div class="section-header">
+          <div class="section-icon" style="background:rgba(255,142,83,0.12);">&#128179;</div>
+          <div>
+            <h2>Singapore Payment Processing Costs</h2>
+            <p>Fee comparison across payment methods available in SG</p>
+          </div>
+        </div>
+
+        <div class="card" style="overflow-x:auto;">
+          <table class="comp-table">
+            <thead>
+              <tr>
+                <th>Payment Method</th>
+                <th>Provider</th>
+                <th>Fee Structure</th>
+                <th>Settlement</th>
+                <th>User Adoption</th>
+                <th>Best For</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>PayNow (via Stripe)</strong></td>
+                <td>Stripe</td>
+                <td>~0.4-0.8% (bank-dependent)</td>
+                <td>Instant / T+1</td>
+                <td><span class="tag tag-green">Very High</span></td>
+                <td>Friend-to-friend payments, low-fee collections</td>
+              </tr>
+              <tr>
+                <td><strong>GrabPay</strong></td>
+                <td>Stripe / Direct</td>
+                <td>3.3% (no fixed fee)</td>
+                <td>T+2</td>
+                <td><span class="tag tag-green">High</span></td>
+                <td>Younger users, rewards-driven</td>
+              </tr>
+              <tr>
+                <td><strong>Credit/Debit Cards</strong></td>
+                <td>Stripe</td>
+                <td>3.4% + S$0.50</td>
+                <td>T+2 to T+7</td>
+                <td><span class="tag tag-ocean">High</span></td>
+                <td>International users, large payments</td>
+              </tr>
+              <tr>
+                <td><strong>Apple/Google Pay</strong></td>
+                <td>Stripe</td>
+                <td>2.2% + S$0.35</td>
+                <td>T+2</td>
+                <td><span class="tag tag-ocean">Medium-High</span></td>
+                <td>Convenience, mobile-first UX</td>
+              </tr>
+              <tr>
+                <td><strong>Airwallex (Cards)</strong></td>
+                <td>Airwallex</td>
+                <td>1.0% + S$0.20 (domestic)</td>
+                <td>T+2</td>
+                <td><span class="tag tag-navy">N/A (backend)</span></td>
+                <td>Lower-cost card processing alternative</td>
+              </tr>
+              <tr>
+                <td><strong>Direct Bank Transfer</strong></td>
+                <td>Banks</td>
+                <td>Free (inward PayNow)</td>
+                <td>Instant</td>
+                <td><span class="tag tag-green">Very High</span></td>
+                <td>Manual verification, no escrow capability</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="rec-box" style="margin-top:16px;">
+          <h4>Payment Strategy Recommendation</h4>
+          <ul>
+            <li>Default to PayNow for SG domestic (lowest fees, instant, universally adopted)</li>
+            <li>Offer GrabPay and Apple/Google Pay for convenience (younger demographic preference)</li>
+            <li>Cards as fallback for international users and SEA expansion</li>
+            <li>Consider Airwallex over Stripe for card processing (1.0% vs 3.4% domestic)</li>
+            <li>Display processing fees transparently at checkout -- users choose method based on cost</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ===== SECTION 4: TARGET SEGMENTS ===== -->
+      <section class="research-section" id="segments">
+        <div class="section-header">
+          <div class="section-icon" style="background:rgba(255,64,129,0.12);">&#128101;</div>
+          <div>
+            <h2>Target User Segments</h2>
+            <p>Who uses The Commons in Singapore/SEA and what they need</p>
+          </div>
+        </div>
+
+        <div class="card-grid-2">
+          <!-- Segment 1 -->
+          <div class="segment-card">
+            <h3>&#127881; Young Professional Social Organisers</h3>
+            <div class="segment-demo">Age 25-35 | Income S$4,000-10,000/mo | 60% of TAM</div>
+            <div class="segment-row"><strong>Event Types:</strong> Birthday parties, yacht outings, weekend hikes, dinner gatherings, music festivals</div>
+            <div class="segment-row"><strong>Avg Event Size:</strong> 8-30 people | S$50-200/pax</div>
+            <div class="segment-row"><strong>Pain Points:</strong> Chasing friends for money, tracking who paid, coordinating vendors</div>
+            <div class="segment-row"><strong>Willingness to Pay:</strong> 2-5% platform fee accepted if UX saves time</div>
+            <div class="segment-row"><strong>Tech Savviness:</strong> <span class="tag tag-green">High</span> Mobile-first, uses PayNow/GrabPay daily</div>
+            <div class="segment-row"><strong>Monthly Social Spend:</strong> S$200-600 on events/nightlife</div>
+          </div>
+
+          <!-- Segment 2 -->
+          <div class="segment-card ocean">
+            <h3>&#127970; Corporate Team Building Organisers</h3>
+            <div class="segment-demo">Age 28-45 | HR/Admin roles | 15% of TAM</div>
+            <div class="segment-row"><strong>Event Types:</strong> D&D, team lunches, offsites, quarterly socials, department celebrations</div>
+            <div class="segment-row"><strong>Avg Event Size:</strong> 20-200 people | S$120-300/pax</div>
+            <div class="segment-row"><strong>Pain Points:</strong> Budget tracking, vendor coordination, approval workflows, receipts</div>
+            <div class="segment-row"><strong>Willingness to Pay:</strong> Higher -- company budget, values reliability + invoicing</div>
+            <div class="segment-row"><strong>Tech Savviness:</strong> <span class="tag tag-ocean">Medium-High</span> Uses enterprise tools</div>
+            <div class="segment-row"><strong>Avg Spend/Event:</strong> S$5,000-50,000 per event</div>
+          </div>
+
+          <!-- Segment 3 -->
+          <div class="segment-card pink">
+            <h3>&#128141; Wedding & Celebration Planners</h3>
+            <div class="segment-demo">Age 25-38 | Couples/Families | 10% of TAM</div>
+            <div class="segment-row"><strong>Event Types:</strong> Weddings, engagements, baby showers, milestone birthdays, anniversaries</div>
+            <div class="segment-row"><strong>Avg Event Size:</strong> 30-300 people | S$100-500/pax</div>
+            <div class="segment-row"><strong>Pain Points:</strong> Managing multiple vendors, collecting contributions, budget tracking</div>
+            <div class="segment-row"><strong>Willingness to Pay:</strong> Moderate-High for reliable vendor booking + escrow</div>
+            <div class="segment-row"><strong>Tech Savviness:</strong> <span class="tag tag-pink">Medium</span> Researches heavily online</div>
+            <div class="segment-row"><strong>Avg Spend/Event:</strong> S$15,000-80,000</div>
+          </div>
+
+          <!-- Segment 4 -->
+          <div class="segment-card green">
+            <h3>&#9968; Adventure & Travel Group Organisers</h3>
+            <div class="segment-demo">Age 22-40 | Active lifestyle | 10% of TAM</div>
+            <div class="segment-row"><strong>Event Types:</strong> Group travel, diving trips, hiking groups, surf trips, festival travel</div>
+            <div class="segment-row"><strong>Avg Event Size:</strong> 5-20 people | S$200-2,000/pax</div>
+            <div class="segment-row"><strong>Pain Points:</strong> Progressive payments, refund policies, multi-vendor coordination, currency</div>
+            <div class="segment-row"><strong>Willingness to Pay:</strong> Moderate -- values escrow/refund protection highly</div>
+            <div class="segment-row"><strong>Tech Savviness:</strong> <span class="tag tag-green">High</span> Uses travel apps extensively</div>
+            <div class="segment-row"><strong>Avg Spend/Event:</strong> S$500-5,000/person</div>
+          </div>
+
+          <!-- Segment 5 -->
+          <div class="segment-card mango">
+            <h3>&#127891; Student Groups</h3>
+            <div class="segment-demo">Age 18-25 | University/Poly | 5% of TAM</div>
+            <div class="segment-row"><strong>Event Types:</strong> Hall events, orientation camps, club activities, grad trips, gatherings</div>
+            <div class="segment-row"><strong>Avg Event Size:</strong> 15-100 people | S$10-80/pax</div>
+            <div class="segment-row"><strong>Pain Points:</strong> Collecting small amounts from many people, no one wants to front cash</div>
+            <div class="segment-row"><strong>Willingness to Pay:</strong> Very Low -- extremely price sensitive, expect free tools</div>
+            <div class="segment-row"><strong>Tech Savviness:</strong> <span class="tag tag-green">Very High</span> Digital native</div>
+            <div class="segment-row"><strong>Growth Value:</strong> <span class="tag tag-mango">Future pipeline</span> Graduate into young professional segment</div>
+          </div>
+
+          <!-- Segment 6 -->
+          <div class="segment-card navy">
+            <h3>&#127908; Service Providers (Supply Side)</h3>
+            <div class="segment-demo">DJs, Caterers, Photographers, Bartenders | Supply side</div>
+            <div class="segment-row"><strong>Provider Types:</strong> Freelance DJs, catering companies, photographers, florists, rental companies</div>
+            <div class="segment-row"><strong>Avg Booking:</strong> S$500-5,000 per gig</div>
+            <div class="segment-row"><strong>Pain Points:</strong> Client acquisition cost, no-shows, payment collection, portfolio visibility</div>
+            <div class="segment-row"><strong>Willingness to Pay:</strong> 10-20% commission accepted (industry standard)</div>
+            <div class="segment-row"><strong>What They Value:</strong> Guaranteed payment via escrow, steady lead flow, reviews/ratings</div>
+            <div class="segment-row"><strong>CAC Benchmark:</strong> Currently spend S$50-200 per lead on ads</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SECTION 5: WILLINGNESS TO PAY ===== -->
+      <section class="research-section" id="willingness">
+        <div class="section-header">
+          <div class="section-icon" style="background:rgba(0,230,118,0.12);">&#128200;</div>
+          <div>
+            <h2>Willingness to Pay Analysis</h2>
+            <p>Price sensitivity by segment and benchmarks from comparable platforms</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Acceptable Platform Fee by Segment</h3>
+          <div style="margin-top:16px;">
+            <div class="bar-row">
+              <div class="bar-label">Students</div>
+              <div class="bar-track"><div class="bar-fill" style="width:15%;background:linear-gradient(135deg,#F59E0B,#FBBF24);">0-1%</div></div>
+              <div class="bar-value">0-1%</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Young Pros</div>
+              <div class="bar-track"><div class="bar-fill" style="width:35%;background:var(--sunset-gradient);">2-5%</div></div>
+              <div class="bar-value">2-5%</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Travel Groups</div>
+              <div class="bar-track"><div class="bar-fill" style="width:30%;background:linear-gradient(135deg,#059669,#34d399);">3-5%</div></div>
+              <div class="bar-value">3-5%</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Celebrations</div>
+              <div class="bar-track"><div class="bar-fill" style="width:40%;background:var(--party-gradient);">3-6%</div></div>
+              <div class="bar-value">3-6%</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Corporate</div>
+              <div class="bar-track"><div class="bar-fill" style="width:55%;background:var(--ocean-gradient);">5-10%</div></div>
+              <div class="bar-value">5-10%</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Vendors (supply)</div>
+              <div class="bar-track"><div class="bar-fill" style="width:60%;background:linear-gradient(135deg,#6366F1,#8B5CF6);">10-20%</div></div>
+              <div class="bar-value">10-20%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-grid-2" style="margin-top:16px;">
+          <div class="card">
+            <h3>Key Price Sensitivity Drivers</h3>
+            <ul style="font-size:0.85rem;list-style:none;padding:0;">
+              <li style="padding:8px 0;border-bottom:1px solid #f0ebe4;">&#8226; <strong>Event size matters:</strong> 2.5% on a S$50 collection (S$1.25) feels invisible; on S$10,000 (S$250) it feels steep</li>
+              <li style="padding:8px 0;border-bottom:1px solid #f0ebe4;">&#8226; <strong>Frequency effect:</strong> One-off organisers tolerate higher fees; repeat organisers want subscriptions</li>
+              <li style="padding:8px 0;border-bottom:1px solid #f0ebe4;">&#8226; <strong>Escrow premium:</strong> Users pay 1-3% more for guaranteed money protection vs raw transfers</li>
+              <li style="padding:8px 0;border-bottom:1px solid #f0ebe4;">&#8226; <strong>Comparison anchor:</strong> Eventbrite at ~10% makes anything under 5% feel like a deal</li>
+              <li style="padding:8px 0;">&#8226; <strong>Absorb vs pass-through:</strong> Organisers prefer "attendees pay the fee" option (Eventbrite model)</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Platform Fee Benchmarks</h3>
+            <ul style="font-size:0.85rem;list-style:none;padding:0;">
+              <li style="padding:8px 0;border-bottom:1px solid #f0ebe4;">&#8226; <strong>Eventbrite:</strong> ~10.2% effective rate (3.7% + 2.9% + $1.79)</li>
+              <li style="padding:8px 0;border-bottom:1px solid #f0ebe4;">&#8226; <strong>Peatix:</strong> ~6.9% effective rate (4.9% + $0.99)</li>
+              <li style="padding:8px 0;border-bottom:1px solid #f0ebe4;">&#8226; <strong>Luma:</strong> 5% + Stripe fees (~8-9% total)</li>
+              <li style="padding:8px 0;border-bottom:1px solid #f0ebe4;">&#8226; <strong>Partiful:</strong> 0% (not monetising yet, VC-subsidised)</li>
+              <li style="padding:8px 0;border-bottom:1px solid #f0ebe4;">&#8226; <strong>Splitwise:</strong> Free (expense tracking only, no collection)</li>
+              <li style="padding:8px 0;">&#8226; <strong>The Commons target:</strong> 2.5% platform + processing pass-through (~3-6% total)</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SECTION 6: NEXT BEST ALTERNATIVES ===== -->
+      <section class="research-section" id="alternatives">
+        <div class="section-header">
+          <div class="section-icon" style="background:rgba(255,64,129,0.12);">&#128260;</div>
+          <div>
+            <h2>Next Best Alternatives</h2>
+            <p>What people currently use instead of The Commons</p>
+          </div>
+        </div>
+
+        <div class="card-grid-3">
+          <div class="alt-card" style="border-top:3px solid #EF4444;">
+            <h4>&#128172; WhatsApp Group + Bank Transfer</h4>
+            <p>The #1 current solution in Singapore. Organiser creates a group, posts bank details, manually tracks who paid.</p>
+            <div class="strengths">+ Free, everyone has it, instant</div>
+            <div class="weaknesses">- Manual tracking, no escrow, organiser bears risk, messy for 15+ people</div>
+          </div>
+          <div class="alt-card" style="border-top:3px solid #F59E0B;">
+            <h4>&#128178; Splitwise / Settle Up</h4>
+            <p>Expense tracking after the fact. Great for splitting bills but does not collect money upfront or handle escrow.</p>
+            <div class="strengths">+ Clean UX, well-known, tracks debts</div>
+            <div class="weaknesses">- No upfront collection, no vendor booking, retrospective only</div>
+          </div>
+          <div class="alt-card" style="border-top:3px solid #3B82F6;">
+            <h4>&#127915; Eventbrite / Peatix</h4>
+            <p>Ticketing for public/semi-public events. Overkill for private friend group events. High fees.</p>
+            <div class="strengths">+ Established, reliable payments, discovery</div>
+            <div class="weaknesses">- Not designed for P2P, no progressive payments, 7-10% fees</div>
+          </div>
+          <div class="alt-card" style="border-top:3px solid #8B5CF6;">
+            <h4>&#127881; Partiful</h4>
+            <p>Beautiful event invitations for casual social events. Free. But no payment collection, no vendor booking, US-focused.</p>
+            <div class="strengths">+ Beautiful UX, viral, free, social features</div>
+            <div class="weaknesses">- No payments, no escrow, no marketplace, US-centric</div>
+          </div>
+          <div class="alt-card" style="border-top:3px solid #059669;">
+            <h4>&#128221; Google Sheets + PayNow</h4>
+            <p>DIY spreadsheet to track participants and payments. Common for organised friend groups and corporate events.</p>
+            <div class="strengths">+ Free, customisable, familiar</div>
+            <div class="weaknesses">- Very manual, no automation, error-prone, no reminders</div>
+          </div>
+          <div class="alt-card" style="border-top:3px solid #EC4899;">
+            <h4>&#128247; Instagram DMs + Direct Booking</h4>
+            <p>For vendor discovery: browse Instagram, DM vendors directly, negotiate, pay via bank transfer.</p>
+            <div class="strengths">+ Visual portfolios, direct relationship</div>
+            <div class="weaknesses">- No price transparency, no escrow, no reviews verification</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SECTION 7: SWITCHING COSTS ===== -->
+      <section class="research-section" id="switching">
+        <div class="section-header">
+          <div class="section-icon" style="background:rgba(26,26,46,0.08);">&#128275;</div>
+          <div>
+            <h2>Switching Costs & Friction Analysis</h2>
+            <p>Barriers to adoption and how to overcome them</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Switching Cost Matrix</h3>
+          <table class="comp-table" style="margin-top:12px;">
+            <thead>
+              <tr>
+                <th>Current Solution</th>
+                <th>Switching Cost</th>
+                <th>Key Friction</th>
+                <th>The Commons Wedge</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>WhatsApp + PayNow</strong></td>
+                <td><span class="tag tag-green">Very Low</span></td>
+                <td>Habit; "it works well enough"</td>
+                <td>Share payment link in the same WhatsApp group -- no behaviour change needed</td>
+              </tr>
+              <tr>
+                <td><strong>Splitwise</strong></td>
+                <td><span class="tag tag-green">Low</span></td>
+                <td>Already have groups set up</td>
+                <td>Collect upfront (not after); Splitwise cannot do this</td>
+              </tr>
+              <tr>
+                <td><strong>Eventbrite/Peatix</strong></td>
+                <td><span class="tag tag-ocean">Medium</span></td>
+                <td>Audience already on platform; analytics</td>
+                <td>Lower fees, P2P focus, escrow, progressive payments</td>
+              </tr>
+              <tr>
+                <td><strong>Google Sheets</strong></td>
+                <td><span class="tag tag-green">Very Low</span></td>
+                <td>Sunk effort in template</td>
+                <td>Automated tracking replaces manual entry, real-time status</td>
+              </tr>
+              <tr>
+                <td><strong>Instagram for Vendors</strong></td>
+                <td><span class="tag tag-ocean">Medium</span></td>
+                <td>Existing vendor relationships</td>
+                <td>Verified reviews, escrow protection, one-stop booking</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="rec-box" style="margin-top:16px;">
+          <h4>GTM Strategy: Zero-Friction Entry</h4>
+          <ul>
+            <li>Share a "collect money" link via WhatsApp -- no app download required for payers</li>
+            <li>Organiser signs up only; attendees just tap a link and pay (PayNow QR or card)</li>
+            <li>Free tier covers all basic needs -- premium is a natural upgrade for power users</li>
+            <li>Embed in existing workflow: generate a payment link, paste in group chat, done</li>
+            <li>Progressive disclosure: start with payment collection, then upsell vendor marketplace</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ===== SECTION 8: MARKET SIZE ===== -->
+      <section class="research-section" id="market-size">
+        <div class="section-header">
+          <div class="section-icon" style="background:rgba(0,210,255,0.12);">&#127758;</div>
+          <div>
+            <h2>Market Size -- Singapore & SEA</h2>
+            <p>Total addressable market and growth projections</p>
+          </div>
+        </div>
+
+        <div class="donut-grid">
+          <div class="donut-item">
+            <div class="donut-ring" style="background:conic-gradient(var(--coral) 0% 100%, var(--sand) 100%);">
+              <span style="background:white;width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center;">$5.5B</span>
+            </div>
+            <div class="donut-label">SG Events Market (2025)</div>
+            <div class="donut-sub">Total events industry value</div>
+          </div>
+          <div class="donut-item">
+            <div class="donut-ring" style="background:conic-gradient(var(--ocean) 0% 35%, var(--sand) 35%);">
+              <span style="background:white;width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center;">$1.9B</span>
+            </div>
+            <div class="donut-label">Social/Private Events (est.)</div>
+            <div class="donut-sub">~35% of total = addressable</div>
+          </div>
+          <div class="donut-item">
+            <div class="donut-ring" style="background:conic-gradient(var(--pink) 0% 5%, var(--sand) 5%);">
+              <span style="background:white;width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center;">$95M</span>
+            </div>
+            <div class="donut-label">Platform Revenue Opp (SG)</div>
+            <div class="donut-sub">~5% take rate on addressable</div>
+          </div>
+        </div>
+
+        <div class="card-grid-2">
+          <div class="card">
+            <h3>Singapore Specifics</h3>
+            <ul style="font-size:0.85rem;list-style:none;padding:0;">
+              <li style="padding:8px 0;border-bottom:1px solid #f0ebe4;">&#8226; <strong>Population:</strong> 5.9M total | ~1.5M aged 25-39</li>
+              <li style="padding:8px 0;border-bottom:1px solid #f0ebe4;">&#8226; <strong>Smartphone penetration:</strong> 97%</li>
+              <li style="padding:8px 0;border-bottom:1px solid #f0ebe4;">&#8226; <strong>PayNow registrations:</strong> 5M+ (nearly universal adult adoption)</li>
+              <li style="padding:8px 0;border-bottom:1px solid #f0ebe4;">&#8226; <strong>Avg nightlife/event spend:</strong> S$100-200 per outing</li>
+              <li style="padding:8px 0;border-bottom:1px solid #f0ebe4;">&#8226; <strong>Monthly social budget (25-35):</strong> S$200-600</li>
+              <li style="padding:8px 0;">&#8226; <strong>Events market CAGR:</strong> 11.1% (2026-2034)</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>SEA Expansion Opportunity</h3>
+            <ul style="font-size:0.85rem;list-style:none;padding:0;">
+              <li style="padding:8px 0;border-bottom:1px solid #f0ebe4;">&#8226; <strong>SEA population:</strong> 680M+ | Median age 30</li>
+              <li style="padding:8px 0;border-bottom:1px solid #f0ebe4;">&#8226; <strong>Social commerce:</strong> US$47.6B (2025) growing 31.4% CAGR</li>
+              <li style="padding:8px 0;border-bottom:1px solid #f0ebe4;">&#8226; <strong>Mobile-first:</strong> 75%+ internet traffic is mobile in SEA</li>
+              <li style="padding:8px 0;border-bottom:1px solid #f0ebe4;">&#8226; <strong>Key markets:</strong> Indonesia (largest), Thailand, Philippines, Vietnam</li>
+              <li style="padding:8px 0;border-bottom:1px solid #f0ebe4;">&#8226; <strong>E-wallets:</strong> GrabPay, ShopeePay, GoPay, Touch 'n Go dominate</li>
+              <li style="padding:8px 0;">&#8226; <strong>Conversational commerce:</strong> Deeply ingrained -- WhatsApp/LINE DM before purchase</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <h3>Event Culture & Spending Patterns</h3>
+          <div class="card-grid-3" style="margin-top:12px;">
+            <div style="padding:12px;background:var(--sand);border-radius:var(--radius-sm);">
+              <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px;">Social Gatherings</div>
+              <div style="font-size:0.8rem;color:var(--slate);">S$50-200/pax. Weekly to monthly frequency. Birthday parties, house parties, group dinners dominant. Yacht parties growing trend.</div>
+            </div>
+            <div style="padding:12px;background:var(--sand);border-radius:var(--radius-sm);">
+              <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px;">Corporate Events</div>
+              <div style="font-size:0.8rem;color:var(--slate);">S$120-300/pax. Quarterly trend replacing annual D&D. Smaller, more frequent events. Budget S$270/employee/year benchmark.</div>
+            </div>
+            <div style="padding:12px;background:var(--sand);border-radius:var(--radius-sm);">
+              <div style="font-weight:700;font-size:0.85rem;margin-bottom:4px;">Emerging: Daytime Events</div>
+              <div style="font-size:0.8rem;color:var(--slate);">Growing Gen Z/millennial shift to daytime raves and lower-cost social events. "Beans&Beats" model -- club energy without nightlife prices.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SECTION 9: SG PAYMENTS ===== -->
+      <section class="research-section" id="payments-sg">
+        <div class="section-header">
+          <div class="section-icon" style="background:rgba(0,230,118,0.12);">&#127480;&#127468;</div>
+          <div>
+            <h2>Singapore Payment Landscape</h2>
+            <p>Popular methods, adoption rates, and integration considerations</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Payment Method Popularity (Singapore 2026)</h3>
+          <div style="margin-top:16px;">
+            <div class="bar-row">
+              <div class="bar-label">PayNow</div>
+              <div class="bar-track"><div class="bar-fill" style="width:92%;background:linear-gradient(135deg,#7C3AED,#A78BFA);">92%</div></div>
+              <div class="bar-value">92% adoption</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Credit/Debit Cards</div>
+              <div class="bar-track"><div class="bar-fill" style="width:85%;background:var(--ocean-gradient);">85%</div></div>
+              <div class="bar-value">85% adoption</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">GrabPay</div>
+              <div class="bar-track"><div class="bar-fill" style="width:65%;background:linear-gradient(135deg,#059669,#34d399);">65%</div></div>
+              <div class="bar-value">65% adoption</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Apple/Google Pay</div>
+              <div class="bar-track"><div class="bar-fill" style="width:55%;background:var(--sunset-gradient);">55%</div></div>
+              <div class="bar-value">55% adoption</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">ShopeePay</div>
+              <div class="bar-track"><div class="bar-fill" style="width:40%;background:var(--party-gradient);">40%</div></div>
+              <div class="bar-value">40% adoption</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Bank Transfer</div>
+              <div class="bar-track"><div class="bar-fill" style="width:75%;background:linear-gradient(135deg,#6366F1,#8B5CF6);">75%</div></div>
+              <div class="bar-value">75% adoption</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SECTION 10: REGULATORY ===== -->
+      <section class="research-section" id="regulatory">
+        <div class="section-header">
+          <div class="section-icon" style="background:rgba(245,158,11,0.12);">&#9878;</div>
+          <div>
+            <h2>Regulatory Requirements</h2>
+            <p>MAS licensing and compliance for escrow/payment handling in Singapore</p>
+          </div>
+        </div>
+
+        <div class="card-grid-3">
+          <div class="reg-card warn">
+            <h4>Payment Services Act 2019 (PS Act)</h4>
+            <p>The PS Act regulates payment service providers in Singapore. If The Commons holds or processes customer funds (escrow), it likely falls under regulated payment services and may need a license.</p>
+            <span class="reg-tag critical">Requires Legal Review</span>
+          </div>
+          <div class="reg-card warn">
+            <h4>MAS License Types</h4>
+            <p><strong>Standard Payment Institution (SPI):</strong> If monthly transaction volume is below S$3M. <strong>Major Payment Institution (MPI):</strong> If above S$3M/month. Escrow services may qualify as "e-money issuance" or "domestic money transfer".</p>
+            <span class="reg-tag important">Threshold-Based</span>
+          </div>
+          <div class="reg-card safe">
+            <h4>Use a Licensed Partner (Shortcut)</h4>
+            <p>Partner with a licensed payment processor (Stripe, HitPay, Airwallex) who already holds the MAS license. Funds flow through their licensed infrastructure -- The Commons acts as the marketplace layer, not a money transmitter.</p>
+            <span class="reg-tag info">Recommended Approach</span>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <h3>Compliance Checklist</h3>
+          <table class="comp-table" style="margin-top:8px;">
+            <thead>
+              <tr>
+                <th>Requirement</th>
+                <th>Status</th>
+                <th>Action Needed</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>MAS PS Act licensing assessment</td>
+                <td><span class="tag tag-coral">Critical</span></td>
+                <td>Engage legal counsel to determine if SPI or MPI license is needed, or if partner model exempts</td>
+              </tr>
+              <tr>
+                <td>Escrow fund segregation</td>
+                <td><span class="tag tag-coral">Critical</span></td>
+                <td>Collected funds must be held in segregated trust accounts, not commingled with operating funds</td>
+              </tr>
+              <tr>
+                <td>AML/KYC requirements</td>
+                <td><span class="tag tag-mango">Important</span></td>
+                <td>Know Your Customer checks for organisers collecting over threshold amounts</td>
+              </tr>
+              <tr>
+                <td>PDPA data protection</td>
+                <td><span class="tag tag-mango">Important</span></td>
+                <td>Personal data consent, purpose limitation, data protection officer appointment</td>
+              </tr>
+              <tr>
+                <td>Consumer protection (refunds)</td>
+                <td><span class="tag tag-ocean">Standard</span></td>
+                <td>Clear refund policy, dispute resolution process, T&C for escrow release conditions</td>
+              </tr>
+              <tr>
+                <td>GST registration</td>
+                <td><span class="tag tag-ocean">Standard</span></td>
+                <td>Required if annual taxable turnover exceeds S$1M; platform commissions are GST-able</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===== SECTION 11: RECOMMENDATION ===== -->
+      <section class="research-section" id="recommendation">
+        <div class="section-header">
+          <div class="section-icon" style="background:var(--sunset-gradient);color:white;">&#127919;</div>
+          <div>
+            <h2>Pricing Recommendation Summary</h2>
+            <p>Proposed pricing model for The Commons launch</p>
+          </div>
+        </div>
+
+        <div class="card" style="border:2px solid var(--coral);">
+          <h3 style="color:var(--coral);font-size:1.1rem;">Recommended: Freemium + Hybrid Commission Model</h3>
+          <div class="card-grid-3" style="margin-top:16px;">
+            <!-- Free Tier -->
+            <div style="background:var(--sand);border-radius:var(--radius-md);padding:20px;text-align:center;">
+              <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--slate);margin-bottom:8px;">Free Tier</div>
+              <div style="font-size:2rem;font-weight:800;">S$0</div>
+              <div style="font-size:0.8rem;color:var(--slate);margin:8px 0 16px;">Forever free for casual use</div>
+              <ul style="text-align:left;font-size:0.82rem;list-style:none;padding:0;">
+                <li style="padding:4px 0;">&#10003; Unlimited event creation</li>
+                <li style="padding:4px 0;">&#10003; Payment collection from friends</li>
+                <li style="padding:4px 0;">&#10003; Progressive escrow payments</li>
+                <li style="padding:4px 0;">&#10003; Basic vendor marketplace access</li>
+                <li style="padding:4px 0;">&#10003; Up to 50 participants/event</li>
+                <li style="padding:4px 0;color:var(--coral);font-weight:600;">2.5% platform fee on collections</li>
+                <li style="padding:4px 0;color:var(--slate);">+ payment processing pass-through</li>
+              </ul>
+            </div>
+            <!-- Premium -->
+            <div style="background:linear-gradient(135deg,rgba(255,107,107,0.08),rgba(255,142,83,0.08));border:1px solid rgba(255,107,107,0.2);border-radius:var(--radius-md);padding:20px;text-align:center;">
+              <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--coral);margin-bottom:8px;">Premium</div>
+              <div style="font-size:2rem;font-weight:800;">S$19<span style="font-size:0.9rem;font-weight:500;">/mo</span></div>
+              <div style="font-size:0.8rem;color:var(--slate);margin:8px 0 16px;">For active organisers</div>
+              <ul style="text-align:left;font-size:0.82rem;list-style:none;padding:0;">
+                <li style="padding:4px 0;">&#10003; <strong>0% platform fee</strong> on collections</li>
+                <li style="padding:4px 0;">&#10003; Unlimited participants</li>
+                <li style="padding:4px 0;">&#10003; Priority vendor matching</li>
+                <li style="padding:4px 0;">&#10003; Event analytics dashboard</li>
+                <li style="padding:4px 0;">&#10003; Custom branding</li>
+                <li style="padding:4px 0;">&#10003; Auto payment reminders</li>
+                <li style="padding:4px 0;color:var(--slate);">+ payment processing pass-through</li>
+              </ul>
+            </div>
+            <!-- Corporate/Enterprise -->
+            <div style="background:var(--navy);border-radius:var(--radius-md);padding:20px;text-align:center;color:white;">
+              <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.5);margin-bottom:8px;">Corporate</div>
+              <div style="font-size:2rem;font-weight:800;">Custom</div>
+              <div style="font-size:0.8rem;color:rgba(255,255,255,0.6);margin:8px 0 16px;">For companies & agencies</div>
+              <ul style="text-align:left;font-size:0.82rem;list-style:none;padding:0;color:rgba(255,255,255,0.85);">
+                <li style="padding:4px 0;">&#10003; Everything in Premium</li>
+                <li style="padding:4px 0;">&#10003; Invoicing & receipts</li>
+                <li style="padding:4px 0;">&#10003; Multi-organiser teams</li>
+                <li style="padding:4px 0;">&#10003; Approval workflows</li>
+                <li style="padding:4px 0;">&#10003; Budget tracking & reports</li>
+                <li style="padding:4px 0;">&#10003; Dedicated account manager</li>
+                <li style="padding:4px 0;">&#10003; SSO & enterprise integrations</li>
+              </ul>
+            </div>
+          </div>
+
+          <div style="margin-top:20px;padding:16px;background:var(--sand);border-radius:var(--radius-sm);">
+            <div style="font-weight:700;font-size:0.9rem;margin-bottom:8px;">Vendor Marketplace Revenue (Separate)</div>
+            <div style="font-size:0.85rem;color:var(--slate);">
+              &#8226; <strong>12-15% commission</strong> on all vendor bookings (DJs, caterers, photographers, etc.)<br>
+              &#8226; <strong>Featured listing:</strong> S$29-99/mo for priority placement in search results<br>
+              &#8226; <strong>Lead generation:</strong> S$5-15 per qualified enquiry (alternative to commission model)<br>
+              &#8226; Vendors benefit from escrow guaranteeing payment -- justifies commission vs Instagram DM bookings
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <h3>Revenue Projection (Year 1, Singapore only)</h3>
+          <table class="comp-table" style="margin-top:8px;">
+            <thead>
+              <tr>
+                <th>Revenue Stream</th>
+                <th>Assumption</th>
+                <th>Monthly (Steady State)</th>
+                <th>Year 1 Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Platform fee (2.5%)</strong></td>
+                <td>500 events/mo, avg S$2,000 GMV</td>
+                <td>S$25,000</td>
+                <td>S$150,000</td>
+              </tr>
+              <tr>
+                <td><strong>Premium subscriptions</strong></td>
+                <td>5% conversion, 200 subscribers @ S$19</td>
+                <td>S$3,800</td>
+                <td>S$30,000</td>
+              </tr>
+              <tr>
+                <td><strong>Vendor commissions (12%)</strong></td>
+                <td>100 bookings/mo, avg S$1,500</td>
+                <td>S$18,000</td>
+                <td>S$120,000</td>
+              </tr>
+              <tr>
+                <td><strong>Featured vendor listings</strong></td>
+                <td>30 vendors @ avg S$49/mo</td>
+                <td>S$1,470</td>
+                <td>S$12,000</td>
+              </tr>
+              <tr style="background:rgba(255,107,107,0.04);">
+                <td><strong style="color:var(--coral);">Total</strong></td>
+                <td></td>
+                <td><strong style="color:var(--coral);">S$48,270</strong></td>
+                <td><strong style="color:var(--coral);">S$312,000</strong></td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="font-size:0.78rem;color:var(--slate);margin-top:8px;">
+            * Assumes 6-month ramp to steady state. Year 1 total reflects partial ramp. Full run-rate = S$579K/year.
+          </div>
+        </div>
+
+        <div style="margin-top:20px;padding:20px;background:linear-gradient(135deg,var(--navy),var(--navy-light));border-radius:var(--radius-md);color:white;">
+          <h3 style="font-size:1rem;margin-bottom:12px;">Key Strategic Takeaways</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:0.85rem;">
+            <div>
+              <div style="font-weight:700;color:var(--coral);margin-bottom:4px;">1. Win on free</div>
+              <div style="color:rgba(255,255,255,0.75);">Be free where Eventbrite/Peatix charge. The payment collection feature alone replaces WhatsApp + bank transfer chaos. Viral loop through payment links.</div>
+            </div>
+            <div>
+              <div style="font-weight:700;color:var(--ocean);margin-bottom:4px;">2. Monetise the marketplace</div>
+              <div style="color:rgba(255,255,255,0.75);">Vendor commissions (12-15%) are where the real margin lives. Organisers bring demand; vendors pay for access. Escrow justifies the fee.</div>
+            </div>
+            <div>
+              <div style="font-weight:700;color:var(--palm);margin-bottom:4px;">3. PayNow-first in SG</div>
+              <div style="color:rgba(255,255,255,0.75);">Lowest fees, instant settlement, universal adoption. Makes the 2.5% platform fee palatable when processing cost is near-zero.</div>
+            </div>
+            <div>
+              <div style="font-weight:700;color:var(--mango);margin-bottom:4px;">4. Regulatory via partner</div>
+              <div style="color:rgba(255,255,255,0.75);">Use Stripe/HitPay as licensed payment infrastructure. Avoids MAS licensing at launch. Revisit own license when GMV exceeds S$3M/month.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div style="text-align:center;padding:40px 0 20px;font-size:0.75rem;color:var(--slate);">
+        Research compiled April 2026. Sources: Stripe, Eventbrite, Peatix, Luma, MAS, Sharetribe, Applioc Inc., Deep Market Insights.
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+  <script>
+    // Active sidebar link tracking
+    const links = document.querySelectorAll('.sidebar-link');
+    const sections = document.querySelectorAll('.research-section');
+
+    function updateActive() {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 120) current = s.id;
+      });
+      links.forEach(l => {
+        l.classList.remove('active');
+        if (l.getAttribute('href') === '#' + current) l.classList.add('active');
+      });
+    }
+    window.addEventListener('scroll', updateActive);
+  </script>
+</body>
+</html>

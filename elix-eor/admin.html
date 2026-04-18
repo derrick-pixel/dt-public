@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELIX EOR — Competitor Analytics Dashboard</title>
+  <meta name="description" content="Internal competitor analytics and market landscape for ELIX EOR" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://derrick-pixel.github.io/elix-eor/admin.html" />
+  <meta property="og:title" content="ELIX EOR — Admin Dashboard" />
+  <meta property="og:description" content="Competitor analytics and market insights" />
+  <meta property="og:image" content="https://derrick-pixel.github.io/elix-eor/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #FAFAFA; --surface: #FFFFFF; --card: #FFFFFF;
+      --border: #E5E5E5; --border2: #D1D1D1;
+      --text: #191919; --muted: #6B6B6B; --muted2: #4A4A4A;
+      --accent: #E04E2B; --accent2: #3D3B8E;
+      --accent-glow: rgba(224,78,43,0.08); --accent2-glow: rgba(61,59,142,0.08);
+      --red: #E04E2B; --red-glow: rgba(224,78,43,0.06);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.6;
+      color: var(--text); background: var(--bg); -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 60px 0; }
+
+    /* Nav */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: 64px;
+      display: flex; align-items: center; justify-content: space-between; padding: 0 24px;
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.1rem; }
+    .nav-logo .logo-elix { color: var(--accent); }
+    .nav-logo .logo-admin { color: var(--accent2); font-weight: 500; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; }
+    .admin-nav { display: flex; gap: 20px; align-items: center; }
+    .admin-nav a { font-size: 0.72rem; font-weight: 500; color: var(--muted2); text-transform: uppercase; letter-spacing: 0.04em; transition: color 0.2s; }
+    .admin-nav a:hover, .admin-nav a.active { color: var(--accent); }
+
+    /* Typography */
+    h1 { font-size: clamp(1.5rem, 4vw, 2.4rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; }
+    h2 { font-size: clamp(1.2rem, 3vw, 1.8rem); font-weight: 700; letter-spacing: -0.01em; }
+    h3 { font-size: 1.1rem; font-weight: 700; }
+    .label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); display: inline-block; margin-bottom: 12px; }
+
+    /* Cards */
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 24px; transition: all 0.2s; }
+    .card:hover { border-color: var(--border2); }
+
+    /* Badge */
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+    .badge-green { background: var(--accent-glow); color: var(--accent); }
+    .badge-gold { background: var(--accent2-glow); color: var(--accent2); }
+    .badge-red { background: var(--red-glow); color: var(--red); }
+    .badge-blue { background: rgba(56,189,248,0.1); color: #38bdf8; }
+    .badge-purple { background: rgba(129,140,248,0.1); color: #818cf8; }
+
+    /* Table */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .data-table th {
+      text-align: left; padding: 12px 14px; font-size: 0.65rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted);
+      border-bottom: 2px solid var(--border2); white-space: nowrap;
+    }
+    .data-table td {
+      padding: 12px 14px; border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .data-table tr:hover td { background: rgba(0,230,138,0.02); }
+    .data-table .company-name { font-weight: 600; color: var(--text); }
+    .data-table .company-url { font-size: 0.7rem; color: var(--muted); }
+
+    /* Score bar */
+    .score-bar { display: flex; align-items: center; gap: 8px; }
+    .score-bar-track { flex: 1; height: 6px; background: var(--surface); border-radius: 3px; overflow: hidden; }
+    .score-bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+    .score-bar-value { font-size: 0.72rem; font-weight: 700; min-width: 28px; }
+
+    /* Grid */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+
+    /* Stats row */
+    .stats-row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 32px; }
+    .stat-card { flex: 1; min-width: 160px; padding: 20px; text-align: center; background: var(--card); border: 1px solid var(--border); border-radius: 12px; }
+    .stat-value { font-size: 1.8rem; font-weight: 800; color: var(--accent); }
+    .stat-label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
+
+    /* Section header */
+    .section-header { margin-bottom: 32px; }
+    .section-header p { margin-top: 8px; color: var(--muted2); font-size: 0.9rem; }
+
+    /* Chart container */
+    .chart-container { position: relative; max-width: 100%; height: 300px; }
+
+    /* Landscape cards */
+    .landscape-item { padding: 20px; }
+    .landscape-item h3 { margin-bottom: 8px; font-size: 0.95rem; }
+    .landscape-item p { font-size: 0.82rem; color: var(--muted2); }
+    .landscape-stat { font-size: 1.4rem; font-weight: 800; color: var(--accent2); margin-bottom: 4px; }
+
+    /* Page header */
+    .page-header { padding-top: 96px; padding-bottom: 20px; }
+
+    /* Scrollable table wrapper */
+    .table-wrap { overflow-x: auto; border-radius: 14px; border: 1px solid var(--border); background: var(--card); }
+
+    /* Borrowed/improved */
+    .borrowed-list { list-style: none; }
+    .borrowed-list li { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; display: flex; gap: 10px; }
+    .borrowed-list li:last-child { border-bottom: none; }
+    .borrowed-icon { flex-shrink: 0; font-size: 0.9rem; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .admin-nav { display: none; }
+      section { padding: 40px 0; }
+    }
+
+    /* Toast */
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--surface); border: 1px solid var(--border2); padding: 10px 20px; border-radius: 8px; font-size: 0.78rem; color: var(--text); opacity: 0; transition: all 0.3s; z-index: 600; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Tab system */
+    .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+    .tab { padding: 10px 18px; font-size: 0.78rem; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-logo">
+      <span class="logo-elix">ELIX</span>
+      <span class="logo-admin">Admin</span>
+    </div>
+    <div class="admin-nav">
+      <a href="admin.html" class="active">Competitor Analytics</a>
+      <a href="admin-insights.html">Market Insights</a>
+      <a href="index.html">Back to Site</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <span class="label">Admin Dashboard</span>
+        <h1>Competitor Analytics &amp; Market Landscape</h1>
+        <p style="color:var(--muted2);margin-top:8px;">30+ EOR and payroll providers analysed across Singapore and Southeast Asia</p>
+      </div>
+
+      <!-- Stats Overview -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-value">35</div>
+          <div class="stat-label">Competitors Analysed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">$150-800</div>
+          <div class="stat-label">Typical EOR Price/Mo</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color:var(--accent2);">$30</div>
+          <div class="stat-label">ELIX Price/Mo</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">5-10x</div>
+          <div class="stat-label">Price Advantage</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('competitors')">Competitors</div>
+        <div class="tab" onclick="switchTab('charts')">Visual Analysis</div>
+        <div class="tab" onclick="switchTab('landscape')">SG/SEA Landscape</div>
+        <div class="tab" onclick="switchTab('rationale')">Design Rationale</div>
+      </div>
+
+      <!-- Tab 1: Competitors Table -->
+      <div class="tab-panel active" id="panel-competitors">
+        <div class="section-header">
+          <h2>Competitor Directory</h2>
+          <p>Comprehensive analysis of EOR, payroll, and HR service providers in Singapore &amp; Southeast Asia</p>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table" id="competitor-table">
+            <thead>
+              <tr>
+                <th>Company</th>
+                <th>Category</th>
+                <th>Target</th>
+                <th>Pricing</th>
+                <th>Key Features</th>
+                <th>Strengths</th>
+                <th>Weaknesses</th>
+                <th>Site</th>
+              </tr>
+            </thead>
+            <tbody id="competitor-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab 2: Visual Analysis -->
+      <div class="tab-panel" id="panel-charts">
+        <div class="section-header">
+          <h2>Visual Competitor Analysis</h2>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <h3 style="margin-bottom:16px;">Pricing Comparison ($/mo per employee)</h3>
+            <div class="chart-container">
+              <canvas id="pricingChart"></canvas>
+            </div>
+          </div>
+          <div class="card">
+            <h3 style="margin-bottom:16px;">Feature Coverage</h3>
+            <div class="chart-container">
+              <canvas id="featureChart"></canvas>
+            </div>
+          </div>
+          <div class="card">
+            <h3 style="margin-bottom:16px;">Target Market Distribution</h3>
+            <div class="chart-container">
+              <canvas id="marketChart"></canvas>
+            </div>
+          </div>
+          <div class="card">
+            <h3 style="margin-bottom:16px;">Website Design Quality</h3>
+            <div class="chart-container">
+              <canvas id="designChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: SG/SEA Landscape -->
+      <div class="tab-panel" id="panel-landscape">
+        <div class="section-header">
+          <h2>Singapore &amp; SEA Market Landscape</h2>
+        </div>
+
+        <div class="grid-3" style="margin-bottom:32px;">
+          <div class="card landscape-item">
+            <div class="landscape-stat">$2.8B</div>
+            <h3>SG HR Services Market</h3>
+            <p>Singapore's HR services market (including EOR, staffing, payroll) valued at approximately SGD $2.8 billion in 2025, growing at 8-10% CAGR.</p>
+          </div>
+          <div class="card landscape-item">
+            <div class="landscape-stat">280K+</div>
+            <h3>Micro Businesses in SG</h3>
+            <p>There are over 280,000 micro enterprises (1-9 employees) in Singapore, representing ~90% of all enterprises. Our sweet spot: those with 1-3 local employees.</p>
+          </div>
+          <div class="card landscape-item">
+            <div class="landscape-stat">Underserved</div>
+            <h3>Micro EOR Gap</h3>
+            <p>No major EOR player specifically targets micro businesses with 1-3 employees. Most require minimum 5-10 employees or charge $300+/mo — pricing out the smallest businesses.</p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:24px;">
+          <h3 style="margin-bottom:16px;">Regulatory Landscape</h3>
+          <div class="grid-2">
+            <div>
+              <h4 style="font-size:0.85rem;color:var(--accent);margin-bottom:8px;">CPF (Central Provident Fund)</h4>
+              <p style="font-size:0.82rem;color:var(--muted2);margin-bottom:16px;">Mandatory for all Singapore citizens and PRs. Employer contributes 17% (age 55 and below), employee contributes 20%. OW ceiling $7,400/mo. Monthly submission by 14th. Penalties for late filing.</p>
+
+              <h4 style="font-size:0.85rem;color:var(--accent);margin-bottom:8px;">WICA (Work Injury Compensation Act)</h4>
+              <p style="font-size:0.82rem;color:var(--muted2);">Mandatory for all employees doing manual work, or earning &le;$2,600/mo for non-manual. Best practice: cover all employees. Solo purchasers pay 1-2%; group rates as low as 0.3-0.5%.</p>
+            </div>
+            <div>
+              <h4 style="font-size:0.85rem;color:var(--accent);margin-bottom:8px;">SDL (Skills Development Levy)</h4>
+              <p style="font-size:0.82rem;color:var(--muted2);margin-bottom:16px;">0.25% of monthly wages, min $2, max $11.25. Payable by all employers for all employees. Submitted alongside CPF contributions.</p>
+
+              <h4 style="font-size:0.85rem;color:var(--accent);margin-bottom:8px;">IR8A (Annual Tax Filing)</h4>
+              <p style="font-size:0.82rem;color:var(--muted2);">Employers must prepare and submit IR8A (income tax) forms for every employee by 1 March each year. Auto-Inclusion Scheme (AIS) strongly encouraged. Penalties for late/inaccurate filing.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:24px;">
+          <h3 style="margin-bottom:16px;">SEA Regional Trends</h3>
+          <div class="grid-2">
+            <div>
+              <h4 style="font-size:0.85rem;color:var(--accent2);margin-bottom:8px;">Growth Drivers</h4>
+              <ul style="font-size:0.82rem;color:var(--muted2);list-style:none;">
+                <li style="padding:6px 0;">&#8226; Rise of gig economy and freelance-to-employee transitions</li>
+                <li style="padding:6px 0;">&#8226; Increasing regulatory complexity across ASEAN markets</li>
+                <li style="padding:6px 0;">&#8226; Remote work enabling cross-border hiring</li>
+                <li style="padding:6px 0;">&#8226; Government push for formalisation of informal workers</li>
+                <li style="padding:6px 0;">&#8226; SME digitalisation grants (e.g. PSG, EDG) lowering adoption barriers</li>
+              </ul>
+            </div>
+            <div>
+              <h4 style="font-size:0.85rem;color:var(--accent2);margin-bottom:8px;">Cultural Factors</h4>
+              <ul style="font-size:0.82rem;color:var(--muted2);list-style:none;">
+                <li style="padding:6px 0;">&#8226; SG micro business owners are cost-conscious; $30/mo is compelling</li>
+                <li style="padding:6px 0;">&#8226; Strong trust in established brands (Elitez brand equity helps)</li>
+                <li style="padding:6px 0;">&#8226; Miles/travel rewards resonate strongly with SG audience</li>
+                <li style="padding:6px 0;">&#8226; WhatsApp is preferred communication channel for SMEs</li>
+                <li style="padding:6px 0;">&#8226; "Kiasu" culture means fear of penalties drives compliance demand</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 4: Design Rationale -->
+      <div class="tab-panel" id="panel-rationale">
+        <div class="section-header">
+          <h2>Design Rationale &amp; Competitive Advantage</h2>
+          <p>Why ELIX EOR's site is designed to beat the competition</p>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:32px;">
+          <div class="card">
+            <h3 style="margin-bottom:16px;color:var(--accent);">Ideas Borrowed</h3>
+            <ul class="borrowed-list">
+              <li><span class="borrowed-icon">&#9989;</span> <span><strong>Deel/Remote:</strong> Clean pricing transparency — one clear price, no hidden fees</span></li>
+              <li><span class="borrowed-icon">&#9989;</span> <span><strong>Papaya Global:</strong> Interactive cost calculator — lets prospects self-serve and understand costs</span></li>
+              <li><span class="borrowed-icon">&#9989;</span> <span><strong>Oyster HR:</strong> Problem-solution narrative flow — start with pain, then present the fix</span></li>
+              <li><span class="borrowed-icon">&#9989;</span> <span><strong>Talenox:</strong> Singapore-specific statutory knowledge (CPF, WICA, SDL specifics)</span></li>
+              <li><span class="borrowed-icon">&#9989;</span> <span><strong>Justlogin:</strong> Benefits comparison visual (before vs after)</span></li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3 style="margin-bottom:16px;color:var(--accent2);">Weaknesses Improved</h3>
+            <ul class="borrowed-list">
+              <li><span class="borrowed-icon">&#128308;</span> <span><strong>Most EORs:</strong> No pricing on website — we lead with $30/mo transparency</span></li>
+              <li><span class="borrowed-icon">&#128308;</span> <span><strong>Enterprise EORs:</strong> Intimidating enterprise language — we speak micro business language</span></li>
+              <li><span class="borrowed-icon">&#128308;</span> <span><strong>Payroll tools:</strong> No benefits bundling — we include WICA + healthcare + compliance</span></li>
+              <li><span class="borrowed-icon">&#128308;</span> <span><strong>All competitors:</strong> No CardUp/miles angle — our unique differentiator</span></li>
+              <li><span class="borrowed-icon">&#128308;</span> <span><strong>Local players:</strong> Dated website designs — we use a clean, modern light theme</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-bottom:16px;">Why ELIX Wins</h3>
+          <div class="grid-3">
+            <div>
+              <h4 style="font-size:0.85rem;color:var(--accent);margin-bottom:8px;">Price Disruption</h4>
+              <p style="font-size:0.82rem;color:var(--muted2);">At $30/mo, we're 5-10x cheaper than any EOR competitor. Most charge $150-800/mo. We can do this because we're not building from scratch — we're leveraging Elitez Group's existing infrastructure and adding micro businesses to our group at marginal cost.</p>
+            </div>
+            <div>
+              <h4 style="font-size:0.85rem;color:var(--accent);margin-bottom:8px;">Unique Value Prop</h4>
+              <p style="font-size:0.82rem;color:var(--muted2);">No other EOR offers a miles-earning pathway through CardUp integration. The "$850/year for a $4,000+ business class ticket" narrative is compelling and shareable — it turns a cost center into a reward.</p>
+            </div>
+            <div>
+              <h4 style="font-size:0.85rem;color:var(--accent);margin-bottom:8px;">Niche Focus</h4>
+              <p style="font-size:0.82rem;color:var(--muted2);">We're the only EOR specifically targeting micro businesses with 1-3 local employees. This niche is too small for enterprise EORs to care about, but represents 280K+ businesses in Singapore. Classic underserved wedge.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ── Competitor Data ──────────────────────────────────────────────────
+    var competitors = [
+      { name: "Deel", url: "deel.com", cat: "Global EOR", target: "Enterprise/SME", price: "$599/mo", features: "Full EOR, payroll, compliance, benefits, contractor mgmt", strengths: "150+ countries, excellent UX, strong brand", weaknesses: "Expensive, no SG micro focus, no miles perk", site: 9 },
+      { name: "Remote.com", url: "remote.com", cat: "Global EOR", target: "Enterprise/SME", price: "$599/mo", features: "EOR, contractor, payroll, equity, benefits", strengths: "Own entities (not via partners), transparent pricing", weaknesses: "Enterprise-focused, overkill for 1-3 employees", site: 9 },
+      { name: "Oyster HR", url: "oysterhr.com", cat: "Global EOR", target: "SME/Startup", price: "$599/mo", features: "EOR, payroll, benefits, compliance, time-off", strengths: "Beautiful UI, startup-friendly, strong content", weaknesses: "No Singapore micro focus, no benefits bundling", site: 9 },
+      { name: "Papaya Global", url: "papayaglobal.com", cat: "Global EOR", target: "Enterprise", price: "$650+/mo", features: "EOR, payroll, payments, workforce analytics", strengths: "AI-driven, excellent analytics, enterprise scale", weaknesses: "Very enterprise, complex, expensive", site: 8 },
+      { name: "Velocity Global", url: "velocityglobal.com", cat: "Global EOR", target: "Enterprise", price: "$500-700/mo", features: "EOR, contractor, immigration, compliance", strengths: "185+ countries, immigration support", weaknesses: "No micro business offering, no SG focus", site: 7 },
+      { name: "Multiplier", url: "multiplier.com", cat: "Global EOR", target: "SME/Enterprise", price: "$400/mo", features: "EOR, payroll, multi-country compliance", strengths: "Competitive pricing, good Asian coverage", weaknesses: "Still too expensive for micro, no benefits bundling", site: 8 },
+      { name: "Omnipresent", url: "omnipresent.com", cat: "Global EOR", target: "SME", price: "$499/mo", features: "EOR, payroll, benefits, compliance", strengths: "Flexible, good customer support", weaknesses: "Mid-market focused, no micro pricing", site: 7 },
+      { name: "Globalization Partners (G-P)", url: "globalization-partners.com", cat: "Global EOR", target: "Enterprise", price: "Custom (~$800+)", features: "EOR, compliance, benefits, risk mitigation", strengths: "Pioneer in EOR space, strong legal team", weaknesses: "Expensive, enterprise-only, slow onboarding", site: 7 },
+      { name: "Rippling", url: "rippling.com", cat: "Global HR/EOR", target: "SME/Enterprise", price: "$8/user + EOR add-on", features: "HR platform, payroll, benefits, IT, EOR", strengths: "All-in-one platform, great UX", weaknesses: "EOR is add-on not core, US-centric", site: 9 },
+      { name: "Safeguard Global", url: "safeguardglobal.com", cat: "Global EOR", target: "Enterprise", price: "Custom", features: "EOR, payroll, consulting, workforce mgmt", strengths: "170+ countries, consulting expertise", weaknesses: "Enterprise only, opaque pricing", site: 6 },
+
+      { name: "AYP Group", url: "ayp-group.com", cat: "SEA EOR", target: "SME/Enterprise", price: "$200-400/mo", features: "EOR, payroll, compliance across ASEAN", strengths: "Strong SEA presence, multi-country", weaknesses: "Not micro-focused, higher pricing", site: 6 },
+      { name: "CXC Global", url: "cxcglobal.com", cat: "SEA EOR", target: "Enterprise", price: "Custom", features: "EOR, contractor compliance, payroll", strengths: "30+ years experience, compliant", weaknesses: "Enterprise focus, dated website", site: 5 },
+      { name: "Reeracoen", url: "reeracoen.sg", cat: "SEA Staffing/EOR", target: "SME", price: "Custom", features: "Staffing, EOR, recruitment across ASEAN", strengths: "Japanese-backed quality, ASEAN coverage", weaknesses: "Primarily staffing, EOR secondary", site: 6 },
+      { name: "Links International", url: "linksinternational.com", cat: "SEA HR/EOR", target: "SME/Enterprise", price: "Custom ($300+)", features: "EOR, payroll outsourcing, visa, HR consulting", strengths: "18 APAC countries, experienced", weaknesses: "Traditional enterprise approach", site: 6 },
+
+      { name: "Elitez Group", url: "elitez.asia", cat: "SG EOR/Staffing", target: "SME/Enterprise", price: "Custom", features: "EOR, staffing, recruitment, workforce transformation", strengths: "Parent brand, local trust, 12+ years, 9 offices", weaknesses: "EOR not separately branded for micro", site: 6 },
+      { name: "Talenox", url: "talenox.com", cat: "SG Payroll SaaS", target: "SME", price: "$15/employee/mo", features: "Payroll, leave, claims, CPF integration", strengths: "Affordable, CPF auto-submit, clean UI", weaknesses: "DIY tool not full EOR, no WICA/health", site: 8 },
+      { name: "Justlogin", url: "justlogin.com", cat: "SG HR SaaS", target: "SME", price: "$5-10/employee/mo", features: "Payroll, leave, attendance, expense, benefits", strengths: "Affordable, comprehensive HR suite", weaknesses: "DIY (you still do the work), no EOR", site: 7 },
+      { name: "Payboy", url: "payboy.biz", cat: "SG Payroll SaaS", target: "SME", price: "$10/employee/mo", features: "Payroll, leave, claims, CPF, IR8A", strengths: "PSG-eligible, SG-focused, MOM compliant", weaknesses: "Software only, not EOR/outsourced", site: 7 },
+      { name: "HReasily", url: "hreasily.com", cat: "SG Payroll SaaS", target: "SME", price: "From $3/employee/mo", features: "Payroll, leave, claims, multi-country", strengths: "Very affordable, growing", weaknesses: "Basic features, software-only, no EOR", site: 6 },
+      { name: "Swingvy", url: "swingvy.com", cat: "SG HR Platform", target: "SME", price: "From $5/employee/mo", features: "Payroll, leave, claims, benefits admin", strengths: "Modern UI, insurance integration", weaknesses: "Platform only, not outsourced EOR", site: 7 },
+      { name: "Carbonate HR", url: "carbonateapp.com", cat: "SG HR SaaS", target: "SME", price: "Free-$5/employee/mo", features: "Payroll, leave, attendance, claims", strengths: "Free tier available, simple", weaknesses: "Very basic, no benefits, no EOR", site: 5 },
+      { name: "Gratitude HR", url: "gratitudesolutions.com.sg", cat: "SG Payroll Outsource", target: "SME", price: "$60-150/employee/mo", features: "Payroll outsourcing, CPF, IR8A", strengths: "Full outsourced payroll, hands-off", weaknesses: "No WICA/health benefits, 2-3x our price", site: 4 },
+      { name: "BoardRoom", url: "boardroomlimited.com", cat: "SG Corporate Services", target: "SME/Enterprise", price: "$100+/employee/mo", features: "Payroll, accounting, corp secretary, tax", strengths: "Trusted brand, comprehensive services", weaknesses: "Expensive, corporate-focused, not micro", site: 5 },
+      { name: "Tricor", url: "tricor.com", cat: "SG Corporate Services", target: "Enterprise", price: "Custom ($200+)", features: "Payroll, corp admin, accounting, advisory", strengths: "Regional scale, professional", weaknesses: "Enterprise pricing, not micro-friendly", site: 6 },
+      { name: "TMF Group", url: "tmf-group.com", cat: "Global Corporate Services", target: "Enterprise", price: "Custom ($300+)", features: "Payroll, EOR, accounting, compliance", strengths: "80+ countries, deep expertise", weaknesses: "Enterprise only, very expensive", site: 6 },
+
+      { name: "Beehive HR", url: "beehivehr.asia", cat: "SG Payroll Outsource", target: "SME", price: "$80-120/employee/mo", features: "Payroll outsourcing, CPF, leave mgmt", strengths: "Affordable outsourcing, SG-focused", weaknesses: "No benefits bundling, no EOR structure", site: 5 },
+      { name: "PayrollServe", url: "payrollserve.com.sg", cat: "SG Payroll Outsource", target: "SME", price: "$50-100/employee/mo", features: "Payroll processing, CPF, IR8A", strengths: "Pure payroll specialist, reliable", weaknesses: "No benefits, no EOR, basic service", site: 4 },
+      { name: "Autocount", url: "autocountcloud.com", cat: "Accounting+Payroll", target: "SME", price: "From $15/mo", features: "Accounting, payroll module, invoicing", strengths: "Affordable, combined accounting", weaknesses: "Software only, no outsourcing, no EOR", site: 5 },
+
+      { name: "CPF Board Portal", url: "cpf.gov.sg", cat: "DIY", target: "All", price: "Free", features: "Direct CPF submission, e-Submit", strengths: "Official, free, authoritative", weaknesses: "Manual work, no automation, no benefits", site: 7 },
+      { name: "IRAS e-Services", url: "iras.gov.sg", cat: "DIY", target: "All", price: "Free", features: "IR8A submission, AIS", strengths: "Official, free", weaknesses: "Time-consuming, error-prone for novices", site: 7 },
+      { name: "Accounting Firms (General)", url: "Various", cat: "Outsource", target: "SME", price: "$100-300/employee/mo", features: "Payroll as part of accounting package", strengths: "Bundled with accounting, trusted", weaknesses: "Expensive for payroll-only, no benefits", site: 4 },
+
+      { name: "Horizons", url: "joinhorizons.com", cat: "Global EOR", target: "SME/Enterprise", price: "$299/mo", features: "EOR, payroll, benefits, compliance", strengths: "Lower cost global EOR, modern", weaknesses: "Still 10x our price, no micro focus", site: 8 },
+      { name: "Skuad", url: "skuad.io", cat: "Global EOR", target: "SME", price: "$199-499/mo", features: "EOR, contractor, payroll, compliance", strengths: "Affordable for global EOR, good UX", weaknesses: "Cross-border focus, not local micro", site: 8 },
+      { name: "Remofirst", url: "remofirst.com", cat: "Global EOR", target: "SME/Startup", price: "$199/mo", features: "EOR, contractor management", strengths: "Budget global EOR option", weaknesses: "Thin feature set, no SG micro focus", site: 7 },
+      { name: "Payoneer", url: "payoneer.com", cat: "Payments/Freelance", target: "Freelancers/SME", price: "Transaction fees", features: "Cross-border payments, mass payouts", strengths: "Payment infrastructure, wide reach", weaknesses: "Not EOR, no compliance, no benefits", site: 7 }
+    ];
+
+    // ── Render Competitor Table ────────────────────────────────────────
+    function renderTable() {
+      var tbody = document.getElementById('competitor-tbody');
+      tbody.textContent = '';
+      competitors.forEach(function(c) {
+        var tr = document.createElement('tr');
+
+        var tdName = document.createElement('td');
+        var nameDiv = document.createElement('div');
+        nameDiv.className = 'company-name';
+        nameDiv.textContent = c.name;
+        var urlDiv = document.createElement('div');
+        urlDiv.className = 'company-url';
+        urlDiv.textContent = c.url;
+        tdName.appendChild(nameDiv);
+        tdName.appendChild(urlDiv);
+
+        var tdCat = document.createElement('td');
+        var catBadge = document.createElement('span');
+        catBadge.className = 'badge ' + getCatBadge(c.cat);
+        catBadge.textContent = c.cat;
+        tdCat.appendChild(catBadge);
+
+        var tdTarget = document.createElement('td');
+        tdTarget.textContent = c.target;
+        tdTarget.style.fontSize = '0.78rem';
+
+        var tdPrice = document.createElement('td');
+        tdPrice.style.fontWeight = '600';
+        tdPrice.style.fontSize = '0.82rem';
+        tdPrice.style.whiteSpace = 'nowrap';
+        tdPrice.textContent = c.price;
+
+        var tdFeatures = document.createElement('td');
+        tdFeatures.style.fontSize = '0.78rem';
+        tdFeatures.style.color = 'var(--muted2)';
+        tdFeatures.style.maxWidth = '200px';
+        tdFeatures.textContent = c.features;
+
+        var tdStrengths = document.createElement('td');
+        tdStrengths.style.fontSize = '0.78rem';
+        tdStrengths.style.color = 'var(--accent)';
+        tdStrengths.style.maxWidth = '180px';
+        tdStrengths.textContent = c.strengths;
+
+        var tdWeaknesses = document.createElement('td');
+        tdWeaknesses.style.fontSize = '0.78rem';
+        tdWeaknesses.style.color = 'var(--red)';
+        tdWeaknesses.style.maxWidth = '180px';
+        tdWeaknesses.textContent = c.weaknesses;
+
+        var tdSite = document.createElement('td');
+        var scoreBar = document.createElement('div');
+        scoreBar.className = 'score-bar';
+        var track = document.createElement('div');
+        track.className = 'score-bar-track';
+        var fill = document.createElement('div');
+        fill.className = 'score-bar-fill';
+        fill.style.width = (c.site * 10) + '%';
+        fill.style.background = c.site >= 8 ? 'var(--accent)' : c.site >= 6 ? 'var(--accent2)' : 'var(--red)';
+        track.appendChild(fill);
+        var sVal = document.createElement('span');
+        sVal.className = 'score-bar-value';
+        sVal.textContent = c.site + '/10';
+        sVal.style.color = c.site >= 8 ? 'var(--accent)' : c.site >= 6 ? 'var(--accent2)' : 'var(--red)';
+        scoreBar.appendChild(track);
+        scoreBar.appendChild(sVal);
+        tdSite.appendChild(scoreBar);
+
+        tr.appendChild(tdName);
+        tr.appendChild(tdCat);
+        tr.appendChild(tdTarget);
+        tr.appendChild(tdPrice);
+        tr.appendChild(tdFeatures);
+        tr.appendChild(tdStrengths);
+        tr.appendChild(tdWeaknesses);
+        tr.appendChild(tdSite);
+        tbody.appendChild(tr);
+      });
+    }
+
+    function getCatBadge(cat) {
+      if (cat.indexOf('Global') >= 0) return 'badge-purple';
+      if (cat.indexOf('SEA') >= 0) return 'badge-blue';
+      if (cat.indexOf('SG') >= 0) return 'badge-green';
+      if (cat.indexOf('DIY') >= 0) return 'badge-gold';
+      return 'badge-gold';
+    }
+
+    // ── Tab Switching ─────────────────────────────────────────────────────
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+      document.getElementById('panel-' + tabId).classList.add('active');
+      event.target.classList.add('active');
+      if (tabId === 'charts' && !window.chartsRendered) renderCharts();
+    }
+
+    // ── Charts ────────────────────────────────────────────────────────────
+    function renderCharts() {
+      window.chartsRendered = true;
+      var chartColors = {
+        accent: '#E04E2B', accent2: '#3D3B8E', red: '#E04E2B',
+        blue: '#2563EB', purple: '#3D3B8E', muted: '#6B6B6B'
+      };
+
+      // Pricing chart
+      new Chart(document.getElementById('pricingChart'), {
+        type: 'bar',
+        data: {
+          labels: ['ELIX EOR', 'Remofirst', 'Skuad', 'Horizons', 'Multiplier', 'Oyster', 'Deel', 'Remote', 'Papaya', 'G-P'],
+          datasets: [{
+            label: '$/mo per employee',
+            data: [30, 199, 349, 299, 400, 599, 599, 599, 650, 800],
+            backgroundColor: ['#E04E2B', '#3D3B8E', '#3D3B8E', '#3D3B8E', '#3D3B8E', '#6B6B6B', '#6B6B6B', '#6B6B6B', '#6B6B6B', '#6B6B6B']
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { grid: { color: 'rgba(0,0,0,0.06)' }, ticks: { color: '#64748B' } },
+            x: { grid: { display: false }, ticks: { color: '#64748B', font: { size: 10 } } }
+          }
+        }
+      });
+
+      // Feature coverage radar
+      new Chart(document.getElementById('featureChart'), {
+        type: 'radar',
+        data: {
+          labels: ['Payroll', 'CPF Filing', 'WICA', 'Healthcare', 'IR8A', 'CardUp Miles', 'Compliance'],
+          datasets: [
+            { label: 'ELIX EOR', data: [10, 10, 10, 10, 10, 10, 10], borderColor: '#E04E2B', backgroundColor: 'rgba(224,78,43,0.1)', pointBackgroundColor: '#E04E2B' },
+            { label: 'Typical Global EOR', data: [10, 8, 6, 7, 8, 0, 9], borderColor: '#3D3B8E', backgroundColor: 'rgba(61,59,142,0.08)', pointBackgroundColor: '#3D3B8E' },
+            { label: 'SG Payroll SaaS', data: [8, 7, 0, 0, 6, 0, 5], borderColor: '#2563EB', backgroundColor: 'rgba(37,99,235,0.08)', pointBackgroundColor: '#2563EB' },
+            { label: 'DIY (CPF Portal)', data: [2, 5, 0, 0, 3, 0, 3], borderColor: '#6B6B6B', backgroundColor: 'rgba(107,107,107,0.08)', pointBackgroundColor: '#6B6B6B' }
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          scales: { r: { grid: { color: 'rgba(0,0,0,0.08)' }, pointLabels: { color: '#475569', font: { size: 10 } }, ticks: { display: false }, min: 0, max: 10 } },
+          plugins: { legend: { labels: { color: '#475569', font: { size: 10 } } } }
+        }
+      });
+
+      // Target market pie
+      new Chart(document.getElementById('marketChart'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Enterprise Only', 'SME/Enterprise', 'SME Only', 'Micro Business', 'DIY/Self-Service'],
+          datasets: [{
+            data: [8, 10, 9, 1, 7],
+            backgroundColor: ['#3D3B8E', '#2563EB', '#E8890C', '#E04E2B', '#6B6B6B']
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom', labels: { color: '#475569', font: { size: 10 }, padding: 12 } } }
+        }
+      });
+
+      // Design quality
+      new Chart(document.getElementById('designChart'), {
+        type: 'bar',
+        data: {
+          labels: ['Deel', 'Remote', 'Rippling', 'Oyster', 'Talenox', 'Justlogin', 'Payboy', 'Swingvy', 'Carbonate', 'PayrollServe'],
+          datasets: [{
+            label: 'Design Score /10',
+            data: [9, 9, 9, 9, 8, 7, 7, 7, 5, 4],
+            backgroundColor: function(ctx) {
+              var v = ctx.raw;
+              return v >= 8 ? '#E04E2B' : v >= 6 ? '#3D3B8E' : '#6B6B6B';
+            }
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { max: 10, grid: { color: 'rgba(0,0,0,0.06)' }, ticks: { color: '#64748B' } },
+            y: { grid: { display: false }, ticks: { color: '#475569', font: { size: 10 } } }
+          }
+        }
+      });
+    }
+
+    // ── Init ──────────────────────────────────────────────────────────────
+    renderTable();
+  </script>
+</body>
+</html>

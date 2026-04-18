@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Color Palettes — Elitez Security</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: #060a14;
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+
+    /* ── Top Nav ── */
+    .top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      background: #0a0f1e;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .top-nav .logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .top-nav .back-link {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .top-nav .back-link:hover { color: #fff; }
+
+    /* ── Page Header ── */
+    .page-header {
+      text-align: center;
+      padding: 3rem 2rem 1.5rem;
+    }
+    .page-header h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 2.4rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #fff;
+    }
+    .page-header p {
+      color: #94a3b8;
+      margin-top: 0.5rem;
+      font-size: 1rem;
+    }
+
+    /* ── Tab Buttons ── */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0 2rem 2rem;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      font-family: 'Barlow', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 0.6rem 1.4rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      background: rgba(255,255,255,0.04);
+      color: #94a3b8;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .tab-btn:hover {
+      background: rgba(255,255,255,0.08);
+      color: #e2e8f0;
+    }
+    .tab-btn.active {
+      background: var(--tab-accent, #3b82f6);
+      color: #fff;
+      border-color: transparent;
+    }
+
+    /* ── Palette Container ── */
+    .palette-container {
+      display: none;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+    }
+    .palette-container.active { display: block; }
+
+    /* ── Variable Display ── */
+    .var-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    .var-card {
+      border-radius: 8px;
+      padding: 0.75rem;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .var-swatch {
+      width: 100%;
+      height: 40px;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+    }
+    .var-name {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+    .var-value {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem;
+      color: #e2e8f0;
+    }
+
+    /* ── Mock Nav ── */
+    .mock-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.8rem 1.2rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+    }
+    .mock-nav .mock-logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .mock-nav .mock-links {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    .mock-nav .mock-links span { color: #94a3b8; }
+    .mock-nav .mock-cta {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.4rem 0.9rem;
+      border-radius: 4px;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Mock Hero ── */
+    .mock-hero {
+      padding: 2.5rem 1.5rem;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .mock-hero .label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-bottom: 0.5rem;
+    }
+    .mock-hero h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 900;
+      font-size: 2rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+    .mock-hero p {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      max-width: 400px;
+      margin: 0 auto 1rem;
+    }
+    .mock-hero .hero-btn {
+      display: inline-block;
+      padding: 0.65rem 1.5rem;
+      border-radius: 6px;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Mock Cards ── */
+    .card-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .mock-card {
+      border-radius: 8px;
+      padding: 1.2rem;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .mock-card h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      color: #fff;
+      margin-bottom: 0.3rem;
+    }
+    .mock-card p {
+      font-size: 0.82rem;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+    .mock-card .card-stat {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 1.6rem;
+      margin-top: 0.5rem;
+    }
+
+    /* ── Badges ── */
+    .badge-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    .badge {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.3rem 0.7rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #fff;
+    }
+
+    /* ── Copy Button ── */
+    .copy-btn {
+      display: block;
+      width: 100%;
+      padding: 0.8rem;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: 2px dashed rgba(255,255,255,0.15);
+      border-radius: 8px;
+      background: transparent;
+      color: #e2e8f0;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+    }
+    .copy-btn:hover {
+      border-color: rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.04);
+    }
+    .copy-btn.copied {
+      border-color: #10b981;
+      color: #10b981;
+    }
+
+    /* ── Section Labels ── */
+    .section-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #64748b;
+      margin-bottom: 0.75rem;
+    }
+
+    @media (max-width: 600px) {
+      .card-row { grid-template-columns: 1fr; }
+      .var-grid { grid-template-columns: 1fr 1fr; }
+      .mock-nav .mock-links { display: none; }
+      .page-header h1 { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ── -->
+<div class="top-nav">
+  <a href="index.html" class="logo">Elitez Security</a>
+  <a href="index.html" class="back-link">&larr; Back to site</a>
+</div>
+
+<!-- ── Header ── -->
+<div class="page-header">
+  <h1>Dark Authority Palettes</h1>
+  <p>5 dark palette variations for Elitez Security. Click each tab to preview.</p>
+</div>
+
+<!-- ── Tabs ── -->
+<div class="tabs">
+  <button class="tab-btn active" style="--tab-accent:#3b82f6" onclick="showPalette(0)">Steel Command</button>
+  <button class="tab-btn" style="--tab-accent:#10b981" onclick="showPalette(1)">Night Ops</button>
+  <button class="tab-btn" style="--tab-accent:#ef4444" onclick="showPalette(2)">Crimson Alert</button>
+  <button class="tab-btn" style="--tab-accent:#f59e0b" onclick="showPalette(3)">Tactical Gold</button>
+  <button class="tab-btn" style="--tab-accent:#06b6d4" onclick="showPalette(4)">Arctic Watch</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PALETTE 1 — Steel Command
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="palette-container active" id="palette-0">
+  <div class="section-label">CSS Variables</div>
+  <div class="var-grid">
+    <div class="var-card" style="background:#111827">
+      <div class="var-swatch" style="background:#0a0f1e"></div>
+      <div class="var-name">--bg</div><div class="var-value">#0a0f1e</div>
+    </div>
+    <div class="var-card" style="background:#111827">
+      <div class="var-swatch" style="background:#0f172a"></div>
+      <div class="var-name">--surface</div><div class="var-value">#0f172a</div>
+    </div>
+    <div class="var-card" style="background:#111827">
+      <div class="var-swatch" style="background:#111827"></div>
+      <div class="var-name">--card</div><div class="var-value">#111827</div>
+    </div>
+    <div class="var-card" style="background:#111827">
+      <div class="var-swatch" style="background:#3b82f6"></div>
+      <div class="var-name">--accent</div><div class="var-value">#3b82f6</div>
+    </div>
+    <div class="var-card" style="background:#111827">
+      <div class="var-swatch" style="background:#64748b"></div>
+      <div class="var-name">--accent2</div><div class="var-value">#64748b</div>
+    </div>
+  </div>
+
+  <div class="section-label">Navigation</div>
+  <div class="mock-nav" style="background:#0f172a">
+    <div class="mock-logo">Elitez Security</div>
+    <div class="mock-links">
+      <span>Services</span><span>Command Center</span><span>Robotics</span><span>Contact</span>
+    </div>
+    <div class="mock-cta" style="background:#3b82f6">Get Assessment</div>
+  </div>
+
+  <div class="section-label">Hero Section</div>
+  <div class="mock-hero" style="background:#0f172a">
+    <div class="label" style="color:#3b82f6">Protecting What Matters</div>
+    <h2>Integrated Security Solutions</h2>
+    <p>From guard deployment to AI-powered surveillance — protecting Singapore's people and assets.</p>
+    <div class="hero-btn" style="background:#3b82f6">Request Assessment</div>
+  </div>
+
+  <div class="section-label">Cards</div>
+  <div class="card-row">
+    <div class="mock-card" style="background:#111827">
+      <h3>Guard Deployment</h3>
+      <p>Professional security officers trained for your specific environment.</p>
+      <div class="card-stat" style="color:#3b82f6">500+</div>
+    </div>
+    <div class="mock-card" style="background:#111827">
+      <h3>AI Surveillance</h3>
+      <p>Smart cameras with real-time threat detection and alerts.</p>
+      <div class="card-stat" style="color:#3b82f6">24/7</div>
+    </div>
+  </div>
+
+  <div class="section-label">Badges</div>
+  <div class="badge-row">
+    <span class="badge" style="background:#3b82f6">Licensed</span>
+    <span class="badge" style="background:#3b82f6">ISO 27001</span>
+    <span class="badge" style="background:#64748b">Enterprise</span>
+    <span class="badge" style="background:#64748b">24/7 Support</span>
+  </div>
+
+  <button class="copy-btn" onclick="copyCSS(0)">Copy CSS Variables</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PALETTE 2 — Night Ops
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="palette-container" id="palette-1">
+  <div class="section-label">CSS Variables</div>
+  <div class="var-grid">
+    <div class="var-card" style="background:#111f1a">
+      <div class="var-swatch" style="background:#0a1210"></div>
+      <div class="var-name">--bg</div><div class="var-value">#0a1210</div>
+    </div>
+    <div class="var-card" style="background:#111f1a">
+      <div class="var-swatch" style="background:#0f1f1a"></div>
+      <div class="var-name">--surface</div><div class="var-value">#0f1f1a</div>
+    </div>
+    <div class="var-card" style="background:#111f1a">
+      <div class="var-swatch" style="background:#111f1a"></div>
+      <div class="var-name">--card</div><div class="var-value">#111f1a</div>
+    </div>
+    <div class="var-card" style="background:#111f1a">
+      <div class="var-swatch" style="background:#10b981"></div>
+      <div class="var-name">--accent</div><div class="var-value">#10b981</div>
+    </div>
+    <div class="var-card" style="background:#111f1a">
+      <div class="var-swatch" style="background:#6b7280"></div>
+      <div class="var-name">--accent2</div><div class="var-value">#6b7280</div>
+    </div>
+  </div>
+
+  <div class="section-label">Navigation</div>
+  <div class="mock-nav" style="background:#0f1f1a">
+    <div class="mock-logo">Elitez Security</div>
+    <div class="mock-links">
+      <span>Services</span><span>Command Center</span><span>Robotics</span><span>Contact</span>
+    </div>
+    <div class="mock-cta" style="background:#10b981">Get Assessment</div>
+  </div>
+
+  <div class="section-label">Hero Section</div>
+  <div class="mock-hero" style="background:#0f1f1a">
+    <div class="label" style="color:#10b981">Protecting What Matters</div>
+    <h2>Integrated Security Solutions</h2>
+    <p>From guard deployment to AI-powered surveillance — protecting Singapore's people and assets.</p>
+    <div class="hero-btn" style="background:#10b981">Request Assessment</div>
+  </div>
+
+  <div class="section-label">Cards</div>
+  <div class="card-row">
+    <div class="mock-card" style="background:#111f1a">
+      <h3>Guard Deployment</h3>
+      <p>Professional security officers trained for your specific environment.</p>
+      <div class="card-stat" style="color:#10b981">500+</div>
+    </div>
+    <div class="mock-card" style="background:#111f1a">
+      <h3>AI Surveillance</h3>
+      <p>Smart cameras with real-time threat detection and alerts.</p>
+      <div class="card-stat" style="color:#10b981">24/7</div>
+    </div>
+  </div>
+
+  <div class="section-label">Badges</div>
+  <div class="badge-row">
+    <span class="badge" style="background:#10b981">Licensed</span>
+    <span class="badge" style="background:#10b981">ISO 27001</span>
+    <span class="badge" style="background:#6b7280">Enterprise</span>
+    <span class="badge" style="background:#6b7280">24/7 Support</span>
+  </div>
+
+  <button class="copy-btn" onclick="copyCSS(1)">Copy CSS Variables</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PALETTE 3 — Crimson Alert
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="palette-container" id="palette-2">
+  <div class="section-label">CSS Variables</div>
+  <div class="var-grid">
+    <div class="var-card" style="background:#1f1414">
+      <div class="var-swatch" style="background:#0f0a0a"></div>
+      <div class="var-name">--bg</div><div class="var-value">#0f0a0a</div>
+    </div>
+    <div class="var-card" style="background:#1f1414">
+      <div class="var-swatch" style="background:#1a0f0f"></div>
+      <div class="var-name">--surface</div><div class="var-value">#1a0f0f</div>
+    </div>
+    <div class="var-card" style="background:#1f1414">
+      <div class="var-swatch" style="background:#1f1414"></div>
+      <div class="var-name">--card</div><div class="var-value">#1f1414</div>
+    </div>
+    <div class="var-card" style="background:#1f1414">
+      <div class="var-swatch" style="background:#ef4444"></div>
+      <div class="var-name">--accent</div><div class="var-value">#ef4444</div>
+    </div>
+    <div class="var-card" style="background:#1f1414">
+      <div class="var-swatch" style="background:#78716c"></div>
+      <div class="var-name">--accent2</div><div class="var-value">#78716c</div>
+    </div>
+  </div>
+
+  <div class="section-label">Navigation</div>
+  <div class="mock-nav" style="background:#1a0f0f">
+    <div class="mock-logo">Elitez Security</div>
+    <div class="mock-links">
+      <span>Services</span><span>Command Center</span><span>Robotics</span><span>Contact</span>
+    </div>
+    <div class="mock-cta" style="background:#ef4444">Get Assessment</div>
+  </div>
+
+  <div class="section-label">Hero Section</div>
+  <div class="mock-hero" style="background:#1a0f0f">
+    <div class="label" style="color:#ef4444">Protecting What Matters</div>
+    <h2>Integrated Security Solutions</h2>
+    <p>From guard deployment to AI-powered surveillance — protecting Singapore's people and assets.</p>
+    <div class="hero-btn" style="background:#ef4444">Request Assessment</div>
+  </div>
+
+  <div class="section-label">Cards</div>
+  <div class="card-row">
+    <div class="mock-card" style="background:#1f1414">
+      <h3>Guard Deployment</h3>
+      <p>Professional security officers trained for your specific environment.</p>
+      <div class="card-stat" style="color:#ef4444">500+</div>
+    </div>
+    <div class="mock-card" style="background:#1f1414">
+      <h3>AI Surveillance</h3>
+      <p>Smart cameras with real-time threat detection and alerts.</p>
+      <div class="card-stat" style="color:#ef4444">24/7</div>
+    </div>
+  </div>
+
+  <div class="section-label">Badges</div>
+  <div class="badge-row">
+    <span class="badge" style="background:#ef4444">Licensed</span>
+    <span class="badge" style="background:#ef4444">ISO 27001</span>
+    <span class="badge" style="background:#78716c">Enterprise</span>
+    <span class="badge" style="background:#78716c">24/7 Support</span>
+  </div>
+
+  <button class="copy-btn" onclick="copyCSS(2)">Copy CSS Variables</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PALETTE 4 — Tactical Gold
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="palette-container" id="palette-3">
+  <div class="section-label">CSS Variables</div>
+  <div class="var-grid">
+    <div class="var-card" style="background:#1f1c14">
+      <div class="var-swatch" style="background:#0f0d08"></div>
+      <div class="var-name">--bg</div><div class="var-value">#0f0d08</div>
+    </div>
+    <div class="var-card" style="background:#1f1c14">
+      <div class="var-swatch" style="background:#1a1710"></div>
+      <div class="var-name">--surface</div><div class="var-value">#1a1710</div>
+    </div>
+    <div class="var-card" style="background:#1f1c14">
+      <div class="var-swatch" style="background:#1f1c14"></div>
+      <div class="var-name">--card</div><div class="var-value">#1f1c14</div>
+    </div>
+    <div class="var-card" style="background:#1f1c14">
+      <div class="var-swatch" style="background:#f59e0b"></div>
+      <div class="var-name">--accent</div><div class="var-value">#f59e0b</div>
+    </div>
+    <div class="var-card" style="background:#1f1c14">
+      <div class="var-swatch" style="background:#78716c"></div>
+      <div class="var-name">--accent2</div><div class="var-value">#78716c</div>
+    </div>
+  </div>
+
+  <div class="section-label">Navigation</div>
+  <div class="mock-nav" style="background:#1a1710">
+    <div class="mock-logo">Elitez Security</div>
+    <div class="mock-links">
+      <span>Services</span><span>Command Center</span><span>Robotics</span><span>Contact</span>
+    </div>
+    <div class="mock-cta" style="background:#f59e0b; color:#0f0d08">Get Assessment</div>
+  </div>
+
+  <div class="section-label">Hero Section</div>
+  <div class="mock-hero" style="background:#1a1710">
+    <div class="label" style="color:#f59e0b">Protecting What Matters</div>
+    <h2>Integrated Security Solutions</h2>
+    <p>From guard deployment to AI-powered surveillance — protecting Singapore's people and assets.</p>
+    <div class="hero-btn" style="background:#f59e0b; color:#0f0d08">Request Assessment</div>
+  </div>
+
+  <div class="section-label">Cards</div>
+  <div class="card-row">
+    <div class="mock-card" style="background:#1f1c14">
+      <h3>Guard Deployment</h3>
+      <p>Professional security officers trained for your specific environment.</p>
+      <div class="card-stat" style="color:#f59e0b">500+</div>
+    </div>
+    <div class="mock-card" style="background:#1f1c14">
+      <h3>AI Surveillance</h3>
+      <p>Smart cameras with real-time threat detection and alerts.</p>
+      <div class="card-stat" style="color:#f59e0b">24/7</div>
+    </div>
+  </div>
+
+  <div class="section-label">Badges</div>
+  <div class="badge-row">
+    <span class="badge" style="background:#f59e0b; color:#0f0d08">Licensed</span>
+    <span class="badge" style="background:#f59e0b; color:#0f0d08">ISO 27001</span>
+    <span class="badge" style="background:#78716c">Enterprise</span>
+    <span class="badge" style="background:#78716c">24/7 Support</span>
+  </div>
+
+  <button class="copy-btn" onclick="copyCSS(3)">Copy CSS Variables</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PALETTE 5 — Arctic Watch
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="palette-container" id="palette-4">
+  <div class="section-label">CSS Variables</div>
+  <div class="var-grid">
+    <div class="var-card" style="background:#101b28">
+      <div class="var-swatch" style="background:#080d12"></div>
+      <div class="var-name">--bg</div><div class="var-value">#080d12</div>
+    </div>
+    <div class="var-card" style="background:#101b28">
+      <div class="var-swatch" style="background:#0c1520"></div>
+      <div class="var-name">--surface</div><div class="var-value">#0c1520</div>
+    </div>
+    <div class="var-card" style="background:#101b28">
+      <div class="var-swatch" style="background:#101b28"></div>
+      <div class="var-name">--card</div><div class="var-value">#101b28</div>
+    </div>
+    <div class="var-card" style="background:#101b28">
+      <div class="var-swatch" style="background:#06b6d4"></div>
+      <div class="var-name">--accent</div><div class="var-value">#06b6d4</div>
+    </div>
+    <div class="var-card" style="background:#101b28">
+      <div class="var-swatch" style="background:#94a3b8"></div>
+      <div class="var-name">--accent2</div><div class="var-value">#94a3b8</div>
+    </div>
+  </div>
+
+  <div class="section-label">Navigation</div>
+  <div class="mock-nav" style="background:#0c1520">
+    <div class="mock-logo">Elitez Security</div>
+    <div class="mock-links">
+      <span>Services</span><span>Command Center</span><span>Robotics</span><span>Contact</span>
+    </div>
+    <div class="mock-cta" style="background:#06b6d4; color:#080d12">Get Assessment</div>
+  </div>
+
+  <div class="section-label">Hero Section</div>
+  <div class="mock-hero" style="background:#0c1520">
+    <div class="label" style="color:#06b6d4">Protecting What Matters</div>
+    <h2>Integrated Security Solutions</h2>
+    <p>From guard deployment to AI-powered surveillance — protecting Singapore's people and assets.</p>
+    <div class="hero-btn" style="background:#06b6d4; color:#080d12">Request Assessment</div>
+  </div>
+
+  <div class="section-label">Cards</div>
+  <div class="card-row">
+    <div class="mock-card" style="background:#101b28">
+      <h3>Guard Deployment</h3>
+      <p>Professional security officers trained for your specific environment.</p>
+      <div class="card-stat" style="color:#06b6d4">500+</div>
+    </div>
+    <div class="mock-card" style="background:#101b28">
+      <h3>AI Surveillance</h3>
+      <p>Smart cameras with real-time threat detection and alerts.</p>
+      <div class="card-stat" style="color:#06b6d4">24/7</div>
+    </div>
+  </div>
+
+  <div class="section-label">Badges</div>
+  <div class="badge-row">
+    <span class="badge" style="background:#06b6d4; color:#080d12">Licensed</span>
+    <span class="badge" style="background:#06b6d4; color:#080d12">ISO 27001</span>
+    <span class="badge" style="background:#94a3b8; color:#080d12">Enterprise</span>
+    <span class="badge" style="background:#94a3b8; color:#080d12">24/7 Support</span>
+  </div>
+
+  <button class="copy-btn" onclick="copyCSS(4)">Copy CSS Variables</button>
+</div>
+
+<script>
+const palettes = [
+  { name:'Steel Command', bg:'#0a0f1e', surface:'#0f172a', card:'#111827', accent:'#3b82f6', accent2:'#64748b' },
+  { name:'Night Ops',     bg:'#0a1210', surface:'#0f1f1a', card:'#111f1a', accent:'#10b981', accent2:'#6b7280' },
+  { name:'Crimson Alert', bg:'#0f0a0a', surface:'#1a0f0f', card:'#1f1414', accent:'#ef4444', accent2:'#78716c' },
+  { name:'Tactical Gold', bg:'#0f0d08', surface:'#1a1710', card:'#1f1c14', accent:'#f59e0b', accent2:'#78716c' },
+  { name:'Arctic Watch',  bg:'#080d12', surface:'#0c1520', card:'#101b28', accent:'#06b6d4', accent2:'#94a3b8' }
+];
+
+function showPalette(idx) {
+  document.querySelectorAll('.palette-container').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+  });
+  document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', i === idx);
+  });
+  document.body.style.background = palettes[idx].bg;
+}
+
+function copyCSS(idx) {
+  const p = palettes[idx];
+  const css = `:root {\n  --bg: ${p.bg};\n  --surface: ${p.surface};\n  --card: ${p.card};\n  --accent: ${p.accent};\n  --accent2: ${p.accent2};\n}`;
+  navigator.clipboard.writeText(css).then(() => {
+    const btn = document.querySelectorAll('.copy-btn')[idx];
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy CSS Variables';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+</script>
+
+</body>
+</html>

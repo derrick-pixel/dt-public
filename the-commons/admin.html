@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel — The Commons</title>
+  <meta name="description" content="Platform administration for The Commons.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .admin-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+      padding-top: var(--nav-height);
+    }
+    .admin-sidebar {
+      background: var(--navy);
+      color: white;
+      padding: 32px 20px;
+      position: sticky;
+      top: var(--nav-height);
+      height: calc(100vh - var(--nav-height));
+      overflow-y: auto;
+    }
+    .admin-sidebar .sidebar-section {
+      margin-bottom: 28px;
+    }
+    .admin-sidebar .sidebar-section-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 12px;
+      padding: 0 16px;
+    }
+    .admin-sidebar .sidebar-nav a {
+      color: rgba(255,255,255,0.65);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 16px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .admin-sidebar .sidebar-nav a:hover {
+      background: rgba(255,255,255,0.08);
+      color: white;
+    }
+    .admin-sidebar .sidebar-nav a.active {
+      background: rgba(255, 107, 107, 0.2);
+      color: var(--coral);
+    }
+    .admin-sidebar .sidebar-nav a .nav-badge {
+      margin-left: auto;
+      background: var(--coral);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 100px;
+    }
+    .admin-main {
+      padding: 32px 40px;
+      background: var(--sand);
+    }
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .kpi-card {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .kpi-card .kpi-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+    }
+    .kpi-card .kpi-value {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+    .kpi-card .kpi-label {
+      font-size: 0.8rem;
+      color: var(--slate);
+      margin-top: 2px;
+    }
+    .kpi-card .kpi-change {
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 6px;
+    }
+    .kpi-change.up { color: #059669; }
+    .kpi-change.down { color: #EF4444; }
+
+    .chart-placeholder {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 28px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+    }
+    .chart-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .chart-bar-label {
+      width: 80px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-align: right;
+      color: var(--slate);
+    }
+    .chart-bar-track {
+      flex: 1;
+      height: 28px;
+      background: var(--sand);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .chart-bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      padding-left: 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: white;
+      transition: width 0.6s var(--ease-out);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+    }
+    .status-dot.green { background: #10B981; }
+    .status-dot.yellow { background: #F59E0B; }
+    .status-dot.red { background: #EF4444; }
+    .status-dot.blue { background: #3B82F6; }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    .flag-card {
+      background: white;
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 10px;
+      border-left: 4px solid var(--coral);
+      box-shadow: var(--shadow-sm);
+    }
+    .flag-card.warn { border-left-color: #F59E0B; }
+    .flag-card.info { border-left-color: var(--ocean); }
+
+    @media (max-width: 1024px) {
+      .admin-layout { grid-template-columns: 1fr; }
+      .admin-sidebar { display: none; }
+      .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .kpi-row { grid-template-columns: 1fr; }
+      .admin-main { padding: 20px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-icon">TC</div>
+        The Commons
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Public Site</a></li>
+        <li><a href="admin.html" class="active">Admin</a></li>
+      </ul>
+      <div class="nav-actions">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span class="badge badge-coral">Admin</span>
+          <div class="avatar" style="background: var(--navy); font-size: 0.8rem; border: 2px solid var(--coral);">AD</div>
+        </div>
+      </div>
+      <button class="mobile-toggle" onclick="toggleMobileMenu()">&#9776;</button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Public Site</a>
+    <a href="admin.html">Admin Panel</a>
+  </div>
+
+  <!-- Admin Layout -->
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div style="margin-bottom: 32px; padding: 0 16px;">
+        <div style="font-weight: 800; font-size: 1.1rem; margin-bottom: 2px;">Admin Panel</div>
+        <div style="font-size: 0.8rem; color: rgba(255,255,255,0.5);">Platform Management</div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Overview</div>
+        <ul class="sidebar-nav">
+          <li><a href="#" class="active" onclick="showAdminTab(this, 'overview')">&#128202; Dashboard</a></li>
+          <li><a href="#" onclick="showAdminTab(this, 'analytics')">&#128200; Analytics</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Management</div>
+        <ul class="sidebar-nav">
+          <li><a href="#" onclick="showAdminTab(this, 'users')">&#128101; Users <span class="nav-badge">1,284</span></a></li>
+          <li><a href="#" onclick="showAdminTab(this, 'events')">&#127881; Events <span class="nav-badge">86</span></a></li>
+          <li><a href="#" onclick="showAdminTab(this, 'providers')">&#127775; Service Providers <span class="nav-badge">5</span></a></li>
+          <li><a href="#" onclick="showAdminTab(this, 'escrow')">&#128176; Escrow & Payments</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Moderation</div>
+        <ul class="sidebar-nav">
+          <li><a href="#" onclick="showAdminTab(this, 'flags')">&#9888;&#65039; Flags & Disputes <span class="nav-badge" style="background: #EF4444;">3</span></a></li>
+          <li><a href="#" onclick="showAdminTab(this, 'reports')">&#128203; Reports</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Platform</div>
+        <ul class="sidebar-nav">
+          <li><a href="#" onclick="showAdminTab(this, 'settings')">&#9881; Settings</a></li>
+          <li><a href="#" onclick="showAdminTab(this, 'fees')">&#128178; Fee Configuration</a></li>
+          <li><a href="#" onclick="showAdminTab(this, 'comms')">&#128231; Communications</a></li>
+        </ul>
+      </div>
+
+      <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+        <ul class="sidebar-nav">
+          <li><a href="dashboard.html">&#128682; Back to Organiser View</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+
+      <!-- ===== OVERVIEW TAB ===== -->
+      <div id="admin-overview">
+        <div class="admin-header">
+          <div>
+            <h2 style="margin-bottom: 4px;">Platform Overview</h2>
+            <p>Real-time health of The Commons. Last updated: just now.</p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <select style="max-width: 160px; padding: 10px 14px; font-size: 0.85rem;">
+              <option>Last 7 days</option>
+              <option>Last 30 days</option>
+              <option selected>All time</option>
+            </select>
+            <button class="btn btn-secondary btn-sm" onclick="showToast('Report exported!')">&#128196; Export</button>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="kpi-row">
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background: rgba(255,107,107,0.1);">&#128101;</div>
+            <div class="kpi-value text-gradient">1,284</div>
+            <div class="kpi-label">Total Users</div>
+            <div class="kpi-change up">&#9650; 12% this month</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background: rgba(0,210,255,0.1);">&#127881;</div>
+            <div class="kpi-value" style="color: var(--deep-ocean);">86</div>
+            <div class="kpi-label">Total Events</div>
+            <div class="kpi-change up">&#9650; 8 new this week</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background: rgba(16,185,129,0.1);">&#128176;</div>
+            <div class="kpi-value" style="color: #059669;">$42.8K</div>
+            <div class="kpi-label">Total Escrow Volume</div>
+            <div class="kpi-change up">&#9650; 23% this month</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background: rgba(139,92,246,0.1);">&#127775;</div>
+            <div class="kpi-value" style="color: #7C3AED;">48</div>
+            <div class="kpi-label">Active Providers</div>
+            <div class="kpi-change up">&#9650; 5 pending approval</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon" style="background: rgba(245,158,11,0.1);">&#128178;</div>
+            <div class="kpi-value" style="color: #D97706;">$2,140</div>
+            <div class="kpi-label">Platform Revenue</div>
+            <div class="kpi-change up">&#9650; 5% commission earned</div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom: 24px;">
+          <!-- Revenue Chart -->
+          <div class="chart-placeholder">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+              <h4>Escrow Volume by Month</h4>
+            </div>
+            <div class="chart-bar-row">
+              <div class="chart-bar-label">Jan</div>
+              <div class="chart-bar-track"><div class="chart-bar-fill" style="width: 25%; background: var(--sunset-gradient);">$4.2K</div></div>
+            </div>
+            <div class="chart-bar-row">
+              <div class="chart-bar-label">Feb</div>
+              <div class="chart-bar-track"><div class="chart-bar-fill" style="width: 38%; background: var(--sunset-gradient);">$6.8K</div></div>
+            </div>
+            <div class="chart-bar-row">
+              <div class="chart-bar-label">Mar</div>
+              <div class="chart-bar-track"><div class="chart-bar-fill" style="width: 55%; background: var(--sunset-gradient);">$9.5K</div></div>
+            </div>
+            <div class="chart-bar-row">
+              <div class="chart-bar-label">Apr</div>
+              <div class="chart-bar-track"><div class="chart-bar-fill" style="width: 72%; background: var(--sunset-gradient);">$12.1K</div></div>
+            </div>
+            <div class="chart-bar-row">
+              <div class="chart-bar-label">May (proj)</div>
+              <div class="chart-bar-track"><div class="chart-bar-fill" style="width: 60%; background: var(--ocean-gradient); opacity: 0.6;">$10.2K</div></div>
+            </div>
+          </div>
+
+          <!-- Events by Category -->
+          <div class="chart-placeholder">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+              <h4>Events by Category</h4>
+            </div>
+            <div class="chart-bar-row">
+              <div class="chart-bar-label">Party</div>
+              <div class="chart-bar-track"><div class="chart-bar-fill" style="width: 85%; background: var(--party-gradient);">24 events</div></div>
+            </div>
+            <div class="chart-bar-row">
+              <div class="chart-bar-label">Yacht</div>
+              <div class="chart-bar-track"><div class="chart-bar-fill" style="width: 60%; background: var(--ocean-gradient);">18 events</div></div>
+            </div>
+            <div class="chart-bar-row">
+              <div class="chart-bar-label">Outdoor</div>
+              <div class="chart-bar-track"><div class="chart-bar-fill" style="width: 50%; background: linear-gradient(90deg, #10B981, #34D399);">15 events</div></div>
+            </div>
+            <div class="chart-bar-row">
+              <div class="chart-bar-label">Festival</div>
+              <div class="chart-bar-track"><div class="chart-bar-fill" style="width: 40%; background: var(--sunset-gradient);">12 events</div></div>
+            </div>
+            <div class="chart-bar-row">
+              <div class="chart-bar-label">Travel</div>
+              <div class="chart-bar-track"><div class="chart-bar-fill" style="width: 30%; background: linear-gradient(90deg, #6366F1, #8B5CF6);">9 events</div></div>
+            </div>
+            <div class="chart-bar-row">
+              <div class="chart-bar-label">Other</div>
+              <div class="chart-bar-track"><div class="chart-bar-fill" style="width: 20%; background: linear-gradient(90deg, #F59E0B, #F97316);">8 events</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flags / Alerts -->
+        <h4 style="margin-bottom: 16px;">&#9888;&#65039; Attention Required</h4>
+        <div class="flag-card">
+          <span style="font-size: 1.3rem;">&#128680;</span>
+          <div style="flex: 1;">
+            <strong style="font-size: 0.9rem;">Payment dispute — Bali Squad Trip</strong>
+            <p style="font-size: 0.8rem; margin: 0;">Attendee "Marcus L." is requesting a refund ($450) after organiser changed dates. Opened 2h ago.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="showToast('Opening dispute case...')">Review</button>
+        </div>
+        <div class="flag-card warn">
+          <span style="font-size: 1.3rem;">&#9888;&#65039;</span>
+          <div style="flex: 1;">
+            <strong style="font-size: 0.9rem;">5 provider applications pending review</strong>
+            <p style="font-size: 0.8rem; margin: 0;">Oldest application waiting 3 days. SLA target: 48 hours.</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="showAdminTab(document.querySelector('[onclick*=providers]'), 'providers')">Review</button>
+        </div>
+        <div class="flag-card info">
+          <span style="font-size: 1.3rem;">&#128276;</span>
+          <div style="flex: 1;">
+            <strong style="font-size: 0.9rem;">12 overdue payments across 4 events</strong>
+            <p style="font-size: 0.8rem; margin: 0;">Auto-reminders sent. 3 are 7+ days overdue — may need escalation.</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="showAdminTab(document.querySelector('[onclick*=escrow]'), 'escrow')">View</button>
+        </div>
+      </div>
+
+      <!-- ===== USERS TAB ===== -->
+      <div id="admin-users" style="display: none;">
+        <div class="admin-header">
+          <h2>User Management</h2>
+          <div style="display: flex; gap: 8px;">
+            <div class="search-bar" style="max-width: 300px;">
+              <input type="text" placeholder="Search users..." style="padding: 10px 0;">
+              <button class="btn btn-primary btn-sm">&#128269;</button>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="showToast('CSV exported!')">&#128196; Export</button>
+          </div>
+        </div>
+
+        <div class="grid-4" style="margin-bottom: 24px;">
+          <div class="kpi-card">
+            <div class="kpi-value text-gradient">1,284</div>
+            <div class="kpi-label">Total Users</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" style="color: var(--deep-ocean);">312</div>
+            <div class="kpi-label">Organisers</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" style="color: #059669;">924</div>
+            <div class="kpi-label">Attendees</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" style="color: #7C3AED;">48</div>
+            <div class="kpi-label">Service Providers</div>
+          </div>
+        </div>
+
+        <div class="tabs" style="margin-bottom: 20px;">
+          <button class="tab active">All Users</button>
+          <button class="tab">Organisers</button>
+          <button class="tab">Attendees</button>
+          <button class="tab">Providers</button>
+          <button class="tab">Flagged</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Events</th>
+                <th>Joined</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div style="display: flex; align-items: center; gap: 10px;"><div class="avatar avatar-sm" style="background: var(--sunset-gradient);">JT</div> Jason Tan</div></td>
+                <td>jason.tan@email.com</td>
+                <td><span class="badge badge-coral">Organiser</span></td>
+                <td>8 organised</td>
+                <td>Jan 15, 2026</td>
+                <td><span class="status-dot green"></span>Active</td>
+                <td><button class="btn btn-sm btn-secondary">View</button></td>
+              </tr>
+              <tr>
+                <td><div style="display: flex; align-items: center; gap: 10px;"><div class="avatar avatar-sm" style="background: var(--ocean-gradient);">SL</div> Sarah Lee</div></td>
+                <td>sarah.lee@email.com</td>
+                <td><span class="badge badge-coral">Organiser</span></td>
+                <td>12 organised</td>
+                <td>Dec 3, 2025</td>
+                <td><span class="status-dot green"></span>Active</td>
+                <td><button class="btn btn-sm btn-secondary">View</button></td>
+              </tr>
+              <tr>
+                <td><div style="display: flex; align-items: center; gap: 10px;"><div class="avatar avatar-sm" style="background: var(--party-gradient);">KL</div> Karen Lim</div></td>
+                <td>karen.lim@email.com</td>
+                <td><span class="badge badge-ocean">Attendee</span></td>
+                <td>6 attended</td>
+                <td>Feb 20, 2026</td>
+                <td><span class="status-dot green"></span>Active</td>
+                <td><button class="btn btn-sm btn-secondary">View</button></td>
+              </tr>
+              <tr>
+                <td><div style="display: flex; align-items: center; gap: 10px;"><div class="avatar avatar-sm" style="background: linear-gradient(135deg, #F59E0B, #F97316);">AM</div> Amir Mohamed</div></td>
+                <td>amir.m@email.com</td>
+                <td><span class="badge badge-ocean">Attendee</span></td>
+                <td>3 attended</td>
+                <td>Mar 8, 2026</td>
+                <td><span class="status-dot yellow"></span>Overdue</td>
+                <td><button class="btn btn-sm btn-secondary">View</button></td>
+              </tr>
+              <tr>
+                <td><div style="display: flex; align-items: center; gap: 10px;"><div class="avatar avatar-sm" style="background: var(--party-gradient);">DM</div> DJ Maxine</div></td>
+                <td>maxine@djmaxine.com</td>
+                <td><span class="badge badge-pink">Provider</span></td>
+                <td>22 booked</td>
+                <td>Nov 10, 2025</td>
+                <td><span class="status-dot green"></span>Verified</td>
+                <td><button class="btn btn-sm btn-secondary">View</button></td>
+              </tr>
+              <tr>
+                <td><div style="display: flex; align-items: center; gap: 10px;"><div class="avatar avatar-sm" style="background: linear-gradient(135deg, #EF4444, #DC2626);">ML</div> Marcus Low</div></td>
+                <td>marcus.l@email.com</td>
+                <td><span class="badge badge-ocean">Attendee</span></td>
+                <td>2 attended</td>
+                <td>Mar 22, 2026</td>
+                <td><span class="status-dot red"></span>Disputed</td>
+                <td><button class="btn btn-sm btn-primary" onclick="showToast('Opening user profile...')">Review</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== EVENTS TAB ===== -->
+      <div id="admin-events" style="display: none;">
+        <div class="admin-header">
+          <h2>Event Management</h2>
+          <div style="display: flex; gap: 8px;">
+            <div class="search-bar" style="max-width: 300px;">
+              <input type="text" placeholder="Search events..." style="padding: 10px 0;">
+              <button class="btn btn-primary btn-sm">&#128269;</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-4" style="margin-bottom: 24px;">
+          <div class="kpi-card">
+            <div class="kpi-value" style="color: var(--coral);">32</div>
+            <div class="kpi-label">Active Events</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" style="color: #059669;">48</div>
+            <div class="kpi-label">Completed</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" style="color: #F59E0B;">4</div>
+            <div class="kpi-label">Under Review</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" style="color: #EF4444;">2</div>
+            <div class="kpi-label">Cancelled</div>
+          </div>
+        </div>
+
+        <div class="tabs" style="margin-bottom: 20px;">
+          <button class="tab active">All Events (86)</button>
+          <button class="tab">Active (32)</button>
+          <button class="tab">Completed (48)</button>
+          <button class="tab">Flagged (4)</button>
+          <button class="tab">Cancelled (2)</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Event</th>
+                <th>Organiser</th>
+                <th>Date</th>
+                <th>Attendees</th>
+                <th>Escrow</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Sunset Yacht Party</strong><br><span style="font-size: 0.75rem; color: var(--slate);">Marina Bay</span></td>
+                <td>Jason Tan</td>
+                <td>Apr 26</td>
+                <td>18/25</td>
+                <td>$2,340</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn btn-sm btn-secondary">View</button></td>
+              </tr>
+              <tr>
+                <td><strong>Neon Nights Festival</strong><br><span style="font-size: 0.75rem; color: var(--slate);">Sentosa</span></td>
+                <td>Jason Tan</td>
+                <td>May 10</td>
+                <td>42/50</td>
+                <td>$1,780</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn btn-sm btn-secondary">View</button></td>
+              </tr>
+              <tr>
+                <td><strong>Bali Squad Trip</strong><br><span style="font-size: 0.75rem; color: var(--slate);">Bali, Indonesia</span></td>
+                <td>Rachel Wong</td>
+                <td>Jun 7</td>
+                <td>8/12</td>
+                <td>$3,600</td>
+                <td><span class="badge badge-coral">Disputed</span></td>
+                <td><button class="btn btn-sm btn-primary" onclick="showToast('Opening dispute...')">Review</button></td>
+              </tr>
+              <tr>
+                <td><strong>Rooftop Cocktail Night</strong><br><span style="font-size: 0.75rem; color: var(--slate);">MBS Rooftop</span></td>
+                <td>David Chen</td>
+                <td>May 24</td>
+                <td>28/35</td>
+                <td>$1,680</td>
+                <td><span class="badge badge-green">Active</span></td>
+                <td><button class="btn btn-sm btn-secondary">View</button></td>
+              </tr>
+              <tr>
+                <td><strong>Wine Tasting Evening</strong><br><span style="font-size: 0.75rem; color: var(--slate);">Dempsey Hill</span></td>
+                <td>Priya Sharma</td>
+                <td>Mar 15</td>
+                <td>20/20</td>
+                <td>$1,500</td>
+                <td><span class="badge badge-ocean">Completed</span></td>
+                <td><button class="btn btn-sm btn-secondary">View</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== PROVIDERS TAB ===== -->
+      <div id="admin-providers" style="display: none;">
+        <div class="admin-header">
+          <h2>Service Provider Management</h2>
+        </div>
+
+        <div class="grid-3" style="margin-bottom: 24px;">
+          <div class="kpi-card">
+            <div class="kpi-value" style="color: #059669;">48</div>
+            <div class="kpi-label">Verified Providers</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" style="color: #F59E0B;">5</div>
+            <div class="kpi-label">Pending Approval</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" style="color: var(--coral);">3</div>
+            <div class="kpi-label">Suspended</div>
+          </div>
+        </div>
+
+        <h4 style="margin-bottom: 16px;">&#9202; Pending Approval</h4>
+        <div style="display: grid; gap: 12px; margin-bottom: 32px;">
+          <div class="card" style="padding: 20px;">
+            <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+              <div class="avatar avatar-lg" style="background: linear-gradient(135deg, #F472B6, #E040FB);">&#127926;</div>
+              <div style="flex: 1; min-width: 200px;">
+                <strong>Luna Acoustic</strong>
+                <p style="font-size: 0.8rem; margin: 2px 0 0;">Acoustic Duo &middot; Applied Apr 7 &middot; luna@acoustic.com</p>
+                <p style="font-size: 0.8rem; margin: 0; color: var(--slate);">"Intimate acoustic covers for parties and private events. 5 years experience."</p>
+              </div>
+              <div style="font-size: 0.85rem; text-align: right; min-width: 100px;">
+                <strong>$250</strong>/event<br>
+                <span style="font-size: 0.75rem; color: var(--slate);">Musician</span>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-sm" style="background: #059669; color: white;" onclick="showToast('Luna Acoustic approved!')">&#10003; Approve</button>
+                <button class="btn btn-sm btn-secondary" onclick="showToast('Requesting more info...')">&#128172; Info</button>
+                <button class="btn btn-sm" style="background: #EF4444; color: white;" onclick="showToast('Application rejected.')">&#10005;</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="padding: 20px;">
+            <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+              <div class="avatar avatar-lg" style="background: linear-gradient(135deg, #14B8A6, #06B6D4);">&#127860;</div>
+              <div style="flex: 1; min-width: 200px;">
+                <strong>Sambal Kitchen</strong>
+                <p style="font-size: 0.8rem; margin: 2px 0 0;">Southeast Asian Catering &middot; Applied Apr 6 &middot; hello@sambalkitchen.sg</p>
+                <p style="font-size: 0.8rem; margin: 0; color: var(--slate);">"Authentic SEA dishes for 20-100 pax. Nasi lemak, satay, rendang. Halal certified."</p>
+              </div>
+              <div style="font-size: 0.85rem; text-align: right; min-width: 100px;">
+                <strong>$22</strong>/person<br>
+                <span style="font-size: 0.75rem; color: var(--slate);">Catering</span>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-sm" style="background: #059669; color: white;" onclick="showToast('Sambal Kitchen approved!')">&#10003; Approve</button>
+                <button class="btn btn-sm btn-secondary">&#128172; Info</button>
+                <button class="btn btn-sm" style="background: #EF4444; color: white;">&#10005;</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="padding: 20px;">
+            <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+              <div class="avatar avatar-lg" style="background: linear-gradient(135deg, #8B5CF6, #A855F7);">&#127911;</div>
+              <div style="flex: 1; min-width: 200px;">
+                <strong>DJ Kenzo</strong>
+                <p style="font-size: 0.8rem; margin: 2px 0 0;">DJ &middot; Applied Apr 8 &middot; kenzo@beats.com</p>
+                <p style="font-size: 0.8rem; margin: 0; color: var(--slate);">"Tech house & deep house. Resident at Zouk. Full Pioneer setup."</p>
+              </div>
+              <div style="font-size: 0.85rem; text-align: right; min-width: 100px;">
+                <strong>$400</strong>/event<br>
+                <span style="font-size: 0.75rem; color: var(--slate);">DJ</span>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-sm" style="background: #059669; color: white;" onclick="showToast('DJ Kenzo approved!')">&#10003; Approve</button>
+                <button class="btn btn-sm btn-secondary">&#128172; Info</button>
+                <button class="btn btn-sm" style="background: #EF4444; color: white;">&#10005;</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h4 style="margin-bottom: 16px;">&#10003; Recently Verified</h4>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Provider</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Rating</th>
+                <th>Bookings</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div style="display: flex; align-items: center; gap: 10px;"><div class="avatar avatar-sm" style="background: var(--party-gradient);">&#127911;</div> DJ Maxine</div></td>
+                <td>DJ</td>
+                <td>$300/event</td>
+                <td>&#9733; 4.9 (127)</td>
+                <td>22</td>
+                <td><span class="badge badge-green">Verified</span></td>
+                <td><button class="btn btn-sm btn-secondary">Manage</button></td>
+              </tr>
+              <tr>
+                <td><div style="display: flex; align-items: center; gap: 10px;"><div class="avatar avatar-sm" style="background: var(--ocean-gradient);">&#127860;</div> Chef Rajan</div></td>
+                <td>Catering</td>
+                <td>$25/pax</td>
+                <td>&#9733; 5.0 (89)</td>
+                <td>18</td>
+                <td><span class="badge badge-green">Verified</span></td>
+                <td><button class="btn btn-sm btn-secondary">Manage</button></td>
+              </tr>
+              <tr>
+                <td><div style="display: flex; align-items: center; gap: 10px;"><div class="avatar avatar-sm" style="background: var(--sunset-gradient);">&#127908;</div> The Velvet Band</div></td>
+                <td>Live Band</td>
+                <td>$800/event</td>
+                <td>&#9733; 4.7 (64)</td>
+                <td>14</td>
+                <td><span class="badge badge-green">Verified</span></td>
+                <td><button class="btn btn-sm btn-secondary">Manage</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== ESCROW TAB ===== -->
+      <div id="admin-escrow" style="display: none;">
+        <div class="admin-header">
+          <h2>Escrow & Payments</h2>
+          <button class="btn btn-secondary btn-sm" onclick="showToast('Financial report exported!')">&#128196; Export Report</button>
+        </div>
+
+        <div class="kpi-row" style="grid-template-columns: repeat(4, 1fr);">
+          <div class="kpi-card" style="border-left: 4px solid #059669;">
+            <div class="kpi-value" style="color: #059669;">$42,800</div>
+            <div class="kpi-label">Total Escrow Volume</div>
+          </div>
+          <div class="kpi-card" style="border-left: 4px solid var(--deep-ocean);">
+            <div class="kpi-value" style="color: var(--deep-ocean);">$18,200</div>
+            <div class="kpi-label">Currently Held</div>
+          </div>
+          <div class="kpi-card" style="border-left: 4px solid var(--coral);">
+            <div class="kpi-value text-gradient">$24,600</div>
+            <div class="kpi-label">Released to Organisers</div>
+          </div>
+          <div class="kpi-card" style="border-left: 4px solid #F59E0B;">
+            <div class="kpi-value" style="color: #D97706;">$2,140</div>
+            <div class="kpi-label">Platform Fees Earned (5%)</div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom: 24px;">
+          <div class="chart-placeholder">
+            <h4 style="margin-bottom: 20px;">Payment Collection Rate</h4>
+            <div style="text-align: center; padding: 20px 0;">
+              <div style="font-size: 3.5rem; font-weight: 900; color: #059669;">96%</div>
+              <p style="font-size: 0.9rem;">of all milestone payments collected on time</p>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 16px;">
+              <div style="text-align: center; padding: 12px; background: var(--sand); border-radius: var(--radius-sm);">
+                <strong style="color: #059669;">842</strong>
+                <div style="font-size: 0.75rem; color: var(--slate);">On Time</div>
+              </div>
+              <div style="text-align: center; padding: 12px; background: var(--sand); border-radius: var(--radius-sm);">
+                <strong style="color: #F59E0B;">24</strong>
+                <div style="font-size: 0.75rem; color: var(--slate);">Late (paid)</div>
+              </div>
+              <div style="text-align: center; padding: 12px; background: var(--sand); border-radius: var(--radius-sm);">
+                <strong style="color: #EF4444;">12</strong>
+                <div style="font-size: 0.75rem; color: var(--slate);">Overdue</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-placeholder">
+            <h4 style="margin-bottom: 20px;">Refunds & Disputes</h4>
+            <div style="display: grid; gap: 12px;">
+              <div style="display: flex; justify-content: space-between; padding: 14px; background: var(--sand); border-radius: var(--radius-sm);">
+                <span>Total Refunds Issued</span>
+                <strong>$1,850</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding: 14px; background: var(--sand); border-radius: var(--radius-sm);">
+                <span>Event Cancellations</span>
+                <strong>2 events</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding: 14px; background: var(--sand); border-radius: var(--radius-sm);">
+                <span>Open Disputes</span>
+                <strong style="color: #EF4444;">1 active</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding: 14px; background: var(--sand); border-radius: var(--radius-sm);">
+                <span>Resolved Disputes</span>
+                <strong style="color: #059669;">7 resolved</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding: 14px; background: var(--sand); border-radius: var(--radius-sm);">
+                <span>Avg Resolution Time</span>
+                <strong>2.3 days</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h4 style="margin-bottom: 16px;">Overdue Payments</h4>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Attendee</th>
+                <th>Event</th>
+                <th>Amount Due</th>
+                <th>Milestone</th>
+                <th>Days Overdue</th>
+                <th>Reminders Sent</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div style="display: flex; align-items: center; gap: 10px;"><div class="avatar avatar-sm" style="background: var(--sunset-gradient);">AM</div> Amir M.</div></td>
+                <td>Yacht Party</td>
+                <td><strong style="color: #EF4444;">$65</strong></td>
+                <td>2nd Payment</td>
+                <td><span style="color: #EF4444; font-weight: 700;">4 days</span></td>
+                <td>3</td>
+                <td>
+                  <div style="display: flex; gap: 6px;">
+                    <button class="btn btn-sm btn-primary" onclick="showToast('Final notice sent to Amir')">Final Notice</button>
+                    <button class="btn btn-sm btn-secondary">Waive</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><div style="display: flex; align-items: center; gap: 10px;"><div class="avatar avatar-sm" style="background: linear-gradient(135deg, #F59E0B, #F97316);">TK</div> Tom K.</div></td>
+                <td>Neon Nights</td>
+                <td><strong style="color: #EF4444;">$45</strong></td>
+                <td>Final Payment</td>
+                <td><span style="color: #EF4444; font-weight: 700;">7 days</span></td>
+                <td>4</td>
+                <td>
+                  <div style="display: flex; gap: 6px;">
+                    <button class="btn btn-sm" style="background: #EF4444; color: white;" onclick="showToast('Spot released. Tom K. removed from event.')">Remove</button>
+                    <button class="btn btn-sm btn-secondary">Contact</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===== FLAGS & DISPUTES TAB ===== -->
+      <div id="admin-flags" style="display: none;">
+        <div class="admin-header">
+          <h2>Flags & Disputes</h2>
+        </div>
+
+        <div class="tabs" style="margin-bottom: 20px;">
+          <button class="tab active">Open (3)</button>
+          <button class="tab">In Progress (1)</button>
+          <button class="tab">Resolved (7)</button>
+        </div>
+
+        <div style="display: grid; gap: 16px;">
+          <div class="card" style="padding: 24px; border-left: 4px solid #EF4444;">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                  <span class="badge badge-coral">Refund Request</span>
+                  <span style="font-size: 0.8rem; color: var(--slate);">Opened 2 hours ago</span>
+                </div>
+                <h4>Bali Squad Trip — Date Change Dispute</h4>
+              </div>
+              <span class="badge" style="background: #FEF3C7; color: #92400E;">High Priority</span>
+            </div>
+            <div style="background: var(--sand); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 16px;">
+              <p style="font-size: 0.85rem;"><strong>Marcus Low</strong> (attendee): "The organiser changed the trip dates after I paid my $450 deposit. The new dates conflict with my work. I want a full refund."</p>
+            </div>
+            <div style="display: flex; gap: 16px; font-size: 0.85rem; color: var(--slate); margin-bottom: 16px;">
+              <span>&#128101; Organiser: Rachel Wong</span>
+              <span>&#128176; Amount: $450</span>
+              <span>&#128197; Original: Jun 7-10 &#8594; Changed: Jun 21-24</span>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-sm btn-primary" onclick="showToast('Refund of $450 approved and processed.')">Approve Refund</button>
+              <button class="btn btn-sm btn-secondary" onclick="showToast('Partial refund dialog opened...')">Partial Refund</button>
+              <button class="btn btn-sm btn-secondary" onclick="showToast('Mediation request sent to both parties.')">Mediate</button>
+              <button class="btn btn-sm btn-secondary">Dismiss</button>
+            </div>
+          </div>
+
+          <div class="card" style="padding: 24px; border-left: 4px solid #F59E0B;">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                  <span class="badge" style="background: #FEF3C7; color: #92400E;">Quality Complaint</span>
+                  <span style="font-size: 0.8rem; color: var(--slate);">Opened 1 day ago</span>
+                </div>
+                <h4>Service Provider — DJ Equipment Issues</h4>
+              </div>
+              <span class="badge badge-ocean">Medium Priority</span>
+            </div>
+            <div style="background: var(--sand); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 16px;">
+              <p style="font-size: 0.85rem;"><strong>David Chen</strong> (organiser): "Booked DJ Zack for our rooftop party. He arrived 45min late and one of his speakers was blown. Had to use the venue's tiny bluetooth speaker for the first hour."</p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-sm btn-primary" onclick="showToast('Warning issued to DJ Zack.')">Issue Warning</button>
+              <button class="btn btn-sm btn-secondary">Partial Refund</button>
+              <button class="btn btn-sm btn-secondary">Contact Provider</button>
+            </div>
+          </div>
+
+          <div class="card" style="padding: 24px; border-left: 4px solid var(--ocean);">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                  <span class="badge badge-ocean">Event Report</span>
+                  <span style="font-size: 0.8rem; color: var(--slate);">Opened 3 days ago</span>
+                </div>
+                <h4>Suspicious Event — Potential Scam</h4>
+              </div>
+              <span class="badge badge-coral">High Priority</span>
+            </div>
+            <div style="background: var(--sand); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 16px;">
+              <p style="font-size: 0.85rem;"><strong>System flag</strong>: Event "Luxury Yacht VIP Experience" ($500/pax, 100 spots) created by new account (2 days old). No verified identity. Already collected $3,000 in deposits.</p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-sm" style="background: #EF4444; color: white;" onclick="showToast('Event suspended. Deposits frozen. Organiser notified.')">Suspend Event</button>
+              <button class="btn btn-sm btn-primary" onclick="showToast('Verification request sent to organiser.')">Request Verification</button>
+              <button class="btn btn-sm btn-secondary">Investigate</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SETTINGS TAB ===== -->
+      <div id="admin-settings" style="display: none;">
+        <div class="admin-header">
+          <h2>Platform Settings</h2>
+        </div>
+
+        <div class="grid-2" style="gap: 24px;">
+          <div class="card" style="padding: 28px;">
+            <h4 style="margin-bottom: 20px;">&#9881; General</h4>
+            <div class="form-group">
+              <label>Platform Name</label>
+              <input type="text" value="The Commons">
+            </div>
+            <div class="form-group">
+              <label>Support Email</label>
+              <input type="email" value="support@thecommons.app">
+            </div>
+            <div class="form-group">
+              <label>Default Currency</label>
+              <select><option selected>SGD</option><option>USD</option><option>EUR</option></select>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="showToast('Settings saved!')">Save Changes</button>
+          </div>
+
+          <div class="card" style="padding: 28px;">
+            <h4 style="margin-bottom: 20px;">&#128176; Escrow & Fees</h4>
+            <div class="form-group">
+              <label>Platform Commission</label>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <input type="number" value="5" style="max-width: 80px;">
+                <span style="font-weight: 600;">%</span>
+              </div>
+              <div class="form-hint">Charged on successful event completion</div>
+            </div>
+            <div class="form-group">
+              <label>Payment Reminder (before deadline)</label>
+              <select><option>24 hours</option><option selected>48 hours</option><option>72 hours</option></select>
+            </div>
+            <div class="form-group">
+              <label>Auto-remove after overdue (days)</label>
+              <input type="number" value="14" style="max-width: 100px;">
+            </div>
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" checked>
+                Auto-release funds on event day
+              </label>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="showToast('Fee settings saved!')">Save Changes</button>
+          </div>
+
+          <div class="card" style="padding: 28px;">
+            <h4 style="margin-bottom: 20px;">&#128272; Security</h4>
+            <div class="form-group">
+              <label>Minimum account age for event creation</label>
+              <select><option>No minimum</option><option selected>24 hours</option><option>7 days</option></select>
+            </div>
+            <div class="form-group">
+              <label>Max event value (without verification)</label>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-weight: 600;">$</span>
+                <input type="number" value="5000" style="max-width: 120px;">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" checked>
+                Flag events over $5,000 for manual review
+              </label>
+            </div>
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" checked>
+                Require ID verification for organisers collecting &gt;$10,000
+              </label>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="showToast('Security settings saved!')">Save Changes</button>
+          </div>
+
+          <div class="card" style="padding: 28px;">
+            <h4 style="margin-bottom: 20px;">&#128231; Notifications</h4>
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" checked>
+                Email admin on new disputes
+              </label>
+            </div>
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" checked>
+                Email admin on new provider applications
+              </label>
+            </div>
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" checked>
+                Email admin on events flagged by system
+              </label>
+            </div>
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox">
+                Daily summary email
+              </label>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="showToast('Notification preferences saved!')">Save Changes</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== FEES TAB ===== -->
+      <div id="admin-fees" style="display: none;">
+        <div class="admin-header">
+          <h2>Fee Configuration</h2>
+        </div>
+        <div class="card" style="padding: 28px; max-width: 700px;">
+          <h4 style="margin-bottom: 20px;">Commission Structure</h4>
+          <div class="form-group">
+            <label>Event Commission Rate</label>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <input type="number" value="5" style="max-width: 80px;">
+              <span>% of total escrow collected</span>
+            </div>
+            <div class="form-hint">Deducted when funds are released to the organiser on event day.</div>
+          </div>
+          <div class="form-group">
+            <label>Provider Booking Fee</label>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <input type="number" value="10" style="max-width: 80px;">
+              <span>% of booking value</span>
+            </div>
+            <div class="form-hint">Charged to the service provider on successful bookings.</div>
+          </div>
+          <div class="form-group">
+            <label>Late Payment Penalty</label>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <input type="number" value="0" style="max-width: 80px;">
+              <span>% per day overdue</span>
+            </div>
+            <div class="form-hint">Set to 0 for no late fees. Applied to attendee balances.</div>
+          </div>
+          <div class="form-group">
+            <label>Cancellation Refund Policy</label>
+            <select>
+              <option selected>Full refund (organiser cancels)</option>
+              <option>Partial refund (minus processing fee)</option>
+              <option>Custom per-event policy</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="showToast('Fee configuration saved!')">Save Fee Structure</button>
+        </div>
+      </div>
+
+      <!-- ===== ANALYTICS TAB ===== -->
+      <div id="admin-analytics" style="display: none;">
+        <div class="admin-header">
+          <h2>Platform Analytics</h2>
+          <select style="max-width: 160px; padding: 10px 14px; font-size: 0.85rem;">
+            <option>Last 7 days</option>
+            <option selected>Last 30 days</option>
+            <option>Last 90 days</option>
+            <option>All time</option>
+          </select>
+        </div>
+
+        <div class="kpi-row" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 24px;">
+          <div class="kpi-card">
+            <div class="kpi-value" style="color: var(--coral);">342</div>
+            <div class="kpi-label">New Signups (30d)</div>
+            <div class="kpi-change up">&#9650; 18% vs prev period</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" style="color: var(--deep-ocean);">24</div>
+            <div class="kpi-label">Events Created (30d)</div>
+            <div class="kpi-change up">&#9650; 12% vs prev period</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" style="color: #059669;">$14,200</div>
+            <div class="kpi-label">Escrow Volume (30d)</div>
+            <div class="kpi-change up">&#9650; 23% vs prev period</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" style="color: #7C3AED;">87%</div>
+            <div class="kpi-label">Event Completion Rate</div>
+            <div class="kpi-change up">&#9650; 3% vs prev period</div>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom: 24px;">
+          <div class="chart-placeholder">
+            <h4 style="margin-bottom: 20px;">User Growth</h4>
+            <div class="chart-bar-row">
+              <div class="chart-bar-label">Week 1</div>
+              <div class="chart-bar-track"><div class="chart-bar-fill" style="width: 30%; background: var(--ocean-gradient);">62</div></div>
+            </div>
+            <div class="chart-bar-row">
+              <div class="chart-bar-label">Week 2</div>
+              <div class="chart-bar-track"><div class="chart-bar-fill" style="width: 45%; background: var(--ocean-gradient);">88</div></div>
+            </div>
+            <div class="chart-bar-row">
+              <div class="chart-bar-label">Week 3</div>
+              <div class="chart-bar-track"><div class="chart-bar-fill" style="width: 55%; background: var(--ocean-gradient);">95</div></div>
+            </div>
+            <div class="chart-bar-row">
+              <div class="chart-bar-label">Week 4</div>
+              <div class="chart-bar-track"><div class="chart-bar-fill" style="width: 65%; background: var(--ocean-gradient);">97</div></div>
+            </div>
+          </div>
+
+          <div class="chart-placeholder">
+            <h4 style="margin-bottom: 20px;">Top Organisers</h4>
+            <div style="display: grid; gap: 12px;">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sand); border-radius: var(--radius-sm);">
+                <div style="font-weight: 800; color: var(--coral); width: 24px;">#1</div>
+                <div class="avatar avatar-sm" style="background: var(--ocean-gradient);">SL</div>
+                <div style="flex: 1;"><strong style="font-size: 0.9rem;">Sarah Lee</strong></div>
+                <div style="text-align: right; font-size: 0.85rem;"><strong>12</strong> events &middot; $8,400</div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sand); border-radius: var(--radius-sm);">
+                <div style="font-weight: 800; color: var(--coral); width: 24px;">#2</div>
+                <div class="avatar avatar-sm" style="background: var(--sunset-gradient);">JT</div>
+                <div style="flex: 1;"><strong style="font-size: 0.9rem;">Jason Tan</strong></div>
+                <div style="text-align: right; font-size: 0.85rem;"><strong>8</strong> events &middot; $6,200</div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sand); border-radius: var(--radius-sm);">
+                <div style="font-weight: 800; color: var(--coral); width: 24px;">#3</div>
+                <div class="avatar avatar-sm" style="background: var(--party-gradient);">DC</div>
+                <div style="flex: 1;"><strong style="font-size: 0.9rem;">David Chen</strong></div>
+                <div style="text-align: right; font-size: 0.85rem;"><strong>6</strong> events &middot; $4,800</div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px; padding: 10px; background: var(--sand); border-radius: var(--radius-sm);">
+                <div style="font-weight: 800; color: var(--coral); width: 24px;">#4</div>
+                <div class="avatar avatar-sm" style="background: linear-gradient(135deg, #F59E0B, #F97316);">RW</div>
+                <div style="flex: 1;"><strong style="font-size: 0.9rem;">Rachel Wong</strong></div>
+                <div style="text-align: right; font-size: 0.85rem;"><strong>5</strong> events &middot; $3,900</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== REPORTS TAB ===== -->
+      <div id="admin-reports" style="display: none;">
+        <div class="admin-header">
+          <h2>Reports</h2>
+        </div>
+        <div class="grid-3">
+          <div class="card" style="padding: 28px; text-align: center; cursor: pointer;" onclick="showToast('Generating financial report...')">
+            <div style="font-size: 2rem; margin-bottom: 12px;">&#128176;</div>
+            <h4>Financial Report</h4>
+            <p style="font-size: 0.85rem;">Escrow volume, revenue, refunds, platform fees</p>
+            <button class="btn btn-primary btn-sm" style="margin-top: 16px;">Generate</button>
+          </div>
+          <div class="card" style="padding: 28px; text-align: center; cursor: pointer;" onclick="showToast('Generating user report...')">
+            <div style="font-size: 2rem; margin-bottom: 12px;">&#128101;</div>
+            <h4>User Activity Report</h4>
+            <p style="font-size: 0.85rem;">Signups, retention, active users, churn</p>
+            <button class="btn btn-primary btn-sm" style="margin-top: 16px;">Generate</button>
+          </div>
+          <div class="card" style="padding: 28px; text-align: center; cursor: pointer;" onclick="showToast('Generating event report...')">
+            <div style="font-size: 2rem; margin-bottom: 12px;">&#127881;</div>
+            <h4>Event Performance</h4>
+            <p style="font-size: 0.85rem;">Completion rates, payment rates, categories</p>
+            <button class="btn btn-primary btn-sm" style="margin-top: 16px;">Generate</button>
+          </div>
+          <div class="card" style="padding: 28px; text-align: center; cursor: pointer;" onclick="showToast('Generating provider report...')">
+            <div style="font-size: 2rem; margin-bottom: 12px;">&#127775;</div>
+            <h4>Provider Performance</h4>
+            <p style="font-size: 0.85rem;">Bookings, ratings, response times, revenue</p>
+            <button class="btn btn-primary btn-sm" style="margin-top: 16px;">Generate</button>
+          </div>
+          <div class="card" style="padding: 28px; text-align: center; cursor: pointer;" onclick="showToast('Generating dispute report...')">
+            <div style="font-size: 2rem; margin-bottom: 12px;">&#9888;&#65039;</div>
+            <h4>Dispute & Moderation</h4>
+            <p style="font-size: 0.85rem;">Disputes, resolution time, flagged content</p>
+            <button class="btn btn-primary btn-sm" style="margin-top: 16px;">Generate</button>
+          </div>
+          <div class="card" style="padding: 28px; text-align: center; cursor: pointer;" onclick="showToast('Generating growth report...')">
+            <div style="font-size: 2rem; margin-bottom: 12px;">&#128200;</div>
+            <h4>Growth & Trends</h4>
+            <p style="font-size: 0.85rem;">MoM growth, projections, market analysis</p>
+            <button class="btn btn-primary btn-sm" style="margin-top: 16px;">Generate</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== COMMS TAB ===== -->
+      <div id="admin-comms" style="display: none;">
+        <div class="admin-header">
+          <h2>Communications</h2>
+        </div>
+        <div class="grid-2" style="gap: 24px;">
+          <div class="card" style="padding: 28px;">
+            <h4 style="margin-bottom: 20px;">&#128231; Send Platform Announcement</h4>
+            <div class="form-group">
+              <label>Audience</label>
+              <select>
+                <option>All Users</option>
+                <option>Organisers Only</option>
+                <option>Attendees Only</option>
+                <option>Service Providers Only</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Subject</label>
+              <input type="text" placeholder="e.g. New Feature: Group Chat for Events">
+            </div>
+            <div class="form-group">
+              <label>Message</label>
+              <textarea rows="6" placeholder="Write your announcement..."></textarea>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-primary" onclick="showToast('Announcement sent to all users!')">Send Now</button>
+              <button class="btn btn-secondary" onclick="showToast('Draft saved!')">Save Draft</button>
+            </div>
+          </div>
+
+          <div class="card" style="padding: 28px;">
+            <h4 style="margin-bottom: 20px;">&#128336; Email Templates</h4>
+            <div style="display: grid; gap: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px; background: var(--sand); border-radius: var(--radius-sm);">
+                <div>
+                  <strong style="font-size: 0.9rem;">Welcome Email</strong>
+                  <div style="font-size: 0.75rem; color: var(--slate);">Sent on signup</div>
+                </div>
+                <button class="btn btn-sm btn-secondary">Edit</button>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px; background: var(--sand); border-radius: var(--radius-sm);">
+                <div>
+                  <strong style="font-size: 0.9rem;">Payment Reminder</strong>
+                  <div style="font-size: 0.75rem; color: var(--slate);">48h before milestone</div>
+                </div>
+                <button class="btn btn-sm btn-secondary">Edit</button>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px; background: var(--sand); border-radius: var(--radius-sm);">
+                <div>
+                  <strong style="font-size: 0.9rem;">Overdue Notice</strong>
+                  <div style="font-size: 0.75rem; color: var(--slate);">After missed deadline</div>
+                </div>
+                <button class="btn btn-sm btn-secondary">Edit</button>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px; background: var(--sand); border-radius: var(--radius-sm);">
+                <div>
+                  <strong style="font-size: 0.9rem;">Event Day Confirmation</strong>
+                  <div style="font-size: 0.75rem; color: var(--slate);">Sent morning of event</div>
+                </div>
+                <button class="btn btn-sm btn-secondary">Edit</button>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px; background: var(--sand); border-radius: var(--radius-sm);">
+                <div>
+                  <strong style="font-size: 0.9rem;">Provider Approval</strong>
+                  <div style="font-size: 0.75rem; color: var(--slate);">After verification</div>
+                </div>
+                <button class="btn btn-sm btn-secondary">Edit</button>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px; background: var(--sand); border-radius: var(--radius-sm);">
+                <div>
+                  <strong style="font-size: 0.9rem;">Refund Confirmation</strong>
+                  <div style="font-size: 0.75rem; color: var(--slate);">After approved refund</div>
+                </div>
+                <button class="btn btn-sm btn-secondary">Edit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Auth Modal -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="authTitle">Admin Login</h3>
+        <button class="modal-close" onclick="closeAuthModal()">&times;</button>
+      </div>
+      <div id="loginForm">
+        <div class="form-group"><label>Email</label><input type="email" placeholder="admin@thecommons.app"></div>
+        <div class="form-group"><label>Password</label><input type="password" placeholder="Enter password"></div>
+        <button class="btn btn-primary btn-lg" style="width: 100%;" onclick="handleAuth()">Log In</button>
+      </div>
+      <div id="signupForm" style="display: none;"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+  <script>
+    // Admin tab switching
+    function showAdminTab(link, tabName) {
+      // Hide all admin tabs
+      document.querySelectorAll('[id^="admin-"]').forEach(tab => {
+        tab.style.display = 'none';
+      });
+      // Show selected
+      const target = document.getElementById('admin-' + tabName);
+      if (target) target.style.display = 'block';
+      // Update sidebar active
+      document.querySelectorAll('.admin-sidebar .sidebar-nav a').forEach(a => a.classList.remove('active'));
+      if (link && link.classList) link.classList.add('active');
+    }
+  </script>
+</body>
+</html>

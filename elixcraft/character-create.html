@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELIXCRAFT — Create Your Unit</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/character-create.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet" />
+</head>
+<body class="cc-screen">
+  <canvas id="starfield"></canvas>
+
+  <!-- STEP INDICATOR -->
+  <div class="cc-steps">
+    <div class="step-indicator" id="steps-bar">
+      <div class="step active" data-step="1"><span class="step-num">1</span><span class="step-label">FACTION</span></div>
+      <div class="step-line"></div>
+      <div class="step" data-step="2"><span class="step-num">2</span><span class="step-label">ROLE</span></div>
+      <div class="step-line"></div>
+      <div class="step" data-step="3"><span class="step-num">3</span><span class="step-label">STATS</span></div>
+      <div class="step-line"></div>
+      <div class="step" data-step="4"><span class="step-num">4</span><span class="step-label">SKILLS</span></div>
+      <div class="step-line"></div>
+      <div class="step" data-step="5"><span class="step-num">5</span><span class="step-label">ARMOR</span></div>
+      <div class="step-line"></div>
+      <div class="step" data-step="6"><span class="step-num">6</span><span class="step-label">DEPLOY</span></div>
+    </div>
+  </div>
+
+  <div class="cc-wrapper">
+
+    <!-- ══════════ STEP 1: FACTION ══════════ -->
+    <div class="cc-panel active" id="step-1">
+      <div class="cc-header">
+        <div class="cc-logo">⬡ ELIXCRAFT</div>
+        <h2>CHOOSE YOUR FACTION</h2>
+        <p>Your faction defines your department, career track, and starting bonuses</p>
+      </div>
+      <div class="faction-grid">
+        <div class="cc-faction-card" data-faction="protoss" onclick="pickFaction('protoss',this)">
+          <div class="cf-glow protoss-glow"></div>
+          <div class="cf-icon">⚡</div>
+          <div class="cf-badge protoss-badge">PROTOSS</div>
+          <h3>ENGINEERING<br>& TECHNOLOGY</h3>
+          <p>ICT, Data, Cloud, Cybersecurity. 5 tracks · 25 roles. Elite units, high impact.</p>
+          <div class="cf-stats">
+            <div class="cf-stat"><span>INTELLIGENCE</span><div class="cf-bar"><div class="cf-fill protoss-fill" style="width:95%"></div></div></div>
+            <div class="cf-stat"><span>STRENGTH</span><div class="cf-bar"><div class="cf-fill protoss-fill" style="width:70%"></div></div></div>
+            <div class="cf-stat"><span>CHARISMA</span><div class="cf-bar"><div class="cf-fill protoss-fill" style="width:55%"></div></div></div>
+            <div class="cf-stat"><span>DEXTERITY</span><div class="cf-bar"><div class="cf-fill protoss-fill" style="width:65%"></div></div></div>
+          </div>
+          <div class="cf-salary">💎 SGD $3,550 – $35,000/mo</div>
+        </div>
+
+        <div class="cc-faction-card" data-faction="terran" onclick="pickFaction('terran',this)">
+          <div class="cf-glow terran-glow"></div>
+          <div class="cf-icon">🏗️</div>
+          <div class="cf-badge terran-badge">TERRAN</div>
+          <h3>OPERATIONS<br>& FINANCE</h3>
+          <p>Ops, Finance, Procurement, Project Management. Builders of the empire backbone.</p>
+          <div class="cf-stats">
+            <div class="cf-stat"><span>INTELLIGENCE</span><div class="cf-bar"><div class="cf-fill terran-fill" style="width:65%"></div></div></div>
+            <div class="cf-stat"><span>STRENGTH</span><div class="cf-bar"><div class="cf-fill terran-fill" style="width:85%"></div></div></div>
+            <div class="cf-stat"><span>CHARISMA</span><div class="cf-bar"><div class="cf-fill terran-fill" style="width:75%"></div></div></div>
+            <div class="cf-stat"><span>DEXTERITY</span><div class="cf-bar"><div class="cf-fill terran-fill" style="width:80%"></div></div></div>
+          </div>
+          <div class="cf-salary">💎 SGD $2,800 – $40,000/mo</div>
+        </div>
+
+        <div class="cc-faction-card" data-faction="zerg" onclick="pickFaction('zerg',this)">
+          <div class="cf-glow zerg-glow"></div>
+          <div class="cf-icon">🦾</div>
+          <div class="cf-badge zerg-badge">ZERG</div>
+          <h3>SALES, MARKETING<br>& PEOPLE</h3>
+          <p>Sales, Growth, HR, Product. Relentless expansion. Highest velocity.</p>
+          <div class="cf-stats">
+            <div class="cf-stat"><span>INTELLIGENCE</span><div class="cf-bar"><div class="cf-fill zerg-fill" style="width:60%"></div></div></div>
+            <div class="cf-stat"><span>STRENGTH</span><div class="cf-bar"><div class="cf-fill zerg-fill" style="width:75%"></div></div></div>
+            <div class="cf-stat"><span>CHARISMA</span><div class="cf-bar"><div class="cf-fill zerg-fill" style="width:95%"></div></div></div>
+            <div class="cf-stat"><span>DEXTERITY</span><div class="cf-bar"><div class="cf-fill zerg-fill" style="width:90%"></div></div></div>
+          </div>
+          <div class="cf-salary">💎 SGD $2,800 – $30,000/mo</div>
+        </div>
+      </div>
+      <button class="cc-next-btn" id="btn-step1" onclick="nextStep()" disabled>CONTINUE →</button>
+    </div>
+
+    <!-- ══════════ STEP 2: ROLE ══════════ -->
+    <div class="cc-panel" id="step-2">
+      <div class="cc-header">
+        <h2>CHOOSE YOUR ROLE</h2>
+        <p>Select a career track and starting role. Data sourced from <span class="src-tag">SkillsFuture Singapore 2025</span></p>
+      </div>
+      <div class="role-columns" id="role-columns">
+        <!-- Injected by JS -->
+      </div>
+      <button class="cc-next-btn" id="btn-step2" onclick="nextStep()" disabled>CONTINUE →</button>
+    </div>
+
+    <!-- ══════════ STEP 3: STATS ══════════ -->
+    <div class="cc-panel" id="step-3">
+      <div class="cc-header">
+        <h2>ALLOCATE STARTING STATS</h2>
+        <p>Distribute <span class="pts-counter" id="pts-remaining">10</span> stat points across your attributes</p>
+      </div>
+      <div class="stat-allocator" id="stat-allocator">
+        <div class="stat-alloc-row" data-stat="str">
+          <div class="sa-icon">⚔️</div>
+          <div class="sa-info">
+            <div class="sa-name">STRENGTH</div>
+            <div class="sa-desc">Leadership, influence, ability to drive outcomes</div>
+          </div>
+          <div class="sa-controls">
+            <button onclick="adjustStat('str',-1)">−</button>
+            <span class="sa-val" id="stat-str">5</span>
+            <button onclick="adjustStat('str',+1)">+</button>
+          </div>
+          <div class="sa-bar-wrap"><div class="sa-bar" id="bar-str" style="width:50%"></div></div>
+        </div>
+        <div class="stat-alloc-row" data-stat="int">
+          <div class="sa-icon">🧠</div>
+          <div class="sa-info">
+            <div class="sa-name">INTELLIGENCE</div>
+            <div class="sa-desc">Technical depth, analytical thinking, learning speed</div>
+          </div>
+          <div class="sa-controls">
+            <button onclick="adjustStat('int',-1)">−</button>
+            <span class="sa-val" id="stat-int">5</span>
+            <button onclick="adjustStat('int',+1)">+</button>
+          </div>
+          <div class="sa-bar-wrap"><div class="sa-bar" id="bar-int" style="width:50%"></div></div>
+        </div>
+        <div class="stat-alloc-row" data-stat="cha">
+          <div class="sa-icon">🗣️</div>
+          <div class="sa-info">
+            <div class="sa-name">CHARISMA</div>
+            <div class="sa-desc">Communication, stakeholder management, persuasion</div>
+          </div>
+          <div class="sa-controls">
+            <button onclick="adjustStat('cha',-1)">−</button>
+            <span class="sa-val" id="stat-cha">5</span>
+            <button onclick="adjustStat('cha',+1)">+</button>
+          </div>
+          <div class="sa-bar-wrap"><div class="sa-bar" id="bar-cha" style="width:50%"></div></div>
+        </div>
+        <div class="stat-alloc-row" data-stat="dex">
+          <div class="sa-icon">⚡</div>
+          <div class="sa-info">
+            <div class="sa-name">DEXTERITY</div>
+            <div class="sa-desc">Execution speed, adaptability, time management</div>
+          </div>
+          <div class="sa-controls">
+            <button onclick="adjustStat('dex',-1)">−</button>
+            <span class="sa-val" id="stat-dex">5</span>
+            <button onclick="adjustStat('dex',+1)">+</button>
+          </div>
+          <div class="sa-bar-wrap"><div class="sa-bar" id="bar-dex" style="width:50%"></div></div>
+        </div>
+      </div>
+      <div class="stat-preset-row">
+        <span>Quick presets:</span>
+        <button onclick="applyPreset('balanced')">Balanced</button>
+        <button onclick="applyPreset('technical')">Technical</button>
+        <button onclick="applyPreset('leader')">Leader</button>
+        <button onclick="applyPreset('executor')">Executor</button>
+      </div>
+      <button class="cc-next-btn" onclick="nextStep()">CONTINUE →</button>
+    </div>
+
+    <!-- ══════════ STEP 4: SKILLS ══════════ -->
+    <div class="cc-panel" id="step-4">
+      <div class="cc-header">
+        <h2>EQUIP POWER-UPS</h2>
+        <p>Choose <strong>3 starting skills</strong>. More unlock as you level up. Source: <span class="src-tag">SkillsFuture + Mavenside SG 2025</span></p>
+      </div>
+      <div class="skill-grid" id="skill-grid">
+        <!-- Injected by JS -->
+      </div>
+      <div class="skill-selected-bar">
+        Selected: <span id="skill-count">0</span>/3 &nbsp;|&nbsp;
+        <span id="skill-names">—</span>
+      </div>
+      <button class="cc-next-btn" id="btn-step4" onclick="nextStep()" disabled>CONTINUE →</button>
+    </div>
+
+    <!-- ══════════ STEP 5: ARMOR / BENEFITS ══════════ -->
+    <div class="cc-panel" id="step-5">
+      <div class="cc-header">
+        <h2>EQUIP ARMOR</h2>
+        <p>Choose your benefits package. Source: <span class="src-tag">MOM Singapore + CPF Board 2025</span></p>
+      </div>
+      <div class="benefit-cards" id="benefit-cards">
+        <!-- Injected by JS -->
+      </div>
+      <button class="cc-next-btn" id="btn-step5" onclick="nextStep()" disabled>CONTINUE →</button>
+    </div>
+
+    <!-- ══════════ STEP 6: DEPLOY ══════════ -->
+    <div class="cc-panel" id="step-6">
+      <div class="cc-header">
+        <h2>UNIT READY FOR DEPLOYMENT</h2>
+        <p>Review your configuration before entering the Command Center</p>
+      </div>
+      <div class="summary-card" id="summary-card">
+        <!-- Injected by JS -->
+      </div>
+      <div class="deploy-actions">
+        <button class="cc-next-btn deploy-btn" onclick="deployUnit()">⚡ DEPLOY UNIT</button>
+        <button class="cc-back-link" onclick="prevStep()">← REVISE CONFIG</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Nav -->
+  <div class="cc-nav">
+    <button onclick="prevStep()" id="cc-back">← BACK</button>
+    <div class="cc-logo-small">⬡ ELIXCRAFT</div>
+    <a href="index.html" style="font-family:var(--font-ui);font-size:0.55rem;color:var(--text-dim);letter-spacing:0.1em">EXIT</a>
+  </div>
+
+  <script src="data/elixcraft-data.js"></script>
+  <script src="js/game-state.js"></script>
+  <script src="js/starfield.js"></script>
+  <script src="js/character-create.js"></script>
+</body>
+</html>

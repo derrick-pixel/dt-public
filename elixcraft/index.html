@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; script-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <title>ELIXCRAFT — Employee Lifecycle Command</title>
+
+  <!-- Open Graph / WhatsApp / Social sharing -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="https://derrick-pixel.github.io/ElixCraft/" />
+  <meta property="og:title"       content="ELIXCRAFT — Gamified HR Platform" />
+  <meta property="og:description" content="The first gamified HR platform built on Singapore's SkillsFuture & MOM frameworks. Choose your faction. Deploy your Commander. Level up your career." />
+  <meta property="og:image"       content="https://derrick-pixel.github.io/ElixCraft/og-image.jpg" />
+  <meta property="og:image:type"   content="image/jpeg" />
+  <meta property="og:image:width"  content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="ELIXCRAFT — Gamified HR Platform" />
+  <meta name="twitter:description" content="Choose your faction. Deploy your Commander. Level up your career." />
+  <meta name="twitter:image"       content="https://derrick-pixel.github.io/ElixCraft/og-image.jpg" />
+  <meta property="fb:app_id"      content="0" />
+
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet" />
+</head>
+<body class="select-screen">
+
+  <!-- Starfield -->
+  <canvas id="starfield"></canvas>
+
+  <!-- Main Container -->
+  <div class="select-wrapper">
+
+    <!-- Header -->
+    <header class="game-header">
+      <div class="logo-lockup">
+        <div class="logo-icon" data-tooltip="ELIXCRAFT — Employee Lifecycle Command System" data-tip-below data-tip-right>⬡</div>
+        <div>
+          <h1 class="logo-title">ELIXCRAFT</h1>
+          <p class="logo-sub">EMPLOYEE LIFECYCLE COMMAND</p>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <a href="tutorial.html"
+           style="font-family:var(--font-ui);font-size:0.6rem;font-weight:700;letter-spacing:0.13em;
+                  padding:8px 16px;
+                  background:linear-gradient(135deg,rgba(255,215,0,0.18),rgba(255,215,0,0.08));
+                  border:1px solid #ffd700;border-radius:3px;
+                  color:#ffd700;text-decoration:none;
+                  box-shadow:0 0 14px rgba(255,215,0,0.3);
+                  transition:all 0.2s;white-space:nowrap"
+           onmouseover="this.style.background='rgba(255,215,0,0.28)';this.style.boxShadow='0 0 22px rgba(255,215,0,0.5)'"
+           onmouseout="this.style.background='linear-gradient(135deg,rgba(255,215,0,0.18),rgba(255,215,0,0.08))';this.style.boxShadow='0 0 14px rgba(255,215,0,0.3)'"
+           data-tooltip="Read the Commander's Field Manual">📖 FIELD MANUAL</a>
+        <a href="tutorial.html?download=1" target="_blank"
+           style="font-family:var(--font-ui);font-size:0.6rem;font-weight:700;letter-spacing:0.13em;
+                  padding:8px 16px;
+                  background:linear-gradient(135deg,#c8a200,#ffd700);
+                  border:none;border-radius:3px;
+                  color:#040810;text-decoration:none;
+                  box-shadow:0 0 14px rgba(255,215,0,0.4);
+                  transition:all 0.2s;white-space:nowrap"
+           onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 0 24px rgba(255,215,0,0.6)'"
+           onmouseout="this.style.transform='';this.style.boxShadow='0 0 14px rgba(255,215,0,0.4)'"
+           data-tooltip="Download PDF version of the Field Manual">⬇ PDF</a>
+        <div class="header-ver">v1.0 · BUILD 2026</div>
+      </div>
+    </header>
+
+    <!-- Faction Select -->
+    <section class="faction-select">
+      <p class="section-sub">Your faction determines your starting stats, unit roster, and tech tree</p>
+
+      <div class="factions">
+
+        <!-- TERRAN: Operations -->
+        <div class="faction-card" data-faction="terran" onclick="selectFaction('terran')">
+          <div class="faction-bg terran-bg"></div>
+          <div class="faction-emblem">🏗️</div>
+          <div class="faction-badge terran-badge">TERRAN</div>
+          <h3 class="faction-name">OPERATIONS</h3>
+          <p class="faction-desc">Adaptable generalists. Build and sustain the empire's infrastructure. Masters of logistics and process.</p>
+          <div class="faction-stats">
+            <div class="stat-row"><span>STRENGTH</span><div class="stat-bar"><div class="stat-fill terran-fill" style="width:85%"></div></div></div>
+            <div class="stat-row"><span>INTELLIGENCE</span><div class="stat-bar"><div class="stat-fill terran-fill" style="width:65%"></div></div></div>
+            <div class="stat-row"><span>CHARISMA</span><div class="stat-bar"><div class="stat-fill terran-fill" style="width:75%"></div></div></div>
+            <div class="stat-row"><span>DEXTERITY</span><div class="stat-bar"><div class="stat-fill terran-fill" style="width:80%"></div></div></div>
+          </div>
+          <div class="faction-units">
+            <span class="unit-tag">Coordinator</span>
+            <span class="unit-tag">Analyst</span>
+            <span class="unit-tag">Manager</span>
+            <span class="unit-tag">Director</span>
+          </div>
+          <button class="btn-select terran-btn" onclick="event.stopPropagation();selectFaction('terran')" data-tooltip="Deploy Terran — Operations, Logistics & Finance roles">DEPLOY TERRAN</button>
+        </div>
+
+        <!-- PROTOSS: Engineering -->
+        <div class="faction-card faction-featured" data-faction="protoss" onclick="selectFaction('protoss')">
+          <div class="faction-bg protoss-bg"></div>
+          <div class="faction-emblem">⚡</div>
+          <div class="faction-badge protoss-badge">PROTOSS</div>
+          <h3 class="faction-name">ENGINEERING</h3>
+          <p class="faction-desc">Elite technologists. Each unit is expensive but formidable. Powered by psionic innovation and precision.</p>
+          <div class="faction-stats">
+            <div class="stat-row"><span>STRENGTH</span><div class="stat-bar"><div class="stat-fill protoss-fill" style="width:70%"></div></div></div>
+            <div class="stat-row"><span>INTELLIGENCE</span><div class="stat-bar"><div class="stat-fill protoss-fill" style="width:95%"></div></div></div>
+            <div class="stat-row"><span>CHARISMA</span><div class="stat-bar"><div class="stat-fill protoss-fill" style="width:55%"></div></div></div>
+            <div class="stat-row"><span>DEXTERITY</span><div class="stat-bar"><div class="stat-fill protoss-fill" style="width:65%"></div></div></div>
+          </div>
+          <div class="faction-units">
+            <span class="unit-tag">Developer</span>
+            <span class="unit-tag">Architect</span>
+            <span class="unit-tag">Staff Eng</span>
+            <span class="unit-tag">Principal</span>
+          </div>
+          <button class="btn-select protoss-btn" onclick="event.stopPropagation();selectFaction('protoss')" data-tooltip="Deploy Protoss — IT, Finance, Healthcare & Aviation roles">DEPLOY PROTOSS</button>
+        </div>
+
+        <!-- ZERG: Sales -->
+        <div class="faction-card" data-faction="zerg" onclick="selectFaction('zerg')">
+          <div class="faction-bg zerg-bg"></div>
+          <div class="faction-emblem">🦾</div>
+          <div class="faction-badge zerg-badge">ZERG</div>
+          <h3 class="faction-name">SALES & GROWTH</h3>
+          <p class="faction-desc">Relentless expansion. Overwhelm through numbers and momentum. Fast evolving, high velocity, unstoppable.</p>
+          <div class="faction-stats">
+            <div class="stat-row"><span>STRENGTH</span><div class="stat-bar"><div class="stat-fill zerg-fill" style="width:75%"></div></div></div>
+            <div class="stat-row"><span>INTELLIGENCE</span><div class="stat-bar"><div class="stat-fill zerg-fill" style="width:60%"></div></div></div>
+            <div class="stat-row"><span>CHARISMA</span><div class="stat-bar"><div class="stat-fill zerg-fill" style="width:95%"></div></div></div>
+            <div class="stat-row"><span>DEXTERITY</span><div class="stat-bar"><div class="stat-fill zerg-fill" style="width:90%"></div></div></div>
+          </div>
+          <div class="faction-units">
+            <span class="unit-tag">SDR</span>
+            <span class="unit-tag">AE</span>
+            <span class="unit-tag">Sr. AE</span>
+            <span class="unit-tag">VP Sales</span>
+          </div>
+          <button class="btn-select zerg-btn" onclick="event.stopPropagation();selectFaction('zerg')" data-tooltip="Deploy Zerg — Sales, MICE, Retail & F&B roles">DEPLOY ZERG</button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Field Manual compact bar -->
+    <div style="display:flex;align-items:center;justify-content:space-between;
+                background:rgba(255,215,0,0.05);border:1px solid #6b5300;border-radius:4px;
+                padding:10px 18px;margin-top:2px;gap:16px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:1.1rem">📖</span>
+        <div>
+          <div style="font-family:var(--font-ui);font-size:0.55rem;letter-spacing:0.15em;color:#ffd700;font-weight:700">COMMANDER'S FIELD MANUAL</div>
+          <div style="font-size:0.65rem;color:var(--text-dim);margin-top:1px">Factions · Stats · HR Portal · Career Map · Boss Battle</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-shrink:0">
+        <a href="tutorial.html"
+           style="font-family:var(--font-ui);font-size:0.55rem;letter-spacing:0.12em;font-weight:700;
+                  padding:7px 14px;border:1px solid #6b5300;border-radius:3px;
+                  color:#ffd700;text-decoration:none;transition:all 0.2s;white-space:nowrap"
+           onmouseover="this.style.borderColor='#ffd700';this.style.background='rgba(255,215,0,0.1)'"
+           onmouseout="this.style.borderColor='#6b5300';this.style.background=''"
+           data-tooltip="Read the Field Manual online">📖 READ</a>
+        <a href="tutorial.html?download=1" target="_blank"
+           style="font-family:var(--font-ui);font-size:0.55rem;letter-spacing:0.12em;font-weight:700;
+                  padding:7px 14px;
+                  background:linear-gradient(135deg,#c8a200,#ffd700);
+                  border:none;border-radius:3px;
+                  color:#040810;text-decoration:none;transition:all 0.2s;white-space:nowrap"
+           onmouseover="this.style.opacity='0.85'"
+           onmouseout="this.style.opacity='1'"
+           data-tooltip="Download PDF version">⬇ PDF</a>
+      </div>
+    </div>
+
+    <!-- How to Play -->
+    <section class="htp-section">
+      <button class="htp-toggle" onclick="this.parentElement.classList.toggle('htp-open')" data-tooltip="Toggle game overview">
+        <span class="htp-toggle-icon">▶</span> HOW TO PLAY — ELIXCRAFT OVERVIEW
+      </button>
+      <div class="htp-body">
+        <div class="htp-about">
+          <p>ELIXCRAFT is a <strong>gamified employee lifecycle system</strong> built on Singapore's SkillsFuture and MOM frameworks. Each employee is a <em>Commander Unit</em> — you choose your faction, configure your stats, and progress through career nodes on the Fog of War map.</p>
+        </div>
+        <div class="htp-flow">
+          <div class="htp-step">
+            <div class="htp-step-num">01</div>
+            <div class="htp-step-body">
+              <div class="htp-step-title">PICK FACTION</div>
+              <div class="htp-step-desc">Protoss (Engineering), Terran (Ops/Finance), or Zerg (Sales/People). Your faction sets your department track and stat bonuses.</div>
+            </div>
+          </div>
+          <div class="htp-arrow">→</div>
+          <div class="htp-step">
+            <div class="htp-step-num">02</div>
+            <div class="htp-step-body">
+              <div class="htp-step-title">CREATE UNIT</div>
+              <div class="htp-step-desc">6-step onboarding: choose role, allocate STR / INT / CHA / DEX stats, equip skills (SkillsFuture-mapped), and select your benefits armour.</div>
+            </div>
+          </div>
+          <div class="htp-arrow">→</div>
+          <div class="htp-step">
+            <div class="htp-step-num">03</div>
+            <div class="htp-step-body">
+              <div class="htp-step-title">COMMAND CENTER</div>
+              <div class="htp-step-desc">Your HQ. Monitor XP, resources, active quests, roster, and industry specialisation. Access the Career Map and SITREP analytics.</div>
+            </div>
+          </div>
+          <div class="htp-arrow">→</div>
+          <div class="htp-step">
+            <div class="htp-step-num">04</div>
+            <div class="htp-step-body">
+              <div class="htp-step-title">COMPLETE QUESTS</div>
+              <div class="htp-step-desc">Daily and weekly objectives earn XP. Hit milestones to unlock fog-of-war career nodes and reveal new paths on the career map.</div>
+            </div>
+          </div>
+          <div class="htp-arrow">→</div>
+          <div class="htp-step">
+            <div class="htp-step-num">05</div>
+            <div class="htp-step-body">
+              <div class="htp-step-title">BOSS BATTLE</div>
+              <div class="htp-step-desc">Performance review season. Survive the review, level up, unlock new roles, and see your SITREP analytics update in real time.</div>
+            </div>
+          </div>
+        </div>
+        <div class="htp-stats-legend">
+          <div class="htp-stat-item"><span class="htp-stat-key">STR</span><span class="htp-stat-val">STRENGTH — Leadership, influence, ability to drive outcomes</span></div>
+          <div class="htp-stat-item"><span class="htp-stat-key">INT</span><span class="htp-stat-val">INTELLIGENCE — Technical depth, analytical thinking, learning speed</span></div>
+          <div class="htp-stat-item"><span class="htp-stat-key">CHA</span><span class="htp-stat-val">CHARISMA — Communication, stakeholder management, persuasion</span></div>
+          <div class="htp-stat-item"><span class="htp-stat-key">DEX</span><span class="htp-stat-val">DEXTERITY — Execution speed, adaptability, time management</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Continue Game Banner -->
+    <div id="continue-banner" class="continue-banner hidden">
+      <div class="continue-info">
+        <span class="continue-label">SAVE DETECTED</span>
+        <span class="continue-detail" id="continue-detail">Loading…</span>
+      </div>
+      <div class="continue-actions">
+        <button class="btn-continue" onclick="continueGame()" data-tooltip="Resume your saved Commander profile">▶ CONTINUE GAME</button>
+        <button class="btn-new-game" onclick="newGame()" data-tooltip="Erase save and start a new Commander">NEW GAME</button>
+      </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <footer class="select-footer">
+      <div class="footer-hint">▲ Click a faction card to preview · Click DEPLOY to enter Command Center</div>
+      <a href="tutorial.html?download=1" target="_blank"
+         style="font-family:var(--font-ui);font-size:0.52rem;letter-spacing:0.12em;
+                display:inline-flex;align-items:center;gap:7px;
+                padding:6px 14px;
+                background:linear-gradient(135deg,rgba(255,215,0,0.12),rgba(255,215,0,0.06));
+                border:1px solid var(--protoss-dim);border-radius:3px;
+                color:var(--protoss);text-decoration:none;
+                transition:all 0.2s;margin-top:10px"
+         onmouseover="this.style.background='rgba(255,215,0,0.18)';this.style.borderColor='var(--protoss)'"
+         onmouseout="this.style.background='linear-gradient(135deg,rgba(255,215,0,0.12),rgba(255,215,0,0.06))';this.style.borderColor='var(--protoss-dim)'"
+         data-tooltip="Download the Commander's Field Manual as a PDF booklet">
+        ⬇ DOWNLOAD COMMANDER'S FIELD MANUAL — PDF
+      </a>
+    </footer>
+
+  </div>
+
+  <!-- Professional Mode Toggle (bottom-left) -->
+  <a href="elix-onboarding/index.html" id="pro-mode-btn"
+     style="position:fixed;bottom:20px;left:20px;z-index:200;
+            display:inline-flex;align-items:center;gap:8px;
+            padding:10px 18px;
+            background:rgba(255,255,255,0.06);
+            border:1px solid rgba(255,255,255,0.15);
+            border-radius:6px;
+            backdrop-filter:blur(8px);
+            color:#c8d8e8;text-decoration:none;
+            font-family:var(--font-ui);font-size:0.55rem;font-weight:700;
+            letter-spacing:0.12em;
+            transition:all 0.25s ease;
+            box-shadow:0 2px 12px rgba(0,0,0,0.3)"
+     onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.borderColor='rgba(255,255,255,0.35)';this.style.color='#ffffff';this.style.boxShadow='0 4px 20px rgba(0,0,0,0.4)';this.style.transform='translateY(-2px)'"
+     onmouseout="this.style.background='rgba(255,255,255,0.06)';this.style.borderColor='rgba(255,255,255,0.15)';this.style.color='#c8d8e8';this.style.boxShadow='0 2px 12px rgba(0,0,0,0.3)';this.style.transform=''"
+     data-tooltip="Switch to the professional onboarding view — no game theme" data-tip-right>
+    💼 PROFESSIONAL MODE
+  </a>
+
+  <!-- Transition Overlay -->
+  <div id="transition-overlay" class="transition-overlay"></div>
+
+
+  <script src="js/game-state.js"></script>
+  <script src="js/starfield.js"></script>
+  <script src="js/select.js"></script>
+  <script>
+    // Check for existing save on load
+    window.addEventListener('DOMContentLoaded', () => {
+      if (GameState.exists()) {
+        const state = GameState.get();
+        const banner = document.getElementById('continue-banner');
+        const detail = document.getElementById('continue-detail');
+        const fLabel = { protoss: '⚡ PROTOSS', terran: '🏗️ TERRAN', zerg: '🦾 ZERG' };
+        detail.textContent = `${fLabel[state.player.faction] || 'COMMANDER'} · ${state.player.role?.title || 'Unit'} · LVL ${state.player.level} · ${state.player.xp} XP`;
+        banner.classList.remove('hidden');
+      }
+    });
+    function continueGame() {
+      const state = GameState.get();
+      if (!state) return;
+      sessionStorage.setItem('elixcraft_faction', state.player.faction);
+      sessionStorage.setItem('elixcraft_faction_badge', `${state.player.faction.toUpperCase()} · ${state.player.role?.title || 'UNIT'}`);
+      sessionStorage.setItem('elixcraft_character', JSON.stringify({ ...state.player, skills: state.skills }));
+      window.location.href = 'dashboard.html';
+    }
+    function newGame() {
+      if (!confirm('Erase save data and start a new Commander?')) return;
+      GameState.reset();
+      document.getElementById('continue-banner').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>

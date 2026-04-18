@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Caskets & Prices — Passage</title>
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://derrick-pixel.github.io/Passage/images/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:title" content="Our Caskets & Prices — PASSAGE">
+  <meta property="og:description" content="Browse our full range of caskets with transparent pricing from S$800. No hidden fees. Island-wide delivery in 3 hours.">
+  <meta property="og:url" content="https://derrick-pixel.github.io/Passage/products.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://derrick-pixel.github.io/Passage/images/og-image.jpg">
+  <meta name="description" content="Three dignified casket models from S$800. Fully transparent pricing. Delivered across Singapore within 3 hours. No hidden fees." />
+  
+  
+  
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .page-body { padding-top: 108px; }
+
+    /* Page header */
+    .page-header {
+      background: var(--primary);
+      padding: 64px 0 56px;
+      text-align: center;
+      color: var(--primary-on);
+    }
+    .page-header h1 { color: var(--primary-on); margin-bottom: 16px; }
+    .page-header p { color: rgba(242,249,249,0.75); max-width: 560px; margin: 0 auto; }
+
+    /* Guarantee bar */
+    .guarantee-bar {
+      background: var(--inverse-surface);
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .guarantee-bar__inner {
+      display: flex; justify-content: center; align-items: center;
+      gap: 32px; flex-wrap: wrap;
+    }
+    .guarantee-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.8rem; font-weight: 500; color: rgba(242,249,249,0.75);
+    }
+    .guarantee-item span:first-child { color: var(--secondary); }
+
+    /* Product section */
+    .product-section {
+      padding: 80px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .product-section:last-of-type { border-bottom: none; }
+    .product-section.alt { background: var(--light); }
+
+    .product-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    .product-visual {
+      position: sticky; top: 100px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .product-visual__main {
+      background: var(--light);
+      height: 320px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 8rem;
+      border-radius: var(--radius-lg);
+      margin-bottom: 16px;
+    }
+    .product-section.alt .product-visual__main { background: #e8e8e4; }
+    .product-visual__main.dark { background: var(--primary); }
+    .product-thumbs {
+      display: flex; gap: 10px;
+    }
+    .product-thumb {
+      flex: 1; height: 72px;
+      background: var(--light);
+      border-radius: var(--radius);
+      border: 2px solid transparent;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem;
+      transition: var(--transition);
+    }
+    .product-thumb:hover, .product-thumb.active { border-color: var(--secondary); }
+
+    /* Product info */
+    .product-tag { margin-bottom: 12px; }
+    .product-name { font-family: var(--font-serif); font-size: 2.4rem; margin-bottom: 8px; }
+    .product-tagline { font-size: 1.05rem; color: var(--muted); margin-bottom: 24px; font-style: italic; }
+
+    .price-block {
+      background: var(--secondary-fixed-dim);
+      border: 1px solid rgba(184,150,90,0.3);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+    .price-block__label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--secondary); margin-bottom: 6px; }
+    .price-block__main { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+    .price-block__amount { font-family: var(--font-serif); font-size: 2.8rem; font-weight: 700; color: var(--charcoal); line-height: 1; }
+    .price-block__compare { font-size: 0.875rem; color: var(--muted); }
+    .price-block__compare del { font-size: 1rem; color: var(--accent-red); }
+    .price-block__saving { font-size: 0.9rem; font-weight: 600; color: var(--green); margin-top: 4px; }
+    .price-breakdown { margin-top: 14px; border-top: 1px solid rgba(184,150,90,0.2); padding-top: 14px; }
+    .price-breakdown__row {
+      display: flex; justify-content: space-between;
+      font-size: 0.85rem; color: var(--mid); margin-bottom: 6px;
+    }
+    .price-breakdown__row.total { font-weight: 700; color: var(--charcoal); border-top: 1px solid rgba(0,0,0,0.1); padding-top: 8px; margin-top: 4px; }
+
+    /* Features */
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .feature-item {
+      display: flex; gap: 8px; align-items: flex-start;
+      font-size: 0.875rem;
+    }
+    .feature-item::before { content: '✓'; color: var(--secondary); font-weight: 700; flex-shrink: 0; }
+
+    /* Specs table */
+    .specs { margin-bottom: 28px; }
+    .specs h4 { margin-bottom: 12px; }
+    .spec-row {
+      display: flex; justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.875rem;
+    }
+    .spec-row:last-child { border-bottom: none; }
+    .spec-row__label { color: var(--muted); }
+    .spec-row__value { font-weight: 500; }
+
+    /* CTA buttons */
+    .product-cta { display: flex; gap: 12px; flex-wrap: wrap; }
+    .product-cta .btn { flex: 1; justify-content: center; min-width: 160px; }
+
+    /* Comparison table */
+    .compare-section { padding: 80px 0; background: var(--light); }
+    .compare-table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow); }
+    .compare-table th {
+      background: var(--primary); color: var(--primary-on);
+      padding: 16px 20px; text-align: left;
+      font-family: var(--font-serif); font-size: 1rem;
+      font-weight: 600;
+    }
+    .compare-table th:first-child { background: var(--inverse-surface); color: rgba(255,255,255,0.6); font-family: var(--font-sans); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+    .compare-table th.featured { background: var(--secondary); }
+    .compare-table td { padding: 14px 20px; font-size: 0.875rem; border-bottom: 1px solid var(--border); }
+    .compare-table td:first-child { color: var(--muted); font-weight: 500; }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table .check { color: var(--green); font-size: 1rem; }
+    .compare-table .dash { color: var(--border); }
+    .compare-table tr:hover td { background: var(--light); }
+
+    /* Checkout modal */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 2000;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      max-width: 480px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(20px);
+      transition: transform 0.25s ease;
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal__close {
+      position: absolute; top: 16px; right: 20px;
+      font-size: 1.5rem; color: var(--muted); cursor: pointer;
+    }
+    .modal__title { font-family: var(--font-serif); font-size: 1.6rem; margin-bottom: 6px; }
+    .modal__sub { font-size: 0.9rem; color: var(--muted); margin-bottom: 24px; }
+    .modal__price-tag { background: var(--secondary-fixed-dim); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
+    .modal__price-tag span:first-child { font-size: 0.85rem; color: var(--muted); }
+    .modal__price-tag span:last-child { font-family: var(--font-serif); font-size: 1.6rem; font-weight: 700; color: var(--secondary); }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--mid); margin-bottom: 6px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%; padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      font-family: var(--font-sans); font-size: 0.95rem;
+      transition: var(--transition);
+      background: var(--white);
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+      outline: none; border-color: var(--secondary);
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-note { font-size: 0.8rem; color: var(--muted); margin-top: 10px; line-height: 1.5; }
+    .checkout-success { text-align: center; padding: 20px 0; display: none; }
+    .checkout-success__icon { font-size: 3rem; margin-bottom: 16px; }
+    .checkout-success h3 { font-family: var(--font-serif); font-size: 1.5rem; margin-bottom: 10px; }
+
+    /* Animate */
+    .animate { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .animate.visible { opacity: 1; transform: translateY(0); }
+
+    /* Mobile nav */
+    .nav__mobile { background: var(--primary); max-height: 0; overflow: hidden; transition: max-height 0.3s ease; border-top: 1px solid rgba(255,255,255,0.06); }
+    .nav__mobile.open { max-height: 400px; }
+    .nav__mobile ul { padding: 16px 24px; display: flex; flex-direction: column; gap: 4px; }
+    .nav__mobile a { display: block; padding: 10px 0; font-size: 0.9rem; color: rgba(255,255,255,0.8); border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .nav__mobile .btn { margin: 8px 24px 16px; display: block; text-align: center; }
+
+    @media (max-width: 768px) {
+      .product-layout { grid-template-columns: 1fr; }
+      .product-visual { position: static; }
+      .features-grid { grid-template-columns: 1fr; }
+      .compare-table th, .compare-table td { padding: 10px 12px; font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body class="page-body">
+
+  <!-- NAV -->
+  <nav class="nav">
+  <div class="hotline-strip">
+    24-Hour Helpline &nbsp;|&nbsp; <a href="tel:+6598479776">+65 9847 9776</a> &nbsp;·&nbsp; Delivery within 3 hours across Singapore &nbsp;·&nbsp; No hidden fees. Ever.
+  </div>
+    <div class="nav__inner">
+      <a href="index.html" class="nav__logo">PASS<span>AGE</span></a>
+      <ul class="nav__links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="products.html" class="active">Our Caskets</a></li>
+        <li><a href="knowledge.html">Funeral Guide</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="accreditation.html">Our Commitments</a></li>
+        <li><a href="admin.html">Admin</a></li>
+      </ul>
+      <a href="#serene" class="btn btn--primary nav__cta">Order Now</a>
+      <button class="nav__hamburger" onclick="toggleMobileNav()"><span></span><span></span><span></span></button>
+    </div>
+    <div class="nav__mobile" id="mobileNav">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="products.html">Our Caskets</a></li>
+        <li><a href="knowledge.html">Funeral Guide</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="accreditation.html">Our Commitments</a></li>
+        <li><a href="admin.html">Admin</a></li>
+      </ul>
+      <a href="#serene" class="btn btn--primary">Order Now</a>
+    </div>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="container">
+      <p class="section-label" style="text-align:center;">Transparent Pricing — Always</p>
+      <h1>Our Caskets</h1>
+      <p>Three dignified options. Every price shown. No packages, no pressure, no hidden fees. Delivered island-wide within 3 hours of your order.</p>
+    </div>
+  </div>
+
+  <!-- GUARANTEE BAR -->
+  <div class="guarantee-bar">
+    <div class="guarantee-bar__inner">
+      <div class="guarantee-item"><span>⏱</span> 3-Hour Island-Wide Delivery</div>
+      <div class="guarantee-item"><span>🔖</span> All-In Price — No Add-Ons</div>
+      <div class="guarantee-item"><span>🌿</span> FSC-Certified Sustainable Timber</div>
+      <div class="guarantee-item"><span>🇸🇬</span> Assembled in Singapore</div>
+      <div class="guarantee-item"><span>📞</span> 24/7 Support Included</div>
+    </div>
+  </div>
+
+  <!-- PRODUCT 1: SERENE -->
+  <section class="product-section" id="serene">
+    <div class="container">
+      <div class="product-layout animate">
+        <div class="product-visual">
+          <div class="product-visual__main" id="visual-serene" style="background:#f0ece6; padding:0; overflow:hidden;">
+            <img src="images/casket-pine.jpg" alt="Serene casket" style="width:100%;height:100%;object-fit:cover;" />
+          </div>
+          <div class="product-thumbs">
+            <div class="product-thumb active" id="thumb-serene-0" onclick="switchView('serene',0)" style="overflow:hidden; padding:0;"><img src="images/casket-pine.jpg" alt="" style="width:100%;height:100%;object-fit:cover;" /></div>
+            <div class="product-thumb" id="thumb-serene-1" onclick="switchView('serene',1)" style="background:var(--light); font-size:1.4rem; display:flex; align-items:center; justify-content:center;">📐</div>
+            <div class="product-thumb" id="thumb-serene-2" onclick="switchView('serene',2)" style="background:var(--light); font-size:1.4rem; display:flex; align-items:center; justify-content:center;">🌿</div>
+          </div>
+        </div>
+        <div class="product-info">
+          <div class="product-tag"><span class="badge badge--gold">Essential</span></div>
+          <h2 class="product-name">Serene</h2>
+          <p class="product-tagline">Simple, honest, and quietly dignified.</p>
+
+          <div class="price-block">
+            <p class="price-block__label">Full Transparent Price</p>
+            <div class="price-block__main">
+              <span class="price-block__amount">S$800</span>
+              <div class="price-block__compare">
+                Typical funeral package: <del>S$2,000–$2,500</del>
+                <div class="price-block__saving">You save approximately S$1,200–$1,700</div>
+              </div>
+            </div>
+            <p style="font-size:0.82rem; color:var(--on-surface-v); margin-top:12px; line-height:1.6;">Casket &nbsp;·&nbsp; Island-wide delivery &nbsp;·&nbsp; Venue positioning &nbsp;·&nbsp; GST — all included. Nothing extra.</p>
+          </div>
+
+          <div class="features-grid">
+            <div class="feature-item">FSC-certified pine timber</div>
+            <div class="feature-item">White satin interior lining</div>
+            <div class="feature-item">Adjustable interior pillow</div>
+            <div class="feature-item">Solid wood side handles</div>
+            <div class="feature-item">Engraved name plate (included)</div>
+            <div class="feature-item">Island-wide 3-hour delivery</div>
+            <div class="feature-item">Positioning at venue</div>
+            <div class="feature-item">24/7 phone support</div>
+          </div>
+
+          <div class="specs">
+            <h4>Specifications</h4>
+            <div class="spec-row"><span class="spec-row__label">Material</span><span class="spec-row__value">FSC-certified pine</span></div>
+            <div class="spec-row"><span class="spec-row__label">Interior</span><span class="spec-row__value">White satin, polyester fill</span></div>
+            <div class="spec-row"><span class="spec-row__label">Finish</span><span class="spec-row__value">Natural lacquer</span></div>
+            <div class="spec-row"><span class="spec-row__label">Handles</span><span class="spec-row__value">Solid wood, 6 point</span></div>
+            <div class="spec-row"><span class="spec-row__label">Dimensions (L×W×H)</span><span class="spec-row__value">210 × 66 × 58 cm</span></div>
+            <div class="spec-row"><span class="spec-row__label">Weight capacity</span><span class="spec-row__value">180 kg</span></div>
+            <div class="spec-row"><span class="spec-row__label">Assembly origin</span><span class="spec-row__value">Singapore</span></div>
+          </div>
+
+          <div class="product-cta">
+            <button class="btn btn--primary" onclick="openCheckout('Serene', 800, 'serene')">Order Now — S$800</button>
+            <a href="faq.html" class="btn btn--outline">Questions? Read FAQ</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCT 2: TRANQUIL -->
+  <section class="product-section alt" id="tranquil">
+    <div class="container">
+      <div class="product-layout animate">
+        <div class="product-visual">
+          <div class="product-visual__main" id="visual-tranquil" style="background:#e8e0d4; padding:0; overflow:hidden;">
+            <img src="images/casket-bamboo.jpg" alt="Tranquil casket" style="width:100%;height:100%;object-fit:cover;" />
+          </div>
+          <div class="product-thumbs">
+            <div class="product-thumb active" id="thumb-tranquil-0" onclick="switchView('tranquil',0)" style="overflow:hidden; padding:0;"><img src="images/casket-bamboo.jpg" alt="" style="width:100%;height:100%;object-fit:cover;" /></div>
+            <div class="product-thumb" id="thumb-tranquil-1" onclick="switchView('tranquil',1)" style="background:var(--light); font-size:1.4rem; display:flex; align-items:center; justify-content:center;">📐</div>
+            <div class="product-thumb" id="thumb-tranquil-2" onclick="switchView('tranquil',2)" style="background:var(--light); font-size:1.4rem; display:flex; align-items:center; justify-content:center;">🌿</div>
+          </div>
+        </div>
+        <div class="product-info">
+          <div class="product-tag">
+            <span class="badge badge--gold">Most Popular</span>
+            &nbsp;<span class="badge badge--green">Best Value</span>
+          </div>
+          <h2 class="product-name">Tranquil</h2>
+          <p class="product-tagline">Our most chosen casket. Warmth, quality, and quiet elegance.</p>
+
+          <div class="price-block">
+            <p class="price-block__label">Full Transparent Price</p>
+            <div class="price-block__main">
+              <span class="price-block__amount">S$1,000</span>
+              <div class="price-block__compare">
+                Typical funeral package: <del>S$2,800–$3,500</del>
+                <div class="price-block__saving">You save approximately S$1,800–$2,500</div>
+              </div>
+            </div>
+            <p style="font-size:0.82rem; color:var(--on-surface-v); margin-top:12px; line-height:1.6;">Casket &nbsp;·&nbsp; Island-wide delivery &nbsp;·&nbsp; Venue positioning &nbsp;·&nbsp; GST — all included. Nothing extra.</p>
+          </div>
+
+          <div class="features-grid">
+            <div class="feature-item">Premium hardwood (local assembly)</div>
+            <div class="feature-item">Ivory velvet interior lining</div>
+            <div class="feature-item">Memory foam interior pillow</div>
+            <div class="feature-item">Brushed nickel handles</div>
+            <div class="feature-item">Engraved brass name plate</div>
+            <div class="feature-item">Interior floral arrangement</div>
+            <div class="feature-item">Island-wide 3-hour delivery</div>
+            <div class="feature-item">24/7 phone support</div>
+          </div>
+
+          <div class="specs">
+            <h4>Specifications</h4>
+            <div class="spec-row"><span class="spec-row__label">Material</span><span class="spec-row__value">FSC-certified hardwood blend</span></div>
+            <div class="spec-row"><span class="spec-row__label">Interior</span><span class="spec-row__value">Ivory velvet, memory foam</span></div>
+            <div class="spec-row"><span class="spec-row__label">Finish</span><span class="spec-row__value">Satin walnut stain</span></div>
+            <div class="spec-row"><span class="spec-row__label">Handles</span><span class="spec-row__value">Brushed nickel, 6 point</span></div>
+            <div class="spec-row"><span class="spec-row__label">Dimensions (L×W×H)</span><span class="spec-row__value">210 × 66 × 60 cm</span></div>
+            <div class="spec-row"><span class="spec-row__label">Weight capacity</span><span class="spec-row__value">200 kg</span></div>
+            <div class="spec-row"><span class="spec-row__label">Assembly origin</span><span class="spec-row__value">Singapore</span></div>
+          </div>
+
+          <div class="product-cta">
+            <button class="btn btn--primary" onclick="openCheckout('Tranquil', 1000, 'tranquil')">Order Now — S$1,000</button>
+            <a href="faq.html" class="btn btn--outline">Questions? Read FAQ</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCT 3: ETERNAL -->
+  <section class="product-section" id="eternal">
+    <div class="container">
+      <div class="product-layout animate">
+        <div class="product-visual">
+          <div class="product-visual__main dark" id="visual-eternal" style="padding:0; overflow:hidden;">
+            <img src="images/casket-teak.jpg" alt="Eternal casket" style="width:100%;height:100%;object-fit:cover;" />
+          </div>
+          <div class="product-thumbs">
+            <div class="product-thumb active" id="thumb-eternal-0" onclick="switchView('eternal',0)" style="overflow:hidden; padding:0;"><img src="images/casket-teak.jpg" alt="" style="width:100%;height:100%;object-fit:cover;" /></div>
+            <div class="product-thumb" id="thumb-eternal-1" onclick="switchView('eternal',1)" style="background:var(--light); font-size:1.4rem; display:flex; align-items:center; justify-content:center;">📐</div>
+            <div class="product-thumb" id="thumb-eternal-2" onclick="switchView('eternal',2)" style="background:var(--light); font-size:1.4rem; display:flex; align-items:center; justify-content:center;">🌿</div>
+          </div>
+        </div>
+        <div class="product-info">
+          <div class="product-tag"><span class="badge badge--dark">Premium</span></div>
+          <h2 class="product-name">Eternal</h2>
+          <p class="product-tagline">A lasting tribute to a life fully lived. Our finest craftsmanship.</p>
+
+          <div class="price-block">
+            <p class="price-block__label">Full Transparent Price</p>
+            <div class="price-block__main">
+              <span class="price-block__amount">S$1,200</span>
+              <div class="price-block__compare">
+                Typical funeral package: <del>S$3,500–$4,500</del>
+                <div class="price-block__saving">You save approximately S$2,300–$3,300</div>
+              </div>
+            </div>
+            <p style="font-size:0.82rem; color:var(--on-surface-v); margin-top:12px; line-height:1.6;">Casket &nbsp;·&nbsp; Island-wide delivery &nbsp;·&nbsp; Venue positioning &nbsp;·&nbsp; GST — all included. Nothing extra.</p>
+          </div>
+
+          <div class="features-grid">
+            <div class="feature-item">Solid mahogany (FSC-certified)</div>
+            <div class="feature-item">Deep burgundy silk interior</div>
+            <div class="feature-item">Hand-stitched memory foam pillow</div>
+            <div class="feature-item">Solid brass handles, 8-point</div>
+            <div class="feature-item">Hand-engraved brass nameplate</div>
+            <div class="feature-item">Premium floral arrangement</div>
+            <div class="feature-item">Priority 2-hour delivery available</div>
+            <div class="feature-item">Dedicated care coordinator</div>
+          </div>
+
+          <div class="specs">
+            <h4>Specifications</h4>
+            <div class="spec-row"><span class="spec-row__label">Material</span><span class="spec-row__value">Solid FSC-certified mahogany</span></div>
+            <div class="spec-row"><span class="spec-row__label">Interior</span><span class="spec-row__value">Burgundy silk, hand-stitched foam</span></div>
+            <div class="spec-row"><span class="spec-row__label">Finish</span><span class="spec-row__value">Hand-polished dark mahogany</span></div>
+            <div class="spec-row"><span class="spec-row__label">Handles</span><span class="spec-row__value">Solid brass, 8-point</span></div>
+            <div class="spec-row"><span class="spec-row__label">Dimensions (L×W×H)</span><span class="spec-row__value">210 × 68 × 62 cm</span></div>
+            <div class="spec-row"><span class="spec-row__label">Weight capacity</span><span class="spec-row__value">220 kg</span></div>
+            <div class="spec-row"><span class="spec-row__label">Assembly origin</span><span class="spec-row__value">Singapore (hand-finished)</span></div>
+          </div>
+
+          <div class="product-cta">
+            <button class="btn btn--primary" onclick="openCheckout('Eternal', 1200, 'eternal')">Order Now — S$1,200</button>
+            <a href="faq.html" class="btn btn--outline">Questions? Read FAQ</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON TABLE -->
+  <section class="compare-section">
+    <div class="container">
+      <div class="text-center animate" style="margin-bottom:40px;">
+        <p class="section-label">Side by Side</p>
+        <h2>Compare All Models</h2>
+        <div class="divider divider--center"></div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="compare-table animate">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Serene</th>
+              <th class="featured">Tranquil <span style="font-size:0.7rem; font-weight:400; opacity:0.8;">★ Popular</span></th>
+              <th>Eternal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Price (all-in)</td><td><strong>S$800</strong></td><td><strong>S$1,000</strong></td><td><strong>S$1,200</strong></td></tr>
+            <tr><td>Timber</td><td>FSC Pine</td><td>Hardwood blend</td><td>Solid Mahogany</td></tr>
+            <tr><td>Interior</td><td>White satin</td><td>Ivory velvet</td><td>Burgundy silk</td></tr>
+            <tr><td>Pillow</td><td>Standard</td><td>Memory foam</td><td>Hand-stitched foam</td></tr>
+            <tr><td>Handles</td><td>Solid wood</td><td>Brushed nickel</td><td>Solid brass</td></tr>
+            <tr><td>Name plate</td><td class="check">✓ Engraved</td><td class="check">✓ Brass engraved</td><td class="check">✓ Hand-engraved brass</td></tr>
+            <tr><td>Floral arrangement</td><td class="dash">—</td><td class="check">✓ Included</td><td class="check">✓ Premium</td></tr>
+            <tr><td>Delivery</td><td>3-hr island-wide</td><td>3-hr island-wide</td><td>2-hr priority available</td></tr>
+            <tr><td>Care coordinator</td><td class="dash">—</td><td class="dash">—</td><td class="check">✓ Dedicated</td></tr>
+            <tr><td>Assembled in Singapore</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓ Hand-finished</td></tr>
+            <tr><td>FSC Certified timber</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHECKOUT MODAL -->
+  <div class="modal-overlay" id="checkoutModal" onclick="closeCheckoutOnOverlay(event)">
+    <div class="modal" style="position:relative;">
+      <span class="modal__close" onclick="closeCheckout()">×</span>
+      <div id="checkoutForm">
+        <h2 class="modal__title">Place Your Order</h2>
+        <p class="modal__sub">Fill in your details — our team will confirm and dispatch within the hour.</p>
+        <div class="modal__price-tag">
+          <span id="co-model">—</span>
+          <span id="co-price">—</span>
+        </div>
+        <div id="co-surcharge-row" style="display:none; background:var(--surface-1); border-radius:var(--radius); padding:10px 14px; margin-bottom:16px; font-size:0.85rem; display:none; justify-content:space-between; align-items:center;">
+          <span style="color:var(--muted);">Express delivery surcharge</span>
+          <span id="co-surcharge-label" style="font-weight:700; color:var(--secondary);"></span>
+        </div>
+        <form onsubmit="submitCheckout(event)">
+          <input type="hidden" id="co-input-model" name="model" />
+          <div class="form-row">
+            <div class="form-group"><label>First Name</label><input type="text" required placeholder="Wei Ming" /></div>
+            <div class="form-group"><label>Last Name</label><input id="co-lastname" type="text" required placeholder="Tan" /></div>
+          </div>
+          <div class="form-group"><label>Mobile Number</label><input type="tel" required placeholder="+65 9XXX XXXX" /></div>
+          <div class="form-group"><label>Email Address</label><input type="email" required placeholder="you@email.com" /></div>
+          <div class="form-row">
+            <div class="form-group" style="flex:2;"><label>Delivery Address</label><input id="co-address" type="text" required placeholder="Block / Street / Unit" /></div>
+            <div class="form-group" style="flex:1;"><label>Postal Code</label><input id="co-postal" type="text" required placeholder="123456" maxlength="6" pattern="\d{6}" inputmode="numeric" /></div>
+          </div>
+          <div class="form-group">
+            <label>Required Delivery Time</label>
+            <select id="co-delivery" required onchange="updateDeliverySurcharge()">
+              <option value="">Select a window</option>
+              <option value="150">Within 1 hour (Emergency) — +S$150</option>
+              <option value="75">Within 2 hours — +S$75</option>
+              <option value="0">Within 3 hours (Standard — no surcharge)</option>
+              <option value="0">I will confirm the time via phone</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Special Requests (optional)</label><textarea rows="2" placeholder="e.g. Buddhist setup, ground floor access needed…"></textarea></div>
+          <p style="font-size:0.82rem; background:var(--secondary-fixed-dim); border-radius:var(--radius); padding:12px 14px; margin-bottom:4px; line-height:1.65; color:var(--charcoal);">🤲 <strong>Your purchase gives back.</strong> 30% of our net profit funds free caskets for needy Singaporeans — and is donated to charity. Thank you for being part of this.</p>
+          <p class="form-note">⚑ Payment is collected upon delivery. We accept cash, PayNow, and all major cards. Our team will call you within 15 minutes to confirm.</p>
+          <button type="submit" class="btn btn--primary" style="width:100%; justify-content:center; margin-top:16px;">Confirm Order →</button>
+        </form>
+      </div>
+      <div class="checkout-success" id="checkoutSuccess">
+        <div style="text-align:center; padding: 4px 0 12px;">
+          <p style="font-size:0.7rem; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--secondary); margin-bottom:6px;">Step 2 — Pay via PayNow</p>
+          <h3 style="font-family:var(--font-serif); font-size:1.4rem; margin-bottom:4px;">Scan to Pay</h3>
+          <p style="font-size:0.85rem; color:var(--on-surface-v); margin-bottom:16px;">Open your banking app and scan the QR below.</p>
+          <!-- QR renders here -->
+          <div id="paynow-qr" style="display:inline-block; padding:12px; background:#fff; border-radius:8px; border:1px solid var(--surface-3);"></div>
+          <div style="margin-top:12px;">
+            <p style="font-size:0.78rem; color:var(--on-surface-v); margin-bottom:2px;">PayNow to <strong style="color:var(--on-surface);">+65 9847 9776</strong></p>
+            <p id="qr-amount-label" style="font-family:var(--font-serif); font-size:1.6rem; font-weight:700; color:var(--secondary);"></p>
+            <p style="font-size:0.75rem; color:var(--outline); margin-top:2px;">Payee: Passage Caskets Pte. Ltd.</p>
+          </div>
+        </div>
+        <div style="background:var(--surface-1); border-radius:8px; padding:14px 16px; margin:16px 0; text-align:left;">
+          <p style="font-size:0.82rem; color:var(--on-surface); line-height:1.65;">
+            ✅ &nbsp;Once payment is made, our team will call you within <strong>15 minutes</strong> to confirm delivery time.<br>
+            📞 &nbsp;Need us sooner? Call <a href="tel:+6598479776" style="color:var(--secondary); font-weight:600;">+65 9847 9776</a>.
+          </p>
+        </div>
+        <div style="display:flex; gap:12px; margin-top:4px;">
+          <button onclick="goBackToStep1()" class="btn btn--outline" style="flex:1; justify-content:center;">← Back</button>
+          <button onclick="closeCheckout()" class="btn btn--outline" style="flex:1; justify-content:center;">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <p class="footer__brand">PASS<span>AGE</span></p>
+          <p class="footer__tagline">"Because grief is burden enough."</p>
+          <p style="font-size:0.8rem; line-height:1.7;">Assembled in Singapore. Sustainably sourced. A social enterprise — 30% of net profits donated to charity. Free caskets for the needy.</p>
+        </div>
+        <div class="footer__col"><h5>Products</h5>
+          <a href="#serene">Serene — S$800</a>
+          <a href="#tranquil">Tranquil — S$1,000</a>
+          <a href="#eternal">Eternal — S$1,200</a>
+        </div>
+        <div class="footer__col"><h5>Information</h5>
+          <a href="knowledge.html">Funeral Guide</a>
+          <a href="faq.html">FAQ & Your Rights</a>
+          <a href="accreditation.html">Certifications</a>
+        </div>
+        <div class="footer__col"><h5>Contact</h5>
+          <a href="tel:+6598479776">+65 9847 9776</a>
+          <a href="mailto:care@passage.sg">care@passage.sg</a>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <p>© 2025 Passage Caskets Pte. Ltd. · Singapore</p>
+        <div class="footer__badge">
+          <span>Progressive Wage Model</span><span>Tripartite Standards</span><span>FSC Certified</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="scripts.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    function closeCheckoutOnOverlay(e) {
+      if (e.target === document.getElementById('checkoutModal')) closeCheckout();
+    }
+
+    // Override openCheckout to store base price and reset delivery select
+    function openCheckout(name, price, model) {
+      document.getElementById('co-model').textContent = name;
+      document.getElementById('co-price').textContent = 'S$' + price.toLocaleString();
+      document.getElementById('co-price').dataset.base = price;
+      document.getElementById('co-input-model').value = model;
+      const sel = document.getElementById('co-delivery');
+      if (sel) sel.value = '';
+      document.getElementById('co-surcharge-row').style.display = 'none';
+      document.getElementById('checkoutModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function updateDeliverySurcharge() {
+      const surcharge = parseInt(document.getElementById('co-delivery').value) || 0;
+      const base = parseInt(document.getElementById('co-price').dataset.base) || 0;
+      const total = base + surcharge;
+      document.getElementById('co-price').textContent = 'S$' + total.toLocaleString();
+      const row = document.getElementById('co-surcharge-row');
+      if (surcharge > 0) {
+        document.getElementById('co-surcharge-label').textContent = '+S$' + surcharge;
+        row.style.display = 'flex';
+      } else {
+        row.style.display = 'none';
+      }
+    }
+
+    // ── PayNow EMVCo QR generator ──
+    function emvField(id, value) {
+      return id + String(value.length).padStart(2, '0') + value;
+    }
+
+    function crc16ccitt(str) {
+      let crc = 0xFFFF;
+      for (let i = 0; i < str.length; i++) {
+        crc ^= str.charCodeAt(i) << 8;
+        for (let j = 0; j < 8; j++) {
+          crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+          crc &= 0xFFFF;
+        }
+      }
+      return crc;
+    }
+
+    function buildPayNowQR(amount, reference) {
+      const proxyValue = '+6598479776';
+      const merchantName = 'PASSAGE';
+
+      // Merchant account info (ID 26) — PayNow
+      const mai = emvField('00', 'SG.PAYNOW')
+                + emvField('01', '0')              // proxy type: mobile
+                + emvField('02', proxyValue)
+                + emvField('03', '0');             // amount not editable
+
+      // Additional data field (ID 62) — bill number as payment reference
+      const adf = emvField('01', reference.slice(0, 25));
+
+      let qr = emvField('00', '01')               // payload format
+              + emvField('01', '11')               // static QR
+              + emvField('26', mai)                // PayNow merchant info
+              + emvField('52', '0000')             // MCC
+              + emvField('53', '702')              // SGD
+              + emvField('54', amount.toFixed(2))  // amount
+              + emvField('58', 'SG')               // country
+              + emvField('59', merchantName)        // merchant name
+              + emvField('60', 'Singapore')         // city
+              + emvField('62', adf)                // additional data (reference)
+              + '6304';                             // CRC tag
+
+      const checksum = crc16ccitt(qr).toString(16).toUpperCase().padStart(4, '0');
+      return qr + checksum;
+    }
+
+    // Override submitCheckout to show PayNow QR on success
+    function submitCheckout(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('button[type=submit]');
+      btn.textContent = 'Processing…';
+      btn.disabled = true;
+
+      setTimeout(() => {
+        // Get amount from displayed price
+        const priceText = document.getElementById('co-price').textContent;
+        const amount = parseFloat(priceText.replace(/[^0-9.]/g, ''));
+
+        // Build reference: LASTNAME + postal code extracted from address
+        const lastName = (document.getElementById('co-lastname').value || '').trim().toUpperCase();
+        const postal = (document.getElementById('co-postal').value || '').trim();
+        const reference = (lastName + ' ' + postal).trim();
+
+        // Generate QR
+        const qrContainer = document.getElementById('paynow-qr');
+        qrContainer.innerHTML = '';
+        new QRCode(qrContainer, {
+          text: buildPayNowQR(amount, reference),
+          width: 200,
+          height: 200,
+          colorDark: '#32332d',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+
+        // Show amount label
+        document.getElementById('qr-amount-label').textContent = 'S$' + amount.toLocaleString();
+
+        // Swap panels
+        document.getElementById('checkoutForm').style.display = 'none';
+        document.getElementById('checkoutSuccess').style.display = 'block';
+      }, 1000);
+
+      return false;
+    }
+
+    // ── Product visual switcher ──
+    const PRODUCT_DATA = {
+      serene:   { L:210, W:66, H:58,  name:'Serene',   material:'FSC-Certified Pine',
+                  img:'images/casket-pine.jpg',
+                  faceF:'#cfc5b0', faceT:'#dfd5be', faceS:'#b0a488',
+                  mats:[{l:'FSC Pine timber',pct:82,c:'#596060'},{l:'White satin lining',pct:10,c:'#9aada6'},{l:'Natural lacquer',pct:5,c:'#725b3f'},{l:'Hardwood hardware',pct:3,c:'#a09070'}] },
+      tranquil: { L:210, W:66, H:60,  name:'Tranquil', material:'FSC-Certified Hardwood',
+                  img:'images/casket-bamboo.jpg',
+                  faceF:'#c0a880', faceT:'#d0b890', faceS:'#a09060',
+                  mats:[{l:'FSC Hardwood',pct:80,c:'#596060'},{l:'Ivory velvet lining',pct:12,c:'#c4b49a'},{l:'Satin finish',pct:5,c:'#725b3f'},{l:'Nickel hardware',pct:3,c:'#8090a0'}] },
+      eternal:  { L:210, W:68, H:62,  name:'Eternal',  material:'FSC-Certified Mahogany',
+                  img:'images/casket-teak.jpg',
+                  faceF:'#7a5030', faceT:'#9a6840', faceS:'#5a3820',
+                  mats:[{l:'FSC Mahogany',pct:83,c:'#596060'},{l:'Burgundy silk lining',pct:10,c:'#8b2040'},{l:'Hand-polish finish',pct:4,c:'#725b3f'},{l:'Brass hardware',pct:3,c:'#c09030'}] }
+    };
+
+    function arcPath(cx,cy,r,a0,a1) {
+      const rad = d => (d-90)*Math.PI/180;
+      const x0=cx+r*Math.cos(rad(a0)), y0=cy+r*Math.sin(rad(a0));
+      const x1=cx+r*Math.cos(rad(a1)), y1=cy+r*Math.sin(rad(a1));
+      return `M${cx},${cy} L${x0},${y0} A${r},${r} 0 ${a1-a0>180?1:0},1 ${x1},${y1}Z`;
+    }
+
+    function dimSVG(d) {
+      const scale = 230 / d.L;
+      const lp = d.L*scale, hp = d.H*scale, dp = d.W*0.32; // cabinet depth
+      const ox=48, oy=230; // front-bottom-left
+      // 3 faces
+      const A=[ox,oy], B=[ox+lp,oy], C=[ox+lp,oy-hp], Dt=[ox,oy-hp];
+      const Br=[ox+lp+dp,oy-dp], Cr=[ox+lp+dp,oy-hp-dp];
+      const Tr=[ox+dp,oy-hp-dp], Tl=[ox,oy-hp];
+      const f=(...pts)=>pts.map(p=>p.join(',')).join(' ');
+      const arrow=(x1,y1,x2,y2,lbl,mx,my,vert=false)=>{
+        const dx=x2-x1,dy=y2-y1,len=Math.sqrt(dx*dx+dy*dy);
+        const ux=dx/len,uy=dy/len;
+        const hs=5;
+        const ah1=`${x1+uy*hs},${y1-ux*hs} ${x1-uy*hs},${y1+ux*hs} ${x1+ux*hs*1.5},${y1+uy*hs*1.5}`;
+        const ah2=`${x2+uy*hs},${y2-ux*hs} ${x2-uy*hs},${y2+ux*hs} ${x2-ux*hs*1.5},${y2-uy*hs*1.5}`;
+        const tr=vert?`transform="rotate(-90,${mx},${my})"`:'' ;
+        return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#596060" stroke-width="1.2"/>
+          <polygon points="${ah1}" fill="#596060"/><polygon points="${ah2}" fill="#596060"/>
+          <text x="${mx}" y="${my}" font-size="11" fill="#32332d" text-anchor="middle" font-family="sans-serif" ${tr}>${lbl}</text>`;
+      };
+      return `<svg viewBox="0 0 360 300" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#f7f5f0">
+        <polygon points="${f(A,B,C,Dt)}" fill="${d.faceF}" stroke="#8a7a60" stroke-width="1"/>
+        <polygon points="${f(B,Br,Cr,C)}" fill="${d.faceS}" stroke="#8a7a60" stroke-width="1"/>
+        <polygon points="${f(Dt,C,Cr,Tr)}" fill="${d.faceT}" stroke="#8a7a60" stroke-width="1"/>
+        <!-- dim: length -->
+        <line x1="${ox}" y1="${oy+14}" x2="${ox+lp}" y2="${oy+14}" stroke="#ccc" stroke-width="0.8" stroke-dasharray="2,2"/>
+        ${arrow(ox,oy+22,ox+lp,oy+22,`${d.L} cm`,(ox+ox+lp)/2,oy+35)}
+        <!-- dim: height -->
+        <line x1="${ox-14}" y1="${oy}" x2="${ox-14}" y2="${oy-hp}" stroke="#ccc" stroke-width="0.8" stroke-dasharray="2,2"/>
+        ${arrow(ox-22,oy,ox-22,oy-hp,`${d.H} cm`,ox-36,(oy+oy-hp)/2,true)}
+        <!-- dim: width -->
+        <line x1="${ox+lp}" y1="${oy}" x2="${ox+lp+dp}" y2="${oy-dp}" stroke="#ccc" stroke-width="0.8" stroke-dasharray="2,2"/>
+        <line x1="${ox+lp+dp+8}" y1="${oy-dp-8}" x2="${ox+lp+dp}" y2="${oy-dp}" stroke="#596060" stroke-width="1.2"/>
+        <text x="${ox+lp+dp+12}" y="${oy-dp-10}" font-size="11" fill="#32332d" font-family="sans-serif">${d.W} cm</text>
+        <text x="${ox+lp/2}" y="22" font-size="11" fill="#725b3f" text-anchor="middle" font-family="sans-serif" font-weight="700" letter-spacing="1">${d.material.toUpperCase()}</text>
+        <text x="${ox+lp/2}" y="38" font-size="10" fill="#7b7b74" text-anchor="middle" font-family="sans-serif">L × W × H (cm)</text>
+      </svg>`;
+    }
+
+    function materialSVG(d) {
+      const cx=130,cy=145,r=95;
+      let a=-90, paths='', legend='';
+      d.mats.forEach((m,i)=>{
+        const sweep=m.pct*3.6;
+        paths+=`<path d="${arcPath(cx,cy,r,a,a+sweep)}" fill="${m.c}" stroke="#f7f5f0" stroke-width="2"/>`;
+        // label inside slice
+        const midA=a+sweep/2, midR=rad=>(rad-90)*Math.PI/180;
+        const tx=cx+(r*0.65)*Math.cos(midR(a+sweep/2)), ty=cy+(r*0.65)*Math.sin(midR(a+sweep/2));
+        if(m.pct>=8) paths+=`<text x="${tx}" y="${ty}" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="700" fill="#fff" font-family="sans-serif">${m.pct}%</text>`;
+        const ly=70+i*46;
+        legend+=`<rect x="262" y="${ly}" width="13" height="13" rx="2" fill="${m.c}"/>`;
+        legend+=`<text x="281" y="${ly+10}" font-size="11" fill="#32332d" font-family="sans-serif">${m.l}</text>`;
+        legend+=`<text x="281" y="${ly+23}" font-size="11" fill="#596060" font-family="sans-serif" font-weight="700">${m.pct}%</text>`;
+        a+=sweep;
+      });
+      return `<svg viewBox="0 0 360 300" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background:#f7f5f0">
+        <text x="${cx}" y="28" font-size="11" fill="#725b3f" text-anchor="middle" font-family="sans-serif" font-weight="700" letter-spacing="1">MATERIAL COMPOSITION</text>
+        <text x="${cx}" y="44" font-size="10" fill="#7b7b74" text-anchor="middle" font-family="sans-serif">${d.material}</text>
+        ${paths}
+        <circle cx="${cx}" cy="${cy}" r="38" fill="#f7f5f0"/>
+        <text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="10" fill="#596060" font-family="sans-serif">FSC</text>
+        <text x="${cx}" y="${cy+10}" text-anchor="middle" font-size="10" fill="#596060" font-family="sans-serif" font-weight="700">Certified</text>
+        ${legend}
+      </svg>`;
+    }
+
+    function switchView(product, view) {
+      const d = PRODUCT_DATA[product];
+      const visual = document.getElementById('visual-'+product);
+      // update thumb active states
+      [0,1,2].forEach(i => {
+        document.getElementById(`thumb-${product}-${i}`).classList.toggle('active', i===view);
+      });
+      if (view===0) {
+        visual.style.background = view===0 ? '' : '#f7f5f0';
+        visual.style.padding = '0';
+        visual.style.overflow = 'hidden';
+        visual.innerHTML = `<img src="${d.img}" style="width:100%;height:100%;object-fit:cover;">`;
+      } else if (view===1) {
+        visual.style.background = '#f7f5f0';
+        visual.style.padding = '0';
+        visual.style.overflow = 'visible';
+        visual.innerHTML = dimSVG(d);
+      } else {
+        visual.style.background = '#f7f5f0';
+        visual.style.padding = '0';
+        visual.style.overflow = 'visible';
+        visual.innerHTML = materialSVG(d);
+      }
+    }
+
+    function goBackToStep1() {
+      document.getElementById('checkoutSuccess').style.display = 'none';
+      document.getElementById('checkoutForm').style.display = 'block';
+      document.getElementById('paynow-qr').innerHTML = '';
+    }
+  </script>
+</body>
+</html>

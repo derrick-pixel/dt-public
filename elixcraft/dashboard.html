@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELIXCRAFT — Command Center</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet" />
+</head>
+<body class="dashboard-screen">
+
+  <canvas id="starfield"></canvas>
+
+  <div class="hud-wrapper">
+
+    <!-- ═══════════════════ TOP RESOURCE BAR ═══════════════════ -->
+    <div class="resource-bar">
+      <div class="resource-logo" onclick="window.location='index.html'" data-tooltip="Return to Faction Select" data-tip-below data-tip-right>
+        <span class="logo-hex">⬡</span>
+        <span class="logo-text">ELIXCRAFT</span>
+      </div>
+
+      <div class="resources">
+        <div class="resource" data-tooltip="💎 BUDGET — Funds available for hiring, training & benefits" data-tip-below>
+          <span class="res-icon">💎</span>
+          <span class="res-label">BUDGET</span>
+          <span class="res-value" id="res-minerals">124,500</span>
+        </div>
+        <div class="resource" data-tooltip="⬡ TALENT — Skilled candidates currently in your pipeline" data-tip-below>
+          <span class="res-icon">⬡</span>
+          <span class="res-label">TALENT</span>
+          <span class="res-value" id="res-gas">48</span>
+        </div>
+        <div class="resource supply-res" data-tooltip="👥 SUPPLY — Active headcount vs maximum team capacity" data-tip-below>
+          <span class="res-icon">👥</span>
+          <span class="res-label">SUPPLY</span>
+          <span class="res-value"><span id="res-supply">34</span><span class="res-cap">/ 50</span></span>
+        </div>
+      </div>
+
+      <div class="hud-faction-badge" id="hud-faction-badge">PROTOSS · ENGINEERING</div>
+      <a href="sitrep.html" class="hud-sitrep-btn" data-tooltip="View SITREP — Situation Report &amp; Analytics dashboard" data-tip-below>📊 SITREP</a>
+      <div class="hud-clock" id="hud-clock">Q2 2026 · DAY 94</div>
+    </div>
+
+    <!-- ═══════════════════ MAIN CONTENT AREA ═══════════════════ -->
+    <div class="main-area">
+
+      <!-- LEFT PANEL: Unit Roster (Your Team) -->
+      <aside class="panel panel-left">
+        <div class="panel-header">
+          <span class="panel-icon">⚔️</span> UNIT ROSTER
+        </div>
+        <div class="panel-body">
+          <div class="unit-list" id="unit-list">
+
+            <div class="unit-item selected-unit" onclick="selectUnit(this,'AC','Alex Chen','Staff Engineer',7,78,72,91,65,80,'active')">
+              <div class="unit-avatar protoss-avatar">AC</div>
+              <div class="unit-info">
+                <div class="unit-name">Alex Chen</div>
+                <div class="unit-role">Staff Engineer</div>
+                <div class="unit-xp-bar"><div class="unit-xp-fill" style="width:78%"></div></div>
+                <div class="unit-level">LVL 7 · 78% to LVL 8</div>
+              </div>
+              <div class="unit-status status-active" data-tooltip="● Active — fully deployed & operational">●</div>
+            </div>
+
+            <div class="unit-item" onclick="selectUnit(this,'SR','Sam Rivera','Senior Engineer',5,45,60,75,70,85,'quest')">
+              <div class="unit-avatar protoss-avatar">SR</div>
+              <div class="unit-info">
+                <div class="unit-name">Sam Rivera</div>
+                <div class="unit-role">Senior Engineer</div>
+                <div class="unit-xp-bar"><div class="unit-xp-fill" style="width:45%"></div></div>
+                <div class="unit-level">LVL 5 · 45% to LVL 6</div>
+              </div>
+              <div class="unit-status status-quest" data-tooltip="⚡ On Quest — assigned to an active mission">⚡</div>
+            </div>
+
+            <div class="unit-item" onclick="selectUnit(this,'JK','Jordan Kim','Engineer II',3,20,45,65,55,60,'training')">
+              <div class="unit-avatar protoss-avatar">JK</div>
+              <div class="unit-info">
+                <div class="unit-name">Jordan Kim</div>
+                <div class="unit-role">Engineer II</div>
+                <div class="unit-xp-bar"><div class="unit-xp-fill" style="width:20%"></div></div>
+                <div class="unit-level">LVL 3 · 20% to LVL 4</div>
+              </div>
+              <div class="unit-status status-training" data-tooltip="📚 Training — earning XP via L&D quest">📚</div>
+            </div>
+
+            <div class="unit-item unit-ghost" onclick="openModal('recruit-modal')">
+              <div class="unit-avatar ghost-avatar">?</div>
+              <div class="unit-info">
+                <div class="unit-name">Open Position</div>
+                <div class="unit-role">Principal Engineer</div>
+                <div class="unit-xp-bar"><div class="unit-xp-fill" style="width:0%"></div></div>
+                <div class="unit-level">RECRUITING… (click to fill)</div>
+              </div>
+              <div class="unit-status status-ghost" data-tooltip="○ Ghost slot — open headcount, click to recruit">○</div>
+            </div>
+
+          </div>
+
+          <button class="btn-panel" onclick="openModal('recruit-modal')" data-tooltip="Open hiring panel — browse & recruit new units">+ RECRUIT UNIT</button>
+        </div>
+      </aside>
+
+      <!-- CENTER: Map / Career World -->
+      <main class="map-area">
+        <div class="map-header">
+          <div class="map-tabs">
+            <button class="map-tab active" onclick="switchTab('org-map', this)" data-tooltip="Org hierarchy — who reports to whom">ORG MAP</button>
+            <button class="map-tab" onclick="switchTab('quest-board', this)" data-tooltip="Active quests, OKRs & training missions">QUEST BOARD</button>
+            <button class="map-tab" onclick="switchTab('tech-tree', this)" data-tooltip="Career progression paths & unlock requirements">TECH TREE</button>
+            <button class="map-tab map-tab-industry" onclick="switchTab('industry-tab', this); renderIndustryTab()" data-tooltip="Pick your industry specialisation from 16 Elitez sectors">⬡ INDUSTRY</button>
+          </div>
+          <div class="map-controls">
+            <a href="industry-map.html" class="map-ctrl-btn" data-tooltip="🌐 Industry Command Map — 16 Elitez sectors" data-tip-left style="display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--text-dim)">🌐</a>
+            <a href="career-map.html" class="map-ctrl-btn" data-tooltip="🗺️ Career Fog of War Map — unlock roles by level" data-tip-left style="display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--text-dim)">🗺️</a>
+            <a href="boss-battle.html" class="map-ctrl-btn" data-tooltip="⚔️ Performance Review — turn-based boss battle" data-tip-left style="display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--text-dim)">⚔️</a>
+            <a href="character-create.html" class="map-ctrl-btn" data-tooltip="+ Create New Unit — 6-step character builder" data-tip-left style="display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--text-dim)">+</a>
+            <a href="kpi-tracking.html" class="map-ctrl-btn" data-tooltip="◎ Mission Objectives — KPI tracking & OKRs" data-tip-left style="display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--text-dim);font-size:0.65rem">KPI</a>
+            <a href="sitrep.html" class="map-ctrl-btn" data-tooltip="📊 Intelligence Hub — Corp Overview & Analytics" data-tip-left style="display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--text-dim)">📊</a>
+            <a href="preboarding.html" class="map-ctrl-btn" data-tooltip="🚀 Pre-Deployment Briefing — complete before Day One" data-tip-left style="display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--success)">🚀</a>
+          </div>
+        </div>
+
+        <!-- Pre-Boarding Banner (shown for new hires) -->
+        <div id="preboarding-banner" style="display:none;margin:12px 12px 0;background:linear-gradient(135deg,rgba(0,230,118,0.1),rgba(0,230,118,0.04));border:1px solid rgba(0,230,118,0.35);border-radius:4px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:16px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:1.4rem">🚀</span>
+            <div>
+              <div style="font-family:var(--font-ui);font-size:0.58rem;letter-spacing:0.15em;color:var(--success);font-weight:700;margin-bottom:2px">PRE-DEPLOYMENT BRIEFING INCOMPLETE</div>
+              <div style="font-size:0.68rem;color:var(--text-secondary)">Complete your 7 pre-boarding tasks to earn <strong style="color:var(--success)">+185 XP</strong> and full deployment clearance before Day One.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;flex-shrink:0">
+            <div id="pb-banner-progress" style="font-family:var(--font-ui);font-size:0.55rem;color:var(--text-dim);align-self:center"></div>
+            <a href="preboarding.html" style="font-family:var(--font-ui);font-size:0.55rem;letter-spacing:0.12em;font-weight:700;padding:8px 16px;background:rgba(0,230,118,0.15);border:1px solid rgba(0,230,118,0.5);border-radius:3px;color:var(--success);text-decoration:none;white-space:nowrap">START BRIEFING →</a>
+          </div>
+        </div>
+
+        <!-- Org Map Tab -->
+        <div class="map-content" id="org-map" style="display:flex;flex-direction:column;padding:0;overflow:hidden">
+          <div class="org-chart" style="padding:20px 24px 12px;flex-shrink:0">
+            <!-- CEO -->
+            <div class="org-row">
+              <div class="org-node node-commander" onclick="showOrgDetail('CEO','Command HQ','Sets vision and allocates empire resources across all factions.','N/A','All factions')">
+                <div class="node-icon">👑</div>
+                <div class="node-title">CEO</div>
+                <div class="node-name">Command</div>
+                <div class="node-status-dots"><span class="ns-dot ns-active" title="Active"></span><span class="ns-dot ns-active" title="Active"></span><span class="ns-dot ns-quest" title="On Quest"></span></div>
+              </div>
+            </div>
+            <!-- Connector -->
+            <div class="org-connector-row"></div>
+            <!-- VPs -->
+            <div class="org-row org-row-3">
+              <div class="org-node node-terran" onclick="showOrgDetail('VP Operations','TERRAN HQ','Oversees logistics, finance, procurement and process. 12 units across 4 tracks.','$12,000–$20,000/mo','Operations · Finance · Procurement')">
+                <div class="node-icon">🏗️</div>
+                <div class="node-title">VP Operations</div>
+                <div class="node-name">TERRAN HQ</div>
+                <div class="node-count">12 units</div>
+                <div class="node-status-dots"><span class="ns-dot ns-active"></span><span class="ns-dot ns-active"></span><span class="ns-dot ns-active"></span><span class="ns-dot ns-quest"></span><span class="ns-dot ns-training"></span></div>
+              </div>
+              <div class="org-node node-protoss active-node" onclick="showOrgDetail('VP Engineering','PROTOSS NEXUS','Commands all software, data, cloud and security units. Your current faction. 34 units across 5 tracks.','$25,000–$40,000/mo','Software · Data/AI · Cloud · CyberSec · Mgmt')">
+                <div class="node-icon">⚡</div>
+                <div class="node-title">VP Engineering</div>
+                <div class="node-name">PROTOSS NEXUS</div>
+                <div class="node-count">34 units</div>
+                <div class="node-status-dots"><span class="ns-dot ns-active"></span><span class="ns-dot ns-active"></span><span class="ns-dot ns-active"></span><span class="ns-dot ns-quest"></span><span class="ns-dot ns-quest"></span><span class="ns-dot ns-training"></span></div>
+              </div>
+              <div class="org-node node-zerg" onclick="showOrgDetail('VP Sales','ZERG HIVE','Drives revenue growth, marketing and people operations. 18 units across 4 tracks.','$18,000–$30,000/mo','Sales · Marketing · HR · Product')">
+                <div class="node-icon">🦾</div>
+                <div class="node-title">VP Sales</div>
+                <div class="node-name">ZERG HIVE</div>
+                <div class="node-count">18 units</div>
+                <div class="node-status-dots"><span class="ns-dot ns-active"></span><span class="ns-dot ns-active"></span><span class="ns-dot ns-quest"></span><span class="ns-dot ns-quest"></span><span class="ns-dot ns-training"></span></div>
+              </div>
+            </div>
+            <!-- Connector -->
+            <div class="org-branch-row"></div>
+            <!-- Teams -->
+            <div class="org-row org-row-4">
+              <div class="org-node node-small node-protoss" onclick="showOrgDetail('Frontend Squad','PROTOSS · Frontend','React/Next.js specialists. Owns the user-facing product surface. 8 units.','$5,000–$13,000/mo','Full-Stack · UX · Mobile')">
+                <div class="node-title">Frontend</div>
+                <div class="node-count">8</div>
+                <div class="node-status-dots"><span class="ns-dot ns-active"></span><span class="ns-dot ns-active"></span><span class="ns-dot ns-quest"></span></div>
+              </div>
+              <div class="org-node node-small node-protoss" onclick="showOrgDetail('Backend Squad','PROTOSS · Backend','API, database and microservices owners. 12 units.','$6,000–$15,000/mo','Java · Python · Cloud · DevOps')">
+                <div class="node-title">Backend</div>
+                <div class="node-count">12</div>
+                <div class="node-status-dots"><span class="ns-dot ns-active"></span><span class="ns-dot ns-active"></span><span class="ns-dot ns-active"></span><span class="ns-dot ns-training"></span></div>
+              </div>
+              <div class="org-node node-small node-protoss" onclick="showOrgDetail('Platform Squad','PROTOSS · Platform','Infrastructure, SRE and security. 9 units.','$7,000–$18,000/mo','Kubernetes · Terraform · CyberSec')">
+                <div class="node-title">Platform</div>
+                <div class="node-count">9</div>
+                <div class="node-status-dots"><span class="ns-dot ns-active"></span><span class="ns-dot ns-quest"></span><span class="ns-dot ns-training"></span></div>
+              </div>
+              <div class="org-node node-small node-ghost-node" onclick="showOrgDetail('AI/ML Squad','PROTOSS · AI/ML','Expanding team building AI-powered features. Actively recruiting.','$9,000–$18,000/mo','Python · TensorFlow · MLOps · GenAI')">
+                <div class="node-title">AI/ML</div>
+                <div class="node-count">↑ Recruiting</div>
+                <div class="node-status-dots"><span class="ns-dot ns-training"></span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- COMMAND FEED -->
+          <div class="command-feed-section" style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+            <div class="feed-header">
+              <div class="feed-title">
+                <span class="feed-live-dot"></span>
+                COMMAND FEED — LIVE ACTIVITY
+              </div>
+              <button onclick="clearFeed()" style="font-family:var(--font-ui);font-size:0.42rem;letter-spacing:0.1em;background:none;border:none;color:var(--text-dim);cursor:pointer">CLEAR</button>
+            </div>
+            <div class="feed-list" id="command-feed"></div>
+          </div>
+        </div>
+
+        <!-- Quest Board Tab -->
+        <div class="map-content hidden" id="quest-board">
+          <div class="quest-list">
+
+            <div class="quest-item quest-active" onclick="showQuestDetail('Project Nexus Launch','MAIN QUEST','Ship v2.0 platform to production. All squads aligned. Frontend, Backend and Platform must coordinate release.','65','Q2 2026','+500 XP · 🏅 Launcher Badge','active')">
+              <div class="quest-type type-main">MAIN</div>
+              <div class="quest-info">
+                <div class="quest-name">Project Nexus Launch</div>
+                <div class="quest-desc">Ship v2.0 platform to production. All squads aligned.</div>
+                <div class="quest-progress">
+                  <div class="quest-prog-bar"><div class="quest-prog-fill" id="qpf-nexus" style="width:65%"></div></div>
+                  <span id="qpt-nexus">65%</span>
+                </div>
+                <div class="quest-prog-actions">
+                  <button class="quest-prog-btn" onclick="event.stopPropagation();advanceQuest('nexus',10,50)">+10% Progress</button>
+                  <button class="quest-prog-btn complete-btn" onclick="event.stopPropagation();completeQuest('nexus',500,'🏅 Launcher Badge')">Mark Complete</button>
+                </div>
+              </div>
+              <div class="quest-reward">
+                <div class="reward-xp">+500 XP</div>
+                <div class="reward-item">🏅 Launcher</div>
+              </div>
+            </div>
+
+            <div class="quest-item quest-active" onclick="showQuestDetail('Mentor a Junior Unit','SIDE QUEST','Complete 4 mentoring sessions with Jordan Kim. Each session covers a technical or career topic.','50','Ongoing','+200 XP · 📖 Sage Badge','active')">
+              <div class="quest-type type-side">SIDE</div>
+              <div class="quest-info">
+                <div class="quest-name">Mentor a Junior Unit</div>
+                <div class="quest-desc">Complete 4 mentoring sessions with Jordan Kim.</div>
+                <div class="quest-progress">
+                  <div class="quest-prog-bar"><div class="quest-prog-fill" id="qpf-mentor" style="width:50%"></div></div>
+                  <span id="qpt-mentor">2 / 4 sessions</span>
+                </div>
+                <div class="quest-prog-actions">
+                  <button class="quest-prog-btn" onclick="event.stopPropagation();advanceQuest('mentor',25,25,'session complete')">+1 Session</button>
+                  <button class="quest-prog-btn complete-btn" onclick="event.stopPropagation();completeQuest('mentor',200,'📖 Sage Badge')">Mark Complete</button>
+                </div>
+              </div>
+              <div class="quest-reward">
+                <div class="reward-xp">+200 XP</div>
+                <div class="reward-item">📖 Sage</div>
+              </div>
+            </div>
+
+            <div class="quest-item quest-available" onclick="showQuestDetail('System Design Mastery','TRAINING QUEST','Complete the advanced architecture course on SkillsFuture. Covers distributed systems, CAP theorem, and large-scale design patterns.','0','Self-paced','+350 XP · ⚡ Arbiter Unit Tier Unlock','available')">
+              <div class="quest-type type-training">TRAINING</div>
+              <div class="quest-info">
+                <div class="quest-name">Unlock: System Design Mastery</div>
+                <div class="quest-desc">Complete advanced architecture course to unlock Arbiter unit tier.</div>
+                <div class="quest-progress">
+                  <div class="quest-prog-bar"><div class="quest-prog-fill" style="width:0%"></div></div>
+                  <span>Not started</span>
+                </div>
+              </div>
+              <div class="quest-reward">
+                <div class="reward-xp">+350 XP</div>
+                <div class="reward-item">⚡ Arbiter</div>
+              </div>
+            </div>
+
+            <div class="quest-item quest-complete" onclick="showQuestDetail('Q1 OKR: Scale to 1M users','COMPLETED QUEST','Achieved 1.2M MAU — exceeded the 1M target by 20%. All squads contributed. AWS bonus awarded.','100','Completed Q1 2026','+600 XP · 🏆 Scale Badge · +3% salary increment','complete')">
+              <div class="quest-type type-complete">✓ DONE</div>
+              <div class="quest-info">
+                <div class="quest-name">Q1 OKR: Scale to 1M users</div>
+                <div class="quest-desc">Achieved 1.2M MAU. Exceeded objective.</div>
+                <div class="quest-progress">
+                  <div class="quest-prog-bar"><div class="quest-prog-fill quest-prog-done" style="width:100%"></div></div>
+                  <span>✓ Complete</span>
+                </div>
+              </div>
+              <div class="quest-reward">
+                <div class="reward-xp">+600 XP</div>
+                <div class="reward-item">🏆 Scale</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Tech Tree Tab -->
+        <div class="map-content hidden" id="tech-tree">
+          <div class="tech-tree-container">
+            <div class="tech-track">
+              <div class="tech-track-label">INDIVIDUAL CONTRIBUTOR</div>
+              <div class="tech-nodes">
+                <div class="tech-node unlocked" onclick="showTechDetail('Junior Software Engineer','LVL 1–2','unlocked','$3,550–$5,000/mo','Full-Stack basics · Python · Agile & Scrum')">
+                  <div class="tech-icon">👨‍💻</div>
+                  <div class="tech-name">Engineer I</div>
+                  <div class="tech-lvl">LVL 1–2</div>
+                </div>
+                <div class="tech-arrow">→</div>
+                <div class="tech-node unlocked" onclick="showTechDetail('Software Engineer','LVL 3–4','unlocked','$5,000–$7,000/mo','Full-Stack · SQL · System Design basics · Cloud fundamentals')">
+                  <div class="tech-icon">⚙️</div>
+                  <div class="tech-name">Engineer II</div>
+                  <div class="tech-lvl">LVL 3–4</div>
+                </div>
+                <div class="tech-arrow">→</div>
+                <div class="tech-node unlocked" onclick="showTechDetail('Senior Software Engineer','LVL 5–6','unlocked','$7,000–$9,500/mo','System Design · AWS · Kubernetes · Stakeholder Management')">
+                  <div class="tech-icon">🔧</div>
+                  <div class="tech-name">Senior Eng</div>
+                  <div class="tech-lvl">LVL 5–6</div>
+                </div>
+                <div class="tech-arrow">→</div>
+                <div class="tech-node active-tech" onclick="showTechDetail('Staff Engineer','LVL 7–8','active','$9,500–$13,000/mo','System Design Mastery · IaC · MLOps · Strategic Thinking')">
+                  <div class="tech-icon">⚡</div>
+                  <div class="tech-name">Staff Eng</div>
+                  <div class="tech-lvl">LVL 7–8</div>
+                </div>
+                <div class="tech-arrow locked-arrow">→</div>
+                <div class="tech-node locked-tech" onclick="showTechDetail('Principal Engineer','LVL 9+','locked','$13,000–$18,000/mo','Requires: System Design Mastery + GenAI Application Development + Team Leadership')">
+                  <div class="tech-icon">🔒</div>
+                  <div class="tech-name">Principal</div>
+                  <div class="tech-lvl">LVL 9+</div>
+                </div>
+              </div>
+            </div>
+            <div class="tech-fork-label">— FORK AT LEVEL 7 —</div>
+            <div class="tech-track">
+              <div class="tech-track-label">MANAGEMENT PATH</div>
+              <div class="tech-nodes">
+                <div class="tech-node locked-tech" onclick="showTechDetail('Engineering Manager','LVL 7+','locked','$10,000–$14,000/mo','Requires: Team Leadership LVL 3 + Staff Eng experience. Fork from IC track at LVL 7.')">
+                  <div class="tech-icon">🔒</div>
+                  <div class="tech-name">Eng Manager</div>
+                  <div class="tech-lvl">LVL 7+</div>
+                </div>
+                <div class="tech-arrow locked-arrow">→</div>
+                <div class="tech-node locked-tech" onclick="showTechDetail('Senior Engineering Manager','LVL 9+','locked','$14,000–$18,000/mo','Requires: Eng Manager + Strategic Thinking + Change Management')">
+                  <div class="tech-icon">🔒</div>
+                  <div class="tech-name">Sr. Manager</div>
+                  <div class="tech-lvl">LVL 9+</div>
+                </div>
+                <div class="tech-arrow locked-arrow">→</div>
+                <div class="tech-node locked-tech" onclick="showTechDetail('Director of Engineering','LVL 11+','locked','$18,000–$25,000/mo','Requires: Sr. Manager + Organisational Development + Executive presence')">
+                  <div class="tech-icon">🔒</div>
+                  <div class="tech-name">Director</div>
+                  <div class="tech-lvl">LVL 11+</div>
+                </div>
+                <div class="tech-arrow locked-arrow">→</div>
+                <div class="tech-node locked-tech" onclick="showTechDetail('VP of Engineering','LVL 13+','locked','$25,000–$40,000/mo','Commander-tier role. Requires full management track + Board-level communication')">
+                  <div class="tech-icon">🔒</div>
+                  <div class="tech-name">VP Eng</div>
+                  <div class="tech-lvl">LVL 13+</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Industry Specialisation Tab -->
+        <div class="map-content hidden" id="industry-tab">
+          <div id="industry-tab-inner">
+            <!-- Populated by renderIndustryTab() in dashboard.js -->
+            <div style="padding:40px;text-align:center;color:var(--text-dim);font-size:0.7rem">Loading sectors…</div>
+          </div>
+        </div>
+
+      </main>
+
+      <!-- RIGHT PANEL: Command Card (Selected Unit Stats) -->
+      <aside class="panel panel-right">
+        <div class="panel-header">
+          <span class="panel-icon">📋</span> COMMAND CARD
+        </div>
+        <div class="panel-body">
+
+          <!-- Unit Portrait -->
+          <div class="command-portrait">
+            <div class="portrait-avatar protoss-avatar large-avatar">AC</div>
+            <div class="portrait-info">
+              <div class="portrait-name">Alex Chen</div>
+              <div class="portrait-class">Staff Engineer · PROTOSS</div>
+              <div class="portrait-level">LEVEL 7</div>
+              <div id="cmd-spec-badge" class="cmd-spec-badge" style="display:none" data-tooltip="Industry Specialisation — click INDUSTRY tab to change" onclick="switchTab('industry-tab', document.querySelector('.map-tab-industry')); renderIndustryTab()"></div>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="unit-stats">
+            <div class="stat-group">
+              <div class="stat-item" data-stat-key="str">
+                <span class="stat-label">⚔️ STR</span>
+                <div class="stat-bar"><div class="stat-fill protoss-fill" style="width:72%"></div></div>
+                <span class="stat-num">72</span>
+              </div>
+              <div class="stat-item" data-stat-key="int">
+                <span class="stat-label">🧠 INT</span>
+                <div class="stat-bar"><div class="stat-fill protoss-fill" style="width:91%"></div></div>
+                <span class="stat-num">91</span>
+              </div>
+              <div class="stat-item" data-stat-key="cha">
+                <span class="stat-label">🗣️ CHA</span>
+                <div class="stat-bar"><div class="stat-fill protoss-fill" style="width:65%"></div></div>
+                <span class="stat-num">65</span>
+              </div>
+              <div class="stat-item" data-stat-key="dex">
+                <span class="stat-label">⚡ DEX</span>
+                <div class="stat-bar"><div class="stat-fill protoss-fill" style="width:80%"></div></div>
+                <span class="stat-num">80</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Armor / Benefits -->
+          <div class="armor-section">
+            <div class="section-mini-header">🛡️ ARMOR (BENEFITS)</div>
+            <div class="armor-slots">
+              <div class="armor-slot equipped" onclick="showCardDetail('benefit','medical')" style="cursor:pointer">
+                <span class="armor-icon">❤️</span>
+                <span class="armor-name">Medical</span>
+                <span class="armor-tier armor-gold">GOLD</span>
+              </div>
+              <div class="armor-slot equipped" onclick="showCardDetail('benefit','dental')" style="cursor:pointer">
+                <span class="armor-icon">🦷</span>
+                <span class="armor-name">Dental</span>
+                <span class="armor-tier armor-silver">SILVER</span>
+              </div>
+              <div class="armor-slot equipped" onclick="showCardDetail('benefit','leave')" style="cursor:pointer">
+                <span class="armor-icon">🏖️</span>
+                <span class="armor-name">Annual Leave</span>
+                <span class="armor-tier">18d left</span>
+              </div>
+              <div class="armor-slot equipped" onclick="showCardDetail('benefit','cpf')" style="cursor:pointer">
+                <span class="armor-icon">🏦</span>
+                <span class="armor-name">CPF</span>
+                <span class="armor-tier armor-gold">17% ER</span>
+              </div>
+              <div class="armor-slot empty" onclick="showCardDetail('benefit','equity')" style="cursor:pointer">
+                <span class="armor-icon">○</span>
+                <span class="armor-name">Equity</span>
+                <span class="armor-tier">Unlock LVL 8</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Power-Ups / Skills -->
+          <div class="powerup-section">
+            <div class="section-mini-header">⚡ POWER-UPS (SKILLS)</div>
+            <div class="powerup-list">
+              <div class="powerup equipped-power" onclick="showCardDetail('skill','distributed')" style="cursor:pointer">
+                <span>🔥</span> Distributed Systems
+                <span class="power-badge power-max">MAX</span>
+              </div>
+              <div class="powerup equipped-power" onclick="showCardDetail('skill','cloud')" style="cursor:pointer">
+                <span>🔥</span> Cloud Architecture
+                <span class="power-badge power-high">LVL 4</span>
+              </div>
+              <div class="powerup equipped-power" onclick="showCardDetail('skill','kubernetes')" style="cursor:pointer">
+                <span>🌀</span> Kubernetes
+                <span class="power-badge power-mid">LVL 3</span>
+              </div>
+              <div class="powerup learning-power" onclick="showCardDetail('skill','sysdesign')" style="cursor:pointer">
+                <span>📘</span> System Design
+                <span class="power-badge power-learn">TRAINING</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="command-actions">
+            <button class="btn-action" onclick="openModal('skill-modal')" data-tooltip="Browse & equip skill training to boost unit stats">+ ADD POWER-UP</button>
+            <button class="btn-action btn-secondary" onclick="openModal('benefit-modal')" data-tooltip="Upgrade benefits package — medical, PTO, equity & more">UPGRADE ARMOR</button>
+          </div>
+
+        </div>
+      </aside>
+
+    </div>
+
+    <!-- ═══════════════════ BOTTOM: MINIMAP + NOTIFICATIONS ═══════════════════ -->
+    <div class="bottom-bar">
+      <div class="minimap">
+        <div class="minimap-label">EMPIRE MAP</div>
+        <div class="minimap-canvas" id="minimap">
+          <div class="mm-node mm-top" style="cursor:pointer" onclick="showOrgDetail('CEO','Command HQ','Sets vision and allocates empire resources across all factions.','N/A','All factions')" data-tooltip="👑 CEO — click to view Command HQ" data-tip-right>👑</div>
+          <div class="mm-row">
+            <div class="mm-node mm-terran" style="cursor:pointer" onclick="window.location='career-map.html'" data-tooltip="🏗️ TERRAN — Operations & Finance → Career Map" data-tip-right>T</div>
+            <div class="mm-node mm-protoss mm-active" style="cursor:pointer" onclick="window.location='career-map.html'" data-tooltip="⚡ PROTOSS — Engineering (your faction) → Career Map">P</div>
+            <div class="mm-node mm-zerg" style="cursor:pointer" onclick="window.location='career-map.html'" data-tooltip="🦾 ZERG — Sales & People → Career Map" data-tip-left>Z</div>
+          </div>
+        </div>
+      </div>
+      <div class="notification-feed" id="notification-feed">
+        <div class="notif-header">◈ COMMAND FEED</div>
+        <div class="notif-item notif-info" style="cursor:pointer" onclick="selectUnit(document.querySelector('.unit-item:nth-child(3)'),'JK','Jordan Kim','Engineer II',3,20,45,65,55,60,'training')">▶ Jordan Kim completed onboarding quest</div>
+        <div class="notif-item notif-warn" style="cursor:pointer" onclick="window.location='leave-management.html'">⚠ PTO Shield depleting — Sam Rivera: 3 days left</div>
+        <div class="notif-item notif-success" style="cursor:pointer" onclick="showQuestDetail('Q1 OKR: Scale to 1M users','COMPLETED QUEST','Achieved 1.2M MAU — exceeded objective.','100','Completed Q1 2026','+600 XP · 🏆 Scale Badge','complete')">✓ Q1 OKR achieved: 1.2M MAU — +600 XP awarded</div>
+        <div class="notif-item notif-info" style="cursor:pointer" onclick="window.location='sitrep.html#risk'">⚡ 8 flight risk employees flagged by AI</div>
+        <div style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px">
+          <div class="notif-header" style="margin-bottom:4px">◈ HR PORTAL</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+            <a href="kpi-tracking.html" style="display:block;padding:5px 7px;background:var(--bg-panel-alt);border:1px solid var(--border);border-radius:3px;font-size:0.62rem;color:var(--text-dim);text-decoration:none;text-align:center;transition:all 0.15s" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-dim)'">◎ Missions</a>
+            <a href="leave-management.html" style="display:block;padding:5px 7px;background:var(--bg-panel-alt);border:1px solid var(--border);border-radius:3px;font-size:0.62rem;color:var(--text-dim);text-decoration:none;text-align:center;transition:all 0.15s" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-dim)'">🛡 PTO Shield</a>
+            <a href="claims.html" style="display:block;padding:5px 7px;background:var(--bg-panel-alt);border:1px solid var(--border);border-radius:3px;font-size:0.62rem;color:var(--text-dim);text-decoration:none;text-align:center;transition:all 0.15s" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-dim)'">💎 Claims</a>
+            <a href="policy-qa.html" style="display:block;padding:5px 7px;background:var(--bg-panel-alt);border:1px solid var(--border);border-radius:3px;font-size:0.62rem;color:var(--text-dim);text-decoration:none;text-align:center;transition:all 0.15s" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-dim)'">🤖 AI Advisor</a>
+            <a href="employee-directory.html" style="display:block;padding:5px 7px;background:var(--bg-panel-alt);border:1px solid var(--border);border-radius:3px;font-size:0.62rem;color:var(--text-dim);text-decoration:none;text-align:center;transition:all 0.15s" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-dim)'">👥 Registry</a>
+            <a href="hr-settings.html" style="display:block;padding:5px 7px;background:var(--bg-panel-alt);border:1px solid var(--border);border-radius:3px;font-size:0.62rem;color:var(--text-dim);text-decoration:none;text-align:center;transition:all 0.15s" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-dim)'">⚙ HR Config</a>
+          </div>
+        </div>
+      </div>
+      <div class="supply-panel">
+        <div class="supply-label">SUPPLY STATUS</div>
+        <div class="supply-bar-wrap">
+          <div class="supply-fill" style="width:68%"></div>
+        </div>
+        <div class="supply-numbers">34 / 50 units deployed</div>
+        <div class="supply-breakdown">
+          <div class="supply-item terran-text">🏗️ OPS: 12</div>
+          <div class="supply-item protoss-text">⚡ ENG: 34</div>
+          <div class="supply-item zerg-text">🦾 SALES: 18</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════ MODALS ═══════════════════ -->
+  <div id="modal-overlay" class="modal-overlay hidden" onclick="closeModal()">
+    <div id="modal-box" class="modal-box" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <!-- Toast container (inside map-area to avoid overflow clip) -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="data/elixcraft-data.js"></script>
+  <script src="js/game-state.js"></script>
+  <script src="js/starfield.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script>
+  // ─── Toast System ─────────────────────────────────────────────────────────
+  function showToast(icon, msg, sub, type = 'toast-xp', duration = 3500) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<div class="toast-icon">${icon}</div><div class="toast-body"><div class="toast-msg">${msg}</div>${sub ? `<div class="toast-sub">${sub}</div>` : ''}</div>`;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.style.animation = 'toast-out 0.4s ease forwards';
+      setTimeout(() => toast.remove(), 400);
+    }, duration);
+  }
+
+  // ─── XP Popup ─────────────────────────────────────────────────────────────
+  function showXPPopup(amount, x, y) {
+    const el = document.createElement('div');
+    el.className = 'xp-popup';
+    el.textContent = `+${amount} XP`;
+    el.style.left = (x || window.innerWidth / 2 - 30) + 'px';
+    el.style.top  = (y || window.innerHeight / 2) + 'px';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1700);
+  }
+
+  // ─── Command Feed ─────────────────────────────────────────────────────────
+  const FEED_TYPES = {
+    xp:     { icon: '⚡', cls: 'feed-gold'   },
+    quest:  { icon: '📋', cls: 'feed-blue'   },
+    level:  { icon: '🏆', cls: 'feed-green'  },
+    hire:   { icon: '👤', cls: 'feed-purple' },
+    alert:  { icon: '⚠️', cls: 'feed-gold'   },
+    train:  { icon: '📚', cls: 'feed-blue'   },
+  };
+
+  function addFeedItem(text, type = 'xp') {
+    const feed = document.getElementById('command-feed');
+    if (!feed) return;
+    const t = FEED_TYPES[type] || FEED_TYPES.xp;
+    const now = new Date();
+    const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+    const item = document.createElement('div');
+    item.className = 'feed-item';
+    item.style.animationDelay = '0s';
+    item.innerHTML = `<span class="feed-time">${time}</span><span class="feed-icon">${t.icon}</span><span class="feed-text ${t.cls}">${text}</span>`;
+    feed.insertBefore(item, feed.firstChild);
+    // keep max 20 items
+    while (feed.children.length > 20) feed.removeChild(feed.lastChild);
+  }
+
+  function clearFeed() {
+    const feed = document.getElementById('command-feed');
+    if (feed) feed.innerHTML = '';
+  }
+
+  // ─── Quest Interactions ────────────────────────────────────────────────────
+  const questProgress = {};
+
+  function advanceQuest(id, increment, xpReward, label, event) {
+    const fillEl = document.getElementById(`qpf-${id}`);
+    const textEl = document.getElementById(`qpt-${id}`);
+    if (!fillEl) return;
+
+    const current = questProgress[id] ?? parseInt(fillEl.style.width) ?? 0;
+    const next = Math.min(100, current + increment);
+    questProgress[id] = next;
+
+    // Animate bar
+    fillEl.style.transition = 'width 0.6s ease';
+    fillEl.style.width = next + '%';
+    if (textEl) textEl.textContent = next + '%';
+
+    // XP reward
+    if (xpReward) {
+      if (window.GameState && GameState.exists()) GameState.addXP(xpReward);
+      const rect = fillEl.getBoundingClientRect();
+      showXPPopup(xpReward, rect.left + 40, rect.top - 10);
+      showToast('⚡', `+${xpReward} XP earned`, label ? `Quest progress: ${next}%` : `Progress updated to ${next}%`, 'toast-xp');
+      addFeedItem(`Quest progress +${increment}% — <span style="color:var(--protoss)">+${xpReward} XP</span> awarded`, 'xp');
+    }
+
+    if (next >= 100) completeQuest(id, xpReward * 2, '');
+  }
+
+  function completeQuest(id, xpReward, badge) {
+    const fillEl = document.getElementById(`qpf-${id}`);
+    if (!fillEl) return;
+
+    fillEl.style.transition = 'width 0.8s ease';
+    fillEl.style.width = '100%';
+    fillEl.classList.add('quest-prog-done');
+
+    const textEl = document.getElementById(`qpt-${id}`);
+    if (textEl) textEl.textContent = '✓ COMPLETE';
+
+    // Find and style the parent quest-item
+    const questItem = fillEl.closest('.quest-item');
+    if (questItem) {
+      questItem.style.transition = 'all 0.5s ease';
+      questItem.style.borderColor = 'rgba(0,230,118,0.5)';
+      questItem.style.background  = 'rgba(0,230,118,0.04)';
+      const actions = questItem.querySelector('.quest-prog-actions');
+      if (actions) actions.innerHTML = '<span style="font-family:var(--font-ui);font-size:0.5rem;letter-spacing:0.1em;color:var(--success)">✓ QUEST COMPLETE</span>';
+    }
+
+    if (xpReward) {
+      if (window.GameState && GameState.exists()) GameState.addXP(xpReward);
+      showXPPopup(xpReward, window.innerWidth / 2 - 40, window.innerHeight / 3);
+    }
+    showToast('🏆', `Quest complete!`, badge || 'Mission accomplished — XP rewarded', 'toast-level', 5000);
+    addFeedItem(`<strong>Quest completed</strong>${badge ? ` — ${badge} unlocked` : ''} · <span style="color:var(--success)">+${xpReward} XP</span>`, 'level');
+
+    // Update resource bar counter
+    if (window.GameState && GameState.exists()) {
+      const state = GameState.get();
+      const mineralsEl = document.getElementById('res-minerals');
+      if (mineralsEl) mineralsEl.textContent = (state.resources.minerals || 0).toLocaleString();
+    }
+  }
+
+  // ─── Benefit & Skill Detail Cards ────────────────────────────────────────
+  const CARD_DATA = {
+    benefit: {
+      medical: {
+        icon: '❤️', name: 'Medical Shield', tier: 'GOLD', tierColor: '#c8a200',
+        desc: 'Integrated Shield Plan with private hospital coverage. Gold tier covers A-ward and above with no co-payment for hospitalisation.',
+        stats: [
+          { label: 'Plan Type',        val: 'Integrated Shield Plan (IP)',       note: 'MAS-regulated, MediShield Life base' },
+          { label: 'Ward Coverage',    val: 'Private Hospital (A-Ward)',          note: 'Riders cover full co-pay' },
+          { label: 'Annual Limit',     val: 'S$1,000,000 / yr',                  note: 'Unlimited for life-threatening conditions' },
+          { label: 'Outpatient',       val: 'S$2,500 / yr',                      note: 'GP + Specialist visits included' },
+          { label: 'Pre-existing',     val: 'Covered after 1-yr waiting period', note: 'Standard SG insurance rule' },
+          { label: 'Dependant Cover',  val: 'Spouse + 2 children',               note: 'Company subsidises 50% of dependant premium' },
+        ],
+        statBonus: [{ stat: 'STR', val: '+3', reason: 'Health coverage = resilience & sustained performance' }],
+        action: { label: '🔗 Apply for Outpatient Claim', href: 'claims.html' },
+      },
+      dental: {
+        icon: '🦷', name: 'Dental & Optical Shield', tier: 'SILVER', tierColor: '#8a9aaa',
+        desc: 'Annual dental and optical coverage for routine care, scaling, fillings, and prescription lenses or contacts.',
+        stats: [
+          { label: 'Dental Annual Cap', val: 'S$500 / yr',            note: 'Scaling, polishing, fillings, extractions' },
+          { label: 'Optical Annual Cap', val: 'S$300 / yr',           note: 'Spectacles, contact lenses, eye tests' },
+          { label: 'Panel Dentists',    val: '120+ island-wide',       note: 'Cashless at panel clinics' },
+          { label: 'Orthodontics',      val: 'Not covered',            note: 'Upgrade to GOLD tier for braces coverage' },
+          { label: 'Claim Process',     val: 'Submit receipt in-app',  note: 'Reimbursed within 5 business days' },
+        ],
+        statBonus: [{ stat: 'CHA', val: '+1', reason: 'Presentation & confidence boost' }],
+        action: { label: '🔗 Submit Dental Claim', href: 'claims.html' },
+      },
+      leave: {
+        icon: '🏖️', name: 'PTO Shield — Annual Leave', tier: 'ACTIVE', tierColor: '#4a9eff',
+        desc: 'Paid time off entitlement per the Employment Act. Your leave recharges STR and DEX — rested Commanders perform better.',
+        stats: [
+          { label: 'Total Entitlement', val: '18 days / yr',          note: 'Above MOM minimum of 14 days' },
+          { label: 'Days Remaining',    val: '18 days',               note: 'As of Apr 2026 — resets Jan 1' },
+          { label: 'Days Used (YTD)',   val: '0 days',                note: 'No leave taken yet this year' },
+          { label: 'Carry Forward',     val: 'Max 5 days',            note: 'Expires Mar 31 following year (MOM rule)' },
+          { label: 'Sick Leave',        val: '14 days outpatient',    note: '+ 60 days hospitalisation (Employment Act s.89)' },
+          { label: 'Childcare Leave',   val: '6 days / yr',           note: 'Per Child Development Co-Savings Act' },
+          { label: 'Maternity Leave',   val: '16 weeks paid',         note: 'Child Citizenship Act — first 8w employer-funded' },
+          { label: 'NS Leave',          val: 'Unlimited (NS Act)',     note: 'Full salary maintained by company top-up' },
+        ],
+        statBonus: [
+          { stat: 'STR', val: '+2', reason: 'Rest & recovery boosts leadership endurance' },
+          { stat: 'DEX', val: '+2', reason: 'Rested Commanders execute faster on return' },
+        ],
+        action: { label: '🔗 Apply for Leave', href: 'leave-management.html' },
+      },
+      cpf: {
+        icon: '🏦', name: 'CPF — Central Provident Fund', tier: '17% ER', tierColor: '#ffd700',
+        desc: 'Mandatory Singapore retirement savings scheme. Employer contributes 17% on top of your salary. Employee contributes 20% (deducted from pay).',
+        stats: [
+          { label: 'Employer Rate (ER)', val: '17% of gross salary',    note: 'For age ≤35 (MOM CPF 2025 rates)' },
+          { label: 'Employee Rate (EE)', val: '20% of gross salary',    note: 'Deducted from take-home pay' },
+          { label: 'Ordinary Account (OA)', val: '~62% of CPF',        note: 'Housing, education, investment' },
+          { label: 'Special Account (SA)', val: '~16% of CPF',         note: 'Retirement savings — higher interest 4% p.a.' },
+          { label: 'MediSave Account (MA)', val: '~22% of CPF',        note: 'Medical expenses, MediShield Life premiums' },
+          { label: 'OA Interest Rate',   val: '2.5% p.a.',             note: 'First S$20k earns extra 1%' },
+          { label: 'SA Interest Rate',   val: '4.0% p.a.',             note: 'First S$40k earns extra 1%' },
+          { label: 'Monthly Wage Ceiling', val: 'S$7,400 (2025)',      note: 'Max base for CPF contribution calculation' },
+          { label: 'Full Retirement Sum', val: 'S$213,000 (2025)',      note: 'Target by age 55 for CPF LIFE payouts' },
+        ],
+        statBonus: [{ stat: 'STR', val: '+5', reason: 'Long-term financial security = leadership stability' }],
+        action: { label: '🔗 View CPF Statement', href: 'https://www.cpf.gov.sg', target: '_blank' },
+      },
+      equity: {
+        icon: '📈', name: 'Equity / RSU Package', tier: 'LOCKED', tierColor: '#5a7a9a',
+        desc: 'Restricted Stock Units (RSUs) vest on a 4-year schedule with 1-year cliff. Unlocks at LVL 8 — completing the Boss Battle & Senior promotion.',
+        stats: [
+          { label: 'Status',         val: '🔒 Locked — LVL 8 required', note: 'Achieve Senior role to unlock' },
+          { label: 'Grant Size',     val: '~S$80,000 notional value',    note: 'Based on current company valuation' },
+          { label: 'Vesting Schedule', val: '4 years with 1-yr cliff',   note: '25% at Year 1, then monthly vesting' },
+          { label: 'Cliff',          val: '1 year from grant date',      note: 'Must remain employed to receive first tranche' },
+          { label: 'Tax Treatment',  val: 'Taxable on vest date',        note: 'IRAS treats RSU as employment income at vest' },
+          { label: 'Accelerated Vest', val: 'On IPO / acquisition',     note: 'Double-trigger clause applies' },
+        ],
+        statBonus: [{ stat: 'STR', val: '+8', reason: 'Ownership stake = max Commander commitment bonus' }],
+        action: null,
+      },
+    },
+    skill: {
+      distributed: {
+        icon: '🔥', name: 'Distributed Systems', level: 'MAX', levelColor: '#ef5350',
+        desc: 'Mastery of distributed computing — CAP theorem, consensus protocols, event sourcing, CQRS, and large-scale fault-tolerant architecture.',
+        stats: [
+          { label: 'Skill Level',        val: 'MAX (LVL 5)',                note: 'Fully mastered — no further XP required' },
+          { label: 'SkillsFuture Code',  val: 'SF-ICT-2023-DS-001',        note: 'Mapped to SkillsFuture credit-eligible course' },
+          { label: 'Market Demand',      val: '⬆ Very High (2025)',         note: 'Top 3 in-demand skill for Staff+ engineers' },
+          { label: 'Salary Premium',     val: '+18–25% vs base band',       note: 'Based on MOM Occupational Wage data 2024' },
+          { label: 'Certifications',     val: 'AWS Advanced · GCP Pro',     note: 'Both recognised for SkillsFuture credit claims' },
+          { label: 'Unlocks',            val: 'Principal Engineer track',   note: 'Required for LVL 9+ tech tree progression' },
+        ],
+        statBonus: [
+          { stat: 'INT', val: '+20', reason: 'Systems thinking and architectural depth' },
+          { stat: 'STR', val: '+5',  reason: 'Ability to drive large-scale technical decisions' },
+        ],
+        action: { label: '🏅 View Certification', href: 'kpi-tracking.html' },
+      },
+      cloud: {
+        icon: '🔥', name: 'Cloud Architecture', level: 'LVL 4', levelColor: '#ffa726',
+        desc: 'Multi-cloud design expertise across AWS, GCP, and Azure. Covers IaC, multi-region resilience, FinOps, and zero-downtime deployments.',
+        stats: [
+          { label: 'Skill Level',       val: 'LVL 4 / 5',                  note: '1 more training module to reach MAX' },
+          { label: 'SkillsFuture Code', val: 'SF-ICT-2023-CA-004',         note: 'TechSkills Accelerator (TSA) approved' },
+          { label: 'Current XP',        val: '840 / 1000 XP to MAX',       note: 'Complete "Multi-Region Design" quest' },
+          { label: 'Primary Platform',  val: 'AWS Solutions Architect Pro', note: 'SAP-C02 certified' },
+          { label: 'Market Demand',     val: '⬆ High (2025)',              note: 'FinTech and healthcare sectors highest premium' },
+          { label: 'Salary Premium',    val: '+12–20% vs base band',        note: 'MOM ICT Workforce Study 2024' },
+          { label: 'Next Unlock',       val: 'FinOps Practitioner badge',   note: 'At MAX level — adds +$800–1,200/mo premium' },
+        ],
+        statBonus: [
+          { stat: 'INT', val: '+15', reason: 'Cloud design patterns and cost optimisation mastery' },
+          { stat: 'DEX', val: '+8',  reason: 'Infrastructure automation — deploy faster' },
+        ],
+        action: { label: '📚 Complete to MAX', href: 'kpi-tracking.html' },
+      },
+      kubernetes: {
+        icon: '🌀', name: 'Kubernetes', level: 'LVL 3', levelColor: '#4a9eff',
+        desc: 'Container orchestration with Kubernetes — cluster management, Helm chart templating, autoscaling, RBAC, and GitOps deployment pipelines.',
+        stats: [
+          { label: 'Skill Level',       val: 'LVL 3 / 5',                  note: 'Intermediate — team lead for K8s migrations' },
+          { label: 'SkillsFuture Code', val: 'SF-ICT-2023-CK-003',         note: 'IMDA-approved training provider list' },
+          { label: 'Certifications',    val: 'CKA (Certified K8s Admin)',   note: 'CNCF official — valid 3 years' },
+          { label: 'Market Demand',     val: '⬆ High (2025)',              note: 'Required for Platform/SRE roles' },
+          { label: 'Current XP',        val: '460 / 800 XP to LVL 4',     note: 'Complete "GitOps Pipeline" training quest' },
+          { label: 'Salary Premium',    val: '+10–15% vs base band',        note: 'Especially in FSI and public sector cloud' },
+        ],
+        statBonus: [
+          { stat: 'INT', val: '+10', reason: 'Infrastructure complexity mastery' },
+          { stat: 'DEX', val: '+12', reason: 'Automated pipelines — faster deployment cadence' },
+        ],
+        action: { label: '📚 Next: GitOps Pipeline quest', href: 'kpi-tracking.html' },
+      },
+      sysdesign: {
+        icon: '📘', name: 'System Design', level: 'TRAINING', levelColor: '#5a7a9a',
+        desc: 'Foundational system design — scalability principles, database selection, API design, caching strategies, and trade-off analysis for large systems.',
+        stats: [
+          { label: 'Skill Level',       val: 'TRAINING (LVL 0 → 1)',       note: 'Complete quest to reach LVL 1' },
+          { label: 'SkillsFuture Code', val: 'SF-ICT-2023-SD-001',         note: 'SkillsFuture Credit claimable (S$500 credit)' },
+          { label: 'Training Progress', val: '0 / 300 XP',                 note: 'Quest: "System Design Mastery" — not started' },
+          { label: 'Est. Completion',   val: '~6 weeks at 2 hrs/week',     note: 'Self-paced via SkillsFuture platform' },
+          { label: 'Pre-requisites',    val: 'INT ≥ 5 · Distributed LVL 1', note: 'Both conditions met ✓' },
+          { label: 'On Completion',     val: 'Unlocks Arbiter unit tier',   note: '+350 XP · INT +8 · DEX +4' },
+        ],
+        statBonus: [
+          { stat: 'INT', val: '+8 (on LVL 1)',  reason: 'Foundational architecture thinking' },
+          { stat: 'DEX', val: '+4 (on LVL 1)',  reason: 'Faster problem decomposition in sprints' },
+        ],
+        action: { label: '🚀 Start Training Quest', href: 'kpi-tracking.html' },
+      },
+    },
+  };
+
+  function showCardDetail(category, id) {
+    const data = CARD_DATA[category]?.[id];
+    if (!data) return;
+
+    const isBenefit = category === 'benefit';
+    const accentColor = isBenefit ? (data.tierColor || '#ffd700') : (data.levelColor || '#ffd700');
+    const badgeText   = isBenefit ? data.tier : data.level;
+
+    const statsHTML = data.stats.map(s => `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:1px solid rgba(26,48,80,0.5);gap:12px">
+        <div style="font-family:var(--font-ui);font-size:0.5rem;letter-spacing:0.1em;color:var(--text-dim);flex-shrink:0;width:140px">${s.label}</div>
+        <div style="flex:1;text-align:right">
+          <div style="font-size:0.75rem;color:var(--text-bright);font-weight:600">${s.val}</div>
+          <div style="font-size:0.62rem;color:var(--text-dim);margin-top:1px">${s.note}</div>
+        </div>
+      </div>`).join('');
+
+    const bonusHTML = data.statBonus.map(b => `
+      <div style="display:flex;align-items:center;gap:10px;padding:6px 10px;background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.2);border-radius:3px">
+        <span style="font-family:var(--font-ui);font-size:0.6rem;font-weight:700;color:var(--text-dim);width:32px">${b.stat}</span>
+        <span style="font-family:var(--font-ui);font-size:0.8rem;font-weight:900;color:var(--protoss)">${b.val}</span>
+        <span style="font-size:0.65rem;color:var(--text-secondary);flex:1">${b.reason}</span>
+      </div>`).join('');
+
+    const actionHTML = data.action ? `
+      <a href="${data.action.href}" ${data.action.target ? `target="${data.action.target}"` : ''}
+         style="display:block;text-align:center;margin-top:18px;padding:11px;
+                background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(255,215,0,0.07));
+                border:1px solid rgba(255,215,0,0.4);border-radius:4px;
+                font-family:var(--font-ui);font-size:0.58rem;letter-spacing:0.12em;font-weight:700;
+                color:var(--protoss);text-decoration:none;transition:all 0.2s"
+         onmouseover="this.style.background='rgba(255,215,0,0.25)'"
+         onmouseout="this.style.background='linear-gradient(135deg,rgba(255,215,0,0.15),rgba(255,215,0,0.07))'">
+        ${data.action.label}
+      </a>` : '';
+
+    const html = `
+      <div style="max-width:500px">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+          <span style="font-size:2.4rem">${data.icon}</span>
+          <div style="flex:1">
+            <div style="font-family:var(--font-ui);font-size:0.44rem;letter-spacing:0.25em;color:var(--text-dim);margin-bottom:4px">${isBenefit ? 'ARMOR — BENEFIT MODULE' : 'POWER-UP — SKILL MODULE'}</div>
+            <div style="font-family:var(--font-ui);font-size:1rem;font-weight:900;color:var(--text-bright);margin-bottom:6px">${data.name}</div>
+            <span style="font-family:var(--font-ui);font-size:0.52rem;letter-spacing:0.12em;font-weight:700;padding:3px 10px;border-radius:2px;border:1px solid;color:${accentColor};border-color:${accentColor};background:rgba(255,255,255,0.05)">${badgeText}</span>
+          </div>
+        </div>
+        <p style="font-size:0.78rem;color:var(--text-secondary);line-height:1.7;margin-bottom:18px">${data.desc}</p>
+        <div style="font-family:var(--font-ui);font-size:0.46rem;letter-spacing:0.2em;color:var(--text-dim);margin-bottom:8px">${isBenefit ? 'ENTITLEMENT DETAILS' : 'SKILL INTELLIGENCE'}</div>
+        <div style="margin-bottom:18px">${statsHTML}</div>
+        <div style="font-family:var(--font-ui);font-size:0.46rem;letter-spacing:0.2em;color:var(--text-dim);margin-bottom:8px">STAT BONUSES</div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:4px">${bonusHTML}</div>
+        ${actionHTML}
+      </div>`;
+
+    const content = document.getElementById('modal-content');
+    if (content) content.innerHTML = html;
+    openModal();
+  }
+
+  // ─── Seed the feed with startup events ────────────────────────────────────
+  window.addEventListener('DOMContentLoaded', () => {
+    const items = [
+      ['Priya Wong completed <strong>Sales Pitch Certification</strong> · +30 XP', 'train'],
+      ['Kevin Neo levelled up to <strong>LVL 7</strong> · Arbiter tier unlocked', 'level'],
+      ['New unit <strong>Jordan Kim</strong> deployed to Frontend Squad', 'hire'],
+      ['Sam Rivera logged <strong>Session 2 of 4</strong> mentoring hours', 'quest'],
+      ['Q2 Sprint review scheduled — Boss Battle in <strong>14 days</strong>', 'alert'],
+    ];
+    // stagger
+    items.forEach((item, i) => {
+      setTimeout(() => addFeedItem(item[0], item[1]), i * 280);
+    });
+  });
+  </script>
+    // Pre-boarding banner logic
+    (function() {
+      const PB_KEY = 'elixcraft_preboarding';
+      const TOTAL_TASKS = 7;
+      try {
+        const pb = JSON.parse(localStorage.getItem(PB_KEY)) || {};
+        const done = Object.values(pb).filter(Boolean).length;
+        const state = GameState.exists() ? GameState.get() : null;
+        // Show if preboarding not fully complete
+        if (done < TOTAL_TASKS && !(state && state.preboarding && state.preboarding.completedAt)) {
+          const banner = document.getElementById('preboarding-banner');
+          if (banner) {
+            banner.style.display = 'flex';
+            const prog = document.getElementById('pb-banner-progress');
+            if (prog) prog.textContent = done + '/' + TOTAL_TASKS + ' TASKS';
+          }
+        }
+      } catch(e) {}
+    })();
+  </script>
+</body>
+</html>

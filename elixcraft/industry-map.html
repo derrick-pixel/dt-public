@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELIXCRAFT — Industry Command Map</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/industry-map.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet" />
+</head>
+<body class="industry-screen">
+
+  <canvas id="starfield"></canvas>
+
+  <!-- ══ HUD ══════════════════════════════════════════════ -->
+  <div class="im-hud">
+    <a href="dashboard.html" class="hud-back">← COMMAND CENTER</a>
+    <div class="im-hud-title">🌐 INDUSTRY COMMAND MAP</div>
+    <div class="im-hud-right">
+      <div class="im-stats-bar">
+        <span data-tooltip="Total industry sectors across all 4 quadrants" data-tip-below>SECTORS: <span class="im-stat" id="im-total-sectors">16</span></span>
+        <span data-tooltip="Sectors where your faction has active deployments" data-tip-below>DEPLOYED: <span class="im-stat" id="im-deployed-count">1</span></span>
+        <span data-tooltip="Total open roles available across all sectors right now" data-tip-below>OPEN ROLES: <span class="im-stat" id="im-open-roles">0</span></span>
+      </div>
+      <div class="im-faction-badge" id="im-faction-badge" data-tooltip="Your active faction — determines sector affinity bonuses" data-tip-below data-tip-left>PROTOSS · ENGINEERING</div>
+    </div>
+  </div>
+
+  <!-- ══ MAIN LAYOUT ═══════════════════════════════════════ -->
+  <div class="im-layout">
+
+    <!-- Left: Galaxy Grid -->
+    <div class="im-galaxy" id="im-galaxy">
+      <!-- Injected by industry-map.js -->
+    </div>
+
+    <!-- Right: Detail Panel -->
+    <div class="im-detail" id="im-detail">
+      <div class="im-detail-inner" id="im-detail-inner">
+        <div class="im-detail-placeholder">
+          <div class="im-detail-icon">🌐</div>
+          <div class="im-detail-title">SELECT A SECTOR</div>
+          <div class="im-detail-sub">Click any industry sector to view available roles, salary benchmarks, required power-ups, and faction deployment intel.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ LEGEND ════════════════════════════════════════════ -->
+  <div class="im-legend">
+    <div class="im-legend-item" data-tooltip="FMCG · Retail · MICE · F&B/Hospitality"><span class="im-dot" style="background:#ff7043"></span> ALPHA — People & Consumer</div>
+    <div class="im-legend-item" data-tooltip="Manufacturing · Construction · Logistics · Automotives"><span class="im-dot" style="background:#607d8b"></span> BETA — Industrial</div>
+    <div class="im-legend-item" data-tooltip="IT · Banking & Finance · Green Energy · Aviation"><span class="im-dot" style="background:#29b6f6"></span> GAMMA — Tech & Finance</div>
+    <div class="im-legend-item" data-tooltip="Government · Healthcare · Security · Sustainability"><span class="im-dot" style="background:#ab47bc"></span> DELTA — Specialized</div>
+    <div class="im-legend-item" style="margin-left:auto" data-tooltip="● Units are actively deployed in this sector"><span class="im-dot" style="background:#ffd700"></span> DEPLOYED</div>
+    <div class="im-legend-item" data-tooltip="◈ Sector is open — recruit units to deploy here"><span class="im-dot" style="background:#00e676"></span> AVAILABLE</div>
+    <div class="im-legend-item" data-tooltip="○ Requires faction affinity or higher level to access"><span class="im-dot" style="background:#5a7a9a"></span> RESTRICTED</div>
+  </div>
+
+  <script src="data/elixcraft-data.js"></script>
+  <script src="js/starfield.js"></script>
+  <script src="js/industry-map.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELIXCRAFT — Career Fog of War Map</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/career-map.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet" />
+</head>
+<body class="map-screen">
+  <canvas id="starfield"></canvas>
+
+  <!-- HUD -->
+  <div class="cm-hud">
+    <a href="dashboard.html" class="hud-back">← COMMAND CENTER</a>
+    <div class="cm-hud-title">⬡ CAREER FOG OF WAR MAP</div>
+    <a href="industry-map.html" style="font-family:var(--font-ui);font-size:0.55rem;letter-spacing:0.12em;color:var(--text-dim);text-decoration:none;padding:4px 10px;border:1px solid #1a3050;border-radius:2px">🌐 INDUSTRY MAP</a>
+    <div class="cm-hud-right">
+      <span class="cm-legend-item" data-tooltip="✓ Unlocked — role is accessible at your current level" data-tip-below><span class="cm-dot dot-unlocked"></span> Unlocked</span>
+      <span class="cm-legend-item" data-tooltip="▶ Current — your active role right now" data-tip-below><span class="cm-dot dot-active"></span> Current</span>
+      <span class="cm-legend-item" data-tooltip="🔒 Locked — level up to access this role" data-tip-below><span class="cm-dot dot-locked"></span> Locked</span>
+      <span class="cm-legend-item" data-tooltip="🌫️ Fog of War — path hidden until you progress further" data-tip-below data-tip-left><span class="cm-dot dot-fog"></span> Fog of War</span>
+    </div>
+  </div>
+
+  <!-- Faction Tabs -->
+  <div class="cm-faction-tabs">
+    <button class="cm-tab active" onclick="switchFaction('protoss',this)" data-faction="protoss" data-tooltip="IT, Data/AI, Cloud, Cybersec & Engineering Management">⚡ PROTOSS — Engineering</button>
+    <button class="cm-tab" onclick="switchFaction('terran',this)" data-faction="terran" data-tooltip="Operations, Finance, Procurement & Project Management">🏗️ TERRAN — Operations</button>
+    <button class="cm-tab" onclick="switchFaction('zerg',this)" data-faction="zerg" data-tooltip="Sales, Marketing, HR & Product Management">🦾 ZERG — Sales & People</button>
+  </div>
+
+  <!-- Map Canvas Area -->
+  <div class="cm-canvas-wrap">
+    <canvas id="fog-canvas"></canvas>
+    <div class="cm-map" id="cm-map">
+      <!-- Nodes injected by JS -->
+    </div>
+  </div>
+
+  <!-- Detail Panel (right side) -->
+  <div class="cm-detail-panel" id="cm-detail-panel">
+    <div class="cm-detail-inner">
+      <div class="cdp-header">SELECT A NODE TO EXPLORE</div>
+      <div class="cdp-body" id="cdp-body">
+        <p style="color:var(--text-dim);font-size:0.75rem;line-height:1.6">
+          Click any unlocked career node on the map to view role details, skill requirements, salary benchmarks, and unlock conditions.
+        </p>
+        <div class="cdp-tip">🗺️ Nodes behind the fog of war represent career paths not yet visible. Level up and complete quests to reveal them.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Level Up Prompt -->
+  <div class="levelup-bar" id="levelup-bar">
+    <div class="lu-content">
+      <span class="lu-icon">⬆️</span>
+      <div>
+        <div class="lu-title" id="lu-title">PATH UNLOCKED</div>
+        <div class="lu-sub"  id="lu-sub">Senior Engineer track revealed</div>
+      </div>
+      <button onclick="dismissLevelUp()">✕</button>
+    </div>
+  </div>
+
+  <script src="data/elixcraft-data.js"></script>
+  <script src="js/game-state.js"></script>
+  <script src="js/starfield.js"></script>
+  <script src="js/career-map.js"></script>
+</body>
+</html>

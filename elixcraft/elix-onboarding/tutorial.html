@@ -1,0 +1,2141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELIX ONBOARDING — Onboarding User Guide</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ══════════════════════════════════════════════
+       SCREEN STYLES
+    ══════════════════════════════════════════════ */
+    :root {
+      --void:     #04080f;
+      --deep:     #07101e;
+      --panel:    #0a1628;
+      --panel2:   #0d1e35;
+      --border:   #1a3050;
+      --glow:     #1e4a7a;
+
+      --gold:     #ffd700;
+      --gold-dim: #6b5300;
+      --blue:     #4a9eff;
+      --blue-dim: #1a3d6e;
+      --purple:   #b44fff;
+      --purple-dim:#4a1a70;
+
+      --text:     #c8d8e8;
+      --dim:      #5a7a9a;
+      --bright:   #ffffff;
+      --success:  #00e676;
+      --warn:     #ffa726;
+      --danger:   #ef5350;
+
+      --ui:   'Orbitron', monospace;
+      --body: 'Exo 2', sans-serif;
+
+      /* booklet page size */
+      --page-w: 794px;
+      --page-h: 1123px;
+      --margin: 52px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #020509;
+      font-family: var(--body);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Download Bar (screen only) ─────────────── */
+    .dl-bar {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: var(--deep);
+      border-bottom: 1px solid var(--glow);
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .dl-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .dl-logo {
+      font-family: var(--ui);
+      font-size: 0.75rem;
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      color: var(--gold);
+      text-shadow: 0 0 16px var(--gold);
+    }
+
+    .dl-sub {
+      font-family: var(--ui);
+      font-size: 0.5rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+    }
+
+    .dl-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 22px;
+      background: linear-gradient(135deg, #c8a200, #ffd700);
+      color: #040810;
+      border: none;
+      border-radius: 3px;
+      font-family: var(--ui);
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 0 20px rgba(255,215,0,0.3);
+    }
+
+    .btn-download:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 28px rgba(255,215,0,0.45);
+    }
+
+    .btn-download:active { transform: none; }
+
+    .btn-back {
+      padding: 8px 16px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--dim);
+      font-family: var(--ui);
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      border-radius: 3px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-back:hover { border-color: var(--glow); color: var(--text); }
+
+    /* ── Page Container (screen) ────────────────── */
+    .booklet-wrapper {
+      max-width: var(--page-w);
+      margin: 32px auto 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      box-shadow: 0 0 80px rgba(0,0,0,0.8);
+    }
+
+    /* ══════════════════════════════════════════════
+       BOOKLET PAGE
+    ══════════════════════════════════════════════ */
+    .page {
+      width: var(--page-w);
+      height: var(--page-h);
+      min-height: var(--page-h);
+      max-height: var(--page-h);
+      background: var(--panel);
+      position: relative;
+      overflow: hidden;
+      padding: var(--margin);
+      border-bottom: 2px solid var(--void);
+    }
+
+    /* ── Decorative corner marks ─── */
+    .page::before,
+    .page::after {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-color: var(--gold-dim);
+      border-style: solid;
+    }
+
+    .page::before { top: 14px; left: 14px; border-width: 1px 0 0 1px; }
+    .page::after  { bottom: 14px; right: 14px; border-width: 0 1px 1px 0; }
+
+    /* ── Page number ─── */
+    .page-num {
+      position: absolute;
+      bottom: 20px;
+      right: var(--margin);
+      font-family: var(--ui);
+      font-size: 0.5rem;
+      letter-spacing: 0.2em;
+      color: var(--gold-dim);
+    }
+
+    /* ── Running header ─── */
+    .page-running {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--ui);
+      font-size: 0.42rem;
+      letter-spacing: 0.25em;
+      color: var(--gold-dim);
+      white-space: nowrap;
+    }
+
+    /* Background hex grid decoration */
+    .page-bg-hex {
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(60deg, rgba(255,215,0,0.015) 0, rgba(255,215,0,0.015) 1px, transparent 1px, transparent 60px),
+        repeating-linear-gradient(-60deg, rgba(255,215,0,0.015) 0, rgba(255,215,0,0.015) 1px, transparent 1px, transparent 60px);
+      pointer-events: none;
+    }
+
+    /* ══════════════════════════════════════════════
+       TYPOGRAPHY
+    ══════════════════════════════════════════════ */
+    .chapter-label {
+      font-family: var(--ui);
+      font-size: 0.48rem;
+      letter-spacing: 0.35em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      opacity: 0.8;
+    }
+
+    h1.booklet-title {
+      font-family: var(--ui);
+      font-size: 3.2rem;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: 0.06em;
+      color: var(--bright);
+      text-shadow: 0 0 40px rgba(255,215,0,0.4);
+      margin-bottom: 8px;
+    }
+
+    h1.booklet-title span { color: var(--gold); }
+
+    h2.section-title {
+      font-family: var(--ui);
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--bright);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--glow);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h2.section-title .s-icon {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    h3.sub-title {
+      font-family: var(--ui);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--gold);
+      margin-bottom: 8px;
+      margin-top: 20px;
+    }
+
+    h3.sub-title:first-child { margin-top: 0; }
+
+    p.body-text {
+      font-size: 0.85rem;
+      line-height: 1.75;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    p.body-text strong { color: var(--bright); }
+    p.body-text em { color: var(--gold); font-style: normal; }
+
+    .lede {
+      font-size: 1rem;
+      line-height: 1.65;
+      color: var(--text);
+      margin-bottom: 20px;
+      font-style: italic;
+      border-left: 3px solid var(--gold);
+      padding-left: 14px;
+    }
+
+    /* ══════════════════════════════════════════════
+       COVER PAGE
+    ══════════════════════════════════════════════ */
+    .cover-page {
+      background: var(--void);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 60px var(--margin);
+    }
+
+    .cover-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 30%, rgba(255,215,0,0.07) 0%, transparent 65%),
+        radial-gradient(ellipse 100% 80% at 30% 70%, rgba(74,158,255,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 75% 20%, rgba(180,79,255,0.05) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .cover-hex-field {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      opacity: 0.4;
+    }
+
+    .cover-hex-field::before {
+      content: '⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡ ⬡';
+      font-size: 3rem;
+      color: var(--gold-dim);
+      line-height: 1.8;
+      word-spacing: 20px;
+      display: block;
+      letter-spacing: 10px;
+    }
+
+    .cover-top { position: relative; z-index: 1; }
+    .cover-mid { position: relative; z-index: 1; text-align: center; }
+    .cover-bot { position: relative; z-index: 1; }
+
+    .cover-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border: 1px solid var(--gold-dim);
+      border-radius: 3px;
+      font-family: var(--ui);
+      font-size: 0.5rem;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      margin-bottom: 24px;
+    }
+
+    .cover-main-title {
+      font-family: var(--ui);
+      font-size: 4.8rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      line-height: 0.9;
+      margin-bottom: 16px;
+    }
+
+    .cover-main-title .elix { color: var(--gold); text-shadow: 0 0 60px rgba(255,215,0,0.5); }
+    .cover-main-title .craft { color: var(--bright); }
+
+    .cover-subtitle {
+      font-family: var(--ui);
+      font-size: 1.1rem;
+      letter-spacing: 0.3em;
+      color: var(--dim);
+      margin-bottom: 40px;
+    }
+
+    .cover-faction-row {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      margin-bottom: 40px;
+    }
+
+    .cover-faction {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cover-faction-icon {
+      font-size: 2.2rem;
+      filter: drop-shadow(0 0 12px currentColor);
+    }
+
+    .cover-faction-name {
+      font-family: var(--ui);
+      font-size: 0.5rem;
+      letter-spacing: 0.2em;
+    }
+
+    .cover-separator {
+      width: 200px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+      margin: 0 auto 40px;
+    }
+
+    .cover-tagline {
+      font-size: 0.85rem;
+      color: var(--dim);
+      letter-spacing: 0.05em;
+      font-style: italic;
+      margin-bottom: 8px;
+    }
+
+    .cover-bot-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .cover-bot-text {
+      font-family: var(--ui);
+      font-size: 0.48rem;
+      letter-spacing: 0.2em;
+      color: var(--gold-dim);
+    }
+
+    .cover-version {
+      font-family: var(--ui);
+      font-size: 0.5rem;
+      letter-spacing: 0.15em;
+      color: var(--dim);
+    }
+
+    /* ══════════════════════════════════════════════
+       TABLE OF CONTENTS
+    ══════════════════════════════════════════════ */
+    .toc-entry {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(26,48,80,0.5);
+      cursor: default;
+    }
+
+    .toc-entry:last-child { border-bottom: none; }
+
+    .toc-num {
+      font-family: var(--ui);
+      font-size: 0.55rem;
+      color: var(--gold);
+      width: 36px;
+      flex-shrink: 0;
+    }
+
+    .toc-icon {
+      font-size: 0.9rem;
+      width: 28px;
+      flex-shrink: 0;
+    }
+
+    .toc-label {
+      flex: 1;
+      font-size: 0.88rem;
+      color: var(--text);
+    }
+
+    .toc-sub {
+      font-size: 0.7rem;
+      color: var(--dim);
+      display: block;
+      margin-top: 1px;
+    }
+
+    .toc-dots {
+      flex: 1;
+      border-bottom: 1px dotted var(--border);
+      margin: 0 10px 4px;
+    }
+
+    .toc-page {
+      font-family: var(--ui);
+      font-size: 0.55rem;
+      color: var(--dim);
+      width: 24px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════════════
+       DEPARTMENT CARDS
+    ══════════════════════════════════════════════ */
+    .faction-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 16px 0;
+    }
+
+    .faction-block {
+      border-radius: 4px;
+      padding: 18px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .faction-block.protoss {
+      background: rgba(255,215,0,0.06);
+      border: 1px solid var(--gold-dim);
+    }
+
+    .faction-block.terran {
+      background: rgba(74,158,255,0.06);
+      border: 1px solid var(--blue-dim);
+    }
+
+    .faction-block.zerg {
+      background: rgba(180,79,255,0.06);
+      border: 1px solid var(--purple-dim);
+    }
+
+    .faction-block-icon { font-size: 1.8rem; margin-bottom: 8px; display: block; }
+
+    .faction-block-label {
+      font-family: var(--ui);
+      font-size: 0.48rem;
+      letter-spacing: 0.25em;
+      margin-bottom: 4px;
+    }
+
+    .faction-block.protoss .faction-block-label { color: var(--gold); }
+    .faction-block.terran  .faction-block-label { color: var(--blue); }
+    .faction-block.zerg    .faction-block-label { color: var(--purple); }
+
+    .faction-block-name {
+      font-family: var(--ui);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--bright);
+      margin-bottom: 8px;
+    }
+
+    .faction-block-desc {
+      font-size: 0.72rem;
+      color: var(--dim);
+      line-height: 1.55;
+      margin-bottom: 12px;
+    }
+
+    /* stat bars */
+    .stat-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+
+    .stat-row-label {
+      font-family: var(--ui);
+      font-size: 0.42rem;
+      letter-spacing: 0.1em;
+      color: var(--dim);
+      width: 28px;
+      flex-shrink: 0;
+    }
+
+    .stat-bar-outer {
+      flex: 1;
+      height: 4px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .stat-bar-fill { height: 100%; border-radius: 2px; }
+    .bar-protoss { background: linear-gradient(90deg, var(--gold-dim), var(--gold)); }
+    .bar-terran  { background: linear-gradient(90deg, var(--blue-dim), var(--blue)); }
+    .bar-zerg    { background: linear-gradient(90deg, var(--purple-dim), var(--purple)); }
+
+    .stat-num {
+      font-family: var(--ui);
+      font-size: 0.45rem;
+      color: var(--dim);
+      width: 22px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .faction-units {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 10px;
+    }
+
+    .unit-tag {
+      padding: 2px 7px;
+      border-radius: 2px;
+      font-family: var(--ui);
+      font-size: 0.42rem;
+      letter-spacing: 0.08em;
+    }
+
+    .faction-block.protoss .unit-tag { background: rgba(255,215,0,0.1); color: var(--gold); border: 1px solid var(--gold-dim); }
+    .faction-block.terran  .unit-tag { background: rgba(74,158,255,0.1); color: var(--blue); border: 1px solid var(--blue-dim); }
+    .faction-block.zerg    .unit-tag { background: rgba(180,79,255,0.1); color: var(--purple); border: 1px solid var(--purple-dim); }
+
+    /* ══════════════════════════════════════════════
+       STAT DEFINITIONS
+    ══════════════════════════════════════════════ */
+    .stat-def-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 16px 0;
+    }
+
+    .stat-def-card {
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 16px;
+    }
+
+    .stat-def-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .stat-def-abbr {
+      font-family: var(--ui);
+      font-size: 1.4rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .str-color { color: #ef5350; }
+    .int-color { color: var(--gold); }
+    .cha-color { color: var(--blue); }
+    .dex-color { color: var(--success); }
+
+    .stat-def-full {
+      font-family: var(--ui);
+      font-size: 0.58rem;
+      letter-spacing: 0.12em;
+      color: var(--bright);
+    }
+
+    .stat-def-icon { font-size: 1.2rem; }
+
+    .stat-def-desc {
+      font-size: 0.76rem;
+      color: var(--dim);
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .stat-def-examples {
+      font-size: 0.68rem;
+      color: var(--dim);
+      opacity: 0.8;
+    }
+
+    .stat-def-examples strong { color: var(--text); }
+
+    /* ══════════════════════════════════════════════
+       STEP FLOW
+    ══════════════════════════════════════════════ */
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(26,48,80,0.5);
+      position: relative;
+    }
+
+    .step-item:last-child { border-bottom: none; }
+
+    .step-num-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .step-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255,215,0,0.1);
+      border: 1px solid var(--gold-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--ui);
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    .step-line {
+      flex: 1;
+      width: 1px;
+      background: var(--border);
+      margin-top: 4px;
+    }
+
+    .step-body { flex: 1; }
+
+    .step-title {
+      font-family: var(--ui);
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      color: var(--bright);
+      margin-bottom: 6px;
+    }
+
+    .step-desc {
+      font-size: 0.8rem;
+      color: var(--dim);
+      line-height: 1.65;
+    }
+
+    .step-desc strong { color: var(--text); }
+
+    .step-tip {
+      margin-top: 8px;
+      padding: 8px 10px;
+      background: rgba(255,215,0,0.05);
+      border-left: 2px solid var(--gold-dim);
+      border-radius: 0 3px 3px 0;
+      font-size: 0.72rem;
+      color: var(--gold);
+    }
+
+    /* ══════════════════════════════════════════════
+       INFO BOXES
+    ══════════════════════════════════════════════ */
+    .info-box {
+      padding: 14px 16px;
+      border-radius: 4px;
+      margin: 14px 0;
+      font-size: 0.78rem;
+      line-height: 1.65;
+    }
+
+    .info-box.gold {
+      background: rgba(255,215,0,0.06);
+      border: 1px solid var(--gold-dim);
+      color: var(--gold);
+    }
+
+    .info-box.blue {
+      background: rgba(74,158,255,0.06);
+      border: 1px solid var(--blue-dim);
+      color: var(--blue);
+    }
+
+    .info-box.green {
+      background: rgba(0,230,118,0.06);
+      border: 1px solid rgba(0,230,118,0.25);
+      color: var(--success);
+    }
+
+    .info-box.red {
+      background: rgba(239,83,80,0.06);
+      border: 1px solid rgba(239,83,80,0.25);
+      color: var(--danger);
+    }
+
+    .info-box-title {
+      font-family: var(--ui);
+      font-size: 0.5rem;
+      letter-spacing: 0.2em;
+      margin-bottom: 5px;
+    }
+
+    /* ══════════════════════════════════════════════
+       HUD DIAGRAM
+    ══════════════════════════════════════════════ */
+    .hud-diagram {
+      background: var(--void);
+      border: 1px solid var(--glow);
+      border-radius: 4px;
+      padding: 16px;
+      font-family: var(--ui);
+      font-size: 0.52rem;
+      letter-spacing: 0.05em;
+      line-height: 2;
+      color: var(--dim);
+      margin: 14px 0;
+    }
+
+    .hud-diagram .hl-gold   { color: var(--gold); }
+    .hud-diagram .hl-blue   { color: var(--blue); }
+    .hud-diagram .hl-green  { color: var(--success); }
+    .hud-diagram .hl-purple { color: var(--purple); }
+    .hud-diagram .hl-white  { color: var(--bright); }
+
+    /* ══════════════════════════════════════════════
+       FEATURE TABLE
+    ══════════════════════════════════════════════ */
+    .feature-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 0.78rem;
+    }
+
+    .feature-table th {
+      font-family: var(--ui);
+      font-size: 0.46rem;
+      letter-spacing: 0.15em;
+      color: var(--dim);
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--glow);
+    }
+
+    .feature-table td {
+      padding: 9px 10px;
+      border-bottom: 1px solid rgba(26,48,80,0.4);
+      color: var(--text);
+      vertical-align: top;
+    }
+
+    .feature-table tr:last-child td { border-bottom: none; }
+    .feature-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .feature-table .game-term { color: var(--gold); font-family: var(--ui); font-size: 0.7rem; }
+    .feature-table .hr-term { color: var(--blue); }
+    .feature-table .desc { color: var(--dim); font-size: 0.72rem; }
+
+    /* ══════════════════════════════════════════════
+       CALLOUT / CALLOUT ROW
+    ══════════════════════════════════════════════ */
+    .callout-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .callout-card {
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .callout-card-icon { font-size: 1.6rem; margin-bottom: 8px; }
+
+    .callout-card-title {
+      font-family: var(--ui);
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      color: var(--text);
+      margin-bottom: 5px;
+    }
+
+    .callout-card-desc {
+      font-size: 0.7rem;
+      color: var(--dim);
+      line-height: 1.55;
+    }
+
+    /* ══════════════════════════════════════════════
+       GLOSSARY
+    ══════════════════════════════════════════════ */
+    .glossary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .glossary-item {
+      padding: 8px 10px;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+    }
+
+    .glossary-term {
+      font-family: var(--ui);
+      font-size: 0.52rem;
+      letter-spacing: 0.1em;
+      color: var(--gold);
+      margin-bottom: 3px;
+    }
+
+    .glossary-def {
+      font-size: 0.72rem;
+      color: var(--dim);
+      line-height: 1.5;
+    }
+
+    /* ══════════════════════════════════════════════
+       BACK COVER
+    ══════════════════════════════════════════════ */
+    .back-cover {
+      background: var(--void);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 60px var(--margin);
+    }
+
+    /* ══════════════════════════════════════════════
+       PRINT / PDF STYLES
+    ══════════════════════════════════════════════ */
+    @media print {
+      body {
+        background: #04080f !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .dl-bar { display: none !important; }
+
+      .booklet-wrapper {
+        max-width: 100%;
+        margin: 0;
+        box-shadow: none;
+      }
+
+      .page {
+        width: 100%;
+        min-height: 100vh;
+        page-break-after: always;
+        break-after: page;
+      }
+
+      .page:last-child {
+        page-break-after: avoid;
+        break-after: avoid;
+      }
+
+      @page {
+        size: A4 portrait;
+        margin: 0;
+      }
+    }
+
+    /* ── Divider line ─── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--glow), transparent);
+      margin: 20px 0;
+    }
+
+    /* ── Two-col layout ─── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 14px 0;
+    }
+
+    /* ── Career grade table ─── */
+    .grade-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(26,48,80,0.4);
+    }
+
+    .grade-row:last-child { border-bottom: none; }
+
+    .grade-badge {
+      font-family: var(--ui);
+      font-size: 0.55rem;
+      font-weight: 700;
+      width: 28px;
+      text-align: center;
+    }
+
+    .grade-title { flex: 1; font-size: 0.78rem; color: var(--text); }
+
+    .grade-level {
+      font-family: var(--ui);
+      font-size: 0.5rem;
+      color: var(--dim);
+      width: 48px;
+      text-align: center;
+    }
+
+    .grade-salary {
+      font-size: 0.7rem;
+      color: var(--dim);
+      width: 110px;
+      text-align: right;
+    }
+
+    /* ── Small progress bar ─── */
+    .mini-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mini-bar-outer {
+      flex: 1;
+      height: 4px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .mini-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Download Bar (screen only) ─── -->
+  <div class="dl-bar">
+    <div class="dl-bar-left">
+      <span class="dl-logo">◆ ELIX ONBOARDING</span>
+      <span class="dl-sub">ONBOARDING USER GUIDE</span>
+    </div>
+    <div class="dl-bar-right">
+      <a href="index.html" class="btn-back">← BACK TO GAME</a>
+      <button class="btn-download" onclick="downloadPDF()">
+        ⬇ DOWNLOAD PDF MANUAL
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       BOOKLET CONTENT
+  ══════════════════════════════════════════════ -->
+  <div class="booklet-wrapper" id="booklet">
+
+    <!-- ═══ PAGE 1: COVER ═══ -->
+    <div class="page cover-page">
+      <div class="cover-bg"></div>
+      <div class="cover-hex-field"></div>
+
+      <div class="cover-top">
+        <div style="font-family:var(--ui);font-size:0.5rem;letter-spacing:0.3em;color:var(--gold-dim)">ELITEZ INTELLIGENCE XECUTION</div>
+      </div>
+
+      <div class="cover-mid">
+        <div class="cover-badge">◆ ONBOARDING USER GUIDE</div>
+        <div class="cover-main-title">
+          <span class="elix">ELIX</span><span class="craft">CRAFT</span>
+        </div>
+        <div class="cover-subtitle">PROFESSIONAL ONBOARDING PLATFORM</div>
+        <div class="cover-separator"></div>
+        <div class="cover-faction-row">
+          <div class="cover-faction">
+            <span class="cover-faction-icon" style="color:#ffd700">⚡</span>
+            <span class="cover-faction-name" style="color:#ffd700">TECHNOLOGY</span>
+            <span style="font-size:0.62rem;color:var(--dim)">Engineering</span>
+          </div>
+          <div class="cover-faction">
+            <span class="cover-faction-icon" style="color:#4a9eff">🏗️</span>
+            <span class="cover-faction-name" style="color:#4a9eff">OPERATIONS</span>
+            <span style="font-size:0.62rem;color:var(--dim)">Operations</span>
+          </div>
+          <div class="cover-faction">
+            <span class="cover-faction-icon" style="color:#b44fff">🦾</span>
+            <span class="cover-faction-name" style="color:#b44fff">GROWTH</span>
+            <span style="font-size:0.62rem;color:var(--dim)">Sales & Growth</span>
+          </div>
+        </div>
+        <p class="cover-tagline">Your career is your command. Your team is your army. Your performance is your power.</p>
+      </div>
+
+      <div class="cover-bot">
+        <div style="height:1px;background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);margin-bottom:16px"></div>
+        <div class="cover-bot-row">
+          <div>
+            <div class="cover-bot-text">SINGAPORE SkillsFuture & MOM ALIGNED</div>
+            <div class="cover-bot-text" style="margin-top:3px;opacity:0.5">ELITEZ HR · PROPRIETARY DOCUMENTATION</div>
+          </div>
+          <div style="text-align:right">
+            <div class="cover-version">VERSION 1.0 · BUILD 2026</div>
+            <div class="cover-version" style="margin-top:3px;opacity:0.6">CLASSIFIED: TEAM MEMBER LEVEL</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE 2: TABLE OF CONTENTS ═══ -->
+    <div class="page">
+      <div class="page-bg-hex"></div>
+      <div class="page-running">ELIX ONBOARDING · ONBOARDING USER GUIDE</div>
+      <div class="page-num">02</div>
+
+      <div class="chapter-label">INDEX</div>
+      <h2 class="section-title"><span class="s-icon">📋</span> TABLE OF CONTENTS</h2>
+
+      <p class="lede" style="margin-bottom:20px">
+        This manual covers everything you need to deploy as a Team Member in ELIX ONBOARDING — from choosing your faction to navigating the full HR intelligence suite.
+      </p>
+
+      <div class="toc-entry">
+        <div class="toc-num">01</div>
+        <div class="toc-icon">◆</div>
+        <div class="toc-label">What is ELIX ONBOARDING?<span class="toc-sub">The concept, the world, and the mission</span></div>
+        <div class="toc-dots"></div>
+        <div class="toc-page">03</div>
+      </div>
+      <div class="toc-entry">
+        <div class="toc-num">02</div>
+        <div class="toc-icon">🎯</div>
+        <div class="toc-label">The Landing Page — Your Entry Point<span class="toc-sub">Faction cards, save detection, and navigation</span></div>
+        <div class="toc-dots"></div>
+        <div class="toc-page">04</div>
+      </div>
+      <div class="toc-entry">
+        <div class="toc-num">03</div>
+        <div class="toc-icon">⚡</div>
+        <div class="toc-label">Choosing Your Faction<span class="toc-sub">Protoss, Terran & Zerg — strengths, roles & lore</span></div>
+        <div class="toc-dots"></div>
+        <div class="toc-page">05</div>
+      </div>
+      <div class="toc-entry">
+        <div class="toc-num">04</div>
+        <div class="toc-icon">📊</div>
+        <div class="toc-label">Profile Stats — STR, INT, CHA, DEX<span class="toc-sub">Understanding your Onboarding capabilities</span></div>
+        <div class="toc-dots"></div>
+        <div class="toc-page">06</div>
+      </div>
+      <div class="toc-entry">
+        <div class="toc-num">05</div>
+        <div class="toc-icon">⚙</div>
+        <div class="toc-label">Character Creation — 6-Step Deployment<span class="toc-sub">Role selection, stat allocation, skills & benefits</span></div>
+        <div class="toc-dots"></div>
+        <div class="toc-page">07</div>
+      </div>
+      <div class="toc-entry">
+        <div class="toc-num">06</div>
+        <div class="toc-icon">🏛️</div>
+        <div class="toc-label">The Dashboard<span class="toc-sub">Resource bar, team roster, maps, objective board & tech tree</span></div>
+        <div class="toc-dots"></div>
+        <div class="toc-page">08</div>
+      </div>
+      <div class="toc-entry">
+        <div class="toc-num">07</div>
+        <div class="toc-icon">📊</div>
+        <div class="toc-label">The HR Portal<span class="toc-sub">PTO Shield, Missions, Claims, HR Advisor & more</span></div>
+        <div class="toc-dots"></div>
+        <div class="toc-page">09</div>
+      </div>
+      <div class="toc-entry">
+        <div class="toc-num">08</div>
+        <div class="toc-icon">🗺</div>
+        <div class="toc-label">Career Progression & Grade Structure<span class="toc-sub">Levels, grades, salary bands & promotion paths</span></div>
+        <div class="toc-dots"></div>
+        <div class="toc-page">10</div>
+      </div>
+      <div class="toc-entry">
+        <div class="toc-num">09</div>
+        <div class="toc-icon">🏆</div>
+        <div class="toc-label">The Performance Review — Performance Review<span class="toc-sub">Surviving the appraisal cycle and levelling up</span></div>
+        <div class="toc-dots"></div>
+        <div class="toc-page">11</div>
+      </div>
+      <div class="toc-entry">
+        <div class="toc-num">10</div>
+        <div class="toc-icon">📖</div>
+        <div class="toc-label">Glossary — Game Terms to HR Terms<span class="toc-sub">Translation guide for all ELIX ONBOARDING terminology</span></div>
+        <div class="toc-dots"></div>
+        <div class="toc-page">12</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="callout-row" style="margin-top:20px">
+        <div class="callout-card">
+          <div class="callout-card-icon">🇸🇬</div>
+          <div class="callout-card-title">MOM ALIGNED</div>
+          <div class="callout-card-desc">All leave, CPF & employment rules follow Singapore's Ministry of Manpower guidelines</div>
+        </div>
+        <div class="callout-card">
+          <div class="callout-card-icon">📚</div>
+          <div class="callout-card-title">SKILLSFUTURE</div>
+          <div class="callout-card-desc">Career paths and skill nodes are mapped to SkillsFuture Singapore frameworks</div>
+        </div>
+        <div class="callout-card">
+          <div class="callout-card-icon">🤖</div>
+          <div class="callout-card-title">AI-POWERED</div>
+          <div class="callout-card-desc">ELIX HR Advisor provides real-time HR policy guidance and career coaching</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE 3: WHAT IS ELIX ONBOARDING ═══ -->
+    <div class="page">
+      <div class="page-bg-hex"></div>
+      <div class="page-running">ELIX ONBOARDING · ONBOARDING USER GUIDE</div>
+      <div class="page-num">03</div>
+
+      <div class="chapter-label">CHAPTER 01</div>
+      <h2 class="section-title"><span class="s-icon">◆</span> WHAT IS ELIX ONBOARDING?</h2>
+
+      <p class="lede">
+        ELIX ONBOARDING transforms the way employees and managers experience HR — turning the daily work of career management into a strategic, engaging command experience.
+      </p>
+
+      <p class="body-text">
+        <strong>ELIX</strong> stands for <em>Elitez Intelligence Xecution</em> — the AI-powered HR intelligence engine that runs beneath ELIX ONBOARDING. Built on Singapore's <strong>SkillsFuture</strong> and <strong>MOM (Ministry of Manpower)</strong> frameworks, ELIX ONBOARDING reimagines the employee lifecycle as a real-time strategy game where every employee is a <em>Team Member</em> in a growing organization.
+      </p>
+
+      <p class="body-text">
+        Whether you are an <strong>individual contributor</strong> tracking your KPIs and managing your leave, a <strong>team lead</strong> monitoring your squad's engagement and performance, or a <strong>senior manager</strong> analysing company-wide attrition and flight risk — ELIX ONBOARDING gives you the intelligence and tools to make better decisions, faster.
+      </p>
+
+      <div class="info-box gold">
+        <div class="info-box-title">◆ CORE PHILOSOPHY</div>
+        Your career is not a ladder — it is a campaign. Each project completed, skill mastered, and milestone reached advances your Team Member through levels, unlocks new career nodes, and strengthens your organization. ELIX ONBOARDING makes this journey visible, measurable, and rewarding.
+      </div>
+
+      <h3 class="sub-title">THE TWO PORTALS</h3>
+
+      <div class="two-col">
+        <div style="background:rgba(74,158,255,0.05);border:1px solid var(--blue-dim);border-radius:4px;padding:14px">
+          <div style="font-family:var(--ui);font-size:0.58rem;letter-spacing:0.15em;color:var(--blue);margin-bottom:8px">👤 EMPLOYEE PORTAL</div>
+          <p style="font-size:0.78rem;color:var(--dim);line-height:1.6">Your personal command interface. Track KPIs as Mission Objectives, manage leave via PTO Shield, submit expense claims, get AI-powered HR guidance, and view your career progression path.</p>
+        </div>
+        <div style="background:rgba(255,215,0,0.05);border:1px solid var(--gold-dim);border-radius:4px;padding:14px">
+          <div style="font-family:var(--ui);font-size:0.58rem;letter-spacing:0.15em;color:var(--gold);margin-bottom:8px">🏛️ EMPLOYER PORTAL</div>
+          <p style="font-size:0.78rem;color:var(--dim);line-height:1.6">The strategic command layer. Access the full Team Directory, monitor team headcount and hiring pipeline, run analytics across cost, demographics, engagement, talent pipeline, and risk.</p>
+        </div>
+      </div>
+
+      <h3 class="sub-title">HOW IT WORKS</h3>
+
+      <p class="body-text">
+        Everything in ELIX ONBOARDING maps directly to <strong>real HR processes and employment data</strong>. There are no random elements or fictional mechanics. When your character gains XP, it reflects completing a real training programme. When you "unlock" a career node, it reflects meeting genuine competency requirements for a role. When you "equip armor," you are selecting your actual benefits package.
+      </p>
+
+      <div class="info-box blue">
+        <div class="info-box-title">ℹ SINGAPORE CONTEXT</div>
+        All leave entitlements, CPF contribution rates, salary bands, and employment terms displayed in ELIX ONBOARDING are based on current Singapore legislation and market benchmarks. The system is updated annually in line with MOM and CPF Board releases.
+      </div>
+
+      <p class="body-text">
+        ELIX ONBOARDING is built for <strong>Elitez</strong> — a Singapore-based HR and recruitment firm — and reflects the actual industry sectors, role grades, and career frameworks used across their client portfolio spanning Technology, Finance, Healthcare, Sales, and Operations.
+      </p>
+    </div>
+
+    <!-- ═══ PAGE 4: THE LANDING PAGE ═══ -->
+    <div class="page">
+      <div class="page-bg-hex"></div>
+      <div class="page-running">ELIX ONBOARDING · ONBOARDING USER GUIDE</div>
+      <div class="page-num">04</div>
+
+      <div class="chapter-label">CHAPTER 02</div>
+      <h2 class="section-title"><span class="s-icon">🎯</span> THE LANDING PAGE — YOUR ENTRY POINT</h2>
+
+      <p class="body-text">
+        The ELIX ONBOARDING landing page is your <strong>Department Selection Screen</strong> — the entry point where every Onboarding journey begins. On first visit, you are presented with three department cards and must deploy to one of them. Returning players will see a <em>Save Detected</em> banner if prior session data exists.
+      </p>
+
+      <h3 class="sub-title">SCREEN ANATOMY</h3>
+
+      <div class="hud-diagram">
+        <div><span class="hl-gold">┌─ HEADER BAR ──────────────────────────────────────────────────────┐</span></div>
+        <div><span class="hl-white">│  ◆ ELIX ONBOARDING   PROFESSIONAL ONBOARDING PLATFORM          v1.0 · 2026   │</span></div>
+        <div><span class="hl-gold">├───────────────────────────────────────────────────────────────────┤</span></div>
+        <div><span class="hl-white">│                                                                   │</span></div>
+        <div><span class="hl-white">│   [🏗️ OPERATIONS]      [⚡ TECHNOLOGY — FEATURED]      [🦾 GROWTH]       │</span></div>
+        <div><span class="hl-blue">│   Operations       Engineering                  Sales & Growth   │</span></div>
+        <div><span class="hl-white">│   STR: ████████    INT: █████████               CHA: █████████  │</span></div>
+        <div><span class="hl-white">│                                                                   │</span></div>
+        <div><span class="hl-gold">├───────────────────────────────────────────────────────────────────┤</span></div>
+        <div><span class="hl-green">│  ▶ HOW IT WORKS — ELIX ONBOARDING OVERVIEW  [toggle]                    │</span></div>
+        <div><span class="hl-gold">├───────────────────────────────────────────────────────────────────┤</span></div>
+        <div><span class="hl-white">│  PROFILE DETECTED: ⚡ TECHNOLOGY · Staff Engineer · LVL 7 · 1,420 XP   │</span></div>
+        <div><span class="hl-green">│  [▶ CONTINUE]                          [START FRESH]           │</span></div>
+        <div><span class="hl-gold">└───────────────────────────────────────────────────────────────────┘</span></div>
+      </div>
+
+      <h3 class="sub-title">SECTION-BY-SECTION GUIDE</h3>
+
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-num-wrap">
+            <div class="step-num">A</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-body">
+            <div class="step-title">HEADER — LOGO & VERSION</div>
+            <div class="step-desc">The top-left <strong>◆ ELIX ONBOARDING</strong> logo is a clickable home icon on all internal pages. The hexagon symbol (⬡) is the ELIX brand mark, representing interconnected teams and career nodes. The version tag confirms you are on the latest deployment.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num-wrap">
+            <div class="step-num">B</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-body">
+            <div class="step-title">DEPARTMENT CARDS — THE HEART OF THE SCREEN</div>
+            <div class="step-desc">Three department cards represent the three primary department tracks. Each card displays the department's <strong>name, lore, unit types, and stat bars</strong>. The centre card (Protoss) is featured by default with a golden glow. <strong>Hover</strong> to preview; <strong>click the SELECT button</strong> to enter character creation.</div>
+            <div class="step-tip">⚡ You can click anywhere on the card (not just the button) to select a faction. The card will animate on hover.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num-wrap">
+            <div class="step-num">C</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-body">
+            <div class="step-title">HOW IT WORKS — COLLAPSIBLE GUIDE</div>
+            <div class="step-desc">The <strong>▶ HOW IT WORKS</strong> section expands to show the full 5-step game flow and stat legend. New Team Members should read this section before deploying. It explains the complete journey from department'selection through to the Performance Review performance review.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num-wrap">
+            <div class="step-num">D</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-body">
+            <div class="step-title">PROFILE DETECTED BANNER</div>
+            <div class="step-desc">If you have previously created a Team Member, a <em>PROFILE DETECTED</em> banner appears at the bottom of the screen showing your faction, role, level, and XP. You can <strong>Continue Game</strong> to resume exactly where you left off, or <strong>New Game</strong> to erase your save and start fresh. Save data is stored locally in your browser.</div>
+            <div class="step-tip">⚠ Clicking START FRESH permanently erases your Team Member data. This action cannot be undone.</div>
+          </div>
+        </div>
+        <div class="step-item" style="border-bottom:none">
+          <div class="step-num-wrap">
+            <div class="step-num">E</div>
+          </div>
+          <div class="step-body">
+            <div class="step-title">STARFIELD BACKGROUND</div>
+            <div class="step-desc">The animated starfield canvas behind the interface is a live particle system rendered on HTML5 Canvas. It responds to page focus and creates depth. It does not affect performance significantly but can be paused by blurring the tab.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE 5: CHOOSING YOUR DEPARTMENT ═══ -->
+    <div class="page">
+      <div class="page-bg-hex"></div>
+      <div class="page-running">ELIX ONBOARDING · ONBOARDING USER GUIDE</div>
+      <div class="page-num">05</div>
+
+      <div class="chapter-label">CHAPTER 03</div>
+      <h2 class="section-title"><span class="s-icon">⚡</span> CHOOSING YOUR DEPARTMENT</h2>
+
+      <p class="body-text">
+        Your faction is the most important decision you will make in ELIX ONBOARDING. It determines your <strong>starting stats, available roles, career track, team roster composition, and the industry sectors</strong> most relevant to your work. Choose the faction that best reflects your department or the direction you want your career to grow.
+      </p>
+
+      <div class="faction-grid">
+
+        <!-- PROTOSS -->
+        <div class="faction-block protoss">
+          <span class="faction-block-icon">⚡</span>
+          <div class="faction-block-label">TECHNOLOGY DEPARTMENT</div>
+          <div class="faction-block-name">ENGINEERING</div>
+          <div class="faction-block-desc">Elite technologists. Each unit is expensive but formidable. Powered by technical excellence and precision engineering. Masters of system architecture and deep technical craft.</div>
+          <div class="stat-row"><span class="stat-row-label">STR</span><div class="stat-bar-outer"><div class="stat-bar-fill bar-protoss" style="width:70%"></div></div><span class="stat-num">70</span></div>
+          <div class="stat-row"><span class="stat-row-label">INT</span><div class="stat-bar-outer"><div class="stat-bar-fill bar-protoss" style="width:95%"></div></div><span class="stat-num">95</span></div>
+          <div class="stat-row"><span class="stat-row-label">CHA</span><div class="stat-bar-outer"><div class="stat-bar-fill bar-protoss" style="width:55%"></div></div><span class="stat-num">55</span></div>
+          <div class="stat-row"><span class="stat-row-label">DEX</span><div class="stat-bar-outer"><div class="stat-bar-fill bar-protoss" style="width:65%"></div></div><span class="stat-num">65</span></div>
+          <div class="faction-units">
+            <span class="unit-tag">Developer</span>
+            <span class="unit-tag">Architect</span>
+            <span class="unit-tag">Staff Eng</span>
+            <span class="unit-tag">Principal</span>
+          </div>
+        </div>
+
+        <!-- TERRAN -->
+        <div class="faction-block terran">
+          <span class="faction-block-icon">🏗️</span>
+          <div class="faction-block-label">OPERATIONS DEPARTMENT</div>
+          <div class="faction-block-name">OPERATIONS</div>
+          <div class="faction-block-desc">Adaptable generalists. Build and sustain the organizational infrastructure. Masters of logistics, process optimisation, and cross-functional coordination. The backbone of the enterprise.</div>
+          <div class="stat-row"><span class="stat-row-label">STR</span><div class="stat-bar-outer"><div class="stat-bar-fill bar-terran" style="width:85%"></div></div><span class="stat-num">85</span></div>
+          <div class="stat-row"><span class="stat-row-label">INT</span><div class="stat-bar-outer"><div class="stat-bar-fill bar-terran" style="width:65%"></div></div><span class="stat-num">65</span></div>
+          <div class="stat-row"><span class="stat-row-label">CHA</span><div class="stat-bar-outer"><div class="stat-bar-fill bar-terran" style="width:75%"></div></div><span class="stat-num">75</span></div>
+          <div class="stat-row"><span class="stat-row-label">DEX</span><div class="stat-bar-outer"><div class="stat-bar-fill bar-terran" style="width:80%"></div></div><span class="stat-num">80</span></div>
+          <div class="faction-units">
+            <span class="unit-tag">Coordinator</span>
+            <span class="unit-tag">Analyst</span>
+            <span class="unit-tag">Manager</span>
+            <span class="unit-tag">Director</span>
+          </div>
+        </div>
+
+        <!-- ZERG -->
+        <div class="faction-block zerg">
+          <span class="faction-block-icon">🦾</span>
+          <div class="faction-block-label">GROWTH DEPARTMENT</div>
+          <div class="faction-block-name">SALES & GROWTH</div>
+          <div class="faction-block-desc">Relentless expansion. Overwhelm through velocity and momentum. Fast-evolving, high-energy, unstoppable. Driven by quotas, client relationships, and the art of the close.</div>
+          <div class="stat-row"><span class="stat-row-label">STR</span><div class="stat-bar-outer"><div class="stat-bar-fill bar-zerg" style="width:75%"></div></div><span class="stat-num">75</span></div>
+          <div class="stat-row"><span class="stat-row-label">INT</span><div class="stat-bar-outer"><div class="stat-bar-fill bar-zerg" style="width:60%"></div></div><span class="stat-num">60</span></div>
+          <div class="stat-row"><span class="stat-row-label">CHA</span><div class="stat-bar-outer"><div class="stat-bar-fill bar-zerg" style="width:95%"></div></div><span class="stat-num">95</span></div>
+          <div class="stat-row"><span class="stat-row-label">DEX</span><div class="stat-bar-outer"><div class="stat-bar-fill bar-zerg" style="width:90%"></div></div><span class="stat-num">90</span></div>
+          <div class="faction-units">
+            <span class="unit-tag">SDR</span>
+            <span class="unit-tag">AE</span>
+            <span class="unit-tag">Sr. AE</span>
+            <span class="unit-tag">VP Sales</span>
+          </div>
+        </div>
+
+      </div>
+
+      <h3 class="sub-title">DEPARTMENT COMPARISON</h3>
+
+      <table class="feature-table">
+        <thead>
+          <tr>
+            <th>ATTRIBUTE</th>
+            <th style="color:var(--gold)">⚡ TECHNOLOGY</th>
+            <th style="color:var(--blue)">🏗 TERRAN</th>
+            <th style="color:var(--purple)">🦾 GROWTH</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Primary Strength</td><td style="color:var(--gold)">Intelligence (95)</td><td style="color:var(--blue)">Strength (85)</td><td style="color:var(--purple)">Charisma (95)</td></tr>
+          <tr><td>Department</td><td>Engineering & Tech</td><td>Ops, Finance, HR</td><td>Sales & Marketing</td></tr>
+          <tr><td>Career Peak</td><td>Principal / VP Eng</td><td>Director / COO</td><td>VP Sales / CRO</td></tr>
+          <tr><td>Key Skill Focus</td><td>System design, AI/ML, cloud</td><td>Process, leadership, strategy</td><td>Negotiation, pipeline, CRM</td></tr>
+          <tr><td>Industry Sectors</td><td>IT, FinTech, Healthcare tech</td><td>Aviation, Finance, Gov</td><td>MICE, Retail, F&B, Real Estate</td></tr>
+          <tr><td>Typical Salary Band</td><td>S$9,500–S$40,000</td><td>S$5,000–S$25,000</td><td>S$4,000–S$30,000 (+ comm)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="info-box gold">
+        <div class="info-box-title">⚡ CAN I CHANGE DEPARTMENT LATER?</div>
+        Your faction is set during initial deployment. However, you can start a <strong>New Game</strong> at any time from the landing page to redeploy under a different faction. Note that this will erase your current Onboarding progress.
+      </div>
+    </div>
+
+    <!-- ═══ PAGE 6: PROFILE STATS ═══ -->
+    <div class="page">
+      <div class="page-bg-hex"></div>
+      <div class="page-running">ELIX ONBOARDING · ONBOARDING USER GUIDE</div>
+      <div class="page-num">06</div>
+
+      <div class="chapter-label">CHAPTER 04</div>
+      <h2 class="section-title"><span class="s-icon">📊</span> PROFILE STATS — STR, INT, CHA, DEX</h2>
+
+      <p class="body-text">
+        Every Team Member in ELIX ONBOARDING is defined by four core stats. These stats are not arbitrary numbers — they are direct representations of professional competencies used in real performance appraisals, mapped to the ELIX Assessment Framework and SkillsFuture competency bands.
+      </p>
+
+      <div class="stat-def-grid">
+
+        <div class="stat-def-card">
+          <div class="stat-def-header">
+            <div class="stat-def-icon">⚔️</div>
+            <div>
+              <div class="stat-def-abbr str-color">STR</div>
+              <div class="stat-def-full">STRENGTH</div>
+            </div>
+          </div>
+          <p class="stat-def-desc">The ability to lead, influence outcomes, and drive results through others. High STR Team Members are effective managers, change agents, and executives who can marshal resources and move organisations.</p>
+          <div class="stat-def-examples"><strong>Real-world equivalents:</strong> Leadership ratings, management effectiveness, stakeholder influence, P&L ownership</div>
+        </div>
+
+        <div class="stat-def-card">
+          <div class="stat-def-header">
+            <div class="stat-def-icon">🧠</div>
+            <div>
+              <div class="stat-def-abbr int-color">INT</div>
+              <div class="stat-def-full">INTELLIGENCE</div>
+            </div>
+          </div>
+          <p class="stat-def-desc">Technical depth, analytical thinking, and learning velocity. High INT Team Members are domain experts, data-driven decision-makers, and fast learners who can absorb complex systems and apply them effectively.</p>
+          <div class="stat-def-examples"><strong>Real-world equivalents:</strong> Technical skills score, certifications earned, problem-solving assessments, code quality metrics</div>
+        </div>
+
+        <div class="stat-def-card">
+          <div class="stat-def-header">
+            <div class="stat-def-icon">🗣️</div>
+            <div>
+              <div class="stat-def-abbr cha-color">CHA</div>
+              <div class="stat-def-full">CHARISMA</div>
+            </div>
+          </div>
+          <p class="stat-def-desc">Communication clarity, stakeholder management, and the power of persuasion. High CHA Team Members build strong client relationships, inspire teams, and create alignment across diverse groups.</p>
+          <div class="stat-def-examples"><strong>Real-world equivalents:</strong> Communication score, 360° feedback, client NPS, presentation effectiveness</div>
+        </div>
+
+        <div class="stat-def-card">
+          <div class="stat-def-header">
+            <div class="stat-def-icon">⚡</div>
+            <div>
+              <div class="stat-def-abbr dex-color">DEX</div>
+              <div class="stat-def-full">DEXTERITY</div>
+            </div>
+          </div>
+          <p class="stat-def-desc">Execution speed, adaptability under pressure, and time management. High DEX Team Members ship faster, pivot effectively when priorities change, and consistently meet deadlines even in ambiguous environments.</p>
+          <div class="stat-def-examples"><strong>Real-world equivalents:</strong> Sprint velocity, on-time delivery rate, response time, agility assessment scores</div>
+        </div>
+
+      </div>
+
+      <h3 class="sub-title">HOW STATS ARE USED</h3>
+
+      <table class="feature-table">
+        <thead><tr><th>CONTEXT</th><th>STAT EFFECT</th></tr></thead>
+        <tbody>
+          <tr><td>Performance Review (Performance Review)</td><td>Your combined stat score determines attack power vs the review "boss" difficulty. Higher STR increases damage against leadership challenges; higher INT defeats technical challenges.</td></tr>
+          <tr><td>Objective Completion</td><td>Objectives have hidden stat requirements. A "System Design Mastery" objective favours high INT; a "Stakeholder Presentation" objective favours high CHA.</td></tr>
+          <tr><td>Career Pathway Unlocks</td><td>Certain career nodes require minimum stat thresholds. Principal Engineer requires INT ≥ 85; Engineering Manager requires STR ≥ 70.</td></tr>
+          <tr><td>Career Map locked paths</td><td>Unexplored nodes reveal based on your level and relevant stat scores. Higher stats reveal more of the career landscape.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="info-box green">
+        <div class="info-box-title">✓ STAT GROWTH</div>
+        Stats grow naturally as you complete objectives, earn certifications, and progress through appraisals. You can also boost specific stats by equipping <strong>professional skills</strong> from SkillsFuture-approved training programmes. A "Distributed Systems" skill, for example, grants +20% INT in relevant contexts.
+      </div>
+    </div>
+
+    <!-- ═══ PAGE 7: PROFILE CREATION ═══ -->
+    <div class="page">
+      <div class="page-bg-hex"></div>
+      <div class="page-running">ELIX ONBOARDING · ONBOARDING USER GUIDE</div>
+      <div class="page-num">07</div>
+
+      <div class="chapter-label">CHAPTER 05</div>
+      <h2 class="section-title"><span class="s-icon">⚙</span> PROFILE CREATION — 6-STEP ONBOARDING</h2>
+
+      <p class="body-text">
+        After selecting your faction, you enter the <strong>6-Step Character Creation</strong> wizard. This represents your employee onboarding journey, mapping each step to a real HR process. Complete all 6 steps to deploy your Team Member to the Dashboard.
+      </p>
+
+      <div class="step-list">
+
+        <div class="step-item">
+          <div class="step-num-wrap"><div class="step-num">01</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">ROLE SELECTION</div>
+            <div class="step-desc">Choose your starting role from the available positions within your faction. Roles have <strong>level requirements</strong>, <strong>stat focuses</strong>, and <strong>salary bands</strong> displayed. Your choice sets your job title, reporting line, and initial career track. <em>HR equivalent: Job offer acceptance & role assignment.</em></div>
+            <div class="step-tip">💡 You are not locked to your starting role forever. Role changes happen via the Career Pathway as you level up.</div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num-wrap"><div class="step-num">02</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">STAT ALLOCATION</div>
+            <div class="step-desc">Distribute <strong>20 stat points</strong> across STR, INT, CHA, and DEX. Each department'starts with different base values. You can add to any stat but cannot reduce below the faction baseline. Points spent here represent your personal assessment at onboarding. <em>HR equivalent: Pre-hire assessment scores & skills profile.</em></div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num-wrap"><div class="step-num">03</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">SKILL SELECTION</div>
+            <div class="step-desc">Select up to <strong>4 starting skills</strong> from the SkillsFuture-mapped skill library. Skills are categorised by domain (Technical, Leadership, Communication, Operational) and each has a level rating (1–5). Higher-level skills require XP to unlock. <em>HR equivalent: Skills declaration & SkillsFuture portfolio.</em></div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num-wrap"><div class="step-num">04</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">BENEFITS PACKAGE</div>
+            <div class="step-desc">Configure your <strong>Benefits package</strong> by selecting tiers for Medical, Dental, Annual Leave, CPF, and optional extras. Medical has Gold/Silver/Bronze tiers. Annual Leave defaults to MOM statutory minimum and increases with tenure. <em>HR equivalent: Benefits enrolment at onboarding.</em></div>
+            <div class="step-tip">🛡 CPF is mandatory for all Singapore Citizens and PRs and cannot be deselected. Equity (RSU) unlocks at Level 8.</div>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num-wrap"><div class="step-num">05</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">INDUSTRY SPECIALISATION</div>
+            <div class="step-desc">Choose one of <strong>16 Elitez industry sectors</strong> to specialise in. This unlocks sector-specific career nodes on the Career Map and determines which industry benchmarks your analytics compare against. <em>HR equivalent: Industry specialisation declaration for placement purposes.</em></div>
+          </div>
+        </div>
+
+        <div class="step-item" style="border-bottom:none">
+          <div class="step-num-wrap"><div class="step-num">06</div></div>
+          <div class="step-body">
+            <div class="step-title">COMPLETE — OPEN DASHBOARD</div>
+            <div class="step-desc">Review your full Team Member profile and click <strong>COMPLETE</strong> to save your character and enter the Dashboard. Your profile is saved to browser localStorage and persists across sessions. <em>HR equivalent: Contract signing & Day 1 onboarding completion.</em></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══ PAGE 8: DASHBOARD ═══ -->
+    <div class="page">
+      <div class="page-bg-hex"></div>
+      <div class="page-running">ELIX ONBOARDING · ONBOARDING USER GUIDE</div>
+      <div class="page-num">08</div>
+
+      <div class="chapter-label">CHAPTER 06</div>
+      <h2 class="section-title"><span class="s-icon">🏛️</span> THE DASHBOARD</h2>
+
+      <p class="body-text">
+        The Dashboard is your <strong>primary HQ</strong> — the main screen you return to after every session. It is a real-time dashboard combining your personal Team Member data, your team's roster, and access to all career management tools.
+      </p>
+
+      <div class="hud-diagram">
+        <div><span class="hl-gold">┌── RESOURCE BAR ─────────────────────────────────────────────────┐</span></div>
+        <div><span class="hl-white">│  ◆ ELIX ONBOARDING  │  💎 BUDGET: 124,500  │  ⬡ TALENT: 48          │</span></div>
+        <div><span class="hl-white">│               │  👥 SUPPLY: 34/50    │  PROTOSS·ENGR  📊ANALYTICS│</span></div>
+        <div><span class="hl-gold">├── LEFT PANEL ─┬─── CENTER MAP ───────────────┬── RIGHT PANEL ──┤</span></div>
+        <div><span class="hl-blue">│  ⚔️ TEAM      │ [ORG MAP][QUESTS][CAREER PATHWAY] │  📋 COMMAND    │</span></div>
+        <div><span class="hl-blue">│  ROSTER       │  [◆ INDUSTRY]          🌐🗺⚔+ │  CARD          │</span></div>
+        <div><span class="hl-white">│               │                              │                │</span></div>
+        <div><span class="hl-white">│  Alex Chen    │   CEO ─ VP Eng ─ VP Ops      │  [Avatar]      │</span></div>
+        <div><span class="hl-white">│  Sam Rivera   │        └── VP Sales           │  Alex Chen     │</span></div>
+        <div><span class="hl-white">│  Jordan Kim   │  Frontend | Backend | DevOps  │  STR ████  72  │</span></div>
+        <div><span class="hl-white">│  [Open Pos.]  │                              │  INT █████ 91  │</span></div>
+        <div><span class="hl-gold">├── MINIMAP ────┴──── ACTIVITY FEED ───────────┴── SUPPLY ────────┤</span></div>
+        <div><span class="hl-green">│  [T][P][Z]    │  ▶ Notif  ▶ Notif  ▶ Notif  │  ████ 34/50    │</span></div>
+        <div><span class="hl-gold">└───────────────┴──────────────────────────────┴────────────────┘</span></div>
+      </div>
+
+      <h3 class="sub-title">PANEL GUIDE</h3>
+
+      <div class="two-col">
+        <div>
+          <div style="margin-bottom:12px">
+            <div style="font-family:var(--ui);font-size:0.55rem;letter-spacing:0.15em;color:var(--gold);margin-bottom:5px">⚡ RESOURCE BAR (TOP)</div>
+            <p style="font-size:0.75rem;color:var(--dim);line-height:1.6">Tracks <strong style="color:var(--text)">Budget</strong> (hiring/training funds), <strong style="color:var(--text)">Talent</strong> (candidates in pipeline), and <strong style="color:var(--text)">Supply</strong> (headcount vs capacity). The ANALYTICS button launches the Intelligence Hub.</p>
+          </div>
+          <div style="margin-bottom:12px">
+            <div style="font-family:var(--ui);font-size:0.55rem;letter-spacing:0.15em;color:var(--gold);margin-bottom:5px">⚔️ TEAM ROSTER (LEFT)</div>
+            <p style="font-size:0.75rem;color:var(--dim);line-height:1.6">Your team members. Each unit shows their role, XP bar, level, and status dot (Active ●, On Task ⚡, Training 📚). Click any unit to load their stats in the Command Card. Ghost slots are open headcount positions.</p>
+          </div>
+          <div>
+            <div style="font-family:var(--ui);font-size:0.55rem;letter-spacing:0.15em;color:var(--gold);margin-bottom:5px">🗺 CENTER MAP AREA</div>
+            <p style="font-size:0.75rem;color:var(--dim);line-height:1.6">Four tabs: <strong style="color:var(--text)">ORG MAP</strong> (org chart), <strong style="color:var(--text)">OBJECTIVES</strong> (OKRs and missions), <strong style="color:var(--text)">CAREER PATHWAY</strong> (career progression), <strong style="color:var(--text)">INDUSTRY</strong> (sector specialisation). Top-right controls link to Career Map, Performance Review, and more.</p>
+          </div>
+        </div>
+        <div>
+          <div style="margin-bottom:12px">
+            <div style="font-family:var(--ui);font-size:0.55rem;letter-spacing:0.15em;color:var(--gold);margin-bottom:5px">📋 COMMAND CARD (RIGHT)</div>
+            <p style="font-size:0.75rem;color:var(--dim);line-height:1.6">The selected unit's full profile: portrait, role, level, stat bars, Benefits package, and Skills (skills). Action buttons allow you to add new skills or upgrade benefits for the selected unit.</p>
+          </div>
+          <div style="margin-bottom:12px">
+            <div style="font-family:var(--ui);font-size:0.55rem;letter-spacing:0.15em;color:var(--gold);margin-bottom:5px">◈ ACTIVITY FEED (BOTTOM)</div>
+            <p style="font-size:0.75rem;color:var(--dim);line-height:1.6">Live notifications: XP awards, PTO alerts, OKR completions, and new recruits. The <strong style="color:var(--text)">HR Portal</strong> quick-links grid gives one-click access to all HR portal pages.</p>
+          </div>
+          <div>
+            <div style="font-family:var(--ui);font-size:0.55rem;letter-spacing:0.15em;color:var(--gold);margin-bottom:5px">🗺 MINIMAP + SUPPLY (BOTTOM)</div>
+            <p style="font-size:0.75rem;color:var(--dim);line-height:1.6">The minimap shows your T/P/Z faction nodes. Supply panel tracks team members vs max capacity across all three factions.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE 9: HR PORTAL ═══ -->
+    <div class="page">
+      <div class="page-bg-hex"></div>
+      <div class="page-running">ELIX ONBOARDING · ONBOARDING USER GUIDE</div>
+      <div class="page-num">09</div>
+
+      <div class="chapter-label">CHAPTER 07</div>
+      <h2 class="section-title"><span class="s-icon">📊</span> THE HR PORTAL</h2>
+
+      <p class="body-text">
+        The HR Portal is ELIX ONBOARDING's full-featured human resources suite — replicating the complete breadth of the ELIX HR platform in a gamified interface. All HR portal pages share a <strong>consistent sidebar navigation</strong> and connect to a common data layer. Access the portal from the HR Portal quick-links in the Activity Feed, or from the ANALYTICS button.
+      </p>
+
+      <h3 class="sub-title">EMPLOYEE PORTAL PAGES</h3>
+
+      <table class="feature-table">
+        <thead><tr><th>PAGE</th><th>GAME NAME</th><th>WHAT IT DOES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="hr-term">KPI Tracking</td>
+            <td class="game-term">Mission Objectives</td>
+            <td class="desc">Track your KPIs, OKRs and performance targets with live progress bars. View appraisal scores and schedule 1:1 meetings.</td>
+          </tr>
+          <tr>
+            <td class="hr-term">Leave Management</td>
+            <td class="game-term">PTO Shield Registry</td>
+            <td class="desc">View leave balances (Annual, Medical, Childcare), submit leave reobjectives with coverage officer, and see the team calendar.</td>
+          </tr>
+          <tr>
+            <td class="hr-term">Claims & Expenses</td>
+            <td class="game-term">Resource Requisition</td>
+            <td class="desc">Submit expense claims with receipt upload, track annual budget utilisation, and view claim history with statuses.</td>
+          </tr>
+          <tr>
+            <td class="hr-term">HR Policy Q&A</td>
+            <td class="game-term">HR Advisor AI</td>
+            <td class="desc">AI chatbot trained on Singapore MOM rules, CPF rates, SkillsFuture, and Elitez internal policy. Ask any HR objectiveion.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 class="sub-title">EMPLOYER PORTAL & INTELLIGENCE HUB</h3>
+
+      <table class="feature-table">
+        <thead><tr><th>PAGE</th><th>GAME NAME</th><th>WHAT IT DOES</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="hr-term">Employee Directory</td>
+            <td class="game-term">Team Directory</td>
+            <td class="desc">Search and filter all 73 team members by department. View profiles with stats, level, appraisal score and status.</td>
+          </tr>
+          <tr>
+            <td class="hr-term">HR Settings</td>
+            <td class="game-term">Platform Settings</td>
+            <td class="desc">5-tab settings hub: Departments, Hiring Setup, Appraisal Setup, Leave Policies, and Salary Structure grade bands.</td>
+          </tr>
+          <tr>
+            <td class="hr-term">Corp Overview</td>
+            <td class="game-term">Intelligence Hub — Corp Overview</td>
+            <td class="desc">6 top KPIs (headcount, engagement, performance, attrition, cost, flight risk) + 4 function cards + AI priorities feed.</td>
+          </tr>
+          <tr>
+            <td class="hr-term">Workforce Analytics</td>
+            <td class="game-term">Intelligence Hub — 6 Tabs</td>
+            <td class="desc">Corp Overview · Workforce Cost · Demographics · Engagement · Talent Pipeline · Risk Analysis — all AI-enhanced.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="info-box blue">
+        <div class="info-box-title">ℹ NAVIGATION TIP</div>
+        Every HR Portal page has a <strong>persistent sidebar</strong> showing all sections. The active page is highlighted with a blue accent. The top breadcrumb tells you exactly where you are. Use the <strong>← DASHBOARD</strong> button or the ELIX ONBOARDING logo to return to the main HUD at any time.
+      </div>
+    </div>
+
+    <!-- ═══ PAGE 10: CAREER PROGRESSION ═══ -->
+    <div class="page">
+      <div class="page-bg-hex"></div>
+      <div class="page-running">ELIX ONBOARDING · ONBOARDING USER GUIDE</div>
+      <div class="page-num">10</div>
+
+      <div class="chapter-label">CHAPTER 08</div>
+      <h2 class="section-title"><span class="s-icon">🗺</span> CAREER PROGRESSION & GRADE STRUCTURE</h2>
+
+      <p class="body-text">
+        ELIX ONBOARDING maps your career progression to a <strong>7-grade structure (G1–G7)</strong> aligned with Singapore tech-sector market benchmarks. Each grade corresponds to a range of levels and unlocks new roles, higher salary bands, and additional benefits.
+      </p>
+
+      <div class="two-col">
+        <div>
+          <h3 class="sub-title" style="margin-top:0">ENGINEERING TRACK (PROTOSS)</h3>
+          <div class="grade-row">
+            <span class="grade-badge" style="color:var(--dim)">G1</span>
+            <span class="grade-title">Engineer I</span>
+            <span class="grade-level">LVL 1–2</span>
+            <span class="grade-salary">S$3,550–5,000</span>
+          </div>
+          <div class="grade-row">
+            <span class="grade-badge" style="color:var(--dim)">G2</span>
+            <span class="grade-title">Engineer II</span>
+            <span class="grade-level">LVL 3–4</span>
+            <span class="grade-salary">S$5,000–7,000</span>
+          </div>
+          <div class="grade-row">
+            <span class="grade-badge" style="color:var(--blue)">G3</span>
+            <span class="grade-title">Senior Engineer</span>
+            <span class="grade-level">LVL 5–6</span>
+            <span class="grade-salary">S$7,000–9,500</span>
+          </div>
+          <div class="grade-row" style="background:rgba(255,215,0,0.04)">
+            <span class="grade-badge" style="color:var(--gold)">G4</span>
+            <span class="grade-title" style="color:var(--gold)">Staff Engineer ←</span>
+            <span class="grade-level">LVL 7–8</span>
+            <span class="grade-salary">S$9,500–13,000</span>
+          </div>
+          <div class="grade-row">
+            <span class="grade-badge" style="color:var(--success)">G5</span>
+            <span class="grade-title">Principal Engineer</span>
+            <span class="grade-level">LVL 9+</span>
+            <span class="grade-salary">S$13,000–18,000</span>
+          </div>
+          <div class="grade-row">
+            <span class="grade-badge" style="color:var(--warn)">G6</span>
+            <span class="grade-title">Eng Manager / Dir.</span>
+            <span class="grade-level">LVL 11+</span>
+            <span class="grade-salary">S$14,000–25,000</span>
+          </div>
+          <div class="grade-row" style="border-bottom:none">
+            <span class="grade-badge" style="color:var(--danger)">G7</span>
+            <span class="grade-title">VP Engineering</span>
+            <span class="grade-level">LVL 13+</span>
+            <span class="grade-salary">S$25,000–40,000</span>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="sub-title" style="margin-top:0">HOW TO LEVEL UP</h3>
+          <div class="step-list">
+            <div class="step-item" style="padding:10px 0">
+              <div class="step-num-wrap"><div class="step-num" style="width:24px;height:24px;font-size:0.5rem">XP</div><div class="step-line"></div></div>
+              <div class="step-body">
+                <div class="step-title" style="font-size:0.6rem">EARN EXPERIENCE POINTS</div>
+                <div class="step-desc" style="font-size:0.72rem">Complete objectives, finish training, and hit OKRs to earn XP. Each level requires progressively more XP.</div>
+              </div>
+            </div>
+            <div class="step-item" style="padding:10px 0">
+              <div class="step-num-wrap"><div class="step-num" style="width:24px;height:24px;font-size:0.5rem">⚔</div><div class="step-line"></div></div>
+              <div class="step-body">
+                <div class="step-title" style="font-size:0.6rem">SURVIVE THE PERFORMANCE REVIEW</div>
+                <div class="step-desc" style="font-size:0.72rem">Performance review season triggers a Performance Review. Win to level up, unlock new career nodes, and receive your salary increment.</div>
+              </div>
+            </div>
+            <div class="step-item" style="padding:10px 0">
+              <div class="step-num-wrap"><div class="step-num" style="width:24px;height:24px;font-size:0.5rem">🔓</div><div class="step-line"></div></div>
+              <div class="step-body">
+                <div class="step-title" style="font-size:0.6rem">UNLOCK CAREER NODES</div>
+                <div class="step-desc" style="font-size:0.72rem">Each level-up reveals new nodes on the Career Pathway Map. Nodes unlock new role options, skill slots, and benefit upgrades.</div>
+              </div>
+            </div>
+            <div class="step-item" style="border-bottom:none;padding:10px 0">
+              <div class="step-num-wrap"><div class="step-num" style="width:24px;height:24px;font-size:0.5rem">↑</div></div>
+              <div class="step-body">
+                <div class="step-title" style="font-size:0.6rem">FORK — IC OR MANAGEMENT</div>
+                <div class="step-desc" style="font-size:0.72rem">At Level 7, the Career Pathway forks. Individual Contributor path leads to Principal/Fellow; Management path leads to Manager → Director → VP.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box green">
+        <div class="info-box-title">✓ PROMOTION REQUIREMENTS</div>
+        To be eligible for promotion to the next grade: (1) minimum 12 months in current grade, (2) last appraisal rating ≥ 3.5, (3) manager nomination, (4) skills gap assessment completed, (5) headcount budget approved. Track your readiness in the <strong>Talent Pipeline</strong> tab of the Intelligence Hub.
+      </div>
+    </div>
+
+    <!-- ═══ PAGE 11: PERFORMANCE REVIEW ═══ -->
+    <div class="page">
+      <div class="page-bg-hex"></div>
+      <div class="page-running">ELIX ONBOARDING · ONBOARDING USER GUIDE</div>
+      <div class="page-num">11</div>
+
+      <div class="chapter-label">CHAPTER 09</div>
+      <h2 class="section-title"><span class="s-icon">🏆</span> THE PERFORMANCE REVIEW — PERFORMANCE REVIEW</h2>
+
+      <p class="body-text">
+        Twice a year, ELIX ONBOARDING enters <em>Performance Review Season</em> — the Performance Review Cycle. This is the most consequential event in your Onboarding journey. Your accumulated stats, objective completions, and skill loadout determine whether you succeed in the review, level up, and unlock promotions — or enter a PIP (Performance Improvement Plan).
+      </p>
+
+      <div class="two-col">
+        <div>
+          <h3 class="sub-title" style="margin-top:0">HOW THE REVIEW WORKS</h3>
+          <div class="step-list">
+            <div class="step-item" style="padding:10px 0">
+              <div class="step-num-wrap"><div class="step-num">1</div><div class="step-line"></div></div>
+              <div class="step-body">
+                <div class="step-title">SELF-ASSESSMENT (PHASE 1)</div>
+                <div class="step-desc" style="font-size:0.75rem">Rate yourself on each competency. Your self-score becomes your opening move. Higher self-scores increase first-round scoring but must be backed by evidence.</div>
+              </div>
+            </div>
+            <div class="step-item" style="padding:10px 0">
+              <div class="step-num-wrap"><div class="step-num">2</div><div class="step-line"></div></div>
+              <div class="step-body">
+                <div class="step-title">MANAGER REVIEW (THE BOSS)</div>
+                <div class="step-desc" style="font-size:0.75rem">Your manager's ratings become the reviewer's scoring basis. High alignment between self and manager scores reduces score impact. Large gaps increase the scrutiny level significantly.</div>
+              </div>
+            </div>
+            <div class="step-item" style="padding:10px 0">
+              <div class="step-num-wrap"><div class="step-num">3</div><div class="step-line"></div></div>
+              <div class="step-body">
+                <div class="step-title">CALIBRATION (REVIEW PHASES)</div>
+                <div class="step-desc" style="font-size:0.75rem">Each calibration round is a review phase. Your completed objectives and certifications provide bonus points. The review gets more challenging as you aim for higher grades.</div>
+              </div>
+            </div>
+            <div class="step-item" style="border-bottom:none;padding:10px 0">
+              <div class="step-num-wrap"><div class="step-num">4</div></div>
+              <div class="step-body">
+                <div class="step-title">OUTCOME</div>
+                <div class="step-desc" style="font-size:0.75rem">Win → Level up, receive XP bonus, unlock new career nodes, get salary increment. Draw → Maintain level, no increment. Loss → Enter PIP mode with 90-day recovery arc.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="sub-title" style="margin-top:0">REVIEW DIFFICULTY LEVELS</h3>
+          <table class="feature-table">
+            <thead><tr><th>RATING</th><th>BOSS</th><th>REWARD</th></tr></thead>
+            <tbody>
+              <tr><td style="color:var(--success)">5.0 Outstanding</td><td>Legendary Review</td><td>2–3× bonus, RSU grant, fast-track promo</td></tr>
+              <tr><td style="color:var(--blue)">4.0–4.9 Exceeds</td><td>Elite Review</td><td>1.5× bonus, promo eligibility</td></tr>
+              <tr><td>3.0–3.9 Meets</td><td>Standard Review</td><td>1× bonus, level maintenance</td></tr>
+              <tr><td style="color:var(--warn)">2.0–2.9 Developing</td><td>Hard Mode</td><td>No increment, PIP risk</td></tr>
+              <tr><td style="color:var(--danger)">1.0–1.9 Below</td><td>Review Failure</td><td>PIP activated, 90-day arc</td></tr>
+            </tbody>
+          </table>
+
+          <div class="info-box gold" style="margin-top:16px">
+            <div class="info-box-title">⚡ PRO TIPS</div>
+            <div style="font-size:0.75rem;line-height:1.7">
+              ✓ Complete all Main Objectives before Review Season for maximum bonus<br>
+              ✓ Equip high-level professional skills to counter specific boss challenges<br>
+              ✓ Schedule 1:1s regularly — each 1:1 completion adds a bonus round<br>
+              ✓ Use the HR Advisor to check promotion criteria before the cycle
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="sub-title">THE CAREER MAP — LOCKED PATHS</h3>
+      <p class="body-text">
+        The <strong>Career Pathway Map</strong> is a spatial representation of all possible career paths from your current position. Explored nodes (visible) show roles you have held or are adjacent to. Unexplored nodes (fogged) reveal as you level up and meet prerequisite stat thresholds. The map is department'specific and updates dynamically after each Performance Review outcome.
+      </p>
+    </div>
+
+    <!-- ═══ PAGE 12: GLOSSARY ═══ -->
+    <div class="page">
+      <div class="page-bg-hex"></div>
+      <div class="page-running">ELIX ONBOARDING · ONBOARDING USER GUIDE</div>
+      <div class="page-num">12</div>
+
+      <div class="chapter-label">CHAPTER 10</div>
+      <h2 class="section-title"><span class="s-icon">📖</span> GLOSSARY — GAME TERMS TO HR TERMS</h2>
+
+      <p class="body-text">
+        ELIX ONBOARDING uses gamified language throughout, but every term maps precisely to an HR or employment concept. Use this reference whenever you encounter unfamiliar terminology.
+      </p>
+
+      <div class="glossary-grid">
+        <div class="glossary-item">
+          <div class="glossary-term">TEAM MEMBER</div>
+          <div class="glossary-def">An individual employee. Each person in the organisation is represented as a deployable unit with stats, skills, and a career trajectory.</div>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">FACTION</div>
+          <div class="glossary-def">Department / business unit. Protoss = Engineering, Terran = Operations/Finance/HR, Zerg = Sales/Marketing/People.</div>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">DEPLOY</div>
+          <div class="glossary-def">Onboard / hire. Deploying a Team Member = completing onboarding and becoming an active employee.</div>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">XP (EXPERIENCE POINTS)</div>
+          <div class="glossary-def">Cumulative performance and learning credits. Earned through objective completion, training, and milestones. Drives level advancement.</div>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">OBJECTIVES</div>
+          <div class="glossary-def">OKR / goal-tracking system. Main Objectives = company OKRs; Side Objectives = team projects; Training Objectives = L&D programmes.</div>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">BENEFITS PACKAGE</div>
+          <div class="glossary-def">Employee benefits package. Medical, dental, annual leave, CPF, and equity slots represent your full compensation and benefits envelope.</div>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">SKILLS (SKILLS)</div>
+          <div class="glossary-def">Certifications and competencies. Each Skill corresponds to a SkillsFuture-mapped skill with a proficiency level (1–5 = basic to mastery).</div>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">PERFORMANCE REVIEW</div>
+          <div class="glossary-def">Performance appraisal cycle. A structured, turn-based review where your stats and objective completions are evaluated against grade expectations.</div>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">CAREER PATHWAY</div>
+          <div class="glossary-def">Career progression framework. Shows all available role transitions from your current position, with unlock requirements for each node.</div>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">PTO SHIELD</div>
+          <div class="glossary-def">Paid Time Off / Leave entitlements. Shield "durability" = remaining leave days. Annual, Medical, Childcare, and other leave types mapped to MOM guidelines.</div>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">RESOURCE REQUISITION</div>
+          <div class="glossary-def">Expense claims and reimbursements. Submit receipts for training, transport, equipment, and meals within your annual claim allowance.</div>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">GHOST SLOT</div>
+          <div class="glossary-def">Open headcount position. A budgeted vacancy that has not yet been filled. Clicking a Ghost Slot opens the recruitment workflow.</div>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">SUPPLY</div>
+          <div class="glossary-def">Headcount utilisation. Current team members vs maximum approved headcount. Supply > 90% triggers a hiring recommendation alert.</div>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">ANALYTICS / INTELLIGENCE HUB</div>
+          <div class="glossary-def">Analytics and reporting dashboard. "Situation Report" — shows personal performance and company-wide HR intelligence in real time.</div>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">FLIGHT RISK</div>
+          <div class="glossary-def">Attrition risk score (0–100). AI-generated score per employee based on engagement trends, pay compression, and tenure signals.</div>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">HR ADVISOR</div>
+          <div class="glossary-def">HR Policy AI. Trained on Singapore MOM, CPF Board, SkillsFuture, and Elitez internal policy. Answers any HR or employment objectiveion.</div>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">TEAM DIRECTORY</div>
+          <div class="glossary-def">Employee directory. Searchable roster of all active units with profiles, department filters, and performance data.</div>
+        </div>
+        <div class="glossary-item">
+          <div class="glossary-term">SETTINGSURATION</div>
+          <div class="glossary-def">HR Settings. Administrative configuration for Departments, Hiring workflows, Appraisal cycles, Leave policies, and Salary structures.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE 13: BACK COVER ═══ -->
+    <div class="page cover-page back-cover">
+      <div class="cover-bg"></div>
+      <div class="cover-hex-field"></div>
+
+      <div style="position:relative;z-index:1;text-align:center">
+        <div style="font-size:3rem;margin-bottom:16px">◆</div>
+        <div style="font-family:var(--ui);font-size:2rem;font-weight:900;color:var(--gold);letter-spacing:0.15em;text-shadow:0 0 40px rgba(255,215,0,0.4);margin-bottom:8px">ELIX ONBOARDING</div>
+        <div style="font-family:var(--ui);font-size:0.6rem;letter-spacing:0.35em;color:var(--dim);margin-bottom:40px">PROFESSIONAL ONBOARDING PLATFORM</div>
+
+        <div style="width:120px;height:1px;background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);margin:0 auto 40px"></div>
+
+        <p style="font-size:0.9rem;color:var(--dim);max-width:480px;margin:0 auto 32px;line-height:1.8;font-style:italic">
+          "The greatest leaders don't just execute orders — they build systems, develop people, and leave the organization stronger than they found it."
+        </p>
+
+        <div style="width:120px;height:1px;background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);margin:0 auto 40px"></div>
+
+        <div class="callout-row" style="max-width:560px;margin:0 auto 40px">
+          <div class="callout-card">
+            <div class="callout-card-icon">🇸🇬</div>
+            <div class="callout-card-title">ELITEZ HR</div>
+            <div class="callout-card-desc">Singapore's Premier HR & Recruitment Intelligence Platform</div>
+          </div>
+          <div class="callout-card">
+            <div class="callout-card-icon">📚</div>
+            <div class="callout-card-title">SKILLSFUTURE</div>
+            <div class="callout-card-desc">All career paths aligned to national skills frameworks</div>
+          </div>
+          <div class="callout-card">
+            <div class="callout-card-icon">⚖️</div>
+            <div class="callout-card-title">MOM COMPLIANT</div>
+            <div class="callout-card-desc">Employment Act, CPF Board & MOM guidelines 2026</div>
+          </div>
+        </div>
+
+        <div style="font-family:var(--ui);font-size:0.48rem;letter-spacing:0.2em;color:var(--gold-dim)">
+          ONBOARDING USER GUIDE · VERSION 1.0 · BUILD 2026 · ELITEZ HR PROPRIETARY
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end booklet-wrapper -->
+
+  <!-- ── Scripts ─── -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script>
+    // Auto-trigger download if ?download=1 is in the URL
+    window.addEventListener('DOMContentLoaded', () => {
+      if (new URLSearchParams(window.location.search).get('download') === '1') {
+        // Brief delay to let fonts and layout render
+        setTimeout(downloadPDF, 1200);
+      }
+    });
+
+    // Resolve CSS custom properties to concrete values so html2canvas can capture them
+    function resolveComputedStyles(root) {
+      const PROPS = ['color','background-color','border-color','border-top-color',
+                     'border-bottom-color','border-left-color','border-right-color',
+                     'fill','stroke','opacity','box-shadow','text-shadow'];
+      const snapshots = [];
+      root.querySelectorAll('*').forEach(el => {
+        const cs = window.getComputedStyle(el);
+        const saved = {};
+        PROPS.forEach(p => {
+          const v = cs.getPropertyValue(p);
+          if (v) { saved[p] = el.style.getPropertyValue(p); el.style.setProperty(p, v, 'important'); }
+        });
+        snapshots.push({ el, saved });
+      });
+      return snapshots;
+    }
+
+    function restoreComputedStyles(snapshots) {
+      snapshots.forEach(({ el, saved }) => {
+        Object.entries(saved).forEach(([p, v]) => {
+          if (v) el.style.setProperty(p, v); else el.style.removeProperty(p);
+        });
+      });
+    }
+
+    function downloadPDF() {
+      const btn = document.querySelector('.btn-download');
+      btn.textContent = '⏳ GENERATING PDF…';
+      btn.disabled = true;
+
+      const element = document.getElementById('booklet');
+
+      // Zero margin so canvas starts flush at y=0 (prevents half-blank first page)
+      const savedMargin = element.style.margin;
+      element.style.margin = '0';
+
+      // Inline all computed styles so html2canvas can resolve CSS variables
+      const snapshots = resolveComputedStyles(element);
+
+      const opt = {
+        margin:      0,
+        filename:    'ELIX ONBOARDING-Team Members-Field-Manual.pdf',
+        image:       { type: 'jpeg', quality: 0.97 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#04080f',
+          logging: false,
+          letterRendering: true,
+          onclone: (doc) => {
+            // Ensure fonts load in the clone
+            doc.querySelectorAll('*').forEach(el => {
+              const cs = window.getComputedStyle(el);
+              el.style.fontFamily = cs.fontFamily;
+            });
+          }
+        },
+        jsPDF: {
+          unit: 'px',
+          format: [794, 1123],
+          orientation: 'portrait',
+          hotfixes: ['px_scaling']
+        },
+        pagebreak: { mode: [] }
+      };
+
+      html2pdf()
+        .set(opt)
+        .from(element)
+        .save()
+        .then(() => {
+          restoreComputedStyles(snapshots);
+          element.style.margin = savedMargin;
+          btn.textContent = '✓ PDF DOWNLOADED';
+          btn.style.background = 'linear-gradient(135deg,#006a3a,#00e676)';
+          setTimeout(() => {
+            btn.textContent = '⬇ DOWNLOAD PDF MANUAL';
+            btn.style.background = '';
+            btn.disabled = false;
+          }, 3000);
+        })
+        .catch(err => {
+          restoreComputedStyles(snapshots);
+          element.style.margin = savedMargin;
+          console.error(err);
+          btn.textContent = '⬇ DOWNLOAD PDF MANUAL';
+          btn.disabled = false;
+        });
+    }
+  </script>
+</body>
+</html>

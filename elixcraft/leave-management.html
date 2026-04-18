@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELIXCRAFT — PTO Shield (Leave Management)</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/hr-pages.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet" />
+</head>
+<body class="hr-screen">
+  <canvas id="starfield"></canvas>
+
+  <!-- TOP BAR -->
+  <div class="hr-topbar">
+    <a href="dashboard.html" class="hr-topbar-logo">
+      <span class="logo-hex">⬡</span>
+      <span class="logo-text">ELIXCRAFT</span>
+    </a>
+    <div class="hr-topbar-breadcrumb">
+      <span>EMPLOYEE PORTAL</span>
+      <span class="bc-sep">›</span>
+      <span class="bc-active">PTO SHIELD</span>
+    </div>
+    <div class="hr-topbar-right">
+      <a href="sitrep.html" class="hr-topbar-btn">📊 SITREP</a>
+      <a href="dashboard.html" class="hr-topbar-btn">⬡ COMMAND CENTER</a>
+      <div class="hr-faction-badge" id="top-faction-badge">PROTOSS · LVL 7</div>
+    </div>
+  </div>
+
+  <div class="hr-body">
+
+    <!-- SIDEBAR -->
+    <aside class="hr-sidebar">
+      <div class="hr-nav-section">
+        <div class="hr-nav-label">OVERVIEW</div>
+        <a href="dashboard.html" class="hr-nav-item"><span class="nav-icon">⬡</span> Command Center</a>
+      </div>
+      <div class="hr-nav-divider"></div>
+      <div class="hr-nav-section">
+        <div class="hr-nav-label">EMPLOYEE PORTAL</div>
+        <a href="dashboard.html" class="hr-nav-item"><span class="nav-icon">⊞</span> Dashboard & AI</a>
+        <a href="kpi-tracking.html" class="hr-nav-item"><span class="nav-icon">◎</span> Mission Objectives</a>
+        <a href="leave-management.html" class="hr-nav-item active"><span class="nav-icon">🛡</span> PTO Shield <span class="nav-dot" style="margin-left:auto"></span></a>
+        <a href="claims.html" class="hr-nav-item"><span class="nav-icon">💎</span> Resource Requisition</a>
+        <a href="policy-qa.html" class="hr-nav-item"><span class="nav-icon">🤖</span> Tactical Advisor</a>
+      </div>
+      <div class="hr-nav-divider"></div>
+      <div class="hr-nav-section">
+        <div class="hr-nav-label">EMPLOYER PORTAL</div>
+        <a href="employee-directory.html" class="hr-nav-item"><span class="nav-icon">👥</span> Unit Registry</a>
+      </div>
+      <div class="hr-nav-divider"></div>
+      <div class="hr-nav-section">
+        <div class="hr-nav-label">COMMAND CONFIG</div>
+        <a href="hr-settings.html" class="hr-nav-item"><span class="nav-icon">⚙</span> HR Settings</a>
+      </div>
+      <div class="hr-nav-divider"></div>
+      <div class="hr-nav-section">
+        <div class="hr-nav-label">INTELLIGENCE</div>
+        <a href="sitrep.html" class="hr-nav-item"><span class="nav-icon">📊</span> Corp Overview</a>
+        <a href="sitrep.html#cost" class="hr-nav-item"><span class="nav-icon">💰</span> Workforce Cost</a>
+        <a href="sitrep.html#demographics" class="hr-nav-item"><span class="nav-icon">👤</span> Demographics</a>
+        <a href="sitrep.html#engagement" class="hr-nav-item"><span class="nav-icon">⚡</span> Engagement</a>
+        <a href="career-map.html" class="hr-nav-item"><span class="nav-icon">🗺</span> Workforce Planning</a>
+        <a href="sitrep.html#talent" class="hr-nav-item"><span class="nav-icon">↑</span> Talent Pipeline</a>
+        <a href="sitrep.html#risk" class="hr-nav-item"><span class="nav-icon">⚠</span> Risk Analysis</a>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="hr-content">
+
+      <div class="hr-page-header">
+        <div>
+          <div class="hr-page-title">PTO Shield Registry</div>
+          <div class="hr-page-sub">Apply for leave, check shield reserves & track time-off activity</div>
+        </div>
+        <div class="hr-page-actions">
+          <button class="btn-hr-primary" onclick="showApplyForm()">+ APPLY FOR LEAVE</button>
+        </div>
+      </div>
+
+      <!-- Leave Balance Cards -->
+      <div class="hr-stat-row" style="grid-template-columns:repeat(4,1fr)">
+        <div class="hr-stat-card" style="border-color:rgba(0,230,118,0.3)">
+          <div class="hr-stat-label"><span class="stat-icon">🏖</span> TOTAL SHIELD DAYS</div>
+          <div class="hr-stat-value" style="color:var(--success)">28</div>
+          <div class="hr-stat-delta up">Days remaining this year</div>
+        </div>
+        <div class="hr-stat-card">
+          <div class="hr-stat-label"><span class="stat-icon">📅</span> ANNUAL LEAVE</div>
+          <div class="hr-stat-value">10</div>
+          <div class="hr-stat-delta">of 14 days remaining</div>
+        </div>
+        <div class="hr-stat-card">
+          <div class="hr-stat-label"><span class="stat-icon">🏥</span> MEDICAL LEAVE</div>
+          <div class="hr-stat-value">12</div>
+          <div class="hr-stat-delta">of 14 days remaining</div>
+        </div>
+        <div class="hr-stat-card">
+          <div class="hr-stat-label"><span class="stat-icon">👶</span> CHILDCARE LEAVE</div>
+          <div class="hr-stat-value">6</div>
+          <div class="hr-stat-delta">of 6 days remaining</div>
+        </div>
+      </div>
+
+      <div class="hr-grid-2">
+
+        <!-- Shield Reserves Panel -->
+        <div class="hr-card">
+          <div class="hr-card-header">
+            <div class="hr-card-title"><span class="card-icon">🛡</span> SHIELD RESERVES</div>
+            <button class="btn-hr-ghost" onclick="showApplyForm()">Apply for Leave →</button>
+          </div>
+
+          <div class="leave-item">
+            <div class="leave-item-header">
+              <span class="leave-item-name">Annual Leave</span>
+              <span class="leave-item-count" style="color:var(--success)">10 / 14 days left</span>
+            </div>
+            <div class="leave-bar"><div class="leave-bar-fill" style="width:71%;background:var(--success)"></div></div>
+          </div>
+
+          <div class="leave-item">
+            <div class="leave-item-header">
+              <span class="leave-item-name">Medical Leave</span>
+              <span class="leave-item-count" style="color:var(--terran)">12 / 14 days left</span>
+            </div>
+            <div class="leave-bar"><div class="leave-bar-fill" style="width:86%;background:var(--terran)"></div></div>
+          </div>
+
+          <div class="leave-item">
+            <div class="leave-item-header">
+              <span class="leave-item-name">Childcare Leave</span>
+              <span class="leave-item-count" style="color:var(--protoss)">6 / 6 days left</span>
+            </div>
+            <div class="leave-bar"><div class="leave-bar-fill" style="width:100%;background:var(--protoss)"></div></div>
+          </div>
+
+          <div class="leave-item">
+            <div class="leave-item-header">
+              <span class="leave-item-name">Compassionate Leave</span>
+              <span class="leave-item-count">3 / 3 days left</span>
+            </div>
+            <div class="leave-bar"><div class="leave-bar-fill" style="width:100%;background:var(--zerg)"></div></div>
+          </div>
+
+          <div class="leave-item">
+            <div class="leave-item-header">
+              <span class="leave-item-name">Study / Exam Leave</span>
+              <span class="leave-item-count" style="color:var(--warning)">2 / 5 days left</span>
+            </div>
+            <div class="leave-bar"><div class="leave-bar-fill" style="width:40%;background:var(--warning)"></div></div>
+          </div>
+
+          <div style="margin-top:12px;padding:12px;background:var(--bg-panel-alt);border-radius:3px;font-size:0.72rem;color:var(--text-dim)">
+            ℹ Per MOM guidelines — annual leave entitlement increases with tenure. Next increment at 3 years (Apr 2027).
+          </div>
+        </div>
+
+        <!-- Apply Form -->
+        <div class="hr-card" id="apply-form">
+          <div class="hr-card-header">
+            <div class="hr-card-title"><span class="card-icon">📋</span> SUBMIT SHIELD REQUEST</div>
+          </div>
+
+          <div class="hr-form-group">
+            <label class="hr-form-label">LEAVE TYPE</label>
+            <select class="hr-form-select">
+              <option>Annual Leave</option>
+              <option>Medical Leave</option>
+              <option>Childcare Leave</option>
+              <option>Compassionate Leave</option>
+              <option>Study / Exam Leave</option>
+              <option>No-Pay Leave</option>
+            </select>
+          </div>
+
+          <div class="hr-form-row">
+            <div class="hr-form-group">
+              <label class="hr-form-label">START DATE</label>
+              <input type="date" class="hr-form-input" value="2026-04-14" />
+            </div>
+            <div class="hr-form-group">
+              <label class="hr-form-label">END DATE</label>
+              <input type="date" class="hr-form-input" value="2026-04-14" />
+            </div>
+          </div>
+
+          <div class="hr-form-group">
+            <label class="hr-form-label">ACTING OFFICER (COVERAGE)</label>
+            <select class="hr-form-select">
+              <option>Sam Rivera — Senior Engineer</option>
+              <option>Jordan Kim — Engineer II</option>
+              <option>Alex Chen — Staff Engineer</option>
+            </select>
+          </div>
+
+          <div class="hr-form-group">
+            <label class="hr-form-label">REASON / NOTES (OPTIONAL)</label>
+            <textarea class="hr-form-textarea" placeholder="Add any additional notes for your manager…"></textarea>
+          </div>
+
+          <div style="display:flex;gap:10px">
+            <button class="btn-hr-primary" onclick="submitLeave()">SUBMIT REQUEST</button>
+            <button class="btn-hr-secondary" onclick="clearForm()">CLEAR</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Leave History -->
+      <div class="hr-card">
+        <div class="hr-card-header">
+          <div class="hr-card-title"><span class="card-icon">📋</span> SHIELD ACTIVITY LOG</div>
+          <div style="display:flex;gap:8px">
+            <select class="hr-form-select" style="width:auto;padding:5px 10px;font-size:0.72rem">
+              <option>All Types</option>
+              <option>Annual Leave</option>
+              <option>Medical Leave</option>
+            </select>
+          </div>
+        </div>
+
+        <table class="hr-table">
+          <thead>
+            <tr>
+              <th>TYPE</th>
+              <th>DATES</th>
+              <th>DURATION</th>
+              <th>COVERAGE</th>
+              <th>SUBMITTED</th>
+              <th>STATUS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div style="font-size:0.78rem;color:var(--text-primary);font-weight:600">Annual Leave</div>
+              </td>
+              <td style="color:var(--text-dim);font-size:0.72rem">Mar 15 – Mar 17, 2026</td>
+              <td style="font-size:0.78rem">3 days</td>
+              <td style="color:var(--text-dim);font-size:0.72rem">Sam Rivera</td>
+              <td style="color:var(--text-dim);font-size:0.72rem">Mar 10, 2026</td>
+              <td><span class="status-badge achieved">APPROVED</span></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="font-size:0.78rem;color:var(--text-primary);font-weight:600">Medical Leave</div>
+              </td>
+              <td style="color:var(--text-dim);font-size:0.72rem">Feb 22, 2026</td>
+              <td style="font-size:0.78rem">1 day</td>
+              <td style="color:var(--text-dim);font-size:0.72rem">Jordan Kim</td>
+              <td style="color:var(--text-dim);font-size:0.72rem">Feb 22, 2026</td>
+              <td><span class="status-badge achieved">APPROVED</span></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="font-size:0.78rem;color:var(--text-primary);font-weight:600">Annual Leave</div>
+              </td>
+              <td style="color:var(--text-dim);font-size:0.72rem">Apr 14 – Apr 17, 2026</td>
+              <td style="font-size:0.78rem">4 days</td>
+              <td style="color:var(--text-dim);font-size:0.72rem">Sam Rivera</td>
+              <td style="color:var(--text-dim);font-size:0.72rem">Apr 5, 2026</td>
+              <td><span class="status-badge on-track">PENDING</span></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="font-size:0.78rem;color:var(--text-primary);font-weight:600">Study Leave</div>
+              </td>
+              <td style="color:var(--text-dim);font-size:0.72rem">Jan 20 – Jan 22, 2026</td>
+              <td style="font-size:0.78rem">3 days</td>
+              <td style="color:var(--text-dim);font-size:0.72rem">—</td>
+              <td style="color:var(--text-dim);font-size:0.72rem">Jan 15, 2026</td>
+              <td><span class="status-badge achieved">APPROVED</span></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="font-size:0.78rem;color:var(--text-primary);font-weight:600">Annual Leave</div>
+              </td>
+              <td style="color:var(--text-dim);font-size:0.72rem">Dec 23 – Dec 31, 2025</td>
+              <td style="font-size:0.78rem">7 days</td>
+              <td style="color:var(--text-dim);font-size:0.72rem">Sam Rivera</td>
+              <td style="color:var(--text-dim);font-size:0.72rem">Dec 1, 2025</td>
+              <td><span class="status-badge achieved">APPROVED</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Team Calendar Preview -->
+      <div class="hr-card">
+        <div class="hr-card-header">
+          <div class="hr-card-title"><span class="card-icon">📆</span> TEAM LEAVE CALENDAR — APRIL 2026</div>
+          <button class="btn-hr-ghost">Full Calendar →</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;font-family:var(--font-ui);font-size:0.55rem;text-align:center">
+          <div style="color:var(--text-dim);padding:6px">MON</div>
+          <div style="color:var(--text-dim);padding:6px">TUE</div>
+          <div style="color:var(--text-dim);padding:6px">WED</div>
+          <div style="color:var(--text-dim);padding:6px">THU</div>
+          <div style="color:var(--text-dim);padding:6px">FRI</div>
+          <div style="color:var(--text-dim);padding:6px">SAT</div>
+          <div style="color:var(--text-dim);padding:6px">SUN</div>
+          <!-- Week 1 -->
+          <div style="padding:8px;color:var(--text-dim)"></div>
+          <div style="padding:8px;color:var(--text-dim)"></div>
+          <div style="padding:8px;color:var(--text-dim)">1</div>
+          <div style="padding:8px;color:var(--text-dim)">2</div>
+          <div style="padding:8px;color:var(--text-dim)">3</div>
+          <div style="padding:8px;color:var(--text-dim)">4</div>
+          <div style="padding:8px;color:var(--text-dim)">5</div>
+          <!-- Week 2 -->
+          <div style="padding:8px;color:var(--text-primary);background:var(--bg-panel-alt);border-radius:3px">6</div>
+          <div style="padding:8px;color:var(--text-primary)">7</div>
+          <div style="padding:8px;color:var(--text-primary)">8</div>
+          <div style="padding:8px;color:var(--text-primary)">9</div>
+          <div style="padding:8px;color:var(--text-primary)">10</div>
+          <div style="padding:8px;color:var(--text-dim)">11</div>
+          <div style="padding:8px;color:var(--text-dim)">12</div>
+          <!-- Week 3 -->
+          <div style="padding:8px;color:var(--text-primary)">13</div>
+          <div style="padding:8px;background:rgba(0,230,118,0.15);color:var(--success);border-radius:3px" title="Alex Chen - Annual Leave">14</div>
+          <div style="padding:8px;background:rgba(0,230,118,0.15);color:var(--success);border-radius:3px" title="Alex Chen - Annual Leave">15</div>
+          <div style="padding:8px;background:rgba(0,230,118,0.15);color:var(--success);border-radius:3px" title="Alex Chen - Annual Leave">16</div>
+          <div style="padding:8px;background:rgba(0,230,118,0.15);color:var(--success);border-radius:3px" title="Alex Chen - Annual Leave">17</div>
+          <div style="padding:8px;color:var(--text-dim)">18</div>
+          <div style="padding:8px;color:var(--text-dim)">19</div>
+          <!-- Week 4 -->
+          <div style="padding:8px;color:var(--text-primary)">20</div>
+          <div style="padding:8px;color:var(--text-primary)">21</div>
+          <div style="padding:8px;background:rgba(74,158,255,0.15);color:var(--terran);border-radius:3px" title="Sam Rivera - Medical Leave">22</div>
+          <div style="padding:8px;color:var(--text-primary)">23</div>
+          <div style="padding:8px;color:var(--text-primary)">24</div>
+          <div style="padding:8px;color:var(--text-dim)">25</div>
+          <div style="padding:8px;color:var(--text-dim)">26</div>
+          <!-- Week 5 -->
+          <div style="padding:8px;color:var(--text-primary)">27</div>
+          <div style="padding:8px;color:var(--text-primary)">28</div>
+          <div style="padding:8px;color:var(--text-primary)">29</div>
+          <div style="padding:8px;color:var(--text-primary)">30</div>
+          <div style="padding:8px;color:var(--text-dim)"></div>
+          <div style="padding:8px;color:var(--text-dim)"></div>
+          <div style="padding:8px;color:var(--text-dim)"></div>
+        </div>
+        <div style="display:flex;gap:16px;margin-top:12px;font-size:0.68rem;color:var(--text-dim)">
+          <span><span style="display:inline-block;width:10px;height:10px;background:rgba(0,230,118,0.4);border-radius:2px;margin-right:5px"></span>You</span>
+          <span><span style="display:inline-block;width:10px;height:10px;background:rgba(74,158,255,0.4);border-radius:2px;margin-right:5px"></span>Team member</span>
+          <span><span style="display:inline-block;width:10px;height:10px;background:rgba(255,215,0,0.4);border-radius:2px;margin-right:5px"></span>Public holiday</span>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="js/game-state.js"></script>
+  <script src="js/starfield.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const badge = sessionStorage.getItem('elixcraft_faction_badge') || 'COMMANDER';
+      document.getElementById('top-faction-badge').textContent = badge;
+    });
+
+    function showApplyForm() {
+      document.getElementById('apply-form').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function submitLeave() {
+      const btn = event.target;
+      btn.textContent = '✓ SUBMITTED';
+      btn.style.background = 'var(--success)';
+      setTimeout(() => { btn.textContent = 'SUBMIT REQUEST'; btn.style.background = ''; }, 2000);
+    }
+
+    function clearForm() {
+      document.querySelectorAll('.hr-form-input, .hr-form-textarea').forEach(el => el.value = '');
+    }
+  </script>
+</body>
+</html>

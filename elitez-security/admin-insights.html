@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Market & Pricing Insights — Elitez Security Admin</title>
+  <meta name="description" content="Market sizing, pricing tiers, buyer personas, and competitive gap analysis for Singapore security services.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .insight-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+    .insight-card h3 { margin-bottom: 12px; }
+    .insight-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
+    .insight-card ul { padding-left: 18px; list-style: disc; }
+    .insight-card li { font-size: 0.85rem; color: var(--muted); margin-bottom: 4px; line-height: 1.6; }
+
+    .pricing-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    .pricing-table th, .pricing-table td { padding: 12px 16px; text-align: left; font-size: 0.8rem; border-bottom: 1px solid var(--border); }
+    .pricing-table th { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.06em; color: var(--accent); background: var(--surface); }
+    .pricing-table td { color: var(--muted); }
+    .pricing-table tr:hover td { color: var(--text); }
+    .pricing-table .tier-col { font-weight: 600; color: var(--text); }
+
+    .persona-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-top: 20px; }
+    .persona-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; transition: border-color 0.3s; }
+    .persona-card:hover { border-color: var(--border2); }
+    .persona-icon { font-size: 2rem; margin-bottom: 8px; }
+    .persona-card h4 { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.1rem; margin-bottom: 4px; }
+    .persona-card .persona-role { font-size: 0.72rem; text-transform: uppercase; color: var(--accent); letter-spacing: 0.04em; margin-bottom: 10px; }
+    .persona-card p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+    .persona-meta { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+    .persona-tag { font-size: 0.65rem; padding: 3px 10px; border-radius: 100px; background: rgba(59,130,246,0.1); color: #60a5fa; text-transform: uppercase; font-weight: 600; }
+
+    .wtp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-top: 16px; }
+    .wtp-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .wtp-card h4 { font-family: 'Barlow Condensed', sans-serif; font-size: 0.9rem; margin-bottom: 6px; }
+    .wtp-card p { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
+    .sensitivity { display: inline-block; padding: 2px 10px; border-radius: 100px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
+    .sensitivity-high { background: rgba(248,113,113,0.15); color: #f87171; }
+    .sensitivity-medium { background: rgba(234,179,8,0.15); color: #facc15; }
+    .sensitivity-low { background: rgba(74,222,128,0.15); color: #4ade80; }
+
+    .gap-list { list-style: none; padding: 0; counter-reset: gap; }
+    .gap-list li { position: relative; padding: 12px 12px 12px 48px; margin-bottom: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-size: 0.85rem; color: var(--muted); line-height: 1.6; counter-increment: gap; }
+    .gap-list li::before { content: counter(gap); position: absolute; left: 14px; top: 12px; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--accent-dark); font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 0.72rem; display: flex; align-items: center; justify-content: center; }
+
+    .nba-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
+    .nba-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .nba-card h4 { font-family: 'Barlow Condensed', sans-serif; font-size: 0.88rem; margin-bottom: 6px; }
+    .nba-card p { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
+    .nba-card .threat-level { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+    .threat-high { color: #f87171; }
+    .threat-medium { color: #facc15; }
+    .threat-low { color: #4ade80; }
+
+    .market-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 24px 0; }
+    .market-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
+    .market-stat .val { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 1.6rem; color: var(--accent); }
+    .market-stat .lbl { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+
+    @media (max-width: 768px) {
+      .market-stats { grid-template-columns: repeat(2, 1fr); }
+      .pricing-table { font-size: 0.72rem; }
+      .pricing-table th, .pricing-table td { padding: 8px 10px; }
+    }
+    @media (max-width: 480px) {
+      .market-stats { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <a href="index.html" class="nav-logo">Elitez Security</a>
+  <div class="nav-links">
+    <a href="services.html">Core Services</a>
+    <a href="command-center.html">Command Center</a>
+    <a href="robotics.html">Robotics</a>
+    <a href="index.html#why">Why Elitez</a>
+    <a href="index.html#contact">Contact</a>
+    <a href="admin.html">Analytics</a>
+  </div>
+  <a href="index.html#contact" class="nav-cta">Get Assessment</a>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div id="mobile-menu">
+  <a href="services.html" onclick="toggleMenu()">Core Services</a>
+  <a href="command-center.html">Command Center</a>
+  <a href="robotics.html">Robotics</a>
+  <a href="index.html#why" onclick="toggleMenu()">Why Elitez</a>
+  <a href="index.html#contact" onclick="toggleMenu()">Contact</a>
+  <a href="admin.html">Analytics</a>
+  <a href="admin-insights.html">Insights</a>
+</div>
+
+<!-- Admin Sub-Nav -->
+<div class="admin-nav container" style="margin-top:80px; padding-top:16px;">
+  <a href="admin.html">Competitor Analytics</a>
+  <a href="admin-insights.html" class="active">Market &amp; Pricing Insights</a>
+</div>
+
+<!-- Market Overview -->
+<section style="padding-top: 0;">
+  <div class="container">
+    <div class="text-center animate">
+      <div class="label">Market Intelligence</div>
+      <h2>Market &amp; Pricing Insights</h2>
+      <p class="section-subtitle">Industry sizing, pricing benchmarks, buyer personas, and competitive gap analysis for Singapore's security sector.</p>
+    </div>
+
+    <div class="market-stats animate" style="margin-top: 32px;">
+      <div class="market-stat">
+        <div class="val">$3.5B</div>
+        <div class="lbl">Market Size (SGD)</div>
+      </div>
+      <div class="market-stat">
+        <div class="val">5-6%</div>
+        <div class="lbl">Annual Growth</div>
+      </div>
+      <div class="market-stat">
+        <div class="val">300+</div>
+        <div class="lbl">Licensed Agencies</div>
+      </div>
+      <div class="market-stat">
+        <div class="val">60K+</div>
+        <div class="lbl">Security Officers</div>
+      </div>
+    </div>
+
+    <div class="insight-card animate">
+      <h3>Industry Overview</h3>
+      <p>Singapore's physical security services market is valued at approximately SGD 3.5 billion, with a steady annual growth rate of 5-6%. The sector is governed by the Police Licensing & Regulatory Department (PLRD) under the Private Security Industry Act, requiring all agencies and officers to hold valid licences.</p>
+      <p style="margin-top: 10px;">Key structural shifts are reshaping the industry:</p>
+      <ul style="margin-top: 8px;">
+        <li><strong>Progressive Wage Model (PWM)</strong> — mandates annual salary increases for security officers, driving up labour costs and pushing agencies to adopt technology</li>
+        <li><strong>Outcome-Based Contracting (OBC)</strong> — replacing traditional headcount-based procurement, rewarding agencies that deliver measurable security outcomes</li>
+        <li><strong>Technology adoption</strong> — AI video analytics, IoT sensors, autonomous patrol robots, and remote monitoring are becoming table stakes for mid-to-premium agencies</li>
+        <li><strong>Manpower shortage</strong> — an aging workforce and low attractiveness to younger workers is accelerating automation investments</li>
+        <li><strong>Consolidation</strong> — smaller agencies are merging or exiting as compliance costs and PWM obligations rise</li>
+        <li><strong>Security Industry Transformation Map (ITM)</strong> — government framework encouraging the shift from manpower-heavy to tech-enabled security models</li>
+      </ul>
+    </div>
+
+    <!-- Pricing Tiers -->
+    <div class="animate" style="margin-top: 40px;">
+      <div class="text-center" style="margin-bottom: 24px;">
+        <div class="label">Pricing Intelligence</div>
+        <h2>Pricing Tiers &amp; Benchmarks</h2>
+      </div>
+      <div class="insight-card" style="overflow-x: auto;">
+        <table class="pricing-table">
+          <thead>
+            <tr>
+              <th>Service</th>
+              <th>Budget Tier</th>
+              <th>Mid-Market Tier</th>
+              <th>Premium Tier</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="tier-col">Guard Services (per guard/month)</td>
+              <td>$1,800 - $2,200</td>
+              <td>$2,200 - $3,000</td>
+              <td>$3,000 - $4,500</td>
+            </tr>
+            <tr>
+              <td class="tier-col">Command Center (per camera/month)</td>
+              <td>$200 - $400</td>
+              <td>$400 - $800</td>
+              <td>$800 - $1,500</td>
+            </tr>
+            <tr>
+              <td class="tier-col">Event Security (per guard/hour)</td>
+              <td>$25 - $35</td>
+              <td>$35 - $50</td>
+              <td>$50 - $80</td>
+            </tr>
+            <tr>
+              <td class="tier-col">Security Consultancy (per engagement)</td>
+              <td>$3,000 - $5,000</td>
+              <td>$5,000 - $15,000</td>
+              <td>$15,000 - $50,000</td>
+            </tr>
+            <tr>
+              <td class="tier-col">CCTV Installation (per camera)</td>
+              <td>$150 - $300</td>
+              <td>$300 - $600</td>
+              <td>$600 - $1,200</td>
+            </tr>
+            <tr>
+              <td class="tier-col">Robotics Patrol (per robot/month)</td>
+              <td>N/A</td>
+              <td>$3,000 - $5,000</td>
+              <td>$5,000 - $12,000</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="margin-top: 12px; font-size: 0.72rem; color: var(--muted2);">* Estimates based on market research and industry benchmarks. Actual pricing varies by scope, contract duration, and site complexity.</p>
+      </div>
+    </div>
+
+    <!-- Target Personas -->
+    <div class="animate" style="margin-top: 40px;">
+      <div class="text-center" style="margin-bottom: 24px;">
+        <div class="label">Buyer Intelligence</div>
+        <h2>Target Personas</h2>
+      </div>
+      <div class="persona-grid">
+        <div class="persona-card">
+          <div class="persona-icon">🏢</div>
+          <h4>MCST Committee Member</h4>
+          <div class="persona-role">Condo / Estate Management</div>
+          <p>Manages security procurement for residential estates and condominiums. Typically a volunteer committee member balancing cost concerns with resident satisfaction. Decisions are made by committee vote, creating long 6-12 month procurement cycles.</p>
+          <div class="persona-meta">
+            <span class="persona-tag">Cost-Sensitive</span>
+            <span class="persona-tag">6-12 Month Cycle</span>
+            <span class="persona-tag">Reliability First</span>
+          </div>
+        </div>
+        <div class="persona-card">
+          <div class="persona-icon">🏗️</div>
+          <h4>Facility Manager</h4>
+          <div class="persona-role">Commercial Buildings</div>
+          <p>Responsible for building operations including security across one or multiple commercial properties. Values vendor consolidation (fewer vendors = less admin) and integrated technology that feeds into their BMS. Prefers outcome-based contracts.</p>
+          <div class="persona-meta">
+            <span class="persona-tag">Tech-Forward</span>
+            <span class="persona-tag">Vendor Consolidation</span>
+            <span class="persona-tag">3-5 Year Contracts</span>
+          </div>
+        </div>
+        <div class="persona-card">
+          <div class="persona-icon">🔒</div>
+          <h4>Corporate Security Director</h4>
+          <div class="persona-role">MNCs / Large Enterprises</div>
+          <p>Senior security professional at multinational corporations. Needs compliance reporting, audit trails, and SLA-driven service delivery. Has budget for premium services and values brand reputation of security partner. Contracts typically 3-5 years.</p>
+          <div class="persona-meta">
+            <span class="persona-tag">Compliance-Driven</span>
+            <span class="persona-tag">Premium Budget</span>
+            <span class="persona-tag">Long Contracts</span>
+          </div>
+        </div>
+        <div class="persona-card">
+          <div class="persona-icon">🎪</div>
+          <h4>Event Organizer</h4>
+          <div class="persona-role">Concerts / Sports / Corporate Events</div>
+          <p>Needs rapid scale-up capability — from 20 guards for a corporate dinner to 500+ for a music festival. Short-term engagements (1-7 days). Cares about professionalism, crowd management experience, and ability to coordinate with police and emergency services.</p>
+          <div class="persona-meta">
+            <span class="persona-tag">Scale-Up Needed</span>
+            <span class="persona-tag">Short-Term</span>
+            <span class="persona-tag">Experience Matters</span>
+          </div>
+        </div>
+        <div class="persona-card">
+          <div class="persona-icon">🚧</div>
+          <h4>Construction Site Manager</h4>
+          <div class="persona-role">Development Sites</div>
+          <p>Manages security for active construction sites and development projects. Primary needs: traffic marshalls, access control, theft prevention, and regulatory compliance (MOM requirements). Duration matches project timeline (1-3 years). Price-conscious but compliance-driven.</p>
+          <div class="persona-meta">
+            <span class="persona-tag">Traffic Marshalls</span>
+            <span class="persona-tag">Regulatory Compliance</span>
+            <span class="persona-tag">Project-Based</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Willingness to Pay -->
+    <div class="animate" style="margin-top: 40px;">
+      <div class="text-center" style="margin-bottom: 24px;">
+        <div class="label">Price Sensitivity</div>
+        <h2>Willingness-to-Pay Analysis</h2>
+      </div>
+      <div class="wtp-grid">
+        <div class="wtp-card">
+          <span class="sensitivity sensitivity-high">High Sensitivity</span>
+          <h4>MCST Committee</h4>
+          <p>Extremely price-sensitive. Decisions made by vote, and cost is the #1 objection. However, they will pay 10-15% more for a technology package that visibly improves security (CCTV analytics, patrol reporting) as it gives committee members proof of value to residents. The key unlock: show the cost of a security breach vs. the marginal cost of better security.</p>
+        </div>
+        <div class="wtp-card">
+          <span class="sensitivity sensitivity-medium">Medium Sensitivity</span>
+          <h4>Facility Manager</h4>
+          <p>Moderate price sensitivity. Values total cost of ownership over sticker price. Will pay premium for integrated solutions that reduce the number of vendors. Key insight: bundle guard + CCTV + command center to capture more wallet share while offering a "consolidated discount" of 5-10%.</p>
+        </div>
+        <div class="wtp-card">
+          <span class="sensitivity sensitivity-low">Low Sensitivity</span>
+          <h4>Corporate Security Director</h4>
+          <p>Least price-sensitive persona. Budget is pre-approved annually. What matters: SLAs, compliance reporting, incident response times, and vendor reputation. They want a partner, not a vendor. Premium positioning with detailed reporting capabilities wins here.</p>
+        </div>
+        <div class="wtp-card">
+          <span class="sensitivity sensitivity-medium">Medium Sensitivity</span>
+          <h4>Event Organizer</h4>
+          <p>Price-sensitive per-event, but repeat clients become loyal once trust is established. Key driver: can you scale quickly and professionally? Will pay 20-30% premium for proven track record at similar events. Event references and case studies are the #1 conversion tool.</p>
+        </div>
+        <div class="wtp-card">
+          <span class="sensitivity sensitivity-high">High Sensitivity</span>
+          <h4>Construction Site Manager</h4>
+          <p>Budget is tied to project costs — security is a line item in overall construction budget. However, regulatory compliance is non-negotiable (traffic marshalls, site access control). Will pay for compliance certainty but will shop aggressively on guard rates. Bundle traffic marshall + guard for margin protection.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Competitive Gaps -->
+    <div class="animate" style="margin-top: 40px;">
+      <div class="text-center" style="margin-bottom: 24px;">
+        <div class="label">Strategic Positioning</div>
+        <h2>Competitive Gaps &amp; Elitez Differentiation</h2>
+      </div>
+      <div class="insight-card">
+        <p style="margin-bottom: 16px;">Based on our analysis of 30+ competitors, Elitez occupies a unique position in the market. Here are the gaps we exploit:</p>
+        <ol class="gap-list">
+          <li><strong>Robotics + Command Center Bundle</strong> — Only Certis and Oneberry offer robotics, and neither bundles it with a manned command center as a standard package. Elitez can offer "Robotic Patrol + 24/7 Command Center + Manned Guards" as a single integrated service — no competitor offers all three under one contract.</li>
+          <li><strong>Tech-Forward Positioning for MCSTs</strong> — Most MCST-focused competitors (Metropolis, Centurion, KH Security) are manpower-only. Elitez can win MCST contracts by offering technology uplift (CCTV analytics, digital patrol reporting, resident app) at a marginal cost increase, giving committee members visible proof of value.</li>
+          <li><strong>Full Spectrum Coverage</strong> — Most competitors are niche: Oneberry (tech only), Aetos (events + government), budget agencies (guards only). Elitez covers condo to corporate to events to construction — enabling cross-selling and client retention across asset types.</li>
+          <li><strong>Modern Digital Presence</strong> — With an average competitor design score of 5.6/10, Elitez's dark-theme, animated, mobile-first website creates an immediate perception of tech sophistication. First impressions matter — procurement committees Google vendors before shortlisting.</li>
+          <li><strong>Event + Permanent Security Cross-Sell</strong> — Event clients often need permanent site security too (and vice versa). Few competitors actively cross-sell these. Elitez can offer "event security clients" a discount on permanent site security to capture lifetime value.</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- Next-Best Alternatives -->
+    <div class="animate" style="margin-top: 40px; margin-bottom: 48px;">
+      <div class="text-center" style="margin-bottom: 24px;">
+        <div class="label">Competitive Landscape</div>
+        <h2>Next-Best Alternatives</h2>
+        <p class="section-subtitle">What prospects use instead of hiring a security agency — and how to position against each.</p>
+      </div>
+      <div class="nba-grid">
+        <div class="nba-card">
+          <div class="threat-level threat-high">High Threat</div>
+          <h4>In-House Security Team</h4>
+          <p>Large corporates and estates sometimes hire guards directly. Higher control but higher cost (CPF, leave, training, management overhead). Position against: "Total cost of in-house is 30-40% higher when you factor in HR, training, and management. We handle everything."</p>
+        </div>
+        <div class="nba-card">
+          <div class="threat-level threat-medium">Medium Threat</div>
+          <h4>DIY CCTV (Ring / Reolink)</h4>
+          <p>Small businesses and some MCSTs install consumer-grade cameras. No monitoring, no response capability. Position against: "Cameras without monitoring are just evidence collection devices. Our command center means someone is watching and responding 24/7."</p>
+        </div>
+        <div class="nba-card">
+          <div class="threat-level threat-high">High Threat</div>
+          <h4>Auxiliary Police (Certis / Aetos)</h4>
+          <p>For high-security sites requiring armed officers. Elitez cannot compete directly here (no auxiliary police licence). Position against: complement rather than compete — "We handle unarmed perimeter security and tech; they handle armed response."</p>
+        </div>
+        <div class="nba-card">
+          <div class="threat-level threat-high">High Threat</div>
+          <h4>Traditional Guard Agencies</h4>
+          <p>Budget competitors offering basic guard services at $1,800-2,200/month. Lowest common denominator. Position against: "Our guards come with technology — patrol tracking, incident reporting, CCTV integration. Same guard, 10x the visibility."</p>
+        </div>
+        <div class="nba-card">
+          <div class="threat-level threat-low">Low Threat</div>
+          <h4>No Security (Status Quo)</h4>
+          <p>Some sites operate without dedicated security, relying on locks and cameras. Position against: "Insurance premiums, liability exposure, and regulatory risk. One incident costs more than a year of professional security."</p>
+        </div>
+        <div class="nba-card">
+          <div class="threat-level threat-medium">Medium Threat</div>
+          <h4>Facilities Management Bundlers</h4>
+          <p>FM companies (ISS, Cushman & Wakefield) offering security as an add-on to cleaning/maintenance contracts. Security is not their core competency. Position against: "Security requires specialization. When your FM vendor handles security, it's always the lowest priority."</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <p>&copy; 2026 Elitez Security Pte Ltd. A business unit of Elitez Group. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Scripts -->
+<script src="js/main.js"></script>
+
+</body>
+</html>

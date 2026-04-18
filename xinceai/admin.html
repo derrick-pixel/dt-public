@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self';" />
+  <title>XinceAI — Competitor Analytics</title>
+  <meta name="robots" content="noindex, nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #140f0c; --surface: #1e1714; --card: #28201b; --card-hi: #332a24;
+      --border: rgba(255,136,68,0.08); --border2: rgba(255,136,68,0.18); --border3: rgba(255,136,68,0.35);
+      --text: #f5ede6; --muted: #7a6a5a; --muted2: #a89888;
+      --cyan: #00e5ff; --amber: #ff8844; --neon: #00ff88; --violet: #c084fc; --rose: #ff4466;
+      --gradient: linear-gradient(135deg, var(--amber), var(--cyan));
+      --glow-c: rgba(0,229,255,0.12); --glow-a: rgba(255,136,68,0.15);
+      --font-head: 'Rajdhani', sans-serif; --font-body: 'Inter', sans-serif; --font-mono: 'Share Tech Mono', monospace;
+      --nav-h: 60px; --radius: 4px; --radius-sm: 4px;
+    }
+
+    /* ── LIGHT MODE ───────────────────────────────────────────────────────── */
+    [data-theme="light"] {
+      --bg: #f5f0eb; --surface: #ebe5de; --card: #ffffff; --card-hi: #f8f4f0;
+      --border: rgba(140,90,40,0.10); --border2: rgba(140,90,40,0.18);
+      --text: #1a1410; --muted: #8a7a6a; --muted2: #6a5a4a;
+      --amber: #d06010; --cyan: #0088aa; --neon: #0a8a4a; --violet: #7040b0; --rose: #c82040;
+    }
+    [data-theme="light"] .admin-nav { background: rgba(245,240,235,0.88); }
+    [data-theme="light"] .admin-nav::after { background: linear-gradient(90deg, transparent, var(--amber), transparent); }
+    [data-theme="light"] body::before {
+      background-image:
+        linear-gradient(rgba(140,90,40,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(140,90,40,0.04) 1px, transparent 1px);
+    }
+
+    /* ── THEME TOGGLE ─────────────────────────────────────────────────────── */
+    .theme-toggle {
+      display: flex; align-items: center; gap: 0;
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 100px; overflow: hidden;
+    }
+    .theme-toggle button {
+      font-family: var(--font-mono); font-size: 0.68rem; padding: 5px 12px;
+      background: none; border: none; color: var(--muted); cursor: pointer;
+      transition: all 0.2s; letter-spacing: 0.04em;
+    }
+    .theme-toggle button.active {
+      background: var(--amber); color: var(--bg); font-weight: 700;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body); background: var(--bg); color: var(--text);
+      font-size: 16px; line-height: 1.65; overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,136,68,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,136,68,0.015) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── ADMIN NAV ──────────────────────────────────────────────────────── */
+    .admin-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: var(--nav-h); display: flex; align-items: center; justify-content: space-between;
+      padding: 0 clamp(16px, 3vw, 32px);
+      background: rgba(20,15,12,0.85); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .admin-nav::after {
+      content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--amber), transparent); opacity: 0.3;
+    }
+    .admin-nav-left { display: flex; align-items: center; gap: 14px; }
+    .nav-brand { display: flex; align-items: center; gap: 10px; }
+    .nav-mark {
+      width: 34px; height: 34px; border: 1.5px solid var(--amber); display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-head); font-weight: 700; font-size: 0.9rem; color: var(--amber);
+      clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+      box-shadow: 0 0 12px var(--glow-a);
+    }
+    .nav-wordmark { font-family: var(--font-head); font-weight: 700; font-size: 1.15rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    .nav-wordmark em { font-style: normal; color: var(--amber); }
+    .admin-badge {
+      font-family: var(--font-mono); font-size: 0.65rem;
+      padding: 4px 12px; border-radius: 0;
+      background: rgba(255,136,68,0.10); border: 1px solid rgba(255,136,68,0.25);
+      color: var(--amber); letter-spacing: 0.08em; text-transform: uppercase;
+      clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+    }
+    .admin-links { display: flex; gap: 8px; align-items: center; }
+    .admin-links a {
+      font-family: var(--font-mono); font-size: 0.8rem; font-weight: 400; color: var(--muted2); padding: 6px 14px;
+      transition: color 0.15s; letter-spacing: 0.04em;
+    }
+    .admin-links a:hover { color: var(--amber); }
+    .admin-links a.active { color: var(--amber); }
+
+    /* ── LAYOUT ─────────────────────────────────────────────────────────── */
+    .wrap { max-width: 1340px; margin: 0 auto; padding: 0 24px; }
+    .page-body { padding-top: calc(var(--nav-h) + 40px); padding-bottom: 80px; }
+
+    /* ── HEADINGS ───────────────────────────────────────────────────────── */
+    .page-title {
+      font-family: var(--font-head); font-size: clamp(2rem, 4vw, 3rem); font-weight: 700;
+      letter-spacing: 0.02em; text-transform: uppercase; margin-bottom: 10px;
+    }
+    .page-sub { color: var(--muted2); font-size: 1rem; margin-bottom: 48px; }
+    .grad { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .eyebrow {
+      font-family: var(--font-mono); font-size: 0.82rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 12px; display: inline-block;
+    }
+    .section-title {
+      font-family: var(--font-head); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700;
+      letter-spacing: 0.02em; text-transform: uppercase; margin-bottom: 24px;
+    }
+
+    /* ── SUMMARY CARDS ──────────────────────────────────────────────────── */
+    .summary-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px; margin-bottom: 48px;
+    }
+    .summary-card {
+      background: var(--card); border: 1px solid var(--border);
+      padding: 24px; position: relative;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    /* HUD corner brackets */
+    .summary-card::before, .summary-card::after {
+      content: ''; position: absolute; width: 12px; height: 12px; pointer-events: none;
+    }
+    .summary-card::before {
+      top: -1px; left: -1px;
+      border-top: 1.5px solid var(--amber); border-left: 1.5px solid var(--amber);
+    }
+    .summary-card::after {
+      bottom: -1px; right: -1px;
+      border-bottom: 1.5px solid var(--amber); border-right: 1.5px solid var(--amber);
+    }
+    .summary-card:hover { transform: translateY(-2px); border-color: var(--border2); }
+    .summary-card .label {
+      font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;
+    }
+    .summary-card .value { font-family: var(--font-head); font-size: 2rem; font-weight: 700; letter-spacing: -0.01em; }
+    .summary-card .sub { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+
+    /* ── TOP COMPETITORS ────────────────────────────────────────────────── */
+    .top-list { display: flex; gap: 16px; margin-bottom: 48px; flex-wrap: wrap; }
+    .top-item {
+      background: var(--card); border: 1px solid var(--border);
+      padding: 20px 24px; flex: 1; min-width: 260px;
+      position: relative; overflow: hidden;
+    }
+    .top-item::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    }
+    .top-item:nth-child(1)::before { background: linear-gradient(90deg, var(--amber), var(--cyan)); }
+    .top-item:nth-child(2)::before { background: linear-gradient(90deg, var(--muted2), var(--muted)); }
+    .top-item:nth-child(3)::before { background: linear-gradient(90deg, #cd7f32, #a0522d); }
+    .top-rank { font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); margin-bottom: 4px; letter-spacing: 0.06em; }
+    .top-name { font-family: var(--font-head); font-weight: 700; font-size: 1.1rem; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.02em; }
+    .top-score { font-family: var(--font-mono); font-size: 0.82rem; color: var(--amber); }
+
+    /* ── FILTER BAR ─────────────────────────────────────────────────────── */
+    .filter-bar {
+      display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; align-items: center;
+    }
+    .filter-bar input, .filter-bar select {
+      background: var(--surface); border: 1px solid var(--border2);
+      padding: 10px 16px; font-family: var(--font-body); font-size: 0.85rem; color: var(--text);
+      outline: none; transition: border-color 0.15s;
+    }
+    .filter-bar input:focus, .filter-bar select:focus { border-color: var(--amber); }
+    .filter-bar input { flex: 1; min-width: 200px; }
+    .filter-bar select { min-width: 140px; cursor: pointer; }
+    .filter-bar select option { background: var(--surface); }
+
+    /* ── TABLE ──────────────────────────────────────────────────────────── */
+    .table-wrap {
+      overflow-x: auto; border: 1px solid var(--border);
+      background: var(--card); margin-bottom: 64px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    thead { background: var(--surface); position: sticky; top: 0; z-index: 10; }
+    thead th {
+      padding: 14px 16px; text-align: left; font-family: var(--font-mono); font-weight: 400; font-size: 0.72rem;
+      text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted2);
+      border-bottom: 1px solid var(--border2); white-space: nowrap; cursor: pointer;
+      user-select: none; transition: color 0.15s;
+    }
+    thead th:hover { color: var(--amber); }
+    thead th.sorted-asc::after { content: ' \u2191'; color: var(--amber); }
+    thead th.sorted-desc::after { content: ' \u2193'; color: var(--amber); }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+    tbody tr:hover { background: rgba(255,136,68,0.03); }
+    tbody td { padding: 12px 16px; vertical-align: top; }
+    td a { color: var(--cyan); font-family: var(--font-mono); font-size: 0.74rem; }
+    td a:hover { text-decoration: underline; }
+
+    /* Rating bars */
+    .rating-cell { min-width: 80px; }
+    .rating-bar {
+      height: 6px; border-radius: 3px; background: rgba(255,136,68,0.06);
+      overflow: hidden; margin-top: 4px;
+    }
+    .rating-bar .fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+    .rating-num { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted2); }
+
+    .region-badge {
+      display: inline-block; padding: 2px 8px; font-family: var(--font-mono); font-size: 0.68rem;
+      font-weight: 400; letter-spacing: 0.04em;
+    }
+    .region-badge.global { background: rgba(0,229,255,0.08); color: var(--cyan); border: 1px solid rgba(0,229,255,0.15); }
+    .region-badge.sg-sea { background: rgba(0,255,136,0.08); color: var(--neon); border: 1px solid rgba(0,255,136,0.15); }
+
+    .features-cell { max-width: 200px; color: var(--muted2); line-height: 1.5; }
+    .strengths-cell { color: var(--neon); max-width: 160px; }
+    .weaknesses-cell { color: var(--rose); max-width: 160px; }
+    .target-cell { color: var(--muted2); font-size: 0.8rem; }
+    .pricing-cell { font-family: var(--font-mono); font-size: 0.74rem; color: var(--amber); }
+
+    /* ── LANDSCAPE SECTION ──────────────────────────────────────────────── */
+    .landscape-section { margin-bottom: 64px; }
+    .landscape-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .landscape-card {
+      background: var(--card); border: 1px solid var(--border);
+      padding: 28px; position: relative;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .landscape-card::before, .landscape-card::after {
+      content: ''; position: absolute; width: 10px; height: 10px; pointer-events: none;
+    }
+    .landscape-card::before {
+      top: -1px; left: -1px;
+      border-top: 1.5px solid var(--amber); border-left: 1.5px solid var(--amber);
+    }
+    .landscape-card::after {
+      bottom: -1px; right: -1px;
+      border-bottom: 1.5px solid var(--amber); border-right: 1.5px solid var(--amber);
+    }
+    .landscape-card:hover { transform: translateY(-2px); border-color: var(--border2); }
+    .landscape-card h3 {
+      font-family: var(--font-head); font-size: 1.1rem; font-weight: 600; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: 0.02em;
+    }
+    .landscape-card h3 .icon { font-size: 1.2rem; }
+    .landscape-card p, .landscape-card li {
+      font-size: 0.88rem; color: var(--muted2); line-height: 1.7;
+    }
+    .landscape-card ul { padding-left: 18px; }
+    .landscape-card li { margin-bottom: 6px; }
+    .landscape-card li strong { color: var(--text); }
+    .landscape-card .stat-highlight {
+      font-family: var(--font-head); font-size: 1.8rem; font-weight: 700; margin: 8px 0;
+      background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    /* ── DESIGN RATIONALE ───────────────────────────────────────────────── */
+    .rationale-section { margin-bottom: 64px; }
+    .rationale-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .rationale-card {
+      background: var(--card); border: 1px solid var(--border);
+      padding: 28px; position: relative;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .rationale-card::before, .rationale-card::after {
+      content: ''; position: absolute; width: 10px; height: 10px; pointer-events: none;
+    }
+    .rationale-card::before {
+      top: -1px; left: -1px;
+      border-top: 1.5px solid var(--amber); border-left: 1.5px solid var(--amber);
+    }
+    .rationale-card::after {
+      bottom: -1px; right: -1px;
+      border-bottom: 1.5px solid var(--amber); border-right: 1.5px solid var(--amber);
+    }
+    .rationale-card:hover { transform: translateY(-2px); border-color: var(--border2); }
+    .rationale-card h3 {
+      font-family: var(--font-head); font-size: 1.1rem; font-weight: 600; margin-bottom: 16px;
+      text-transform: uppercase; letter-spacing: 0.02em;
+    }
+    .rationale-card ul { padding-left: 18px; }
+    .rationale-card li { font-size: 0.88rem; color: var(--muted2); line-height: 1.7; margin-bottom: 8px; }
+    .rationale-card li strong { color: var(--text); font-weight: 600; }
+
+    /* ── SCROLL REVEAL ──────────────────────────────────────────────────── */
+    .reveal {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── FOOTER ─────────────────────────────────────────────────────────── */
+    .admin-footer {
+      text-align: center; padding: 32px 0; border-top: 1px solid var(--border);
+      font-family: var(--font-mono); font-size: 0.76rem; color: var(--muted); letter-spacing: 0.04em;
+    }
+
+    /* ── RESPONSIVE ─────────────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .admin-nav { flex-direction: column; height: auto; padding: 12px 16px; gap: 8px; }
+      .admin-nav-left { width: 100%; justify-content: space-between; }
+      .admin-links { width: 100%; justify-content: center; }
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .top-list { flex-direction: column; }
+      table { font-size: 0.76rem; }
+      thead th, tbody td { padding: 10px 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── ADMIN NAV ─────────────────────────────────────────────────────── -->
+<nav class="admin-nav">
+  <div class="admin-nav-left">
+    <div class="theme-toggle" id="theme-toggle">
+      <button onclick="setTheme('dark')" class="active" id="btn-dark">DARK</button>
+      <button onclick="setTheme('light')" id="btn-light">LIGHT</button>
+    </div>
+    <a href="index.html" class="nav-brand">
+      <div class="nav-mark">X</div>
+      <div class="nav-wordmark">XINCE<em>AI</em></div>
+    </a>
+    <span class="admin-badge">Admin</span>
+  </div>
+  <div class="admin-links">
+    <a href="index.html">Public Site</a>
+    <a href="admin.html" class="active">Analytics</a>
+    <a href="admin-insights.html">Insights</a>
+  </div>
+</nav>
+
+<!-- ── PAGE BODY ──────────────────────────────────────────────────────── -->
+<div class="page-body">
+  <div class="wrap">
+
+    <!-- Header -->
+    <div class="reveal">
+      <div class="eyebrow">Competitive Intelligence</div>
+      <h1 class="page-title">Competitor <span class="grad">Analytics</span></h1>
+      <p class="page-sub">30+ AI workflow and automation companies analyzed for market positioning, strengths, and relevance to Singapore SMEs.</p>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="summary-grid reveal" id="summaryGrid"></div>
+
+    <!-- Top 3 -->
+    <div class="reveal">
+      <div class="eyebrow">Leaderboard</div>
+      <h2 class="section-title" style="margin-bottom:16px;">Top Competitors by Composite Score</h2>
+    </div>
+    <div class="top-list reveal" id="topList"></div>
+
+    <!-- Filter -->
+    <div class="filter-bar reveal">
+      <input type="text" id="searchInput" placeholder="Search companies..." />
+      <select id="regionFilter">
+        <option value="">All Regions</option>
+        <option value="Global">Global</option>
+        <option value="SG/SEA">SG/SEA</option>
+      </select>
+      <select id="sortSelect">
+        <option value="composite">Sort: Composite Score</option>
+        <option value="design">Sort: Design</option>
+        <option value="features">Sort: Features</option>
+        <option value="sme">Sort: SME Focus</option>
+        <option value="sg">Sort: SG Relevance</option>
+        <option value="name">Sort: Name A-Z</option>
+      </select>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap reveal" id="tableWrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Company</th>
+            <th>Region</th>
+            <th>Target Market</th>
+            <th>Key Features</th>
+            <th>Pricing</th>
+            <th>Strengths</th>
+            <th>Weaknesses</th>
+            <th class="rating-cell">Design</th>
+            <th class="rating-cell">Features</th>
+            <th class="rating-cell">SME Focus</th>
+            <th class="rating-cell">SG Rel.</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+    <!-- SG/SEA Landscape -->
+    <div class="landscape-section reveal">
+      <div class="eyebrow">Market Intelligence</div>
+      <h2 class="section-title">Singapore &amp; SEA AI Landscape</h2>
+      <div class="landscape-grid" id="landscapeGrid"></div>
+    </div>
+
+    <!-- Design Rationale -->
+    <div class="rationale-section reveal">
+      <div class="eyebrow">Strategic Positioning</div>
+      <h2 class="section-title">Design Rationale &amp; Differentiation</h2>
+      <div class="rationale-grid" id="rationaleGrid"></div>
+    </div>
+
+  </div>
+</div>
+
+<footer class="admin-footer">
+  <div class="wrap">XinceAI Admin &middot; Competitor Analytics &middot; Internal Use Only</div>
+</footer>
+
+<script>
+// ── THEME TOGGLE ──────────────────────────────────────────────────────
+function setTheme(mode) {
+  document.documentElement.setAttribute('data-theme', mode);
+  document.getElementById('btn-dark').classList.toggle('active', mode === 'dark');
+  document.getElementById('btn-light').classList.toggle('active', mode === 'light');
+  localStorage.setItem('xince-theme', mode);
+}
+(function() { const saved = localStorage.getItem('xince-theme'); if (saved) setTheme(saved); })();
+
+// ── COMPETITOR DATA ────────────────────────────────────────────────────
+const competitors = [
+  { name:"Relevance AI", url:"relevanceai.com", region:"Global", target:"Mid-market, enterprise", features:"AI workforce platform, agent builder, tool integrations, multi-step workflows", pricing:"Freemium / Usage-based", strengths:"Strong agent builder UX, flexible tool system", weaknesses:"Limited SG presence, enterprise-leaning pricing", design:4, features:5, sme:3, sg:2 },
+  { name:"Bardeen", url:"bardeen.ai", region:"Global", target:"Individuals, SMEs", features:"Browser automation, no-code playbooks, scraping, integrations", pricing:"Freemium", strengths:"Very easy to start, good templates", weaknesses:"Limited to browser tasks, shallow enterprise features", design:4, features:3, sme:4, sg:1 },
+  { name:"n8n", url:"n8n.io", region:"Global", target:"Developers, tech SMEs", features:"Open-source workflow automation, 400+ integrations, self-host option", pricing:"Open-source / Paid cloud", strengths:"Open-source flexibility, strong community", weaknesses:"Requires technical skill, no SG localization", design:3, features:5, sme:3, sg:2 },
+  { name:"Make.com", url:"make.com", region:"Global", target:"SMEs, mid-market", features:"Visual workflow builder, 1500+ apps, scenarios, data mapping", pricing:"Freemium / Tiered", strengths:"Excellent visual builder, wide integrations", weaknesses:"Complex pricing, no SG-specific workflows", design:5, features:5, sme:4, sg:2 },
+  { name:"Zapier", url:"zapier.com", region:"Global", target:"SMEs, individuals", features:"7000+ app integrations, Zaps, Tables, Interfaces, AI actions", pricing:"Freemium / Tiered", strengths:"Massive ecosystem, brand recognition, ease of use", weaknesses:"Expensive at scale, shallow AI capabilities", design:4, features:4, sme:5, sg:2 },
+  { name:"Lindy AI", url:"lindy.ai", region:"Global", target:"Professionals, SMEs", features:"AI assistants for email, scheduling, meeting notes, sales", pricing:"Subscription", strengths:"Polished UX, focused use cases", weaknesses:"Narrow scope, no SG market presence", design:5, features:3, sme:3, sg:1 },
+  { name:"Beam AI", url:"beam.ai", region:"Global", target:"Enterprise, mid-market", features:"Agentic process automation, AI workers, enterprise workflows", pricing:"Enterprise", strengths:"Strong enterprise positioning, agentic approach", weaknesses:"High cost, not SME-friendly", design:4, features:4, sme:2, sg:1 },
+  { name:"Cognigy", url:"cognigy.com", region:"Global", target:"Enterprise", features:"Conversational AI, voice/chat agents, contact center automation", pricing:"Enterprise", strengths:"Deep conversational AI, multilingual", weaknesses:"Enterprise-only, complex deployment", design:3, features:4, sme:1, sg:2 },
+  { name:"UiPath", url:"uipath.com", region:"Global", target:"Enterprise", features:"RPA, process mining, AI-powered automation, document understanding", pricing:"Enterprise / Per-robot", strengths:"Market leader in RPA, comprehensive platform", weaknesses:"Heavy, expensive, steep learning curve", design:3, features:5, sme:1, sg:3 },
+  { name:"Automation Anywhere", url:"automationanywhere.com", region:"Global", target:"Enterprise", features:"Cloud RPA, IQ Bot, process discovery, AI-powered automation", pricing:"Enterprise", strengths:"Strong cloud RPA, good AI integration", weaknesses:"Enterprise-focused, complex licensing", design:3, features:5, sme:1, sg:2 },
+  { name:"Microsoft Copilot Studio", url:"microsoft.com/copilot", region:"Global", target:"Enterprise, mid-market", features:"Custom Copilot agents, Power Platform integration, Teams bots", pricing:"Per-user/month", strengths:"Microsoft ecosystem lock-in, familiar interface", weaknesses:"Requires M365, limited outside MS stack", design:4, features:4, sme:2, sg:3 },
+  { name:"Salesforce Einstein", url:"salesforce.com/einstein", region:"Global", target:"Enterprise", features:"CRM AI, predictive analytics, AI-generated content, Copilot", pricing:"Add-on to Salesforce", strengths:"Deep CRM integration, trusted brand", weaknesses:"Only for Salesforce users, very expensive", design:3, features:4, sme:1, sg:2 },
+  { name:"HubSpot AI", url:"hubspot.com", region:"Global", target:"SMEs, mid-market", features:"AI content writer, chatbot, predictive lead scoring, workflow AI", pricing:"Bundled with HubSpot", strengths:"Great for marketing/sales SMEs, freemium CRM", weaknesses:"Limited to HubSpot ecosystem, basic AI", design:4, features:3, sme:4, sg:2 },
+  { name:"Aisera", url:"aisera.com", region:"Global", target:"Enterprise", features:"AI service desk, IT/HR automation, conversational AI, copilot", pricing:"Enterprise", strengths:"Strong IT service management AI", weaknesses:"Enterprise-only, no SME tier", design:3, features:4, sme:1, sg:1 },
+  { name:"Moveworks", url:"moveworks.com", region:"Global", target:"Enterprise", features:"Employee service platform, IT support AI, natural language ticketing", pricing:"Enterprise", strengths:"Best-in-class IT helpdesk AI", weaknesses:"Narrow use case, very expensive", design:4, features:4, sme:1, sg:1 },
+  { name:"Workato", url:"workato.com", region:"Global", target:"Mid-market, enterprise", features:"iPaaS, recipe-based automation, AI connectors, 1200+ apps", pricing:"Usage-based", strengths:"Powerful iPaaS, good for complex workflows", weaknesses:"Expensive, requires technical knowledge", design:3, features:5, sme:2, sg:2 },
+  { name:"Tray.io", url:"tray.io", region:"Global", target:"Mid-market, enterprise", features:"API integration platform, visual builder, AI-ready connectors", pricing:"Enterprise", strengths:"Flexible API platform, scalable", weaknesses:"Not SME-friendly, steep pricing", design:3, features:4, sme:2, sg:1 },
+  { name:"Creatio", url:"creatio.com", region:"Global", target:"Mid-market", features:"No-code CRM/BPM platform, process automation, AI/ML tools", pricing:"Per-user/month", strengths:"Unified CRM+workflow, no-code approach", weaknesses:"Less known, smaller ecosystem", design:3, features:4, sme:3, sg:1 },
+  { name:"Pega", url:"pega.com", region:"Global", target:"Enterprise", features:"Low-code platform, BPM, decisioning AI, customer engagement", pricing:"Enterprise", strengths:"Enterprise decisioning, regulated industries", weaknesses:"Very complex, expensive, slow to deploy", design:2, features:4, sme:1, sg:2 },
+  { name:"Appian", url:"appian.com", region:"Global", target:"Enterprise", features:"Low-code automation, process mining, AI document extraction", pricing:"Enterprise", strengths:"Strong low-code for enterprises, compliance focus", weaknesses:"Enterprise-only pricing, limited AI depth", design:3, features:4, sme:1, sg:2 },
+  { name:"Celonis", url:"celonis.com", region:"Global", target:"Enterprise", features:"Process mining, execution management, AI recommendations", pricing:"Enterprise", strengths:"Market leader in process mining", weaknesses:"Requires large data, enterprise-only", design:4, features:4, sme:1, sg:1 },
+  { name:"Gong", url:"gong.io", region:"Global", target:"Sales teams", features:"Revenue intelligence, call analytics, deal forecasting, coaching AI", pricing:"Enterprise", strengths:"Best-in-class revenue intel, strong analytics", weaknesses:"Sales-only, expensive, no SG adaptation", design:5, features:4, sme:2, sg:1 },
+  { name:"Outreach", url:"outreach.io", region:"Global", target:"Sales teams", features:"Sales engagement, sequencing, AI-guided selling, analytics", pricing:"Enterprise", strengths:"Strong sales automation, AI coaching", weaknesses:"Sales-only, not for general workflow", design:4, features:4, sme:2, sg:1 },
+  { name:"AI Singapore", url:"aisingapore.org", region:"SG/SEA", target:"SG ecosystem", features:"National AI programme, 100E AI adoption, research, talent dev", pricing:"Government-funded", strengths:"Government backing, deep local knowledge, free/funded", weaknesses:"Not a commercial product, slow-moving", design:3, features:3, sme:4, sg:5 },
+  { name:"Hypotenuse AI", url:"hypotenuse.ai", region:"SG/SEA", target:"E-commerce, content teams", features:"AI content generation, product descriptions, SEO writing, brand voice", pricing:"Subscription", strengths:"SG-founded, good for e-commerce content", weaknesses:"Content-only, no workflow automation", design:4, features:3, sme:4, sg:4 },
+  { name:"Taiger", url:"taiger.com", region:"SG/SEA", target:"Enterprise, government", features:"Intelligent document processing, NLP search, knowledge management", pricing:"Enterprise", strengths:"Strong NLP, SG government contracts", weaknesses:"Enterprise-only, narrow scope", design:3, features:4, sme:2, sg:5 },
+  { name:"NextBillion.ai", url:"nextbillion.ai", region:"SG/SEA", target:"Logistics, delivery", features:"Geospatial AI, route optimization, fleet management, maps", pricing:"Usage-based", strengths:"Best-in-class SEA mapping, logistics focus", weaknesses:"Logistics-only, no general AI workflow", design:3, features:4, sme:2, sg:4 },
+  { name:"Eureka AI", url:"eureka.ai", region:"SG/SEA", target:"Finance, enterprise", features:"AI analytics, business intelligence, data visualization", pricing:"Enterprise", strengths:"SG-based, strong analytics", weaknesses:"Enterprise-focused, limited automation", design:3, features:3, sme:2, sg:4 },
+  { name:"Locus", url:"locus.sh", region:"SG/SEA", target:"Logistics, supply chain", features:"Route optimization, dispatch management, AI-driven logistics", pricing:"Enterprise", strengths:"Strong SEA presence, proven logistics AI", weaknesses:"Logistics-only, not general-purpose", design:3, features:4, sme:2, sg:3 },
+  { name:"PatSnap", url:"patsnap.com", region:"SG/SEA", target:"R&D, IP teams", features:"AI-powered patent analytics, innovation intelligence, tech scouting", pricing:"Enterprise", strengths:"SG-headquartered, deep IP analytics", weaknesses:"Niche IP focus, expensive", design:4, features:4, sme:2, sg:4 },
+  { name:"Deskera", url:"deskera.com", region:"SG/SEA", target:"SMEs", features:"All-in-one ERP/CRM/HR, AI bookkeeping, invoicing, inventory", pricing:"Subscription / Tiered", strengths:"SG-based, built for SEA SMEs, affordable", weaknesses:"Basic AI, jack-of-all-trades, clunky UX", design:2, features:3, sme:5, sg:5 },
+];
+
+// ── LANDSCAPE DATA ─────────────────────────────────────────────────────
+const landscapeData = [
+  {
+    icon: "📊", title: "Market Size & Growth",
+    content: `<p class="stat-highlight">US$3.2B</p><p>Singapore AI market projected by 2027 (CAGR ~30%). Southeast Asia AI market expected to reach US$12B+ by 2028.</p><ul><li>Singapore: AI adoption rate among businesses at 53% (highest in ASEAN)</li><li>SEA region: 2nd fastest-growing AI market globally after Middle East</li><li>SME segment: ~70% of SG businesses interested in AI but only 15% have deployed</li></ul>`
+  },
+  {
+    icon: "🏢", title: "Key SG AI Players",
+    content: `<ul><li><strong>Taiger</strong> — NLP/document AI, government + enterprise</li><li><strong>PatSnap</strong> — Innovation intelligence, global SG HQ</li><li><strong>Hypotenuse AI</strong> — Content gen, e-commerce focus</li><li><strong>Deskera</strong> — SME ERP/CRM with AI features</li><li><strong>AI Singapore (AISG)</strong> — National AI programme, 100E adoption</li><li><strong>GovTech</strong> — Government AI/digital services</li><li><strong>Grab</strong> — Applied AI in logistics/payments at scale</li></ul>`
+  },
+  {
+    icon: "📈", title: "Regional Trends",
+    content: `<ul><li><strong>Generative AI adoption</strong> accelerating across SEA (2024-2026 inflection point)</li><li><strong>Vertical AI solutions</strong> gaining traction over horizontal platforms</li><li><strong>Government push:</strong> SG Smart Nation 2.0, NAIS 2.0, 100E programme</li><li><strong>Funding:</strong> US$1B+ invested in SG AI startups in 2024-2025</li><li><strong>Talent gap:</strong> 60,000 AI practitioners needed by 2028 (SG alone)</li><li><strong>Cloud-first:</strong> AWS, Azure, GCP all have SG regions</li></ul>`
+  },
+  {
+    icon: "⚖️", title: "Regulatory Landscape",
+    content: `<ul><li><strong>PDPA (Personal Data Protection Act):</strong> SG's primary data law; mandatory data breach notification; consent + legitimate interest bases</li><li><strong>MAIGF (Model AI Governance Framework):</strong> Voluntary but industry-standard; emphasizes transparency, explainability, fairness</li><li><strong>AI Verify:</strong> World's first AI governance testing framework (by IMDA)</li><li><strong>ASEAN AI Guide:</strong> Regional harmonization in progress, SG leading</li><li><strong>Key implication:</strong> AI solutions for SG must be PDPA-compliant with data residency options</li></ul>`
+  },
+  {
+    icon: "🌏", title: "Cultural & Localization Factors",
+    content: `<ul><li><strong>Multilingual needs:</strong> English (primary), Mandarin, Malay, Tamil — AI must handle Singlish nuances</li><li><strong>Trust-first culture:</strong> SG SMEs prefer proven solutions with local support and references</li><li><strong>Government incentive-driven:</strong> 60-80% adoption decisions influenced by grant availability (PSG, JR+, EDG)</li><li><strong>Relationship-based sales:</strong> Channel partners and trade associations (SBF, ASME) are key</li><li><strong>WhatsApp-dominant:</strong> 85%+ business communication via WhatsApp in SG SMEs</li></ul>`
+  },
+  {
+    icon: "🔄", title: "SME Adoption Patterns",
+    content: `<ul><li><strong>Top use cases:</strong> Customer service automation (45%), accounting/invoicing (38%), marketing content (32%)</li><li><strong>Barriers:</strong> Cost uncertainty (#1), lack of technical staff (#2), data privacy fears (#3)</li><li><strong>Preferred model:</strong> Done-for-you > low-code > no-code > custom dev</li><li><strong>Budget:</strong> SG SMEs typically allocate S$2K-8K/month for SaaS tools</li><li><strong>Decision cycle:</strong> 2-6 weeks for SMEs vs 3-12 months for enterprise</li><li><strong>Key trigger:</strong> Government grant approval accelerates adoption 3x</li></ul>`
+  },
+];
+
+// ── RATIONALE DATA ─────────────────────────────────────────────────────
+const rationaleData = [
+  {
+    title: "Ideas Borrowed from Competitors",
+    items: [
+      "<strong>Visual workflow builder</strong> (from Make.com/Zapier) — intuitive drag-and-drop paradigm for non-technical users",
+      "<strong>Agent-based framing</strong> (from Relevance AI/Beam AI) — positioning AI as autonomous workers, not just tools",
+      "<strong>Template library approach</strong> (from Bardeen/Zapier) — pre-built workflows reduce time-to-value",
+      "<strong>Transparent pricing</strong> (from HubSpot) — clear tiers vs enterprise 'contact us' opacity",
+      "<strong>Dark theme + gradient accents</strong> (from Lindy AI/Gong) — modern SaaS aesthetic that signals sophistication",
+    ]
+  },
+  {
+    title: "Weaknesses We Improved Upon",
+    items: [
+      "<strong>No SG localization</strong> (most competitors) — XinceAI built Singapore-first with PDPA compliance, local integrations, Singlish-aware NLP",
+      "<strong>Enterprise-only pricing</strong> (UiPath/Pega/Cognigy) — XinceAI offers SME-friendly tiers starting under S$500/month",
+      "<strong>Generic workflows</strong> (Zapier/Make) — XinceAI provides 9 pre-built workflows specifically designed for SG SME pain points",
+      "<strong>No grant alignment</strong> (all global players) — XinceAI is pre-approved for JR+ grant with up to 70% government funding",
+      "<strong>Complex onboarding</strong> (n8n/Workato) — XinceAI offers done-for-you deployment in 2-4 weeks, not months",
+    ]
+  },
+  {
+    title: "Why XinceAI Wins for SG SMEs",
+    items: [
+      "<strong>Grant-first positioning:</strong> Only AI workflow platform pre-approved for WSG JR+ (up to 70% funded) — removes the #1 adoption barrier: cost",
+      "<strong>Local-first design:</strong> PDPA-compliant, SG data residency, WhatsApp integration, multilingual support",
+      "<strong>Done-for-you model:</strong> SG SMEs prefer implementation partners over DIY tools — XinceAI handles deployment end-to-end",
+      "<strong>Vertical depth:</strong> 9 production-ready workflows (not generic templates) built for SG business processes",
+      "<strong>Speed to value:</strong> 377-577 hours saved/month with 2-4 week deployment vs 3-12 months for enterprise tools",
+      "<strong>Local support:</strong> Singapore-based team with on-ground support, not a chatbot in another timezone",
+    ]
+  },
+];
+
+// ── HELPER FUNCTIONS ───────────────────────────────────────────────────
+function ratingColor(score) {
+  if (score >= 4.5) return 'var(--neon)';
+  if (score >= 3.5) return 'var(--amber)';
+  if (score >= 2.5) return 'var(--cyan)';
+  if (score >= 1.5) return 'var(--violet)';
+  return 'var(--rose)';
+}
+
+function ratingBar(score) {
+  const pct = (score / 5) * 100;
+  const color = ratingColor(score);
+  return `<span class="rating-num">${score}</span><div class="rating-bar"><div class="fill" style="width:${pct}%;background:${color}"></div></div>`;
+}
+
+function compositeScore(c) {
+  return ((c.design + c.features + c.sme + c.sg) / 4).toFixed(1);
+}
+
+// ── RENDER SUMMARY ─────────────────────────────────────────────────────
+function renderSummary() {
+  const total = competitors.length;
+  const avgDesign = (competitors.reduce((s,c) => s + c.design, 0) / total).toFixed(1);
+  const avgFeatures = (competitors.reduce((s,c) => s + c.features, 0) / total).toFixed(1);
+  const avgSME = (competitors.reduce((s,c) => s + c.sme, 0) / total).toFixed(1);
+  const avgSG = (competitors.reduce((s,c) => s + c.sg, 0) / total).toFixed(1);
+  const sgCount = competitors.filter(c => c.region === 'SG/SEA').length;
+
+  const cards = [
+    { label:'Companies Analyzed', value:total, sub:'AI workflow & automation' },
+    { label:'Avg Design Score', value:avgDesign, sub:'out of 5.0' },
+    { label:'Avg Features Score', value:avgFeatures, sub:'out of 5.0' },
+    { label:'Avg SME Focus', value:avgSME, sub:'out of 5.0' },
+    { label:'Avg SG Relevance', value:avgSG, sub:'out of 5.0' },
+    { label:'SG/SEA Players', value:sgCount, sub:'local competitors' },
+  ];
+
+  document.getElementById('summaryGrid').innerHTML = cards.map(c =>
+    `<div class="summary-card"><div class="label">${c.label}</div><div class="value grad">${c.value}</div><div class="sub">${c.sub}</div></div>`
+  ).join('');
+}
+
+// ── RENDER TOP 3 ───────────────────────────────────────────────────────
+function renderTop3() {
+  const sorted = [...competitors].sort((a,b) => compositeScore(b) - compositeScore(a));
+  const top3 = sorted.slice(0, 3);
+  const medals = ['1st', '2nd', '3rd'];
+
+  document.getElementById('topList').innerHTML = top3.map((c, i) =>
+    `<div class="top-item"><div class="top-rank">${medals[i]}</div><div class="top-name">${c.name}</div><div class="top-score">Composite: ${compositeScore(c)} / 5.0</div><div style="font-size:0.78rem;color:var(--muted);margin-top:6px">${c.strengths}</div></div>`
+  ).join('');
+}
+
+// ── RENDER TABLE ───────────────────────────────────────────────────────
+function renderTable(data) {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = data.map((c, i) => {
+    const regionClass = c.region === 'SG/SEA' ? 'sg-sea' : 'global';
+    return `<tr>
+      <td style="color:var(--muted);font-family:var(--font-mono);font-size:0.74rem">${i + 1}</td>
+      <td><strong>${c.name}</strong><br><a href="https://${c.url}" target="_blank">${c.url}</a></td>
+      <td><span class="region-badge ${regionClass}">${c.region}</span></td>
+      <td class="target-cell">${c.target}</td>
+      <td class="features-cell">${c.features}</td>
+      <td class="pricing-cell">${c.pricing}</td>
+      <td class="strengths-cell">${c.strengths}</td>
+      <td class="weaknesses-cell">${c.weaknesses}</td>
+      <td class="rating-cell">${ratingBar(c.design)}</td>
+      <td class="rating-cell">${ratingBar(c.features)}</td>
+      <td class="rating-cell">${ratingBar(c.sme)}</td>
+      <td class="rating-cell">${ratingBar(c.sg)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── RENDER LANDSCAPE ───────────────────────────────────────────────────
+function renderLandscape() {
+  document.getElementById('landscapeGrid').innerHTML = landscapeData.map(d =>
+    `<div class="landscape-card"><h3><span class="icon">${d.icon}</span>${d.title}</h3>${d.content}</div>`
+  ).join('');
+}
+
+// ── RENDER RATIONALE ───────────────────────────────────────────────────
+function renderRationale() {
+  document.getElementById('rationaleGrid').innerHTML = rationaleData.map(d =>
+    `<div class="rationale-card"><h3>${d.title}</h3><ul>${d.items.map(i => `<li>${i}</li>`).join('')}</ul></div>`
+  ).join('');
+}
+
+// ── FILTERING & SORTING ────────────────────────────────────────────────
+function getFilteredData() {
+  let data = [...competitors];
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const region = document.getElementById('regionFilter').value;
+  const sort = document.getElementById('sortSelect').value;
+
+  if (search) {
+    data = data.filter(c =>
+      c.name.toLowerCase().includes(search) ||
+      c.features.toLowerCase().includes(search) ||
+      c.target.toLowerCase().includes(search)
+    );
+  }
+  if (region) {
+    data = data.filter(c => c.region === region);
+  }
+
+  const sortMap = {
+    composite: (a,b) => compositeScore(b) - compositeScore(a),
+    design: (a,b) => b.design - a.design,
+    features: (a,b) => b.features - a.features,
+    sme: (a,b) => b.sme - a.sme,
+    sg: (a,b) => b.sg - a.sg,
+    name: (a,b) => a.name.localeCompare(b.name),
+  };
+  data.sort(sortMap[sort] || sortMap.composite);
+
+  return data;
+}
+
+function updateTable() {
+  renderTable(getFilteredData());
+}
+
+// ── SCROLL REVEAL ──────────────────────────────────────────────────────
+function initReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  renderSummary();
+  renderTop3();
+  renderTable([...competitors].sort((a,b) => compositeScore(b) - compositeScore(a)));
+  renderLandscape();
+  renderRationale();
+
+  document.getElementById('searchInput').addEventListener('input', updateTable);
+  document.getElementById('regionFilter').addEventListener('change', updateTable);
+  document.getElementById('sortSelect').addEventListener('change', updateTable);
+
+  // Slight delay for scroll reveal to register elements after render
+  requestAnimationFrame(() => initReveal());
+});
+</script>
+</body>
+</html>
