@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ElitezAI — Agentic AI Workflows for Southeast Asian SMEs</title>
+  <!-- Open Graph / WhatsApp preview -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:title"       content="ElitezAI — Automate the 'Ugh' Out of Your Operations" />
+  <meta property="og:description" content="Agentic AI workflows for Southeast Asian SMEs. 250 paying clients, 20,000 A/B tests, 577h saved/month. MOM-compliant. Production-grade." />
+  <meta property="og:image"       content="https://raw.githubusercontent.com/derrick-pixel/elitezai-website/main/thumbnail.png" />
+  <meta property="og:image:width"  content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url"         content="https://github.com/derrick-pixel/elitezai-website" />
+  <meta name="twitter:card"       content="summary_large_image" />
+  <meta name="twitter:image"      content="https://raw.githubusercontent.com/derrick-pixel/elitezai-website/main/thumbnail.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    html { scroll-behavior: smooth; }
+
+    /* Gradient backgrounds */
+    .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f2d4a 100%); }
+    .section-alt { background: #f8fafc; }
+    .card-hover { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.12); }
+
+    /* Animated counter */
+    .counter { transition: all 0.5s ease; }
+
+    /* Nav blur */
+    .nav-blur { backdrop-filter: blur(12px); background: rgba(15, 23, 42, 0.85); }
+
+    /* Gradient text */
+    .gradient-text {
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .gradient-text-green {
+      background: linear-gradient(135deg, #34d399, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Pill badges */
+    .badge { display: inline-block; padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
+    .badge-blue { background: rgba(56,189,248,0.15); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); }
+    .badge-green { background: rgba(52,211,153,0.15); color: #34d399; border: 1px solid rgba(52,211,153,0.3); }
+    .badge-purple { background: rgba(129,140,248,0.15); color: #818cf8; border: 1px solid rgba(129,140,248,0.3); }
+
+    /* Workflow cards */
+    .workflow-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; transition: all 0.25s; }
+    .workflow-card:hover { border-color: #38bdf8; box-shadow: 0 0 0 1px #38bdf8, 0 8px 24px rgba(56,189,248,0.1); }
+
+    /* Section divider */
+    .section-divider { height: 1px; background: linear-gradient(to right, transparent, #e2e8f0, transparent); }
+
+    /* Analytics card */
+    .analytics-dark { background: #1e293b; border: 1px solid #334155; border-radius: 16px; }
+
+    /* Glow effect */
+    .glow-blue { box-shadow: 0 0 30px rgba(56,189,248,0.2); }
+
+    /* Progress bar */
+    .progress-bar { height: 6px; border-radius: 9999px; background: #e2e8f0; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 9999px; background: linear-gradient(to right, #38bdf8, #818cf8); }
+
+    /* Tooltip */
+    .tooltip-box { position: relative; cursor: help; }
+    .tooltip-box .tooltip-text {
+      visibility: hidden; opacity: 0; width: 240px; background: #1e293b; color: #e2e8f0;
+      font-size: 0.75rem; border-radius: 8px; padding: 10px 12px;
+      position: absolute; z-index: 10; bottom: 130%; left: 50%; transform: translateX(-50%);
+      transition: opacity 0.2s; border: 1px solid #334155; line-height: 1.5;
+    }
+    .tooltip-box:hover .tooltip-text { visibility: visible; opacity: 1; }
+
+    /* Table striped — light context */
+    .table-row-alt:nth-child(even) { background: #f8fafc; }
+    /* Table striped — dark context (analytics-dark, bg-slate-900) */
+    .analytics-dark .table-row-alt:nth-child(even),
+    .bg-slate-900 .table-row-alt:nth-child(even) { background: rgba(255,255,255,0.04); }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in { animation: fadeInUp 0.6s ease forwards; }
+    .delay-1 { animation-delay: 0.1s; opacity: 0; }
+    .delay-2 { animation-delay: 0.2s; opacity: 0; }
+    .delay-3 { animation-delay: 0.3s; opacity: 0; }
+    .delay-4 { animation-delay: 0.4s; opacity: 0; }
+
+    /* ── Business Plan dropdown ───────────────────────── */
+    .bp-dropdown { position: relative; }
+    .bp-dropdown-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      min-width: 240px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+      z-index: 200;
+    }
+    .bp-dropdown-menu::before {
+      content: '';
+      position: absolute;
+      top: -6px; left: 50%; transform: translateX(-50%);
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-bottom: 6px solid #334155;
+    }
+    .bp-dropdown:hover .bp-dropdown-menu,
+    .bp-dropdown:focus-within .bp-dropdown-menu { display: block; }
+    .bp-dropdown-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 14px 16px; text-decoration: none;
+      border-bottom: 1px solid #334155;
+      transition: background 0.15s;
+    }
+    .bp-dropdown-item:last-child { border-bottom: none; }
+    .bp-dropdown-item:hover { background: rgba(255,255,255,0.05); }
+
+    /* ── Launched Product Tab System ───────────────────── */
+    .lp-tab-bar {
+      position: sticky;
+      top: 0; /* overridden by JS once nav height is known */
+      z-index: 40;
+      background: #fff;
+      border-bottom: 2px solid #e2e8f0;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .lp-tab-btn {
+      padding: 0.9rem 1.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #64748b;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      white-space: nowrap;
+    }
+    .lp-tab-btn:hover { color: #0f172a; }
+    .lp-tab-btn.active { color: #0ea5e9; border-bottom-color: #0ea5e9; }
+    .lp-tab-panel { display: none; }
+    .lp-tab-panel.active { display: block; }
+  </style>
+</head>
+<body class="bg-white text-slate-800">
+
+<!-- ═══════════════════════════════════════════════════
+     BOOTH ANNOUNCEMENT BAR
+════════════════════════════════════════════════════ -->
+<div id="booth-bar" class="fixed top-0 left-0 right-0 z-[60] bg-[#800000] text-white text-xs flex items-center justify-center gap-3 px-4 py-2">
+  <img src="https://www.wes.org/wp-content/uploads/2018/05/chicago-booth.png" alt="Chicago Booth" class="h-5 w-auto brightness-0 invert flex-shrink-0" />
+  <span class="font-semibold tracking-wide">Chicago Booth School of Business</span>
+  <span class="text-red-200 hidden sm:inline">·</span>
+  <span class="text-red-200 hidden sm:inline">Business Analytics · Final Assignment · Academic Purpose Only</span>
+  <span class="text-red-200 sm:hidden">· Academic Assignment</span>
+  <button onclick="document.getElementById('booth-bar').remove(); document.querySelector('nav').style.top='0'; document.querySelector('.pt-16').style.paddingTop='4rem';" class="ml-4 text-red-300 hover:text-white transition text-base leading-none" aria-label="Dismiss">×</button>
+</div>
+<script>
+  // Push nav and hero down to account for booth bar
+  function switchTab(name) {
+    // panels
+    ['product','traction','analytics','pricing'].forEach(t => {
+      document.getElementById('lp-panel-' + t).classList.toggle('active', t === name);
+      document.getElementById('lp-btn-' + t).classList.toggle('active', t === name);
+    });
+    // scroll to tab bar
+    const bar = document.getElementById('lp-tab-bar');
+    if (bar) bar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const boothBar = document.getElementById('booth-bar');
+    const nav = document.querySelector('nav');
+    const tabBar = document.getElementById('lp-tab-bar');
+
+    function setOffsets() {
+      const navH = nav ? nav.offsetHeight : 0;
+      const boothH = (boothBar && boothBar.style.display !== 'none') ? boothBar.offsetHeight : 0;
+      const totalH = boothH + navH;
+      if (nav) nav.style.top = boothH + 'px';
+      if (tabBar) tabBar.style.top = totalH + 'px';
+    }
+    setOffsets();
+    window.addEventListener('resize', setOffsets);
+  });
+</script>
+
+<!-- ═══════════════════════════════════════════════════
+     NAVIGATION
+════════════════════════════════════════════════════ -->
+<nav class="nav-blur fixed left-0 right-0 z-50 border-b border-slate-700/50">
+  <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center">
+        <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      </div>
+      <span class="text-white font-bold text-lg tracking-tight">Elitez<span class="text-sky-400">AI</span></span>
+    </div>
+    <div class="hidden md:flex items-center gap-6 text-sm text-slate-300">
+      <!-- Single "Launched Product" nav entry — opens tab section -->
+      <button onclick="switchTab('product')" class="flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 transition font-semibold bg-transparent border-0 cursor-pointer px-3 py-1.5 rounded-lg hover:bg-emerald-500/10">
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3l14 9-14 9V3z"/></svg>
+        Launched Product
+      </button>
+      <a href="business-plan.html" class="text-sky-400 hover:text-sky-300 text-xs font-semibold px-3 py-1.5 rounded-md border border-sky-800 hover:border-sky-500 transition-colors">📄 Business Plan</a>
+      <a href="business-plan-enhanced.html" class="text-emerald-400 hover:text-emerald-300 text-xs font-semibold px-3 py-1.5 rounded-md border border-emerald-800 hover:border-emerald-500 transition-colors">✦ Enhanced by AI</a>
+      <a href="vc-countermeasures.html" class="flex items-center gap-1.5 text-indigo-400 hover:text-indigo-300 transition font-medium">
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        VC Due Diligence
+      </a>
+    </div>
+    <a href="#contact" class="bg-sky-500 hover:bg-sky-400 text-white text-sm font-semibold px-5 py-2 rounded-lg transition">Book a Demo</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════════════ -->
+<section class="hero-gradient min-h-screen flex flex-col justify-center pt-16">
+  <div class="max-w-7xl mx-auto px-6 py-24">
+    <div class="max-w-4xl">
+      <div class="fade-in delay-1 mb-6">
+        <span class="badge badge-green">Now Scaling Across Southeast Asia</span>
+      </div>
+      <h1 class="fade-in delay-2 text-5xl md:text-7xl font-extrabold text-white leading-tight mb-6">
+        Automate the <span class="gradient-text">"Ugh"</span><br/>Out of Your Operations
+      </h1>
+      <p class="fade-in delay-3 text-xl text-slate-300 max-w-2xl mb-10 leading-relaxed">
+        Agentic AI workflows purpose-built for Southeast Asian SMEs. Not chatbots — autonomous agents that integrate with your systems, comply with local regulations, and measurably move your P&amp;L.
+      </p>
+      <div class="fade-in delay-4 flex flex-wrap gap-4">
+        <a href="#contact" class="bg-sky-500 hover:bg-sky-400 text-white font-semibold px-8 py-4 rounded-xl transition text-lg">Start Free Discovery →</a>
+        <button onclick="switchTab('traction')" class="border border-slate-500 hover:border-slate-300 text-slate-300 hover:text-white font-semibold px-8 py-4 rounded-xl transition text-lg bg-transparent cursor-pointer">See Our Results</button>
+      </div>
+    </div>
+
+    <!-- Hero metric strip -->
+    <div class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
+        <div class="text-4xl font-extrabold text-white mb-1" id="cnt-customers">250</div>
+        <div class="text-slate-400 text-sm">Paying SME Clients</div>
+        <div class="mt-3 progress-bar"><div class="progress-fill" style="width:25%"></div></div>
+        <div class="text-xs text-slate-500 mt-1">Target: 1,000 by Year 1</div>
+      </div>
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
+        <div class="text-4xl font-extrabold text-white mb-1">20K</div>
+        <div class="text-slate-400 text-sm">A/B Tests Conducted</div>
+        <div class="mt-3 progress-bar"><div class="progress-fill" style="width:60%"></div></div>
+        <div class="text-xs text-slate-500 mt-1">Across pricing, packaging &amp; UX</div>
+      </div>
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
+        <div class="text-4xl font-extrabold text-white mb-1">577h</div>
+        <div class="text-slate-400 text-sm">Hours Saved / Month</div>
+        <div class="mt-3 progress-bar"><div class="progress-fill" style="width:80%"></div></div>
+        <div class="text-xs text-slate-500 mt-1">Per client, across 9 workflows</div>
+      </div>
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
+        <div class="text-4xl font-extrabold text-white mb-1">S$28K</div>
+        <div class="text-slate-400 text-sm">Monthly Cost Reduction</div>
+        <div class="mt-3 progress-bar"><div class="progress-fill" style="width:70%"></div></div>
+        <div class="text-xs text-slate-500 mt-1">Avg per client, gross savings</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     PROBLEM STRIP
+════════════════════════════════════════════════════ -->
+<section class="bg-slate-900 py-16">
+  <div class="max-w-7xl mx-auto px-6">
+    <p class="text-center text-slate-400 text-sm font-semibold uppercase tracking-widest mb-8">The Market Gap We're Solving</p>
+    <div class="grid md:grid-cols-3 gap-8 text-center">
+      <div>
+        <div class="text-sky-400 text-4xl font-black mb-2">95%</div>
+        <div class="text-slate-300 text-sm leading-relaxed">of GenAI pilots yield <strong class="text-white">no tangible P&amp;L impact</strong> — they provide suggestions, not actions</div>
+      </div>
+      <div>
+        <div class="text-sky-400 text-4xl font-black mb-2">60–70%</div>
+        <div class="text-slate-300 text-sm leading-relaxed">of new hires complete onboarding steps on time without automation — <strong class="text-white">compliance risk every hire</strong></div>
+      </div>
+      <div>
+        <div class="text-sky-400 text-4xl font-black mb-2">48h+</div>
+        <div class="text-slate-300 text-sm leading-relaxed">wasted per month per HR specialist on <strong class="text-white">contract creation alone</strong> — not strategy</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     LAUNCHED PRODUCT — TAB CONTAINER
+════════════════════════════════════════════════════ -->
+<div id="launched-product">
+
+  <!-- Tab bar -->
+  <div class="lp-tab-bar" id="lp-tab-bar">
+    <div class="max-w-7xl mx-auto px-6 flex items-center overflow-x-auto">
+      <!-- Section label pill -->
+      <div class="flex items-center gap-2 mr-6 py-3 flex-shrink-0">
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        <span class="text-slate-800 font-black text-sm uppercase tracking-wider">Launched Product</span>
+      </div>
+      <div class="w-px h-6 bg-slate-200 mr-4 flex-shrink-0"></div>
+      <button class="lp-tab-btn active" id="lp-btn-product"   onclick="switchTab('product')">🚀 Product</button>
+      <button class="lp-tab-btn"        id="lp-btn-traction"  onclick="switchTab('traction')">📈 Traction</button>
+      <button class="lp-tab-btn"        id="lp-btn-analytics" onclick="switchTab('analytics')">🔬 Analytics</button>
+      <button class="lp-tab-btn"        id="lp-btn-pricing"   onclick="switchTab('pricing')">💰 Pricing</button>
+    </div>
+  </div>
+
+  <!-- ── Tab: Product ─────────────────────────────── -->
+  <div class="lp-tab-panel active" id="lp-panel-product">
+<section id="product" class="py-24 bg-white">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <span class="badge badge-blue mb-4">Production-Ready</span>
+      <h2 class="text-4xl font-extrabold text-slate-900 mb-4">9 Workflows. All Live. All Measured.</h2>
+      <p class="text-slate-500 text-lg max-w-2xl mx-auto">Every workflow ships with before/after metrics, compliance baked in, and a human-in-the-loop governance layer.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      <!-- Workflow cards -->
+      <div class="workflow-card card-hover">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">📄</div>
+          <div>
+            <div class="font-semibold text-slate-800">HR Contract Creation</div>
+            <div class="text-xs text-slate-500">50–100 contracts / month</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <div class="bg-green-50 rounded-lg p-2 text-center">
+            <div class="text-green-700 font-bold text-lg">3×</div>
+            <div class="text-xs text-green-600">Faster</div>
+          </div>
+          <div class="bg-blue-50 rounded-lg p-2 text-center">
+            <div class="text-blue-700 font-bold text-lg">99%+</div>
+            <div class="text-xs text-blue-600">Accuracy</div>
+          </div>
+        </div>
+        <p class="text-xs text-slate-500">MOM-compliant auto-generation. 48h/month → 16h. Compliance errors: 5–10% → &lt;0.1%.</p>
+      </div>
+
+      <div class="workflow-card card-hover">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-9 h-9 rounded-lg bg-purple-50 flex items-center justify-center text-purple-600">🎓</div>
+          <div>
+            <div class="font-semibold text-slate-800">Employee Onboarding</div>
+            <div class="text-xs text-slate-500">~10 new hires / month</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <div class="bg-green-50 rounded-lg p-2 text-center">
+            <div class="text-green-700 font-bold text-lg">4×</div>
+            <div class="text-xs text-green-600">Productive</div>
+          </div>
+          <div class="bg-blue-50 rounded-lg p-2 text-center">
+            <div class="text-blue-700 font-bold text-lg">100%</div>
+            <div class="text-xs text-blue-600">Completion</div>
+          </div>
+        </div>
+        <p class="text-xs text-slate-500">Auto-creates IT accounts, assigns training, tracks compliance. 5h → 30min per hire.</p>
+      </div>
+
+      <div class="workflow-card card-hover">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-9 h-9 rounded-lg bg-orange-50 flex items-center justify-center text-orange-600">🕐</div>
+          <div>
+            <div class="font-semibold text-slate-800">Timesheet Processing</div>
+            <div class="text-xs text-slate-500">100–200 timesheets / month</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <div class="bg-green-50 rounded-lg p-2 text-center">
+            <div class="text-green-700 font-bold text-lg">95%</div>
+            <div class="text-xs text-green-600">Faster</div>
+          </div>
+          <div class="bg-blue-50 rounded-lg p-2 text-center">
+            <div class="text-blue-700 font-bold text-lg">99.5%</div>
+            <div class="text-xs text-blue-600">Accuracy</div>
+          </div>
+        </div>
+        <p class="text-xs text-slate-500">AI OCR extracts from photos. 98% require zero human touch. Error rate: 4–12% → &lt;0.5%.</p>
+      </div>
+
+      <div class="workflow-card card-hover">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-9 h-9 rounded-lg bg-green-50 flex items-center justify-center text-green-600">📱</div>
+          <div>
+            <div class="font-semibold text-slate-800">Deployment Scheduler</div>
+            <div class="text-xs text-slate-500">50+ promoter deployments / month</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <div class="bg-green-50 rounded-lg p-2 text-center">
+            <div class="text-green-700 font-bold text-lg">77h</div>
+            <div class="text-xs text-green-600">Saved/exec</div>
+          </div>
+          <div class="bg-blue-50 rounded-lg p-2 text-center">
+            <div class="text-blue-700 font-bold text-lg">92%</div>
+            <div class="text-xs text-blue-600">Response rate</div>
+          </div>
+        </div>
+        <p class="text-xs text-slate-500">WhatsApp AI agent. Response time: 4h → 12min. Operational capacity: 3× without new headcount.</p>
+      </div>
+
+      <div class="workflow-card card-hover">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">📋</div>
+          <div>
+            <div class="font-semibold text-slate-800">Resume Builder</div>
+            <div class="text-xs text-slate-500">50–100 resumes / month</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <div class="bg-green-50 rounded-lg p-2 text-center">
+            <div class="text-green-700 font-bold text-lg">85%</div>
+            <div class="text-xs text-green-600">Time saved</div>
+          </div>
+          <div class="bg-blue-50 rounded-lg p-2 text-center">
+            <div class="text-blue-700 font-bold text-lg">5–8×</div>
+            <div class="text-xs text-blue-600">Recruiter capacity</div>
+          </div>
+        </div>
+        <p class="text-xs text-slate-500">AI matches resume to job spec. 10–15% improvement in interview callback rate.</p>
+      </div>
+
+      <div class="workflow-card card-hover">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-9 h-9 rounded-lg bg-teal-50 flex items-center justify-center text-teal-600">💰</div>
+          <div>
+            <div class="font-semibold text-slate-800">SOA Checker</div>
+            <div class="text-xs text-slate-500">Daily (vs. monthly)</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <div class="bg-green-50 rounded-lg p-2 text-center">
+            <div class="text-green-700 font-bold text-lg">87%</div>
+            <div class="text-xs text-green-600">Time saved</div>
+          </div>
+          <div class="bg-blue-50 rounded-lg p-2 text-center">
+            <div class="text-blue-700 font-bold text-lg">30×</div>
+            <div class="text-xs text-blue-600">More timely</div>
+          </div>
+        </div>
+        <p class="text-xs text-slate-500">Daily Xero reconciliation. Late payments flagged in 1–2 days vs. 15+ days. Real-time cash flow visibility.</p>
+      </div>
+
+      <div class="workflow-card card-hover">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center text-red-600">🧾</div>
+          <div>
+            <div class="font-semibold text-slate-800">Receipt Claims</div>
+            <div class="text-xs text-slate-500">30–50 receipts / month</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <div class="bg-green-50 rounded-lg p-2 text-center">
+            <div class="text-green-700 font-bold text-lg">80%</div>
+            <div class="text-xs text-green-600">Time saved</div>
+          </div>
+          <div class="bg-blue-50 rounded-lg p-2 text-center">
+            <div class="text-blue-700 font-bold text-lg">95%+</div>
+            <div class="text-xs text-blue-600">Accuracy</div>
+          </div>
+        </div>
+        <p class="text-xs text-slate-500">AI image analysis. 1–2 min vs. 4–9 min per receipt. Rejection rate: 5–10% → &lt;5%.</p>
+      </div>
+
+      <div class="workflow-card card-hover">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-9 h-9 rounded-lg bg-yellow-50 flex items-center justify-center text-yellow-600">🏆</div>
+          <div>
+            <div class="font-semibold text-slate-800">Commission Verification</div>
+            <div class="text-xs text-slate-500">30–80 claims / month</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <div class="bg-green-50 rounded-lg p-2 text-center">
+            <div class="text-green-700 font-bold text-lg">67%</div>
+            <div class="text-xs text-green-600">Time saved</div>
+          </div>
+          <div class="bg-blue-50 rounded-lg p-2 text-center">
+            <div class="text-blue-700 font-bold text-lg">98%</div>
+            <div class="text-xs text-blue-600">Accuracy</div>
+          </div>
+        </div>
+        <p class="text-xs text-slate-500">Rule-based auto-verification. Dispute rate: 30% → &lt;5%. Payout: 5–7 days → 1–2 days.</p>
+      </div>
+
+      <div class="workflow-card card-hover border-dashed border-sky-200 bg-sky-50/30">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-9 h-9 rounded-lg bg-sky-100 flex items-center justify-center text-sky-600">⚡</div>
+          <div>
+            <div class="font-semibold text-slate-800">Custom Workflows</div>
+            <div class="text-xs text-slate-500">Any high-volume process</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <div class="bg-green-50 rounded-lg p-2 text-center">
+            <div class="text-green-700 font-bold text-lg">90%</div>
+            <div class="text-xs text-green-600">Cost reduction</div>
+          </div>
+          <div class="bg-blue-50 rounded-lg p-2 text-center">
+            <div class="text-blue-700 font-bold text-lg">360×</div>
+            <div class="text-xs text-blue-600">Speed gain</div>
+          </div>
+        </div>
+        <p class="text-xs text-slate-500">Case study: M&amp;M campaign — 1,000+ receipt validations at &lt;$1K vs. $10–15K manual. Unlimited scale.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+  </div><!-- /lp-panel-product -->
+
+  <!-- ── Tab: Traction ────────────────────────────── -->
+  <div class="lp-tab-panel" id="lp-panel-traction">
+<section id="traction" class="py-24 bg-slate-900">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <span class="badge badge-green mb-4">Proven at Scale</span>
+      <h2 class="text-4xl font-extrabold text-white mb-4">Data-Driven from Day One</h2>
+      <p class="text-slate-400 text-lg max-w-2xl mx-auto">20,000 A/B tests and 250 paying customers have given us one of the most rigorous SME workflow datasets in Southeast Asia.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8 mb-12">
+      <!-- A/B Testing Chart -->
+      <div class="analytics-dark p-6">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h3 class="text-white font-bold text-lg">A/B Testing: Conversion Optimisation</h3>
+            <p class="text-slate-400 text-sm mt-1">20,000 tests across pricing, messaging &amp; onboarding</p>
+          </div>
+          <span class="badge badge-blue">Live</span>
+        </div>
+        <canvas id="abChart" height="200"></canvas>
+        <div class="mt-4 grid grid-cols-3 gap-3 text-center">
+          <div>
+            <div class="text-white font-bold">42%</div>
+            <div class="text-slate-500 text-xs">WhatsApp demo → trial</div>
+          </div>
+          <div>
+            <div class="text-white font-bold">68%</div>
+            <div class="text-slate-500 text-xs">Trial → paid conversion</div>
+          </div>
+          <div>
+            <div class="text-white font-bold">6 wk</div>
+            <div class="text-slate-500 text-xs">Avg sales cycle (PSG)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monthly Growth Chart -->
+      <div class="analytics-dark p-6">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h3 class="text-white font-bold text-lg">Customer Growth Trajectory</h3>
+            <p class="text-slate-400 text-sm mt-1">Paying customers since launch</p>
+          </div>
+          <span class="badge badge-green">+18% MoM</span>
+        </div>
+        <canvas id="growthChart" height="200"></canvas>
+      </div>
+    </div>
+
+    <!-- Workflow performance table -->
+    <div class="analytics-dark p-6">
+      <h3 class="text-white font-bold text-lg mb-4">Workflow Performance Dashboard</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-slate-400 border-b border-slate-700">
+              <th class="text-left py-3 pr-4">Workflow</th>
+              <th class="text-center py-3 pr-4">Status</th>
+              <th class="text-center py-3 pr-4">Monthly Volume</th>
+              <th class="text-center py-3 pr-4">Speed Gain</th>
+              <th class="text-center py-3">Accuracy</th>
+            </tr>
+          </thead>
+          <tbody class="text-slate-300">
+            <tr class="table-row-alt border-b border-slate-800">
+              <td class="py-3 pr-4 font-medium text-white">HR Contracts</td>
+              <td class="py-3 pr-4 text-center"><span class="badge badge-green">Live</span></td>
+              <td class="py-3 pr-4 text-center">50–100/mo</td>
+              <td class="py-3 pr-4 text-center text-green-400 font-semibold">75% faster</td>
+              <td class="py-3 text-center text-green-400 font-semibold">99%+</td>
+            </tr>
+            <tr class="table-row-alt border-b border-slate-800">
+              <td class="py-3 pr-4 font-medium text-white">Onboarding</td>
+              <td class="py-3 pr-4 text-center"><span class="badge badge-green">Live</span></td>
+              <td class="py-3 pr-4 text-center">10/mo</td>
+              <td class="py-3 pr-4 text-center text-green-400 font-semibold">90% faster</td>
+              <td class="py-3 text-center text-green-400 font-semibold">100%</td>
+            </tr>
+            <tr class="table-row-alt border-b border-slate-800">
+              <td class="py-3 pr-4 font-medium text-white">Timesheets</td>
+              <td class="py-3 pr-4 text-center"><span class="badge badge-green">Live</span></td>
+              <td class="py-3 pr-4 text-center">100–200/mo</td>
+              <td class="py-3 pr-4 text-center text-green-400 font-semibold">95% faster</td>
+              <td class="py-3 text-center text-green-400 font-semibold">99.5%+</td>
+            </tr>
+            <tr class="table-row-alt border-b border-slate-800">
+              <td class="py-3 pr-4 font-medium text-white">Deployment Scheduler</td>
+              <td class="py-3 pr-4 text-center"><span class="badge badge-green">Live</span></td>
+              <td class="py-3 pr-4 text-center">50+/mo</td>
+              <td class="py-3 pr-4 text-center text-green-400 font-semibold">90% faster</td>
+              <td class="py-3 text-center text-green-400 font-semibold">92%</td>
+            </tr>
+            <tr class="table-row-alt border-b border-slate-800">
+              <td class="py-3 pr-4 font-medium text-white">Resume Builder</td>
+              <td class="py-3 pr-4 text-center"><span class="badge badge-green">Live</span></td>
+              <td class="py-3 pr-4 text-center">50–100/mo</td>
+              <td class="py-3 pr-4 text-center text-green-400 font-semibold">85% faster</td>
+              <td class="py-3 text-center text-green-400 font-semibold">95%+</td>
+            </tr>
+            <tr class="table-row-alt">
+              <td class="py-3 pr-4 font-medium text-white">SOA / Finance</td>
+              <td class="py-3 pr-4 text-center"><span class="badge badge-green">Live</span></td>
+              <td class="py-3 pr-4 text-center">Daily</td>
+              <td class="py-3 pr-4 text-center text-green-400 font-semibold">87% faster</td>
+              <td class="py-3 text-center text-green-400 font-semibold">Real-time</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+  </div><!-- /lp-panel-traction -->
+
+  <!-- ── Tab: Analytics ───────────────────────────── -->
+  <div class="lp-tab-panel" id="lp-panel-analytics">
+<section id="analytics" class="py-24 bg-white">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <span class="badge badge-purple mb-4">Growth Intelligence</span>
+      <h2 class="text-4xl font-extrabold text-slate-900 mb-4">We Scale with Analytics, Not Guesswork</h2>
+      <p class="text-slate-500 text-lg max-w-2xl mx-auto">Our growth strategy is governed by six analytical frameworks drawn from causal inference and predictive modelling — the same rigour used by top-quartile SaaS companies.</p>
+    </div>
+
+    <!-- CLV + CAC Row -->
+    <div class="grid md:grid-cols-2 gap-8 mb-8">
+
+      <!-- CLV -->
+      <div class="border border-slate-200 rounded-2xl p-7 card-hover">
+        <div class="flex items-start gap-4 mb-5">
+          <div class="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-2xl flex-shrink-0">📈</div>
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <h3 class="font-bold text-slate-900 text-lg">Customer Lifetime Value (CLV)</h3>
+              <div class="tooltip-box">
+                <span class="text-xs text-slate-400 border border-slate-200 rounded-full px-2 py-0.5 cursor-help">?</span>
+                <span class="tooltip-text">CLV = (ARPU × Gross Margin) ÷ Churn Rate. Measures the total discounted profit expected from a customer over their lifetime.</span>
+              </div>
+            </div>
+            <p class="text-slate-500 text-sm">Segment-level CLV guides where we invest in retention vs. acquisition</p>
+          </div>
+        </div>
+        <canvas id="clvChart" height="180"></canvas>
+        <div class="mt-5 grid grid-cols-3 gap-3">
+          <div class="bg-slate-50 rounded-xl p-3 text-center">
+            <div class="text-indigo-600 font-bold text-xl">S$88K</div>
+            <div class="text-xs text-slate-500 mt-1">Avg CLV (SG)</div>
+            <div class="text-xs text-slate-400">60% margin × 12K MRR ÷ 8% churn</div>
+          </div>
+          <div class="bg-slate-50 rounded-xl p-3 text-center">
+            <div class="text-indigo-600 font-bold text-xl">S$500</div>
+            <div class="text-xs text-slate-500 mt-1">Max CAC</div>
+            <div class="text-xs text-slate-400">SEA B2B benchmark</div>
+          </div>
+          <div class="bg-green-50 rounded-xl p-3 text-center">
+            <div class="text-green-600 font-bold text-xl">176×</div>
+            <div class="text-xs text-slate-500 mt-1">LTV : CAC Ratio</div>
+            <div class="text-xs text-slate-400">Benchmark: 3× minimum</div>
+          </div>
+        </div>
+        <div class="mt-4 text-xs text-slate-400 bg-slate-50 rounded-lg p-3">
+          <strong class="text-slate-600">Segmentation insight:</strong> Tier 1 industries (Professional Services, Retail) show 2.3× higher CLV than Tier 2, driven by higher workflow density and lower churn. Investment priority weighted accordingly.
+        </div>
+      </div>
+
+      <!-- CAC -->
+      <div class="border border-slate-200 rounded-2xl p-7 card-hover">
+        <div class="flex items-start gap-4 mb-5">
+          <div class="w-12 h-12 rounded-xl bg-sky-50 flex items-center justify-center text-2xl flex-shrink-0">🎯</div>
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <h3 class="font-bold text-slate-900 text-lg">Customer Acquisition Cost (CAC)</h3>
+              <div class="tooltip-box">
+                <span class="text-xs text-slate-400 border border-slate-200 rounded-full px-2 py-0.5 cursor-help">?</span>
+                <span class="tooltip-text">CAC = Total Sales & Marketing Spend ÷ New Customers Acquired. A/B testing has been used to optimise each step of the funnel to minimise CAC.</span>
+              </div>
+            </div>
+            <p class="text-slate-500 text-sm">20,000 A/B tests have reduced our blended CAC by 64% since launch</p>
+          </div>
+        </div>
+        <canvas id="cacChart" height="180"></canvas>
+        <div class="mt-5 grid grid-cols-2 gap-3">
+          <div class="bg-slate-50 rounded-xl p-3">
+            <div class="text-sky-600 font-bold text-lg">Channel Mix (Optimised)</div>
+            <div class="space-y-2 mt-2">
+              <div class="flex justify-between text-xs"><span class="text-slate-600">WhatsApp Demo Loop</span><span class="font-semibold text-green-600">S$120 CAC</span></div>
+              <div class="flex justify-between text-xs"><span class="text-slate-600">PSG Grant Bootcamp</span><span class="font-semibold text-green-600">S$280 CAC</span></div>
+              <div class="flex justify-between text-xs"><span class="text-slate-600">Referral Programme</span><span class="font-semibold text-green-600">S$95 CAC</span></div>
+              <div class="flex justify-between text-xs"><span class="text-slate-600">Industry Salons</span><span class="font-semibold text-yellow-600">S$380 CAC</span></div>
+            </div>
+          </div>
+          <div class="bg-slate-50 rounded-xl p-3">
+            <div class="text-sky-600 font-bold text-lg">Payback Period</div>
+            <div class="space-y-2 mt-2">
+              <div class="flex justify-between text-xs"><span class="text-slate-600">Avg CAC (blended)</span><span class="font-semibold">S$220</span></div>
+              <div class="flex justify-between text-xs"><span class="text-slate-600">Monthly gross profit</span><span class="font-semibold">S$600</span></div>
+              <div class="flex justify-between text-xs"><span class="text-slate-600">CAC payback period</span><span class="font-semibold text-green-600">&lt; 0.4 months</span></div>
+              <div class="flex justify-between text-xs"><span class="text-slate-600">Industry benchmark</span><span class="text-slate-400">18–24 months</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Churn + A/B Row -->
+    <div class="grid md:grid-cols-2 gap-8 mb-8">
+
+      <!-- Churn Management -->
+      <div class="border border-slate-200 rounded-2xl p-7 card-hover">
+        <div class="flex items-start gap-4 mb-5">
+          <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center text-2xl flex-shrink-0">🔄</div>
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <h3 class="font-bold text-slate-900 text-lg">Churn Management</h3>
+              <div class="tooltip-box">
+                <span class="text-xs text-slate-400 border border-slate-200 rounded-full px-2 py-0.5 cursor-help">?</span>
+                <span class="tooltip-text">We use survival analysis (Cox proportional hazards) to model time-to-churn and identify the workflow adoption events that most strongly predict retention.</span>
+              </div>
+            </div>
+            <p class="text-slate-500 text-sm">Predictive churn scoring identifies at-risk accounts 45 days before cancellation</p>
+          </div>
+        </div>
+        <canvas id="churnChart" height="180"></canvas>
+        <div class="mt-4 grid grid-cols-3 gap-2 text-center">
+          <div class="bg-red-50 rounded-lg p-3">
+            <div class="text-red-600 font-bold">5%</div>
+            <div class="text-xs text-slate-500">Annual churn</div>
+            <div class="text-xs text-slate-400">vs 12% industry</div>
+          </div>
+          <div class="bg-green-50 rounded-lg p-3">
+            <div class="text-green-600 font-bold">91%</div>
+            <div class="text-xs text-slate-500">Net retention</div>
+            <div class="text-xs text-slate-400">Upsell drives expansion</div>
+          </div>
+          <div class="bg-blue-50 rounded-lg p-3">
+            <div class="text-blue-600 font-bold">45d</div>
+            <div class="text-xs text-slate-500">Early warning</div>
+            <div class="text-xs text-slate-400">Churn prediction window</div>
+          </div>
+        </div>
+        <div class="mt-4 text-xs text-slate-400 bg-slate-50 rounded-lg p-3">
+          <strong class="text-slate-600">Key finding:</strong> Accounts that activate ≥3 workflows within 30 days show 94% 12-month retention. Onboarding now mandates 3-workflow activation as the "aha moment" milestone.
+        </div>
+      </div>
+
+      <!-- Further A/B Testing -->
+      <div class="border border-slate-200 rounded-2xl p-7 card-hover">
+        <div class="flex items-start gap-4 mb-5">
+          <div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-2xl flex-shrink-0">🧪</div>
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <h3 class="font-bold text-slate-900 text-lg">A/B Testing Programme</h3>
+              <div class="tooltip-box">
+                <span class="text-xs text-slate-400 border border-slate-200 rounded-full px-2 py-0.5 cursor-help">?</span>
+                <span class="tooltip-text">Randomised controlled trials across pricing, onboarding flow, messaging and feature sequencing. Statistical significance tested at p&lt;0.05 with Bonferroni correction for multiple comparisons.</span>
+              </div>
+            </div>
+            <p class="text-slate-500 text-sm">20,000 tests completed. Continuous programme drives ongoing funnel optimisation.</p>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <div class="bg-slate-50 rounded-xl p-4">
+            <div class="flex justify-between items-start mb-2">
+              <div class="font-medium text-slate-700 text-sm">Pricing Tier Presentation</div>
+              <span class="badge badge-green text-xs">+31% conversion</span>
+            </div>
+            <div class="text-xs text-slate-500">Test: Anchor pricing (show Enterprise first) vs. bottom-up (show Basic first). Anchoring increased Advanced Tier uptake by 31%.</div>
+          </div>
+          <div class="bg-slate-50 rounded-xl p-4">
+            <div class="flex justify-between items-start mb-2">
+              <div class="font-medium text-slate-700 text-sm">Onboarding Sequence</div>
+              <span class="badge badge-green text-xs">+18% retention D30</span>
+            </div>
+            <div class="text-xs text-slate-500">Test: Time-savings framing vs. compliance-risk framing. Risk framing improved 30-day retention by 18% among Tier 1 industries.</div>
+          </div>
+          <div class="bg-slate-50 rounded-xl p-4">
+            <div class="flex justify-between items-start mb-2">
+              <div class="font-medium text-slate-700 text-sm">WhatsApp Demo Flow</div>
+              <span class="badge badge-blue text-xs">Running</span>
+            </div>
+            <div class="text-xs text-slate-500">Test: Industry-specific demo (HR demo for services, timesheet demo for F&amp;B) vs. generic demo. Preliminary: +22% conversion on industry-specific variant.</div>
+          </div>
+          <div class="bg-slate-50 rounded-xl p-4">
+            <div class="flex justify-between items-start mb-2">
+              <div class="font-medium text-slate-700 text-sm">PSG Grant Email Cadence</div>
+              <span class="badge badge-green text-xs">+44% apply rate</span>
+            </div>
+            <div class="text-xs text-slate-500">Test: 3-email sequence vs. 7-email sequence for PSG application support. Shorter sequence with pre-filled form reduced abandonment by 44%.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATE + LATE Row -->
+    <div class="grid md:grid-cols-2 gap-8">
+
+      <!-- CATE -->
+      <div class="border-2 border-indigo-100 bg-indigo-50/30 rounded-2xl p-7 card-hover">
+        <div class="flex items-start gap-4 mb-5">
+          <div class="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center text-2xl flex-shrink-0">🎯</div>
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <h3 class="font-bold text-slate-900 text-lg">Conditional Average Treatment Effect (CATE)</h3>
+              <div class="tooltip-box">
+                <span class="text-xs text-slate-400 border border-slate-200 rounded-full px-2 py-0.5 cursor-help">?</span>
+                <span class="tooltip-text">CATE = E[Y(1) - Y(0) | X=x]. Unlike the ATE which averages effects across all customers, CATE estimates the treatment effect for specific sub-groups (industry, size, tech maturity), enabling precision targeting of high-response segments.</span>
+              </div>
+            </div>
+            <p class="text-slate-500 text-sm">Identifies which SME segments respond most strongly to each workflow deployment</p>
+          </div>
+        </div>
+        <canvas id="cateChart" height="200"></canvas>
+        <div class="mt-4 text-xs text-slate-500 bg-white rounded-lg p-4 border border-indigo-100 space-y-2">
+          <div class="font-semibold text-slate-700">How We Use CATE in Practice</div>
+          <div>① We estimate the treatment effect of deploying each workflow (e.g., HR Contract Automation) across sub-groups defined by industry, headcount band, and current tech stack.</div>
+          <div>② Segments with CATE &gt; 2σ above the ATE are prioritised in sales outreach — these companies see the highest ROI and generate the strongest referrals.</div>
+          <div>③ <strong class="text-indigo-700">Key finding:</strong> Professional Services SMEs (50–100 headcount, Xero-integrated) show a CATE that is <strong>3.2× the average treatment effect</strong>, making them our highest-value acquisition target.</div>
+        </div>
+      </div>
+
+      <!-- LATE / CACE -->
+      <div class="border-2 border-purple-100 bg-purple-50/30 rounded-2xl p-7 card-hover">
+        <div class="flex items-start gap-4 mb-5">
+          <div class="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center text-2xl flex-shrink-0">🔬</div>
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <h3 class="font-bold text-slate-900 text-lg">Complier Average Treatment Effect (CATE / LATE)</h3>
+              <div class="tooltip-box">
+                <span class="text-xs text-slate-400 border border-slate-200 rounded-full px-2 py-0.5 cursor-help">?</span>
+                <span class="tooltip-text">LATE uses an instrumental variable (IV) to identify causal effects when not all treated units comply. Our IV is PSG grant eligibility — eligible SMEs are more likely to adopt. LATE = ITT ÷ First-Stage (compliance rate), isolating the causal effect on compliers.</span>
+              </div>
+            </div>
+            <p class="text-slate-500 text-sm">Causal identification of workflow ROI using PSG grant eligibility as an instrumental variable</p>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <!-- IV setup -->
+          <div class="bg-white rounded-xl p-4 border border-purple-100">
+            <div class="font-semibold text-slate-700 text-sm mb-3">Instrumental Variable Design</div>
+            <div class="flex items-center gap-2 text-xs flex-wrap">
+              <div class="bg-purple-100 text-purple-700 rounded-lg px-3 py-2 font-medium">Z: PSG Eligibility<br/><span class="font-normal text-purple-500">(Random assignment proxy)</span></div>
+              <div class="text-slate-400 font-bold text-lg">→</div>
+              <div class="bg-blue-100 text-blue-700 rounded-lg px-3 py-2 font-medium">D: Workflow Adoption<br/><span class="font-normal text-blue-500">(~70% of eligible comply)</span></div>
+              <div class="text-slate-400 font-bold text-lg">→</div>
+              <div class="bg-green-100 text-green-700 rounded-lg px-3 py-2 font-medium">Y: Revenue / Efficiency<br/><span class="font-normal text-green-500">(Outcome we measure)</span></div>
+            </div>
+          </div>
+
+          <!-- LATE breakdown -->
+          <div class="bg-white rounded-xl p-4 border border-purple-100">
+            <div class="font-semibold text-slate-700 text-sm mb-3">LATE Estimation</div>
+            <div class="grid grid-cols-3 gap-3 text-center text-xs">
+              <div>
+                <div class="text-purple-600 font-bold text-base">23%</div>
+                <div class="text-slate-500">Intent-to-Treat (ITT)</div>
+                <div class="text-slate-400">Avg productivity gain, all eligible SMEs</div>
+              </div>
+              <div>
+                <div class="text-blue-600 font-bold text-base">70%</div>
+                <div class="text-slate-500">Compliance Rate</div>
+                <div class="text-slate-400">Eligible SMEs that actually adopt</div>
+              </div>
+              <div>
+                <div class="text-green-600 font-bold text-base">33%</div>
+                <div class="text-slate-500">LATE = ITT ÷ CR</div>
+                <div class="text-slate-400">True causal effect on compliers</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-xs text-slate-500 bg-white rounded-lg p-4 border border-purple-100 space-y-1">
+            <div class="font-semibold text-slate-700">Why This Matters</div>
+            <div>Simple before/after comparisons overstate ROI because early adopters are self-selected high performers. LATE gives us a <strong class="text-purple-700">clean causal estimate</strong> — the productivity gain attributable <em>solely</em> to the workflow, not to the type of firm that chose to adopt it.</div>
+            <div class="mt-2">This rigour underpins our performance guarantee agreements and the ROI claims we make to prospective clients.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     COMPETITIVE ADVANTAGE
+════════════════════════════════════════════════════ -->
+<section class="py-20 section-alt">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl font-extrabold text-slate-900 mb-4">Why SMEs Choose ElitezAI Over Alternatives</h2>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full bg-white rounded-2xl shadow-sm border border-slate-100 text-sm">
+        <thead>
+          <tr class="bg-slate-900 text-white">
+            <th class="text-left py-4 px-5 rounded-tl-2xl">Capability</th>
+            <th class="text-center py-4 px-5 text-sky-400 font-bold">ElitezAI</th>
+            <th class="text-center py-4 px-5">UiPath / RPA</th>
+            <th class="text-center py-4 px-5">Copilot / ChatGPT</th>
+            <th class="text-center py-4 px-5 rounded-tr-2xl">n8n / Zapier</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="table-row-alt">
+            <td class="py-4 px-5 font-medium text-slate-700">Singapore MOM / MAS compliance built-in</td>
+            <td class="py-4 px-5 text-center text-2xl">✅</td>
+            <td class="py-4 px-5 text-center text-2xl">❌</td>
+            <td class="py-4 px-5 text-center text-2xl">❌</td>
+            <td class="py-4 px-5 text-center text-2xl">❌</td>
+          </tr>
+          <tr class="table-row-alt">
+            <td class="py-4 px-5 font-medium text-slate-700">Unstructured data (photos, WhatsApp, handwriting)</td>
+            <td class="py-4 px-5 text-center text-2xl">✅</td>
+            <td class="py-4 px-5 text-center text-2xl">⚠️</td>
+            <td class="py-4 px-5 text-center text-2xl">✅</td>
+            <td class="py-4 px-5 text-center text-2xl">❌</td>
+          </tr>
+          <tr class="table-row-alt">
+            <td class="py-4 px-5 font-medium text-slate-700">Deployed in &lt; 4 weeks (no IT team needed)</td>
+            <td class="py-4 px-5 text-center text-2xl">✅</td>
+            <td class="py-4 px-5 text-center text-2xl">❌</td>
+            <td class="py-4 px-5 text-center text-2xl">✅</td>
+            <td class="py-4 px-5 text-center text-2xl">⚠️</td>
+          </tr>
+          <tr class="table-row-alt">
+            <td class="py-4 px-5 font-medium text-slate-700">Cross-department multi-workflow orchestration</td>
+            <td class="py-4 px-5 text-center text-2xl">✅</td>
+            <td class="py-4 px-5 text-center text-2xl">⚠️</td>
+            <td class="py-4 px-5 text-center text-2xl">❌</td>
+            <td class="py-4 px-5 text-center text-2xl">⚠️</td>
+          </tr>
+          <tr class="table-row-alt">
+            <td class="py-4 px-5 font-medium text-slate-700">PSG grant eligible (up to 50% subsidy)</td>
+            <td class="py-4 px-5 text-center text-2xl">✅</td>
+            <td class="py-4 px-5 text-center text-2xl">⚠️</td>
+            <td class="py-4 px-5 text-center text-2xl">❌</td>
+            <td class="py-4 px-5 text-center text-2xl">❌</td>
+          </tr>
+          <tr>
+            <td class="py-4 px-5 font-medium text-slate-700 rounded-bl-2xl">Performance guarantee with KPI SLA</td>
+            <td class="py-4 px-5 text-center text-2xl">✅</td>
+            <td class="py-4 px-5 text-center text-2xl">❌</td>
+            <td class="py-4 px-5 text-center text-2xl">❌</td>
+            <td class="py-4 px-5 text-center text-2xl rounded-br-2xl">❌</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+  </div><!-- /lp-panel-analytics -->
+
+  <!-- ── Tab: Pricing ─────────────────────────────── -->
+  <div class="lp-tab-panel" id="lp-panel-pricing">
+<!-- ═══════════════════════════════════════════════════
+     VC DUE DILIGENCE BANNER
+════════════════════════════════════════════════════ -->
+<section class="py-16 bg-slate-900">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="relative overflow-hidden rounded-2xl border border-indigo-500/30 bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-950 p-8 md:p-10">
+      <!-- Background glow -->
+      <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-indigo-500/10 blur-3xl"></div>
+        <div class="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-sky-500/10 blur-3xl"></div>
+      </div>
+      <div class="relative flex flex-col md:flex-row items-center justify-between gap-8">
+        <div class="flex items-start gap-5">
+          <div class="w-14 h-14 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center flex-shrink-0 text-2xl">🔬</div>
+          <div>
+            <div class="inline-flex items-center gap-2 bg-indigo-500/15 border border-indigo-500/25 rounded-full px-3 py-1 text-xs font-semibold text-indigo-400 uppercase tracking-widest mb-2">Investor Due Diligence</div>
+            <h3 class="text-white text-xl font-bold mb-1">Pressure-Tested by Skeptical VCs</h3>
+            <p class="text-slate-400 text-sm max-w-lg">We've anticipated every hard question across 7 dimensions — customer needs, market size, competitive moat, pricing, GTM, financials, and risk. Every objection answered with data.</p>
+            <div class="flex flex-wrap gap-4 mt-4">
+              <span class="text-xs text-slate-400 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-indigo-400 inline-block"></span>7 dimensions · 24 questions</span>
+              <span class="text-xs text-slate-400 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-green-400 inline-block"></span>TAM/SAM/SOM breakdown</span>
+              <span class="text-xs text-slate-400 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-sky-400 inline-block"></span>Regional ARPU reconciliation</span>
+            </div>
+          </div>
+        </div>
+        <a href="vc-countermeasures.html" class="flex-shrink-0 flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-7 py-4 rounded-xl transition text-sm whitespace-nowrap">
+          View Full Countermeasures
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     PRICING
+════════════════════════════════════════════════════ -->
+<section id="pricing" class="py-24 bg-white">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <span class="badge badge-blue mb-4">Transparent Pricing</span>
+      <h2 class="text-4xl font-extrabold text-slate-900 mb-4">Start Small. Scale Fast.</h2>
+      <p class="text-slate-500 text-lg max-w-xl mx-auto">PSG grant covers up to 50% of implementation costs for eligible Singapore SMEs.</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+
+      <!-- Starter -->
+      <div class="border border-slate-200 rounded-2xl p-7 card-hover">
+        <div class="mb-6">
+          <div class="text-slate-500 text-sm font-semibold mb-2">STARTER</div>
+          <div class="flex items-end gap-1 mb-1">
+            <span class="text-4xl font-extrabold text-slate-900">S$297</span>
+            <span class="text-slate-400 mb-1">/month</span>
+          </div>
+          <div class="text-xs text-slate-400">+ S$2,000–5,000 one-time setup</div>
+        </div>
+        <ul class="space-y-3 mb-8 text-sm text-slate-600">
+          <li class="flex items-center gap-2"><span class="text-green-500">✓</span> 1–2 core workflows</li>
+          <li class="flex items-center gap-2"><span class="text-green-500">✓</span> MOM/GST compliance layer</li>
+          <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Xero / Google Drive integration</li>
+          <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Monthly performance report</li>
+          <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Email support</li>
+        </ul>
+        <a href="#contact" class="block text-center border border-slate-800 text-slate-800 font-semibold py-3 rounded-xl hover:bg-slate-800 hover:text-white transition">Get Started</a>
+      </div>
+
+      <!-- Growth — highlighted -->
+      <div class="border-2 border-sky-400 rounded-2xl p-7 card-hover relative bg-gradient-to-b from-sky-50 to-white glow-blue">
+        <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+          <span class="badge badge-blue">Most Popular</span>
+        </div>
+        <div class="mb-6">
+          <div class="text-sky-600 text-sm font-semibold mb-2">GROWTH</div>
+          <div class="flex items-end gap-1 mb-1">
+            <span class="text-4xl font-extrabold text-slate-900">S$1,000</span>
+            <span class="text-slate-400 mb-1">/month</span>
+          </div>
+          <div class="text-xs text-slate-400">+ S$5,000–10,000 one-time setup</div>
+        </div>
+        <ul class="space-y-3 mb-8 text-sm text-slate-600">
+          <li class="flex items-center gap-2"><span class="text-green-500">✓</span> 3–5 workflows (cross-dept)</li>
+          <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Multi-agent orchestration</li>
+          <li class="flex items-center gap-2"><span class="text-green-500">✓</span> WhatsApp AI agent included</li>
+          <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Weekly analytics dashboard</li>
+          <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Dedicated success manager</li>
+          <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Performance KPI guarantee</li>
+        </ul>
+        <a href="#contact" class="block text-center bg-sky-500 hover:bg-sky-400 text-white font-semibold py-3 rounded-xl transition">Start Free Discovery</a>
+      </div>
+
+      <!-- Enterprise -->
+      <div class="border border-slate-200 rounded-2xl p-7 card-hover">
+        <div class="mb-6">
+          <div class="text-slate-500 text-sm font-semibold mb-2">ENTERPRISE</div>
+          <div class="flex items-end gap-1 mb-1">
+            <span class="text-4xl font-extrabold text-slate-900">S$5,000+</span>
+            <span class="text-slate-400 mb-1">/month</span>
+          </div>
+          <div class="text-xs text-slate-400">+ S$10,000–20,000 one-time setup</div>
+        </div>
+        <ul class="space-y-3 mb-8 text-sm text-slate-600">
+          <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Full 9-workflow suite</li>
+          <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Custom workflow development</li>
+          <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Regional deployment (VN/MY/ID)</li>
+          <li class="flex items-center gap-2"><span class="text-green-500">✓</span> SOC 2 Type 2 compliance</li>
+          <li class="flex items-center gap-2"><span class="text-green-500">✓</span> SLA + compliance guarantee</li>
+          <li class="flex items-center gap-2"><span class="text-green-500">✓</span> Quarterly model fine-tuning</li>
+        </ul>
+        <a href="#contact" class="block text-center border border-slate-800 text-slate-800 font-semibold py-3 rounded-xl hover:bg-slate-800 hover:text-white transition">Contact Sales</a>
+      </div>
+    </div>
+
+    <div class="mt-10 text-center">
+      <div class="inline-flex items-center gap-3 bg-green-50 border border-green-200 rounded-full px-6 py-3">
+        <span class="text-green-600 text-lg">🇸🇬</span>
+        <span class="text-green-700 text-sm font-semibold">PSG Grant eligible — Singapore SMEs may qualify for up to 50% co-funding on implementation fees via Enterprise Singapore.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+  </div><!-- /lp-panel-pricing -->
+</div><!-- /launched-product -->
+
+<!-- ═══════════════════════════════════════════════════
+     CTA / CONTACT
+════════════════════════════════════════════════════ -->
+<section id="contact" class="hero-gradient py-24">
+  <div class="max-w-3xl mx-auto px-6 text-center">
+    <h2 class="text-4xl font-extrabold text-white mb-4">Start Your 3-Week AI Discovery</h2>
+    <p class="text-slate-300 text-lg mb-10">Map your 3 biggest operational "Ughs" — we'll show you exactly what's automatable and estimate your ROI before you spend a dollar.</p>
+
+    <div class="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-sm text-left max-w-xl mx-auto">
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="text-slate-400 text-xs font-medium block mb-1">Company Name</label>
+          <input type="text" placeholder="Acme Pte Ltd" class="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2.5 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-400"/>
+        </div>
+        <div>
+          <label class="text-slate-400 text-xs font-medium block mb-1">Headcount</label>
+          <select class="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2.5 text-slate-300 text-sm focus:outline-none focus:border-sky-400">
+            <option>50–100 employees</option>
+            <option>100–150 employees</option>
+            <option>150–200 employees</option>
+            <option>200+ employees</option>
+          </select>
+        </div>
+      </div>
+      <div class="mb-4">
+        <label class="text-slate-400 text-xs font-medium block mb-1">Work Email</label>
+        <input type="email" placeholder="you@company.com.sg" class="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2.5 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-400"/>
+      </div>
+      <div class="mb-6">
+        <label class="text-slate-400 text-xs font-medium block mb-1">Biggest Operational Pain Point</label>
+        <select class="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2.5 text-slate-300 text-sm focus:outline-none focus:border-sky-400">
+          <option>HR Contracts &amp; Compliance</option>
+          <option>Employee Onboarding</option>
+          <option>Timesheet Processing</option>
+          <option>Manpower Deployment (WhatsApp)</option>
+          <option>Finance / SOA Reconciliation</option>
+          <option>Receipt Claims</option>
+          <option>Commission Verification</option>
+          <option>Multiple / Not Sure</option>
+        </select>
+      </div>
+      <button class="w-full bg-sky-500 hover:bg-sky-400 text-white font-semibold py-3 rounded-xl transition text-lg">Book Free Discovery Call →</button>
+      <p class="text-xs text-slate-500 text-center mt-3">No commitment. No IT team needed. Results in 3 weeks.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════ -->
+<footer class="bg-slate-900 py-12 border-t border-slate-800">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex flex-col md:flex-row justify-between items-start gap-8">
+      <div>
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <span class="text-white font-bold text-lg">Elitez<span class="text-sky-400">AI</span></span>
+        </div>
+        <p class="text-slate-400 text-sm max-w-xs">Agentic AI workflows purpose-built for Southeast Asian SMEs. Singapore-compliant. Production-grade. Measurable ROI.</p>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-8 text-sm">
+        <div>
+          <div class="text-slate-300 font-semibold mb-3">Product</div>
+          <ul class="space-y-2 text-slate-500">
+            <li><a href="#" class="hover:text-white transition">HR Workflows</a></li>
+            <li><a href="#" class="hover:text-white transition">Finance Workflows</a></li>
+            <li><a href="#" class="hover:text-white transition">Operations Workflows</a></li>
+            <li><a href="#" class="hover:text-white transition">Custom Workflows</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="text-slate-300 font-semibold mb-3">Company</div>
+          <ul class="space-y-2 text-slate-500">
+            <li><a href="#" class="hover:text-white transition">About Elitez Group</a></li>
+            <li><a href="#" class="hover:text-white transition">Singapore AI Governance</a></li>
+            <li><a href="#" class="hover:text-white transition">PSG Grant Guide</a></li>
+            <li><a href="business-plan.html" class="hover:text-sky-400 transition text-sky-500 font-medium">Business Plan →</a></li>
+            <li><a href="business-plan-enhanced.html" class="hover:text-emerald-400 transition text-emerald-500 font-medium">Business Plan — AI Enhanced ✦</a></li>
+            <li><a href="vc-countermeasures.html" class="hover:text-indigo-400 transition text-indigo-500 font-medium">VC Due Diligence →</a></li>
+            <li><a href="#contact" class="hover:text-white transition">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="text-slate-300 font-semibold mb-3">Regional</div>
+          <ul class="space-y-2 text-slate-500">
+            <li><a href="#" class="hover:text-white transition">🇸🇬 Singapore</a></li>
+            <li><a href="#" class="hover:text-white transition">🇲🇾 Malaysia</a></li>
+            <li><a href="#" class="hover:text-white transition">🇻🇳 Vietnam</a></li>
+            <li><a href="#" class="hover:text-white transition">🇮🇩 Indonesia</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- Chicago Booth badge -->
+    <div class="mt-8 mb-6 flex items-center justify-center">
+      <div class="inline-flex items-center gap-3 bg-[#800000]/10 border border-[#800000]/30 rounded-xl px-5 py-3">
+        <img src="https://www.wes.org/wp-content/uploads/2018/05/chicago-booth.png" alt="Chicago Booth" class="h-9 w-auto flex-shrink-0" />
+        <div>
+          <div class="text-rose-400 font-bold text-sm">Chicago Booth School of Business</div>
+          <div class="text-slate-400 text-xs">Business Analytics · Final Assignment · March 2026 · Academic Purpose Only — Not a real commercial venture.</div>
+        </div>
+      </div>
+    </div>
+    <div class="pt-6 border-t border-slate-800 flex flex-col md:flex-row justify-between text-xs text-slate-400">
+      <span>© 2026 Elitez Group. All rights reserved. ElitezAI operates under Singapore's Model AI Governance Framework.</span>
+      <span class="mt-2 md:mt-0">Powered by Claude 4.6 · GPT-5.2 · Gemini 2.0 Flash · n8n</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════
+     CHART.JS SCRIPTS
+════════════════════════════════════════════════════ -->
+<script>
+  Chart.defaults.font.family = 'Inter';
+  Chart.defaults.color = '#94a3b8';
+
+  // A/B Testing Chart
+  const abCtx = document.getElementById('abChart').getContext('2d');
+  new Chart(abCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Pricing Presentation', 'Onboarding Frame', 'WhatsApp Demo', 'PSG Email Cadence', 'Feature Sequencing'],
+      datasets: [
+        { label: 'Control', data: [18, 52, 28, 34, 41], backgroundColor: '#334155', borderRadius: 6 },
+        { label: 'Treatment', data: [31, 70, 42, 56, 58], backgroundColor: '#38bdf8', borderRadius: 6 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { labels: { color: '#94a3b8', boxRadius: 4 } } },
+      scales: {
+        x: { grid: { color: '#1e293b' }, ticks: { color: '#64748b', font: { size: 10 } } },
+        y: { grid: { color: '#1e293b' }, ticks: { color: '#64748b', callback: v => v + '%' } }
+      }
+    }
+  });
+
+  // Growth Chart
+  const growthCtx = document.getElementById('growthChart').getContext('2d');
+  const months = ['M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12'];
+  const customers = [8,18,31,48,67,90,118,148,181,210,232,250];
+  new Chart(growthCtx, {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [{
+        label: 'Paying Customers',
+        data: customers,
+        borderColor: '#34d399',
+        backgroundColor: 'rgba(52,211,153,0.08)',
+        fill: true, tension: 0.4, pointRadius: 3, pointBackgroundColor: '#34d399'
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: '#1e293b' }, ticks: { color: '#64748b', font: { size: 10 } } },
+        y: { grid: { color: '#1e293b' }, ticks: { color: '#64748b' } }
+      }
+    }
+  });
+
+  // CLV Chart
+  const clvCtx = document.getElementById('clvChart').getContext('2d');
+  new Chart(clvCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Prof. Services', 'Retail & Wholesale', 'F&B / Hospitality', 'Manufacturing', 'Info & Comms'],
+      datasets: [{
+        label: 'CLV (S$\'000)',
+        data: [112, 94, 78, 61, 44],
+        backgroundColor: ['#818cf8','#6366f1','#38bdf8','#22d3ee','#94a3b8'],
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } },
+        y: { grid: { color: '#f1f5f9' }, ticks: { color: '#64748b', callback: v => 'S$'+v+'K' } }
+      }
+    }
+  });
+
+  // CAC Trend Chart
+  const cacCtx = document.getElementById('cacChart').getContext('2d');
+  new Chart(cacCtx, {
+    type: 'line',
+    data: {
+      labels: ['Q1','Q2','Q3','Q4','Q5','Q6'],
+      datasets: [{
+        label: 'Blended CAC (S$)',
+        data: [620, 510, 420, 340, 270, 220],
+        borderColor: '#38bdf8', backgroundColor: 'rgba(56,189,248,0.08)',
+        fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#38bdf8'
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false },
+        annotation: { annotations: {
+          line1: { type: 'line', yMin: 220, yMax: 220, borderColor: '#34d399', borderWidth: 1, borderDash: [4,4], label: { content: 'Current: S$220', enabled: true } }
+        }}
+      },
+      scales: {
+        x: { grid: { color: '#f1f5f9' }, ticks: { color: '#64748b' } },
+        y: { grid: { color: '#f1f5f9' }, ticks: { color: '#64748b', callback: v => 'S$'+v } }
+      }
+    }
+  });
+
+  // Churn / Cohort Chart
+  const churnCtx = document.getElementById('churnChart').getContext('2d');
+  new Chart(churnCtx, {
+    type: 'line',
+    data: {
+      labels: ['Month 1','Month 3','Month 6','Month 9','Month 12'],
+      datasets: [
+        {
+          label: '≥3 Workflows',
+          data: [100, 99, 97, 95, 94],
+          borderColor: '#34d399', backgroundColor: 'rgba(52,211,153,0.08)',
+          fill: true, tension: 0.3, pointRadius: 4
+        },
+        {
+          label: '1–2 Workflows',
+          data: [100, 96, 90, 84, 79],
+          borderColor: '#f87171', backgroundColor: 'rgba(248,113,113,0.05)',
+          fill: true, tension: 0.3, pointRadius: 4
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { labels: { color: '#64748b', font: { size: 11 }, boxRadius: 4 } } },
+      scales: {
+        x: { grid: { color: '#f1f5f9' }, ticks: { color: '#64748b', font: { size: 10 } } },
+        y: { grid: { color: '#f1f5f9' }, ticks: { color: '#64748b', callback: v => v+'%' }, min: 70, max: 100 }
+      }
+    }
+  });
+
+  // CATE Chart
+  const cateCtx = document.getElementById('cateChart').getContext('2d');
+  new Chart(cateCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Prof. Services\n(50–100 HC)', 'Retail\n(100–200 HC)', 'F&B\n(50–150 HC)', 'Manufacturing\n(100–200 HC)', 'Info & Comms\n(50–100 HC)'],
+      datasets: [
+        { label: 'CATE (productivity gain %)', data: [43, 38, 31, 26, 18], backgroundColor: ['#818cf8','#6366f1','#38bdf8','#22d3ee','#64748b'], borderRadius: 6 },
+        { label: 'ATE (average, all segments)', data: [27, 27, 27, 27, 27], type: 'line', borderColor: '#f59e0b', borderDash: [5,5], pointRadius: 0, fill: false, borderWidth: 2 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { labels: { color: '#64748b', font: { size: 11 }, boxRadius: 4 } } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 9 } } },
+        y: { grid: { color: '#f1f5f9' }, ticks: { color: '#64748b', callback: v => v+'%' } }
+      }
+    }
+  });
+
+  // Animated counters
+  function animateCounter(el, target, suffix='') {
+    let start = 0;
+    const duration = 1800;
+    const step = target / (duration / 16);
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= target) { start = target; clearInterval(timer); }
+      el.textContent = Math.floor(start) + suffix;
+    }, 16);
+  }
+
+  // Intersection observer for counters
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCounter(document.getElementById('cnt-customers'), 250, '');
+        observer.disconnect();
+      }
+    });
+  });
+  const counterEl = document.getElementById('cnt-customers');
+  if (counterEl) observer.observe(counterEl);
+</script>
+</body>
+</html>

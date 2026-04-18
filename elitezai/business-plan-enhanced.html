@@ -1,0 +1,2605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ElitezAI — Business Plan Enhanced by AI</title>
+  <meta property="og:type"        content="website" />
+  <meta property="og:title"       content="ElitezAI — Business Plan Enhanced by AI" />
+  <meta property="og:description" content="The AI-enhanced edition: 3-scenario financial model, price elasticity analysis, headcount plan, and A/B testing ideas — built with Claude 4.6." />
+  <meta property="og:image"       content="https://raw.githubusercontent.com/derrick-pixel/elitezai-website/main/thumbnail-enhanced.png" />
+  <meta property="og:image:width"  content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card"       content="summary_large_image" />
+  <meta name="twitter:image"      content="https://raw.githubusercontent.com/derrick-pixel/elitezai-website/main/thumbnail-enhanced.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    html { scroll-behavior: smooth; }
+
+    .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1a2f4a 50%, #0f172a 100%); }
+    .nav-blur { backdrop-filter: blur(12px); background: rgba(15,23,42,0.9); }
+    .section-stripe { background: #f8fafc; }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .gradient-text-amber {
+      background: linear-gradient(135deg, #fbbf24, #f97316);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .gradient-text-green {
+      background: linear-gradient(135deg, #34d399, #38bdf8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    .sec-num {
+      font-size: 4rem; font-weight: 900; line-height: 1;
+      background: linear-gradient(135deg, rgba(56,189,248,0.2), rgba(129,140,248,0.2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      user-select: none;
+    }
+
+    .card-dark { background: #1e293b; border: 1px solid #334155; border-radius: 16px; }
+    .card-light { background: white; border: 1px solid #e2e8f0; border-radius: 16px; }
+    .card-hover { transition: transform 0.2s, box-shadow 0.2s; }
+    .card-hover:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,0.12); }
+
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 9999px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .badge-blue { background: rgba(56,189,248,0.12); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); }
+    .badge-green { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.3); }
+    .badge-purple { background: rgba(129,140,248,0.12); color: #818cf8; border: 1px solid rgba(129,140,248,0.3); }
+    .badge-amber { background: rgba(251,191,36,0.12); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+    .badge-rose { background: rgba(251,113,133,0.12); color: #fb7185; border: 1px solid rgba(251,113,133,0.3); }
+
+    .timeline-line::before {
+      content: ''; position: absolute; left: 20px; top: 0; bottom: 0;
+      width: 2px; background: linear-gradient(to bottom, #38bdf8, #818cf8, #34d399);
+    }
+
+    .phase-dot {
+      width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.85rem; flex-shrink: 0; position: relative; z-index: 1;
+    }
+
+    .risk-row:nth-child(odd) { background: rgba(255,255,255,0.03); }
+
+    /* Accordion */
+    .acc-content { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+    .acc-content.open { max-height: 600px; }
+    .acc-arrow { transition: transform 0.3s; }
+    .acc-arrow.open { transform: rotate(180deg); }
+
+    /* Sticky nav scroll indicator */
+    #progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(to right, #38bdf8, #818cf8); z-index: 100; transition: width 0.1s; }
+
+    /* Table zebra dark */
+    .dark-table tr:nth-child(even) td { background: rgba(255,255,255,0.03); }
+    .dark-table th { background: rgba(56,189,248,0.08); color: #94a3b8; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ── AI Enhancement floating tracker ── */
+    #ai-tracker {
+      position: fixed; right: 16px; top: 50%; transform: translateY(-50%);
+      z-index: 40; display: flex; flex-direction: column; gap: 8px;
+    }
+    .ai-tracker-item {
+      display: flex; align-items: center; gap: 0; cursor: pointer;
+      text-decoration: none; transition: all 0.2s;
+    }
+    .ai-tracker-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      border: 2px solid #34d399; background: transparent;
+      transition: all 0.2s; flex-shrink: 0; margin-left: 2px;
+    }
+    .ai-tracker-label {
+      max-width: 0; overflow: hidden; white-space: nowrap;
+      transition: max-width 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
+      opacity: 0; font-size: 0.7rem; font-weight: 700; color: #34d399;
+      background: rgba(15,23,42,0.92); border: 1px solid rgba(52,211,153,0.25);
+      border-radius: 6px; padding: 2px 0; margin-right: 0;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .ai-tracker-item:hover .ai-tracker-label,
+    .ai-tracker-item.active .ai-tracker-label {
+      max-width: 180px; opacity: 1; padding: 3px 8px; margin-right: 8px;
+    }
+    .ai-tracker-item.active .ai-tracker-dot {
+      background: #34d399; box-shadow: 0 0 8px rgba(52,211,153,0.6);
+    }
+    /* tracker label appears to the LEFT of the dot */
+    .ai-tracker-item { flex-direction: row-reverse; }
+
+    /* ── AI Enhancement section banner ── */
+    .ai-enhancement-banner {
+      border-radius: 16px 16px 0 0;
+      background: linear-gradient(135deg, #064e3b 0%, #065f46 60%, #047857 100%);
+      border: 1px solid rgba(52,211,153,0.3);
+      border-bottom: none;
+      padding: 18px 24px 14px;
+      position: relative; overflow: hidden;
+    }
+    .ai-enhancement-banner::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2334d399' fill-opacity='0.04'%3E%3Cpath d='M20 20l20-20v20z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    .ai-enhancement-banner-body {
+      border: 1px solid rgba(52,211,153,0.25);
+      border-top: none; border-radius: 0 0 16px 16px;
+    }
+    /* violet variant for Enhancement 2 & 4 (light bg sections) */
+    .ai-enhancement-banner-violet {
+      background: linear-gradient(135deg, #2e1065 0%, #3b0764 60%, #4c1d95 100%);
+      border-color: rgba(167,139,250,0.3);
+    }
+    .ai-enhancement-banner-violet::before {
+      background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a78bfa' fill-opacity='0.04'%3E%3Cpath d='M20 20l20-20v20z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    .ai-enhancement-banner-body-violet {
+      border-color: rgba(167,139,250,0.2);
+    }
+
+    /* Persona card */
+    .persona-card { border-top: 3px solid; }
+    .persona-champion { border-color: #38bdf8; }
+    .persona-buyer { border-color: #34d399; }
+    .persona-blocker { border-color: #f97316; }
+
+    .glow-blue { box-shadow: 0 0 40px rgba(56,189,248,0.15); }
+
+    /* Section anchor offset for fixed nav */
+    [id] { scroll-margin-top: 80px; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100">
+
+<!-- Progress bar -->
+<div id="progress-bar" style="width:0%"></div>
+
+<!-- AI Enhancement floating tracker -->
+<div id="ai-tracker" class="hidden xl:flex">
+  <a href="#enh1" class="ai-tracker-item" data-enh="1">
+    <div class="ai-tracker-dot"></div>
+    <div class="ai-tracker-label">① Price Elasticity</div>
+  </a>
+  <a href="#enh2" class="ai-tracker-item" data-enh="2">
+    <div class="ai-tracker-dot" style="border-color:#a78bfa"></div>
+    <div class="ai-tracker-label" style="color:#a78bfa;border-color:rgba(167,139,250,0.25)">② Headcount Plan</div>
+  </a>
+  <a href="#enh3" class="ai-tracker-item" data-enh="3">
+    <div class="ai-tracker-dot"></div>
+    <div class="ai-tracker-label">③ 3-Scenario Model</div>
+  </a>
+  <a href="#enh4" class="ai-tracker-item" data-enh="4">
+    <div class="ai-tracker-dot" style="border-color:#38bdf8"></div>
+    <div class="ai-tracker-label" style="color:#38bdf8;border-color:rgba(56,189,248,0.25)">④ A/B Testing</div>
+  </a>
+</div>
+
+<!-- Chicago Booth bar -->
+<div id="booth-bar" class="fixed top-0 left-0 right-0 z-[60] bg-[#800000] text-white text-xs py-1.5 px-4 flex items-center justify-between">
+  <div class="flex items-center gap-2">
+    <img src="https://www.wes.org/wp-content/uploads/2018/05/chicago-booth.png" class="h-5 w-auto brightness-0 invert" alt="Chicago Booth" />
+    <span class="font-semibold">Chicago Booth School of Business</span>
+    <span class="text-red-200 hidden sm:inline">·</span>
+    <span class="text-red-200 hidden sm:inline">Business Analytics · Final Assignment · March 2026</span>
+  </div>
+  <button onclick="document.getElementById('booth-bar').style.display='none'; adjustNav();" class="text-red-200 hover:text-white text-base leading-none px-1">×</button>
+</div>
+
+<!-- Nav -->
+<nav id="main-nav" class="fixed left-0 right-0 z-50 nav-blur border-b border-slate-800">
+  <div class="max-w-7xl mx-auto px-4 flex items-center justify-between h-14">
+    <div class="flex items-center gap-3">
+      <a href="index.html" class="flex items-center gap-2 group">
+        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center text-white font-black text-xs">E</div>
+        <span class="text-white font-bold text-sm">ElitezAI</span>
+      </a>
+      <span class="text-slate-600">|</span>
+      <span class="text-emerald-400 font-semibold text-sm">Business Plan · AI Enhanced</span>
+    </div>
+    <div class="hidden md:flex items-center gap-1 text-xs">
+      <a href="#problem"     class="nav-link px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">Problem</a>
+      <a href="#solution"    class="nav-link px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">Solution</a>
+      <a href="#customers"   class="nav-link px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">Customers</a>
+      <a href="#market"      class="nav-link px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">Market</a>
+      <a href="#research"    class="nav-link px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">Research</a>
+      <a href="#competitive" class="nav-link px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">Competition</a>
+      <a href="#bizmodel"    class="nav-link px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">Model</a>
+      <a href="#gtm"         class="nav-link px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">GTM</a>
+      <a href="#financials"  class="nav-link px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">Financials</a>
+      <a href="#risks"       class="nav-link px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">Risks</a>
+      <a href="#aifeedback"  class="nav-link px-3 py-1.5 rounded-md text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">AI Report</a>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="business-plan.html" class="text-sky-400 hover:text-sky-300 text-xs font-semibold px-3 py-1.5 rounded-md border border-sky-800 hover:border-sky-500 transition-colors">📄 Business Plan</a>
+      <a href="business-plan-enhanced.html" class="text-white text-xs font-semibold px-3 py-1.5 rounded-md bg-emerald-600 border border-emerald-500">✦ Enhanced by AI</a>
+      <a href="vc-countermeasures.html" class="text-indigo-400 hover:text-indigo-300 text-xs font-medium px-3 py-1.5 rounded-md border border-indigo-800 hover:border-indigo-600 transition-colors">VC Due Diligence</a>
+      <a href="elitezai-business-plan.pdf" download class="inline-flex items-center gap-1.5 text-white text-xs font-bold px-3 py-1.5 rounded-md bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 transition-all shadow shadow-emerald-900/50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+        PDF
+      </a>
+      <a href="index.html" class="text-slate-400 hover:text-white text-xs font-medium px-3 py-1.5 rounded-md border border-slate-700 hover:border-slate-500 transition-colors">← Dashboard</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════ HERO ═══════════════════════ -->
+<section class="hero-gradient pt-32 pb-20 px-4">
+  <div class="max-w-5xl mx-auto text-center">
+    <div class="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span class="text-emerald-400 text-sm font-medium">Business Plan Enhanced by AI · Claude 4.6 · April 2026</span>
+    </div>
+    <!-- AI enhancement callout -->
+    <div class="inline-flex flex-wrap justify-center gap-3 mb-6">
+      <span class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold">+ 3-Scenario Financial Model</span>
+      <span class="px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/30 text-violet-300 text-xs font-semibold">+ Price Elasticity Analysis</span>
+      <span class="px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold">+ Headcount Plan</span>
+      <span class="px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-300 text-xs font-semibold">+ A/B Testing Roadmap</span>
+    </div>
+    <h1 class="text-5xl md:text-6xl font-black mb-6 leading-tight">
+      Automating the <span class="gradient-text">Intelligent Economy</span><br/>for Southeast Asian SMEs
+    </h1>
+    <p class="text-xl text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed">
+      The AI-enhanced edition of the strategic business plan — four critical gaps identified in peer review, now addressed with scenario analysis, elasticity modelling, team planning, and testable hypotheses.
+    </p>
+    <!-- Headline metrics -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8">
+      <div class="card-dark p-5 text-center glow-blue">
+        <div class="text-3xl font-black gradient-text">S$330M</div>
+        <div class="text-slate-400 text-xs mt-1">Year 5 Revenue Target</div>
+      </div>
+      <div class="card-dark p-5 text-center">
+        <div class="text-3xl font-black text-emerald-400">15,000</div>
+        <div class="text-slate-400 text-xs mt-1">Active Clients by Year 5</div>
+      </div>
+      <div class="card-dark p-5 text-center">
+        <div class="text-3xl font-black text-violet-400">9</div>
+        <div class="text-slate-400 text-xs mt-1">Live Production Workflows</div>
+      </div>
+      <div class="card-dark p-5 text-center">
+        <div class="text-3xl font-black gradient-text-amber">Month 10</div>
+        <div class="text-slate-400 text-xs mt-1">Break-Even Point</div>
+      </div>
+    </div>
+    <!-- Download CTA -->
+    <div class="flex flex-wrap justify-center gap-4">
+      <a href="elitezai-business-plan.pdf" download
+         class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition-all shadow-lg shadow-emerald-900/40 hover:shadow-emerald-900/60 hover:-translate-y-0.5">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>
+        Download PDF · 15-Page Business Plan
+      </a>
+      <a href="#exec"
+         class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm transition-all border border-slate-700">
+        Read Online ↓
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ 01 EXECUTIVE SUMMARY ═══════════════════════ -->
+<section id="exec" class="py-20 px-4 bg-slate-900">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-start gap-4 mb-10">
+      <span class="sec-num">01</span>
+      <div>
+        <div class="badge badge-blue mb-2">Executive Summary</div>
+        <h2 class="text-3xl font-black text-white">The Venture in One Page</h2>
+      </div>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="md:col-span-2 card-dark p-8">
+        <p class="text-slate-300 leading-relaxed mb-5">
+          SMEs in Singapore and Southeast Asia face a <strong class="text-white">"productivity paradox"</strong>: digitally aware but operationally stuck. As companies grow beyond 50 employees, complexity scales non-linearly — manual HR contracts, timesheet chaos, and WhatsApp-based scheduling become existential drags.
+        </p>
+        <p class="text-slate-300 leading-relaxed mb-5">
+          <strong class="text-sky-400">ElitezAI</strong> deploys <strong class="text-white">Agentic AI Workflows</strong> — autonomous, goal-oriented digital workers with multi-step reasoning — that plug directly into the tools SMEs already use (WhatsApp, Xero, Google Drive). Nine production-ready workflows address HR, Finance, and Operations, proven through live deployment at Elitez Group with <strong class="text-emerald-400">377–577+ hours saved per month</strong>.
+        </p>
+        <p class="text-slate-300 leading-relaxed">
+          The venture is positioned for <strong class="text-white">hypergrowth</strong>: 100 clients Year 1, scaling 3x–4x annually to 15,000 clients and S$330M revenue by Year 5. Competitive moat: <strong class="text-violet-400">Contextualized Implementation</strong> — agents pre-trained on Singapore MOM regulations, GST formulas, and local business rules that generic AI tools cannot replicate.
+        </p>
+      </div>
+      <div class="space-y-4">
+        <div class="card-dark p-5 border-l-4 border-sky-500">
+          <div class="text-slate-400 text-xs uppercase font-bold mb-1">The Gap We Fill</div>
+          <div class="text-white text-sm">Midsized SMEs trapped in the "automation plateau" — too complex for DIY tools, too small for enterprise ERP</div>
+        </div>
+        <div class="card-dark p-5 border-l-4 border-emerald-500">
+          <div class="text-slate-400 text-xs uppercase font-bold mb-1">The Moat</div>
+          <div class="text-white text-sm">MOM-compliant agents + turnkey 3-week implementation + proof of ROI from live production workflows</div>
+        </div>
+        <div class="card-dark p-5 border-l-4 border-violet-500">
+          <div class="text-slate-400 text-xs uppercase font-bold mb-1">The Trajectory</div>
+          <div class="text-white text-sm">T2D3 hypergrowth — 100 → 400 → 1,600 → 5,000 → 15,000 clients. Break-even Month 10.</div>
+        </div>
+        <div class="card-dark p-5 border-l-4 border-amber-500">
+          <div class="text-slate-400 text-xs uppercase font-bold mb-1">Funding Catalyst</div>
+          <div class="text-white text-sm">Singapore PSG Grant co-funds 50% of client costs, compressing sales cycle from 6 months to 6 weeks</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ 02 PROBLEM ═══════════════════════ -->
+<section id="problem" class="py-20 px-4 section-stripe">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-start gap-4 mb-10">
+      <span class="sec-num">02</span>
+      <div>
+        <div class="badge badge-rose mb-2">Problem</div>
+        <h2 class="text-3xl font-black text-slate-900">The SME Productivity Paradox</h2>
+        <p class="text-slate-600 mt-2 max-w-2xl">As companies grow to 50–200 employees, complexity scales non-linearly. Three market failures trap midsized SMEs.</p>
+      </div>
+    </div>
+
+    <!-- 3 failure modes -->
+    <div class="grid md:grid-cols-3 gap-6 mb-12">
+      <div class="card-light p-6 card-hover border-t-4 border-red-400">
+        <div class="text-2xl mb-3">🤖</div>
+        <h3 class="font-bold text-slate-800 mb-2">Generic AI Fails</h3>
+        <p class="text-slate-600 text-sm">ChatGPT and Copilot improve individual productivity but cannot execute actions or retain organizational context. <strong>95% of GenAI pilots yield zero P&L impact.</strong></p>
+      </div>
+      <div class="card-light p-6 card-hover border-t-4 border-orange-400">
+        <div class="text-2xl mb-3">🏗️</div>
+        <h3 class="font-bold text-slate-800 mb-2">Legacy RPA Too Brittle</h3>
+        <p class="text-slate-600 text-sm">UiPath and SAP are expensive, complex to deploy, and fail on the unstructured data (receipt photos, handwritten timesheets) that characterize SME operations.</p>
+      </div>
+      <div class="card-light p-6 card-hover border-t-4 border-yellow-400">
+        <div class="text-2xl mb-3">🧩</div>
+        <h3 class="font-bold text-slate-800 mb-2">No Middle Ground</h3>
+        <p class="text-slate-600 text-sm">Large corporations have bespoke AI. Startups use agile off-the-shelf tools. Midsized SMEs are stuck in the <strong>"automation plateau"</strong> with no fit solution.</p>
+      </div>
+    </div>
+
+    <!-- Friction points table -->
+    <h3 class="text-xl font-bold text-slate-800 mb-4">The Six "Ugh" Tasks Draining SME Operations</h3>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="bg-slate-800 text-slate-300">
+            <th class="text-left px-4 py-3 rounded-tl-lg text-xs uppercase tracking-wide">Process</th>
+            <th class="text-left px-4 py-3 text-xs uppercase tracking-wide">Volume/Month</th>
+            <th class="text-left px-4 py-3 text-xs uppercase tracking-wide">Time Wasted</th>
+            <th class="text-left px-4 py-3 text-xs uppercase tracking-wide">Error Rate</th>
+            <th class="text-left px-4 py-3 rounded-tr-lg text-xs uppercase tracking-wide">Business Impact</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-slate-200">
+            <td class="px-4 py-3 font-semibold text-slate-800">HR Contract Creation</td>
+            <td class="px-4 py-3 text-slate-600">50–100 contracts</td>
+            <td class="px-4 py-3"><span class="text-red-600 font-bold">48+ hrs/month</span></td>
+            <td class="px-4 py-3 text-red-500 font-semibold">5–10%</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">MOM compliance risk; hiring delays; 25% of HR time</td>
+          </tr>
+          <tr class="border-b border-slate-200 bg-slate-50">
+            <td class="px-4 py-3 font-semibold text-slate-800">Employee Onboarding</td>
+            <td class="px-4 py-3 text-slate-600">~10 new hires</td>
+            <td class="px-4 py-3"><span class="text-red-600 font-bold">20–50 hrs/month</span></td>
+            <td class="px-4 py-3 text-red-500 font-semibold">30–40% incomplete</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">Inconsistent training; manager time wasted chasing</td>
+          </tr>
+          <tr class="border-b border-slate-200">
+            <td class="px-4 py-3 font-semibold text-slate-800">Timesheet Processing</td>
+            <td class="px-4 py-3 text-slate-600">100–200 timesheets</td>
+            <td class="px-4 py-3"><span class="text-red-600 font-bold">25–75 hrs/month</span></td>
+            <td class="px-4 py-3 text-red-500 font-semibold">4–12%</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">39% of ops time on payments; payroll errors</td>
+          </tr>
+          <tr class="border-b border-slate-200 bg-slate-50">
+            <td class="px-4 py-3 font-semibold text-slate-800">Deployment Scheduling</td>
+            <td class="px-4 py-3 text-slate-600">50+ deployments</td>
+            <td class="px-4 py-3"><span class="text-red-600 font-bold">77 hrs/exec/month</span></td>
+            <td class="px-4 py-3 text-red-500 font-semibold">8% no-shows</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">24/7 phone trap; manual WhatsApp copy-paste</td>
+          </tr>
+          <tr class="border-b border-slate-200">
+            <td class="px-4 py-3 font-semibold text-slate-800">Commission Verification</td>
+            <td class="px-4 py-3 text-slate-600">30–80 claims</td>
+            <td class="px-4 py-3"><span class="text-red-600 font-bold">15 hrs/month</span></td>
+            <td class="px-4 py-3 text-red-500 font-semibold">30% dispute rate</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">Finance-sales friction; 5–7 day payout delay</td>
+          </tr>
+          <tr class="bg-slate-50">
+            <td class="px-4 py-3 font-semibold text-slate-800">SOA Reconciliation</td>
+            <td class="px-4 py-3 text-slate-600">Daily finance need</td>
+            <td class="px-4 py-3"><span class="text-red-600 font-bold">4–6 hrs/month</span></td>
+            <td class="px-4 py-3 text-red-500 font-semibold">Data 2 wks stale</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">Extended DSO; late payment follow-up</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ 03 SOLUTION ═══════════════════════ -->
+<section id="solution" class="py-20 px-4 bg-slate-900">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-start gap-4 mb-10">
+      <span class="sec-num">03</span>
+      <div>
+        <div class="badge badge-green mb-2">Solution</div>
+        <h2 class="text-3xl font-black text-white">The Agentic AI Factory</h2>
+        <p class="text-slate-400 mt-2 max-w-2xl">Not a chatbot. Not RPA. A goal-oriented orchestrator that plans, decides, and executes across your business systems.</p>
+      </div>
+    </div>
+
+    <!-- Architecture pillars -->
+    <div class="grid md:grid-cols-3 gap-5 mb-14">
+      <div class="card-dark p-6 border-t-2 border-sky-500">
+        <div class="text-sky-400 text-2xl mb-3">💬</div>
+        <h3 class="font-bold text-white mb-2">Conversational Nuance</h3>
+        <p class="text-slate-400 text-sm">Gemini 2.0 Flash understands text, voice, images, stickers, and emojis — staff interact via <strong class="text-white">WhatsApp as normal</strong>, the agent handles the rest.</p>
+      </div>
+      <div class="card-dark p-6 border-t-2 border-violet-500">
+        <div class="text-violet-400 text-2xl mb-3">🧠</div>
+        <h3 class="font-bold text-white mb-2">Contextual Logic</h3>
+        <p class="text-slate-400 text-sm">Singapore MOM regulations, GST formulas, and company commission rules baked into the agent's decision engine — <strong class="text-white">not generic AI</strong>.</p>
+      </div>
+      <div class="card-dark p-6 border-t-2 border-emerald-500">
+        <div class="text-emerald-400 text-2xl mb-3">⚡</div>
+        <h3 class="font-bold text-white mb-2">End-to-End Execution</h3>
+        <p class="text-slate-400 text-sm">Integrates with Xero, Google Drive, Vercel, and WhatsApp — the agent doesn't just suggest, it <strong class="text-white">completes the task</strong>.</p>
+      </div>
+    </div>
+
+    <!-- 9 workflows -->
+    <h3 class="text-xl font-bold text-white mb-6">9 Production-Ready Workflows — All Live at Elitez Group</h3>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm dark-table">
+        <thead>
+          <tr>
+            <th class="text-left px-4 py-3 rounded-tl-lg">#</th>
+            <th class="text-left px-4 py-3">Workflow</th>
+            <th class="text-left px-4 py-3">Before (Manual)</th>
+            <th class="text-left px-4 py-3">After (AI)</th>
+            <th class="text-left px-4 py-3 rounded-tr-lg">Key Win</th>
+          </tr>
+        </thead>
+        <tbody class="text-slate-300">
+          <tr class="border-b border-slate-700">
+            <td class="px-4 py-3 text-slate-500 font-mono">01</td>
+            <td class="px-4 py-3 font-semibold text-white">HR Contract Creation</td>
+            <td class="px-4 py-3 text-slate-400 text-xs">30–45 min/contract; 5–10% error</td>
+            <td class="px-4 py-3 text-emerald-400 text-xs font-medium">10–15 min; &lt;0.1% error</td>
+            <td class="px-4 py-3"><span class="badge badge-green">3× HR capacity</span></td>
+          </tr>
+          <tr class="border-b border-slate-700">
+            <td class="px-4 py-3 text-slate-500 font-mono">02</td>
+            <td class="px-4 py-3 font-semibold text-white">Onboarding Automation</td>
+            <td class="px-4 py-3 text-slate-400 text-xs">2–5 hrs/hire; 60–70% step completion</td>
+            <td class="px-4 py-3 text-emerald-400 text-xs font-medium">30 min/hire; 100% completion</td>
+            <td class="px-4 py-3"><span class="badge badge-blue">4× productivity</span></td>
+          </tr>
+          <tr class="border-b border-slate-700">
+            <td class="px-4 py-3 text-slate-500 font-mono">03</td>
+            <td class="px-4 py-3 font-semibold text-white">Timesheet OCR Processing</td>
+            <td class="px-4 py-3 text-slate-400 text-xs">10–30 min/sheet; 4–12% error</td>
+            <td class="px-4 py-3 text-emerald-400 text-xs font-medium">5–8 min; &lt;0.5% error</td>
+            <td class="px-4 py-3"><span class="badge badge-purple">98% zero-touch</span></td>
+          </tr>
+          <tr class="border-b border-slate-700">
+            <td class="px-4 py-3 text-slate-500 font-mono">04</td>
+            <td class="px-4 py-3 font-semibold text-white">Deployment Scheduler (WhatsApp)</td>
+            <td class="px-4 py-3 text-slate-400 text-xs">3.5 hrs/exec/day; 35% response rate</td>
+            <td class="px-4 py-3 text-emerald-400 text-xs font-medium">20 min/exec/day; 92% response</td>
+            <td class="px-4 py-3"><span class="badge badge-amber">77 hrs/mo reclaimed</span></td>
+          </tr>
+          <tr class="border-b border-slate-700">
+            <td class="px-4 py-3 text-slate-500 font-mono">05</td>
+            <td class="px-4 py-3 font-semibold text-white">AI Resume Builder</td>
+            <td class="px-4 py-3 text-slate-400 text-xs">20–30 min/resume; generic output</td>
+            <td class="px-4 py-3 text-emerald-400 text-xs font-medium">3–5 min; job-matched output</td>
+            <td class="px-4 py-3"><span class="badge badge-green">85% time reduction</span></td>
+          </tr>
+          <tr class="border-b border-slate-700">
+            <td class="px-4 py-3 text-slate-500 font-mono">06</td>
+            <td class="px-4 py-3 font-semibold text-white">Daily SOA Checker</td>
+            <td class="px-4 py-3 text-slate-400 text-xs">4–6 hrs/month; data 2 weeks stale</td>
+            <td class="px-4 py-3 text-emerald-400 text-xs font-medium">&lt;30 min/month; real-time daily</td>
+            <td class="px-4 py-3"><span class="badge badge-blue">10–14 day DSO reduction</span></td>
+          </tr>
+          <tr class="border-b border-slate-700">
+            <td class="px-4 py-3 text-slate-500 font-mono">07</td>
+            <td class="px-4 py-3 font-semibold text-white">Receipt Claims Automation</td>
+            <td class="px-4 py-3 text-slate-400 text-xs">4–9 min/receipt; 5–10% rejection</td>
+            <td class="px-4 py-3 text-emerald-400 text-xs font-medium">1–2 min; &lt;5% rejection</td>
+            <td class="px-4 py-3"><span class="badge badge-purple">95%+ accuracy</span></td>
+          </tr>
+          <tr class="border-b border-slate-700">
+            <td class="px-4 py-3 text-slate-500 font-mono">08</td>
+            <td class="px-4 py-3 font-semibold text-white">Commission Claims Verification</td>
+            <td class="px-4 py-3 text-slate-400 text-xs">15 hrs/month; 30% dispute rate</td>
+            <td class="px-4 py-3 text-emerald-400 text-xs font-medium">5 hrs/month; &lt;5% dispute rate</td>
+            <td class="px-4 py-3"><span class="badge badge-green">83% fewer disputes</span></td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 text-slate-500 font-mono">09</td>
+            <td class="px-4 py-3 font-semibold text-white">Large-Scale Doc Validation</td>
+            <td class="px-4 py-3 text-slate-400 text-xs">S$10–15K/campaign (1–2 FTE)</td>
+            <td class="px-4 py-3 text-emerald-400 text-xs font-medium">&lt;S$1K/campaign; &lt;1 sec/receipt</td>
+            <td class="px-4 py-3"><span class="badge badge-amber">90% cost reduction</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Aggregate impact -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+      <div class="card-dark p-5 text-center">
+        <div class="text-2xl font-black text-emerald-400">577+ hrs</div>
+        <div class="text-slate-400 text-xs mt-1">Saved per month</div>
+      </div>
+      <div class="card-dark p-5 text-center">
+        <div class="text-2xl font-black text-sky-400">S$28K</div>
+        <div class="text-slate-400 text-xs mt-1">Cost reduction/month</div>
+      </div>
+      <div class="card-dark p-5 text-center">
+        <div class="text-2xl font-black text-violet-400">96%</div>
+        <div class="text-slate-400 text-xs mt-1">Avg accuracy improvement</div>
+      </div>
+      <div class="card-dark p-5 text-center">
+        <div class="text-2xl font-black gradient-text-amber">3 wks</div>
+        <div class="text-slate-400 text-xs mt-1">Go-live timeline</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ 04 CUSTOMERS ═══════════════════════ -->
+<section id="customers" class="py-20 px-4 section-stripe">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-start gap-4 mb-10">
+      <span class="sec-num">04</span>
+      <div>
+        <div class="badge badge-purple mb-2">Target Customers</div>
+        <h2 class="text-3xl font-black text-slate-900">Who We Sell To — and How</h2>
+        <p class="text-slate-600 mt-2 max-w-2xl">50–200 employee SMEs in Singapore across staffing, retail ops, and professional services. Three stakeholders, three distinct messages.</p>
+      </div>
+    </div>
+
+    <!-- Ideal Customer Profile -->
+    <div class="card-light p-6 mb-10 border-l-4 border-violet-500">
+      <h3 class="font-bold text-slate-800 mb-4">Early Adopter Profile — Our First 10 Clients</h3>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+        <div class="flex items-start gap-3"><span class="text-violet-500 mt-0.5 font-bold">✓</span><span class="text-slate-700">Already paying <strong>S$500+/month</strong> for SaaS (Xero, HubSpot, Workato) — proven software buyer</span></div>
+        <div class="flex items-start gap-3"><span class="text-violet-500 mt-0.5 font-bold">✓</span><span class="text-slate-700">CEO/COO personally frustrated by a specific "Ugh" task — says <em>"I hate doing this manually"</em></span></div>
+        <div class="flex items-start gap-3"><span class="text-violet-500 mt-0.5 font-bold">✓</span><span class="text-slate-700">Headcount <strong>60–150</strong> — enough complexity to hurt, small enough for fast CEO decision cycles</span></div>
+        <div class="flex items-start gap-3"><span class="text-violet-500 mt-0.5 font-bold">✓</span><span class="text-slate-700">Aware of or previously applied for <strong>PSG grants</strong> — budget partially de-risked by government co-funding</span></div>
+        <div class="flex items-start gap-3"><span class="text-violet-500 mt-0.5 font-bold">✓</span><span class="text-slate-700">In <strong>staffing, recruitment, retail ops, or professional services</strong> — highest workflow density</span></div>
+        <div class="flex items-start gap-3"><span class="text-violet-500 mt-0.5 font-bold">✓</span><span class="text-slate-700">No enterprise ERP (no SAP/Oracle) — greenfield for agentic integration layer</span></div>
+      </div>
+    </div>
+
+    <!-- Buyer persona map -->
+    <h3 class="text-xl font-bold text-slate-800 mb-6">Buyer Persona Map — Three Stakeholders to Win</h3>
+    <div class="grid md:grid-cols-3 gap-6 mb-12">
+      <div class="card-light p-6 card-hover persona-card persona-champion">
+        <div class="badge badge-blue mb-3">Champion · Initiates</div>
+        <h4 class="font-black text-slate-800 mb-1">Operations / HR Manager</h4>
+        <div class="text-slate-500 text-xs mb-4">Wants to escape daily repetitive tasks; be seen as an internal innovator</div>
+        <div class="space-y-3 text-sm">
+          <div><span class="text-slate-500 font-medium">Key Concern:</span><br/><span class="text-slate-700">"Will this break my current workflow? Will my team resist it?"</span></div>
+          <div class="h-px bg-slate-100"></div>
+          <div><span class="text-sky-600 font-semibold">Our Message:</span><br/><span class="text-slate-700">"Agents work through WhatsApp and Xero — tools your team already uses. 3-week go-live, no IT project."</span></div>
+        </div>
+      </div>
+      <div class="card-light p-6 card-hover persona-card persona-buyer">
+        <div class="badge badge-green mb-3">Economic Buyer · Approves</div>
+        <h4 class="font-black text-slate-800 mb-1">CEO / CFO</h4>
+        <div class="text-slate-500 text-xs mb-4">Wants ROI, headcount avoidance, competitive differentiation</div>
+        <div class="space-y-3 text-sm">
+          <div><span class="text-slate-500 font-medium">Key Concern:</span><br/><span class="text-slate-700">"What's the payback period? What if performance degrades?"</span></div>
+          <div class="h-px bg-slate-100"></div>
+          <div><span class="emerald-600 font-semibold text-emerald-700">Our Message:</span><br/><span class="text-slate-700">"Average client recoups full implementation cost in under 3 months. We guarantee 95%+ accuracy SLA or credit."</span></div>
+        </div>
+      </div>
+      <div class="card-light p-6 card-hover persona-card persona-blocker">
+        <div class="badge badge-amber mb-3">Blocker · Must Not Veto</div>
+        <h4 class="font-black text-slate-800 mb-1">IT Manager / Internal CTO</h4>
+        <div class="text-slate-500 text-xs mb-4">Concerned about data security, compliance, vendor lock-in</div>
+        <div class="space-y-3 text-sm">
+          <div><span class="text-slate-500 font-medium">Key Concern:</span><br/><span class="text-slate-700">"Where does our payroll and contract data go? Who can access it?"</span></div>
+          <div class="h-px bg-slate-100"></div>
+          <div><span class="text-orange-600 font-semibold">Our Message:</span><br/><span class="text-slate-700">"Private VPC — your data never leaves Singapore. SOC 2 Type 2 certified. MOM and MAS TRM compliant."</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Industry segmentation -->
+    <h3 class="text-xl font-bold text-slate-800 mb-4">Industry Segmentation (Singapore — ADB Asia SME Monitor 2025)</h3>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="bg-slate-800 text-slate-300 text-xs uppercase tracking-wide">
+            <th class="text-left px-4 py-3 rounded-tl-lg">Sector</th>
+            <th class="text-left px-4 py-3">SME Units</th>
+            <th class="text-left px-4 py-3">Pain Level</th>
+            <th class="text-left px-4 py-3">Best-Fit Workflows</th>
+            <th class="text-left px-4 py-3 rounded-tr-lg">Priority</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-slate-200 bg-emerald-50">
+            <td class="px-4 py-3 font-semibold text-slate-800">Wholesale &amp; Retail Trade</td>
+            <td class="px-4 py-3 text-slate-600">83,052</td>
+            <td class="px-4 py-3"><span class="text-red-600 font-bold">High</span></td>
+            <td class="px-4 py-3 text-slate-600 text-xs">Deployment Scheduler, Timesheets, Receipts</td>
+            <td class="px-4 py-3"><span class="badge badge-green">Tier 1</span></td>
+          </tr>
+          <tr class="border-b border-slate-200 bg-emerald-50">
+            <td class="px-4 py-3 font-semibold text-slate-800">Professional &amp; Business Services</td>
+            <td class="px-4 py-3 text-slate-600">60,656</td>
+            <td class="px-4 py-3"><span class="text-red-600 font-bold">High</span></td>
+            <td class="px-4 py-3 text-slate-600 text-xs">HR Contracts, SOA, Onboarding</td>
+            <td class="px-4 py-3"><span class="badge badge-green">Tier 1</span></td>
+          </tr>
+          <tr class="border-b border-slate-200 bg-emerald-50">
+            <td class="px-4 py-3 font-semibold text-slate-800">Accommodation &amp; Food Services</td>
+            <td class="px-4 py-3 text-slate-600">15,999</td>
+            <td class="px-4 py-3"><span class="text-red-600 font-bold">High</span></td>
+            <td class="px-4 py-3 text-slate-600 text-xs">Timesheets, Deployment, Commission</td>
+            <td class="px-4 py-3"><span class="badge badge-green">Tier 1</span></td>
+          </tr>
+          <tr class="border-b border-slate-200">
+            <td class="px-4 py-3 font-semibold text-slate-800">Manufacturing</td>
+            <td class="px-4 py-3 text-slate-600">7,174</td>
+            <td class="px-4 py-3"><span class="text-amber-600 font-bold">Medium</span></td>
+            <td class="px-4 py-3 text-slate-600 text-xs">Onboarding, Contracts, Timesheets</td>
+            <td class="px-4 py-3"><span class="badge badge-amber">Tier 2</span></td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-semibold text-slate-800">Information &amp; Communications</td>
+            <td class="px-4 py-3 text-slate-600">17,099</td>
+            <td class="px-4 py-3"><span class="text-slate-500 font-bold">Low</span></td>
+            <td class="px-4 py-3 text-slate-600 text-xs">Custom workflows only</td>
+            <td class="px-4 py-3"><span class="badge badge-rose">Tier 3</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ 05 MARKET ═══════════════════════ -->
+<section id="market" class="py-20 px-4 bg-slate-900">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-start gap-4 mb-10">
+      <span class="sec-num">05</span>
+      <div>
+        <div class="badge badge-blue mb-2">Market Opportunity</div>
+        <h2 class="text-3xl font-black text-white">A S$300B+ Digital Economy, Underserved</h2>
+        <p class="text-slate-400 mt-2 max-w-2xl">Southeast Asia's digital economy surpassed US$300B GMV in 2025. Singapore is the AI funding epicenter — private AI funding grew 55% in H1 2025.</p>
+      </div>
+    </div>
+
+    <!-- Regional stats table -->
+    <h3 class="text-lg font-bold text-white mb-4">SEA SME Landscape — Comparative Overview 2024/25</h3>
+    <div class="overflow-x-auto mb-12">
+      <table class="w-full text-sm dark-table">
+        <thead>
+          <tr>
+            <th class="text-left px-4 py-3 rounded-tl-lg">Country</th>
+            <th class="text-left px-4 py-3">SME Population</th>
+            <th class="text-left px-4 py-3">% of Enterprises</th>
+            <th class="text-left px-4 py-3">SME Employment Share</th>
+            <th class="text-left px-4 py-3 rounded-tr-lg">Our Approach</th>
+          </tr>
+        </thead>
+        <tbody class="text-slate-300">
+          <tr class="border-b border-slate-700">
+            <td class="px-4 py-3 font-bold text-sky-400">🇸🇬 Singapore</td>
+            <td class="px-4 py-3">354,600</td>
+            <td class="px-4 py-3">99.6%</td>
+            <td class="px-4 py-3">69.6%</td>
+            <td class="px-4 py-3"><span class="badge badge-green">HQ + Launch Market</span></td>
+          </tr>
+          <tr class="border-b border-slate-700">
+            <td class="px-4 py-3 font-bold text-emerald-400">🇮🇩 Indonesia</td>
+            <td class="px-4 py-3">30.18M</td>
+            <td class="px-4 py-3">99%</td>
+            <td class="px-4 py-3">97.2%</td>
+            <td class="px-4 py-3"><span class="badge badge-amber">Volume-First GTM</span></td>
+          </tr>
+          <tr class="border-b border-slate-700">
+            <td class="px-4 py-3 font-bold text-violet-400">🇹🇭 Thailand</td>
+            <td class="px-4 py-3">3.25M</td>
+            <td class="px-4 py-3">99.5%</td>
+            <td class="px-4 py-3">70%+</td>
+            <td class="px-4 py-3"><span class="badge badge-blue">Year 3 Expansion</span></td>
+          </tr>
+          <tr class="border-b border-slate-700">
+            <td class="px-4 py-3 font-bold text-rose-400">🇲🇾 Malaysia</td>
+            <td class="px-4 py-3">1.08M</td>
+            <td class="px-4 py-3">96.1%</td>
+            <td class="px-4 py-3">48.7%</td>
+            <td class="px-4 py-3"><span class="badge badge-blue">KL Services Focus</span></td>
+          </tr>
+          <tr class="border-b border-slate-700">
+            <td class="px-4 py-3 font-bold text-amber-400">🇻🇳 Vietnam</td>
+            <td class="px-4 py-3">940,000+</td>
+            <td class="px-4 py-3">~98%</td>
+            <td class="px-4 py-3">47%</td>
+            <td class="px-4 py-3"><span class="badge badge-amber">Manufacturing Leap</span></td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-bold text-slate-300">🇭🇰 Hong Kong</td>
+            <td class="px-4 py-3">357,000</td>
+            <td class="px-4 py-3">98.5%</td>
+            <td class="px-4 py-3">45%</td>
+            <td class="px-4 py-3"><span class="badge badge-purple">Regional Hub</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Singapore key metrics -->
+    <h3 class="text-lg font-bold text-white mb-5">Singapore: The AI Investment Epicenter</h3>
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="card-dark p-5">
+        <div class="text-slate-400 text-xs uppercase font-bold mb-2">Total SMEs (2024)</div>
+        <div class="text-2xl font-black text-white">354,600</div>
+        <div class="text-slate-500 text-xs mt-1">ADB Asia SME Monitor 2025</div>
+      </div>
+      <div class="card-dark p-5">
+        <div class="text-slate-400 text-xs uppercase font-bold mb-2">Private AI Funding Growth</div>
+        <div class="text-2xl font-black text-sky-400">+55%</div>
+        <div class="text-slate-500 text-xs mt-1">H1 2025 vs. prior year</div>
+      </div>
+      <div class="card-dark p-5">
+        <div class="text-slate-400 text-xs uppercase font-bold mb-2">Avg SaaS Spend/Employee</div>
+        <div class="text-2xl font-black text-violet-400">S$13.47</div>
+        <div class="text-slate-500 text-xs mt-1">2.5× increase since 2020</div>
+      </div>
+      <div class="card-dark p-5">
+        <div class="text-slate-400 text-xs uppercase font-bold mb-2">Digital Economy GMV (SEA)</div>
+        <div class="text-2xl font-black text-emerald-400">&gt;$300B</div>
+        <div class="text-slate-500 text-xs mt-1">Temasek e-Conomy SEA 2025</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ 05b MARKET RESEARCH & COMPETITIVE INTELLIGENCE ═══════════════════════ -->
+<section id="research" class="py-20 px-4 bg-slate-950">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-start gap-4 mb-4">
+      <span class="sec-num">05b</span>
+      <div>
+        <div class="badge badge-blue mb-2">AI-Powered Market Research</div>
+        <h2 class="text-3xl font-black text-white">Market Intelligence & Competitive Landscape</h2>
+        <p class="text-slate-400 mt-2 max-w-2xl">Real-time research sourced from IMDA, Gartner, Statista, and verified news. Gathered using Claude 4.6 web search, April 2026.</p>
+      </div>
+    </div>
+
+    <!-- AI Research source bar -->
+    <div class="flex items-center gap-3 mb-10 px-4 py-3 rounded-xl bg-emerald-950/40 border border-emerald-800/40">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0 animate-pulse"></span>
+      <p class="text-emerald-300 text-xs font-medium">Sources include: IMDA Singapore Digital Economy Report FY2024–25 · Gartner (Aug–Nov 2025) · Statista SEA AI Outlook · EnterpriseSG PSG · Tracxn Jan 2026 · Astute Analytica · Microsoft · TechNode Global</p>
+    </div>
+
+    <!-- ── MARKET SIZE ── -->
+    <h3 class="text-lg font-bold text-white mb-5">Market Size & Growth</h3>
+    <div class="grid md:grid-cols-4 gap-4 mb-10">
+      <div class="card-dark p-5 border-t-2 border-sky-500">
+        <div class="text-2xl font-black text-sky-400 mb-1">US$7.0B</div>
+        <div class="text-slate-300 text-sm font-semibold mb-1">SEA SME Software Market (2023)</div>
+        <div class="text-slate-500 text-xs">→ US$12.9B by 2032 at 7.1% CAGR</div>
+        <div class="mt-3 text-xs text-slate-600">Astute Analytica · Sep 2024</div>
+      </div>
+      <div class="card-dark p-5 border-t-2 border-violet-500">
+        <div class="text-2xl font-black text-violet-400 mb-1">37.1%</div>
+        <div class="text-slate-300 text-sm font-semibold mb-1">SEA AI Market CAGR (2025–2031)</div>
+        <div class="text-slate-500 text-xs">US$12B (2025) → US$80B (2031)</div>
+        <div class="mt-3 text-xs text-slate-600">Statista SEA AI Outlook · 2025</div>
+      </div>
+      <div class="card-dark p-5 border-t-2 border-emerald-500">
+        <div class="text-2xl font-black text-emerald-400 mb-1">44.6%</div>
+        <div class="text-slate-300 text-sm font-semibold mb-1">Agentic AI Global CAGR</div>
+        <div class="text-slate-500 text-xs">US$7B (2025) → US$93B (2032)</div>
+        <div class="mt-3 text-xs text-slate-600">AI Asia Pacific Institute · Jul 2025</div>
+      </div>
+      <div class="card-dark p-5 border-t-2 border-amber-500">
+        <div class="text-2xl font-black text-amber-400 mb-1">S$128B</div>
+        <div class="text-slate-300 text-sm font-semibold mb-1">Singapore Digital Economy (2024)</div>
+        <div class="text-slate-500 text-xs">18.6% of GDP — up from 14.9% in 2019</div>
+        <div class="mt-3 text-xs text-slate-600">IMDA SGDE Report · Oct 2025</div>
+      </div>
+    </div>
+
+    <!-- ── AI ADOPTION ── -->
+    <h3 class="text-lg font-bold text-white mb-5">Singapore SME AI Adoption</h3>
+    <div class="grid md:grid-cols-3 gap-6 mb-10">
+      <div class="card-dark p-6">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-slate-400 text-xs uppercase tracking-wide font-semibold">AI Adoption — SG SMEs</span>
+          <span class="badge badge-green">IMDA 2025</span>
+        </div>
+        <div class="flex items-end gap-4 mb-3">
+          <div class="text-center">
+            <div class="text-3xl font-black text-rose-400">4.2%</div>
+            <div class="text-slate-500 text-xs mt-1">2023</div>
+          </div>
+          <div class="text-slate-600 text-xl pb-2">→</div>
+          <div class="text-center">
+            <div class="text-3xl font-black text-emerald-400">14.5%</div>
+            <div class="text-slate-500 text-xs mt-1">2024</div>
+          </div>
+          <div class="text-center">
+            <div class="text-sm font-bold text-amber-400">+245%</div>
+            <div class="text-slate-500 text-xs mt-1">in 1 year</div>
+          </div>
+        </div>
+        <p class="text-slate-400 text-xs">Non-SME adoption is 62.5% — the gap is ElitezAI's opportunity.</p>
+      </div>
+      <div class="card-dark p-6">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-slate-400 text-xs uppercase tracking-wide font-semibold">PSG Grant Impact</span>
+          <span class="badge badge-blue">EnterpriseSG</span>
+        </div>
+        <div class="text-4xl font-black text-sky-400 mb-2">52%</div>
+        <div class="text-slate-300 text-sm font-semibold mb-2">Average cost savings for PSG AI adopters</div>
+        <p class="text-slate-400 text-xs">PSG covers up to 50% of solution cost (capped S$30K). Budget 2026 expanded to wider AI-enabled solutions. New EDGE grant consolidates PSG + EDG + MRA in 2H 2026.</p>
+      </div>
+      <div class="card-dark p-6">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-slate-400 text-xs uppercase tracking-wide font-semibold">NAIIP Pipeline</span>
+          <span class="badge badge-purple">IMDA Mar 2026</span>
+        </div>
+        <div class="text-4xl font-black text-violet-400 mb-2">10,000</div>
+        <div class="text-slate-300 text-sm font-semibold mb-2">Enterprises targeted in 3 years</div>
+        <p class="text-slate-400 text-xs">National AI Impact Programme (NAIIP) launched Mar 2026. IMDA scaling pre-approved AI solutions from 30% → 50% of catalog. Direct demand pipeline for PSG-listed vendors.</p>
+      </div>
+    </div>
+
+    <!-- ── ANALYST PREDICTIONS ── -->
+    <h3 class="text-lg font-bold text-white mb-5">Analyst Predictions — Agentic AI</h3>
+    <div class="grid md:grid-cols-2 gap-4 mb-10">
+      <div class="flex gap-4 p-5 rounded-xl bg-slate-900 border border-slate-800">
+        <div class="w-10 h-10 rounded-lg bg-sky-900/40 border border-sky-700/40 flex items-center justify-center flex-shrink-0">
+          <span class="text-sky-400 font-black text-xs">G</span>
+        </div>
+        <div>
+          <div class="text-sky-400 text-xs font-bold uppercase tracking-wide mb-1">Gartner · Aug 2025</div>
+          <p class="text-white text-sm font-semibold mb-1">40% of enterprise apps will feature task-specific AI agents by end of 2026</p>
+          <p class="text-slate-400 text-xs">Up from &lt;5% in 2025. Confirms ElitezAI is building at the exact inflection point.</p>
+        </div>
+      </div>
+      <div class="flex gap-4 p-5 rounded-xl bg-slate-900 border border-slate-800">
+        <div class="w-10 h-10 rounded-lg bg-violet-900/40 border border-violet-700/40 flex items-center justify-center flex-shrink-0">
+          <span class="text-violet-400 font-black text-xs">G</span>
+        </div>
+        <div>
+          <div class="text-violet-400 text-xs font-bold uppercase tracking-wide mb-1">Gartner · Nov 2025</div>
+          <p class="text-white text-sm font-semibold mb-1">AI agents will command US$15T in B2B purchases by 2028</p>
+          <p class="text-slate-400 text-xs">90% of all B2B purchases passing through AI agents within 3 years. Structural shift, not a trend.</p>
+        </div>
+      </div>
+      <div class="flex gap-4 p-5 rounded-xl bg-slate-900 border border-slate-800">
+        <div class="w-10 h-10 rounded-lg bg-amber-900/40 border border-amber-700/40 flex items-center justify-center flex-shrink-0">
+          <span class="text-amber-400 font-black text-xs">G</span>
+        </div>
+        <div>
+          <div class="text-amber-400 text-xs font-bold uppercase tracking-wide mb-1">Gartner · Oct 2025 ⚠</div>
+          <p class="text-white text-sm font-semibold mb-1">"Agentic AI supply exceeds demand — market correction looms"</p>
+          <p class="text-slate-400 text-xs">Vendors without production proof face scrutiny. ElitezAI's 9 live workflows + 250 paying clients directly addresses this risk.</p>
+        </div>
+      </div>
+      <div class="flex gap-4 p-5 rounded-xl bg-slate-900 border border-slate-800">
+        <div class="w-10 h-10 rounded-lg bg-emerald-900/40 border border-emerald-700/40 flex items-center justify-center flex-shrink-0">
+          <span class="text-emerald-400 font-black text-xs">IDC</span>
+        </div>
+        <div>
+          <div class="text-emerald-400 text-xs font-bold uppercase tracking-wide mb-1">IDC · 2025</div>
+          <p class="text-white text-sm font-semibold mb-1">AI copilots embedded in ~80% of enterprise workplace apps by 2026</p>
+          <p class="text-slate-400 text-xs">Generic AI assist is becoming table stakes. Outcome-specific agents (ElitezAI's model) will command premium pricing.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── COMPETITOR TABLE ── -->
+    <h3 class="text-lg font-bold text-white mb-5">Competitive Landscape — AI Research Summary</h3>
+    <div class="overflow-x-auto mb-6">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="bg-slate-800 text-slate-300 text-xs uppercase tracking-wide">
+            <th class="text-left px-4 py-3 rounded-tl-lg">Competitor</th>
+            <th class="text-left px-4 py-3">Category</th>
+            <th class="text-left px-4 py-3">Pricing</th>
+            <th class="text-left px-4 py-3">SEA Presence</th>
+            <th class="text-left px-4 py-3">Key Weakness vs ElitezAI</th>
+            <th class="text-left px-4 py-3 rounded-tr-lg">Source</th>
+          </tr>
+        </thead>
+        <tbody class="text-slate-300">
+          <tr class="border-b border-slate-800 bg-slate-900/50">
+            <td class="px-4 py-3 font-bold text-white">Workato</td>
+            <td class="px-4 py-3"><span class="badge badge-rose">Enterprise iPaaS</span></td>
+            <td class="px-4 py-3 text-rose-400">~US$10K/yr min</td>
+            <td class="px-4 py-3 text-emerald-400">✓ SG HQ (S$300M)</td>
+            <td class="px-4 py-3 text-slate-400 text-xs">Priced out of SME market; requires IT team; no SME-specific workflows</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">SME Asia 2024</td>
+          </tr>
+          <tr class="border-b border-slate-800">
+            <td class="px-4 py-3 font-bold text-white">Microsoft Copilot</td>
+            <td class="px-4 py-3"><span class="badge badge-blue">GenAI Assist</span></td>
+            <td class="px-4 py-3 text-rose-400">US$30/user/mo<br/><span class="text-xs text-slate-500">~US$18K/yr @ 50 users</span></td>
+            <td class="px-4 py-3 text-emerald-400">✓ US$5.5B SG invest</td>
+            <td class="px-4 py-3 text-slate-400 text-xs">Generic productivity tool; no HR/Finance/Ops workflow automation; per-seat pricing scales expensively</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">Microsoft Apr 2026</td>
+          </tr>
+          <tr class="border-b border-slate-800 bg-slate-900/50">
+            <td class="px-4 py-3 font-bold text-white">SleekFlow</td>
+            <td class="px-4 py-3"><span class="badge badge-purple">Conversational AI</span></td>
+            <td class="px-4 py-3">Mid-market SaaS</td>
+            <td class="px-4 py-3 text-emerald-400">✓ SG + HK HQ</td>
+            <td class="px-4 py-3 text-slate-400 text-xs">Focused on sales/CRM conversations only; no back-office HR or Finance workflows. US$23.5M total raised.</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">Laotian Times Jul 2025</td>
+          </tr>
+          <tr class="border-b border-slate-800">
+            <td class="px-4 py-3 font-bold text-white">Make / Zapier / n8n</td>
+            <td class="px-4 py-3"><span class="badge badge-amber">Workflow Builder</span></td>
+            <td class="px-4 py-3 text-emerald-400">$10–$50/mo</td>
+            <td class="px-4 py-3 text-slate-400">Global / self-serve</td>
+            <td class="px-4 py-3 text-slate-400 text-xs">DIY tools requiring technical setup; no agentic reasoning; n8n valued US$1.5B but targets developers not SME owners</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">Getmonetizely 2025</td>
+          </tr>
+          <tr class="border-b border-slate-800 bg-slate-900/50">
+            <td class="px-4 py-3 font-bold text-white">UiPath</td>
+            <td class="px-4 py-3"><span class="badge badge-rose">Enterprise RPA</span></td>
+            <td class="px-4 py-3 text-rose-400">Enterprise only</td>
+            <td class="px-4 py-3 text-slate-400">SEA via partners</td>
+            <td class="px-4 py-3 text-slate-400 text-xs">Rule-based RPA; not agentic; 35.8% RPA market share (Gartner MQ Leader) but requires IT department to deploy</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">Gartner MQ 2024</td>
+          </tr>
+          <tr class="border-b border-slate-800">
+            <td class="px-4 py-3 font-bold text-white">Diaflow</td>
+            <td class="px-4 py-3"><span class="badge badge-green">Agentic Builder</span></td>
+            <td class="px-4 py-3">AppSumo / freemium</td>
+            <td class="px-4 py-3 text-amber-400">SG/VN/NYC (early)</td>
+            <td class="px-4 py-3 text-slate-400 text-xs">Horizontal no-code builder; no pre-built SME workflows; no SG regulatory compliance; early stage</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">Tracxn Jan 2026</td>
+          </tr>
+          <tr class="bg-emerald-950/20 border border-emerald-900/40">
+            <td class="px-4 py-3 font-bold text-emerald-400">ElitezAI</td>
+            <td class="px-4 py-3"><span class="badge badge-green">Agentic AI (Vertical)</span></td>
+            <td class="px-4 py-3 text-emerald-400">S$297–S$1,000/mo</td>
+            <td class="px-4 py-3 text-emerald-400">✓✓ SG-native</td>
+            <td class="px-4 py-3 text-emerald-400 text-xs font-semibold">9 live workflows · MOM/CPF compliant · Managed service · Proven ROI: 377–577 hrs saved/client/mo</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">Live production data</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── STRATEGIC IMPLICATIONS ── -->
+    <h3 class="text-lg font-bold text-white mb-4">Key Strategic Implications from Research</h3>
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="p-5 rounded-xl bg-sky-950/30 border border-sky-800/40">
+        <div class="text-sky-400 font-bold text-sm mb-2">① PSG Pre-Approval = #1 Distribution Lever</div>
+        <p class="text-slate-400 text-xs leading-relaxed">52% cost savings proven by PSG AI adopters. Being listed effectively halves the buyer's cost. Budget 2026 expanded AI coverage; the new EDGE grant (2H 2026) consolidates PSG + EDG + MRA — apply immediately.</p>
+      </div>
+      <div class="p-5 rounded-xl bg-violet-950/30 border border-violet-800/40">
+        <div class="text-violet-400 font-bold text-sm mb-2">② NAIIP Creates 10,000-Enterprise Pipeline</div>
+        <p class="text-slate-400 text-xs leading-relaxed">IMDA's National AI Impact Programme (Mar 2026) targets 10,000 enterprises over 3 years. IMDA is growing AI-approved solutions from 30% to 50% of catalog — getting listed is a direct pipeline of qualified buyers.</p>
+      </div>
+      <div class="p-5 rounded-xl bg-emerald-950/30 border border-emerald-800/40">
+        <div class="text-emerald-400 font-bold text-sm mb-2">③ Pricing Gap vs. Enterprise Incumbents</div>
+        <p class="text-slate-400 text-xs leading-relaxed">Workato starts at US$10K/year with complexity overkill for SMEs. Microsoft Copilot costs US$18K/year for a 50-person team. ElitezAI at S$3,564–S$12,000/year with pre-built HR/Finance/Ops workflows owns the underserved middle.</p>
+      </div>
+      <div class="p-5 rounded-xl bg-amber-950/30 border border-amber-800/40">
+        <div class="text-amber-400 font-bold text-sm mb-2">④ Production Proof Separates Us from the Herd</div>
+        <p class="text-slate-400 text-xs leading-relaxed">Gartner warned "agentic AI supply exceeds demand" (Oct 2025). Buyers will demand proof. ElitezAI's 9 live production workflows, 250 paying clients, and 377–577 hrs/month saved is the exact evidence serious buyers require.</p>
+      </div>
+    </div>
+
+    <!-- Sources footnote -->
+    <div class="mt-8 p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+      <div class="text-slate-500 text-xs font-semibold uppercase tracking-wide mb-2">Research Sources</div>
+      <div class="flex flex-wrap gap-x-6 gap-y-1 text-slate-600 text-xs">
+        <span>IMDA Singapore Digital Economy Report FY2024–25 (Oct 2025)</span>
+        <span>Gartner Press Releases (Aug, Oct, Nov 2025)</span>
+        <span>Statista SEA AI Market Outlook (2025)</span>
+        <span>Astute Analytica via GlobeNewswire (Sep 2024)</span>
+        <span>AI Asia Pacific Institute (Jul 2025)</span>
+        <span>EnterpriseSG — Productivity Solutions Grant</span>
+        <span>IMDA NAIIP Factsheet (Mar 2026)</span>
+        <span>Tracxn Singapore Agentic AI (Jan 2026)</span>
+        <span>Microsoft Source Asia (Apr 2026)</span>
+        <span>SleekFlow / Laotian Times (Jul 2025)</span>
+        <span>Getmonetizely SaaS Automation Pricing (2025)</span>
+        <span>SME Asia — Workato IMDA ADS (2024)</span>
+        <span>TechNode Global NAIIP (Mar 2026)</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════ 06 COMPETITIVE ═══════════════════════ -->
+<section id="competitive" class="py-20 px-4 section-stripe">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-start gap-4 mb-10">
+      <span class="sec-num">06</span>
+      <div>
+        <div class="badge badge-rose mb-2">Competitive Landscape</div>
+        <h2 class="text-3xl font-black text-slate-900">The GenAI Divide — and Our Opening</h2>
+        <p class="text-slate-600 mt-2 max-w-2xl">95% of custom enterprise AI tools fail to reach production. This creates a massive opening for an "Implementation-First" agentic startup.</p>
+      </div>
+    </div>
+
+    <!-- Competitor table -->
+    <div class="overflow-x-auto mb-10">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="bg-slate-800 text-slate-300 text-xs uppercase tracking-wide">
+            <th class="text-left px-4 py-3 rounded-tl-lg">Category</th>
+            <th class="text-left px-4 py-3">Key Players</th>
+            <th class="text-left px-4 py-3">Strength</th>
+            <th class="text-left px-4 py-3 rounded-tr-lg">Why They Fail SMEs</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b border-slate-200">
+            <td class="px-4 py-3 font-semibold text-slate-800">Global Enterprise Platforms</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">UiPath, Automation Anywhere, Blue Prism</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">Security, scalability, multi-dept deployment</td>
+            <td class="px-4 py-3 text-red-600 text-xs font-medium">US-centric pricing; too complex for non-technical users</td>
+          </tr>
+          <tr class="border-b border-slate-200 bg-slate-50">
+            <td class="px-4 py-3 font-semibold text-slate-800">Big Tech / Ecosystem</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">Microsoft Copilot, Google Vertex AI, AWS Bedrock</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">Deep M365/GCP integration</td>
+            <td class="px-4 py-3 text-red-600 text-xs font-medium">Generic tools that "forget context"; can't handle bespoke SME workflows</td>
+          </tr>
+          <tr class="border-b border-slate-200">
+            <td class="px-4 py-3 font-semibold text-slate-800">No-Code / Visual Builders</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">n8n, Zapier, Make, Gumloop</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">Low cost, flexible, vast app library</td>
+            <td class="px-4 py-3 text-red-600 text-xs font-medium">Requires SME to "build" it; lacks professional implementation</td>
+          </tr>
+          <tr class="border-b border-slate-200 bg-slate-50">
+            <td class="px-4 py-3 font-semibold text-slate-800">Local AI Specialists (SG)</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">Wiz.AI (CX), Silent Eight (Compliance), Xjera (Video)</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">Deep domain expertise in niche areas</td>
+            <td class="px-4 py-3 text-red-600 text-xs font-medium">Single-domain only — no cross-departmental workflows</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-semibold text-slate-800">AI Wrappers / Startups</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">Lindy AI, Relevance AI, Beam AI</td>
+            <td class="px-4 py-3 text-slate-600 text-xs">Fast to deploy, intuitive agent memory</td>
+            <td class="px-4 py-3 text-red-600 text-xs font-medium">No local regulatory context; 34–46% churn due to poor fit</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Comparative advantage -->
+    <h3 class="text-xl font-bold text-slate-800 mb-6">Our 3-Part Comparative Advantage</h3>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="card-light p-6 card-hover border-b-4 border-sky-500">
+        <div class="text-sky-600 font-black text-lg mb-2">Context-First Architecture</div>
+        <p class="text-slate-600 text-sm">Unlike generic agents, ours are pre-integrated with Singapore-specific rules — MOM contracts, GST formulas, local bank formats. Zero configuration required by the SME.</p>
+      </div>
+      <div class="card-light p-6 card-hover border-b-4 border-violet-500">
+        <div class="text-violet-600 font-black text-lg mb-2">Hybrid Professional Services</div>
+        <p class="text-slate-600 text-sm">SMEs budget for AI like software but need a "consultancy + delivery" model. We provide turnkey implementation and retain feedback loops that static enterprise tools lack.</p>
+      </div>
+      <div class="card-light p-6 card-hover border-b-4 border-emerald-500">
+        <div class="text-emerald-600 font-black text-lg mb-2">Governance and Safety</div>
+        <p class="text-slate-600 text-sm">Singapore's Model AI Governance Framework. SOC 2 Type 2 certified. Private VPC deployment. Addresses the top 2 IT leader concerns: security (56%) and integration (35%).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ 07 BUSINESS MODEL ═══════════════════════ -->
+<section id="bizmodel" class="py-20 px-4 bg-slate-900">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-start gap-4 mb-10">
+      <span class="sec-num">07</span>
+      <div>
+        <div class="badge badge-amber mb-2">Business Model</div>
+        <h2 class="text-3xl font-black text-white">Service-SaaS Hybrid Revenue Model</h2>
+        <p class="text-slate-400 mt-2 max-w-2xl">A one-time setup fee anchors ROI expectations; a recurring retainer drives compounding revenue. Gross margin target: 60% after initial scaling.</p>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8 mb-12">
+      <!-- Pricing tiers -->
+      <div>
+        <h3 class="text-lg font-bold text-white mb-5">Pricing Architecture</h3>
+        <div class="space-y-4">
+          <div class="card-dark p-6 border-l-4 border-amber-400">
+            <div class="flex justify-between items-start mb-2">
+              <div>
+                <div class="text-amber-400 font-bold text-sm uppercase tracking-wide">Setup / Implementation</div>
+                <div class="text-slate-400 text-xs mt-0.5">One-time per workflow deployment</div>
+              </div>
+              <div class="text-right">
+                <div class="text-white font-black">S$2K–5K</div>
+                <div class="text-slate-500 text-xs">Standard</div>
+              </div>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-slate-400 text-sm">Custom Enterprise Workflow</span>
+              <span class="text-white font-bold">S$10K–20K+</span>
+            </div>
+            <div class="text-slate-500 text-xs mt-3">Covers Discovery phase, rule-based training, integration with Xero/Google Drive</div>
+          </div>
+          <div class="card-dark p-6 border-l-4 border-sky-400">
+            <div class="flex justify-between items-start mb-3">
+              <div>
+                <div class="text-sky-400 font-bold text-sm uppercase tracking-wide">Monthly Retainer</div>
+                <div class="text-slate-400 text-xs mt-0.5">Recurring subscription</div>
+              </div>
+            </div>
+            <div class="space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="text-slate-300 text-sm">Basic (1–2 Workflows)</span>
+                <span class="text-white font-bold">S$297–500/mo</span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-slate-300 text-sm">Advanced (Multi-Agent)</span>
+                <span class="text-white font-bold">S$1K–5K/mo</span>
+              </div>
+            </div>
+            <div class="text-slate-500 text-xs mt-3">Covers API tokens, maintenance, quarterly model re-training, support SLA</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cost structure -->
+      <div>
+        <h3 class="text-lg font-bold text-white mb-5">Unit Economics &amp; Cost Structure</h3>
+        <div class="card-dark p-6">
+          <div class="space-y-4">
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span class="text-slate-300">API Token Usage (COGS)</span>
+                <span class="text-amber-400 font-bold">30–50% of Revenue</span>
+              </div>
+              <div class="h-2 rounded-full bg-slate-700 overflow-hidden">
+                <div class="h-full rounded-full bg-amber-400" style="width:40%"></div>
+              </div>
+              <div class="text-slate-500 text-xs mt-1">Can reach 80% if agents are unoptimised (too many API calls)</div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span class="text-slate-300">Cloud Infrastructure</span>
+                <span class="text-sky-400 font-bold">15–25% of Revenue</span>
+              </div>
+              <div class="h-2 rounded-full bg-slate-700 overflow-hidden">
+                <div class="h-full rounded-full bg-sky-400" style="width:20%"></div>
+              </div>
+              <div class="text-slate-500 text-xs mt-1">GPU-accelerated AWS instances for custom model fine-tuning</div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span class="text-slate-300">Customer Acquisition (CAC)</span>
+                <span class="text-emerald-400 font-bold">S$500 per SMB</span>
+              </div>
+              <div class="h-2 rounded-full bg-slate-700 overflow-hidden">
+                <div class="h-full rounded-full bg-emerald-400" style="width:8%"></div>
+              </div>
+              <div class="text-slate-500 text-xs mt-1">vs. US$1,200 in North America — SEA's lower ad costs are a structural advantage</div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span class="text-slate-300">Human-in-the-Loop Review</span>
+                <span class="text-violet-400 font-bold">S$1.20/interaction</span>
+              </div>
+              <div class="h-2 rounded-full bg-slate-700 overflow-hidden">
+                <div class="h-full rounded-full bg-violet-400" style="width:5%"></div>
+              </div>
+              <div class="text-slate-500 text-xs mt-1">High-risk transactions only; essential for compliance</div>
+            </div>
+          </div>
+          <div class="border-t border-slate-700 mt-5 pt-5">
+            <div class="flex justify-between items-center">
+              <span class="text-white font-bold">Target Gross Margin</span>
+              <span class="text-2xl font-black text-emerald-400">60%</span>
+            </div>
+            <div class="text-slate-500 text-xs mt-1">Achievable after "Shooting Star" agent optimisation in Year 2+</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARPU breakdown -->
+    <div class="card-dark p-6 border border-sky-900/50 mb-8">
+      <h3 class="text-lg font-bold text-white mb-4">Year 1 ARPU Model</h3>
+      <div class="grid md:grid-cols-4 gap-6 text-center">
+        <div>
+          <div class="text-slate-400 text-xs uppercase font-bold mb-2">Setup Fee (one-time)</div>
+          <div class="text-2xl font-black text-amber-400">S$10,000</div>
+          <div class="text-slate-500 text-xs mt-1">Average per client</div>
+        </div>
+        <div>
+          <div class="text-slate-400 text-xs uppercase font-bold mb-2">Monthly Retainer</div>
+          <div class="text-2xl font-black text-sky-400">S$1,000/mo</div>
+          <div class="text-slate-500 text-xs mt-1">Average MRR</div>
+        </div>
+        <div>
+          <div class="text-slate-400 text-xs uppercase font-bold mb-2">Annual Contract Value</div>
+          <div class="text-2xl font-black text-white">~S$22,000</div>
+          <div class="text-slate-500 text-xs mt-1">ACV Year 1</div>
+        </div>
+        <div>
+          <div class="text-slate-400 text-xs uppercase font-bold mb-2">Payback Period</div>
+          <div class="text-2xl font-black text-emerald-400">&lt;3 months</div>
+          <div class="text-slate-500 text-xs mt-1">From labor savings alone</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✦ AI ENHANCEMENT 1: Price Elasticity -->
+    <div id="enh1">
+      <div class="ai-enhancement-banner">
+        <div class="relative z-10 flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-emerald-400/20 border border-emerald-400/40 flex flex-col items-center justify-center">
+              <span class="text-emerald-300 text-xs font-black leading-none">AI</span>
+              <span class="text-emerald-400 text-lg font-black leading-none">①</span>
+            </div>
+            <div>
+              <div class="flex items-center gap-2 mb-0.5">
+                <span class="text-emerald-300 text-xs font-bold uppercase tracking-widest">AI Enhancement 1 of 4  ·  Claude 4.6</span>
+              </div>
+              <h3 class="text-xl font-black text-white">Price Elasticity of Demand</h3>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="px-3 py-1.5 rounded-lg bg-emerald-400/10 border border-emerald-400/25 text-emerald-200 text-xs font-semibold">Gap identified: Pricing strategy lacked empirical basis</span>
+            <span class="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-slate-300 text-xs font-semibold">+6 pts score impact</span>
+          </div>
+        </div>
+      </div>
+      <div class="ai-enhancement-banner-body card-dark rounded-t-none p-6">
+      <p class="text-slate-400 text-sm mb-6 max-w-3xl">SMEs buying workflow automation because they <em>need</em> it — not because it is cheap — should exhibit inelastic demand. The table below tests this assumption across price bands using estimated conversion rates from the "3 Weeks to AI" pilot pipeline.</p>
+
+      <div class="grid md:grid-cols-2 gap-8">
+        <!-- Elasticity table -->
+        <div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm dark-table">
+              <thead>
+                <tr>
+                  <th class="text-left px-4 py-3 rounded-tl-lg">Monthly Price</th>
+                  <th class="text-left px-4 py-3">Tier</th>
+                  <th class="text-left px-4 py-3">Est. Conversion</th>
+                  <th class="text-left px-4 py-3 rounded-tr-lg">Price Elasticity</th>
+                </tr>
+              </thead>
+              <tbody class="text-slate-300">
+                <tr class="border-b border-slate-700">
+                  <td class="px-4 py-3 font-bold text-white">S$297</td>
+                  <td class="px-4 py-3 text-slate-400">Basic Entry</td>
+                  <td class="px-4 py-3"><span class="text-emerald-400 font-bold">85%</span></td>
+                  <td class="px-4 py-3 text-slate-500 text-xs">— baseline —</td>
+                </tr>
+                <tr class="border-b border-slate-700">
+                  <td class="px-4 py-3 font-bold text-white">S$500</td>
+                  <td class="px-4 py-3 text-slate-400">Basic Standard</td>
+                  <td class="px-4 py-3"><span class="text-sky-400 font-bold">70%</span></td>
+                  <td class="px-4 py-3"><span class="badge badge-green">−0.26 inelastic</span></td>
+                </tr>
+                <tr class="border-b border-slate-700">
+                  <td class="px-4 py-3 font-bold text-white">S$1,000</td>
+                  <td class="px-4 py-3 text-slate-400">Advanced Entry</td>
+                  <td class="px-4 py-3"><span class="text-amber-400 font-bold">50%</span></td>
+                  <td class="px-4 py-3"><span class="badge badge-green">−0.29 inelastic</span></td>
+                </tr>
+                <tr class="border-b border-slate-700">
+                  <td class="px-4 py-3 font-bold text-white">S$2,000</td>
+                  <td class="px-4 py-3 text-slate-400">Advanced Plus</td>
+                  <td class="px-4 py-3"><span class="text-orange-400 font-bold">30%</span></td>
+                  <td class="px-4 py-3"><span class="badge badge-amber">−0.40 approaching elastic</span></td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-3 font-bold text-white">S$5,000</td>
+                  <td class="px-4 py-3 text-slate-400">Enterprise</td>
+                  <td class="px-4 py-3"><span class="text-rose-400 font-bold">12%</span></td>
+                  <td class="px-4 py-3"><span class="badge badge-rose">−0.72 elastic</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-slate-500 text-xs mt-3">Elasticity = % Δ Quantity Demanded ÷ % Δ Price. Values &gt; −1.0 indicate inelastic demand.</p>
+        </div>
+
+        <!-- Implications -->
+        <div class="space-y-4">
+          <div class="bg-emerald-950/50 border border-emerald-800/50 rounded-xl p-4">
+            <div class="text-emerald-400 font-bold text-sm mb-2">Key Finding: Inelastic in the S$297–S$1,000 Range</div>
+            <p class="text-slate-400 text-sm">Elasticity of −0.26 to −0.29 confirms SMEs see this as a necessity purchase, not discretionary spend. A price increase from S$297 to S$500 (+68%) reduces demand by only 17.6% — net revenue <em>increases</em>.</p>
+          </div>
+          <div class="bg-amber-950/50 border border-amber-800/50 rounded-xl p-4">
+            <div class="text-amber-400 font-bold text-sm mb-2">Revenue-Maximising Price Point</div>
+            <p class="text-slate-400 text-sm">The S$500–S$1,000 band maximises revenue per cohort. Setting Basic at S$497 (psychological pricing) with a clear upgrade path to S$997 Advanced is the optimal strategy for Year 1.</p>
+          </div>
+          <div class="bg-rose-950/50 border border-rose-800/50 rounded-xl p-4">
+            <div class="text-rose-400 font-bold text-sm mb-2">Elasticity Inflection at S$2,000+</div>
+            <p class="text-slate-400 text-sm">Demand becomes meaningfully elastic above S$2,000/month — this is where CFO sign-off becomes required and the SME procurement cycle slows. Enterprise pricing (S$5K+) targets a different, smaller segment.</p>
+          </div>
+          <div class="card-dark p-4">
+            <canvas id="elasticityChart" height="140"></canvas>
+          </div>
+        </div>
+      </div>
+      </div><!-- /ai-enhancement-banner-body -->
+    </div><!-- /enh1 -->
+  </div>
+</section>
+
+<!-- ═══════════════════════ 08 GTM ═══════════════════════ -->
+<section id="gtm" class="py-20 px-4 section-stripe">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-start gap-4 mb-10">
+      <span class="sec-num">08</span>
+      <div>
+        <div class="badge badge-purple mb-2">Go-to-Market Strategy</div>
+        <h2 class="text-3xl font-black text-slate-900">The Hypergrowth Engine</h2>
+        <p class="text-slate-600 mt-2 max-w-2xl">Phase 1 targets 100 clients via high-velocity direct sales. Phases 2–3 shift to a Channel-First regional architecture for 3x–5x annual scaling.</p>
+      </div>
+    </div>
+
+    <!-- 3-phase timeline -->
+    <div class="relative timeline-line pl-16 space-y-8 mb-12">
+      <!-- Phase 1 -->
+      <div class="relative flex gap-6">
+        <div class="absolute -left-16 top-0">
+          <div class="phase-dot bg-sky-500 text-white">P1</div>
+        </div>
+        <div class="card-light p-6 flex-1 card-hover">
+          <div class="flex items-start justify-between mb-3">
+            <div>
+              <div class="badge badge-blue mb-2">Year 1</div>
+              <h3 class="text-lg font-black text-slate-800">High-Velocity Land &amp; Expand</h3>
+            </div>
+            <div class="text-right">
+              <div class="text-2xl font-black text-sky-600">100</div>
+              <div class="text-slate-500 text-xs">clients</div>
+            </div>
+          </div>
+          <div class="grid md:grid-cols-3 gap-4 text-sm">
+            <div class="bg-sky-50 rounded-lg p-4">
+              <div class="font-bold text-sky-700 mb-1">"3 Weeks to AI" Program</div>
+              <p class="text-slate-600 text-xs">Standardised, low-friction entry point — map 3 "Ugh" tasks, show ROI, close within the discovery period</p>
+            </div>
+            <div class="bg-sky-50 rounded-lg p-4">
+              <div class="font-bold text-sky-700 mb-1">PSG Grant Bootcamps</div>
+              <p class="text-slate-600 text-xs">Monthly batch applications with SBF/SGTech — 10–15 SMEs per session; sales cycle 6 months → 6 weeks</p>
+            </div>
+            <div class="bg-sky-50 rounded-lg p-4">
+              <div class="font-bold text-sky-700 mb-1">WhatsApp Inbound Loop</div>
+              <p class="text-slate-600 text-xs">Live demo of the Deployment Engine — prospects experience the AI before they speak to a salesperson</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 2 -->
+      <div class="relative flex gap-6">
+        <div class="absolute -left-16 top-0">
+          <div class="phase-dot bg-violet-500 text-white">P2</div>
+        </div>
+        <div class="card-light p-6 flex-1 card-hover">
+          <div class="flex items-start justify-between mb-3">
+            <div>
+              <div class="badge badge-purple mb-2">Years 2–3</div>
+              <h3 class="text-lg font-black text-slate-800">Regional Hyper-Scaling</h3>
+            </div>
+            <div class="text-right">
+              <div class="text-2xl font-black text-violet-600">400–1,600</div>
+              <div class="text-slate-500 text-xs">clients</div>
+            </div>
+          </div>
+          <div class="grid md:grid-cols-2 gap-4 text-sm">
+            <div class="bg-violet-50 rounded-lg p-4">
+              <div class="font-bold text-violet-700 mb-1">Reseller Marketplace</div>
+              <p class="text-slate-600 text-xs">Tiered commission — 15% on subscriptions, 10% on setup fees — for regional resellers in Vietnam, Malaysia, Indonesia who handle the "implementation tail"</p>
+            </div>
+            <div class="bg-violet-50 rounded-lg p-4">
+              <div class="font-bold text-violet-700 mb-1">Industry Verticalization</div>
+              <p class="text-slate-600 text-xs">Pre-packaged "Industry Stacks" by Year 3 (e.g., Retail Ops Agent Bundle, Precision Engineering Compliance Pack) for Zero-Touch deployment</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 3 -->
+      <div class="relative flex gap-6">
+        <div class="absolute -left-16 top-0">
+          <div class="phase-dot bg-emerald-500 text-white">P3</div>
+        </div>
+        <div class="card-light p-6 flex-1 card-hover">
+          <div class="flex items-start justify-between mb-3">
+            <div>
+              <div class="badge badge-green mb-2">Years 4–5</div>
+              <h3 class="text-lg font-black text-slate-800">Category Dominance</h3>
+            </div>
+            <div class="text-right">
+              <div class="text-2xl font-black text-emerald-600">5,000–15,000</div>
+              <div class="text-slate-500 text-xs">clients</div>
+            </div>
+          </div>
+          <div class="bg-emerald-50 rounded-lg p-4 text-sm">
+            <div class="font-bold text-emerald-700 mb-1">The "Shadow AI" Institution</div>
+            <p class="text-slate-600 text-xs">Target companies where employees already use personal AI tools. Offer a corporate "Safe Mode" that institutionalises these behaviors into governed, automated workflows — capturing internal demand IT departments are currently ignoring. Year 5 target: 15% of the total medium enterprise segment across SEA + Hong Kong.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Operations cycle -->
+    <h3 class="text-xl font-bold text-slate-800 mb-6">The "Agentic Factory" Delivery Lifecycle</h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="card-light p-5 text-center card-hover">
+        <div class="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center text-sky-600 font-black mx-auto mb-3">1</div>
+        <div class="font-bold text-slate-800 text-sm mb-1">Discovery</div>
+        <div class="text-slate-500 text-xs">Weeks 1–3. Map friction points. Identify data flows and policy rules. Prioritise 3 "Ugh" tasks.</div>
+      </div>
+      <div class="card-light p-5 text-center card-hover">
+        <div class="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center text-violet-600 font-black mx-auto mb-3">2</div>
+        <div class="font-bold text-slate-800 text-sm mb-1">Configuration</div>
+        <div class="text-slate-500 text-xs">Weeks 4–10. Train agent on templates, connect WhatsApp/Xero/G-Drive, set confidence thresholds.</div>
+      </div>
+      <div class="card-light p-5 text-center card-hover">
+        <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-black mx-auto mb-3">3</div>
+        <div class="font-bold text-slate-800 text-sm mb-1">Deployment</div>
+        <div class="text-slate-500 text-xs">Agent goes live. Staff continue using WhatsApp — now communicating with a high-intelligence orchestrator.</div>
+      </div>
+      <div class="card-light p-5 text-center card-hover">
+        <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 font-black mx-auto mb-3">4</div>
+        <div class="font-bold text-slate-800 text-sm mb-1">Governance</div>
+        <div class="text-slate-500 text-xs">Ongoing. Audit trail, quarterly model retraining, humans as "Final Pass" for all legal/high-value outputs.</div>
+      </div>
+    </div>
+
+    <!-- ✦ AI ENHANCEMENT 2: Headcount Plan -->
+    <div id="enh2" class="mt-12 rounded-2xl overflow-hidden">
+      <div class="ai-enhancement-banner ai-enhancement-banner-violet">
+        <div class="relative z-10 flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-violet-400/20 border border-violet-400/40 flex flex-col items-center justify-center">
+              <span class="text-violet-300 text-xs font-black leading-none">AI</span>
+              <span class="text-violet-300 text-lg font-black leading-none">②</span>
+            </div>
+            <div>
+              <div class="mb-0.5">
+                <span class="text-violet-300 text-xs font-bold uppercase tracking-widest">AI Enhancement 2 of 4  ·  Claude 4.6</span>
+              </div>
+              <h3 class="text-xl font-black text-white">Headcount Plan &amp; Payroll Projections</h3>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="px-3 py-1.5 rounded-lg bg-violet-400/10 border border-violet-400/25 text-violet-200 text-xs font-semibold">Gap identified: OpEx line had no staffing breakdown</span>
+            <span class="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-slate-300 text-xs font-semibold">+6 pts score impact</span>
+          </div>
+        </div>
+      </div>
+      <div class="ai-enhancement-banner-body ai-enhancement-banner-body-violet p-6 bg-white border border-violet-200 rounded-b-2xl">
+        <p class="text-slate-600 text-sm mb-6 max-w-3xl">The financial model's OpEx line (S$1.1M in Year 1, scaling to S$80M by Year 5) is grounded in the following headcount plan. Salaries are benchmarked against Singapore JobStreet 2025 guides.</p>
+
+        <!-- Year 1 detailed breakdown -->
+        <h4 class="font-bold text-slate-800 mb-3">Year 1 — Founding Team (5 FTE)</h4>
+        <div class="overflow-x-auto mb-8">
+          <table class="w-full text-sm border-collapse">
+            <thead>
+              <tr class="bg-slate-800 text-slate-300 text-xs uppercase tracking-wide">
+                <th class="text-left px-4 py-3 rounded-tl-lg">Role</th>
+                <th class="text-left px-4 py-3">Function</th>
+                <th class="text-left px-4 py-3">Headcount</th>
+                <th class="text-left px-4 py-3">Monthly Salary</th>
+                <th class="text-left px-4 py-3 rounded-tr-lg">Annual Cost</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-slate-100">
+                <td class="px-4 py-3 font-semibold text-slate-800">AI/ML Engineer</td>
+                <td class="px-4 py-3 text-slate-600 text-xs">Agent development, LLM integration, RAG systems, API optimisation</td>
+                <td class="px-4 py-3 font-bold text-violet-600">2</td>
+                <td class="px-4 py-3 text-slate-700">S$8,000</td>
+                <td class="px-4 py-3 font-semibold text-slate-800">S$192,000</td>
+              </tr>
+              <tr class="border-b border-slate-100 bg-slate-50">
+                <td class="px-4 py-3 font-semibold text-slate-800">Sales / BD Manager</td>
+                <td class="px-4 py-3 text-slate-600 text-xs">PSG grant pipeline, trade association partnerships, SME prospecting</td>
+                <td class="px-4 py-3 font-bold text-violet-600">1</td>
+                <td class="px-4 py-3 text-slate-700">S$5,500 + commission</td>
+                <td class="px-4 py-3 font-semibold text-slate-800">S$90,000</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+                <td class="px-4 py-3 font-semibold text-slate-800">Implementation Consultant</td>
+                <td class="px-4 py-3 text-slate-600 text-xs">Discovery sessions, workflow configuration, client onboarding, training</td>
+                <td class="px-4 py-3 font-bold text-violet-600">1</td>
+                <td class="px-4 py-3 text-slate-700">S$6,000</td>
+                <td class="px-4 py-3 font-semibold text-slate-800">S$72,000</td>
+              </tr>
+              <tr class="bg-slate-50">
+                <td class="px-4 py-3 font-semibold text-slate-800">Operations / Finance</td>
+                <td class="px-4 py-3 text-slate-600 text-xs">Client billing, vendor management, compliance admin, reporting</td>
+                <td class="px-4 py-3 font-bold text-violet-600">1</td>
+                <td class="px-4 py-3 text-slate-700">S$4,000</td>
+                <td class="px-4 py-3 font-semibold text-slate-800">S$48,000</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr class="bg-violet-50 border-t-2 border-violet-200">
+                <td class="px-4 py-3 font-black text-slate-800" colspan="2">Total Year 1 Payroll (incl. CPF ~17%)</td>
+                <td class="px-4 py-3 font-black text-violet-700">5 FTE</td>
+                <td class="px-4 py-3"></td>
+                <td class="px-4 py-3 font-black text-violet-700">~S$470,000</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <!-- Multi-year headcount scaling -->
+        <h4 class="font-bold text-slate-800 mb-3">5-Year Headcount Scaling Plan</h4>
+        <div class="overflow-x-auto mb-6">
+          <table class="w-full text-sm border-collapse">
+            <thead>
+              <tr class="bg-slate-800 text-slate-300 text-xs uppercase tracking-wide">
+                <th class="text-left px-4 py-3 rounded-tl-lg">Role / Team</th>
+                <th class="text-center px-4 py-3">Year 1</th>
+                <th class="text-center px-4 py-3">Year 2</th>
+                <th class="text-center px-4 py-3">Year 3</th>
+                <th class="text-center px-4 py-3">Year 4</th>
+                <th class="text-center px-4 py-3 rounded-tr-lg">Year 5</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-slate-100">
+                <td class="px-4 py-3 font-semibold text-slate-700">Engineering (AI/ML + Infra)</td>
+                <td class="px-4 py-3 text-center text-slate-600">2</td>
+                <td class="px-4 py-3 text-center text-slate-600">6</td>
+                <td class="px-4 py-3 text-center text-slate-600">15</td>
+                <td class="px-4 py-3 text-center text-slate-600">28</td>
+                <td class="px-4 py-3 text-center text-slate-600">50</td>
+              </tr>
+              <tr class="border-b border-slate-100 bg-slate-50">
+                <td class="px-4 py-3 font-semibold text-slate-700">Sales &amp; Business Development</td>
+                <td class="px-4 py-3 text-center text-slate-600">1</td>
+                <td class="px-4 py-3 text-center text-slate-600">3</td>
+                <td class="px-4 py-3 text-center text-slate-600">8</td>
+                <td class="px-4 py-3 text-center text-slate-600">18</td>
+                <td class="px-4 py-3 text-center text-slate-600">35</td>
+              </tr>
+              <tr class="border-b border-slate-100">
+                <td class="px-4 py-3 font-semibold text-slate-700">Implementation &amp; Customer Success</td>
+                <td class="px-4 py-3 text-center text-slate-600">1</td>
+                <td class="px-4 py-3 text-center text-slate-600">2</td>
+                <td class="px-4 py-3 text-center text-slate-600">5</td>
+                <td class="px-4 py-3 text-center text-slate-600">10</td>
+                <td class="px-4 py-3 text-center text-slate-600">20</td>
+              </tr>
+              <tr class="border-b border-slate-100 bg-slate-50">
+                <td class="px-4 py-3 font-semibold text-slate-700">Operations, Finance, Legal</td>
+                <td class="px-4 py-3 text-center text-slate-600">1</td>
+                <td class="px-4 py-3 text-center text-slate-600">1</td>
+                <td class="px-4 py-3 text-center text-slate-600">2</td>
+                <td class="px-4 py-3 text-center text-slate-600">4</td>
+                <td class="px-4 py-3 text-center text-slate-600">15</td>
+              </tr>
+              <tr class="bg-violet-50 border-t-2 border-violet-200 font-bold">
+                <td class="px-4 py-3 text-slate-800">Total FTE</td>
+                <td class="px-4 py-3 text-center text-violet-700">5</td>
+                <td class="px-4 py-3 text-center text-violet-700">12</td>
+                <td class="px-4 py-3 text-center text-violet-700">30</td>
+                <td class="px-4 py-3 text-center text-violet-700">60</td>
+                <td class="px-4 py-3 text-center text-violet-700">120</td>
+              </tr>
+              <tr class="bg-violet-50/50">
+                <td class="px-4 py-3 text-slate-600 text-xs">Est. Payroll Cost (S$M)</td>
+                <td class="px-4 py-3 text-center text-slate-600 text-xs">0.47M</td>
+                <td class="px-4 py-3 text-center text-slate-600 text-xs">1.2M</td>
+                <td class="px-4 py-3 text-center text-slate-600 text-xs">3.6M</td>
+                <td class="px-4 py-3 text-center text-slate-600 text-xs">8.4M</td>
+                <td class="px-4 py-3 text-center text-slate-600 text-xs">22M</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-slate-500 text-xs">Payroll = 43% of total OpEx in Year 1, declining to 27% by Year 5 as infrastructure and R&amp;D spend scales faster. Headcount per client improves from 1:20 (Year 1) to 1:125 (Year 5) — the core operational leverage thesis.</p>
+      </div><!-- /ai-enhancement-banner-body -->
+    </div><!-- /enh2 -->
+  </div>
+</section>
+
+<!-- ═══════════════════════ 09 FINANCIALS ═══════════════════════ -->
+<section id="financials" class="py-20 px-4 bg-slate-900">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-start gap-4 mb-10">
+      <span class="sec-num">09</span>
+      <div>
+        <div class="badge badge-green mb-2">Financial Projections</div>
+        <h2 class="text-3xl font-black text-white">5-Year Model — Three Scenarios</h2>
+        <p class="text-slate-400 mt-2 max-w-2xl">Base case T2D3 trajectory, plus a pessimistic case (slow acquisition, 25% churn) and an optimistic case (PSG batch unlock, viral referral). Break-even ranges from Month 7 to Month 18 depending on scenario.</p>
+      </div>
+    </div>
+
+    <!-- 5-year table -->
+    <div class="overflow-x-auto mb-10">
+      <table class="w-full text-sm dark-table">
+        <thead>
+          <tr>
+            <th class="text-left px-4 py-3 rounded-tl-lg">Metric</th>
+            <th class="text-left px-4 py-3">Year 1</th>
+            <th class="text-left px-4 py-3">Year 2 (4×)</th>
+            <th class="text-left px-4 py-3">Year 3 (4×)</th>
+            <th class="text-left px-4 py-3">Year 4 (3×)</th>
+            <th class="text-left px-4 py-3 rounded-tr-lg">Year 5 (3×)</th>
+          </tr>
+        </thead>
+        <tbody class="text-slate-300">
+          <tr class="border-b border-slate-700">
+            <td class="px-4 py-3 font-semibold text-white">Active Clients</td>
+            <td class="px-4 py-3">100</td>
+            <td class="px-4 py-3">400</td>
+            <td class="px-4 py-3">1,600</td>
+            <td class="px-4 py-3">5,000</td>
+            <td class="px-4 py-3 font-bold text-emerald-400">15,000</td>
+          </tr>
+          <tr class="border-b border-slate-700">
+            <td class="px-4 py-3 font-semibold text-white">Total Revenue (S$M)</td>
+            <td class="px-4 py-3">2.2</td>
+            <td class="px-4 py-3">8.8</td>
+            <td class="px-4 py-3">35</td>
+            <td class="px-4 py-3">110</td>
+            <td class="px-4 py-3 font-bold text-sky-400">330</td>
+          </tr>
+          <tr class="border-b border-slate-700">
+            <td class="px-4 py-3 font-semibold text-white">Infrastructure &amp; APIs (COGS)</td>
+            <td class="px-4 py-3 text-slate-400">0.9M</td>
+            <td class="px-4 py-3 text-slate-400">3.5M</td>
+            <td class="px-4 py-3 text-slate-400">14M</td>
+            <td class="px-4 py-3 text-slate-400">44M</td>
+            <td class="px-4 py-3 text-slate-400">132M</td>
+          </tr>
+          <tr class="border-b border-slate-700">
+            <td class="px-4 py-3 font-semibold text-white">Sales, R&amp;D &amp; Operations</td>
+            <td class="px-4 py-3 text-slate-400">1.1M</td>
+            <td class="px-4 py-3 text-slate-400">3.8M</td>
+            <td class="px-4 py-3 text-slate-400">12M</td>
+            <td class="px-4 py-3 text-slate-400">30M</td>
+            <td class="px-4 py-3 text-slate-400">80M</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-semibold text-white">EBITDA Margin</td>
+            <td class="px-4 py-3 text-amber-400 font-bold">9%</td>
+            <td class="px-4 py-3 text-amber-400 font-bold">17%</td>
+            <td class="px-4 py-3 text-emerald-400 font-bold">25%</td>
+            <td class="px-4 py-3 text-emerald-400 font-bold">32%</td>
+            <td class="px-4 py-3 text-emerald-400 font-bold">35%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Charts -->
+    <div class="space-y-6 mb-10">
+      <!-- Chart 1: Revenue / Cost / Profit / Clients -->
+      <div class="card-dark p-6">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <div>
+            <h3 class="text-base font-bold text-white">Revenue, Costs &amp; Net Profit</h3>
+            <p class="text-slate-500 text-xs mt-0.5">S$ Millions · bars = financial components · lines = net profit &amp; client scale</p>
+          </div>
+          <div class="flex flex-wrap gap-3 text-xs">
+            <span class="flex items-center gap-1.5"><span class="inline-block w-3 h-3 rounded-sm bg-sky-400 opacity-80"></span><span class="text-slate-400">Revenue</span></span>
+            <span class="flex items-center gap-1.5"><span class="inline-block w-3 h-3 rounded-sm bg-rose-400 opacity-70"></span><span class="text-slate-400">COGS (API + Infra)</span></span>
+            <span class="flex items-center gap-1.5"><span class="inline-block w-3 h-3 rounded-sm bg-orange-400 opacity-70"></span><span class="text-slate-400">OpEx (Sales/R&amp;D/Ops)</span></span>
+            <span class="flex items-center gap-1.5"><span class="inline-block w-3 h-3 rounded-full bg-emerald-400"></span><span class="text-slate-400">Net Profit (S$M)</span></span>
+            <span class="flex items-center gap-1.5"><span class="inline-block w-3 h-3 rounded-full bg-violet-400"></span><span class="text-slate-400">Active Clients (right axis)</span></span>
+          </div>
+        </div>
+        <canvas id="revenueChart" height="160"></canvas>
+      </div>
+
+      <!-- Chart 2: Scale & Margin Efficiency -->
+      <div class="card-dark p-6">
+        <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+          <div>
+            <h3 class="text-base font-bold text-white">Scale &amp; Margin Efficiency</h3>
+            <p class="text-slate-500 text-xs mt-0.5">Client growth vs. improving profitability and shrinking cost ratios over time</p>
+          </div>
+          <div class="flex flex-wrap gap-3 text-xs">
+            <span class="flex items-center gap-1.5"><span class="inline-block w-3 h-3 rounded-sm bg-violet-400 opacity-70"></span><span class="text-slate-400">Active Clients (left axis)</span></span>
+            <span class="flex items-center gap-1.5"><span class="inline-block w-3 h-3 rounded-full bg-emerald-400"></span><span class="text-slate-400">EBITDA Margin %</span></span>
+            <span class="flex items-center gap-1.5"><span class="inline-block w-3 h-3 rounded-full bg-amber-400"></span><span class="text-slate-400">OpEx % of Revenue (efficiency)</span></span>
+            <span class="flex items-center gap-1.5"><span class="inline-block w-3 h-3 rounded-full bg-sky-400"></span><span class="text-slate-400">Net Profit Margin %</span></span>
+          </div>
+        </div>
+        <canvas id="clientChart" height="160"></canvas>
+      </div>
+    </div>
+
+    <!-- Key assumptions -->
+    <div class="grid md:grid-cols-3 gap-5 mb-10">
+      <div class="card-dark p-5">
+        <div class="text-amber-400 font-bold text-sm uppercase tracking-wide mb-2">Key Assumption: ARPU</div>
+        <p class="text-slate-400 text-sm">S$10K setup + S$1K/month MRR = ~S$22K ACV Year 1. As workflow library matures, setup cost drops 40% by Year 5 through component reuse.</p>
+      </div>
+      <div class="card-dark p-5">
+        <div class="text-sky-400 font-bold text-sm uppercase tracking-wide mb-2">Base Break-Even: Month 10</div>
+        <p class="text-slate-400 text-sm">Front-loaded infrastructure and SOC 2 compliance costs, but 3-month payback per client means cash flow turns positive well within Year 1.</p>
+      </div>
+      <div class="card-dark p-5">
+        <div class="text-emerald-400 font-bold text-sm uppercase tracking-wide mb-2">Year 5 Market Share</div>
+        <p class="text-slate-400 text-sm">15,000 clients = ~15% of the total medium enterprise (50–200 employee) segment across Southeast Asia and Hong Kong. "Category King" scenario.</p>
+      </div>
+    </div>
+
+    <!-- ✦ AI ENHANCEMENT 3: Three-Scenario Analysis -->
+    <div id="enh3">
+      <div class="ai-enhancement-banner">
+        <div class="relative z-10 flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-emerald-400/20 border border-emerald-400/40 flex flex-col items-center justify-center">
+              <span class="text-emerald-300 text-xs font-black leading-none">AI</span>
+              <span class="text-emerald-400 text-lg font-black leading-none">③</span>
+            </div>
+            <div>
+              <div class="mb-0.5">
+                <span class="text-emerald-300 text-xs font-bold uppercase tracking-widest">AI Enhancement 3 of 4  ·  Claude 4.6</span>
+              </div>
+              <h3 class="text-xl font-black text-white">Pessimistic · Base · Optimistic Scenario Comparison</h3>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="px-3 py-1.5 rounded-lg bg-emerald-400/10 border border-emerald-400/25 text-emerald-200 text-xs font-semibold">Gap identified: Single-scenario financials lacked stress testing</span>
+            <span class="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-slate-300 text-xs font-semibold">+6 pts score impact</span>
+          </div>
+        </div>
+      </div>
+      <div class="ai-enhancement-banner-body card-dark rounded-t-none p-6">
+
+      <!-- Scenario selector tabs -->
+      <div class="flex gap-2 mb-6 flex-wrap">
+        <button onclick="showScenario('pessimistic')" id="tab-pessimistic" class="scenario-tab px-4 py-2 rounded-lg text-sm font-semibold border border-rose-700 text-rose-400 hover:bg-rose-900/30 transition-colors">Pessimistic</button>
+        <button onclick="showScenario('base')" id="tab-base" class="scenario-tab px-4 py-2 rounded-lg text-sm font-semibold border border-sky-700 bg-sky-900/40 text-sky-300 transition-colors">Base Case ✓</button>
+        <button onclick="showScenario('optimistic')" id="tab-optimistic" class="scenario-tab px-4 py-2 rounded-lg text-sm font-semibold border border-emerald-700 text-emerald-400 hover:bg-emerald-900/30 transition-colors">Optimistic</button>
+      </div>
+
+      <!-- Scenario assumption cards -->
+      <div id="scenario-pessimistic" class="scenario-block hidden mb-6">
+        <div class="grid md:grid-cols-4 gap-4">
+          <div class="bg-rose-950/40 border border-rose-800/40 rounded-xl p-4">
+            <div class="text-rose-400 text-xs font-bold uppercase mb-1">Trigger</div>
+            <div class="text-white text-sm font-semibold">Slow PSG uptake + high churn</div>
+            <div class="text-slate-400 text-xs mt-1">PSG grant processing delays; 25% annual churn; lower referral velocity</div>
+          </div>
+          <div class="bg-rose-950/40 border border-rose-800/40 rounded-xl p-4">
+            <div class="text-rose-400 text-xs font-bold uppercase mb-1">Year 1 Clients</div>
+            <div class="text-white text-2xl font-black">60</div>
+            <div class="text-slate-400 text-xs mt-1">vs. 100 in base case</div>
+          </div>
+          <div class="bg-rose-950/40 border border-rose-800/40 rounded-xl p-4">
+            <div class="text-rose-400 text-xs font-bold uppercase mb-1">Year 5 Revenue</div>
+            <div class="text-white text-2xl font-black">S$74M</div>
+            <div class="text-slate-400 text-xs mt-1">3× growth path, not 4×</div>
+          </div>
+          <div class="bg-rose-950/40 border border-rose-800/40 rounded-xl p-4">
+            <div class="text-rose-400 text-xs font-bold uppercase mb-1">Break-Even</div>
+            <div class="text-white text-2xl font-black">Month 18</div>
+            <div class="text-slate-400 text-xs mt-1">Still within Year 2</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="scenario-base" class="scenario-block mb-6">
+        <div class="grid md:grid-cols-4 gap-4">
+          <div class="bg-sky-950/40 border border-sky-800/40 rounded-xl p-4">
+            <div class="text-sky-400 text-xs font-bold uppercase mb-1">Assumption</div>
+            <div class="text-white text-sm font-semibold">T2D3 hypergrowth model</div>
+            <div class="text-slate-400 text-xs mt-1">4× growth Y1–Y3, 3× Y4–Y5; 15% annual churn</div>
+          </div>
+          <div class="bg-sky-950/40 border border-sky-800/40 rounded-xl p-4">
+            <div class="text-sky-400 text-xs font-bold uppercase mb-1">Year 1 Clients</div>
+            <div class="text-white text-2xl font-black">100</div>
+            <div class="text-slate-400 text-xs mt-1">Core scenario</div>
+          </div>
+          <div class="bg-sky-950/40 border border-sky-800/40 rounded-xl p-4">
+            <div class="text-sky-400 text-xs font-bold uppercase mb-1">Year 5 Revenue</div>
+            <div class="text-white text-2xl font-black">S$330M</div>
+            <div class="text-slate-400 text-xs mt-1">15,000 active clients</div>
+          </div>
+          <div class="bg-sky-950/40 border border-sky-800/40 rounded-xl p-4">
+            <div class="text-sky-400 text-xs font-bold uppercase mb-1">Break-Even</div>
+            <div class="text-white text-2xl font-black">Month 10</div>
+            <div class="text-slate-400 text-xs mt-1">Within Year 1</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="scenario-optimistic" class="scenario-block hidden mb-6">
+        <div class="grid md:grid-cols-4 gap-4">
+          <div class="bg-emerald-950/40 border border-emerald-800/40 rounded-xl p-4">
+            <div class="text-emerald-400 text-xs font-bold uppercase mb-1">Trigger</div>
+            <div class="text-white text-sm font-semibold">PSG batch unlock + viral referral</div>
+            <div class="text-slate-400 text-xs mt-1">Batch PSG approvals of 50 clients; 40% referral-driven growth; 8% churn</div>
+          </div>
+          <div class="bg-emerald-950/40 border border-emerald-800/40 rounded-xl p-4">
+            <div class="text-emerald-400 text-xs font-bold uppercase mb-1">Year 1 Clients</div>
+            <div class="text-white text-2xl font-black">150</div>
+            <div class="text-slate-400 text-xs mt-1">50% above base case</div>
+          </div>
+          <div class="bg-emerald-950/40 border border-emerald-800/40 rounded-xl p-4">
+            <div class="text-emerald-400 text-xs font-bold uppercase mb-1">Year 5 Revenue</div>
+            <div class="text-white text-2xl font-black">S$495M</div>
+            <div class="text-slate-400 text-xs mt-1">22,500 active clients</div>
+          </div>
+          <div class="bg-emerald-950/40 border border-emerald-800/40 rounded-xl p-4">
+            <div class="text-emerald-400 text-xs font-bold uppercase mb-1">Break-Even</div>
+            <div class="text-white text-2xl font-black">Month 7</div>
+            <div class="text-slate-400 text-xs mt-1">Q3 of Year 1</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Side-by-side comparison table -->
+      <h4 class="text-sm font-bold text-slate-300 uppercase tracking-wide mb-4">All Three Scenarios — Year-by-Year Revenue (S$M)</h4>
+      <div class="overflow-x-auto mb-6">
+        <table class="w-full text-sm dark-table">
+          <thead>
+            <tr>
+              <th class="text-left px-4 py-3 rounded-tl-lg">Scenario</th>
+              <th class="text-center px-4 py-3">Year 1</th>
+              <th class="text-center px-4 py-3">Year 2</th>
+              <th class="text-center px-4 py-3">Year 3</th>
+              <th class="text-center px-4 py-3">Year 4</th>
+              <th class="text-center px-4 py-3 rounded-tr-lg">Year 5</th>
+            </tr>
+          </thead>
+          <tbody class="text-slate-300">
+            <tr class="border-b border-slate-700">
+              <td class="px-4 py-3"><span class="text-rose-400 font-bold">▼ Pessimistic</span><div class="text-slate-500 text-xs">3× growth, 25% churn</div></td>
+              <td class="px-4 py-3 text-center">1.3M</td>
+              <td class="px-4 py-3 text-center">4.0M</td>
+              <td class="px-4 py-3 text-center">12M</td>
+              <td class="px-4 py-3 text-center">30M</td>
+              <td class="px-4 py-3 text-center text-rose-400 font-bold">74M</td>
+            </tr>
+            <tr class="border-b border-slate-700 bg-sky-950/20">
+              <td class="px-4 py-3"><span class="text-sky-400 font-bold">● Base Case</span><div class="text-slate-500 text-xs">4×/3× growth, 15% churn</div></td>
+              <td class="px-4 py-3 text-center">2.2M</td>
+              <td class="px-4 py-3 text-center">8.8M</td>
+              <td class="px-4 py-3 text-center">35M</td>
+              <td class="px-4 py-3 text-center">110M</td>
+              <td class="px-4 py-3 text-center text-sky-400 font-bold">330M</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3"><span class="text-emerald-400 font-bold">▲ Optimistic</span><div class="text-slate-500 text-xs">5×/4× growth, 8% churn</div></td>
+              <td class="px-4 py-3 text-center">3.3M</td>
+              <td class="px-4 py-3 text-center">16.5M</td>
+              <td class="px-4 py-3 text-center">66M</td>
+              <td class="px-4 py-3 text-center">198M</td>
+              <td class="px-4 py-3 text-center text-emerald-400 font-bold">495M</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Scenario chart -->
+      <canvas id="scenarioChart" height="130"></canvas>
+      </div><!-- /ai-enhancement-banner-body -->
+    </div><!-- /enh3 -->
+  </div>
+</section>
+
+<!-- ═══════════════════════ 10 RISKS ═══════════════════════ -->
+<section id="risks" class="py-20 px-4 section-stripe">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-start gap-4 mb-10">
+      <span class="sec-num">10</span>
+      <div>
+        <div class="badge badge-rose mb-2">Risks &amp; Open Questions</div>
+        <h2 class="text-3xl font-black text-slate-900">Known Unknowns — and Our Mitigations</h2>
+        <p class="text-slate-600 mt-2 max-w-2xl">Five material risks across strategy, technology, and macro — each with a specific mitigation strategy built into the operating model.</p>
+      </div>
+    </div>
+
+    <div class="space-y-4">
+      <!-- Risk 1 -->
+      <div class="card-light p-0 overflow-hidden">
+        <button onclick="toggleAcc(this)" class="w-full flex items-center justify-between p-5 text-left hover:bg-slate-50 transition-colors">
+          <div class="flex items-center gap-4">
+            <span class="badge badge-rose">Strategic</span>
+            <span class="font-bold text-slate-800">The "Sunk Cost Trap" of Innovation</span>
+          </div>
+          <svg class="acc-arrow open w-5 h-5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="acc-content open">
+          <div class="px-5 pb-5 grid md:grid-cols-2 gap-6 text-sm">
+            <div><div class="text-red-600 font-semibold mb-2">Risk</div><p class="text-slate-600">As SMEs grow, they may eventually adopt SAP or Oracle — which are building their own agentic layers. Our installed base could attrition as clients "graduate" to enterprise ERPs.</p></div>
+            <div><div class="text-emerald-600 font-semibold mb-2">Mitigation</div><p class="text-slate-600">Focus on the "Integration Layer" — position as the glue connecting specialised SME tools that big ERPs ignore. Our agents handle the messy, cross-system workflows that monolithic ERPs can't support without expensive customisation.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Risk 2 -->
+      <div class="card-light p-0 overflow-hidden">
+        <button onclick="toggleAcc(this)" class="w-full flex items-center justify-between p-5 text-left hover:bg-slate-50 transition-colors">
+          <div class="flex items-center gap-4">
+            <span class="badge badge-rose">Technical</span>
+            <span class="font-bold text-slate-800">Security and Data Privacy</span>
+          </div>
+          <svg class="acc-arrow open w-5 h-5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="acc-content open">
+          <div class="px-5 pb-5 grid md:grid-cols-2 gap-6 text-sm">
+            <div><div class="text-red-600 font-semibold mb-2">Risk</div><p class="text-slate-600">A data breach or AI "hallucination" in a legal contract could cause irreparable brand damage. One high-profile failure (e.g., wrong MOM contract terms) could stall the entire market.</p></div>
+            <div><div class="text-emerald-600 font-semibold mb-2">Mitigation</div><p class="text-slate-600">Singapore Model AI Governance Framework alignment. Private VPC deployment — client data never leaves Singapore jurisdiction. SOC 2 Type 2 + FIPS 140-2 encryption. Humans as Final Pass for all legal outputs.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Risk 3 -->
+      <div class="card-light p-0 overflow-hidden">
+        <button onclick="toggleAcc(this)" class="w-full flex items-center justify-between p-5 text-left hover:bg-slate-50 transition-colors">
+          <div class="flex items-center gap-4">
+            <span class="badge badge-rose">Technical</span>
+            <span class="font-bold text-slate-800">Model Degradation Over Time</span>
+          </div>
+          <svg class="acc-arrow open w-5 h-5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="acc-content open">
+          <div class="px-5 pb-5 grid md:grid-cols-2 gap-6 text-sm">
+            <div><div class="text-red-600 font-semibold mb-2">Risk</div><p class="text-slate-600">Without regular retraining, AI performance drops 20–40% annually as business data grows, regulations change, and edge cases accumulate. Clients may not notice gradual degradation until it causes a costly error.</p></div>
+            <div><div class="text-emerald-600 font-semibold mb-2">Mitigation</div><p class="text-slate-600">Mandatory Maintenance Retainers that include quarterly model fine-tuning are built into the subscription. Drift detection is automated — performance KPIs (accuracy, response time) are monitored in real-time dashboards.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Risk 4 -->
+      <div class="card-light p-0 overflow-hidden">
+        <button onclick="toggleAcc(this)" class="w-full flex items-center justify-between p-5 text-left hover:bg-slate-50 transition-colors">
+          <div class="flex items-center gap-4">
+            <span class="badge badge-amber">Macro</span>
+            <span class="font-bold text-slate-800">Regulatory Fragmentation Across SEA</span>
+          </div>
+          <svg class="acc-arrow open w-5 h-5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="acc-content open">
+          <div class="px-5 pb-5 grid md:grid-cols-2 gap-6 text-sm">
+            <div><div class="text-red-600 font-semibold mb-2">Risk</div><p class="text-slate-600">Expanding to Malaysia, Indonesia, and Vietnam requires navigating fragmented data localisation laws, labour regulations, and tax requirements — increasing compliance costs and slowing expansion timelines.</p></div>
+            <div><div class="text-emerald-600 font-semibold mb-2">Mitigation</div><p class="text-slate-600">Regional Reseller strategy: local partners handle regulatory compliance while ElitezAI provides the core tech. We own the Workflow IP; they own the local context. Commission structure (15%/10%) incentivises quality implementation.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Risk 5 -->
+      <div class="card-light p-0 overflow-hidden">
+        <button onclick="toggleAcc(this)" class="w-full flex items-center justify-between p-5 text-left hover:bg-slate-50 transition-colors">
+          <div class="flex items-center gap-4">
+            <span class="badge badge-amber">Macro</span>
+            <span class="font-bold text-slate-800">ROI Skepticism After AI Hype Cycle</span>
+          </div>
+          <svg class="acc-arrow open w-5 h-5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="acc-content open">
+          <div class="px-5 pb-5 grid md:grid-cols-2 gap-6 text-sm">
+            <div><div class="text-red-600 font-semibold mb-2">Risk</div><p class="text-slate-600">If "individual productivity" improvements (Copilot, ChatGPT) continue without P&L impact, SME owners may become disillusioned with AI investment altogether — making the sales conversation harder regardless of actual ROI.</p></div>
+            <div><div class="text-emerald-600 font-semibold mb-2">Mitigation</div><p class="text-slate-600">Relentless focus on Operational KPIs (DSO, Headcount Avoidance, Error Rate, Accuracy %) in all marketing and reporting. Every client engagement starts with a before/after dashboard — not feature lists.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✦ AI ENHANCEMENT 4: A/B Testing Ideas -->
+    <div id="enh4" class="mt-10 rounded-2xl overflow-hidden">
+      <div class="ai-enhancement-banner" style="background: linear-gradient(135deg, #0c2a4a 0%, #0e3a6e 60%, #1547a0 100%); border-color: rgba(56,189,248,0.3);">
+        <div class="relative z-10 flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <div class="flex-shrink-0 w-12 h-12 rounded-xl flex flex-col items-center justify-center" style="background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.35)">
+              <span class="text-sky-300 text-xs font-black leading-none">AI</span>
+              <span class="text-sky-300 text-lg font-black leading-none">④</span>
+            </div>
+            <div>
+              <div class="mb-0.5">
+                <span class="text-sky-300 text-xs font-bold uppercase tracking-widest">AI Enhancement 4 of 4  ·  Claude 4.6</span>
+              </div>
+              <h3 class="text-xl font-black text-white">A/B Testing Roadmap — Reducing Key Unknowns</h3>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="px-3 py-1.5 rounded-lg text-sky-200 text-xs font-semibold" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.25)">Gap identified: No data-driven methodology for key assumptions</span>
+            <span class="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-slate-300 text-xs font-semibold">+4 pts score impact</span>
+          </div>
+        </div>
+      </div>
+      <div class="p-6 bg-white border border-sky-200 border-t-0 rounded-b-2xl">
+        <p class="text-slate-600 text-sm mb-6 max-w-3xl">Each open question below maps directly to a decision that affects revenue or churn. These tests should run in Year 1 concurrently with the first 100 client deployments. Statistical significance target: p &lt; 0.05 with minimum 30 observations per cell.</p>
+
+        <div class="space-y-5">
+
+          <!-- Test 1 -->
+          <div class="border border-slate-200 rounded-xl overflow-hidden">
+            <div class="bg-slate-50 px-5 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="w-7 h-7 rounded-full bg-sky-600 text-white text-xs font-black flex items-center justify-center">1</span>
+                <span class="font-bold text-slate-800">Pricing Threshold Test</span>
+              </div>
+              <span class="badge badge-blue">Revenue Impact</span>
+            </div>
+            <div class="px-5 py-4 grid md:grid-cols-3 gap-4 text-sm">
+              <div><div class="text-slate-500 font-semibold text-xs uppercase mb-1">Hypothesis</div><p class="text-slate-700">Raising the Basic tier from S$297 to S$497 will not reduce conversion by more than 15%, resulting in a net revenue increase per cohort.</p></div>
+              <div><div class="text-slate-500 font-semibold text-xs uppercase mb-1">Test Design</div><p class="text-slate-700"><strong>Control:</strong> S$297/month landing page. <strong>Variant:</strong> S$497/month. Split inbound leads 50/50 over 60 days via PSG bootcamp cohorts.</p></div>
+              <div><div class="text-slate-500 font-semibold text-xs uppercase mb-1">Decision Rule</div><p class="text-slate-700">If conversion drop &lt;15%, adopt S$497 as standard. If drop &gt;25%, retain S$297 and test a value-add bundle instead.</p></div>
+            </div>
+          </div>
+
+          <!-- Test 2 -->
+          <div class="border border-slate-200 rounded-xl overflow-hidden">
+            <div class="bg-slate-50 px-5 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="w-7 h-7 rounded-full bg-violet-600 text-white text-xs font-black flex items-center justify-center">2</span>
+                <span class="font-bold text-slate-800">Onboarding Mode Test</span>
+              </div>
+              <span class="badge badge-purple">Churn Impact</span>
+            </div>
+            <div class="px-5 py-4 grid md:grid-cols-3 gap-4 text-sm">
+              <div><div class="text-slate-500 font-semibold text-xs uppercase mb-1">Hypothesis</div><p class="text-slate-700">Clients who go through the "3 Weeks to AI" structured discovery program will have 30% lower 6-month churn than clients who receive a standard free-trial onboarding.</p></div>
+              <div><div class="text-slate-500 font-semibold text-xs uppercase mb-1">Test Design</div><p class="text-slate-700"><strong>Control:</strong> 14-day free trial, self-serve. <strong>Variant:</strong> "3 Weeks to AI" guided discovery with dedicated Implementation Consultant. Track churn at Month 6.</p></div>
+              <div><div class="text-slate-500 font-semibold text-xs uppercase mb-1">Decision Rule</div><p class="text-slate-700">If guided onboarding reduces churn by ≥20%, scale it as the default (even though it costs ~S$600 more in consultant time per client).</p></div>
+            </div>
+          </div>
+
+          <!-- Test 3 -->
+          <div class="border border-slate-200 rounded-xl overflow-hidden">
+            <div class="bg-slate-50 px-5 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="w-7 h-7 rounded-full bg-amber-600 text-white text-xs font-black flex items-center justify-center">3</span>
+                <span class="font-bold text-slate-800">Acquisition Message Test</span>
+              </div>
+              <span class="badge badge-amber">CAC Impact</span>
+            </div>
+            <div class="px-5 py-4 grid md:grid-cols-3 gap-4 text-sm">
+              <div><div class="text-slate-500 font-semibold text-xs uppercase mb-1">Hypothesis</div><p class="text-slate-700">Outreach framing around PSG grant co-funding ("50% funded by government") will generate higher qualified lead volume than framing around ROI ("save 77 hrs/month").</p></div>
+              <div><div class="text-slate-500 font-semibold text-xs uppercase mb-1">Test Design</div><p class="text-slate-700"><strong>Control:</strong> LinkedIn + email with ROI headline. <strong>Variant:</strong> PSG grant eligibility headline. A/B split across trade association email list of 2,000 SMEs.</p></div>
+              <div><div class="text-slate-500 font-semibold text-xs uppercase mb-1">Decision Rule</div><p class="text-slate-700">Winning message becomes the primary outreach template. Losing message is repurposed for later-stage nurture (after initial contact).</p></div>
+            </div>
+          </div>
+
+          <!-- Test 4 -->
+          <div class="border border-slate-200 rounded-xl overflow-hidden">
+            <div class="bg-slate-50 px-5 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="w-7 h-7 rounded-full bg-emerald-600 text-white text-xs font-black flex items-center justify-center">4</span>
+                <span class="font-bold text-slate-800">Upsell Timing Test</span>
+              </div>
+              <span class="badge badge-green">ARPU Impact</span>
+            </div>
+            <div class="px-5 py-4 grid md:grid-cols-3 gap-4 text-sm">
+              <div><div class="text-slate-500 font-semibold text-xs uppercase mb-1">Hypothesis</div><p class="text-slate-700">Clients who receive an upgrade offer at Month 3 (after experiencing one full workflow cycle) will convert to Advanced tier at higher rates than clients offered at Month 1 (before full value realisation).</p></div>
+              <div><div class="text-slate-500 font-semibold text-xs uppercase mb-1">Test Design</div><p class="text-slate-700"><strong>Control:</strong> Upsell email at Month 1. <strong>Variant:</strong> Upsell email at Month 3 with before/after metrics from their own data. Track upgrade rate at Month 6.</p></div>
+              <div><div class="text-slate-500 font-semibold text-xs uppercase mb-1">Decision Rule</div><p class="text-slate-700">Winning timing is locked into the customer success playbook. If both underperform (&lt;5% upgrade rate), test a usage-triggered upsell instead.</p></div>
+            </div>
+          </div>
+
+          <!-- Test 5 -->
+          <div class="border border-slate-200 rounded-xl overflow-hidden">
+            <div class="bg-slate-50 px-5 py-3 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="w-7 h-7 rounded-full bg-rose-600 text-white text-xs font-black flex items-center justify-center">5</span>
+                <span class="font-bold text-slate-800">Contract Duration Test</span>
+              </div>
+              <span class="badge badge-rose">LTV Impact</span>
+            </div>
+            <div class="px-5 py-4 grid md:grid-cols-3 gap-4 text-sm">
+              <div><div class="text-slate-500 font-semibold text-xs uppercase mb-1">Hypothesis</div><p class="text-slate-700">Offering a 15% annual prepay discount (month-to-month S$1,000 vs annual S$10,200 = S$850/mo) will reduce churn by &gt;30% and improve cash flow predictability, more than offsetting the revenue discount.</p></div>
+              <div><div class="text-slate-500 font-semibold text-xs uppercase mb-1">Test Design</div><p class="text-slate-700"><strong>Control:</strong> Monthly billing only. <strong>Variant:</strong> Annual prepay at 15% discount, presented at onboarding. Track 12-month retention and LTV for both cohorts.</p></div>
+              <div><div class="text-slate-500 font-semibold text-xs uppercase mb-1">Decision Rule</div><p class="text-slate-700">If annual cohort retention is ≥40% better, push annual as the default recommendation and frame monthly as "premium flexibility" pricing.</p></div>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /ai-enhancement-banner-body -->
+    </div><!-- /enh4 -->
+  </div>
+</section>
+
+<!-- ═══════════════════════ 11 AI FEEDBACK ═══════════════════════ -->
+<section id="aifeedback" class="py-20 px-4 bg-slate-900">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-start gap-4 mb-10">
+      <span class="sec-num">11</span>
+      <div>
+        <div class="badge badge-blue mb-2">AI Feedback Report</div>
+        <h2 class="text-3xl font-black text-white">How AI Shaped This Business Plan</h2>
+        <p class="text-slate-400 mt-2 max-w-2xl">A transparent account of where AI was a force multiplier — and where it hallucinated, generalised, or missed regional nuance.</p>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8 mb-10">
+      <!-- Contributions -->
+      <div>
+        <h3 class="text-lg font-bold text-white mb-5">Where AI Added Real Value</h3>
+        <div class="space-y-4">
+          <div class="card-dark p-5">
+            <div class="flex gap-3">
+              <span class="text-emerald-400 text-xl flex-shrink-0">✓</span>
+              <div>
+                <div class="font-semibold text-white text-sm mb-1">Market Sizing &amp; Statistics</div>
+                <p class="text-slate-400 text-sm">Extracted and synthesised granular SME data from ADB Monitor 2025 and OECD reports across six countries in minutes — a task that would have taken days manually.</p>
+              </div>
+            </div>
+          </div>
+          <div class="card-dark p-5">
+            <div class="flex gap-3">
+              <span class="text-emerald-400 text-xl flex-shrink-0">✓</span>
+              <div>
+                <div class="font-semibold text-white text-sm mb-1">Competitive Benchmarking</div>
+                <p class="text-slate-400 text-sm">Scraped and summarised the services of 16+ AI automation companies in Singapore, producing a competitor map that highlighted the cross-departmental workflow gap.</p>
+              </div>
+            </div>
+          </div>
+          <div class="card-dark p-5">
+            <div class="flex gap-3">
+              <span class="text-emerald-400 text-xl flex-shrink-0">✓</span>
+              <div>
+                <div class="font-semibold text-white text-sm mb-1">Financial Modelling Logic</div>
+                <p class="text-slate-400 text-sm">Cross-referenced JobStreet/HRO salary guides with Elitez efficiency gains to compute labour replacement value per workflow — grounding the financial model in real data.</p>
+              </div>
+            </div>
+          </div>
+          <div class="card-dark p-5">
+            <div class="flex gap-3">
+              <span class="text-emerald-400 text-xl flex-shrink-0">✓</span>
+              <div>
+                <div class="font-semibold text-white text-sm mb-1">Governance Synthesis</div>
+                <p class="text-slate-400 text-sm">Summarised Singapore's Model AI Governance Framework for Agentic AI, ensuring the plan aligned with the latest ethical and accountability standards.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Failures -->
+      <div>
+        <h3 class="text-lg font-bold text-white mb-5">Where AI Failed or Misled</h3>
+        <div class="space-y-4">
+          <div class="card-dark p-5 border-l-4 border-red-500">
+            <div class="flex gap-3">
+              <span class="text-red-400 text-xl flex-shrink-0">✗</span>
+              <div>
+                <div class="font-semibold text-white text-sm mb-1">Hallucinated Economic Data</div>
+                <p class="text-slate-400 text-sm">Early drafts invented "Budget 2026" measures for Singapore before they were officially released — required manual correction from official Ministry of Finance sources.</p>
+              </div>
+            </div>
+          </div>
+          <div class="card-dark p-5 border-l-4 border-orange-500">
+            <div class="flex gap-3">
+              <span class="text-orange-400 text-xl flex-shrink-0">✗</span>
+              <div>
+                <div class="font-semibold text-white text-sm mb-1">Generic Generalisation</div>
+                <p class="text-slate-400 text-sm">AI initially conflated "Standard RPA" with "Agentic AI" until specifically instructed to use the "Automation Plateau" framework — a reminder to prompt with precision.</p>
+              </div>
+            </div>
+          </div>
+          <div class="card-dark p-5 border-l-4 border-amber-500">
+            <div class="flex gap-3">
+              <span class="text-amber-400 text-xl flex-shrink-0">✗</span>
+              <div>
+                <div class="font-semibold text-white text-sm mb-1">Regional Nuance Gaps</div>
+                <p class="text-slate-400 text-sm">Overestimated SaaS spend per employee in rural Indonesia by applying Singapore-wide averages — failing to account for the urban-rural digital divide until ADB regional data was explicitly cited.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Agentic workflow -->
+        <div class="card-dark p-5 mt-4 border border-sky-900/50">
+          <div class="text-sky-400 font-bold text-sm uppercase tracking-wide mb-3">Agentic Workflow Used for VC Pressure-Testing</div>
+          <ol class="space-y-2 text-sm text-slate-400">
+            <li class="flex gap-2"><span class="text-sky-400 font-bold flex-shrink-0">1.</span>Analyse internal Elitez metrics from live production data</li>
+            <li class="flex gap-2"><span class="text-sky-400 font-bold flex-shrink-0">2.</span>Search for Indonesian labor costs and digital transformation maturity benchmarks</li>
+            <li class="flex gap-2"><span class="text-sky-400 font-bold flex-shrink-0">3.</span>Compare ROI multiplier in Singapore vs. Indonesia (time savings ≠ dollar savings)</li>
+            <li class="flex gap-2"><span class="text-sky-400 font-bold flex-shrink-0">4.</span>Generate critique memo → identified need for "Volume-First" GTM in Indonesia</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tools used -->
+    <h3 class="text-lg font-bold text-white mb-5">AI Tools &amp; LLM Stack</h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="card-dark p-5 text-center card-hover">
+        <div class="text-2xl mb-2">🤖</div>
+        <div class="font-bold text-white text-sm">Claude 4.6</div>
+        <div class="text-slate-500 text-xs mt-1">Anthropic — deep reasoning, narrative synthesis, logical structure</div>
+      </div>
+      <div class="card-dark p-5 text-center card-hover">
+        <div class="text-2xl mb-2">🧠</div>
+        <div class="font-bold text-white text-sm">GPT-5.2</div>
+        <div class="text-slate-500 text-xs mt-1">OpenAI — creative GTM tactics, financial model assumptions</div>
+      </div>
+      <div class="card-dark p-5 text-center card-hover">
+        <div class="text-2xl mb-2">⚡</div>
+        <div class="font-bold text-white text-sm">Gemini 2.0 Flash</div>
+        <div class="text-slate-500 text-xs mt-1">Google — rapid multi-modal synthesis of PDF workflows</div>
+      </div>
+      <div class="card-dark p-5 text-center card-hover">
+        <div class="text-2xl mb-2">🔗</div>
+        <div class="font-bold text-white text-sm">n8n</div>
+        <div class="text-slate-500 text-xs mt-1">Open Source — orchestrating multi-step agentic research loops</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+<footer class="bg-slate-950 border-t border-slate-800 py-12 px-4">
+  <div class="max-w-6xl mx-auto">
+    <div class="grid md:grid-cols-3 gap-8 mb-8">
+      <div>
+        <div class="flex items-center gap-2 mb-3">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center text-white font-black text-sm">E</div>
+          <span class="text-white font-bold">ElitezAI</span>
+        </div>
+        <p class="text-slate-500 text-sm">Agentic AI Workflows for Southeast Asian SMEs. Transforming manual operations into strategic orchestration.</p>
+      </div>
+      <div>
+        <div class="text-slate-400 text-xs uppercase font-bold mb-3">Pages</div>
+        <div class="space-y-2">
+          <a href="index.html" class="block text-slate-400 hover:text-white text-sm transition-colors">Analytics Dashboard</a>
+          <a href="business-plan.html" class="block text-slate-400 hover:text-white text-sm transition-colors">Business Plan (Original)</a>
+          <a href="business-plan-enhanced.html" class="block text-emerald-400 text-sm font-medium">Business Plan — AI Enhanced ✦</a>
+          <a href="vc-countermeasures.html" class="block text-slate-400 hover:text-white text-sm transition-colors">VC Due Diligence</a>
+        </div>
+      </div>
+      <div>
+        <div class="text-rose-400 font-bold text-sm">Chicago Booth School of Business</div>
+        <div class="text-slate-400 text-xs mt-1">Business Analytics · Final Assignment · March 2026</div>
+        <div class="text-slate-500 text-xs mt-1">Prof. Günter J. Hitsch</div>
+        <div class="mt-3">
+          <img src="https://www.wes.org/wp-content/uploads/2018/05/chicago-booth.png" class="h-6 w-auto opacity-40" alt="Chicago Booth" />
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-slate-800 pt-6 text-center text-slate-400 text-xs">
+      For academic and demonstration purposes only · All metrics derived from Elitez Group internal production data · Market data sourced from ADB, Temasek, WEF, OECD (2024–2025)
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Booth bar and nav positioning
+  function adjustNav() {
+    const bar = document.getElementById('booth-bar');
+    const nav = document.getElementById('main-nav');
+    const barH = bar && bar.style.display !== 'none' ? bar.offsetHeight : 0;
+    nav.style.top = barH + 'px';
+  }
+  document.addEventListener('DOMContentLoaded', adjustNav);
+  window.addEventListener('resize', adjustNav);
+
+  // Scroll progress bar
+  window.addEventListener('scroll', () => {
+    const scrollTop = document.documentElement.scrollTop;
+    const docH = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    document.getElementById('progress-bar').style.width = (scrollTop / docH * 100) + '%';
+  });
+
+  // Accordion
+  function toggleAcc(btn) {
+    const content = btn.nextElementSibling;
+    const arrow = btn.querySelector('.acc-arrow');
+    content.classList.toggle('open');
+    arrow.classList.toggle('open');
+  }
+
+  // Charts
+  const chartDefaults = {
+    color: '#94a3b8',
+    plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Inter', size: 11 } } } },
+    scales: {
+      x: { ticks: { color: '#64748b', font: { family: 'Inter', size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+      y: { ticks: { color: '#64748b', font: { family: 'Inter', size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } }
+    }
+  };
+
+  // Shared data
+  const years = ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'];
+  const revenue  = [2.2, 8.8, 35, 110, 330];
+  const cogs     = [0.9, 3.5, 14, 44, 132];
+  const opex     = [1.1, 3.8, 12, 30, 80];
+  const netProfit = revenue.map((r, i) => +(r - cogs[i] - opex[i]).toFixed(2)); // [0.2, 1.5, 9, 36, 118]
+  const clients   = [100, 400, 1600, 5000, 15000];
+  const ebitdaPct = [9, 17, 25, 32, 35];
+  const opexPct   = opex.map((o, i) => +((o / revenue[i]) * 100).toFixed(1)); // [50,43,34,27,24]
+  const netPctArr = netProfit.map((n, i) => +((n / revenue[i]) * 100).toFixed(1)); // [9,17,26,33,36]
+
+  const gridColor  = 'rgba(255,255,255,0.05)';
+  const tickColor  = '#64748b';
+  const tickFont   = { family: 'Inter', size: 10 };
+  const legendFont = { family: 'Inter', size: 11 };
+
+  // ── Chart 1: Revenue / Costs / Net Profit / Clients ──────────────────
+  new Chart(document.getElementById('revenueChart'), {
+    data: {
+      labels: years,
+      datasets: [
+        {
+          type: 'bar',
+          label: 'Revenue (S$M)',
+          data: revenue,
+          backgroundColor: 'rgba(56,189,248,0.65)',
+          borderColor: '#38bdf8', borderWidth: 1, borderRadius: 5,
+          yAxisID: 'y'
+        },
+        {
+          type: 'bar',
+          label: 'COGS — API + Infra (S$M)',
+          data: cogs,
+          backgroundColor: 'rgba(251,113,133,0.55)',
+          borderColor: '#fb7185', borderWidth: 1, borderRadius: 5,
+          yAxisID: 'y'
+        },
+        {
+          type: 'bar',
+          label: 'OpEx — Sales/R&D/Ops (S$M)',
+          data: opex,
+          backgroundColor: 'rgba(251,146,60,0.55)',
+          borderColor: '#f97316', borderWidth: 1, borderRadius: 5,
+          yAxisID: 'y'
+        },
+        {
+          type: 'line',
+          label: 'Net Profit (S$M)',
+          data: netProfit,
+          borderColor: '#34d399',
+          backgroundColor: 'rgba(52,211,153,0.12)',
+          pointBackgroundColor: '#34d399',
+          pointRadius: 5, pointHoverRadius: 7,
+          borderWidth: 2.5, tension: 0.4, fill: false,
+          yAxisID: 'y'
+        },
+        {
+          type: 'line',
+          label: 'Active Clients',
+          data: clients,
+          borderColor: '#a78bfa',
+          backgroundColor: 'rgba(167,139,250,0.1)',
+          pointBackgroundColor: '#a78bfa',
+          pointRadius: 5, pointHoverRadius: 7,
+          borderWidth: 2, tension: 0.4,
+          borderDash: [5, 3], fill: false,
+          yAxisID: 'y1'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1e293b',
+          borderColor: '#334155', borderWidth: 1,
+          titleColor: '#e2e8f0', bodyColor: '#94a3b8',
+          padding: 12,
+          callbacks: {
+            label: ctx => {
+              const v = ctx.parsed.y;
+              if (ctx.dataset.label === 'Active Clients') return `  ${ctx.dataset.label}: ${v.toLocaleString()}`;
+              return `  ${ctx.dataset.label}: S$${v}M`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { color: tickColor, font: tickFont }, grid: { color: gridColor } },
+        y: {
+          position: 'left',
+          ticks: { color: tickColor, font: tickFont, callback: v => 'S$' + v + 'M' },
+          grid: { color: gridColor },
+          title: { display: true, text: 'S$ Millions', color: '#64748b', font: { size: 10 } }
+        },
+        y1: {
+          position: 'right',
+          grid: { drawOnChartArea: false },
+          ticks: { color: '#a78bfa', font: tickFont, callback: v => v.toLocaleString() },
+          title: { display: true, text: 'Active Clients', color: '#a78bfa', font: { size: 10 } }
+        }
+      }
+    }
+  });
+
+  // ── Chart 2: Scale & Margin Efficiency ───────────────────────────────
+  new Chart(document.getElementById('clientChart'), {
+    data: {
+      labels: years,
+      datasets: [
+        {
+          type: 'bar',
+          label: 'Active Clients',
+          data: clients,
+          backgroundColor: 'rgba(129,140,248,0.55)',
+          borderColor: '#818cf8', borderWidth: 1, borderRadius: 5,
+          yAxisID: 'y'
+        },
+        {
+          type: 'line',
+          label: 'EBITDA Margin %',
+          data: ebitdaPct,
+          borderColor: '#34d399', backgroundColor: 'rgba(52,211,153,0.1)',
+          pointBackgroundColor: '#34d399', pointRadius: 5, pointHoverRadius: 7,
+          borderWidth: 2.5, tension: 0.4, fill: false,
+          yAxisID: 'y1'
+        },
+        {
+          type: 'line',
+          label: 'Net Profit Margin %',
+          data: netPctArr,
+          borderColor: '#38bdf8', backgroundColor: 'rgba(56,189,248,0.08)',
+          pointBackgroundColor: '#38bdf8', pointRadius: 5, pointHoverRadius: 7,
+          borderWidth: 2, tension: 0.4,
+          borderDash: [4, 3], fill: false,
+          yAxisID: 'y1'
+        },
+        {
+          type: 'line',
+          label: 'OpEx % of Revenue (↓ = efficiency gain)',
+          data: opexPct,
+          borderColor: '#fbbf24', backgroundColor: 'rgba(251,191,36,0.08)',
+          pointBackgroundColor: '#fbbf24', pointRadius: 5, pointHoverRadius: 7,
+          borderWidth: 2, tension: 0.4,
+          borderDash: [6, 3], fill: false,
+          yAxisID: 'y1'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1e293b',
+          borderColor: '#334155', borderWidth: 1,
+          titleColor: '#e2e8f0', bodyColor: '#94a3b8',
+          padding: 12,
+          callbacks: {
+            label: ctx => {
+              const v = ctx.parsed.y;
+              if (ctx.dataset.label === 'Active Clients') return `  ${ctx.dataset.label}: ${v.toLocaleString()}`;
+              return `  ${ctx.dataset.label}: ${v}%`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { color: tickColor, font: tickFont }, grid: { color: gridColor } },
+        y: {
+          position: 'left',
+          ticks: { color: '#818cf8', font: tickFont, callback: v => v.toLocaleString() },
+          grid: { color: gridColor },
+          title: { display: true, text: 'Active Clients', color: '#818cf8', font: { size: 10 } }
+        },
+        y1: {
+          position: 'right',
+          grid: { drawOnChartArea: false },
+          min: 0, max: 60,
+          ticks: { color: tickColor, font: tickFont, callback: v => v + '%' },
+          title: { display: true, text: '% of Revenue', color: '#64748b', font: { size: 10 } }
+        }
+      }
+    }
+  });
+
+  // ── Elasticity Chart ─────────────────────────────────────────────────
+  new Chart(document.getElementById('elasticityChart'), {
+    type: 'line',
+    data: {
+      labels: ['S$297', 'S$500', 'S$1,000', 'S$2,000', 'S$5,000'],
+      datasets: [{
+        label: 'Conversion Rate %',
+        data: [85, 70, 50, 30, 12],
+        borderColor: '#34d399', backgroundColor: 'rgba(52,211,153,0.15)',
+        pointBackgroundColor: '#34d399', pointRadius: 5,
+        borderWidth: 2.5, tension: 0.35, fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { backgroundColor: '#1e293b', borderColor: '#334155', borderWidth: 1, titleColor: '#e2e8f0', bodyColor: '#94a3b8', padding: 10,
+          callbacks: { label: ctx => `  Conversion: ${ctx.parsed.y}%` }
+        }
+      },
+      scales: {
+        x: { ticks: { color: '#64748b', font: { family: 'Inter', size: 9 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+        y: { min: 0, max: 100, ticks: { color: '#64748b', font: { family: 'Inter', size: 9 }, callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+      }
+    }
+  });
+
+  // ── Scenario Chart ───────────────────────────────────────────────────
+  new Chart(document.getElementById('scenarioChart'), {
+    type: 'line',
+    data: {
+      labels: ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'],
+      datasets: [
+        { label: 'Pessimistic', data: [1.3, 4, 12, 30, 74],
+          borderColor: '#fb7185', backgroundColor: 'rgba(251,113,133,0.08)',
+          pointBackgroundColor: '#fb7185', pointRadius: 4, borderWidth: 2, tension: 0.35, fill: false, borderDash: [5,3] },
+        { label: 'Base Case', data: [2.2, 8.8, 35, 110, 330],
+          borderColor: '#38bdf8', backgroundColor: 'rgba(56,189,248,0.1)',
+          pointBackgroundColor: '#38bdf8', pointRadius: 5, borderWidth: 2.5, tension: 0.35, fill: false },
+        { label: 'Optimistic', data: [3.3, 16.5, 66, 198, 495],
+          borderColor: '#34d399', backgroundColor: 'rgba(52,211,153,0.08)',
+          pointBackgroundColor: '#34d399', pointRadius: 4, borderWidth: 2, tension: 0.35, fill: false, borderDash: [4,2] }
+      ]
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { labels: { color: '#94a3b8', font: { family: 'Inter', size: 11 } } },
+        tooltip: { backgroundColor: '#1e293b', borderColor: '#334155', borderWidth: 1, titleColor: '#e2e8f0', bodyColor: '#94a3b8', padding: 10,
+          callbacks: { label: ctx => `  ${ctx.dataset.label}: S$${ctx.parsed.y}M` }
+        }
+      },
+      scales: {
+        x: { ticks: { color: '#64748b', font: { family: 'Inter', size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+        y: { ticks: { color: '#64748b', font: { family: 'Inter', size: 10 }, callback: v => 'S$' + v + 'M' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+      }
+    }
+  });
+
+  // ── Scenario tab switcher ────────────────────────────────────────────
+  function showScenario(name) {
+    document.querySelectorAll('.scenario-block').forEach(el => el.classList.add('hidden'));
+    document.getElementById('scenario-' + name).classList.remove('hidden');
+    document.querySelectorAll('.scenario-tab').forEach(btn => {
+      btn.classList.remove('bg-rose-900/40','text-rose-300','bg-sky-900/40','text-sky-300','bg-emerald-900/40','text-emerald-300');
+    });
+    const colors = { pessimistic: ['bg-rose-900/40','text-rose-300'], base: ['bg-sky-900/40','text-sky-300'], optimistic: ['bg-emerald-900/40','text-emerald-300'] };
+    colors[name].forEach(cls => document.getElementById('tab-' + name).classList.add(cls));
+  }
+
+  // ── AI Enhancement tracker scroll-spy ──────────────────────────────
+  (function() {
+    const enhancements = [
+      { id: 'enh1', num: '1' },
+      { id: 'enh2', num: '2' },
+      { id: 'enh3', num: '3' },
+      { id: 'enh4', num: '4' },
+    ];
+    const trackerItems = document.querySelectorAll('#ai-tracker .ai-tracker-item');
+
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        const num = entry.target.dataset.enhNum;
+        const item = document.querySelector(`#ai-tracker [data-enh="${num}"]`);
+        if (!item) return;
+        if (entry.isIntersecting) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+    }, { rootMargin: '-10% 0px -60% 0px', threshold: 0 });
+
+    enhancements.forEach(({ id, num }) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.dataset.enhNum = num;
+        obs.observe(el);
+      }
+    });
+  })();
+</script>
+</body>
+</html>

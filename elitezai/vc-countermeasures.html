@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VC Pressure Test — ElitezAI Countermeasures</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <meta property="og:type"        content="website" />
+  <meta property="og:title"       content="ElitezAI — VC Pressure Test Countermeasures" />
+  <meta property="og:description" content="7 strategic dimensions. 24 Q&As answered with live data. Every hard question VC investors ask — addressed." />
+  <meta property="og:image"       content="https://raw.githubusercontent.com/derrick-pixel/elitezai-website/main/thumbnail-vc.png" />
+  <meta property="og:image:width"  content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card"       content="summary_large_image" />
+  <meta name="twitter:image"      content="https://raw.githubusercontent.com/derrick-pixel/elitezai-website/main/thumbnail-vc.png" />
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    html { scroll-behavior: smooth; }
+
+    .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f2d4a 100%); }
+    .nav-blur { backdrop-filter: blur(12px); background: rgba(15,23,42,0.88); }
+
+    /* Dimension sidebar pills */
+    .dim-pill {
+      display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+      border-radius: 10px; cursor: pointer; transition: all 0.2s;
+      border: 1px solid transparent; text-decoration: none;
+    }
+    .dim-pill:hover  { background: rgba(56,189,248,0.08); border-color: rgba(56,189,248,0.2); }
+    .dim-pill.active { background: rgba(56,189,248,0.12); border-color: rgba(56,189,248,0.35); }
+    .dim-number { width: 26px; height: 26px; border-radius: 50%; background: #1e293b;
+                  display: flex; align-items: center; justify-content: center;
+                  font-size: 0.7rem; font-weight: 700; color: #94a3b8; flex-shrink: 0; }
+    .dim-pill.active .dim-number { background: #38bdf8; color: #0f172a; }
+
+    /* Q&A card */
+    .qa-card { border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden; margin-bottom: 16px; transition: box-shadow 0.2s; }
+    .qa-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.07); }
+    .qa-question { background: #f8fafc; padding: 18px 22px; cursor: pointer; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .qa-question:hover { background: #f1f5f9; }
+    .qa-answer { padding: 20px 22px; background: white; border-top: 1px solid #e2e8f0; display: none; }
+    .qa-answer.open { display: block; }
+
+    /* Action item */
+    .action { display: flex; gap: 10px; padding: 10px 14px; border-radius: 8px; background: #f0fdf4; border-left: 3px solid #34d399; margin-bottom: 8px; }
+    .action-num { font-weight: 700; color: #059669; flex-shrink: 0; }
+
+    /* Metric badge inside answers */
+    .m-badge { display: inline-flex; align-items: center; gap: 4px; background: #eff6ff; color: #2563eb; border-radius: 6px; padding: 2px 8px; font-size: 0.75rem; font-weight: 600; }
+    .m-badge-green { background: #f0fdf4; color: #15803d; }
+    .m-badge-orange { background: #fff7ed; color: #c2410c; }
+
+    /* Progress indicator */
+    .progress-track { height: 3px; background: #e2e8f0; border-radius: 9999px; overflow: hidden; }
+    .progress-fill  { height: 3px; background: linear-gradient(to right, #38bdf8, #818cf8); border-radius: 9999px; }
+
+    /* Section anchor offset */
+    .section-anchor { scroll-margin-top: 80px; }
+
+    /* Sticky sidebar on desktop */
+    @media (min-width: 1024px) {
+      .sidebar-sticky { position: sticky; top: 88px; max-height: calc(100vh - 100px); overflow-y: auto; }
+    }
+
+    /* Chevron rotate */
+    .chevron { transition: transform 0.2s; flex-shrink: 0; }
+    .chevron.open { transform: rotate(180deg); }
+
+    @keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+    .fade-in { animation: fadeIn 0.5s ease forwards; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+<!-- BOOTH BAR -->
+<div id="booth-bar" class="fixed top-0 left-0 right-0 z-[60] bg-[#800000] text-white text-xs flex items-center justify-center gap-3 px-4 py-2">
+  <img src="https://www.wes.org/wp-content/uploads/2018/05/chicago-booth.png" alt="Chicago Booth" class="h-5 w-auto brightness-0 invert flex-shrink-0" />
+  <span class="font-semibold tracking-wide">Chicago Booth School of Business</span>
+  <span class="text-red-200 hidden sm:inline">·</span>
+  <span class="text-red-200 hidden sm:inline">Business Analytics · Final Assignment · Academic Purpose Only</span>
+  <span class="text-red-200 sm:hidden">· Academic Assignment</span>
+  <button onclick="document.getElementById('booth-bar').remove(); document.querySelector('nav').style.top='0';" class="ml-4 text-red-300 hover:text-white transition text-base leading-none" aria-label="Dismiss">×</button>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const bar = document.getElementById('booth-bar');
+    const nav = document.querySelector('nav');
+    if (bar && nav) nav.style.top = bar.offsetHeight + 'px';
+
+    // Auto-expand all Q&A answers on load
+    document.querySelectorAll('.qa-answer').forEach(el => el.classList.add('open'));
+    document.querySelectorAll('.chevron').forEach(el => el.classList.add('open'));
+  });
+</script>
+
+<!-- NAV -->
+<nav class="nav-blur fixed left-0 right-0 z-50 border-b border-slate-700/40">
+  <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-4">
+      <a href="index.html" class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center">
+          <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        </div>
+        <span class="text-white font-bold text-lg tracking-tight">Elitez<span class="text-sky-400">AI</span></span>
+      </a>
+      <span class="text-slate-400 hidden md:block">／</span>
+      <span class="text-slate-300 text-sm hidden md:block font-medium">VC Pressure Test Countermeasures</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="elitezai-vc-duediligence.pdf" download
+         class="inline-flex items-center gap-1.5 text-white text-xs font-bold px-3 py-1.5 rounded-md bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 transition-all shadow shadow-indigo-900/50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+        Download PDF
+      </a>
+      <a href="index.html" class="text-sm text-slate-400 hover:text-white transition">← Back to main site</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero-gradient pt-16">
+  <div class="max-w-7xl mx-auto px-6 py-16">
+    <div class="max-w-3xl fade-in">
+      <div class="inline-flex items-center gap-2 bg-white/8 border border-white/15 rounded-full px-4 py-1.5 text-xs font-semibold text-sky-300 uppercase tracking-widest mb-6">
+        <span class="w-2 h-2 rounded-full bg-sky-400 inline-block"></span>
+        Investor Due Diligence
+      </div>
+      <h1 class="text-4xl md:text-5xl font-extrabold text-white leading-tight mb-4">
+        Pressure-Tested.<br/>
+        <span style="background:linear-gradient(135deg,#38bdf8,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Every Objection Answered.</span>
+      </h1>
+      <p class="text-slate-300 text-lg max-w-2xl mb-8">
+        Skeptical VCs ask hard questions. Below are the 7 dimensions of scrutiny we've faced — and our data-backed countermeasures for each.
+      </p>
+
+      <!-- Download CTA -->
+      <div class="mb-8">
+        <a href="elitezai-vc-duediligence.pdf" download
+           class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition-all shadow-lg shadow-indigo-900/40 hover:shadow-indigo-900/60 hover:-translate-y-0.5">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+          Download PDF · 6-Page VC Due Diligence
+        </a>
+      </div>
+
+      <!-- Stats strip -->
+      <div class="flex flex-wrap gap-6">
+        <div class="text-center"><div class="text-3xl font-extrabold text-white">7</div><div class="text-slate-400 text-xs mt-0.5">Dimensions</div></div>
+        <div class="w-px bg-white/10 self-stretch"></div>
+        <div class="text-center"><div class="text-3xl font-extrabold text-white">24</div><div class="text-slate-400 text-xs mt-0.5">VC Questions</div></div>
+        <div class="w-px bg-white/10 self-stretch"></div>
+        <div class="text-center"><div class="text-3xl font-extrabold text-white">250</div><div class="text-slate-400 text-xs mt-0.5">Paying Clients</div></div>
+        <div class="w-px bg-white/10 self-stretch"></div>
+        <div class="text-center"><div class="text-3xl font-extrabold text-white">20K</div><div class="text-slate-400 text-xs mt-0.5">A/B Tests</div></div>
+        <div class="w-px bg-white/10 self-stretch"></div>
+        <div class="text-center"><div class="text-3xl font-extrabold text-white">&lt;5%</div><div class="text-slate-400 text-xs mt-0.5">Annual Churn</div></div>
+      </div>
+    </div>
+  </div>
+  <!-- Wave separator -->
+  <div class="overflow-hidden leading-none">
+    <svg viewBox="0 0 1200 48" preserveAspectRatio="none" class="w-full h-10 fill-slate-50"><path d="M0,48 C300,0 900,0 1200,48 Z"/></svg>
+  </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<div class="max-w-7xl mx-auto px-6 py-10">
+  <div class="flex gap-10">
+
+    <!-- SIDEBAR -->
+    <aside class="hidden lg:block w-72 flex-shrink-0">
+      <div class="sidebar-sticky">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3 px-2">7 Dimensions</p>
+        <nav id="sidebar-nav" class="space-y-1">
+          <a href="#dim1" class="dim-pill active" data-dim="1">
+            <span class="dim-number">I</span>
+            <span class="text-sm text-slate-300 leading-tight">Customer Needs &amp; Pain Point Rigidity</span>
+          </a>
+          <a href="#dim2" class="dim-pill" data-dim="2">
+            <span class="dim-number">II</span>
+            <span class="text-sm text-slate-300 leading-tight">Market Size &amp; Penetration Rationality</span>
+          </a>
+          <a href="#dim3" class="dim-pill" data-dim="3">
+            <span class="dim-number">III</span>
+            <span class="text-sm text-slate-300 leading-tight">Competitive Barriers &amp; Sustainability</span>
+          </a>
+          <a href="#dim4" class="dim-pill" data-dim="4">
+            <span class="dim-number">IV</span>
+            <span class="text-sm text-slate-300 leading-tight">Willingness to Pay &amp; Pricing</span>
+          </a>
+          <a href="#dim5" class="dim-pill" data-dim="5">
+            <span class="dim-number">V</span>
+            <span class="text-sm text-slate-300 leading-tight">GTM Feasibility &amp; Growth</span>
+          </a>
+          <a href="#dim6" class="dim-pill" data-dim="6">
+            <span class="dim-number">VI</span>
+            <span class="text-sm text-slate-300 leading-tight">Operations &amp; Financial Model</span>
+          </a>
+          <a href="#dim7" class="dim-pill" data-dim="7">
+            <span class="dim-number">VII</span>
+            <span class="text-sm text-slate-300 leading-tight">Risk Mitigation Effectiveness</span>
+          </a>
+        </nav>
+
+        <!-- Progress tracker -->
+        <div class="mt-8 bg-slate-900 rounded-2xl p-5">
+          <p class="text-xs text-slate-400 font-semibold mb-3">Due Diligence Progress</p>
+          <div class="space-y-3">
+            <div>
+              <div class="flex justify-between text-xs text-slate-400 mb-1"><span>Questions addressed</span><span class="text-white font-semibold">24 / 24</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs text-slate-400 mb-1"><span>Data-backed responses</span><span class="text-white font-semibold">22 / 24</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:92%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs text-slate-400 mb-1"><span>External validation</span><span class="text-white font-semibold">18 / 24</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:75%"></div></div>
+            </div>
+          </div>
+          <div class="mt-4 pt-4 border-t border-slate-800">
+            <p class="text-xs text-slate-400">Countermeasures updated March 2026. Based on 250 live client deployments and 20,000 A/B test observations.</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Q&A CONTENT -->
+    <main class="flex-1 min-w-0">
+
+      <!-- ── DIMENSION I ───────────────────────────────────── -->
+      <section id="dim1" class="section-anchor mb-14">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-11 h-11 rounded-xl bg-sky-500 flex items-center justify-center text-white font-black text-lg flex-shrink-0">I</div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Customer Needs &amp; Pain Point Rigidity</h2>
+            <p class="text-sm text-slate-500">3 questions — Does the pain translate to real P&L? Are pilots replicable? Are pain points genuine?</p>
+          </div>
+        </div>
+
+        <!-- Q1 -->
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge I.1</span>
+              <p class="text-slate-800 font-semibold mt-1">Efficiency improvements often fail to translate into P&L improvements that CEOs care about. Why is yours different?</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="action"><span class="action-num">①</span><div><span class="font-semibold text-slate-700">Hard P&L translation model:</span> We don't sell "hours saved" — we convert it directly to revenue and cash flow.<br/><br/>
+              <span class="m-badge">77 hrs/exec/month saved</span> = 4 additional client development hours/week = <span class="m-badge-green">~S$50,000 annual incremental revenue</span> per exec (based on Singapore SME sales commission benchmarks).<br/><br/>
+              SOA reconciliation daily (vs. monthly) = 10–14 day earlier payment chasing = <span class="m-badge-green">20% reduction in working capital occupation</span>, freeing funds for inventory or marketing.</div></div>
+            <div class="action"><span class="action-num">②</span><div><span class="font-semibold text-slate-700">Performance guarantee agreements:</span> We tie subscription fees to customers' core KPIs — DSO improvement, headcount avoidance, accuracy rates. If preset targets are not met, subscription fees are reduced. <span class="m-badge-green">0 compensation claims to date</span> across 250 clients.</div></div>
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge I.2</span>
+              <p class="text-slate-800 font-semibold mt-1">Internal pilot results rarely replicate with real paying customers. What's your evidence base?</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="action"><span class="action-num">①</span><div><span class="font-semibold text-slate-700">250 live paying clients — not pilots:</span><br/>
+              <span class="m-badge">Avg time saving: 62%</span> (vs. 60–90% in internal pilots — slightly conservative, consistent with real-world friction)<br/>
+              <span class="m-badge-orange">Employee resistance: 8%</span> — resolved via phased rollout and training<br/>
+              <span class="m-badge-orange">Cross-dept coordination issues: 12%</span> — addressed via dedicated client contact mechanism</div></div>
+            <div class="action"><span class="action-num">②</span><div><span class="font-semibold text-slate-700">15% customisation headroom:</span> Every workflow ships with a standardised 85% core + 15% reserved for non-standard needs in real scenarios, preventing performance degradation without materially increasing implementation cost.</div></div>
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge I.3</span>
+              <p class="text-slate-800 font-semibold mt-1">Many SMEs resist standardised AI processes. Are your pain points real or confirmation-biased?</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="action"><span class="action-num">①</span><div><span class="font-semibold text-slate-700">120 SME interviews across Tier 1–3 industries</span> (Singapore + regional) before product build:<br/>
+              <span class="m-badge-green">83% of Tier 1</span> (Professional Services, Retail, F&B) — rigid, high-frequency pain points<br/>
+              <span class="m-badge-green">71% of Tier 2</span> (Manufacturing) — clear needs driven by skilled-labour shortage<br/>
+              <span class="m-badge-orange">45% of Tier 3</span> (people-oriented small retail) — weak signal → classified as secondary expansion targets</div></div>
+            <div class="action"><span class="action-num">②</span><div><span class="font-semibold text-slate-700">Lightweight pilot programme for sceptics:</span> 1-month free pilot activating 1–2 core workflows. Reduces resistance by letting results speak. <span class="m-badge-green">Pilot → paid conversion: 68%</span> across 20,000 A/B tested leads.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── DIMENSION II ──────────────────────────────────── -->
+      <section id="dim2" class="section-anchor mb-14">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-11 h-11 rounded-xl bg-indigo-500 flex items-center justify-center text-white font-black text-lg flex-shrink-0">II</div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Market Size &amp; Penetration Rationality</h2>
+            <p class="text-sm text-slate-500">3 questions — Regional digital gaps, TAM/SAM/SOM rigour, excluding non-addressable customers.</p>
+          </div>
+        </div>
+
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge II.1</span>
+              <p class="text-slate-800 font-semibold mt-1">SEA digital infrastructure is uneven. Your 15% penetration target looks uniform. Isn't that naive?</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="action"><span class="action-num">①</span><div><span class="font-semibold text-slate-700">Differentiated penetration targets by market:</span><br/>
+              🇸🇬 Singapore: <span class="m-badge-green">18%</span> — highest digital infrastructure, strongest payment capacity<br/>
+              🇻🇳🇲🇾 Vietnam / Malaysia: <span class="m-badge">12%</span> — mid-tier digital readiness<br/>
+              🇮🇩 Indonesia: <span class="m-badge-orange">8%</span> — urban-rural digital divide acknowledged<br/>
+              Weighted average: ~15% — arithmetic is correct, the assumption is not uniform.</div></div>
+            <div class="action"><span class="action-num">②</span><div><span class="font-semibold text-slate-700">Regionally graded product tiers:</span> Full-feature (SG) → Standard (VN/MY, high-end customisation removed) → Basic (ID, core workflows only), with pricing scaled accordingly to match local willingness to pay.</div></div>
+          </div>
+        </div>
+
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge II.2</span>
+              <p class="text-slate-800 font-semibold mt-1">You haven't split TAM/SAM/SOM. Your 15,000 client Year 5 target feels like it came from a spreadsheet formula.</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="overflow-x-auto mb-4">
+              <table class="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+                <thead class="bg-slate-800 text-white">
+                  <tr><th class="text-left py-2.5 px-4">Market</th><th class="text-center py-2.5 px-4">SMEs (50–200 HC)</th><th class="text-center py-2.5 px-4">Filter Criteria</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-slate-100 bg-white"><td class="py-2.5 px-4 font-semibold">TAM</td><td class="py-2.5 px-4 text-center font-bold text-slate-800">~100,000</td><td class="py-2.5 px-4 text-center text-slate-500">All 50–200 HC SMEs across SEA + HK</td></tr>
+                  <tr class="border-b border-slate-100 bg-slate-50"><td class="py-2.5 px-4 font-semibold">SAM</td><td class="py-2.5 px-4 text-center font-bold text-slate-800">~65,000</td><td class="py-2.5 px-4 text-center text-slate-500">Has software budget + basic digital tools</td></tr>
+                  <tr class="bg-white"><td class="py-2.5 px-4 font-semibold">SOM</td><td class="py-2.5 px-4 text-center font-bold text-sky-600">~40,000</td><td class="py-2.5 px-4 text-center text-slate-500">Reachable via GTM channels + product fit</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="text-sm text-slate-600 bg-blue-50 rounded-xl p-4">
+              <strong>15,000 clients in Year 5 = 37.5% of SOM = 15% of TAM.</strong> Industry split: 70% Tier 1, 25% Tier 2, 5% Tier 3.
+            </div>
+          </div>
+        </div>
+
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge II.3</span>
+              <p class="text-slate-800 font-semibold mt-1">Your TAM includes family-run SMEs without software budgets. That inflates your numbers.</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="action"><span class="action-num">①</span><div><span class="font-semibold text-slate-700">Explicit exclusion criteria:</span> Family-run SMEs with no software budget, no basic digital tools, and annual revenue &lt;S$5M are excluded. Only include those with basic tools + revenue ≥S$5M + clear efficiency needs — approximately <span class="m-badge-green">28% of regional family-run SMEs</span>, all with demonstrated payment potential.</div></div>
+            <div class="action"><span class="action-num">②</span><div><span class="font-semibold text-slate-700">"Pay-first, upgrade-later" entry model:</span> Basic subscription (S$297–500/month) builds their standardised processes first. Gradual upsell to advanced tier as their digital maturity grows. Reduces initial barrier to entry without subsidising non-viable customers.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── DIMENSION III ─────────────────────────────────── -->
+      <section id="dim3" class="section-anchor mb-14">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-11 h-11 rounded-xl bg-violet-500 flex items-center justify-center text-white font-black text-lg flex-shrink-0">III</div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Competitive Barriers &amp; Sustainability</h2>
+            <p class="text-sm text-slate-500">3 questions — Giant risk, no-code replication, and tech moat durability.</p>
+          </div>
+        </div>
+
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge III.1</span>
+              <p class="text-slate-800 font-semibold mt-1">Microsoft, Google, and SAP will eventually build localised SME AI. What's your 18-month runway?</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="action"><span class="action-num">①</span><div><span class="font-semibold text-slate-700">Niche defensibility over head-on competition:</span> Giants build for "full-industry, full-process" general solutions. We own "SEA SMEs (50–200 HC) + local compliance + cross-departmental workflow orchestration" — a niche they won't serve profitably.</div></div>
+            <div class="action"><span class="action-num">②</span><div><span class="font-semibold text-slate-700">First-mover compliance barriers:</span> MOM + MAS rules embedded in Year 1. VN/MY/ID local compliance integrated in Year 2. <span class="m-badge">Giants need 18 months minimum</span> (6M compliance research + 8M dev + 4M marketing) to replicate. We will have 400+ clients and strong switching costs before they ship.</div></div>
+            <div class="action"><span class="action-num">③</span><div><span class="font-semibold text-slate-700">Co-opetition strategy:</span> Rather than only defending, we're exploring complementary partnerships — e.g., providing specialised SEA SME workflow capabilities inside Microsoft M365 ecosystem for customers giants can't cost-effectively serve directly. <span class="m-badge-green">Exploratory discussions underway with Microsoft SEA team.</span></div></div>
+          </div>
+        </div>
+
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge III.2</span>
+              <p class="text-slate-800 font-semibold mt-1">A local consultant + n8n/Zapier replicates this in 2 months. Why would anyone pay your prices?</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="overflow-x-auto mb-4">
+              <table class="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+                <thead class="bg-slate-800 text-white">
+                  <tr><th class="text-left py-2.5 px-4">Metric</th><th class="text-center py-2.5 px-4">ElitezAI</th><th class="text-center py-2.5 px-4">n8n + Local Consultant</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-slate-100 bg-white"><td class="py-2.5 px-4">Implementation time</td><td class="py-2.5 px-4 text-center text-green-600 font-semibold">3 weeks</td><td class="py-2.5 px-4 text-center text-red-500">8 weeks</td></tr>
+                  <tr class="border-b border-slate-100 bg-slate-50"><td class="py-2.5 px-4">Error rate</td><td class="py-2.5 px-4 text-center text-green-600 font-semibold">&lt;0.1%</td><td class="py-2.5 px-4 text-center text-red-500">6–8%</td></tr>
+                  <tr class="border-b border-slate-100 bg-white"><td class="py-2.5 px-4">Annual comprehensive cost</td><td class="py-2.5 px-4 text-center text-green-600 font-semibold">S$22,000</td><td class="py-2.5 px-4 text-center text-red-500">S$31,000</td></tr>
+                  <tr class="bg-slate-50"><td class="py-2.5 px-4">MOM / MAS compliance</td><td class="py-2.5 px-4 text-center text-green-600 font-semibold">Built-in</td><td class="py-2.5 px-4 text-center text-red-500">Manual / extra cost</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="action"><span class="action-num">②</span><div>One-stop closed loop: product + implementation + operations + compliance maintenance. Eliminates coordination cost of managing 2–3 separate vendors for equivalent coverage.</div></div>
+          </div>
+        </div>
+
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge III.3</span>
+              <p class="text-slate-800 font-semibold mt-1">Fine-tuning LLMs is becoming commoditised. Your tech differentiation could vanish within 12 months.</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="action"><span class="action-num">①</span><div><span class="font-semibold text-slate-700">Proprietary scenario data is the real moat — not fine-tuning:</span> We are collecting <span class="m-badge-green">3,000+ real SEA SME business scenario data points</span> (SG HR contract templates, Indonesian reconciliation processes, Malaysian GST formats). Imitators cannot replicate this dataset without equivalent client deployments. Data compounds with each new client.</div></div>
+            <div class="action"><span class="action-num">②</span><div><span class="font-semibold text-slate-700">Continuous product velocity:</span> 1–2 new workflows per quarter + 1 core function upgrade annually (multilingual adaption Year 2, AI anomaly auto-alerting Year 3). The gap widens, not narrows, as we accumulate domain data and client feedback loops.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── DIMENSION IV ──────────────────────────────────── -->
+      <section id="dim4" class="section-anchor mb-14">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-11 h-11 rounded-xl bg-emerald-500 flex items-center justify-center text-white font-black text-lg flex-shrink-0">IV</div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Willingness to Pay &amp; Pricing Rationality</h2>
+            <p class="text-sm text-slate-500">3 questions — Budget conflicts, regional ROI dilution, and compliance liability.</p>
+          </div>
+        </div>
+
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge IV.1</span>
+              <p class="text-slate-800 font-semibold mt-1">At S$1,000/month you're consuming the entire software budget of a 75-person SME. They won't cancel Xero for you.</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="action"><span class="action-num">①</span><div><span class="font-semibold text-slate-700">Software linkage discounts:</span> Cooperation agreements with core SME software (Xero, inventory tools, CRMs). Bundle subscribers receive 15–20% combined discount — net software spend goes down, not up. <span class="m-badge-green">89% of clients choose core package or linkage plan.</span> Zero churn attributable to budget conflict to date.</div></div>
+            <div class="action"><span class="action-num">②</span><div><span class="font-semibold text-slate-700">Modular subscription design:</span> Basic Core Package (S$297–800/month) covers HR + Finance only — doesn't require displacing other tools. On-demand expansion as ROI is proven in-situ.</div></div>
+          </div>
+        </div>
+
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge IV.2</span>
+              <p class="text-slate-800 font-semibold mt-1">Indonesian and Vietnamese labour is cheap. Your ROI story collapses in those markets.</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="action"><span class="action-num">①</span><div><span class="font-semibold text-slate-700">Regional pricing adjustment:</span> VN/ID: implementation fees reduced 40% (S$800–12,000), monthly subscriptions reduced 30% (S$208–3,500). ROI payback period maintained at 6–9 months across all markets.</div></div>
+            <div class="action"><span class="action-num">②</span><div><span class="font-semibold text-slate-700">Value reframe for low-labour-cost markets:</span> Lead with <span class="m-badge-green">cash flow optimisation and compliance risk</span> — not labour savings. Indonesian SMEs shorten payment collection by 8–10 days via daily SOA reconciliation = direct working capital improvement. This is the #1 pain point for growth-stage businesses in those markets regardless of labour cost.</div></div>
+            <div class="mt-3 bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm">
+              <span class="font-semibold text-amber-800">Revised ARPU model:</span> SG: S$22K/year · VN/MY: S$12K/year · ID: S$8K/year → <strong>Weighted avg: S$15K/year</strong>. Year 5 revenue revised to S$225M (still high-growth, more defensible).
+            </div>
+          </div>
+        </div>
+
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge IV.3</span>
+              <p class="text-slate-800 font-semibold mt-1">A single compliance error in an AI-generated HR contract could be catastrophic. Who bears that liability?</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="action"><span class="action-num">①</span><div><span class="font-semibold text-slate-700">5% risk reserve in pricing:</span> Compliance error compensation budget built into every subscription. High-risk outputs (HR contracts, financial reconciliation) require mandatory human-in-the-loop review before execution. Compliance error rate: <span class="m-badge-green">&lt;0.05%</span> across current deployments.</div></div>
+            <div class="action"><span class="action-num">②</span><div><span class="font-semibold text-slate-700">Legal partnership for compliance guarantee:</span> Partnership with Singapore law firm providing free compliance consulting. If compliance issues arise from our AI, legal assistance is covered — capped at 3× annual subscription fee. Reduces client risk perception to near-zero. <span class="m-badge-green">Zero compliance errors or compensation cases to date.</span></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── DIMENSION V ───────────────────────────────────── -->
+      <section id="dim5" class="section-anchor mb-14">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-11 h-11 rounded-xl bg-orange-500 flex items-center justify-center text-white font-black text-lg flex-shrink-0">V</div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">GTM Feasibility &amp; Growth Sustainability</h2>
+            <p class="text-sm text-slate-500">4 questions — PSG dependency, WhatsApp coverage, dealer control, and deployment cycles.</p>
+          </div>
+        </div>
+
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibond text-slate-400 uppercase tracking-wide">VC Challenge V.1</span>
+              <p class="text-slate-800 font-semibold mt-1">PSG grant is a policy risk. If Enterprise Singapore changes the rules, your GTM collapses.</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="action"><span class="action-num">①</span><div><span class="font-semibold text-slate-700">Dedicated 3-person grant docking team:</span> Maintains direct ESG relationships. Locked in <span class="m-badge-green">≥10 monthly subsidy quotas</span>. PSG application acceptance rate: <span class="m-badge-green">98%</span> (vs. 85% industry average).</div></div>
+            <div class="action"><span class="action-num">②</span><div><span class="font-semibold text-slate-700">Fallback GTM covers 60% of Year 1 target independently:</span><br/>
+              — Industry association partnerships (SBF + SGTech): 8 salons/year for batch acquisition<br/>
+              — Referral programme: existing clients get 1 month free per referral; new client gets 10% off setup<br/>
+              PSG is an accelerant, not the foundation.</div></div>
+          </div>
+        </div>
+
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge V.2</span>
+              <p class="text-slate-800 font-semibold mt-1">WhatsApp live demos only work for deployment-heavy businesses. You're excluding whole sectors.</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="action"><span class="action-num">①</span><div><span class="font-semibold text-slate-700">Industry-specific demo routing:</span><br/>
+              Professional Services → HR contract automation demo<br/>
+              Manufacturing → Attendance &amp; working hours calculation demo<br/>
+              F&amp;B / Retail → Intelligent deployment scheduling demo<br/>
+              Finance/Admin → SOA reconciliation demo<br/>
+              Customers self-select via WhatsApp menu. 10-minute demo, no sales rep required. <span class="m-badge-green">Avg conversion: 42% across all industries</span> — no significant industry gap.</div></div>
+          </div>
+        </div>
+
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge V.3</span>
+              <p class="text-slate-800 font-semibold mt-1">Regional resellers will cut corners on implementation. You'll own the reputation risk but not the control.</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="action"><span class="action-num">①</span><div><span class="font-semibold text-slate-700">3-metric dealer KPI system:</span> Implementation acceptance rate ≥95% · Customer satisfaction ≥85 · Client retention ≥80%. Qualified dealers earn +5% commission bonus; underperformers are docked or terminated.</div></div>
+            <div class="action"><span class="action-num">②</span><div>1 regional supervisor per market; quarterly on-site compliance and quality reviews.</div></div>
+            <div class="action"><span class="action-num">③</span><div><span class="font-semibold text-slate-700">Contractual bite:</span> If client churn is caused by dealer service failure, dealer bears 50% of client's annual subscription fee as compensation. This creates genuine skin-in-the-game alignment.</div></div>
+          </div>
+        </div>
+
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge V.4</span>
+              <p class="text-slate-800 font-semibold mt-1">Customisation creep will blow your 3-week deployment promise. Enterprise projects always balloon.</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="action"><span class="action-num">①</span><div><span class="font-semibold text-slate-700">85/15 standardisation rule:</span> 85% of every workflow is a certified standard module. 15% is a controlled customisation zone handled by a dedicated implementation team. Max cycle: 4 weeks (3 standard + 1 custom).</div></div>
+            <div class="action"><span class="action-num">②</span><div><span class="font-semibold text-slate-700">Pre-contract scoping:</span> 1–2 day requirements discovery before signing. Non-standard needs are scoped, priced, and locked in writing before implementation begins. <span class="m-badge-green">92% of clients deploy within 3–4 weeks. Zero deployments have exceeded 6 weeks.</span></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── DIMENSION VI ──────────────────────────────────── -->
+      <section id="dim6" class="section-anchor mb-14">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-11 h-11 rounded-xl bg-teal-500 flex items-center justify-center text-white font-black text-lg flex-shrink-0">VI</div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Operations &amp; Financial Model Feasibility</h2>
+            <p class="text-sm text-slate-500">4 questions — API cost risks, regional reuse rates, ARPU dilution, and break-even timing.</p>
+          </div>
+        </div>
+
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge VI.1</span>
+              <p class="text-slate-800 font-semibold mt-1">API pricing from OpenAI, Google, and Anthropic could double overnight. Your 60% gross margin assumption will blow up.</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="action"><span class="action-num">①</span><div><span class="font-semibold text-slate-700">Multi-LLM hedging architecture:</span> 3-year agreements with OpenAI, Google (Gemini), and Anthropic (Claude) locking annual price increases at ≤5%. Multi-provider routing enables instant switching if one provider's pricing moves adversely.</div></div>
+            <div class="action"><span class="action-num">②</span><div><span class="font-semibold text-slate-700">Year 3 fine-tuned model strategy:</span> Develop a lightweight, domain-specific fine-tuned model covering 80% of core workflow inference needs, reducing third-party API dependency. Target: API costs &lt;15% of revenue by Year 3, protecting ≥60% gross margin structurally.</div></div>
+          </div>
+        </div>
+
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge VI.2</span>
+              <p class="text-slate-800 font-semibold mt-1">Regional expansion will require rebuilding workflows from scratch for each country. Your "40% cost decline" assumption doesn't hold.</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="action"><span class="action-num">①</span><div><span class="font-semibold text-slate-700">Regional Workflow Library (Year 3 target):</span> Localised templates for each country's compliance framework — Indonesian labour law HR, Malaysian GST reconciliation, Vietnamese tax reporting. Target workflow reuse rate: <span class="m-badge-green">&gt;70%</span> by Year 3.</div></div>
+            <div class="action"><span class="action-num">②</span><div><span class="font-semibold text-slate-700">HQ-standardised + regional-localised delivery model:</span> Core workflow logic built centrally; regional teams handle only localisation layer. Per-capita implementation efficiency improves 30% with scale. Confirms 40% implementation cost reduction from Year 1 → Year 5.</div></div>
+          </div>
+        </div>
+
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge VI.3</span>
+              <p class="text-slate-800 font-semibold mt-1">Your S$22K ARPU assumption breaks down in lower-wage SEA markets. Year 5 revenue of S$330M is not credible.</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="overflow-x-auto mb-4">
+              <table class="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
+                <thead class="bg-slate-800 text-white">
+                  <tr><th class="text-left py-2.5 px-4">Market</th><th class="text-center py-2.5 px-4">ARPU / Year</th><th class="text-center py-2.5 px-4">Year 5 Client Mix</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-slate-100 bg-white"><td class="py-2.5 px-4">🇸🇬 Singapore</td><td class="py-2.5 px-4 text-center font-semibold text-green-600">S$22,000</td><td class="py-2.5 px-4 text-center">35%</td></tr>
+                  <tr class="border-b border-slate-100 bg-slate-50"><td class="py-2.5 px-4">🇻🇳🇲🇾 Vietnam / Malaysia</td><td class="py-2.5 px-4 text-center font-semibold text-blue-600">S$12,000</td><td class="py-2.5 px-4 text-center">40%</td></tr>
+                  <tr class="border-b border-slate-100 bg-white"><td class="py-2.5 px-4">🇮🇩 Indonesia</td><td class="py-2.5 px-4 text-center font-semibold text-orange-500">S$8,000</td><td class="py-2.5 px-4 text-center">25%</td></tr>
+                  <tr class="bg-blue-50 font-semibold"><td class="py-2.5 px-4">Weighted Average</td><td class="py-2.5 px-4 text-center text-blue-700">S$15,000</td><td class="py-2.5 px-4 text-center text-blue-700">→ Year 5 Rev: S$225M</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-sm text-slate-600">S$225M (15K clients × S$15K) replaces the S$330M figure. Still a strong growth story — and far more defensible to investors.</p>
+          </div>
+        </div>
+
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge VI.4</span>
+              <p class="text-slate-800 font-semibold mt-1">B2B sales cycles are long. Your Month 10 break-even assumes clean, fast payments that won't materialise.</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="action"><span class="action-num">①</span><div><span class="font-semibold text-slate-700">Compressed sales cycle:</span> "3-week AI Discovery + WhatsApp demo + PSG subsidy docking" reduces average cycle to 4–5 weeks. 100 clients targeted within first 10 months of Year 1. Prepayment discount (10% off for 3-month upfront) accelerates cash flow.</div></div>
+            <div class="action"><span class="action-num">②</span><div><span class="font-semibold text-slate-700">Cash flow model on realistic payment terms:</span> 30–60 day payment terms modelled (not instant). Accounts receivable factoring available via bank partnership for early cash recovery. <span class="m-badge-green">78% of current clients pay within 45 days or prepay.</span> Break-even remains Month 10 on conservative cash-flow basis.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── DIMENSION VII ─────────────────────────────────── -->
+      <section id="dim7" class="section-anchor mb-14">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-11 h-11 rounded-xl bg-rose-500 flex items-center justify-center text-white font-black text-lg flex-shrink-0">VII</div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Risk Mitigation Effectiveness</h2>
+            <p class="text-sm text-slate-500">4 questions — Giant ecosystem threats, model degradation, dealer compliance, and data sovereignty.</p>
+          </div>
+        </div>
+
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge VII.1</span>
+              <p class="text-slate-800 font-semibold mt-1">Your "integration layer" defence is passive. Microsoft will build SEA SME templates into Copilot and make you redundant.</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="action"><span class="action-num">①</span><div><span class="font-semibold text-slate-700">Repositioning as the SEA SME AI Hub — not just a connector:</span> Our integration layer bundles tools + local compliance capabilities + scenario-specific models. Giants lack regional scenario data and local compliance depth. We become the specialised layer they route SME clients to, not the one they replace.</div></div>
+            <div class="action"><span class="action-num">②</span><div><span class="font-semibold text-slate-700">Proactive ecosystem play:</span> We have opened exploratory discussions with Microsoft's SEA team to position ElitezAI as the recommended agentic workflow layer for Microsoft M365 Southeast Asian SME customers — using their distribution, not competing with it.</div></div>
+          </div>
+        </div>
+
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge VII.2</span>
+              <p class="text-slate-800 font-semibold mt-1">AI model performance decays as business rules change. Quarterly retraining won't keep up. Clients will churn.</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="action"><span class="action-num">①</span><div><span class="font-semibold text-slate-700">Real-time model update mechanism:</span> Live connections to clients' Xero / HR systems capture rule changes as they occur. Weekly micro fine-tuning + monthly comprehensive updates. Performance stays synchronised with dynamic business needs — not a periodic patch cycle.</div></div>
+            <div class="action"><span class="action-num">②</span><div><span class="font-semibold text-slate-700">Rapid feedback loop:</span> Dedicated client contact submits change requests → 24h response SLA → 72h model adjustment. <span class="m-badge-green">Model satisfaction rate: 91%. Annual churn: &lt;5%</span> (vs. 12% industry average).</div></div>
+          </div>
+        </div>
+
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge VII.3</span>
+              <p class="text-slate-800 font-semibold mt-1">Regional resellers won't understand AI governance. You'll inherit their compliance failures.</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="action"><span class="action-num">①</span><div><span class="font-semibold text-slate-700">HQ-level compliance control layer:</span> 1 regional compliance specialist per market reviews dealer work and conducts regular inspections.</div></div>
+            <div class="action"><span class="action-num">②</span><div><span class="font-semibold text-slate-700">Country-specific compliance manuals:</span> Localised AI governance + data privacy guides distributed to all dealers. Online certification programme. Local compliance institution partnerships for ongoing support.</div></div>
+            <div class="action"><span class="action-num">③</span><div><span class="font-semibold text-slate-700">Full liability transfer in dealer contracts:</span> If we incur liability due to dealer non-compliance, dealer bears 100% of resulting costs. Creates correct incentive alignment.</div></div>
+          </div>
+        </div>
+
+        <div class="qa-card">
+          <div class="qa-question" onclick="toggleQA(this)">
+            <div>
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wide">VC Challenge VII.4</span>
+              <p class="text-slate-800 font-semibold mt-1">Indonesia and Malaysia require data to be stored locally. Your cloud architecture will get expensive fast.</p>
+            </div>
+            <svg class="chevron w-5 h-5 text-slate-400 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="qa-answer">
+            <div class="action"><span class="action-num">①</span><div><span class="font-semibold text-slate-700">Regional VPC architecture:</span> Telkomsel Cloud (Indonesia) and TM Cloud (Malaysia) host private VPCs for local data residency compliance. Singapore clients remain on Singapore-hosted VPCs. Fully compliant with national data sovereignty requirements without a monolithic architecture.</div></div>
+            <div class="action"><span class="action-num">②</span><div><span class="font-semibold text-slate-700">Cost contained via long-term agreements:</span> Bulk purchasing + multi-year contracts cap incremental regional cloud infrastructure cost at &lt;20% uplift. Unit cost decreases as regional client volume grows — the cost structure improves, not worsens, with scale.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bottom CTA -->
+      <div class="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-8 text-center">
+        <h3 class="text-white text-2xl font-bold mb-2">Still have questions?</h3>
+        <p class="text-slate-400 mb-6">Schedule a 30-minute deep-dive with our founding team. We'll walk you through live client data, workflow demos, and our full financial model.</p>
+        <a href="index.html#contact" class="inline-block bg-sky-500 hover:bg-sky-400 text-white font-semibold px-8 py-3 rounded-xl transition">Request Investor Meeting →</a>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="bg-slate-900 mt-20 py-8 border-t border-slate-800">
+  <div class="max-w-7xl mx-auto px-6">
+    <!-- Chicago Booth badge -->
+    <div class="flex items-center justify-center mb-6">
+      <div class="inline-flex items-center gap-3 bg-[#800000]/10 border border-[#800000]/30 rounded-xl px-5 py-3">
+        <img src="https://www.wes.org/wp-content/uploads/2018/05/chicago-booth.png" alt="Chicago Booth" class="h-9 w-auto flex-shrink-0" />
+        <div>
+          <div class="text-rose-400 font-bold text-sm">Chicago Booth School of Business</div>
+          <div class="text-slate-400 text-xs">Business Analytics · Final Assignment · March 2026 · Academic Purpose Only — Not a real commercial venture.</div>
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400 border-t border-slate-800 pt-6">
+      <span>© 2026 Elitez Group · ElitezAI · Singapore Model AI Governance Framework compliant</span>
+      <div class="flex gap-6">
+        <a href="index.html" class="hover:text-white transition">Main Site</a>
+        <a href="index.html#pricing" class="hover:text-white transition">Pricing</a>
+        <a href="index.html#contact" class="hover:text-white transition">Contact</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Toggle Q&A
+  function toggleQA(el) {
+    const answer  = el.nextElementSibling;
+    const chevron = el.querySelector('.chevron');
+    const isOpen  = answer.classList.contains('open');
+    answer.classList.toggle('open', !isOpen);
+    chevron.classList.toggle('open', !isOpen);
+  }
+
+  // Sidebar active state on scroll
+  const sections = document.querySelectorAll('.section-anchor');
+  const pills    = document.querySelectorAll('.dim-pill');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        pills.forEach(p => {
+          p.classList.toggle('active', p.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+
+  // Open all Q&As that are in viewport on load
+  document.querySelectorAll('.qa-card').forEach((card, i) => {
+    if (i === 0) {
+      const q = card.querySelector('.qa-question');
+      const a = card.querySelector('.qa-answer');
+      const c = card.querySelector('.chevron');
+      a.classList.add('open');
+      c.classList.add('open');
+    }
+  });
+</script>
+</body>
+</html>
