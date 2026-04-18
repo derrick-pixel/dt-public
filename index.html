@@ -258,6 +258,75 @@
       border: 1px solid rgba(245,158,11,.28);
       text-transform: uppercase; flex-shrink: 0;
     }
+    .wip-interactive { cursor: pointer; }
+    .wip-card.wip-interactive:hover {
+      border-color: rgba(245,158,11,.35);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow);
+    }
+
+    /* ── WIP MODAL ── */
+    .wip-modal {
+      display: none; position: fixed; inset: 0; z-index: 9999;
+      background: rgba(10,15,30,.82); backdrop-filter: blur(8px);
+      align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    :root[data-theme="light"] .wip-modal { background: rgba(15,23,42,.55); }
+    .wip-modal.open { display: flex; }
+    .wip-modal-dialog {
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 14px;
+      max-width: 520px; width: 100%;
+      max-height: 85vh; overflow-y: auto;
+      box-shadow: 0 24px 64px rgba(0,0,0,.5);
+      position: relative;
+    }
+    .wip-modal-img {
+      width: 100%; aspect-ratio: 16/9;
+      background-size: cover; background-position: center;
+      background-color: var(--card);
+      border-bottom: 1px solid var(--border);
+    }
+    .wip-modal-body { padding: 22px 24px 20px; }
+    .wip-modal-top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .wip-modal-icon { font-size: 1.4rem; line-height: 1; }
+    .wip-modal-title { font-size: 1.15rem; font-weight: 800; letter-spacing: -.02em; color: var(--text); }
+    .wip-modal-status {
+      display: inline-block;
+      font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--gold); padding: 4px 9px; border-radius: 100px;
+      background: rgba(245,158,11,.12); border: 1px solid rgba(245,158,11,.28);
+      margin-bottom: 14px;
+    }
+    .wip-modal-desc { font-size: .82rem; color: var(--muted2); line-height: 1.6; margin-bottom: 0; }
+    .wip-modal-cta {
+      display: flex; gap: 8px; margin-top: 18px; padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .wip-modal-cta a, .wip-modal-cta button {
+      flex: 1; text-align: center;
+      padding: 10px 14px; border-radius: 7px;
+      font-size: .78rem; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: all .15s;
+    }
+    .wip-modal-cta a.primary {
+      background: var(--accent); color: #0a0f1e; border: 1px solid transparent;
+    }
+    .wip-modal-cta a.primary:hover { filter: brightness(1.1); }
+    .wip-modal-cta button.secondary {
+      background: transparent; color: var(--muted2); border: 1px solid var(--border2);
+    }
+    .wip-modal-cta button.secondary:hover { color: var(--text); border-color: var(--muted2); }
+    .wip-modal-close {
+      position: absolute; top: 10px; right: 12px;
+      background: rgba(0,0,0,.3); border: 1px solid var(--border2);
+      color: var(--text); width: 28px; height: 28px; border-radius: 50%;
+      font-size: 1rem; cursor: pointer; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      font-family: inherit;
+    }
+    .wip-modal-close:hover { background: rgba(0,0,0,.5); }
 
     /* ── FOOTER ── */
     .main-footer {
@@ -491,34 +560,34 @@
 
     <div class="project-grid">
 
-      <div class="project-card wip-card">
+      <div class="project-card wip-card wip-interactive">
         <div class="wip-teaser" style="background-image: url('wip/aevum.jpg')"></div>
         <div class="pc-top"><div class="pc-icon-name"><span class="pc-icon">🏥</span><span class="pc-name">AEVUM MRI</span></div><span class="wip-badge">WIP</span></div>
         <p class="pc-desc">Premium concierge MRI screening clinic in Johor Bahru — by Elitez Group. Aesthetic-first booking and care journey.</p>
         <span class="pc-tag tag-blue">Healthcare · Premium</span>
       </div>
 
-      <div class="project-card wip-card">
+      <div class="project-card wip-card wip-interactive">
         <div class="wip-teaser" style="background-image: url('wip/discounter.png')"></div>
         <div class="pc-top"><div class="pc-icon-name"><span class="pc-icon">🛒</span><span class="pc-name">Discounter</span></div><span class="wip-badge">WIP</span></div>
         <p class="pc-desc">FMCG clearance platform delivering weekly essentials to Singapore worker dormitories. Bulk pricing, zero waste, direct delivery.</p>
         <span class="pc-tag tag-green">FMCG · Next.js</span>
       </div>
 
-      <div class="project-card wip-card">
+      <div class="project-card wip-card wip-interactive">
         <div class="wip-teaser" style="background-image: url('wip/elitezai.png')"></div>
         <div class="pc-top"><div class="pc-icon-name"><span class="pc-icon">🤖</span><span class="pc-name">ElitezAI</span></div><span class="wip-badge">WIP</span></div>
         <p class="pc-desc">Agentic AI workflows for Southeast Asian SMEs — automating recruitment ops, document processing, and client communications.</p>
         <span class="pc-tag tag-blue">AI · Workflows</span>
       </div>
 
-      <div class="project-card wip-card">
+      <div class="project-card wip-card wip-interactive">
         <div class="pc-top"><div class="pc-icon-name"><span class="pc-icon">📄</span><span class="pc-name">ELIX Resume</span></div><span class="wip-badge">WIP</span></div>
         <p class="pc-desc">Free browser-based resume editor — create, customise, and export professional resumes with live preview and PDF export. No sign-up, nothing stored.</p>
         <span class="pc-tag tag-purple">HR · Tools</span>
       </div>
 
-      <div class="project-card wip-card">
+      <div class="project-card wip-card wip-interactive">
         <div class="pc-top"><div class="pc-icon-name"><span class="pc-icon">🌐</span><span class="pc-name">DT Site Creator</span></div><span class="wip-badge">WIP</span></div>
         <p class="pc-desc">Personal style agent and component library trained on my prior sites — for rapid, on-brand site builds.</p>
         <span class="pc-tag tag-gold">Tools · Web</span>
@@ -530,7 +599,7 @@
         <span class="pc-tag tag-gold">Engineering · Dashboard</span>
       </div>
 
-      <div class="project-card wip-card">
+      <div class="project-card wip-card wip-interactive">
         <div class="pc-top"><div class="pc-icon-name"><span class="pc-icon">👔</span><span class="pc-name">Elitez C-Suite</span></div><span class="wip-badge">WIP</span></div>
         <p class="pc-desc">Internal leadership console for the Elitez Group executive team — more to come.</p>
         <span class="pc-tag tag-purple">Executive · Elitez</span>
@@ -550,6 +619,26 @@
 
 </div>
 
+<!-- WIP modal -->
+<div class="wip-modal" id="wip-modal" role="dialog" aria-modal="true" aria-labelledby="wip-modal-title">
+  <div class="wip-modal-dialog">
+    <button type="button" class="wip-modal-close" id="wip-modal-close" aria-label="Close">×</button>
+    <div class="wip-modal-img" id="wip-modal-img"></div>
+    <div class="wip-modal-body">
+      <div class="wip-modal-top">
+        <span class="wip-modal-icon" id="wip-modal-icon"></span>
+        <span class="wip-modal-title" id="wip-modal-title"></span>
+      </div>
+      <span class="wip-modal-status">Work in progress</span>
+      <p class="wip-modal-desc" id="wip-modal-desc"></p>
+      <div class="wip-modal-cta">
+        <a class="primary" id="wip-modal-email" href="mailto:derrick@elitez.asia">Get in touch</a>
+        <button type="button" class="secondary" id="wip-modal-close2">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   (function () {
     const root = document.documentElement;
@@ -562,6 +651,48 @@
       if (next === 'light') root.setAttribute('data-theme', 'light');
       else root.removeAttribute('data-theme');
       localStorage.setItem(KEY, next);
+    });
+  })();
+
+  (function () {
+    const modal = document.getElementById('wip-modal');
+    const img = document.getElementById('wip-modal-img');
+    const icon = document.getElementById('wip-modal-icon');
+    const title = document.getElementById('wip-modal-title');
+    const desc = document.getElementById('wip-modal-desc');
+    const email = document.getElementById('wip-modal-email');
+
+    function open(card) {
+      const iconEl = card.querySelector('.pc-icon');
+      const nameEl = card.querySelector('.pc-name');
+      const descEl = card.querySelector('.pc-desc');
+      const teaserEl = card.querySelector('.wip-teaser');
+      icon.textContent = iconEl ? iconEl.textContent : '';
+      title.textContent = nameEl ? nameEl.textContent : '';
+      desc.textContent = descEl ? descEl.textContent : '';
+      if (teaserEl && teaserEl.style.backgroundImage) {
+        img.style.backgroundImage = teaserEl.style.backgroundImage;
+        img.style.display = 'block';
+      } else {
+        img.style.display = 'none';
+      }
+      const subject = 'Interested in ' + (nameEl ? nameEl.textContent : 'your project');
+      email.href = 'mailto:derrick@elitez.asia?subject=' + encodeURIComponent(subject);
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    document.querySelectorAll('.wip-interactive').forEach(card => {
+      card.addEventListener('click', () => open(card));
+    });
+    document.getElementById('wip-modal-close').addEventListener('click', close);
+    document.getElementById('wip-modal-close2').addEventListener('click', close);
+    modal.addEventListener('click', e => { if (e.target === modal) close(); });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) close();
     });
   })();
 </script>
