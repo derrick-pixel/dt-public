@@ -35,6 +35,14 @@ for entry in "${WIP_REPOS[@]}"; do
   rm -rf ".tmp-sync/.git" ".tmp-sync/.github"
   rm -rf "./$folder"
   mv ".tmp-sync" "./$folder"
+
+  # SEO: mark every HTML page in the mirror as noindex,nofollow
+  # so Google doesn't treat these snapshots as duplicate content of the live sites.
+  while IFS= read -r f; do
+    if ! grep -q 'name="robots"' "$f"; then
+      perl -i -CSD -0777 -pe 's|</head>|  <meta name="robots" content="noindex, nofollow">\n</head>|' "$f"
+    fi
+  done < <(find "./$folder" -name "*.html" -type f)
 done
 
 echo ""
