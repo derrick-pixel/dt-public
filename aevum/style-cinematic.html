@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AEVUM — One hour. The next decade.</title>
+<meta name="description" content="A premium concierge full-body MRI clinic in Johor Bahru. Built for those who measure life in decades." />
+
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://derrick-pixel.github.io/Elitez_MRI/style-cinematic.html" />
+<meta property="og:title" content="AEVUM — One hour. The next decade." />
+<meta property="og:image" content="https://derrick-pixel.github.io/Elitez_MRI/og-image.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+<style>
+  :root, [data-theme="dark"] {
+    --bg: #050505;
+    --bg-2: #0E0E0E;
+    --surface: #161616;
+    --line: rgba(255,255,255,0.10);
+    --line-2: rgba(255,255,255,0.20);
+    --text: #FFFFFF;
+    --text-2: #D4D4D4;
+    --muted: #999999;
+    --coral: #FF5733;
+    --coral-soft: #FF7E5A;
+    --warm: #F5E6D3;
+  }
+  [data-theme="light"] {
+    --bg: #FFFFFF;
+    --bg-2: #F5F5F5;
+    --surface: #FAFAFA;
+    --line: rgba(0,0,0,0.10);
+    --line-2: rgba(0,0,0,0.18);
+    --text: #050505;
+    --text-2: #2C2C2C;
+    --muted: #6B6B6B;
+    --coral: #E8451F;
+    --coral-soft: #FF6B45;
+    --warm: #1A1A1A;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Archivo', sans-serif;
+    font-size: 17px; line-height: 1.65; font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.4s, color 0.4s;
+  }
+
+  /* ── Typography ─────────────────────────────────────────────── */
+  .display { font-family: 'Archivo Black', 'Archivo', sans-serif; line-height: 0.92; letter-spacing: -0.04em; font-weight: 900; text-transform: uppercase; }
+  .display .accent { color: var(--coral); }
+  .display .stroke {
+    -webkit-text-stroke: 2px var(--text);
+    color: transparent;
+  }
+  h1.display { font-size: clamp(3.2rem, 11vw, 9rem); }
+  h2.display { font-size: clamp(2.4rem, 6vw, 5rem); }
+  h3.display { font-size: clamp(1.6rem, 3vw, 2.6rem); }
+  p { font-size: 1.08rem; color: var(--text-2); line-height: 1.7; font-weight: 500; }
+  p strong { color: var(--text); font-weight: 700; }
+  .lead { font-size: 1.3rem; line-height: 1.5; color: var(--text); font-weight: 600; }
+  .label {
+    font-family: 'Archivo', sans-serif; font-size: 0.84rem;
+    letter-spacing: 0.32em; text-transform: uppercase; font-weight: 800;
+    color: var(--coral); display: inline-flex; align-items: center; gap: 12px;
+  }
+  .label::before { content: ''; width: 32px; height: 2px; background: var(--coral); }
+  a { color: inherit; text-decoration: none; transition: color 0.2s; }
+  a:hover { color: var(--coral); }
+
+  /* Container */
+  .container { max-width: 1320px; margin: 0 auto; padding: 0 36px; }
+  @media (max-width: 768px) { .container { padding: 0 22px; } }
+  section { padding: 130px 0; position: relative; }
+  @media (max-width: 768px) { section { padding: 70px 0; } }
+
+  /* Navigation */
+  nav.bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: color-mix(in srgb, var(--bg) 90%, transparent);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--line);
+    transition: background 0.4s, border-color 0.4s;
+  }
+  .nav-inner { max-width: 1320px; margin: 0 auto; padding: 0 36px; height: 80px; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+  .brand { font-family: 'Archivo Black', sans-serif; font-size: 1.4rem; letter-spacing: 0.08em; color: var(--text); display: inline-flex; align-items: center; gap: 12px; }
+  .brand .dot { width: 10px; height: 10px; background: var(--coral); border-radius: 50%; box-shadow: 0 0 16px var(--coral); }
+  .nav-links { display: flex; gap: 30px; font-size: 0.84rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-2); }
+  .nav-links a:hover { color: var(--coral); }
+
+  .theme-toggle { background: var(--surface); border: 1px solid var(--line-2); border-radius: 100px; padding: 5px; display: flex; gap: 4px; cursor: pointer; transition: all 0.25s; }
+  .theme-toggle:hover { border-color: var(--coral); }
+  .theme-toggle button { background: transparent; border: none; cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--muted); transition: all 0.25s; }
+  .theme-toggle button.active { background: var(--coral); color: var(--bg); }
+  .theme-toggle svg { width: 16px; height: 16px; }
+
+  .nav-cta {
+    background: var(--coral); color: var(--bg);
+    border: none; padding: 14px 24px; font-size: 0.84rem;
+    letter-spacing: 0.16em; text-transform: uppercase; font-weight: 800;
+    cursor: pointer; transition: all 0.2s; font-family: 'Archivo', sans-serif;
+    border-radius: 0;
+  }
+  .nav-cta:hover { background: var(--coral-soft); transform: translateY(-1px); }
+
+  .hamburger { display: none; width: 28px; height: 18px; cursor: pointer; flex-direction: column; justify-content: space-between; }
+  .hamburger span { display: block; width: 100%; height: 2px; background: var(--text); transition: 0.25s; }
+  .hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+  @media (max-width: 1024px) { .nav-links { display: none; } .hamburger { display: flex; } }
+  .mobile-menu { position: fixed; top: 80px; left: 0; right: 0; background: var(--bg-2); border-bottom: 1px solid var(--line); padding: 24px 36px; transform: translateY(-110%); transition: transform 0.3s; z-index: 99; }
+  .mobile-menu.open { transform: translateY(0); }
+  .mobile-menu a { display: block; padding: 14px 0; font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; border-bottom: 1px solid var(--line); }
+
+  /* Hero */
+  .hero { padding-top: 180px; padding-bottom: 90px; position: relative; overflow: hidden; }
+  .hero-meta { display: flex; gap: 16px; margin-bottom: 36px; flex-wrap: wrap; }
+  .hero-pill {
+    background: var(--surface); border: 1px solid var(--line-2);
+    padding: 9px 18px; font-size: 0.82rem; font-weight: 700;
+    color: var(--text-2); letter-spacing: 0.12em; text-transform: uppercase;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .hero-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--coral); }
+  .hero h1 { color: var(--text); margin-bottom: 36px; }
+  .hero-sub { font-size: 1.3rem; line-height: 1.5; color: var(--text); font-weight: 600; max-width: 720px; margin-bottom: 44px; }
+  .hero-sub strong { color: var(--coral); font-weight: 800; }
+  .hero-cta { display: flex; gap: 18px; flex-wrap: wrap; }
+  .btn-pri {
+    background: var(--coral); color: var(--bg);
+    padding: 18px 32px; font-size: 0.88rem; letter-spacing: 0.16em;
+    text-transform: uppercase; border: none; cursor: pointer;
+    transition: all 0.2s; font-family: 'Archivo', sans-serif; font-weight: 800;
+    display: inline-flex; align-items: center; gap: 12px;
+  }
+  .btn-pri::after { content: '→'; font-size: 1.1rem; }
+  .btn-pri:hover { background: var(--coral-soft); transform: translateY(-2px); }
+  .btn-ghost {
+    background: transparent; color: var(--text); border: 2px solid var(--text);
+    padding: 16px 30px; font-size: 0.88rem; letter-spacing: 0.16em;
+    text-transform: uppercase; cursor: pointer; font-weight: 800;
+    transition: all 0.2s; font-family: 'Archivo', sans-serif;
+  }
+  .btn-ghost:hover { background: var(--text); color: var(--bg); }
+
+  /* Big number marquee */
+  .marquee {
+    margin-top: 80px; padding: 28px 0; border-top: 2px solid var(--text); border-bottom: 2px solid var(--text);
+    display: flex; gap: 60px; align-items: center; overflow: hidden; white-space: nowrap;
+  }
+  .marquee-track { display: flex; gap: 60px; align-items: center; animation: scroll 40s linear infinite; }
+  @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .marquee-item { font-family: 'Archivo Black', sans-serif; font-size: 1.4rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text); display: inline-flex; align-items: center; gap: 60px; }
+  .marquee-item .dot { width: 10px; height: 10px; background: var(--coral); }
+
+  /* Section header */
+  .sec-h { display: flex; justify-content: space-between; align-items: end; gap: 40px; padding-bottom: 28px; border-bottom: 2px solid var(--text); margin-bottom: 60px; }
+  @media (max-width: 768px) { .sec-h { flex-direction: column; align-items: start; gap: 18px; } }
+  .sec-h h2 { margin-top: 18px; }
+  .sec-h .num { font-family: 'Archivo Black', sans-serif; font-size: 5rem; line-height: 0.9; color: var(--coral); letter-spacing: -0.04em; }
+
+  /* Premise */
+  .premise-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 72px; align-items: start; }
+  @media (max-width: 900px) { .premise-grid { grid-template-columns: 1fr; gap: 40px; } }
+  .premise-l p { font-size: 1.18rem; margin-bottom: 22px; line-height: 1.65; }
+  .pull-quote {
+    background: var(--surface); border-left: 6px solid var(--coral);
+    padding: 32px 36px; margin: 36px 0;
+  }
+  .pull-quote p { font-family: 'Archivo Black', sans-serif; font-size: clamp(1.3rem, 2.4vw, 1.9rem); color: var(--text); line-height: 1.25; margin: 0; text-transform: uppercase; letter-spacing: -0.01em; }
+  .premise-r {
+    background: var(--surface); padding: 36px;
+    border-top: 4px solid var(--coral);
+  }
+  .premise-r h4 { font-family: 'Archivo Black', sans-serif; font-size: 0.84rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--coral); margin-bottom: 28px; }
+  .premise-stat { padding: 22px 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: baseline; }
+  .premise-stat:last-child { border-bottom: none; }
+  .premise-stat .num { font-family: 'Archivo Black', sans-serif; font-size: 2.8rem; line-height: 1; letter-spacing: -0.04em; color: var(--text); }
+  .premise-stat .num span { color: var(--coral); }
+  .premise-stat .desc { font-size: 0.96rem; color: var(--text-2); line-height: 1.5; }
+
+  /* Experience — vertical timeline */
+  .timeline-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  @media (max-width: 768px) { .timeline-grid { grid-template-columns: 1fr; } }
+  .tl-card { background: var(--bg); padding: 48px 40px; transition: all 0.25s; }
+  .tl-card:hover { background: var(--surface); }
+  .tl-num { font-family: 'Archivo Black', sans-serif; font-size: 4rem; line-height: 0.9; color: var(--coral); letter-spacing: -0.04em; margin-bottom: 22px; }
+  .tl-card h3 { font-family: 'Archivo Black', sans-serif; text-transform: uppercase; font-size: 1.45rem; line-height: 1.1; margin-bottom: 14px; letter-spacing: -0.01em; }
+  .tl-card p { color: var(--text-2); font-size: 1.02rem; }
+
+  /* Technology */
+  .technology { background: var(--bg-2); }
+  .tech-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 900px) { .tech-grid { grid-template-columns: 1fr; } }
+  .tech-card { background: var(--bg); border: 1px solid var(--line); padding: 36px; }
+  .tech-card .num { font-family: 'Archivo Black', sans-serif; font-size: 0.82rem; color: var(--coral); margin-bottom: 18px; letter-spacing: 0.18em; text-transform: uppercase; }
+  .tech-card h3 { font-family: 'Archivo Black', sans-serif; text-transform: uppercase; font-size: 1.4rem; line-height: 1.1; margin-bottom: 14px; letter-spacing: -0.01em; }
+  .tech-card p { color: var(--text-2); font-size: 1rem; margin-bottom: 24px; }
+  .tech-rows { padding-top: 18px; border-top: 1px solid var(--line); }
+  .tech-rows .r { display: flex; justify-content: space-between; padding: 8px 0; font-size: 0.9rem; }
+  .tech-rows .r .k { color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.82rem; }
+  .tech-rows .r .v { font-weight: 800; }
+
+  /* Packages */
+  .pkg-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+  @media (max-width: 1024px) { .pkg-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px) { .pkg-grid { grid-template-columns: 1fr; } }
+  .pkg { background: var(--bg); border: 1px solid var(--line); border-right: none; padding: 36px 32px; display: flex; flex-direction: column; transition: all 0.3s; }
+  .pkg:last-child { border-right: 1px solid var(--line); }
+  @media (max-width: 1024px) { .pkg:nth-child(2n) { border-right: 1px solid var(--line); } .pkg { border-right: none; } }
+  @media (max-width: 640px) { .pkg { border-right: 1px solid var(--line); border-bottom: none; } .pkg:last-child { border-bottom: 1px solid var(--line); } }
+  .pkg:hover { background: var(--surface); }
+  .pkg.feat { background: var(--coral); color: var(--bg); }
+  .pkg.feat .pkg-tag, .pkg.feat .pkg-name, .pkg.feat .pkg-price-myr { color: var(--bg); }
+  .pkg.feat .pkg-price-sgd, .pkg.feat .pkg-target { color: rgba(0,0,0,0.7); }
+  .pkg.feat .pkg-incl li { color: var(--bg); }
+  .pkg.feat .pkg-incl li::before { color: var(--bg); }
+  .pkg.feat .pkg-cta { background: var(--bg); color: var(--coral); }
+  .pkg.feat:hover { background: var(--coral-soft); }
+  .pkg-tag { font-family: 'Archivo Black', sans-serif; font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--coral); margin-bottom: 22px; }
+  .pkg-name { font-family: 'Archivo Black', sans-serif; font-size: 1.7rem; text-transform: uppercase; line-height: 1.05; margin-bottom: 6px; letter-spacing: -0.01em; }
+  .pkg-price { padding: 22px 0; border-top: 1px solid currentColor; border-bottom: 1px solid currentColor; opacity: 0.95; }
+  .pkg.feat .pkg-price { border-color: rgba(0,0,0,0.2); }
+  .pkg-price-myr { font-family: 'Archivo Black', sans-serif; font-size: 2rem; line-height: 1; letter-spacing: -0.02em; }
+  .pkg-price-sgd { font-size: 0.86rem; color: var(--muted); margin-top: 8px; font-weight: 600; }
+  .pkg-incl { list-style: none; flex: 1; padding-top: 18px; }
+  .pkg-incl li { padding: 8px 0; font-size: 0.96rem; display: flex; gap: 10px; align-items: start; line-height: 1.45; font-weight: 500; }
+  .pkg-incl li::before { content: '✕'; color: var(--coral); font-weight: 800; flex-shrink: 0; }
+  .pkg-target { font-size: 0.92rem; color: var(--muted); margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); font-weight: 600; line-height: 1.45; }
+  .pkg.feat .pkg-target { border-color: rgba(0,0,0,0.2); }
+  .pkg-cta { margin-top: 22px; width: 100%; padding: 14px; background: var(--coral); color: var(--bg); border: none; font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 0.86rem; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+  .pkg-cta:hover { transform: translateY(-1px); }
+
+  /* Consultation */
+  .consult { background: var(--bg-2); }
+  .consult-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  @media (max-width: 900px) { .consult-grid { grid-template-columns: 1fr; gap: 50px; } }
+  .consult-l h2 { margin-bottom: 28px; }
+  .consult-l p { font-size: 1.1rem; margin-bottom: 18px; }
+  .consult-r {
+    background: var(--bg); border: 1px solid var(--line); padding: 48px;
+    border-top: 6px solid var(--coral);
+  }
+  .consult-r h4 { font-family: 'Archivo Black', sans-serif; font-size: 0.88rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--coral); margin-bottom: 28px; }
+  .stat-bar { padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .stat-bar:last-child { border-bottom: none; }
+  .stat-bar-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+  .stat-bar-label { font-size: 1rem; font-weight: 600; }
+  .stat-bar-pct { font-family: 'Archivo Black', sans-serif; font-size: 1.6rem; letter-spacing: -0.04em; color: var(--coral); }
+  .stat-bar-track { height: 10px; background: var(--surface); border-radius: 0; overflow: hidden; }
+  .stat-bar-fill { height: 100%; background: var(--coral); transition: width 1.4s cubic-bezier(0.16,1,0.3,1); }
+
+  /* Facility */
+  .fac-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 900px) { .fac-grid { grid-template-columns: 1fr; } }
+  .fac-card { background: var(--surface); border: 1px solid var(--line); padding: 36px; }
+  .fac-card h4 { font-family: 'Archivo Black', sans-serif; font-size: 1.3rem; line-height: 1.15; text-transform: uppercase; margin-bottom: 14px; letter-spacing: -0.01em; }
+  .fac-card p { color: var(--text-2); font-size: 1rem; }
+  .fac-meta { font-family: 'Archivo Black', sans-serif; font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--coral); margin-top: 18px; }
+
+  /* Provenance */
+  .provenance { background: var(--coral); color: var(--bg); text-align: center; }
+  .provenance .label { color: var(--bg); }
+  .provenance .label::before { background: var(--bg); }
+  .provenance h2 { color: var(--bg); margin: 24px 0; max-width: 800px; margin-left: auto; margin-right: auto; }
+  .provenance p { color: rgba(0,0,0,0.8); max-width: 660px; margin: 0 auto; font-size: 1.1rem; font-weight: 500; }
+  .companies { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; margin-top: 60px; background: rgba(0,0,0,0.2); }
+  @media (max-width: 900px) { .companies { grid-template-columns: repeat(2, 1fr); } }
+  .company { background: var(--coral); padding: 32px 16px; font-family: 'Archivo Black', sans-serif; font-size: 0.92rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--bg); }
+
+  /* Inquiry */
+  .inquiry-frame { background: var(--surface); border: 1px solid var(--line); border-top: 6px solid var(--coral); padding: 56px; display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; }
+  @media (max-width: 900px) { .inquiry-frame { grid-template-columns: 1fr; padding: 32px; gap: 36px; } }
+  .inquiry-l h2 { margin-bottom: 22px; }
+  .inquiry-l p { font-size: 1.08rem; margin-bottom: 14px; }
+  .inquiry-channels { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--line); }
+  .inquiry-channels .ch { padding: 14px 0; display: flex; justify-content: space-between; align-items: center; font-size: 0.96rem; border-bottom: 1px solid var(--line); }
+  .inquiry-channels .ch:last-child { border-bottom: none; }
+  .inquiry-channels .ch .k { color: var(--muted); font-weight: 600; }
+  .inquiry-channels .ch .v { font-weight: 800; }
+  .form-grid { display: grid; gap: 18px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+  .form-field label { display: block; font-family: 'Archivo Black', sans-serif; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--coral); margin-bottom: 8px; }
+  .form-field input, .form-field textarea, .form-field select {
+    width: 100%; padding: 14px 16px; background: var(--bg);
+    border: 2px solid var(--line-2); border-radius: 0;
+    font-family: 'Archivo', sans-serif; font-size: 1rem; color: var(--text);
+    outline: none; transition: border 0.2s; font-weight: 500;
+  }
+  .form-field input:focus, .form-field textarea:focus, .form-field select:focus { border-color: var(--coral); }
+
+  /* Footer */
+  footer { padding: 70px 0 40px; border-top: 1px solid var(--line); }
+  .footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 50px; }
+  @media (max-width: 900px) { .footer-inner { grid-template-columns: 1fr 1fr; } }
+  .footer-brand { font-family: 'Archivo Black', sans-serif; font-size: 1.6rem; letter-spacing: 0.06em; margin-bottom: 18px; }
+  .footer-tag { font-size: 1rem; color: var(--text-2); max-width: 320px; }
+  .footer-col h5 { font-family: 'Archivo Black', sans-serif; font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--coral); margin-bottom: 18px; }
+  .footer-col a { display: block; padding: 8px 0; font-size: 1rem; color: var(--text-2); font-weight: 500; }
+  .footer-col a:hover { color: var(--coral); }
+  .footer-bot { margin-top: 50px; padding-top: 24px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; font-size: 0.86rem; color: var(--muted); font-weight: 600; }
+
+  .animate { opacity: 0; transform: translateY(28px); transition: opacity 0.8s ease, transform 0.8s ease; }
+  .animate.visible { opacity: 1; transform: translateY(0); }
+
+  .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--coral); color: var(--bg); padding: 14px 28px; font-family: 'Archivo Black', sans-serif; font-size: 0.84rem; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0; transition: all 0.3s; z-index: 600; pointer-events: none; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .style-banner { position: fixed; top: 80px; right: 36px; z-index: 80; background: var(--bg); border: 2px solid var(--coral); color: var(--coral); padding: 8px 16px; font-family: 'Archivo Black', sans-serif; font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; }
+  .style-banner a { color: var(--coral); border-bottom: 1px dotted var(--coral); }
+  @media (max-width: 1024px) { .style-banner { right: 16px; padding: 6px 12px; font-size: 0.62rem; } }
+</style>
+</head>
+<body>
+
+<nav class="bar">
+  <div class="nav-inner">
+    <a href="#top" class="brand"><span class="dot"></span> AEVUM</a>
+    <div class="nav-links">
+      <a href="#premise">Premise</a>
+      <a href="#protocol">Protocol</a>
+      <a href="#technology">Tech</a>
+      <a href="#packages">Packages</a>
+      <a href="#facility">Facility</a>
+      <a href="admin.html">Research</a>
+    </div>
+    <div style="display: flex; gap: 12px; align-items: center;">
+      <div class="theme-toggle" id="themeToggle" title="Toggle theme">
+        <button data-mode="dark" aria-label="Dark mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+        <button data-mode="light" aria-label="Light mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
+      </div>
+      <button class="nav-cta" onclick="document.getElementById('inquiry').scrollIntoView({behavior:'smooth'})">Reserve</button>
+      <div class="hamburger" id="hamb" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mmenu">
+    <a href="#premise">Premise</a>
+    <a href="#protocol">Protocol</a>
+    <a href="#technology">Technology</a>
+    <a href="#packages">Packages</a>
+    <a href="#facility">Facility</a>
+    <a href="admin.html">Research</a>
+    <a href="admin-insights.html">Pricing</a>
+    <a href="index.html">↩ Style Selector</a>
+  </div>
+</nav>
+
+<div class="style-banner">Style V · Cinematic · <a href="index.html">switch</a></div>
+
+<section class="hero" id="top">
+  <div class="container animate">
+    <div class="hero-meta">
+      <span class="hero-pill"><span class="dot"></span> AEVUM · BY ELITEZ GROUP</span>
+      <span class="hero-pill">JOHOR BAHRU · 2026</span>
+    </div>
+    <h1 class="display">
+      One <span class="accent">hour.</span><br/>
+      The <span class="stroke">next</span><br/>
+      <span class="accent">decade.</span>
+    </h1>
+    <p class="hero-sub">A premium concierge full-body MRI clinic in Johor Bahru. Three magnets, sub-millimetre slices, an unhurried sit-down with the radiologist who read your scan. <strong>Built for those who measure life in decades, not days.</strong></p>
+    <div class="hero-cta">
+      <button class="btn-pri" onclick="document.getElementById('inquiry').scrollIntoView({behavior:'smooth'})">Reserve a slot</button>
+      <a href="#packages" class="btn-ghost">View packages</a>
+    </div>
+  </div>
+
+  <div class="marquee">
+    <div class="marquee-track">
+      <span class="marquee-item">SIEMENS 3.0T <span class="dot"></span></span>
+      <span class="marquee-item">SUB-MILLIMETRE RESOLUTION <span class="dot"></span></span>
+      <span class="marquee-item">60-MIN RADIOLOGIST CONSULT <span class="dot"></span></span>
+      <span class="marquee-item">5 MIN FROM RTS LINK <span class="dot"></span></span>
+      <span class="marquee-item">BY APPOINTMENT ONLY <span class="dot"></span></span>
+      <span class="marquee-item">SIEMENS 3.0T <span class="dot"></span></span>
+      <span class="marquee-item">SUB-MILLIMETRE RESOLUTION <span class="dot"></span></span>
+      <span class="marquee-item">60-MIN RADIOLOGIST CONSULT <span class="dot"></span></span>
+      <span class="marquee-item">5 MIN FROM RTS LINK <span class="dot"></span></span>
+      <span class="marquee-item">BY APPOINTMENT ONLY <span class="dot"></span></span>
+    </div>
+  </div>
+</section>
+
+<section id="premise">
+  <div class="container animate">
+    <div class="sec-h">
+      <div>
+        <span class="label">Premise</span>
+        <h2 class="display">Not a scan.<br/>A <span class="accent">baseline.</span></h2>
+      </div>
+      <span class="num">01</span>
+    </div>
+
+    <div class="premise-grid">
+      <div class="premise-l">
+        <p>A full-body MRI is, in 2026, a commodity. The same Siemens magnet sits in tertiary hospitals across Singapore, Bangkok, and Kuala Lumpur. <strong>What is rare — and what AEVUM exists to provide — is the workflow that surrounds the scan.</strong></p>
+        <p>One radiologist. One guest. Sixty minutes after the scan, in a room with no clock. Every finding mapped, contextualised, and explained — including the ~32% of incidental findings that are statistically benign and which, in less considered settings, trigger a costly diagnostic cascade.</p>
+        <div class="pull-quote">
+          <p>"The product is not the scan. The product is the calm in the room afterward."</p>
+        </div>
+        <p>You leave with a written, hand-bound report; a plan you can actually follow; and a calibrated sense of where your body is — not where it might be.</p>
+      </div>
+
+      <div class="premise-r">
+        <h4>The signal · 2025 data</h4>
+        <div class="premise-stat">
+          <div class="num">94<span>%</span></div>
+          <div class="desc">of Singapore HNW recognise health is more important than anything else (Manulife · 2025)</div>
+        </div>
+        <div class="premise-stat">
+          <div class="num">44<span>%</span></div>
+          <div class="desc">are confident in their long-term health prospects — explicit anxiety to address</div>
+        </div>
+        <div class="premise-stat">
+          <div class="num">$76<span>B</span></div>
+          <div class="desc">ASEAN medical &amp; wellness tourism · 2025 → $218B by 2034</div>
+        </div>
+        <div class="premise-stat">
+          <div class="num">5<span> min</span></div>
+          <div class="desc">RTS Link crossing time, end-2026 — Woodlands North → Bukit Chagar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="protocol">
+  <div class="container animate">
+    <div class="sec-h">
+      <div>
+        <span class="label">Protocol</span>
+        <h2 class="display">Six hours.<br/>Door to <span class="accent">door.</span></h2>
+      </div>
+      <span class="num">02</span>
+    </div>
+
+    <div class="timeline-grid">
+      <div class="tl-card">
+        <div class="tl-num">01</div>
+        <h3>Pre-arranged transfer</h3>
+        <p>A car collects you in Singapore — Orchard, Sentosa, or your residence. Causeway clearance is pre-cleared. From end-2026, the RTS Link makes this a five-minute crossing.</p>
+      </div>
+      <div class="tl-card">
+        <div class="tl-num">02</div>
+        <h3>Lounge, change, brief</h3>
+        <p>A private suite with linen robes, fast-compliant tea or breakfast. Your file is already on the radiologist's desk. No clipboards. No waiting room.</p>
+      </div>
+      <div class="tl-card">
+        <div class="tl-num">03</div>
+        <h3>The sixty-minute scan</h3>
+        <p>Inside a 3.0 Tesla magnet with noise-cancelling audio, your selected music or film, and a single-occupancy changing room. We never overlap appointments.</p>
+      </div>
+      <div class="tl-card">
+        <div class="tl-num">04</div>
+        <h3>Sit-down with the radiologist</h3>
+        <p>The radiologist who read your scan presents the findings. Each is explained in plain language with statistical context. Hand-bound written report, returned by hand.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="technology" id="technology">
+  <div class="container animate">
+    <div class="sec-h">
+      <div>
+        <span class="label">Technology</span>
+        <h2 class="display">Three magnets.<br/>One <span class="accent">philosophy.</span></h2>
+      </div>
+      <span class="num">03</span>
+    </div>
+
+    <div class="tech-grid">
+      <div class="tech-card">
+        <div class="num">[ MAG · 01 ]</div>
+        <h3>Siemens MAGNETOM Vida 3.0T</h3>
+        <p>For neurological depth, MR angiography, and brain volumetrics. Used for the Legacy tiers and any high-resolution targeted re-look.</p>
+        <div class="tech-rows">
+          <div class="r"><span class="k">Field strength</span><span class="v">3.0 T</span></div>
+          <div class="r"><span class="k">Bore</span><span class="v">70 cm</span></div>
+          <div class="r"><span class="k">Resolution</span><span class="v">≤ 0.5 mm</span></div>
+          <div class="r"><span class="k">Approval</span><span class="v">FDA · CE · MDA</span></div>
+        </div>
+      </div>
+      <div class="tech-card">
+        <div class="num">[ MAG · 02 / 03 ]</div>
+        <h3>Siemens MAGNETOM Amira 1.5T (×2)</h3>
+        <p>Two units in parallel for full-body coverage on Core and Comprehensive tiers. Refurbished by Siemens, recent-generation, manufacturer-warrantied.</p>
+        <div class="tech-rows">
+          <div class="r"><span class="k">Field strength</span><span class="v">1.5 T</span></div>
+          <div class="r"><span class="k">Bore</span><span class="v">60 cm</span></div>
+          <div class="r"><span class="k">Resolution</span><span class="v">≤ 1.0 mm</span></div>
+          <div class="r"><span class="k">Approval</span><span class="v">FDA · CE · MDA</span></div>
+        </div>
+      </div>
+      <div class="tech-card">
+        <div class="num">[ CT · 01 ]</div>
+        <h3>Low-dose CT — Heart &amp; Lungs</h3>
+        <p>Reserved for the Platinum tier — where MRI is weakest. Used judiciously, with consent. Effective dose comparable to one transatlantic flight.</p>
+        <div class="tech-rows">
+          <div class="r"><span class="k">Modality</span><span class="v">128-slice CT</span></div>
+          <div class="r"><span class="k">Effective dose</span><span class="v">≤ 1.5 mSv</span></div>
+          <div class="r"><span class="k">Targets</span><span class="v">Heart · Lungs</span></div>
+          <div class="r"><span class="k">Approval</span><span class="v">FDA · CE · MDA</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="packages">
+  <div class="container animate">
+    <div class="sec-h">
+      <div>
+        <span class="label">Packages</span>
+        <h2 class="display">Four scans.<br/>One <span class="accent">philosophy.</span></h2>
+      </div>
+      <span class="num">04</span>
+    </div>
+
+    <div class="pkg-grid">
+      <div class="pkg">
+        <div class="pkg-tag">Tier I</div>
+        <div class="pkg-name">Core<br/>Scan</div>
+        <div class="pkg-price">
+          <div class="pkg-price-myr">RM 1,999</div>
+          <div class="pkg-price-sgd">~ SGD 575</div>
+        </div>
+        <ul class="pkg-incl">
+          <li>Head, Neck, Abdomen, Pelvis</li>
+          <li>1.5T MRI · 60-min scan</li>
+          <li>30-min consultation</li>
+          <li>Same-day report</li>
+        </ul>
+        <div class="pkg-target">For first-time guests, age 30–40, or as annual follow-up.</div>
+        <button class="pkg-cta" onclick="document.getElementById('inquiry').scrollIntoView({behavior:'smooth'})">Reserve →</button>
+      </div>
+
+      <div class="pkg feat">
+        <div class="pkg-tag">Tier II · Recommended</div>
+        <div class="pkg-name">Comprehensive</div>
+        <div class="pkg-price">
+          <div class="pkg-price-myr">RM 8,699</div>
+          <div class="pkg-price-sgd">~ SGD 2,499</div>
+        </div>
+        <ul class="pkg-incl">
+          <li>Full-body MRI (head → pelvis)</li>
+          <li>Spine, hips, knees</li>
+          <li>1.5T or 3.0T as indicated</li>
+          <li>60-min radiologist consult</li>
+          <li>Hand-bound report</li>
+        </ul>
+        <div class="pkg-target">The annual workhorse, for proactive guests, age 40+.</div>
+        <button class="pkg-cta" onclick="document.getElementById('inquiry').scrollIntoView({behavior:'smooth'})">Reserve →</button>
+      </div>
+
+      <div class="pkg">
+        <div class="pkg-tag">Tier III</div>
+        <div class="pkg-name">Legacy<br/>Ultimate</div>
+        <div class="pkg-price">
+          <div class="pkg-price-myr">RM 17,499</div>
+          <div class="pkg-price-sgd">~ SGD 4,999</div>
+        </div>
+        <ul class="pkg-incl">
+          <li>Everything in Comprehensive</li>
+          <li>MR angiography (head + neck)</li>
+          <li>Brain volumetrics, brain age</li>
+          <li>Body composition</li>
+          <li>3.0T-only · 90-min consult</li>
+        </ul>
+        <div class="pkg-target">For the longevity-minded, working with experts.</div>
+        <button class="pkg-cta" onclick="document.getElementById('inquiry').scrollIntoView({behavior:'smooth'})">Reserve →</button>
+      </div>
+
+      <div class="pkg">
+        <div class="pkg-tag">Tier IV</div>
+        <div class="pkg-name">Legacy<br/>Platinum</div>
+        <div class="pkg-price">
+          <div class="pkg-price-myr">RM 24,499</div>
+          <div class="pkg-price-sgd">~ SGD 6,999</div>
+        </div>
+        <ul class="pkg-incl">
+          <li>Everything in Legacy Ultimate</li>
+          <li>Low-dose CT (heart + lungs)</li>
+          <li>Comprehensive blood panel</li>
+          <li>Two-physician second read</li>
+          <li>120-min consult · bound report</li>
+        </ul>
+        <div class="pkg-target">The most comprehensive scan in the region.</div>
+        <button class="pkg-cta" onclick="document.getElementById('inquiry').scrollIntoView({behavior:'smooth'})">Reserve →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="consult">
+  <div class="container animate">
+    <div class="sec-h">
+      <div>
+        <span class="label">Consultation</span>
+        <h2 class="display">The <span class="accent">conversation</span><br/>that follows.</h2>
+      </div>
+      <span class="num">05</span>
+    </div>
+
+    <div class="consult-grid">
+      <div class="consult-l">
+        <h2 class="display" style="font-size: clamp(1.6rem, 3vw, 2.4rem); margin-bottom: 22px;">The scan tells you what is there. The consultation tells you what to <span class="accent">do about it.</span></h2>
+        <p><strong>About 1 in 3 full-body scans</strong> surfaces a benign incidental finding — a small cyst, a tendon irregularity, a soft-tissue shadow. Without context, this triggers anxiety and unnecessary follow-up.</p>
+        <p>Our 60-minute consultation, conducted by the radiologist who read your scan, exists to <strong>de-escalate with evidence</strong>. We are explicit about the WB-MRI clinical-evidence debate (ACR, CAR · Sept 2025) — and we name our radiologists.</p>
+        <p>You leave with a written, hand-bound report and the name of a physician we trust at Columbia Asia, Mount Elizabeth, or Gleneagles, should one prove useful.</p>
+      </div>
+
+      <div class="consult-r">
+        <h4>Typical findings · n = 1000 scans</h4>
+        <div class="stat-bar">
+          <div class="stat-bar-row">
+            <span class="stat-bar-label">Normal · no findings</span>
+            <span class="stat-bar-pct">65%</span>
+          </div>
+          <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 65%;"></div></div>
+        </div>
+        <div class="stat-bar">
+          <div class="stat-bar-row">
+            <span class="stat-bar-label">Benign incidental finding</span>
+            <span class="stat-bar-pct">32%</span>
+          </div>
+          <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 32%;"></div></div>
+        </div>
+        <div class="stat-bar">
+          <div class="stat-bar-row">
+            <span class="stat-bar-label">Actionable, warrants follow-up</span>
+            <span class="stat-bar-pct">3%</span>
+          </div>
+          <div class="stat-bar-track"><div class="stat-bar-fill" style="width: 3%;"></div></div>
+        </div>
+        <p style="margin-top: 24px; font-size: 0.88rem; color: var(--muted);">Indicative ranges from published whole-body MRI cohort studies (Hegenscheid et al., 2013; Lee et al., 2024). Distribution varies by age and health profile.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="facility">
+  <div class="container animate">
+    <div class="sec-h">
+      <div>
+        <span class="label">Facility</span>
+        <h2 class="display">Nusajaya.<br/>25 min from <span class="accent">causeway.</span></h2>
+      </div>
+      <span class="num">06</span>
+    </div>
+
+    <div class="fac-grid">
+      <div class="fac-card">
+        <h4>5,000 sq ft, three magnets</h4>
+        <p>RF-shielded suites, cryogen-vented, with dedicated luxury reception, two consultation studies, and private changing rooms.</p>
+        <div class="fac-meta">Act 586 · Ambulatory Care Centre</div>
+      </div>
+      <div class="fac-card">
+        <h4>Pursuing MSQH accreditation</h4>
+        <p>The Malaysian Society for Quality in Health is the international standard equivalent to JCI. Pursued from year one.</p>
+        <div class="fac-meta">In Application · 2026</div>
+      </div>
+      <div class="fac-card">
+        <h4>On-site emergency capability</h4>
+        <p>Per Act 586, Section 38(1) — full resuscitative readiness on the floor, including for contrast-dye reactions.</p>
+        <div class="fac-meta">Mandated · Always Staffed</div>
+      </div>
+      <div class="fac-card">
+        <h4>Adjacent to Columbia Asia</h4>
+        <p>For follow-up imaging, sub-specialist consultations, or onward referrals — without starting from scratch.</p>
+        <div class="fac-meta">Partner Hospital · 2-min Walk</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="provenance">
+  <div class="container animate">
+    <span class="label">Provenance</span>
+    <h2 class="display">An Elitez Group company.</h2>
+    <p>Elitez has built and operated nine companies across security, training, FMCG, and human capital — serving regional clients for over a decade. AEVUM is our entry into preventative medicine.</p>
+    <div class="companies">
+      <div class="company">ELITEZ FMCG</div>
+      <div class="company">ELITEZ SECURITY</div>
+      <div class="company">ADEPT ACADEMY</div>
+      <div class="company">DYNAMA HC</div>
+      <div class="company">WORKELVES</div>
+    </div>
+  </div>
+</section>
+
+<section id="inquiry">
+  <div class="container animate">
+    <div class="sec-h">
+      <div>
+        <span class="label">Reserve</span>
+        <h2 class="display">Begin a quiet<br/><span class="accent">conversation.</span></h2>
+      </div>
+      <span class="num">07</span>
+    </div>
+
+    <div class="inquiry-frame">
+      <div class="inquiry-l">
+        <h2 class="display" style="font-size: clamp(1.6rem, 3vw, 2rem); margin-bottom: 22px;">By appointment only.</h2>
+        <p>The concierge will respond within one working day, on the channel of your choosing. There is no obligation, and no follow-up unless you ask for one.</p>
+
+        <div class="inquiry-channels">
+          <div class="ch"><span class="k">Singapore concierge</span><span class="v">+65 6602 8282</span></div>
+          <div class="ch"><span class="k">Email</span><span class="v">concierge@aevum.elitez.asia</span></div>
+          <div class="ch"><span class="k">WhatsApp</span><span class="v">+65 8888 8282</span></div>
+          <div class="ch"><span class="k">Hours</span><span class="v">Mon–Sat · 09:00–19:00</span></div>
+        </div>
+      </div>
+
+      <form class="form-grid" onsubmit="event.preventDefault(); showToast('Reservation request received'); this.reset();">
+        <div class="form-row">
+          <div class="form-field"><label>Full Name</label><input type="text" required /></div>
+          <div class="form-field"><label>Country</label><select><option>Singapore</option><option>Malaysia</option><option>Indonesia</option><option>Other</option></select></div>
+        </div>
+        <div class="form-row">
+          <div class="form-field"><label>Email</label><input type="email" required /></div>
+          <div class="form-field"><label>WhatsApp</label><input type="tel" required /></div>
+        </div>
+        <div class="form-field">
+          <label>Tier of Interest</label>
+          <select>
+            <option>Comprehensive — RM 8,699</option>
+            <option>Core — RM 1,999</option>
+            <option>Legacy Ultimate — RM 17,499</option>
+            <option>Legacy Platinum — RM 24,499</option>
+            <option>I'd like to be advised</option>
+          </select>
+        </div>
+        <div class="form-field"><label>Note for the Concierge</label><textarea rows="4"></textarea></div>
+        <button type="submit" class="btn-pri" style="margin-top: 8px; align-self: start;">Submit inquiry</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">AEVUM</div>
+        <p class="footer-tag">A premium concierge MRI clinic in Johor Bahru. By appointment only.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Clinic</h5>
+        <a href="#premise">Premise</a>
+        <a href="#technology">Technology</a>
+        <a href="#packages">Packages</a>
+        <a href="#facility">Facility</a>
+      </div>
+      <div class="footer-col">
+        <h5>Concierge</h5>
+        <a href="#inquiry">Reserve</a>
+        <a href="mailto:concierge@aevum.elitez.asia">Email</a>
+        <a href="tel:+6566028282">+65 6602 8282</a>
+      </div>
+      <div class="footer-col">
+        <h5>Internal</h5>
+        <a href="admin.html">Research</a>
+        <a href="admin-insights.html">Pricing</a>
+        <a href="index.html">Selector</a>
+      </div>
+    </div>
+    <div class="footer-bot">
+      <span>© 2026 · AEVUM is a brand of Elitez Group of Companies</span>
+      <span>2 Kallang Avenue #03-08, CT Hub Singapore 339407</span>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  (function() {
+    const saved = localStorage.getItem('aevum-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+    const toggle = document.getElementById('themeToggle');
+    function syncButtons() {
+      const cur = document.documentElement.getAttribute('data-theme');
+      toggle.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.mode === cur));
+    }
+    toggle.querySelectorAll('button').forEach(b => {
+      b.addEventListener('click', () => {
+        document.documentElement.setAttribute('data-theme', b.dataset.mode);
+        localStorage.setItem('aevum-theme', b.dataset.mode);
+        syncButtons();
+      });
+    });
+    syncButtons();
+  })();
+
+  function toggleMenu(){ document.getElementById('mmenu').classList.toggle('open'); document.getElementById('hamb').classList.toggle('open'); }
+  function showToast(msg, ms=2400){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), ms); }
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click', e=>{
+      const href=a.getAttribute('href');
+      if(href.length<2) return;
+      const t=document.querySelector(href);
+      if(t){ e.preventDefault(); t.scrollIntoView({behavior:'smooth'}); document.getElementById('mmenu').classList.remove('open'); document.getElementById('hamb').classList.remove('open'); }
+    });
+  });
+  const obs=new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); }); }, {threshold: 0.06});
+  document.querySelectorAll('.animate').forEach(el=>obs.observe(el));
+</script>
+
+</body>
+</html>

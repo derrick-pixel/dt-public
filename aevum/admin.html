@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AEVUM · Competitor Research Panel</title>
+<meta name="description" content="Internal research panel: competitor product analysis, online sentiment, market sizing, clinical evidence debate. Elitez MRI." />
+
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://derrick-pixel.github.io/Elitez_MRI/admin.html" />
+<meta property="og:title" content="AEVUM · Competitor Research Panel" />
+<meta property="og:image" content="https://derrick-pixel.github.io/Elitez_MRI/og-image.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --bg: #F4F6F8;
+    --surface: #FFFFFF;
+    --surface-2: #ECF0F4;
+    --surface-3: #E2E8EE;
+    --line: rgba(11,41,72,0.10);
+    --line-2: rgba(11,41,72,0.18);
+    --text: #1A2530;
+    --muted: #5C6B82;
+    --muted-2: #8B95A3;
+    --teal: #0D7488;
+    --amber: #B8761F;
+    --plum: #8B4FBF;
+    --rose: #B33A3A;
+    --green: #0E8A4A;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 14px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(ellipse 1000px 700px at 8% -10%, rgba(13,116,136,0.05), transparent 60%),
+      radial-gradient(ellipse 800px 500px at 95% 100%, rgba(184,118,31,0.04), transparent 60%);
+    background-attachment: fixed;
+  }
+  a { color: inherit; text-decoration: none; transition: color 0.18s; }
+  a.link { color: var(--teal); border-bottom: 1px dotted var(--teal); }
+  a.link:hover { color: var(--text); border-color: var(--text); }
+  .mono { font-family: 'JetBrains Mono', monospace; font-feature-settings: 'tnum'; }
+
+  .container { max-width: 1400px; margin: 0 auto; padding: 0 32px; }
+  @media (max-width: 768px) { .container { padding: 0 20px; } }
+
+  /* ── Top bar ────────────────────────────────────────────────── */
+  .topbar { position: sticky; top: 0; z-index: 100; background: rgba(244,246,248,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--line); }
+  .topbar-inner { max-width: 1400px; margin: 0 auto; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 0.95rem; }
+  .brand-mark { width: 28px; height: 28px; border-radius: 7px; background: var(--teal); display: inline-flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 0.78rem; }
+  .topbar-tabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 100px; padding: 4px; }
+  .topbar-tabs a { padding: 7px 14px; border-radius: 100px; font-size: 0.8rem; color: var(--muted); }
+  .topbar-tabs a:hover { color: var(--text); }
+  .topbar-tabs a.active { background: var(--teal); color: #fff; font-weight: 600; }
+  .topbar-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted-2); }
+
+  /* ── Hero / page title ──────────────────────────────────────── */
+  .ph { padding: 50px 0 30px; }
+  .ph-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal); margin-bottom: 14px; display: inline-flex; align-items: center; gap: 10px; }
+  .ph-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 8px var(--teal); }
+  .ph h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; letter-spacing: -0.025em; margin-bottom: 14px; }
+  .ph p { color: var(--muted); max-width: 780px; }
+
+  /* ── KPI strip ──────────────────────────────────────────────── */
+  .kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin: 34px 0; }
+  @media (max-width: 1024px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+  .kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+  .kpi .l { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-2); margin-bottom: 12px; }
+  .kpi .v { font-family: 'JetBrains Mono', monospace; font-size: 1.7rem; font-weight: 500; letter-spacing: -0.04em; }
+  .kpi .v span { color: var(--teal); }
+  .kpi .v small { font-size: 0.95rem; color: var(--muted); }
+  .kpi .s { font-size: 0.78rem; color: var(--muted); margin-top: 6px; }
+
+  /* ── Section ────────────────────────────────────────────────── */
+  section.panel { padding: 28px 0; }
+  .sec-h { display: flex; align-items: end; justify-content: space-between; gap: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--line); margin-bottom: 24px; flex-wrap: wrap; }
+  .sec-h h2 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; }
+  .sec-h .num { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted-2); letter-spacing: 0.1em; text-transform: uppercase; }
+  .sec-h p { color: var(--muted); font-size: 0.88rem; margin-top: 6px; }
+
+  /* ── Tables ─────────────────────────────────────────────────── */
+  .tbl-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+  th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted-2); font-weight: 500; background: var(--surface-2); position: sticky; top: 0; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(11,41,72,0.03); }
+  td.mono { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; }
+  td .name { font-weight: 600; color: var(--text); display: block; margin-bottom: 4px; }
+  td .nameSmall { font-size: 0.74rem; color: var(--muted); }
+  .pill { display: inline-block; padding: 3px 8px; border-radius: 100px; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.04em; font-family: 'JetBrains Mono', monospace; }
+  .pill.teal { background: rgba(94,233,196,0.12); color: var(--teal); }
+  .pill.amber { background: rgba(255,180,84,0.12); color: var(--amber); }
+  .pill.rose { background: rgba(248,113,113,0.12); color: var(--rose); }
+  .pill.plum { background: rgba(199,125,255,0.12); color: var(--plum); }
+  .pill.gray { background: rgba(11,41,72,0.06); color: var(--muted); }
+
+  /* ── Cards ──────────────────────────────────────────────────── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  @media (max-width: 1024px) { .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 700px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 24px; }
+  .card h3 { font-size: 1.05rem; margin-bottom: 12px; font-weight: 700; }
+  .card p { color: var(--muted); font-size: 0.86rem; margin-bottom: 8px; }
+  .card .src { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted-2); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .card .src a { color: var(--muted); }
+  .card .src a:hover { color: var(--teal); }
+
+  /* ── Sentiment cards ────────────────────────────────────────── */
+  .sent-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; position: relative; }
+  .sent-card .head { display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; gap: 12px; }
+  .sent-card .head h4 { font-size: 1rem; font-weight: 700; }
+  .sent-card .head .price { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+  .sent-card .meter { display: flex; gap: 4px; height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 14px; background: var(--surface-2); }
+  .sent-card .meter .p { background: var(--green); }
+  .sent-card .meter .m { background: var(--amber); }
+  .sent-card .meter .n { background: var(--rose); }
+  .sent-card .pos, .sent-card .neg { font-size: 0.82rem; margin: 8px 0; padding-left: 18px; position: relative; color: var(--muted); }
+  .sent-card .pos::before { content: '+'; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+  .sent-card .neg::before { content: '−'; position: absolute; left: 0; color: var(--rose); font-weight: 700; }
+  .sent-card .verdict { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; padding: 8px 0 0; margin-top: 12px; border-top: 1px solid var(--line); color: var(--muted-2); text-transform: uppercase; letter-spacing: 0.08em; }
+  .sent-card .verdict span { color: var(--teal); }
+
+  /* ── Lawsuit / risk callout ─────────────────────────────────── */
+  .alert {
+    background: linear-gradient(160deg, rgba(248,113,113,0.06), rgba(255,180,84,0.04));
+    border: 1px solid rgba(248,113,113,0.2);
+    border-radius: 14px; padding: 28px;
+  }
+  .alert h3 { color: var(--rose); margin-bottom: 12px; font-size: 1.05rem; font-weight: 700; }
+  .alert p { color: var(--text); margin-bottom: 8px; font-size: 0.92rem; }
+  .alert .label { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--rose); margin-bottom: 8px; display: block; }
+
+  /* ── Quote stripe ───────────────────────────────────────────── */
+  .quote { background: var(--surface); border-left: 3px solid var(--teal); padding: 18px 24px; border-radius: 4px; margin: 14px 0; }
+  .quote p { font-size: 0.92rem; color: var(--text); margin: 0; font-style: italic; }
+  .quote cite { display: block; margin-top: 8px; font-style: normal; font-size: 0.74rem; color: var(--muted-2); font-family: 'JetBrains Mono', monospace; }
+
+  /* ── Insights ───────────────────────────────────────────────── */
+  .insight {
+    background: linear-gradient(160deg, var(--surface), rgba(13,116,136,0.05));
+    border: 1px solid var(--line); border-radius: 14px; padding: 28px; position: relative;
+  }
+  .insight::before { content: ''; position: absolute; top: 0; left: 28px; right: 28px; height: 2px; background: linear-gradient(90deg, var(--teal), transparent); }
+  .insight .num { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--teal); margin-bottom: 10px; letter-spacing: 0.1em; }
+  .insight h4 { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; }
+  .insight p { color: var(--muted); font-size: 0.88rem; }
+
+  /* ── Charts ─────────────────────────────────────────────────── */
+  .bar-chart { padding: 4px 0; }
+  .bar-row { display: grid; grid-template-columns: 220px 1fr 90px; gap: 14px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .bar-row:last-child { border-bottom: none; }
+  .bar-row .lbl { font-size: 0.84rem; }
+  .bar-row .lbl small { display: block; font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+  .bar-row .track { background: var(--surface-2); height: 16px; border-radius: 4px; overflow: hidden; position: relative; }
+  .bar-row .fill { height: 100%; border-radius: 4px; transition: width 1.2s cubic-bezier(0.16,1,0.3,1); }
+  .bar-row .val { font-family: 'JetBrains Mono', monospace; font-size: 0.84rem; color: var(--text); text-align: right; }
+  @media (max-width: 700px) { .bar-row { grid-template-columns: 1fr; gap: 4px; } .bar-row .val { text-align: left; } }
+
+  footer { padding: 50px 0 30px; border-top: 1px solid var(--line); margin-top: 60px; font-family: 'JetBrains Mono', monospace; font-size: 0.74rem; color: var(--muted-2); display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="brand">
+      <span class="brand-mark">A</span>
+      <span>AEVUM <span style="color: var(--muted); font-weight: 400; font-size: 0.84rem;">/ internal panel</span></span>
+    </a>
+    <div class="topbar-tabs">
+      <a href="index.html">Site</a>
+      <a href="admin.html" class="active">Research</a>
+      <a href="admin-insights.html">Pricing</a>
+      <a href="compliance.html">Compliance</a>
+      <a href="images.html">Images</a>
+    </div>
+    <span class="topbar-meta">DRAFT v0.1 · 2026-04-18 · n=30+ competitors</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <section class="ph">
+    <span class="ph-tag">Panel 01 / Competitor Product Analysis</span>
+    <h1>The competitive set, in 2026.<br/><span style="color: var(--muted); font-weight: 400;">Product, sentiment, evidence, market — not website attractiveness.</span></h1>
+    <p>30+ competitors analysed across four categories: direct B2C MRI clinics (Prenuvo, Ezra, Neko, Q Bio, Human Longevity, SimonMed, Echelon), Singapore hospital screening (Raffles, Mt Elizabeth, AsiaMedic, Lifescan), Malaysian hospitals (Gleneagles JB, Sunway, Pantai), and adjacent longevity retreats (Clinique La Prairie, Lanserhof, Chenot, RAKxa, COMO Shambhala). Focus is on real product, real prices, real online sentiment, and the live clinical-evidence debate — not on logos and homepages.</p>
+  </section>
+
+  <section class="kpis">
+    <div class="kpi">
+      <div class="l">ASEAN Med + Wellness Tourism · 2025</div>
+      <div class="v">$76.5<small>B</small></div>
+      <div class="s">→ $218.4B by 2034 · CAGR 12.4%</div>
+    </div>
+    <div class="kpi">
+      <div class="l">SG HNW · Health is Top Priority</div>
+      <div class="v">94<small>%</small></div>
+      <div class="s">Manulife/Forbes Insights 2025</div>
+    </div>
+    <div class="kpi">
+      <div class="l">SG HNW · Confident in Long-Term Health</div>
+      <div class="v">44<small>%</small></div>
+      <div class="s">→ explicit anxiety to address</div>
+    </div>
+    <div class="kpi">
+      <div class="l">RTS Link Crossing · End-2026</div>
+      <div class="v">5<small> min</small></div>
+      <div class="s">S$5–7 fare · 140k pax/day capacity</div>
+    </div>
+    <div class="kpi">
+      <div class="l">JB Premium MRI Brand Competitors</div>
+      <div class="v">0</div>
+      <div class="s">Category open in Johor &amp; KL</div>
+    </div>
+  </section>
+
+  <!-- Direct Competitors Table -->
+  <section class="panel">
+    <div class="sec-h">
+      <div>
+        <h2>1A · Direct Competitors — Premium Full-Body MRI</h2>
+        <p>The B2C category that defines public perception of "longevity scanning."</p>
+      </div>
+      <span class="num">/ § 01.A · n=8 brands</span>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="min-width: 180px;">Brand</th>
+            <th>Markets</th>
+            <th>Scan</th>
+            <th>Tech</th>
+            <th>Entry</th>
+            <th>Top tier</th>
+            <th>Reputation cue</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">Prenuvo</span><span class="nameSmall">Vancouver / 25 clinics</span></td>
+            <td>USA · UK · CA · AU</td>
+            <td>~60 min</td>
+            <td>3T MRI · AI-assist</td>
+            <td class="mono">US$999</td>
+            <td class="mono">US$5,000<br/><span style="color: var(--muted); font-size: 0.74rem;">Exec annual</span></td>
+            <td><span class="pill rose">Lawsuit · Jan 2026</span></td>
+          </tr>
+          <tr>
+            <td><span class="name">Ezra</span><span class="nameSmall">acq. by Function · May 2025</span></td>
+            <td>USA · ~50 partner sites</td>
+            <td>22 min<br/><span style="color: var(--muted); font-size: 0.74rem;">Flash AI</span></td>
+            <td>1.5T/3T partner</td>
+            <td class="mono">US$499<br/><span style="color: var(--teal); font-size: 0.74rem;">Slashed from $1,500+</span></td>
+            <td class="mono">US$1,950</td>
+            <td><span class="pill amber">Mass-market pivot</span></td>
+          </tr>
+          <tr>
+            <td><span class="name">Function Health</span><span class="nameSmall">$2.5B valuation</span></td>
+            <td>USA · digital-first</td>
+            <td>n/a</td>
+            <td>160+ biomarkers + Ezra MRI</td>
+            <td class="mono">US$365/yr<br/><span style="color: var(--muted); font-size: 0.74rem;">+ $499 MRI</span></td>
+            <td class="mono">US$864</td>
+            <td><span class="pill teal">Rising · celeb-backed</span></td>
+          </tr>
+          <tr>
+            <td><span class="name">Neko Health</span><span class="nameSmall">Daniel Ek · Spotify co-founder</span></td>
+            <td>Sweden · UK · Germany</td>
+            <td>~20 min</td>
+            <td>3D laser + bloods (NOT MRI)</td>
+            <td class="mono">£299</td>
+            <td class="mono">£299<br/><span style="color: var(--muted); font-size: 0.74rem;">Flat</span></td>
+            <td><span class="pill amber">Booking chaos</span></td>
+          </tr>
+          <tr>
+            <td><span class="name">Q Bio</span><span class="nameSmall">Redwood City</span></td>
+            <td>California</td>
+            <td>~75 min</td>
+            <td>Mark I upright + 350 measures</td>
+            <td class="mono">~US$3,500</td>
+            <td class="mono">~US$3,500</td>
+            <td><span class="pill gray">Niche · digital twin</span></td>
+          </tr>
+          <tr>
+            <td><span class="name">Human Longevity</span><span class="nameSmall">Founder: Craig Venter</span></td>
+            <td>San Diego</td>
+            <td>Full day</td>
+            <td>WB-MRI + WGS + cardiac</td>
+            <td class="mono">US$8,000</td>
+            <td class="mono">US$19,000/yr</td>
+            <td><span class="pill teal">Premium · scientific</span></td>
+          </tr>
+          <tr>
+            <td><span class="name">SimonMed (simonONE)</span><span class="nameSmall">170+ US centres</span></td>
+            <td>USA</td>
+            <td>20–30 min</td>
+            <td>Hospital MRI + AI</td>
+            <td class="mono">US$650</td>
+            <td class="mono">US$1,550</td>
+            <td><span class="pill rose">Safety incidents 2025</span></td>
+          </tr>
+          <tr>
+            <td><span class="name">Echelon Health</span><span class="nameSmall">Mayfair · concierge</span></td>
+            <td>London</td>
+            <td>Full day</td>
+            <td>3T MRI + CT + DEXA + bloods</td>
+            <td class="mono">£2,000</td>
+            <td class="mono">£14,000<br/><span style="color: var(--muted); font-size: 0.74rem;">Platinum</span></td>
+            <td><span class="pill teal">Closest analogue</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Singapore Table -->
+  <section class="panel">
+    <div class="sec-h">
+      <div>
+        <h2>1B · Singapore Hospital Executive Screening</h2>
+        <p>The actual price ceiling AEVUM anchors against — premium hospital concierge, not Ezra/Prenuvo.</p>
+      </div>
+      <span class="num">/ § 01.B · n=7 brands</span>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Brand · Top Package</th>
+            <th>Price (SGD)</th>
+            <th>What's included</th>
+            <th>Format</th>
+            <th>vs AEVUM</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">Mount Elizabeth</span><span class="nameSmall">Screen Excelsior · Parkway Shenton</span></td>
+            <td class="mono"><strong>S$12,388 (M)<br/>S$12,888 (F)</strong></td>
+            <td>All diagnostics + private lounge + care manager</td>
+            <td>Premium hospital concierge</td>
+            <td class="mono"><span class="pill teal">AEVUM Platinum 35–40% cheaper</span></td>
+          </tr>
+          <tr>
+            <td><span class="name">Raffles Medical</span><span class="nameSmall">Raffles Platinum</span></td>
+            <td class="mono"><strong>S$11,408 (M)<br/>S$11,530 (F)</strong></td>
+            <td>Endoscopy + cardiac + radiology + labs</td>
+            <td>Half/full-day hospital</td>
+            <td class="mono"><span class="pill teal">AEVUM Platinum ~35% cheaper</span></td>
+          </tr>
+          <tr>
+            <td><span class="name">Lifescan Medical</span><span class="nameSmall">3 SG centres · advanced tier</span></td>
+            <td class="mono">S$7,588</td>
+            <td>MRI + 50-cancer screen</td>
+            <td>Standalone screening</td>
+            <td class="mono"><span class="pill amber">Nearest direct comp</span></td>
+          </tr>
+          <tr>
+            <td><span class="name">AsiaMedic · Navigator 7</span><span class="nameSmall">Top tier</span></td>
+            <td class="mono">S$4,600</td>
+            <td>One of most in-depth full-body</td>
+            <td>Standalone screening</td>
+            <td class="mono"><span class="pill amber">Comprehensive overlap</span></td>
+          </tr>
+          <tr>
+            <td><span class="name">Thomson Medical</span><span class="nameSmall">Prestige tier</span></td>
+            <td class="mono">S$2,869–3,188</td>
+            <td>Comprehensive labs + imaging</td>
+            <td>Hospital screening</td>
+            <td class="mono"><span class="pill gray">Below Comprehensive</span></td>
+          </tr>
+          <tr>
+            <td><span class="name">ATA Medical</span><span class="nameSmall">Customisable</span></td>
+            <td class="mono">From S$76 + add-ons</td>
+            <td>Basic to executive</td>
+            <td>High-volume affordable</td>
+            <td class="mono"><span class="pill gray">Different segment</span></td>
+          </tr>
+          <tr>
+            <td><span class="name">Healthscreening.sg</span><span class="nameSmall">CHAS-accredited</span></td>
+            <td class="mono">From S$76 + MRI from S$1,090</td>
+            <td>Add-on full-body MRI</td>
+            <td>Affordable</td>
+            <td class="mono"><span class="pill gray">Different segment</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="quote" style="margin-top: 16px;">
+      <p>Singapore's <em>premium</em> anchor is S$11,400–S$12,900 — but those packages include endoscopy and concierge, NOT a true 60-min full-body MRI. There is no Singapore equivalent of Prenuvo/Ezra at scale. AEVUM's Comprehensive (RM 8,699 ≈ S$2,640) sweet-spots between Lifescan and AsiaMedic; Legacy Platinum (RM 24,499 ≈ S$7,420) is 35–40% below the SG hospital ceiling.</p>
+      <cite>— Synthesis · April 2026</cite>
+    </div>
+  </section>
+
+  <!-- Malaysia Table -->
+  <section class="panel">
+    <div class="sec-h">
+      <div>
+        <h2>1C · Malaysia Hospital Health Screening</h2>
+        <p>The category is wide open — no Malaysian provider currently offers a Prenuvo/Ezra-style branded longevity full-body MRI.</p>
+      </div>
+      <span class="num">/ § 01.C · n=6 brands</span>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Brand</th>
+            <th>MRI / package price (RM)</th>
+            <th>Notes</th>
+            <th>Threat level</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">Gleneagles Hospital Johor</span><span class="nameSmall">Medini · IHH-owned</span></td>
+            <td class="mono">Quoted on request</td>
+            <td>Direct neighbour to AEVUM. Already serves Singapore cross-border. The most credible adjacent player.</td>
+            <td><span class="pill amber">High · adjacent</span></td>
+          </tr>
+          <tr>
+            <td><span class="name">Sunway Medical (KL)</span><span class="nameSmall">3T scanner · medical tourism</span></td>
+            <td class="mono">RM 1,500–3,000 / MRI</td>
+            <td>Tiered wellness packages. KL location buffer; not in JB.</td>
+            <td><span class="pill gray">Low · KL-based</span></td>
+          </tr>
+          <tr>
+            <td><span class="name">Pantai Hospital (IHH)</span><span class="nameSmall">KL / Ampang</span></td>
+            <td class="mono">From RM 1,000<br/>Premium Women RM 1,880</td>
+            <td>Broad network, hospital pricing.</td>
+            <td><span class="pill gray">Low</span></td>
+          </tr>
+          <tr>
+            <td><span class="name">Subang Jaya Medical Centre</span><span class="nameSmall">SJMC</span></td>
+            <td class="mono">Year-end RM 794 promo<br/>Heart RM 3,000</td>
+            <td>Mass-market pricing.</td>
+            <td><span class="pill gray">Low</span></td>
+          </tr>
+          <tr>
+            <td><span class="name">Regency Medical (JB)</span><span class="nameSmall">Cross-border focus</span></td>
+            <td class="mono">n/a</td>
+            <td>Targets cross-border Singaporeans. Direct geographic competitor but not premium.</td>
+            <td><span class="pill amber">Medium · JB direct</span></td>
+          </tr>
+          <tr>
+            <td><span class="name">Omega Clinic (JB)</span><span class="nameSmall">Boutique</span></td>
+            <td class="mono">n/a</td>
+            <td>Doctor-led check-ups. Smaller boutique.</td>
+            <td><span class="pill gray">Low</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Wellness Retreats -->
+  <section class="panel">
+    <div class="sec-h">
+      <div>
+        <h2>1D · Longevity &amp; Wellness Retreats — Aspirational Benchmarks</h2>
+        <p>Not direct competitors, but the brands AEVUM should learn aesthetic and pricing language from for the Legacy tiers.</p>
+      </div>
+      <span class="num">/ § 01.D · n=7 brands</span>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Brand</th>
+            <th>Location</th>
+            <th>Entry</th>
+            <th>Top program</th>
+            <th>Relevance to AEVUM</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">Clinique La Prairie</span><span class="nameSmall">Global gold standard</span></td>
+            <td>Montreux, CH</td>
+            <td class="mono">CHF 14,900<br/><span style="font-size:0.74rem; color: var(--muted);">Life Reset</span></td>
+            <td class="mono">CHF 48,520<br/><span style="font-size:0.74rem; color: var(--muted);">Legendary Premium</span></td>
+            <td>Brand language to borrow for Legacy Platinum messaging.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Lanserhof</span><span class="nameSmall">"World's Best Medical Spa"</span></td>
+            <td>DE/AT · 3 sites</td>
+            <td class="mono">€5,390<br/><span style="font-size:0.74rem; color: var(--muted);">7 nights</span></td>
+            <td class="mono">€8,175+<br/><span style="font-size:0.74rem; color: var(--muted);">Bespoke</span></td>
+            <td>Long-stay model — useful framing for "longevity weekend."</td>
+          </tr>
+          <tr>
+            <td><span class="name">Chenot Palace Weggis</span><span class="nameSmall">Lake Lucerne</span></td>
+            <td>Switzerland</td>
+            <td class="mono">€1,200/day all-in</td>
+            <td class="mono">CHF 6,900<br/><span style="font-size:0.74rem; color: var(--muted);">7 nights</span></td>
+            <td>AEVUM Platinum (RM 24,499) ≈ 5-night Chenot stay.</td>
+          </tr>
+          <tr>
+            <td><span class="name">SHA Wellness</span><span class="nameSmall">Genetics + biomarkers</span></td>
+            <td>Alicante, Spain</td>
+            <td class="mono">€7,500<br/><span style="font-size:0.74rem; color: var(--muted);">7 nt Advanced Longevity</span></td>
+            <td class="mono">€12,000<br/><span style="font-size:0.74rem; color: var(--muted);">14 nights</span></td>
+            <td>Genetic add-on as future AEVUM expansion.</td>
+          </tr>
+          <tr>
+            <td><span class="name">RAKxa</span><span class="nameSmall">Closest Asia analogue</span></td>
+            <td>Bangkok, TH</td>
+            <td class="mono">~€800/day · US$5,279/3 nt</td>
+            <td class="mono">US$7,350<br/><span style="font-size:0.74rem; color: var(--muted);">5 nights</span></td>
+            <td>Direct partner / referral candidate. Asia HNW already books here.</td>
+          </tr>
+          <tr>
+            <td><span class="name">COMO Shambhala</span><span class="nameSmall">SG HNW touchstone</span></td>
+            <td>Ubud, Bali</td>
+            <td class="mono">~€500/day</td>
+            <td class="mono">5–10 night programs</td>
+            <td>Indonesian HNW touchstone. Source of demand for AEVUM.</td>
+          </tr>
+          <tr>
+            <td><span class="name">REVĪVŌ Wellness</span><span class="nameSmall">Bali · 6 retreats</span></td>
+            <td>Nusa Dua, Bali</td>
+            <td class="mono">IDR 6.8M<br/><span style="font-size:0.74rem; color: var(--muted);">~US$415/night</span></td>
+            <td class="mono">Signature longevity</td>
+            <td>Bali wellness halo — co-marketing potential.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Online Sentiment cards -->
+  <section class="panel">
+    <div class="sec-h">
+      <div>
+        <h2>02 · Online Reputation — Major Competitors</h2>
+        <p>Real review sentiment, distilled. Not website attractiveness — what users actually say after the scan.</p>
+      </div>
+      <span class="num">/ § 02 · Trustpilot · Reddit · Yelp · Press</span>
+    </div>
+
+    <div class="grid-3">
+      <div class="sent-card">
+        <div class="head">
+          <div>
+            <h4>Prenuvo</h4>
+            <div class="price">US$999–5,000</div>
+          </div>
+          <span class="pill rose">RISK</span>
+        </div>
+        <div class="meter">
+          <div class="p" style="flex: 35;"></div>
+          <div class="m" style="flex: 35;"></div>
+          <div class="n" style="flex: 30;"></div>
+        </div>
+        <div class="pos">"Polished, clean, premium" — early adopters; Kim K halo</div>
+        <div class="neg">4–5 week result wait, missed findings cited in lawsuit</div>
+        <div class="neg">Press tone shifting hostile (Fortune, GeekWire, Radiology Today)</div>
+        <div class="verdict">VERDICT · <span>defining cautionary tale</span></div>
+      </div>
+
+      <div class="sent-card">
+        <div class="head">
+          <div>
+            <h4>Ezra (Function)</h4>
+            <div class="price">US$499 (post-acq.)</div>
+          </div>
+          <span class="pill teal">RISING</span>
+        </div>
+        <div class="meter">
+          <div class="p" style="flex: 65;"></div>
+          <div class="m" style="flex: 25;"></div>
+          <div class="n" style="flex: 10;"></div>
+        </div>
+        <div class="pos">DICOM files within 24h; TIME magazine feature</div>
+        <div class="pos">Acquired by Function (Mark Hyman MD); celeb investors</div>
+        <div class="neg">Aggressive price cut → questions on radiologist read time</div>
+        <div class="verdict">VERDICT · <span>fast, cheap, mass-market</span></div>
+      </div>
+
+      <div class="sent-card">
+        <div class="head">
+          <div>
+            <h4>Neko Health</h4>
+            <div class="price">£299 flat</div>
+          </div>
+          <span class="pill amber">MIXED</span>
+        </div>
+        <div class="meter">
+          <div class="p" style="flex: 50;"></div>
+          <div class="m" style="flex: 25;"></div>
+          <div class="n" style="flex: 25;"></div>
+        </div>
+        <div class="pos">Manchester clinic praised: "professional, stylish, hygienic"</div>
+        <div class="neg">Booking chaos — paid £299 but no slots; multi-month waits</div>
+        <div class="neg">Staff couldn't explain "are machines clinically approved?"</div>
+        <div class="verdict">VERDICT · <span>brand &gt; ops</span></div>
+      </div>
+
+      <div class="sent-card">
+        <div class="head">
+          <div>
+            <h4>Human Longevity</h4>
+            <div class="price">US$8k–19k/yr</div>
+          </div>
+          <span class="pill teal">CREDIBLE</span>
+        </div>
+        <div class="meter">
+          <div class="p" style="flex: 75;"></div>
+          <div class="m" style="flex: 20;"></div>
+          <div class="n" style="flex: 5;"></div>
+        </div>
+        <div class="pos">Craig Venter halo — strong scientific credibility</div>
+        <div class="pos">No major scandals, quietly continues</div>
+        <div class="neg">Tiny scale (~81 employees); price screens out mass market</div>
+        <div class="verdict">VERDICT · <span>premium · niche</span></div>
+      </div>
+
+      <div class="sent-card">
+        <div class="head">
+          <div>
+            <h4>SimonMed</h4>
+            <div class="price">US$650–1,550</div>
+          </div>
+          <span class="pill rose">RISK</span>
+        </div>
+        <div class="meter">
+          <div class="p" style="flex: 30;"></div>
+          <div class="m" style="flex: 30;"></div>
+          <div class="n" style="flex: 40;"></div>
+        </div>
+        <div class="pos">Massive scale (170+ centres); affordable</div>
+        <div class="neg">Cyberattack lawsuit Feb 2025; AZ MRI safety incidents</div>
+        <div class="neg">ACR's Davenport called practice "a terrible idea"</div>
+        <div class="verdict">VERDICT · <span>volume play, fragile</span></div>
+      </div>
+
+      <div class="sent-card">
+        <div class="head">
+          <div>
+            <h4>Echelon Health</h4>
+            <div class="price">£2,000–14,000</div>
+          </div>
+          <span class="pill teal">CLOSEST FIT</span>
+        </div>
+        <div class="meter">
+          <div class="p" style="flex: 80;"></div>
+          <div class="m" style="flex: 18;"></div>
+          <div class="n" style="flex: 2;"></div>
+        </div>
+        <div class="pos">Premium UK Mayfair concierge — Boat International, Glossary</div>
+        <div class="pos">Internal: 92–95% detection of preventable death causes</div>
+        <div class="pos">No major public controversies</div>
+        <div class="verdict">VERDICT · <span>aesthetic + price model to study</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lawsuit alert -->
+  <section class="panel">
+    <div class="sec-h">
+      <div>
+        <h2>03 · The Defining 2026 Event — Prenuvo Lawsuit</h2>
+        <p>Heavily covered in the radiology press. Will define category perception for the rest of the year.</p>
+      </div>
+      <span class="num">/ § 03 · Washington Post · Jan 2026</span>
+    </div>
+
+    <div class="alert">
+      <span class="label">⚠ Reputational risk for the entire WB-MRI category</span>
+      <h3>Prenuvo loses bid to limit damages in Sean Clifford malpractice case (NY)</h3>
+      <p>Sean Clifford, 37, paid US$2,500 for an NYC scan in July 2023. The cerebral and cerebellar vasculature read came back "normal." In March 2024, he suffered a catastrophic ischemic stroke (right middle cerebral artery territory), resulting in left-side paralysis and permanent disability.</p>
+      <p>Plaintiffs allege "worrisome arterial stenosis in right middle cerebral artery" was visible on the original scan and missed. Prenuvo attempted to apply California's damages cap; the New York court rejected that motion in January 2026 and the case is proceeding.</p>
+      <p style="margin-top: 16px;"><strong style="color: var(--text);">Implications for AEVUM:</strong></p>
+      <p>1. Marketing must NOT promise "early detection of all cancers" or "find disease before symptoms" without heavy disclaimers — these claims are now legally and reputationally risky.</p>
+      <p>2. Radiologist quality is the moat. AEVUM should publish credentials, double-read protocols, and turnaround SLAs explicitly.</p>
+      <p>3. Incidental findings management is a product, not an afterthought. A "next-step concierge" (specialist booking, second opinion, anxiety counselling) is differentiating.</p>
+      <p>4. Position as <em>"longevity baseline + concierge"</em> — not "cancer screening." This avoids the strongest critique.</p>
+    </div>
+  </section>
+
+  <!-- Clinical Evidence -->
+  <section class="panel">
+    <div class="sec-h">
+      <div>
+        <h2>04 · Clinical Evidence — The WB-MRI Debate</h2>
+        <p>Major medical bodies oppose asymptomatic WB-MRI screening. AEVUM must engage with this honestly, not skirt it.</p>
+      </div>
+      <span class="num">/ § 04 · ACR · CAR · Fred Hutch · Michigan Medicine</span>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>Position of the medical establishment</h3>
+        <p><strong style="color: var(--text);">American College of Radiology (ACR):</strong> explicitly does not recommend total-body screening MRI for average-risk asymptomatic adults — citing no evidence of life extension or cost-effectiveness, and concern about non-specific findings driving downstream testing.</p>
+        <p><strong style="color: var(--text);">Canadian Association of Radiologists (CAR), Sept 2025 policy:</strong> opposes whole-body MRI as a screening tool in asymptomatic individuals outside specific evidence-based clinical indications.</p>
+        <p><strong style="color: var(--text);">Michigan Medicine, Fred Hutch (2025):</strong> "Pricey whole-body MRIs don't add up."</p>
+        <div class="src">
+          Sources: <a href="https://car.ca/wp-content/uploads/2025/09/CAR-Policy-Statement-Whole-Body-MRI-Screening-in-Asymptomatic-Individuals.pdf" target="_blank">CAR Policy</a> · <a href="https://www.michiganmedicine.org/health-lab/whole-body-mris-arent-beneficial-they-seem" target="_blank">Michigan Medicine</a> · <a href="https://www.fredhutch.org/en/news/center-news/2025/08/pricey-whole-body-mris-dont-add-up.html" target="_blank">Fred Hutch</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Headline statistics</h3>
+        <div class="bar-chart">
+          <div class="bar-row">
+            <div class="lbl">Adults with ≥1 abnormal finding<small>12-study review · DI</small></div>
+            <div class="track"><div class="fill" style="background: var(--rose); width: 95%;"></div></div>
+            <div class="val">95%</div>
+          </div>
+          <div class="bar-row">
+            <div class="lbl">Findings clinically irrelevant<small>same review</small></div>
+            <div class="track"><div class="fill" style="background: var(--amber); width: 91%;"></div></div>
+            <div class="val">91%</div>
+          </div>
+          <div class="bar-row">
+            <div class="lbl">Pooled false-positive rate<small>2019 systematic review (n=5,809)</small></div>
+            <div class="track"><div class="fill" style="background: var(--amber); width: 16%;"></div></div>
+            <div class="val">16%</div>
+          </div>
+          <div class="bar-row">
+            <div class="lbl">Findings suspicious for malignancy<small>same meta-analysis</small></div>
+            <div class="track"><div class="fill" style="background: var(--plum); width: 10%;"></div></div>
+            <div class="val">2%</div>
+          </div>
+          <div class="bar-row">
+            <div class="lbl">Histologically confirmed cancers<small>n=3,287 screened</small></div>
+            <div class="track"><div class="fill" style="background: var(--teal); width: 7.5%;"></div></div>
+            <div class="val">1.5%</div>
+          </div>
+          <div class="bar-row">
+            <div class="lbl">Social posts framed positively<small>2025 SM analysis</small></div>
+            <div class="track"><div class="fill" style="background: var(--teal); width: 87%;"></div></div>
+            <div class="val">87%</div>
+          </div>
+        </div>
+        <div class="src">
+          The gap between published evidence (~91% irrelevant findings) and social-media tone (~87% positive) is the core category risk. AEVUM's compliance and consultation practice must close this gap.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEA Market Trends -->
+  <section class="panel">
+    <div class="sec-h">
+      <div>
+        <h2>05 · SEA Medical Tourism — Why JB, Why Now</h2>
+        <p>Structural tailwinds: RTS Link, ASEAN wellness CAGR 12.4%, Singapore HNW health anxiety, Indonesian HNW orbit.</p>
+      </div>
+      <span class="num">/ § 05 · GMI · GWI · Manulife · Wikipedia</span>
+    </div>
+
+    <div class="grid-3">
+      <div class="card">
+        <h3>ASEAN Medical &amp; Wellness Tourism</h3>
+        <div class="bar-chart">
+          <div class="bar-row">
+            <div class="lbl">2024<small>baseline</small></div>
+            <div class="track"><div class="fill" style="background: var(--muted); width: 30%;"></div></div>
+            <div class="val">$66B</div>
+          </div>
+          <div class="bar-row">
+            <div class="lbl">2025</div>
+            <div class="track"><div class="fill" style="background: var(--teal); width: 35%;"></div></div>
+            <div class="val">$76.5B</div>
+          </div>
+          <div class="bar-row">
+            <div class="lbl">2034 (projected)</div>
+            <div class="track"><div class="fill" style="background: var(--teal); width: 100%;"></div></div>
+            <div class="val">$218.4B</div>
+          </div>
+        </div>
+        <div class="src">CAGR 12.4% · GMI 2025</div>
+      </div>
+
+      <div class="card">
+        <h3>Indonesia Med + Wellness Tourism</h3>
+        <div class="bar-chart">
+          <div class="bar-row">
+            <div class="lbl">2026</div>
+            <div class="track"><div class="fill" style="background: var(--amber); width: 38%;"></div></div>
+            <div class="val">$7.9B</div>
+          </div>
+          <div class="bar-row">
+            <div class="lbl">2035 (projected)</div>
+            <div class="track"><div class="fill" style="background: var(--amber); width: 100%;"></div></div>
+            <div class="val">$20.6B</div>
+          </div>
+        </div>
+        <div class="src">CAGR 11.3% · Indonesia HNW already orbits Singapore. Bali = wellness halo. AEVUM is reachable on a SG weekend trip.</div>
+      </div>
+
+      <div class="card">
+        <h3>Singapore HNW Pulse · 2025</h3>
+        <div class="bar-chart">
+          <div class="bar-row">
+            <div class="lbl">Recognise health is critical</div>
+            <div class="track"><div class="fill" style="background: var(--teal); width: 94%;"></div></div>
+            <div class="val">94%</div>
+          </div>
+          <div class="bar-row">
+            <div class="lbl">Confident in long-term health</div>
+            <div class="track"><div class="fill" style="background: var(--rose); width: 44%;"></div></div>
+            <div class="val">44%</div>
+          </div>
+          <div class="bar-row">
+            <div class="lbl">Use longevity tech (wearables/apps)</div>
+            <div class="track"><div class="fill" style="background: var(--teal); width: 40%;"></div></div>
+            <div class="val">40%</div>
+          </div>
+          <div class="bar-row">
+            <div class="lbl">APAC HNW with formal LTC plan</div>
+            <div class="track"><div class="fill" style="background: var(--teal); width: 68%;"></div></div>
+            <div class="val">68%</div>
+          </div>
+        </div>
+        <div class="src">Manulife / Forbes Insights · 2025. The 50-pt gap between "health is critical" and "confident in health" is the demand to monetise.</div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top: 16px;">
+      <div class="card">
+        <h3>RTS Link — The Inflection Point</h3>
+        <p>The Johor Bahru–Singapore Rapid Transit System launches end-2026. Woodlands North to Bukit Chagar in 5 minutes, fares S$5–7, AI e-gates with 7-second clearance. Capacity: 40,000 pax/day at launch, 140,000/day long-term.</p>
+        <p>Pre-RTS, JB is for price-sensitive Singaporeans willing to drive. Post-RTS, JB is a 5-minute Uber from Woodlands — same effective distance as Mt Elizabeth Novena from Orchard.</p>
+        <p style="color: var(--teal); font-weight: 600; margin-top: 12px;">AEVUM's go-to-market should backsolve from RTS launch month.</p>
+        <div class="src">Sources: <a href="https://en.wikipedia.org/wiki/Johor_Bahru%E2%80%93Singapore_Rapid_Transit_System" target="_blank">Wikipedia: RTS Link</a> · <a href="https://theindependent.sg/johor-bahru-singapore-rts-link-5-minute-crossing-with-s5-s7-fares-and-7-seconds-clearance-via-ai-e-gates-to-launch-by-end-2026/" target="_blank">Independent SG</a></div>
+      </div>
+
+      <div class="card">
+        <h3>Adjacent SG Movement — Window is Closing</h3>
+        <p><strong style="color: var(--text);">Chi Longevity</strong> opened at Four Seasons Singapore, January 2025 — luxury-hospitality longevity model. Validates AEVUM's positioning.</p>
+        <p><strong style="color: var(--text);">Morrow</strong> (Singapore longevity hub) opened December 2025 — democratising version.</p>
+        <p>Healthway, Nuffield, The Longevity GP, Clifford Clinic all entering longevity space.</p>
+        <p style="color: var(--amber); font-weight: 600; margin-top: 12px;">JB is uncontested — but the SG shoulder has 18 months to react.</p>
+        <div class="src">Sources: <a href="https://medicaltravelmarket.com/news/chi-longevity-clinic-opens-at-four-seasons-hotel-singapore" target="_blank">Medical Travel Market</a> · industry trade press</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Strategic Insights -->
+  <section class="panel">
+    <div class="sec-h">
+      <div>
+        <h2>06 · Five Insights for AEVUM Positioning</h2>
+        <p>Synthesised from the full research set. These shape every messaging decision in the brand.</p>
+      </div>
+      <span class="num">/ § 06 · Strategy</span>
+    </div>
+
+    <div class="grid-2">
+      <div class="insight">
+        <div class="num">INSIGHT · 01</div>
+        <h4>Don't compete with Prenuvo on tech. Compete with Mt Elizabeth on experience.</h4>
+        <p>The Singapore HNW competitive set isn't Ezra at US$499 — it's Raffles Platinum at S$11,408. AEVUM's 35–40% price advantage vs. SG hospital concierge is the durable wedge. Position against Mt Elizabeth, not against Prenuvo.</p>
+      </div>
+
+      <div class="insight">
+        <div class="num">INSIGHT · 02</div>
+        <h4>Lead with concierge &amp; hospitality design. Support with MRI.</h4>
+        <p>Every competitor that has gone viral (Neko, Prenuvo, Chi Longevity at Four Seasons) won on physical experience + brand. The MRI machine is undifferentiated commodity. AEVUM should look more like Aman than KPJ — steal language from CLP/Chenot, not from Pantai.</p>
+      </div>
+
+      <div class="insight">
+        <div class="num">INSIGHT · 03</div>
+        <h4>Get ahead of the clinical-evidence backlash now.</h4>
+        <p>The Prenuvo lawsuit, ACR/CAR opposition, and Fred Hutch/Michigan critiques mean asymptomatic WB-MRI is in a credibility war. AEVUM should: hire publicly named credentialed radiologists, publish a double-read protocol, frame as "personalised longevity baseline" (not "cancer screening"), and build the Specialist Concierge product — what happens after a finding is the real luxury.</p>
+      </div>
+
+      <div class="insight">
+        <div class="num">INSIGHT · 04</div>
+        <h4>The RTS Link opens the actual market window.</h4>
+        <p>End-2026 is when AEVUM's TAM 5×s. AEVUM's go-to-market plan should backsolve from RTS launch month. Pre-launch hype + early-adopter referral list timed to RTS opening = founders' moment. Soft-launch with a paid pilot Q3 2026; full launch at RTS opening.</p>
+      </div>
+
+      <div class="insight" style="grid-column: span 2;">
+        <div class="num">INSIGHT · 05</div>
+        <h4>Indonesian HNW is the highest-value secondary segment.</h4>
+        <p>Indonesia wellness tourism: US$7.9B → US$20.6B 2026–2035 (CAGR 11.3%). Indonesian HNW already travel to Singapore for finance and Bali for wellness. AEVUM could be <strong style="color: var(--text);">the medical screening anchor of an Indonesia–Singapore–JB triangle</strong> for jetset clients (private plane to Senai, RTS to Singapore for shopping/banking, return flight via JB). Marketing: Bahasa Indonesia microsite, Jakarta-based ambassador (KOL doctor or wellness figure), partnerships with Mandiri Private / BCA Prioritas / DBS Treasures for warm referrals.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="container" style="display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
+    <span>© 2026 · AEVUM is a brand of Elitez Group of Companies · Internal research panel</span>
+    <span>Data current as of 2026-04-18 · Will rot — verify before quoting</span>
+  </div>
+</footer>
+
+</body>
+</html>

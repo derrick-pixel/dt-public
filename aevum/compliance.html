@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AEVUM · MAB Compliance Audit</title>
+<meta name="description" content="Internal MAB (Medicine Advertisement Board, Malaysia) compliance audit of the AEVUM marketing site. For legal sign-off." />
+
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://derrick-pixel.github.io/Elitez_MRI/compliance.html" />
+<meta property="og:title" content="AEVUM · MAB Compliance Audit" />
+<meta property="og:image" content="https://derrick-pixel.github.io/Elitez_MRI/og-image.jpg" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --bg: #F4F6F8;
+    --surface: #FFFFFF;
+    --surface-2: #ECF0F4;
+    --line: #DDE3E9;
+    --line-2: #C5CDD6;
+    --ink: #0B2948;
+    --text: #1A2530;
+    --text-2: #2E4060;
+    --muted: #5C6B82;
+    --sage: #4A7C7E;
+    --sage-deep: #2E5557;
+    --green: #0E8A4A;
+    --amber: #B8761F;
+    --red: #B33A3A;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; font-size: 16px; line-height: 1.7; font-weight: 500; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; transition: color 0.2s; }
+  a.lk { color: var(--sage); border-bottom: 1px solid var(--sage); padding-bottom: 1px; }
+  a.lk:hover { color: var(--sage-deep); }
+  h1, h2, h3 { font-family: 'Source Serif 4', Georgia, serif; line-height: 1.1; letter-spacing: -0.018em; color: var(--ink); }
+  h1 { font-size: clamp(2.2rem, 4.6vw, 3.4rem); font-weight: 600; margin-bottom: 16px; }
+  h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 600; margin-bottom: 14px; }
+  h3 { font-size: 1.3rem; font-weight: 600; margin-bottom: 10px; }
+  p { font-size: 1.04rem; line-height: 1.7; color: var(--text); }
+  p strong { color: var(--ink); font-weight: 700; }
+
+  .container { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+  @media (max-width: 768px) { .container { padding: 0 22px; } }
+
+  /* Top */
+  .topbar { position: sticky; top: 0; z-index: 100; background: rgba(244,246,248,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--line); }
+  .topbar-inner { max-width: 1180px; margin: 0 auto; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; color: var(--ink); }
+  .brand-mark { width: 30px; height: 30px; border-radius: 7px; background: var(--ink); color: var(--surface); display: flex; align-items: center; justify-content: center; font-family: 'Source Serif 4', serif; font-style: italic; font-weight: 600; font-size: 1.15rem; line-height: 1; }
+  .topbar-tabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 100px; padding: 4px; }
+  .topbar-tabs a { padding: 7px 14px; border-radius: 100px; font-size: 0.84rem; color: var(--muted); font-weight: 600; }
+  .topbar-tabs a.active { background: var(--ink); color: var(--surface); }
+  .topbar-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.74rem; color: var(--muted); font-weight: 500; }
+
+  .label { font-family: 'Inter', sans-serif; font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; color: var(--sage); display: inline-flex; align-items: center; gap: 12px; }
+  .label::before { content: ''; width: 24px; height: 2px; background: var(--sage); }
+
+  section.panel { padding: 40px 0; }
+  .ph { padding: 60px 0 30px; }
+  .ph p { color: var(--text-2); max-width: 800px; margin-top: 20px; }
+
+  .summary-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 32px; margin-top: 28px; box-shadow: 0 1px 2px rgba(11,41,72,0.05); }
+  .summary-card h3 { color: var(--ink); margin-bottom: 18px; }
+  .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line); border-radius: 12px; overflow: hidden; border: 1px solid var(--line); margin-top: 24px; }
+  @media (max-width: 768px) { .summary-grid { grid-template-columns: 1fr 1fr; } }
+  .summary-stat { background: var(--surface); padding: 22px 20px; }
+  .summary-stat .lbl { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; font-weight: 600; }
+  .summary-stat .val { font-family: 'Source Serif 4', serif; font-size: 2rem; font-weight: 700; color: var(--ink); line-height: 1; letter-spacing: -0.03em; }
+  .summary-stat .val.green { color: var(--green); }
+  .summary-stat .val.amber { color: var(--amber); }
+  .summary-stat .val.red { color: var(--red); }
+  .summary-stat .desc { font-size: 0.84rem; color: var(--muted); margin-top: 6px; }
+
+  /* Rules table */
+  .sec-h { padding-bottom: 20px; border-bottom: 1.5px solid var(--ink); margin-bottom: 36px; }
+  .rules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 768px) { .rules-grid { grid-template-columns: 1fr; } }
+  .rule {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 24px; border-left: 4px solid var(--green);
+  }
+  .rule.no { border-left-color: var(--red); }
+  .rule .h-tag { font-family: 'Inter', sans-serif; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--green); margin-bottom: 12px; }
+  .rule.no .h-tag { color: var(--red); }
+  .rule h4 { font-size: 1.06rem; font-weight: 700; margin-bottom: 12px; color: var(--ink); }
+  .rule p { font-size: 0.96rem; color: var(--text-2); margin-bottom: 8px; }
+  .rule .src { font-family: 'JetBrains Mono', monospace; font-size: 0.74rem; color: var(--muted); margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+
+  /* Audit table */
+  .audit { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .audit-row {
+    display: grid; grid-template-columns: 80px 100px 1fr 1fr;
+    gap: 18px; padding: 22px 24px; border-bottom: 1px solid var(--line); align-items: start;
+    font-size: 0.94rem;
+  }
+  .audit-row:first-child {
+    background: var(--surface-2); font-family: 'Inter', sans-serif;
+    font-size: 0.74rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .audit-row:last-child { border-bottom: none; }
+  @media (max-width: 900px) {
+    .audit-row { grid-template-columns: 1fr; gap: 8px; }
+    .audit-row:first-child { display: none; }
+    .audit-row { padding: 22px 18px; border-bottom: 6px solid var(--bg); }
+  }
+  .audit .ref { font-family: 'JetBrains Mono', monospace; font-size: 0.86rem; font-weight: 700; color: var(--muted); }
+  .audit .status .pill {
+    display: inline-block; padding: 4px 10px; border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+  .audit .status .pill.fixed { background: rgba(14,138,74,0.14); color: var(--green); }
+  .audit .status .pill.safe { background: rgba(74,124,126,0.14); color: var(--sage-deep); }
+  .audit .status .pill.amber { background: rgba(184,118,31,0.14); color: var(--amber); }
+  .audit .before { color: var(--text-2); }
+  .audit .before s { color: var(--red); text-decoration-thickness: 1.5px; }
+  .audit .after { color: var(--text); }
+  .audit .after strong { color: var(--ink); font-weight: 700; }
+  .audit .reason { display: block; margin-top: 8px; font-size: 0.84rem; color: var(--muted); font-style: italic; }
+  .audit .where { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+
+  /* Sign-off block */
+  .signoff {
+    background: linear-gradient(160deg, var(--surface), color-mix(in srgb, var(--sage) 8%, var(--surface)));
+    border: 1.5px solid var(--sage); border-radius: 16px; padding: 32px;
+  }
+  .signoff h3 { color: var(--ink); margin-bottom: 14px; }
+  .signoff p { color: var(--text-2); margin-bottom: 12px; }
+  .signoff-block { background: var(--surface); border: 1px dashed var(--line-2); border-radius: 10px; padding: 22px; margin-top: 20px; }
+  .signoff-block .row { display: grid; grid-template-columns: 160px 1fr; gap: 18px; padding: 10px 0; border-bottom: 1px dotted var(--line); align-items: center; }
+  .signoff-block .row:last-child { border-bottom: none; }
+  .signoff-block .row .k { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+  .signoff-block .row .v { font-size: 0.96rem; color: var(--text); border-bottom: 1px solid var(--line); padding-bottom: 4px; min-height: 22px; }
+
+  footer { padding: 50px 0 30px; border-top: 1px solid var(--line); margin-top: 60px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--muted); display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="brand">
+      <span class="brand-mark">A</span>
+      <span>AEVUM <span style="color: var(--muted); font-weight: 400; font-size: 0.86rem;">/ internal</span></span>
+    </a>
+    <div class="topbar-tabs">
+      <a href="index.html">Site</a>
+      <a href="admin.html">Research</a>
+      <a href="admin-insights.html">Pricing</a>
+      <a href="compliance.html" class="active">Compliance</a>
+      <a href="images.html">Images</a>
+    </div>
+    <span class="topbar-meta">v0.5 · 2026-04-18 · For legal sign-off</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <section class="ph">
+    <span class="label">Panel 03 / Compliance audit</span>
+    <h1>MAB compliance audit of the marketing site.<br/><span style="color: var(--sage); font-style: italic; font-weight: 500;">Sentence-by-sentence, with rule reference.</span></h1>
+    <p>Malaysia's Medicine Advertisement Board (MAB) — under the Medicines (Advertisement and Sale) Act 1956 and elaborated in the Pharmacy Act guidelines for healthcare facilities — strictly regulates what private healthcare clinics may say in their marketing material. <strong>The benchmarked B2C model used by Prenuvo, Ezra, Function Health and similar US-based providers is functionally illegal in Malaysia.</strong> This page documents how the AEVUM marketing site has been audited against the MAB rules, what was changed, and what remains for review by a Malaysian-registered healthcare lawyer prior to public launch.</p>
+
+    <div class="summary-card">
+      <h3>Summary</h3>
+      <div class="summary-grid">
+        <div class="summary-stat">
+          <div class="lbl">Pages audited</div>
+          <div class="val">1</div>
+          <div class="desc">index.html (primary site)</div>
+        </div>
+        <div class="summary-stat">
+          <div class="lbl">Violations identified</div>
+          <div class="val red">7</div>
+          <div class="desc">All flagged below</div>
+        </div>
+        <div class="summary-stat">
+          <div class="lbl">Violations fixed</div>
+          <div class="val green">7 / 7</div>
+          <div class="desc">Live on the site as of v0.5</div>
+        </div>
+        <div class="summary-stat">
+          <div class="lbl">Pending legal sign-off</div>
+          <div class="val amber">1</div>
+          <div class="desc">Final consultant disclosure</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAB rules reference -->
+  <section class="panel">
+    <div class="sec-h">
+      <h2>01 · MAB rules at a glance</h2>
+    </div>
+
+    <div class="rules-grid">
+      <div class="rule no">
+        <div class="h-tag">✗  Forbidden</div>
+        <h4>Patient testimonials</h4>
+        <p>"Mrs Tan from Bangsar said her scan saved her life" — not permitted, even if the testimonial is genuine and offered voluntarily.</p>
+        <div class="src">MAB Guideline §3 · Pharmacy Act</div>
+      </div>
+      <div class="rule no">
+        <div class="h-tag">✗  Forbidden</div>
+        <h4>Celebrity endorsements</h4>
+        <p>Kim Kardashian-style celebrity recommendation of a clinical service. No celebrity may endorse a treatment or service.</p>
+        <div class="src">MAB Guideline §3</div>
+      </div>
+      <div class="rule no">
+        <div class="h-tag">✗  Forbidden</div>
+        <h4>Promoting individual practitioners' skills</h4>
+        <p>"Our radiologists are the best in the region" / "world-renowned consultant" / "Dr X is internationally acclaimed". Listing names &amp; basic qualifications for verification is allowed; framing as superior expertise is not.</p>
+        <div class="src">MAB Guideline §4</div>
+      </div>
+      <div class="rule no">
+        <div class="h-tag">✗  Forbidden</div>
+        <h4>Comparing prices or packages between clinics</h4>
+        <p>"Our scan is 50% cheaper than Hospital X" / "We charge less than Mt Elizabeth". Even factually true comparisons are prohibited.</p>
+        <div class="src">MAB Guideline §5</div>
+      </div>
+      <div class="rule no">
+        <div class="h-tag">✗  Forbidden</div>
+        <h4>Free offers of healthcare services</h4>
+        <p>"First consultation free" / "Complimentary follow-up visit". Bundled inclusions inside a paid package are different and are permitted.</p>
+        <div class="src">MAB Guideline §6</div>
+      </div>
+      <div class="rule no">
+        <div class="h-tag">✗  Forbidden</div>
+        <h4>Exaggerated, false, misleading, or deceptive claims</h4>
+        <p>Catch-all clause. Includes "the most comprehensive scan in the region", "guaranteed early detection", "the only clinic that…".</p>
+        <div class="src">Medicines Act 1956 §4</div>
+      </div>
+
+      <div class="rule">
+        <div class="h-tag">✓  Permitted</div>
+        <h4>Bundled package pricing</h4>
+        <p>"Our Comprehensive package: full-body MRI + 60-min consultation + bound report = RM 8,699." This is permitted. Itemised inclusions inside the bundle are permitted.</p>
+        <div class="src">MAB Guideline §7</div>
+      </div>
+      <div class="rule">
+        <div class="h-tag">✓  Permitted</div>
+        <h4>Time-limited package discounts</h4>
+        <p>"15% off the Comprehensive package during Mother's Day week" / "Founders' Programme rate, valid Q3 2026 only" — explicit time-limited discounts on full bundled packages are permitted.</p>
+        <div class="src">MAB Guideline §7</div>
+      </div>
+      <div class="rule">
+        <div class="h-tag">✓  Permitted</div>
+        <h4>Factual disclosure of practitioners on register</h4>
+        <p>Listing the names, MMC registration numbers, and basic qualifications (MBBS, MMed, FRCR) of practitioners — required under Act 586 anyway. The line is between disclosure (permitted) and promotion (not).</p>
+        <div class="src">Act 586 §38 + MAB Guideline §4</div>
+      </div>
+      <div class="rule">
+        <div class="h-tag">✓  Permitted</div>
+        <h4>Facility &amp; technology description</h4>
+        <p>"5,000 sq ft facility, three Siemens MAGNETOM magnets, RF-shielded suites, on-site emergency capability." Factual descriptions of facility, equipment, and technology are permitted in full.</p>
+        <div class="src">MAB Guideline §8</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sentence-by-sentence audit -->
+  <section class="panel">
+    <div class="sec-h">
+      <h2>02 · Audit findings — index.html</h2>
+      <p style="color: var(--text-2); font-size: 1rem; margin-top: 14px;">Each violation identified, with the original phrasing, the MAB rule cited, the rewrite applied, and the reason. All seven violations have been fixed in the live site as of v0.5.</p>
+    </div>
+
+    <div class="audit">
+      <div class="audit-row">
+        <span>Ref.</span>
+        <span>Status</span>
+        <span>Before / Rule</span>
+        <span>After / Reason</span>
+      </div>
+
+      <div class="audit-row">
+        <span class="ref">A-01</span>
+        <span class="status"><span class="pill fixed">FIXED</span></span>
+        <span class="before">
+          <strong>FAQ — "How is AEVUM different from Prenuvo, Ezra, or Function Health?"</strong>
+          <div class="where">/ Section 09, FAQ accordion item 3</div>
+          <s>"We are slower and more expensive than Ezra, but we are still 35–40% cheaper than the equivalent Singapore hospital concierge package."</s>
+          <span class="reason">Direct comparison of prices for healthcare services between AEVUM and other clinics.</span>
+        </span>
+        <span class="after">
+          "We do not publish comparisons against the prices of other clinics; the right scan for you depends on your individual clinical context, and we will discuss that openly during your initial intake."
+          <span class="reason"><strong>MAB Guideline §5.</strong> All inter-clinic price comparisons removed. The bundled package price (RM 8,699 etc.) is retained — bundled pricing is explicitly permitted.</span>
+        </span>
+      </div>
+
+      <div class="audit-row">
+        <span class="ref">A-02</span>
+        <span class="status"><span class="pill fixed">FIXED</span></span>
+        <span class="before">
+          <strong>Section 02 heading</strong>
+          <div class="where">/ Specialists section</div>
+          <s>"Named, credentialed, available to sit with you for an hour."</s>
+          <span class="reason">Frames consultants as personally distinguished — a soft promotion of individual practitioner skill.</span>
+        </span>
+        <span class="after">
+          "Our consultant radiologists. Listed publicly, registered with the MMC."
+          <span class="reason"><strong>MAB Guideline §4.</strong> Reframed as factual disclosure (per Act 586) rather than promotion. The MMC reference signals regulatory compliance.</span>
+        </span>
+      </div>
+
+      <div class="audit-row">
+        <span class="ref">A-03</span>
+        <span class="status"><span class="pill fixed">FIXED</span></span>
+        <span class="before">
+          <strong>Specialist credentials</strong>
+          <div class="where">/ All three consultant cards</div>
+          <s>"FRCR (UK) · 18 years post-fellowship"</s><br/>
+          <s>"Former senior consultant, SGH Diagnostic Imaging"</s><br/>
+          <s>"Subspecialty: oncologic body imaging"</s>
+          <span class="reason">Years of experience and prior senior positions are framed as superior expertise. "Subspecialty" implies differentiated skill.</span>
+        </span>
+        <span class="after">
+          "FRCR (UK)" (years removed)<br/>
+          (Former positions removed entirely)<br/>
+          "Areas of clinical practice: oncologic MRI, body imaging"
+          <span class="reason"><strong>MAB Guideline §4.</strong> Reduced to MMC-style factual disclosure. Names and degree qualifications retained (required under Act 586). Each card now ends with "MMC Reg. No. pending registration" — appropriate disclosure language.</span>
+        </span>
+      </div>
+
+      <div class="audit-row">
+        <span class="ref">A-04</span>
+        <span class="status"><span class="pill fixed">FIXED</span></span>
+        <span class="before">
+          <strong>Honesty card 03 — "What the literature says"</strong>
+          <div class="where">/ Section 06, Evidence triangle</div>
+          <s>"We disagree, partially. We agree the marketing of WB-MRI by US disruptors has been irresponsible."</s>
+          <span class="reason">Implicit comparison to other providers ("US disruptors"); self-positioning as morally superior is comparative framing.</span>
+        </span>
+        <span class="after">
+          "Our practice engages with this debate directly. We accept that not every patient is a suitable candidate for asymptomatic full-body MRI screening, and we will say so during the intake conversation if we believe so in your case."
+          <span class="reason"><strong>MAB Guideline §6.</strong> Reframed as honest patient-counselling commitment rather than comparison. Strengthens trust without comparing to competitors.</span>
+        </span>
+      </div>
+
+      <div class="audit-row">
+        <span class="ref">A-05</span>
+        <span class="status"><span class="pill fixed">FIXED</span></span>
+        <span class="before">
+          <strong>Legacy Platinum tier description</strong>
+          <div class="where">/ Section 04, Packages</div>
+          <s>"The most comprehensive preventative scan in the region."</s>
+          <span class="reason">Superlative claim ("the most comprehensive in the region") is a comparative quality claim that could be characterised as exaggerated.</span>
+        </span>
+        <span class="after">
+          "Our broadest tier — full-body MRI plus a low-dose CT and laboratory biomarker panel."
+          <span class="reason"><strong>MAB Guideline §6.</strong> Replaced superlative with factual itemised description. "Our broadest tier" is internal comparative (within AEVUM's own tier ladder), which is permitted.</span>
+        </span>
+      </div>
+
+      <div class="audit-row">
+        <span class="ref">A-06</span>
+        <span class="status"><span class="pill fixed">FIXED</span></span>
+        <span class="before">
+          <strong>Longitudinal section</strong>
+          <div class="where">/ Section 07, 12-month re-read</div>
+          <s>"…included in the Comprehensive tier and above, complimentary in the first year for all tiers."</s>
+          <span class="reason">"Complimentary" reads as a free service offer — formally not permitted for healthcare services.</span>
+        </span>
+        <span class="after">
+          "…included as part of the bundled package price for the Comprehensive tier and above, and included for the first year as part of the Core tier package price."
+          <span class="reason"><strong>MAB Guideline §6.</strong> Reframed as bundled-package inclusion rather than free offer. The 12-month re-read is paid for as part of the package price — semantically and legally distinct from "complimentary".</span>
+        </span>
+      </div>
+
+      <div class="audit-row">
+        <span class="ref">A-07</span>
+        <span class="status"><span class="pill fixed">FIXED</span></span>
+        <span class="before">
+          <strong>Section 02 sub-meta</strong>
+          <div class="where">/ Specialists section header</div>
+          <s>"Subject-matter expertise"</s>
+          <span class="reason">Reads as marketing claim of superior knowledge.</span>
+        </span>
+        <span class="after">
+          "Practitioners on register · Act 586 disclosure"
+          <span class="reason"><strong>MAB Guideline §4.</strong> Reframed as regulatory-disclosure context, the same way a hospital's "Our Doctors" page reads.</span>
+        </span>
+      </div>
+
+      <div class="audit-row">
+        <span class="ref">A-08</span>
+        <span class="status"><span class="pill amber">PENDING</span></span>
+        <span class="before">
+          <strong>Practitioner names overall</strong>
+          <div class="where">/ Section 02, all three cards</div>
+          The site currently shows three named consultants: Dr. Aminah Lim, Dr. Rajesh Balachandran, Dr. Marcus Tan Wei Liang.
+          <span class="reason">These are illustrative placeholders for the draft site. Final consultant appointments are pending.</span>
+        </span>
+        <span class="after">
+          A disclaimer has been added to the spec-note: <em>"Practitioner names shown are illustrative for the purposes of this draft site. Final consultant appointments will be confirmed and listed with their MMC registration numbers prior to clinic opening, as required under the Private Healthcare Facilities and Services Act 1998 (Act 586)."</em>
+          <span class="reason"><strong>Pending action:</strong> Replace placeholder names with actual hires once recruited (target Q3 2026, ahead of clinic opening). At that point each card must show real MMC registration number.</span>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Internal pages disclaimer -->
+  <section class="panel">
+    <div class="sec-h">
+      <h2>03 · Scope of audit · what is not in scope</h2>
+    </div>
+
+    <div class="rules-grid">
+      <div class="rule">
+        <div class="h-tag">In scope</div>
+        <h4>index.html (primary marketing site)</h4>
+        <p>The public-facing AEVUM site that potential guests will visit. All consumer-facing copy here is subject to MAB review and has been audited above.</p>
+      </div>
+      <div class="rule">
+        <div class="h-tag">Out of scope (internal)</div>
+        <h4>admin.html · admin-insights.html · this page</h4>
+        <p>These are internal strategy and research panels. They contain inter-clinic price comparisons, pricing strategy analyses, and competitor positioning material. <strong>This content is appropriate inside an internal strategy document but must NOT be reused in any consumer-facing marketing.</strong> Pre-launch, these pages should be password-gated or removed from the public site.</p>
+      </div>
+      <div class="rule">
+        <div class="h-tag">Out of scope (archived)</div>
+        <h4>style-*.html files (selector + archived drafts)</h4>
+        <p>Style exploration drafts kept for design-direction comparison. Pre-launch, these should be removed from the public site or moved to a password-protected staging URL. Re-audit any draft that becomes the live site.</p>
+      </div>
+      <div class="rule">
+        <div class="h-tag">Out of scope (future)</div>
+        <h4>Bahasa Indonesia microsite, future pre-booking pages, blog posts</h4>
+        <p>Any future content added to the public AEVUM site must be re-audited under the same MAB framework before publication. The Bahasa Indonesia microsite is particularly sensitive — translation can introduce subtle promotional emphasis that the original English avoided.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sign-off -->
+  <section class="panel">
+    <div class="sec-h">
+      <h2>04 · Pre-launch sign-off block</h2>
+    </div>
+
+    <div class="signoff">
+      <h3>For the appointed Malaysian-registered healthcare lawyer</h3>
+      <p>The internal audit above is a starting point, not a substitute for legal opinion. Before the AEVUM site is published in production form (i.e. with real consultant names, in a way that constitutes "advertising" to the Malaysian public), this audit should be reviewed and signed off by Malaysian-registered legal counsel competent in healthcare advertising regulation.</p>
+      <p>Recommended additional checks the lawyer should perform: (1) confirm A-08 once consultant hires are finalised; (2) review every imported asset (photography, video) for incidental MAB exposure; (3) approve the launch press release and any paid-channel ad copy; (4) confirm the Bahasa Indonesia translation does not materially change the regulatory weight of any sentence.</p>
+
+      <div class="signoff-block">
+        <div class="row"><span class="k">Date of review</span><span class="v"></span></div>
+        <div class="row"><span class="k">Lawyer name</span><span class="v"></span></div>
+        <div class="row"><span class="k">Firm</span><span class="v"></span></div>
+        <div class="row"><span class="k">Bar / MAA reference</span><span class="v"></span></div>
+        <div class="row"><span class="k">Outstanding items</span><span class="v"></span></div>
+        <div class="row"><span class="k">Signature</span><span class="v"></span></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="container" style="display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
+    <span>© 2026 · AEVUM is a brand of Elitez Group of Companies · Internal compliance panel · Not for public distribution</span>
+    <span>Audit current as of 2026-04-18 · Re-audit on every site update</span>
+  </div>
+</footer>
+
+</body>
+</html>

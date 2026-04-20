@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AEVUM — Style Selector v0.3 | Elitez MRI</title>
+<meta name="description" content="Three medical-trust directions for AEVUM, a specialist preventative MRI clinic in Johor Bahru. Each style ships with a light/dark toggle, named consultants, regulatory accreditation, sample report, and the live evidence debate." />
+
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://derrick-pixel.github.io/Elitez_MRI/" />
+<meta property="og:title" content="AEVUM — Style Selector v0.3" />
+<meta property="og:description" content="3 medical-trust directions, every claim sourced. Designed for the 35-60yo HNW reader." />
+<meta property="og:image" content="https://derrick-pixel.github.io/Elitez_MRI/og-image.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --bg: #F4F6F8;
+    --surface: #FFFFFF;
+    --surface-2: #ECF0F4;
+    --line: rgba(11,41,72,0.10);
+    --line-2: rgba(11,41,72,0.18);
+    --text: #1A2530;
+    --text-2: #2E4060;
+    --muted: #5C6B82;
+    --muted-2: #8B95A3;
+    --teal: #0D7488;
+    --sage: #4A7C7E;
+    --gold: #B8761F;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 16px; line-height: 1.7; font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(ellipse 1000px 700px at 8% -10%, rgba(13,116,136,0.05), transparent 60%),
+      radial-gradient(ellipse 800px 500px at 90% 100%, rgba(184,118,31,0.04), transparent 60%);
+    background-attachment: fixed;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 1;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+    opacity: 0.025; mix-blend-mode: overlay;
+  }
+  a { color: inherit; text-decoration: none; transition: color 0.18s; }
+  .container { max-width: 1320px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 2; }
+  @media (max-width: 768px) { .container { padding: 0 22px; } }
+
+  .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem; letter-spacing: 0.16em;
+    text-transform: uppercase; font-weight: 500; color: var(--teal);
+    display: inline-flex; align-items: center; gap: 12px;
+  }
+  .label::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 12px var(--teal); }
+
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(244,246,248,0.92); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--line); height: 68px;
+    display: flex; align-items: center;
+  }
+  .topbar-inner { max-width: 1320px; margin: 0 auto; padding: 0 32px; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+  .brand { display: flex; align-items: center; gap: 14px; font-weight: 800; font-size: 1.05rem; }
+  .brand-mark {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--teal); color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.92rem;
+    box-shadow: 0 0 0 3px rgba(74,200,220,0.18);
+  }
+  .topbar-links { display: flex; gap: 26px; font-size: 0.92rem; font-weight: 600; color: var(--text-2); }
+  .topbar-links a:hover { color: var(--teal); }
+  .topbar-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; color: var(--muted); display: inline-flex; align-items: center; gap: 8px; }
+  .topbar-tag::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--teal); animation: pulse 2.4s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;}50%{opacity:0.4;} }
+  @media (max-width: 720px) { .topbar-links { display: none; } }
+
+  /* Hero */
+  .hero { padding: 130px 0 60px; }
+  .hero-meta { display: flex; gap: 12px; margin-bottom: 32px; flex-wrap: wrap; }
+  .hero-pill {
+    background: var(--surface); border: 1px solid var(--line-2);
+    padding: 8px 16px; border-radius: 100px; font-size: 0.82rem;
+    color: var(--text-2); display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'JetBrains Mono', monospace; font-weight: 500;
+  }
+  .hero-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--teal); }
+  .hero-pill.gold .dot { background: var(--gold); }
+  .hero-pill.sage .dot { background: var(--sage); }
+
+  h1 {
+    font-size: clamp(2.6rem, 6.5vw, 4.8rem); line-height: 1.05;
+    font-weight: 800; letter-spacing: -0.035em; margin-bottom: 28px; max-width: 1100px; color: var(--text);
+  }
+  h1 em { font-family: 'EB Garamond', Georgia, serif; font-style: italic; font-weight: 500; color: var(--gold); }
+  h1 .acc { color: var(--teal); }
+
+  .hero-sub {
+    font-size: 1.18rem; color: var(--text-2); max-width: 780px;
+    line-height: 1.7; margin-bottom: 36px; font-weight: 500;
+  }
+  .hero-sub strong { color: var(--text); font-weight: 700; }
+
+  .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn {
+    padding: 14px 22px; border-radius: 12px; font-size: 0.96rem; font-weight: 700;
+    border: none; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .btn-pri { background: var(--teal); color: #fff; }
+  .btn-pri:hover { box-shadow: 0 0 32px rgba(74,200,220,0.5); transform: translateY(-1px); }
+  .btn-ghost { background: var(--surface); color: var(--text); border: 1px solid var(--line-2); }
+  .btn-ghost:hover { border-color: var(--teal); color: var(--teal); }
+
+  .update-banner {
+    margin-top: 28px; background: linear-gradient(160deg, var(--surface), color-mix(in srgb, var(--teal) 8%, var(--surface)));
+    border: 1px solid color-mix(in srgb, var(--teal) 30%, transparent);
+    border-radius: 14px; padding: 22px 26px; max-width: 800px;
+    display: flex; gap: 18px; align-items: start;
+  }
+  .update-banner .ic {
+    flex-shrink: 0; width: 42px; height: 42px; border-radius: 10px;
+    background: var(--teal); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem;
+  }
+  .update-banner h4 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+  .update-banner p { font-size: 0.94rem; color: var(--text-2); margin: 0; line-height: 1.6; }
+
+  /* Section header */
+  .sec-h { padding: 60px 0 30px; display: flex; justify-content: space-between; align-items: end; gap: 30px; flex-wrap: wrap; }
+  .sec-h h2 { font-size: clamp(1.7rem, 3.5vw, 2.6rem); font-weight: 800; letter-spacing: -0.025em; margin-top: 14px; }
+  .sec-h .num { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--muted); letter-spacing: 0.12em; }
+
+  /* Style cards */
+  .styles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  @media (max-width: 1024px) { .styles { grid-template-columns: 1fr; } }
+
+  .style-card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 22px; overflow: hidden;
+    display: flex; flex-direction: column;
+    transition: all 0.3s; position: relative;
+  }
+  .style-card:hover { border-color: var(--line-2); transform: translateY(-6px); box-shadow: 0 16px 36px rgba(11,41,72,0.12); }
+
+  .featured-tag {
+    position: absolute; top: 16px; right: 16px; z-index: 5;
+    background: var(--teal); color: #fff;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.62rem;
+    padding: 5px 10px; border-radius: 100px; letter-spacing: 0.12em; font-weight: 700;
+  }
+
+  .preview { aspect-ratio: 16/11; position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
+
+  /* CLINIC preview (light medical) */
+  .preview.clinic {
+    background: #F4F6F8; padding: 20px; color: #0B2948;
+    font-family: 'Inter', sans-serif;
+  }
+  .preview.clinic .nav { display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid #DDE3E9; align-items: center; }
+  .preview.clinic .brand-c { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 0.74rem; }
+  .preview.clinic .mark-c { width: 18px; height: 18px; border-radius: 4px; background: #0B2948; color: white; display: inline-flex; align-items: center; justify-content: center; font-family: 'Source Serif 4', serif; font-style: italic; font-weight: 600; font-size: 0.78rem; }
+  .preview.clinic .cta-c { background: #0B2948; color: white; font-size: 0.55rem; padding: 4px 9px; border-radius: 4px; font-weight: 700; }
+  .preview.clinic .h-c { font-family: 'Source Serif 4', Georgia, serif; font-size: clamp(1.1rem, 2.7vw, 1.85rem); line-height: 1.05; font-weight: 600; margin-top: 12px; letter-spacing: -0.025em; }
+  .preview.clinic .h-c .acc { color: #4A7C7E; font-style: italic; font-weight: 500; }
+  .preview.clinic .scan-c { margin-top: 10px; aspect-ratio: 16/8; background: #050810; border-radius: 6px; padding: 4px; position: relative; }
+  .preview.clinic .scan-c svg { width: 100%; height: 100%; }
+  .preview.clinic .trust-c { display: flex; gap: 4px; margin-top: 10px; flex-wrap: wrap; }
+  .preview.clinic .trust-c span { background: white; border: 1px solid #DDE3E9; padding: 3px 7px; border-radius: 100px; font-family: 'JetBrains Mono', monospace; font-size: 0.45rem; font-weight: 700; color: #5C6B82; letter-spacing: 0.1em; }
+
+  /* ATLAS preview (dark editorial) */
+  .preview.atlas {
+    background: #11140F; padding: 20px; color: #F0E8D0;
+    font-family: 'EB Garamond', serif;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+  }
+  .preview.atlas .nav { display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid rgba(232,224,200,0.18); align-items: center; }
+  .preview.atlas .brand-a { font-family: 'EB Garamond', serif; font-size: 0.95rem; letter-spacing: 0.4em; font-weight: 500; }
+  .preview.atlas .brand-a span { color: #D4B47A; }
+  .preview.atlas .cta-a { background: #D4B47A; color: #11140F; font-family: 'Inter', sans-serif; font-size: 0.5rem; padding: 4px 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+  .preview.atlas .tag-a { display: inline-block; padding: 4px 10px; border: 1px solid #9DB35F; color: #9DB35F; font-family: 'Inter', sans-serif; font-size: 0.5rem; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; margin-top: 12px; }
+  .preview.atlas .h-a { font-family: 'EB Garamond', serif; font-size: clamp(1.2rem, 2.8vw, 2.05rem); line-height: 1.05; font-weight: 500; margin-top: 8px; letter-spacing: -0.02em; }
+  .preview.atlas .h-a em { font-style: italic; color: #D4B47A; font-weight: 500; }
+  .preview.atlas .plate-a {
+    margin-top: 10px; background: #181B15; border: 1px solid rgba(232,224,200,0.22); padding: 10px;
+    aspect-ratio: 16/8; position: relative;
+  }
+  .preview.atlas .plate-a::before, .preview.atlas .plate-a::after {
+    content: ''; position: absolute; width: 12px; height: 12px;
+    border: 1.5px solid #D4B47A;
+  }
+  .preview.atlas .plate-a::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+  .preview.atlas .plate-a::after { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+  .preview.atlas .plate-a svg { width: 100%; height: 100%; }
+
+  /* EVIDENCE preview (light citation) */
+  .preview.evidence {
+    background: #FFFFFF; padding: 20px; color: #0E1820;
+    font-family: 'Inter', sans-serif;
+  }
+  .preview.evidence .nav { display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid #E2E8EE; align-items: center; }
+  .preview.evidence .brand-e { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 0.78rem; }
+  .preview.evidence .mark-e { width: 18px; height: 18px; border-radius: 4px; background: #0D7488; color: white; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.6rem; }
+  .preview.evidence .cta-e { background: #0D7488; color: white; font-size: 0.55rem; padding: 4px 9px; border-radius: 4px; font-weight: 700; }
+  .preview.evidence .h-e { font-size: clamp(1.1rem, 2.7vw, 1.85rem); line-height: 1.05; font-weight: 800; margin-top: 12px; letter-spacing: -0.035em; color: #0E1820; }
+  .preview.evidence .h-e .acc { color: #0D7488; }
+  .preview.evidence .h-e sup { color: #0D7488; font-weight: 600; font-family: 'JetBrains Mono', monospace; font-size: 0.55em; }
+  .preview.evidence .stats-e { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: #E2E8EE; border: 1px solid #E2E8EE; border-radius: 6px; margin-top: 10px; overflow: hidden; }
+  .preview.evidence .stats-e .s { background: #F7F9FA; padding: 8px; }
+  .preview.evidence .stats-e .v { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 600; color: #0E1820; letter-spacing: -0.02em; }
+  .preview.evidence .stats-e .v span { color: #0D7488; }
+  .preview.evidence .stats-e .l { font-size: 0.5rem; color: #6B7B8C; margin-top: 2px; line-height: 1.3; }
+
+  /* Card meta */
+  .meta { padding: 28px 28px 18px; }
+  .meta .badge {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--teal); margin-bottom: 14px;
+  }
+  .meta h3 {
+    font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em;
+    margin-bottom: 12px; color: var(--text);
+  }
+  .meta h3 em {
+    font-family: 'EB Garamond', Georgia, serif; font-style: italic;
+    font-weight: 500; color: var(--gold);
+  }
+  .meta p { font-size: 0.96rem; color: var(--text-2); line-height: 1.6; margin-bottom: 18px; }
+  .meta .features {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px;
+  }
+  .meta .features span {
+    background: var(--surface-2); padding: 5px 10px; border-radius: 6px;
+    font-size: 0.72rem; color: var(--text-2); font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .palette { display: flex; gap: 6px; padding: 0 28px 18px; }
+  .swatch { flex: 1; height: 36px; border-radius: 6px; border: 1px solid rgba(11,41,72,0.10); }
+
+  .style-card .actions {
+    margin-top: auto; padding: 18px 28px; border-top: 1px solid var(--line);
+    display: flex; gap: 10px;
+  }
+  .style-card .a-pri {
+    flex: 1; padding: 12px 14px; background: var(--teal); color: #fff;
+    border-radius: 9px; font-size: 0.92rem; font-weight: 700; text-align: center;
+    transition: all 0.2s;
+  }
+  .style-card .a-pri:hover { box-shadow: 0 0 24px rgba(74,200,220,0.4); }
+
+  /* Trust principles row */
+  .principles {
+    margin-top: 80px; padding: 36px 0;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 18px;
+  }
+  .principles-grid { padding: 0 32px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+  @media (max-width: 1024px) { .principles-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px) { .principles-grid { grid-template-columns: 1fr; } }
+  .principle {
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .principle .ico {
+    width: 32px; height: 32px; border-radius: 8px; background: var(--teal); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.86rem; margin-bottom: 8px;
+  }
+  .principle h5 { font-size: 0.94rem; font-weight: 700; color: var(--text); }
+  .principle p { font-size: 0.84rem; color: var(--text-2); line-height: 1.55; }
+
+  /* Archive section */
+  .archive {
+    margin-top: 80px; padding: 70px 0 60px;
+    border-top: 1px solid var(--line);
+  }
+  .archive .arch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 1024px) { .archive .arch-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 700px) { .archive .arch-grid { grid-template-columns: 1fr; } }
+  .arch-card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 20px; transition: all 0.2s; opacity: 0.65;
+  }
+  .arch-card:hover { opacity: 1; border-color: var(--line-2); transform: translateY(-2px); }
+  .arch-card .arch-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-2); margin-bottom: 10px; }
+  .arch-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+  .arch-card p { font-size: 0.82rem; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+  .arch-card a { display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--teal); font-weight: 600; }
+
+  /* Admin link cards */
+  .admin-section { margin-top: 80px; padding: 70px 0; border-top: 1px solid var(--line); }
+  .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 768px) { .admin-grid { grid-template-columns: 1fr; } }
+  .admin-card {
+    background: linear-gradient(160deg, var(--surface), color-mix(in srgb, var(--teal) 8%, var(--surface)));
+    border: 1px solid var(--line-2); border-radius: 18px; padding: 36px;
+    transition: all 0.25s; position: relative; overflow: hidden;
+  }
+  .admin-card:hover { border-color: var(--teal); transform: translateY(-3px); }
+  .admin-card .badge { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal); margin-bottom: 14px; }
+  .admin-card h3 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; color: var(--text); }
+  .admin-card p { color: var(--text-2); margin-bottom: 22px; font-size: 0.96rem; }
+  .admin-card .open { display: inline-flex; align-items: center; gap: 8px; color: var(--teal); font-size: 0.96rem; font-weight: 600; }
+  .admin-card .open::after { content: '→'; transition: transform 0.2s; }
+  .admin-card:hover .open::after { transform: translateX(4px); }
+
+  /* Footer */
+  footer { margin-top: 80px; padding: 50px 0 32px; border-top: 1px solid var(--line); }
+  .footer-inner { display: flex; justify-content: space-between; gap: 30px; flex-wrap: wrap; font-size: 0.86rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+  .footer-inner a { color: var(--text-2); }
+  .footer-inner a:hover { color: var(--teal); }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="#top" class="brand">
+      <span class="brand-mark">A</span>
+      <span>AEVUM <span style="color: var(--muted); font-weight: 400; font-size: 0.86rem;">/ first-draft selector</span></span>
+    </a>
+    <div class="topbar-links">
+      <a href="#styles">Styles</a>
+      <a href="#principles">Trust principles</a>
+      <a href="#archive">Archive</a>
+      <a href="admin.html">Research</a>
+      <a href="admin-insights.html">Pricing</a>
+      <a href="https://github.com/derrick-pixel/Elitez_MRI" target="_blank">GitHub ↗</a>
+    </div>
+    <span class="topbar-tag">DRAFT v0.3 · 2026-04-18</span>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="container">
+    <div class="hero-meta">
+      <span class="hero-pill"><span class="dot"></span> ELITEZ_MRI · DRAFT v0.3</span>
+      <span class="hero-pill gold">MEDICAL TRUST · NAMED CONSULTANTS</span>
+      <span class="hero-pill sage">EVIDENCE-LED · EVERY CLAIM SOURCED</span>
+    </div>
+    <h1>Three directions <em>that read</em><br/>as a <span class="acc">specialist medical clinic</span> —<br/>not a wellness brand.</h1>
+    <p class="hero-sub">
+      Re-drafted around the discipline that builds clinical trust: <strong>show the inside of the body</strong> (real MRI scan visuals in the hero), <strong>name the consultants</strong> (Dr. Lim, Dr. Balachandran, Dr. Tan with full credentials), <strong>display the regulators</strong> (Act 586, MDA, FDA/CE, MSQH), and <strong>be honest about the evidence</strong> (a "what we claim · what we don't · what the literature says" triangle on every page).
+    </p>
+    <div class="hero-cta">
+      <a href="#styles" class="btn btn-pri">Compare the three trust directions ↓</a>
+      <a href="admin.html" class="btn btn-ghost">Research Panel →</a>
+      <a href="admin-insights.html" class="btn btn-ghost">Pricing Insights →</a>
+    </div>
+
+    <div class="update-banner">
+      <div class="ic">v3</div>
+      <div>
+        <h4>Why v0.3 reads differently</h4>
+        <p>v0.1 leaned editorial / luxury. v0.2 added contrast and toggle. v0.3 rebuilds around <strong>medical trust</strong>: a real MRI scan in every hero, named consultant radiologists with credentials, a regulatory trust bar directly under the hero, a sample report excerpt, and an explicit "what we don't claim" honesty section. Conservative palettes — no neon. Sources cited.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="styles">
+  <div class="container">
+    <div class="sec-h">
+      <div>
+        <span class="label">v0.3 · Three medical-trust directions</span>
+        <h2>Pick a direction. Toggle a theme.</h2>
+      </div>
+      <span class="num">/ § 02 · 3 styles · light + dark</span>
+    </div>
+
+    <div class="styles">
+
+      <!-- Style VII — Clinic -->
+      <div class="style-card">
+        <span class="featured-tag">NEW · v0.3</span>
+        <div class="preview clinic">
+          <div class="nav">
+            <div class="brand-c">
+              <span class="mark-c">A</span>
+              <span>AEVUM</span>
+            </div>
+            <span class="cta-c">Reserve →</span>
+          </div>
+          <div class="h-c">A specialist diagnostic imaging clinic <span class="acc">that shows you what is inside.</span></div>
+          <div class="scan-c">
+            <svg viewBox="0 0 400 200">
+              <defs>
+                <radialGradient id="cb" cx="50%" cy="50%">
+                  <stop offset="0" stop-color="#7BAEB0" stop-opacity="0.5"/>
+                  <stop offset="1" stop-color="#0B2948" stop-opacity="0"/>
+                </radialGradient>
+              </defs>
+              <ellipse cx="200" cy="100" rx="100" ry="70" fill="#0E1A2E" stroke="rgba(123,174,176,0.6)" stroke-width="1"/>
+              <ellipse cx="200" cy="100" rx="85" ry="58" fill="url(#cb)"/>
+              <ellipse cx="200" cy="100" rx="14" ry="22" fill="#0A1320" stroke="rgba(123,174,176,0.5)" stroke-width="0.6"/>
+              <line x1="200" y1="20" x2="200" y2="180" stroke="rgba(184,150,90,0.4)" stroke-width="0.4" stroke-dasharray="3 3"/>
+              <line x1="80" y1="100" x2="320" y2="100" stroke="rgba(184,150,90,0.4)" stroke-width="0.4" stroke-dasharray="3 3"/>
+            </svg>
+          </div>
+          <div class="trust-c">
+            <span>ACT 586</span>
+            <span>MDA</span>
+            <span>FDA / CE</span>
+            <span>MSQH</span>
+          </div>
+        </div>
+        <div class="meta">
+          <div class="badge">Style VII · Clinic</div>
+          <h3>The Radiologist's <em>Office</em></h3>
+          <p>Light default. Medical navy on white, sage accents. Real MRI cross-section in hero. Trust bar (Act 586 / MDA / FDA-CE / MSQH) directly under hero. Named consultant team with full credentials. <strong>Toggles to dark navy.</strong></p>
+          <div class="features">
+            <span>17px body</span>
+            <span>Source Serif 4</span>
+            <span>Light + dark toggle</span>
+          </div>
+        </div>
+        <div class="palette">
+          <div class="swatch" style="background: #FFFFFF"></div>
+          <div class="swatch" style="background: #F4F6F8"></div>
+          <div class="swatch" style="background: #0B2948"></div>
+          <div class="swatch" style="background: #4A7C7E"></div>
+          <div class="swatch" style="background: #B8965A"></div>
+        </div>
+        <div class="actions">
+          <a href="style-clinic.html" class="a-pri">Open Style VII →</a>
+        </div>
+      </div>
+
+      <!-- Style VIII — Atlas -->
+      <div class="style-card">
+        <span class="featured-tag">NEW · v0.3</span>
+        <div class="preview atlas">
+          <div class="nav">
+            <span class="brand-a">A E V U M<span>·</span></span>
+            <span class="cta-a">Reserve</span>
+          </div>
+          <span class="tag-a">Specialist Diagnostic · Est. MMXXVI</span>
+          <div class="h-a">An <em>atlas</em> of your inside.<br/>Read by named consultants.</div>
+          <div class="plate-a">
+            <svg viewBox="0 0 400 200">
+              <g stroke="#F0E8D0" stroke-width="1" fill="none">
+                <ellipse cx="200" cy="100" rx="100" ry="65"/>
+                <ellipse cx="270" cy="100" rx="14" ry="11"/>
+                <path d="M295 100 L310 110 L312 130"/>
+              </g>
+              <g fill="rgba(157,179,95,0.18)" stroke="rgba(212,180,122,0.4)" stroke-width="0.5">
+                <path d="M120 95 Q100 110 100 140 Q120 160 200 160 Q280 160 295 145 L295 90 Q280 70 200 70 Q140 70 120 95 Z"/>
+              </g>
+              <g font-family="EB Garamond, serif" font-style="italic" font-size="9" fill="#D4B47A">
+                <line x1="180" y1="100" x2="60" y2="60" stroke="#D4B47A" stroke-width="0.4"/>
+                <text x="20" y="60">a.</text>
+                <line x1="240" y1="120" x2="380" y2="150" stroke="#D4B47A" stroke-width="0.4"/>
+                <text x="378" y="148">b.</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+        <div class="meta">
+          <div class="badge">Style VIII · Atlas</div>
+          <h3>Anatomy <em>Atlas</em></h3>
+          <p>Dark default. Charcoal + ivory + warm sand + clinical olive accents. Encyclopedia tone with Roman numeral sections. Anatomical plates with leader-line annotations. Like a Gray's Anatomy reborn for diagnostic imaging. <strong>Toggles to warm cream.</strong></p>
+          <div class="features">
+            <span>18px body</span>
+            <span>EB Garamond</span>
+            <span>Dark + light toggle</span>
+          </div>
+        </div>
+        <div class="palette">
+          <div class="swatch" style="background: #11140F"></div>
+          <div class="swatch" style="background: #181B15"></div>
+          <div class="swatch" style="background: #F0E8D0"></div>
+          <div class="swatch" style="background: #D4B47A"></div>
+          <div class="swatch" style="background: #C8453A"></div>
+        </div>
+        <div class="actions">
+          <a href="style-atlas.html" class="a-pri">Open Style VIII →</a>
+        </div>
+      </div>
+
+      <!-- Style IX — Evidence -->
+      <div class="style-card">
+        <span class="featured-tag">NEW · v0.3</span>
+        <div class="preview evidence">
+          <div class="nav">
+            <div class="brand-e">
+              <span class="mark-e">A</span>
+              <span>AEVUM</span>
+            </div>
+            <span class="cta-e">Reserve →</span>
+          </div>
+          <div class="h-e">Diagnostic imaging,<br/><span class="acc">sourced and explained.</span><sup>1</sup></div>
+          <div class="stats-e">
+            <div class="s">
+              <div class="v">~500</div>
+              <div class="l">conditions detectable</div>
+            </div>
+            <div class="s">
+              <div class="v">3<span>%</span></div>
+              <div class="l">warrant follow-up</div>
+            </div>
+            <div class="s">
+              <div class="v">2</div>
+              <div class="l">consultants per scan</div>
+            </div>
+          </div>
+        </div>
+        <div class="meta">
+          <div class="badge">Style IX · Evidence</div>
+          <h3>Evidence <em>Forward</em></h3>
+          <p>Light default. Pure white + medical teal. Every claim numbered and sourced (citation sidebar). Stat-strip with sources. Stripe meets Cleveland Clinic — confident, clean, citation-heavy. <strong>Toggles to deep ink.</strong></p>
+          <div class="features">
+            <span>17px body</span>
+            <span>Inter 800</span>
+            <span>Light + dark toggle</span>
+          </div>
+        </div>
+        <div class="palette">
+          <div class="swatch" style="background: #FFFFFF"></div>
+          <div class="swatch" style="background: #F7F9FA"></div>
+          <div class="swatch" style="background: #0E1820"></div>
+          <div class="swatch" style="background: #0D7488"></div>
+          <div class="swatch" style="background: #B8761F"></div>
+        </div>
+        <div class="actions">
+          <a href="style-evidence.html" class="a-pri">Open Style IX →</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="principles" id="principles">
+      <div class="principles-grid">
+        <div class="principle">
+          <div class="ico">★</div>
+          <h5>MRI scan in every hero</h5>
+          <p>Real anatomical visualisation, not abstract orbs. Sagittal head, ventricles, cerebellum, annotated.</p>
+        </div>
+        <div class="principle">
+          <div class="ico">M</div>
+          <h5>Named consultants</h5>
+          <p>Dr. Lim, Dr. Balachandran, Dr. Tan — full MBBS / MMed / FRCR credentials, fellowships, sub-specialties.</p>
+        </div>
+        <div class="principle">
+          <div class="ico">!</div>
+          <h5>Trust bar under hero</h5>
+          <p>Act 586 · MDA · FDA/CE · MSQH — visible immediately, not hidden in the footer.</p>
+        </div>
+        <div class="principle">
+          <div class="ico">D</div>
+          <h5>Sample report on page</h5>
+          <p>An actual specimen report with hand-bound styling. What guests literally receive on the day.</p>
+        </div>
+        <div class="principle">
+          <div class="ico">⚖</div>
+          <h5>Honesty triangle</h5>
+          <p>"What we claim · what we don't · what the literature says" — engages the ACR/CAR debate openly.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="admin-section">
+  <div class="container">
+    <span class="label">Internal Panels · Behind the brand</span>
+    <h2 style="margin-top: 14px; font-size: clamp(1.7rem, 3.5vw, 2.4rem); font-weight: 800; letter-spacing: -0.025em; margin-bottom: 14px;">The research that built every draft.</h2>
+    <p style="color: var(--text-2); max-width: 720px; margin-bottom: 56px; font-size: 1.05rem;">Both panels apply across v0.1, v0.2, and v0.3 — the underlying business strategy doesn't change with the visual treatment.</p>
+
+    <div class="admin-grid">
+      <a href="admin.html" class="admin-card">
+        <div class="badge">Panel 01 / Research</div>
+        <h3>Competitor Product Analysis</h3>
+        <p>30+ competitors across 4 categories: direct B2C MRI clinics, Singapore hospital screening, Malaysia hospitals, longevity retreats. Includes online sentiment, the Prenuvo lawsuit (Jan 2026), market sizing, RTS Link, clinical-evidence debate.</p>
+        <span class="open">Open the research panel</span>
+      </a>
+      <a href="admin-insights.html" class="admin-card">
+        <div class="badge">Panel 02 / Pricing</div>
+        <h3>Pricing Strategy &amp; Insights</h3>
+        <p>8 pricing models analysed. 4 detailed personas (Singapore HNW, Indonesian HNW, Malaysian Affluent, C-Suite). Willingness-to-pay analysis vs. Singapore hospital ceiling and US disruptor floor. Switching costs.</p>
+        <span class="open">Open the pricing panel</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="archive" id="archive">
+  <div class="container">
+    <div class="sec-h">
+      <div>
+        <span class="label" style="color: var(--muted);">v0.1 + v0.2 · Archived for reference</span>
+        <h2 style="font-weight: 700;">Earlier directions.</h2>
+      </div>
+      <span class="num">/ archived but viewable</span>
+    </div>
+    <p style="color: var(--text-2); margin-bottom: 36px; max-width: 720px; font-size: 1.02rem;">The earlier draft directions remain accessible. The v0.3 styles above are the current proposals.</p>
+
+    <div class="arch-grid">
+      <div class="arch-card"><div class="arch-tag">v0.2 · Style IV</div><h4>Twilight Editorial</h4><p>Dark serif (Cormorant + warm gold + navy). Light toggle.</p><a href="style-twilight.html">Open →</a></div>
+      <div class="arch-card"><div class="arch-tag">v0.2 · Style V</div><h4>Cinematic Bold</h4><p>Massive Archivo Black + coral. Light toggle.</p><a href="style-cinematic.html">Open →</a></div>
+      <div class="arch-card"><div class="arch-tag">v0.2 · Style VI</div><h4>Medical Console</h4><p>Dark teal + warm gold + Newsreader. Light toggle.</p><a href="style-console.html">Open →</a></div>
+      <div class="arch-card"><div class="arch-tag">v0.1 · Style I</div><h4>Editorial Luxury (light)</h4><p>Cream + forest + bronze. No toggle.</p><a href="style-editorial.html">Open →</a></div>
+      <div class="arch-card"><div class="arch-tag">v0.1 · Style II</div><h4>Clinical Precision (light)</h4><p>Off-white + clinical blue. No toggle.</p><a href="style-clinical.html">Open →</a></div>
+      <div class="arch-card"><div class="arch-tag">v0.1 · Style III</div><h4>Obsidian Longevity (dark)</h4><p>Obsidian + teal + amber. No toggle.</p><a href="style-obsidian.html">Open →</a></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <span>© 2026 · AEVUM is a brand of Elitez Group of Companies</span>
+      <span>derrick-pixel/Elitez_MRI · draft v0.3 · 2026-04-18</span>
+      <a href="https://github.com/derrick-pixel/Elitez_MRI" target="_blank">GitHub ↗</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click', e=>{
+      const h=a.getAttribute('href');
+      if(h.length<2) return;
+      const t=document.querySelector(h);
+      if(t){ e.preventDefault(); t.scrollIntoView({behavior:'smooth'}); }
+    });
+  });
+</script>
+
+</body>
+</html>

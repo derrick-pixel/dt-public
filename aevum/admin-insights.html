@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AEVUM · Pricing Strategy Panel</title>
+<meta name="description" content="Pricing strategies, personas, willingness-to-pay analysis, and next-best alternatives. Internal panel · Elitez MRI." />
+
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://derrick-pixel.github.io/Elitez_MRI/admin-insights.html" />
+<meta property="og:title" content="AEVUM · Pricing Strategy Panel" />
+<meta property="og:image" content="https://derrick-pixel.github.io/Elitez_MRI/og-image.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --bg: #F4F6F8;
+    --surface: #FFFFFF;
+    --surface-2: #ECF0F4;
+    --surface-3: #E2E8EE;
+    --line: rgba(11,41,72,0.10);
+    --line-2: rgba(11,41,72,0.18);
+    --text: #1A2530;
+    --muted: #5C6B82;
+    --muted-2: #8B95A3;
+    --teal: #0D7488;
+    --amber: #B8761F;
+    --plum: #8B4FBF;
+    --rose: #B33A3A;
+    --green: #0E8A4A;
+    --blue: #2563EB;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 14px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(ellipse 1000px 700px at 8% -10%, rgba(184,118,31,0.05), transparent 60%),
+      radial-gradient(ellipse 800px 500px at 95% 100%, rgba(13,116,136,0.04), transparent 60%);
+    background-attachment: fixed;
+  }
+  a { color: inherit; text-decoration: none; transition: color 0.18s; }
+  .mono { font-family: 'JetBrains Mono', monospace; font-feature-settings: 'tnum'; }
+  .container { max-width: 1400px; margin: 0 auto; padding: 0 32px; }
+  @media (max-width: 768px) { .container { padding: 0 20px; } }
+
+  /* Top bar */
+  .topbar { position: sticky; top: 0; z-index: 100; background: rgba(244,246,248,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--line); }
+  .topbar-inner { max-width: 1400px; margin: 0 auto; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 0.95rem; }
+  .brand-mark { width: 28px; height: 28px; border-radius: 7px; background: var(--teal); display: inline-flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 0.78rem; }
+  .topbar-tabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 100px; padding: 4px; }
+  .topbar-tabs a { padding: 7px 14px; border-radius: 100px; font-size: 0.8rem; color: var(--muted); }
+  .topbar-tabs a:hover { color: var(--text); }
+  .topbar-tabs a.active { background: var(--teal); color: #fff; font-weight: 600; }
+  .topbar-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted-2); }
+
+  .ph { padding: 50px 0 30px; }
+  .ph-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber); margin-bottom: 14px; display: inline-flex; align-items: center; gap: 10px; }
+  .ph-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+  .ph h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; letter-spacing: -0.025em; margin-bottom: 14px; }
+  .ph p { color: var(--muted); max-width: 780px; }
+
+  /* AEVUM tier strip */
+  .tier-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 34px 0; }
+  @media (max-width: 768px) { .tier-strip { grid-template-columns: 1fr 1fr; } }
+  .tier { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; position: relative; }
+  .tier.feat { background: linear-gradient(160deg, var(--surface), rgba(13,116,136,0.06)); border-color: rgba(13,116,136,0.3); }
+  .tier .lbl { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-2); margin-bottom: 8px; }
+  .tier .name { font-size: 1.05rem; font-weight: 700; margin-bottom: 12px; }
+  .tier .myr { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 500; letter-spacing: -0.04em; color: var(--text); }
+  .tier .sgd { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+  .tier.feat .myr { color: var(--teal); }
+  .tier .badge { position: absolute; top: -10px; right: 16px; background: var(--teal); color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; padding: 4px 10px; border-radius: 100px; letter-spacing: 0.12em; font-weight: 600; }
+
+  section.panel { padding: 28px 0; }
+  .sec-h { display: flex; align-items: end; justify-content: space-between; gap: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--line); margin-bottom: 24px; flex-wrap: wrap; }
+  .sec-h h2 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; }
+  .sec-h .num { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted-2); letter-spacing: 0.1em; text-transform: uppercase; }
+  .sec-h p { color: var(--muted); font-size: 0.88rem; margin-top: 6px; }
+
+  /* Pricing model cards */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  @media (max-width: 1024px) { .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 700px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+
+  .model {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+    padding: 28px; position: relative; transition: all 0.2s;
+  }
+  .model:hover { border-color: var(--line-2); transform: translateY(-3px); }
+  .model.recommended {
+    background: linear-gradient(160deg, var(--surface), rgba(13,116,136,0.04));
+    border-color: rgba(13,116,136,0.25);
+  }
+  .model.recommended::after {
+    content: 'RECOMMENDED'; position: absolute; top: -10px; right: 20px;
+    background: var(--teal); color: #fff; font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem; padding: 4px 10px; border-radius: 100px; letter-spacing: 0.12em; font-weight: 600;
+  }
+  .model.avoid {
+    background: linear-gradient(160deg, var(--surface), rgba(248,113,113,0.04));
+    border-color: rgba(248,113,113,0.18);
+  }
+  .model.avoid::after {
+    content: 'AVOID'; position: absolute; top: -10px; right: 20px;
+    background: var(--rose); color: #fff; font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem; padding: 4px 10px; border-radius: 100px; letter-spacing: 0.12em; font-weight: 600;
+  }
+  .model .num { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; color: var(--muted-2); margin-bottom: 12px; letter-spacing: 0.1em; }
+  .model h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.015em; }
+  .model .sub { font-size: 0.84rem; color: var(--muted); margin-bottom: 18px; }
+  .model .ex { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--muted); margin-bottom: 14px; }
+  .model .ex strong { color: var(--text); display: block; margin-bottom: 4px; }
+  .model .pros, .model .cons { padding: 4px 0; }
+  .model .pros .h, .model .cons .h { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 8px; }
+  .model .pros .h { color: var(--green); }
+  .model .cons .h { color: var(--rose); }
+  .model .pros li, .model .cons li { list-style: none; padding: 4px 0 4px 18px; font-size: 0.84rem; color: var(--muted); position: relative; }
+  .model .pros li::before { content: '+'; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+  .model .cons li::before { content: '−'; position: absolute; left: 0; color: var(--rose); font-weight: 700; }
+  .model .verdict { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; padding: 12px 0 0; margin-top: 16px; border-top: 1px solid var(--line); color: var(--text); letter-spacing: 0.04em; }
+  .model .verdict span.k { color: var(--muted-2); text-transform: uppercase; letter-spacing: 0.18em; font-size: 0.62rem; display: block; margin-bottom: 4px; }
+
+  /* Persona cards */
+  .persona { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 0; overflow: hidden; }
+  .persona .head { padding: 24px 28px 16px; border-bottom: 1px solid var(--line); display: flex; gap: 18px; align-items: start; }
+  .persona .head .avatar { width: 56px; height: 56px; border-radius: 14px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 1.25rem; color: #fff; }
+  .persona .head .avatar.p1 { background: linear-gradient(135deg, var(--teal), #2EA77A); }
+  .persona .head .avatar.p2 { background: linear-gradient(135deg, var(--amber), #D97706); }
+  .persona .head .avatar.p3 { background: linear-gradient(135deg, var(--blue), #3B82F6); }
+  .persona .head .avatar.p4 { background: linear-gradient(135deg, var(--plum), #A855F7); }
+  .persona .head h3 { font-size: 1.05rem; font-weight: 700; }
+  .persona .head .tag { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted); margin-top: 4px; }
+  .persona .body { padding: 18px 28px; }
+  .persona .body .row { display: grid; grid-template-columns: 130px 1fr; gap: 14px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 0.84rem; }
+  .persona .body .row:last-child { border-bottom: none; }
+  .persona .body .row .k { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted-2); text-transform: uppercase; letter-spacing: 0.08em; }
+  .persona .body .row .v { color: var(--text); }
+  .persona .body .row .v strong { color: var(--teal); }
+  .persona .pkg { padding: 16px 28px 24px; background: var(--bg); display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--line); }
+  .persona .pkg .l { font-size: 0.74rem; color: var(--muted-2); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; }
+  .persona .pkg .v { font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; color: var(--teal); font-weight: 600; }
+
+  /* WTP charts */
+  .wtp { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 28px; }
+  .wtp h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+  .wtp .desc { color: var(--muted); font-size: 0.86rem; margin-bottom: 22px; }
+  .wtp-chart { display: flex; align-items: end; gap: 14px; height: 240px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .wtp-bar { flex: 1; display: flex; flex-direction: column; align-items: center; }
+  .wtp-bar .top-lbl { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--text); margin-bottom: 8px; font-weight: 500; }
+  .wtp-bar .col { width: 100%; min-height: 8px; border-radius: 6px 6px 0 0; transition: height 1s; }
+  .wtp-bar.ceiling .col { background: linear-gradient(180deg, var(--rose), rgba(248,113,113,0.3)); }
+  .wtp-bar.aevum .col { background: linear-gradient(180deg, var(--teal), rgba(13,116,136,0.3)); box-shadow: 0 0 16px rgba(13,116,136,0.25); }
+  .wtp-bar.floor .col { background: linear-gradient(180deg, var(--amber), rgba(255,180,84,0.3)); }
+  .wtp-bar .x-lbl { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--muted); margin-top: 10px; text-align: center; line-height: 1.4; }
+  .wtp-legend { display: flex; gap: 18px; margin-top: 16px; flex-wrap: wrap; }
+  .wtp-legend .leg { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: var(--muted); }
+  .wtp-legend .leg .sw { width: 12px; height: 12px; border-radius: 3px; }
+
+  /* Tier validation */
+  .validation-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1.5fr; gap: 14px; padding: 16px 18px; border-bottom: 1px solid var(--line); align-items: center; font-size: 0.86rem; }
+  .validation-row:first-child { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; color: var(--muted-2); text-transform: uppercase; letter-spacing: 0.12em; background: var(--surface-2); border-radius: 14px 14px 0 0; }
+  .validation-row .price { font-family: 'JetBrains Mono', monospace; font-weight: 500; color: var(--text); }
+  .validation-row .bench { color: var(--muted); font-size: 0.82rem; }
+  .pill-vld { display: inline-block; padding: 3px 8px; border-radius: 100px; font-size: 0.66rem; font-weight: 600; letter-spacing: 0.04em; font-family: 'JetBrains Mono', monospace; }
+  .pill-vld.green { background: rgba(52,211,153,0.12); color: var(--green); }
+  .pill-vld.amber { background: rgba(255,180,84,0.12); color: var(--amber); }
+
+  /* Switching costs / alternatives */
+  .alt-row { display: grid; grid-template-columns: 220px 1fr 100px 100px; gap: 18px; padding: 16px 18px; border-bottom: 1px solid var(--line); align-items: center; font-size: 0.86rem; }
+  .alt-row:first-child { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; color: var(--muted-2); text-transform: uppercase; letter-spacing: 0.12em; background: var(--surface-2); border-radius: 14px 14px 0 0; }
+  .alt-row .name { font-weight: 600; color: var(--text); }
+  .alt-row .name small { display: block; font-size: 0.74rem; color: var(--muted); font-weight: 400; margin-top: 2px; }
+  @media (max-width: 768px) { .validation-row, .alt-row { grid-template-columns: 1fr; gap: 6px; } }
+
+  .meter-mini { width: 60px; height: 6px; background: var(--surface-2); border-radius: 3px; overflow: hidden; display: inline-block; vertical-align: middle; }
+  .meter-mini .f { height: 100%; }
+
+  footer { padding: 50px 0 30px; border-top: 1px solid var(--line); margin-top: 60px; font-family: 'JetBrains Mono', monospace; font-size: 0.74rem; color: var(--muted-2); display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="brand">
+      <span class="brand-mark">A</span>
+      <span>AEVUM <span style="color: var(--muted); font-weight: 400; font-size: 0.84rem;">/ internal panel</span></span>
+    </a>
+    <div class="topbar-tabs">
+      <a href="index.html">Site</a>
+      <a href="admin.html">Research</a>
+      <a href="admin-insights.html" class="active">Pricing</a>
+      <a href="compliance.html">Compliance</a>
+      <a href="images.html">Images</a>
+    </div>
+    <span class="topbar-meta">DRAFT v0.1 · 2026-04-18</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <section class="ph">
+    <span class="ph-tag">Panel 02 / Pricing Strategy &amp; Insights</span>
+    <h1>Eight pricing models. Four personas.<br/><span style="color: var(--muted); font-weight: 400;">One recommendation, anchored against the SG hospital ceiling.</span></h1>
+    <p>This panel translates the competitor research into a deliberate pricing strategy. We benchmark all four AEVUM tiers against the actual price ceiling (Mt Elizabeth S$12,388, Raffles Platinum S$11,408) and the actual price floor (Function/Ezra US$499). Then we map four target personas — Singapore HNW, Indonesian HNW, Malaysian Affluent, C-Suite — and assess what they would pay, why, and what they'd switch to instead.</p>
+  </section>
+
+  <!-- AEVUM Tier Strip -->
+  <div class="tier-strip">
+    <div class="tier">
+      <div class="lbl">[ TIER · I ]</div>
+      <div class="name">Core Scan</div>
+      <div class="myr">RM 1,999</div>
+      <div class="sgd">~ S$ 575 / US$ 450</div>
+    </div>
+    <div class="tier feat">
+      <span class="badge">SWEET SPOT</span>
+      <div class="lbl">[ TIER · II ]</div>
+      <div class="name">Comprehensive</div>
+      <div class="myr">RM 8,699</div>
+      <div class="sgd">~ S$ 2,640 / US$ 1,955</div>
+    </div>
+    <div class="tier">
+      <div class="lbl">[ TIER · III ]</div>
+      <div class="name">Legacy Ultimate</div>
+      <div class="myr">RM 17,499</div>
+      <div class="sgd">~ S$ 5,300 / US$ 3,930</div>
+    </div>
+    <div class="tier">
+      <div class="lbl">[ TIER · IV ]</div>
+      <div class="name">Legacy Platinum</div>
+      <div class="myr">RM 24,499</div>
+      <div class="sgd">~ S$ 7,420 / US$ 5,500</div>
+    </div>
+  </div>
+
+  <!-- WTP Chart -->
+  <section class="panel">
+    <div class="sec-h">
+      <div>
+        <h2>01 · Willingness-to-Pay Triangulation</h2>
+        <p>Where each AEVUM tier sits between the SG hospital ceiling and the US disruptor floor.</p>
+      </div>
+      <span class="num">/ § 01 · SGD comparable</span>
+    </div>
+
+    <div class="wtp">
+      <h3>Price ladder · all in SGD-equivalent</h3>
+      <div class="desc">The right strategic anchor for AEVUM is not Prenuvo (US$2,499) — it's <strong style="color: var(--text);">Raffles Platinum (S$11,408)</strong> and <strong style="color: var(--text);">Mt Elizabeth Screen Excelsior (S$12,388)</strong>. AEVUM's Legacy Platinum at S$7,420 is 35–40% cheaper, while delivering an MRI-led longevity narrative those packages don't.</p>
+      <div class="wtp-chart">
+        <div class="wtp-bar floor"><div class="top-lbl">S$675</div><div class="col" style="height: 6%;"></div><div class="x-lbl">Function/Ezra<br/>US$499<br/><span style="color: var(--rose);">FLOOR</span></div></div>
+        <div class="wtp-bar floor"><div class="top-lbl">S$880</div><div class="col" style="height: 8%;"></div><div class="x-lbl">SimonMed<br/>US$650</div></div>
+        <div class="wtp-bar aevum"><div class="top-lbl">S$575</div><div class="col" style="height: 5%;"></div><div class="x-lbl">AEVUM<br/>Core<br/><strong style="color: var(--teal);">RM 1,999</strong></div></div>
+        <div class="wtp-bar floor"><div class="top-lbl">S$1,090</div><div class="col" style="height: 9%;"></div><div class="x-lbl">SG MRI<br/>add-on</div></div>
+        <div class="wtp-bar floor"><div class="top-lbl">S$2,640</div><div class="col" style="height: 22%;"></div><div class="x-lbl">Prenuvo<br/>Comp</div></div>
+        <div class="wtp-bar aevum"><div class="top-lbl">S$2,640</div><div class="col" style="height: 22%;"></div><div class="x-lbl">AEVUM<br/>Comp<br/><strong style="color: var(--teal);">RM 8,699</strong></div></div>
+        <div class="wtp-bar floor"><div class="top-lbl">S$4,600</div><div class="col" style="height: 38%;"></div><div class="x-lbl">AsiaMedic<br/>Nav 7</div></div>
+        <div class="wtp-bar aevum"><div class="top-lbl">S$5,300</div><div class="col" style="height: 44%;"></div><div class="x-lbl">AEVUM<br/>Ultimate<br/><strong style="color: var(--teal);">RM 17,499</strong></div></div>
+        <div class="wtp-bar floor"><div class="top-lbl">S$7,588</div><div class="col" style="height: 62%;"></div><div class="x-lbl">Lifescan<br/>Adv</div></div>
+        <div class="wtp-bar aevum"><div class="top-lbl">S$7,420</div><div class="col" style="height: 60%;"></div><div class="x-lbl">AEVUM<br/>Platinum<br/><strong style="color: var(--teal);">RM 24,499</strong></div></div>
+        <div class="wtp-bar ceiling"><div class="top-lbl">S$11,408</div><div class="col" style="height: 92%;"></div><div class="x-lbl">Raffles<br/>Platinum<br/><span style="color: var(--rose);">CEILING</span></div></div>
+        <div class="wtp-bar ceiling"><div class="top-lbl">S$12,388</div><div class="col" style="height: 100%;"></div><div class="x-lbl">Mt E.<br/>Excelsior<br/><span style="color: var(--rose);">CEILING</span></div></div>
+      </div>
+      <div class="wtp-legend">
+        <div class="leg"><span class="sw" style="background: var(--teal);"></span> AEVUM tiers</div>
+        <div class="leg"><span class="sw" style="background: var(--amber);"></span> US/SG disruptor floor</div>
+        <div class="leg"><span class="sw" style="background: var(--rose);"></span> SG hospital ceiling</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden;">
+      <div class="validation-row">
+        <span>AEVUM Tier</span>
+        <span>Closest competitor anchor</span>
+        <span>Implied positioning</span>
+        <span>Verdict</span>
+      </div>
+      <div class="validation-row">
+        <div><strong>Core · RM 1,999</strong><br/><span class="bench">~ US$450</span></div>
+        <div class="bench">Ezra US$499; Sunway MRI RM 1,500–3,000</div>
+        <div class="bench">Approachable luxury baseline</div>
+        <div><span class="pill-vld green">DEFENSIBLE</span> — within Asia hospital MRI band; serves trial &amp; younger guests</div>
+      </div>
+      <div class="validation-row">
+        <div><strong>Comprehensive · RM 8,699</strong><br/><span class="bench">~ S$2,640</span></div>
+        <div class="bench">Lifescan Adv S$7,588; AsiaMedic Nav 7 S$4,600</div>
+        <div class="bench">Sweet spot · MRI-led narrative</div>
+        <div><span class="pill-vld green">SWEET SPOT</span> — undercuts SG advanced screening, premium vs MY hospitals</div>
+      </div>
+      <div class="validation-row">
+        <div><strong>Legacy Ultimate · RM 17,499</strong><br/><span class="bench">~ S$5,300</span></div>
+        <div class="bench">Below Raffles Platinum S$11,408; ≈ Echelon Bronze</div>
+        <div class="bench">Concierge tier · longevity branding</div>
+        <div><span class="pill-vld amber">DEFENSIBLE</span> — needs hospitality design + named radiologists to justify</div>
+      </div>
+      <div class="validation-row">
+        <div><strong>Legacy Platinum · RM 24,499</strong><br/><span class="bench">~ S$7,420</span></div>
+        <div class="bench">35% below Mt E S$12,388; ≈ 5-night Chenot stay</div>
+        <div class="bench">Aspirational ceiling</div>
+        <div><span class="pill-vld amber">REQUIRES BUNDLE</span> — must include hotel partner, multi-day, longevity coach, follow-up year</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 Pricing Models -->
+  <section class="panel">
+    <div class="sec-h">
+      <div>
+        <h2>02 · Eight Pricing Models — Pros, Cons, Verdict</h2>
+        <p>Every viable model considered. Recommendation: hybrid of tiered packages + concierge premium.</p>
+      </div>
+      <span class="num">/ § 02 · 8 models analysed</span>
+    </div>
+
+    <div class="grid-2">
+      <div class="model recommended">
+        <div class="num">[ MODEL · 01 ]</div>
+        <h3>Tiered Package Pricing</h3>
+        <p class="sub">Four named tiers (Core / Comprehensive / Ultimate / Platinum), priced and bundled by intent. The proposed AEVUM model.</p>
+        <div class="ex">
+          <strong>Anchor: AEVUM (proposed)</strong>
+          RM 1,999 → 8,699 → 17,499 → 24,499<br/>
+          Equivalent to Prenuvo's tier ladder.
+        </div>
+        <div class="pros">
+          <div class="h">Pros</div>
+          <li>Aligns CapEx (1.5T vs 3.0T) with tier — cost-efficient</li>
+          <li>Anchors against SG hospital concierge naturally</li>
+          <li>MAB-compliant — bundled pricing &amp; package discounts allowed</li>
+          <li>Easy upsell: Core → Comprehensive within 12 months</li>
+        </div>
+        <div class="cons">
+          <div class="h">Cons</div>
+          <li>Requires marketing investment to communicate four tiers</li>
+          <li>Risk of decision paralysis at the top end</li>
+        </div>
+        <div class="verdict"><span class="k">Recommendation</span>This is the spine. Combine with concierge premium (Model 02).</div>
+      </div>
+
+      <div class="model recommended">
+        <div class="num">[ MODEL · 02 ]</div>
+        <h3>Concierge / Experience Premium</h3>
+        <p class="sub">Bundle scan + cross-border transport + lounge + post-scan radiologist time as one price. The "experience wrapper" justifies the premium.</p>
+        <div class="ex">
+          <strong>Anchor: Echelon Health, Mayfair</strong>
+          £14,000 Platinum = scan + lounge + private specialist follow-up
+        </div>
+        <div class="pros">
+          <div class="h">Pros</div>
+          <li>Fits the Singapore HNW mental model (they pay for hotel-grade service)</li>
+          <li>Defensible against Function/Ezra commodity threat</li>
+          <li>Justifies 35–40% premium vs hospital screening</li>
+          <li>Differentiates on hospitality, not on radiology technology</li>
+        </div>
+        <div class="cons">
+          <div class="h">Cons</div>
+          <li>OpEx-heavy — concierge salaries, transport, lounge</li>
+          <li>Capacity-constrained — caps daily throughput at 3–6 guests</li>
+        </div>
+        <div class="verdict"><span class="k">Recommendation</span>Pair with Model 01. Make every tier "concierge-included."</div>
+      </div>
+
+      <div class="model">
+        <div class="num">[ MODEL · 03 ]</div>
+        <h3>Annual Membership / Subscription</h3>
+        <p class="sub">RM 8,000–15,000/year for one annual scan + quarterly biomarker pulls + 24/7 health concierge access.</p>
+        <div class="ex">
+          <strong>Anchor: Function Health (US$365/yr)</strong>
+          Prenuvo Executive (US$5,000/yr "Member")
+        </div>
+        <div class="pros">
+          <div class="h">Pros</div>
+          <li>Recurring revenue smooths OpEx-heavy operating model</li>
+          <li>Builds longitudinal data — true "longevity baseline"</li>
+          <li>Cross-sell biomarker tests, supplements, specialist referrals</li>
+        </div>
+        <div class="cons">
+          <div class="h">Cons</div>
+          <li>SG/MY HNW prefer one-off purchases over subs (cultural)</li>
+          <li>Requires year-2 retention discipline AEVUM doesn't have yet</li>
+          <li>MAB scrutiny on "membership" framing for medical service</li>
+        </div>
+        <div class="verdict"><span class="k">Recommendation</span>Defer to year 2 once the operational base is proven. Then introduce as upsell to Comprehensive/Ultimate guests.</div>
+      </div>
+
+      <div class="model">
+        <div class="num">[ MODEL · 04 ]</div>
+        <h3>Freemium / Loss-Leader Entry</h3>
+        <p class="sub">Sub-RM 1,000 entry "consultation" → upsell to a full scan. Mirrors Ezra's classic upsell sales funnel.</p>
+        <div class="ex">
+          <strong>Anchor: Ezra MRI Scan US$499</strong>
+          Designed strategically limited (omits Spine/Chest/Lungs/Heart) to upsell.
+        </div>
+        <div class="pros">
+          <div class="h">Pros</div>
+          <li>Lowers psychological barrier to first visit</li>
+          <li>Creates lead-gen funnel into higher tiers</li>
+        </div>
+        <div class="cons">
+          <div class="h">Cons</div>
+          <li>Fundamentally off-brand for "concierge luxury" positioning</li>
+          <li>Trains the market to expect price competition</li>
+          <li>Operationally expensive (full radiologist time on a low-revenue scan)</li>
+          <li>MAB rules limit "free offer of healthcare services"</li>
+        </div>
+        <div class="verdict"><span class="k">Recommendation</span>Skip. The Core tier (RM 1,999) already serves this function without brand dilution.</div>
+      </div>
+
+      <div class="model">
+        <div class="num">[ MODEL · 05 ]</div>
+        <h3>Pay-Per-Scan (à la carte)</h3>
+        <p class="sub">No packages — patient picks individual scan regions, pays per region. Mirrors current Singapore private MRI pricing.</p>
+        <div class="ex">
+          <strong>Anchor: SG private MRI</strong>
+          S$900–1,000+ per region (head, knee, spine)
+        </div>
+        <div class="pros">
+          <div class="h">Pros</div>
+          <li>Maximum patient flexibility</li>
+          <li>Familiar pricing pattern in Asia</li>
+        </div>
+        <div class="cons">
+          <div class="h">Cons</div>
+          <li>Defeats AEVUM's positioning as "the annual standard"</li>
+          <li>Reduces concierge time monetisation</li>
+          <li>Hospital MRI commodity competitor — race to the bottom</li>
+        </div>
+        <div class="verdict"><span class="k">Recommendation</span>Skip. Run as a fallback offering only for partner specialist referrals (not advertised).</div>
+      </div>
+
+      <div class="model">
+        <div class="num">[ MODEL · 06 ]</div>
+        <h3>Family / Couple Bundle</h3>
+        <p class="sub">"Two for the price of one and a half" — annual couple package, parent + adult child legacy package.</p>
+        <div class="ex">
+          <strong>Concept: AEVUM Family Annual</strong>
+          RM 14,499 for 2x Comprehensive (saving RM 2,899)
+        </div>
+        <div class="pros">
+          <div class="h">Pros</div>
+          <li>Doubles scan throughput per concierge visit</li>
+          <li>Strong gifting / legacy framing — natural for HNW Asian families</li>
+          <li>Cross-generational client acquisition (the parent buys, the child becomes annual)</li>
+        </div>
+        <div class="cons">
+          <div class="h">Cons</div>
+          <li>Operational complexity (two scans, two consults, same day)</li>
+          <li>Risk of MAB rule on "package discounts" framing</li>
+        </div>
+        <div class="verdict"><span class="k">Recommendation</span>Launch as quarterly seasonal promo (Mother's Day, Father's Day, Lunar New Year — MAB-compliant package discount window).</div>
+      </div>
+
+      <div class="model">
+        <div class="num">[ MODEL · 07 ]</div>
+        <h3>Corporate / Family Office Retainer</h3>
+        <p class="sub">B2B contract: family office, single-family office, or corporate executive program. RM 200,000–500,000/yr for n=20–40 guaranteed scans.</p>
+        <div class="ex">
+          <strong>Concept: AEVUM Founders Programme</strong>
+          Annual retainer with PE / family-office / SFO clients
+        </div>
+        <div class="pros">
+          <div class="h">Pros</div>
+          <li>Predictable utilisation — fills off-peak slots</li>
+          <li>One sale = 20–40 guests; high LTV</li>
+          <li>Aligns with Elitez Group's existing B2B sales muscle</li>
+          <li>MAB-permitted — corporate health programs are a recognised category</li>
+        </div>
+        <div class="cons">
+          <div class="h">Cons</div>
+          <li>Long sales cycle (6–12 months per contract)</li>
+          <li>Risk of brand dilution if "corporate" guests dominate the lounge</li>
+        </div>
+        <div class="verdict"><span class="k">Recommendation</span>Build as parallel B2B channel from Q4 2026. Cap at 30% of capacity to protect concierge feel.</div>
+      </div>
+
+      <div class="model avoid">
+        <div class="num">[ MODEL · 08 ]</div>
+        <h3>Dynamic / Surge Pricing</h3>
+        <p class="sub">Higher prices on weekends, holidays, "RTS Link launch month." Lower prices on slow Tuesdays. Yield-managed.</p>
+        <div class="ex">
+          <strong>Anchor: Hotel/airline yield management</strong>
+        </div>
+        <div class="pros">
+          <div class="h">Pros</div>
+          <li>Maximises revenue per slot</li>
+          <li>Smooths capacity utilisation</li>
+        </div>
+        <div class="cons">
+          <div class="h">Cons</div>
+          <li>Fundamentally hostile to luxury positioning ("I paid more last week?")</li>
+          <li>Implicitly compares prices — MAB grey area</li>
+          <li>Erodes trust with HNW clientele who expect transparency</li>
+        </div>
+        <div class="verdict"><span class="k">Recommendation</span>Avoid. Never visible-price-by-day. Quiet "off-peak preferred slot" upgrade for early bookers is fine.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Personas -->
+  <section class="panel">
+    <div class="sec-h">
+      <div>
+        <h2>03 · Four Target Personas</h2>
+        <p>Demographics, motivations, decision-making patterns, and the AEVUM tier each is most likely to buy.</p>
+      </div>
+      <span class="num">/ § 03 · n=4 segments</span>
+    </div>
+
+    <div class="grid-2">
+      <div class="persona">
+        <div class="head">
+          <div class="avatar p1">SG</div>
+          <div>
+            <h3>The Singapore HNW</h3>
+            <div class="tag">Primary Segment · 60–70% of revenue forecast</div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="row"><span class="k">Profile</span><span class="v">42–60yo, household income S$500k+, owns property in Sentosa Cove / D9 / D10. Works in finance, law, family business, or as a C-suite executive.</span></div>
+          <div class="row"><span class="k">Motivation</span><span class="v">Already engaged with a longevity expert (50% per Manulife). Wants <strong>data they can build a plan around</strong>. Aware of Prenuvo and Neko but hasn't booked.</span></div>
+          <div class="row"><span class="k">Pain</span><span class="v">Hospital screening feels transactional. Doesn't want to fly to US/UK. Distrusts SG hospital upsell.</span></div>
+          <div class="row"><span class="k">Decision</span><span class="v">Researches online but books on personal recommendation. Influenced by Tatler, BusinessTimes, Robb Report, private banking referrals.</span></div>
+          <div class="row"><span class="k">Switching cost</span><span class="v">Low — they've never been a customer of any. The first mover wins.</span></div>
+        </div>
+        <div class="pkg">
+          <span class="l">Most likely AEVUM tier</span>
+          <span class="v">Comprehensive · RM 8,699 → upgrade to Ultimate Y2</span>
+        </div>
+      </div>
+
+      <div class="persona">
+        <div class="head">
+          <div class="avatar p2">ID</div>
+          <div>
+            <h3>The Indonesian HNW</h3>
+            <div class="tag">Highest-Value Secondary · 15–25% revenue, top tier mix</div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="row"><span class="k">Profile</span><span class="v">35–65yo, family business / banking / commodities. Has SG family office, kids in SG schools. Travels to Bali for wellness retreats already.</span></div>
+          <div class="row"><span class="k">Motivation</span><span class="v"><strong>Combine SG visit (banking/shopping) with health.</strong> Bali wellness is for the spouse — AEVUM is the medical anchor.</span></div>
+          <div class="row"><span class="k">Pain</span><span class="v">Indonesia hospital quality concerns. Singapore hospital prices feel 2–3× over fair value. Wants discretion.</span></div>
+          <div class="row"><span class="k">Decision</span><span class="v">Books via private banker (Mandiri Private, BCA Prioritas, DBS Treasures). Influenced by family ambassador, Jakarta KOL doctor.</span></div>
+          <div class="row"><span class="k">Switching cost</span><span class="v">Medium — currently use SG hospital screening; would happily switch for a more refined experience at lower price.</span></div>
+        </div>
+        <div class="pkg">
+          <span class="l">Most likely AEVUM tier</span>
+          <span class="v">Legacy Ultimate / Platinum (multi-day with hotel)</span>
+        </div>
+      </div>
+
+      <div class="persona">
+        <div class="head">
+          <div class="avatar p3">MY</div>
+          <div>
+            <h3>The Malaysian Affluent</h3>
+            <div class="tag">Domestic · 10–15% of revenue, high-volume Core/Comp tier</div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="row"><span class="k">Profile</span><span class="v">35–55yo, professional / SME owner / corporate exec. KL, Penang, Johor. RM 50k+ household monthly income. Pro-rich private healthcare user.</span></div>
+          <div class="row"><span class="k">Motivation</span><span class="v">Wants premium screening without flying overseas. Comfortable with Gleneagles/Sunway but curious about something newer.</span></div>
+          <div class="row"><span class="k">Pain</span><span class="v">Existing hospital options feel clinical, not lifestyle. Wants something to gift their parents.</span></div>
+          <div class="row"><span class="k">Decision</span><span class="v">Influenced by The Edge, Tatler MY, doctor referrals. Books via WhatsApp.</span></div>
+          <div class="row"><span class="k">Switching cost</span><span class="v">Medium — but loyal to Gleneagles/Sunway brand equity. Need to earn trust.</span></div>
+        </div>
+        <div class="pkg">
+          <span class="l">Most likely AEVUM tier</span>
+          <span class="v">Core or Comprehensive · gift-buys Legacy for parents</span>
+        </div>
+      </div>
+
+      <div class="persona">
+        <div class="head">
+          <div class="avatar p4">CXO</div>
+          <div>
+            <h3>The C-Suite / Executive Programme buyer</h3>
+            <div class="tag">B2B Channel · 20–30% revenue once mature</div>
+          </div>
+        </div>
+        <div class="body">
+          <div class="row"><span class="k">Profile</span><span class="v">Corporate HR / family office / private equity / single-family office. Buying for an executive team or principal family.</span></div>
+          <div class="row"><span class="k">Motivation</span><span class="v"><strong>Risk management for the principal.</strong> Annual scans for the C-suite as part of the executive comp package.</span></div>
+          <div class="row"><span class="k">Pain</span><span class="v">SG hospital corporate health programs are commodity. Wants something to put on the executive offer letter that signals the firm's care.</span></div>
+          <div class="row"><span class="k">Decision</span><span class="v">RFP-driven. Procurement-mediated. Long sales cycle (6–12 months). Influenced by reference customers.</span></div>
+          <div class="row"><span class="k">Switching cost</span><span class="v">High once a contract is signed. Sticky — the moat AEVUM should build for.</span></div>
+        </div>
+        <div class="pkg">
+          <span class="l">Most likely AEVUM tier</span>
+          <span class="v">Founders Programme retainer · Ultimate/Platinum</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Next-best alternatives -->
+  <section class="panel">
+    <div class="sec-h">
+      <div>
+        <h2>04 · Next-Best Alternatives — What HNW Switch To</h2>
+        <p>If AEVUM doesn't get the booking, where does the wallet go? Switching cost analysis.</p>
+      </div>
+      <span class="num">/ § 04 · alternatives + friction</span>
+    </div>
+
+    <div style="background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden;">
+      <div class="alt-row">
+        <span>Alternative</span>
+        <span>What they get / lose</span>
+        <span>Switching cost</span>
+        <span>Threat</span>
+      </div>
+      <div class="alt-row">
+        <div><span class="name">Mt Elizabeth / Raffles</span><small>Hospital concierge screening · S$11–13k</small></div>
+        <div>Familiar brand, full diagnostics + endoscopy. Loses MRI depth, loses "longevity baseline" framing, gets clinical not lifestyle experience.</div>
+        <div><span class="meter-mini"><span class="f" style="background: var(--rose); width: 25%;"></span></span> Low</div>
+        <div><span class="pill-vld amber">High</span></div>
+      </div>
+      <div class="alt-row">
+        <div><span class="name">Fly to US for Prenuvo / Ezra</span><small>US$499–2,500 + flight + 3 days</small></div>
+        <div>Cheaper scan price. Pays in flights, hotel, time, post-Prenuvo-lawsuit risk. No follow-up if anything found.</div>
+        <div><span class="meter-mini"><span class="f" style="background: var(--amber); width: 65%;"></span></span> Medium</div>
+        <div><span class="pill-vld green">Low</span></div>
+      </div>
+      <div class="alt-row">
+        <div><span class="name">Wait for Chi Longevity / Morrow SG</span><small>Singapore-based longevity (just opened)</small></div>
+        <div>Singapore convenience, premium hospitality. Pays SG retail prices (likely 2× AEVUM). Limited MRI depth (Chi is non-MRI longevity).</div>
+        <div><span class="meter-mini"><span class="f" style="background: var(--amber); width: 50%;"></span></span> Medium</div>
+        <div><span class="pill-vld amber">High</span> (post-RTS)</div>
+      </div>
+      <div class="alt-row">
+        <div><span class="name">CLP / Chenot / Lanserhof retreat</span><small>European wellness · €5–50k/week</small></div>
+        <div>Multi-day immersive. Pays 5–10× AEVUM Platinum. Annual cadence is impractical for time-poor SG/MY exec. Often complementary, not substitute.</div>
+        <div><span class="meter-mini"><span class="f" style="background: var(--rose); width: 90%;"></span></span> High</div>
+        <div><span class="pill-vld green">Low</span></div>
+      </div>
+      <div class="alt-row">
+        <div><span class="name">Sunway / Gleneagles JB MRI</span><small>RM 1,500–3,000 hospital MRI</small></div>
+        <div>Cheapest price for raw MRI. Loses concierge wrapper, loses post-scan radiologist hour. Hospital aesthetic, not lifestyle.</div>
+        <div><span class="meter-mini"><span class="f" style="background: var(--rose); width: 20%;"></span></span> Low</div>
+        <div><span class="pill-vld amber">Medium</span></div>
+      </div>
+      <div class="alt-row">
+        <div><span class="name">Do nothing / wearables only</span><small>Whoop / Apple Watch / Oura</small></div>
+        <div>Continuous data, low cost. No imaging. Misses the 3% actionable findings AEVUM screens for. The "I'm fine" inertia.</div>
+        <div><span class="meter-mini"><span class="f" style="background: var(--rose); width: 5%;"></span></span> Very low</div>
+        <div><span class="pill-vld amber">Medium</span> (the largest category)</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 24px;">
+      <p style="font-size: 0.92rem; color: var(--text);"><strong style="color: var(--teal);">The single biggest competitor is inertia.</strong> Most HNW Singaporeans say "I'll get a scan eventually" and never do. AEVUM's concierge wrapper, RTS Link convenience, and gift-card option exist to defeat the "do-nothing" alternative — not to defeat Prenuvo.</p>
+    </div>
+  </section>
+
+  <!-- Final recommendation -->
+  <section class="panel">
+    <div class="sec-h">
+      <div>
+        <h2>05 · Final Pricing Recommendation</h2>
+        <p>The synthesis: which models, which tiers, which channels — in priority order.</p>
+      </div>
+      <span class="num">/ § 05 · Strategy</span>
+    </div>
+
+    <div class="grid-3">
+      <div class="model recommended" style="grid-column: span 2;">
+        <div class="num">[ TIER STRATEGY · LAUNCH ]</div>
+        <h3>Tiered Packages × Concierge Premium</h3>
+        <p class="sub">Combine Models 01 + 02. Four tiers. Every tier "concierge included." Anchored against SG hospital ceiling (S$11–13k), priced 35–60% below.</p>
+        <ul class="pros" style="margin-top: 8px;">
+          <div class="h">What this looks like in market</div>
+          <li><strong style="color: var(--text);">Core (RM 1,999):</strong> Lead-gen tier · serves trial buyers, younger guests, year-2 returns</li>
+          <li><strong style="color: var(--text);">Comprehensive (RM 8,699):</strong> Hero product · 70% of bookings forecast · "the annual standard"</li>
+          <li><strong style="color: var(--text);">Legacy Ultimate (RM 17,499):</strong> Longevity-curious · upgrade pathway from Comprehensive</li>
+          <li><strong style="color: var(--text);">Legacy Platinum (RM 24,499):</strong> Aspirational ceiling · bundle with hotel + multi-day for true HNW</li>
+        </ul>
+        <div class="verdict" style="margin-top: 18px;"><span class="k">Why this wins</span>Aligns operations (1.5T vs 3.0T cost-recovery), aligns persona (Comprehensive for HNW Singaporean, Platinum for Indonesian), and stays MAB-compliant (bundled pricing &amp; package discounts allowed).</div>
+      </div>
+
+      <div class="model recommended">
+        <div class="num">[ CHANNEL · YEAR 1 ]</div>
+        <h3>B2C First, B2B Layer Q4 2026</h3>
+        <p class="sub">Open as direct-to-consumer for the first three quarters. Add Founders Programme (Model 07) once concierge ops are battle-tested.</p>
+        <ul class="pros" style="margin-top: 8px;">
+          <div class="h">Sequencing</div>
+          <li>Q3 2026: B2C launch (pre-RTS soft-launch)</li>
+          <li>Q4 2026: RTS Link opens · full marketing push</li>
+          <li>Q1 2027: Family / Couple Bundle (Model 06)</li>
+          <li>Q2 2027: Corporate Founders Programme (Model 07)</li>
+          <li>Year 2: Annual Membership (Model 03) for repeat guests</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top: 16px;">
+      <div class="model">
+        <div class="num">[ GEOGRAPHIC · DAY 1 ]</div>
+        <h3>Singapore-First Acquisition</h3>
+        <p class="sub">Soft-launch to a curated Singapore HNW list (200 names). Hold marketing budget until RTS Link opens.</p>
+        <ul class="pros" style="margin-top: 8px;">
+          <div class="h">Why</div>
+          <li>SG HNW has the highest WTP and shortest decision cycle</li>
+          <li>The RTS opening event creates a natural demand-pull launch moment</li>
+          <li>Indonesian HNW comes via SG referrals naturally</li>
+          <li>Malaysian Affluent comes via PR + Tatler MY in Year 2</li>
+        </ul>
+      </div>
+
+      <div class="model">
+        <div class="num">[ DEFENSIVE · ALWAYS ]</div>
+        <h3>MAB-Compliance Bake-In</h3>
+        <p class="sub">Every pricing communication reviewed against Malaysia's Medicine Advertisement Board rules.</p>
+        <ul class="pros" style="margin-top: 8px;">
+          <div class="h">Hard Rules</div>
+          <li><strong style="color: var(--text);">PERMITTED:</strong> Bundled pricing · package discounts · seasonal promo windows (e.g. "Mother's Day 15% off")</li>
+          <li><strong style="color: var(--rose);">FORBIDDEN:</strong> Price comparisons ("50% cheaper than X"), patient testimonials, celebrity endorsements, "best radiologist" claims</li>
+          <li>Marketing must focus on facility, technology, packages — never on people or outcomes</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="container" style="display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
+    <span>© 2026 · AEVUM is a brand of Elitez Group of Companies · Internal pricing panel</span>
+    <span>Models &amp; recommendations · review quarterly · update on competitor price moves</span>
+  </div>
+</footer>
+
+</body>
+</html>

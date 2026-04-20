@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#002a3d" />
+  <title>Elitez Deals — Delivery Locations</title>
+  <!-- Open Graph / WhatsApp thumbnail -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://derrick-pixel.github.io/discounter/locations.html" />
+  <meta property="og:title" content="Elitez Deals — Delivery Locations" />
+  <meta property="og:description" content="We deliver to 20 foreign worker dormitories and 10 domestic worker gathering spots across Singapore. Free delivery on orders S$40+." />
+  <meta property="og:image" content="https://derrick-pixel.github.io/discounter/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Lato', sans-serif; background: #f3f4f6; color: #111827; -webkit-font-smoothing: antialiased; }
+
+    /* NAVBAR */
+    .navbar { background: #002a3d; color: #fff; padding: 0 24px; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+    .navbar-inner { width: 100%; max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+    .navbar-brand { font-size: 20px; font-weight: 800; letter-spacing: -.3px; display: flex; align-items: center; gap: 8px; text-decoration: none; color: #fff; }
+    .navbar-right { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; }
+    .navbar-right a { color: #fff; text-decoration: none; background: rgba(255,255,255,.2); padding: 6px 14px; border-radius: 999px; font-weight: 600; font-size: 13px; transition: background .15s; }
+    .navbar-right a:hover { background: rgba(255,255,255,.35); }
+    .nav-active { background: rgba(253,125,0,.4) !important; }
+
+    /* WRAPPER */
+    .wrapper { max-width: 1200px; margin: 0 auto; padding: 24px 20px 60px; }
+
+    /* HERO */
+    .hero { background: linear-gradient(135deg, #002a3d 0%, #004d6e 60%, #fd7d00 100%); color: #fff; border-radius: 20px; padding: 32px 24px; margin-bottom: 24px; }
+    .hero h1 { font-size: 28px; font-weight: 900; margin-bottom: 6px; }
+    .hero p { font-size: 14px; opacity: .88; line-height: 1.6; max-width: 620px; }
+    @media (min-width: 640px) { .hero h1 { font-size: 36px; } }
+
+    /* SECTION HEADER */
+    .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; margin-top: 28px; }
+    .section-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .section-icon.orange { background: #fff3e0; }
+    .section-icon.teal   { background: #e0f4f7; }
+    .section-header h2 { font-size: 18px; font-weight: 900; color: #111; }
+    .section-header p  { font-size: 13px; color: #6b7280; margin-top: 2px; }
+
+    /* CARDS GRID */
+    .cards { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 540px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 900px) { .cards { grid-template-columns: repeat(3, 1fr); } }
+
+    /* LOCATION CARD */
+    .loc-card { background: #fff; border-radius: 14px; padding: 16px 18px; box-shadow: 0 1px 4px rgba(0,0,0,.06); display: flex; flex-direction: column; gap: 8px; transition: box-shadow .15s, transform .15s; }
+    .loc-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,.1); transform: translateY(-2px); }
+    .loc-number { font-size: 11px; font-weight: 900; color: #fff; background: #fd7d00; border-radius: 6px; padding: 2px 7px; width: fit-content; letter-spacing: .4px; }
+    .loc-number.teal { background: #4295a5; }
+    .loc-name { font-size: 15px; font-weight: 900; color: #111; line-height: 1.25; }
+    .loc-area { font-size: 12px; color: #fd7d00; font-weight: 700; display: flex; align-items: center; gap: 4px; }
+    .loc-area.teal { color: #4295a5; }
+    .loc-meta { font-size: 12px; color: #6b7280; line-height: 1.6; }
+    .loc-meta strong { color: #374151; }
+    .loc-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
+    .tag { font-size: 11px; background: #f3f4f6; color: #4b5563; border-radius: 999px; padding: 2px 9px; font-weight: 600; }
+
+    /* STATS BAR */
+    .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
+    .stat { background: #fff; border-radius: 14px; padding: 16px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+    .stat-num { font-size: 26px; font-weight: 900; color: #fd7d00; }
+    .stat-label { font-size: 12px; color: #6b7280; margin-top: 2px; }
+
+    /* FOOTER */
+    .footer { text-align: center; font-size: 12px; color: #9ca3af; margin-top: 36px; padding-bottom: 8px; line-height: 1.8; }
+
+    @media (max-width: 640px) { .hide-mobile { display: none !important; } }
+
+    /* NOTE BOX */
+    .note { background: #fff; border-left: 4px solid #feb336; border-radius: 12px; padding: 14px 16px; font-size: 13px; color: #374151; line-height: 1.6; margin-bottom: 24px; }
+    .note strong { color: #002a3d; }
+
+    /* ── GOOGLE TRANSLATE SUPPRESS DEFAULT UI ──── */
+    .goog-te-banner-frame, .skiptranslate { display: none !important; }
+    body { top: 0 !important; }
+    .goog-te-gadget { display: none !important; }
+
+    /* ── LANGUAGE BAR ─────────────────────────── */
+    .lang-bar {
+      background: #002a3d;
+      border-top: 1px solid rgba(255,255,255,.1);
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .lang-bar::-webkit-scrollbar { display: none; }
+    .lang-btn {
+      flex-shrink: 0;
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,.55);
+      font-family: 'Lato', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px 12px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color .15s, border-color .15s;
+      letter-spacing: .3px;
+      white-space: nowrap;
+    }
+    .lang-btn:hover { color: rgba(255,255,255,.85); }
+    .lang-btn.active {
+      color: #fd7d00;
+      border-bottom-color: #fd7d00;
+    }
+    .lang-divider {
+      color: rgba(255,255,255,.2);
+      font-size: 11px;
+      user-select: none;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-brand">
+      <img src="https://www.elitez.asia/wp-content/uploads/2022/03/logo_on-1-1.png" alt="Elitez" style="height:30px;filter:brightness(0) invert(1);" />
+      <span style="font-size:13px;font-weight:700;opacity:.85;letter-spacing:.5px;">DEALS</span>
+    </a>
+    <div class="navbar-right">
+      <a href="index.html">🛒 Shop</a>
+      <a href="locations.html" class="nav-active">📍 Locations</a>
+      <a href="https://wa.me/6583638499?text=Hi%2C%20I%20want%20to%20order%20from%20Elitez%20Deals!" class="hide-mobile">💬 WhatsApp</a>
+    </div>
+  </div>
+</header>
+
+<!-- GOOGLE TRANSLATE (hidden) -->
+<div id="google_translate_element" style="display:none;visibility:hidden;"></div>
+
+<!-- LANGUAGE BAR -->
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('en', this)" data-lang="en">🇬🇧 EN</button>
+  <span class="lang-divider">|</span>
+  <button class="lang-btn" onclick="setLang('hi', this)" data-lang="hi">🇮🇳 हिन्दी</button>
+  <span class="lang-divider">|</span>
+  <button class="lang-btn" onclick="setLang('ta', this)" data-lang="ta">🇮🇳 தமிழ்</button>
+  <span class="lang-divider">|</span>
+  <button class="lang-btn" onclick="setLang('my', this)" data-lang="my">🇲🇲 မြန်မာ</button>
+  <span class="lang-divider">|</span>
+  <button class="lang-btn" onclick="setLang('id', this)" data-lang="id">🇮🇩 Bahasa</button>
+</div>
+
+<div class="wrapper">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>📍 Our Delivery Locations</h1>
+    <p>We deliver to <strong>20 foreign worker dormitories</strong> and <strong>10 domestic worker gathering spots</strong> across Singapore — weekly batch delivery, free on orders S$40+.</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-num">30</div>
+      <div class="stat-label">Delivery Points</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">274K+</div>
+      <div class="stat-label">Workers Reachable</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">FREE</div>
+      <div class="stat-label">Delivery from S$40</div>
+    </div>
+  </div>
+
+  <div class="note">
+    ⚠️ <strong>Phase 1 coverage.</strong> All locations below are served in our weekly batch delivery cycle. Cut-off every <strong>Sunday 11:59 PM</strong>. Delivery follows within the week. More locations coming soon.
+  </div>
+
+  <!-- SECTION 1: DORMITORIES -->
+  <div class="section-header">
+    <div class="section-icon orange">🏗️</div>
+    <div>
+      <h2>Foreign Worker Dormitories</h2>
+      <p>Top 20 Purpose-Built Worker Accommodation (PBWA) facilities · ~274,000 beds islandwide</p>
+    </div>
+  </div>
+
+  <div class="cards">
+
+    <div class="loc-card">
+      <span class="loc-number">01</span>
+      <p class="loc-name">Sungei Tengah Lodge</p>
+      <p class="loc-area">📍 Choa Chu Kang</p>
+      <p class="loc-meta"><strong>500 Old Choa Chu Kang Road</strong><br/>Capacity: ~25,000 beds · Operator: TG25 Pte Ltd<br/>Singapore's largest dormitory — 10 blocks of 13-storey buildings</p>
+      <div class="loc-tags"><span class="tag">Construction</span><span class="tag">Largest in SG</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number">02</span>
+      <p class="loc-name">Tuas View Dormitory</p>
+      <p class="loc-area">📍 Tuas South</p>
+      <p class="loc-meta"><strong>70 Tuas South Avenue 1</strong><br/>Capacity: ~16,800 beds · Operator: TS Group / Centurion<br/>Singapore's first PBWA, launched 2014</p>
+      <div class="loc-tags"><span class="tag">Construction</span><span class="tag">Marine</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number">03</span>
+      <p class="loc-name">Pioneer Lodge</p>
+      <p class="loc-area">📍 Jurong West</p>
+      <p class="loc-meta"><strong>39A Soon Lee Road</strong><br/>Capacity: ~10,500 beds · Operator: TS Group / Wee Hur<br/>Near Jurong Island and Tuas Mega Port</p>
+      <div class="loc-tags"><span class="tag">Construction</span><span class="tag">PCM</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number">04</span>
+      <p class="loc-name">ASPRI-Westlite Papan</p>
+      <p class="loc-area">📍 Jurong / Tuas</p>
+      <p class="loc-meta"><strong>2 Papan Road</strong><br/>Capacity: ~7,900 beds · Operator: Centurion Corporation<br/>Dedicated to Process, Construction & Maintenance workers</p>
+      <div class="loc-tags"><span class="tag">PCM Industry</span><span class="tag">Process</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number">05</span>
+      <p class="loc-name">Westlite Woodlands</p>
+      <p class="loc-area">📍 Woodlands</p>
+      <p class="loc-meta"><strong>2 Woodlands Sector 2</strong><br/>Capacity: ~4,100 beds · Operator: Centurion Corporation<br/>Serves marine, process and manufacturing workers</p>
+      <div class="loc-tags"><span class="tag">Marine</span><span class="tag">Manufacturing</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number">06</span>
+      <p class="loc-name">Westlite Mandai</p>
+      <p class="loc-area">📍 Mandai / Sungei Kadut</p>
+      <p class="loc-meta"><strong>34 Mandai Estate</strong><br/>Capacity: ~3,700 beds · Operator: Centurion Corporation<br/>Near Sungei Kadut and Woodlands industrial zone</p>
+      <div class="loc-tags"><span class="tag">Industrial</span><span class="tag">Construction</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number">07</span>
+      <p class="loc-name">Westlite Toh Guan</p>
+      <p class="loc-area">📍 Jurong East</p>
+      <p class="loc-meta"><strong>28 Toh Guan Road East</strong><br/>Capacity: ~3,000 beds · Operator: Centurion Corporation<br/>Central Jurong location serving multiple industries</p>
+      <div class="loc-tags"><span class="tag">Construction</span><span class="tag">Industrial</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number">08</span>
+      <p class="loc-name">Westlite Ubi</p>
+      <p class="loc-area">📍 Ubi / Kaki Bukit</p>
+      <p class="loc-meta"><strong>Ubi Avenue 4</strong><br/>Capacity: ~1,650 beds · Operator: Centurion Corporation<br/>East-side dorm serving Ubi industrial estate workers</p>
+      <div class="loc-tags"><span class="tag">Industrial</span><span class="tag">East Zone</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number">09</span>
+      <p class="loc-name">S11 Changi Lodge 2</p>
+      <p class="loc-area">📍 Changi / Tanah Merah</p>
+      <p class="loc-meta"><strong>70 Tanah Merah Coast Road</strong><br/>Operator: S11 Capital Investments<br/>Located near Changi industrial park and airport logistics</p>
+      <div class="loc-tags"><span class="tag">Logistics</span><span class="tag">Construction</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number">10</span>
+      <p class="loc-name">Tampines Dormitory</p>
+      <p class="loc-area">📍 Tampines</p>
+      <p class="loc-meta"><strong>2 Tampines Place</strong><br/>Operator: TPD Facilities Management<br/>Serves eastern Singapore construction and industrial workers</p>
+      <div class="loc-tags"><span class="tag">Construction</span><span class="tag">East Zone</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number">11</span>
+      <p class="loc-name">The Leo Dormitory</p>
+      <p class="loc-area">📍 Kaki Bukit</p>
+      <p class="loc-meta"><strong>23–25 Kaki Bukit Road 3</strong><br/>Operator: Minestone Corporation<br/>East-side dorm near Ubi and Paya Lebar industrial areas</p>
+      <div class="loc-tags"><span class="tag">Industrial</span><span class="tag">East Zone</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number">12</span>
+      <p class="loc-name">Homestay Lodge</p>
+      <p class="loc-area">📍 Kaki Bukit</p>
+      <p class="loc-meta"><strong>39 Kaki Bukit Avenue 3</strong><br/>Serves the Kaki Bukit and Bedok industrial cluster<br/>Workers from construction and light manufacturing</p>
+      <div class="loc-tags"><span class="tag">Construction</span><span class="tag">Light Industry</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number">13</span>
+      <p class="loc-name">Kranji Lodge</p>
+      <p class="loc-area">📍 Kranji / Lim Chu Kang</p>
+      <p class="loc-meta"><strong>Kranji Road corridor</strong><br/>One of several Kranji-area dormitories<br/>Serves workers from Kranji and Sungei Kadut industrial zones</p>
+      <div class="loc-tags"><span class="tag">Industrial</span><span class="tag">North Zone</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number">14</span>
+      <p class="loc-name">Sembawang Dormitory</p>
+      <p class="loc-area">📍 Sembawang</p>
+      <p class="loc-meta"><strong>Sembawang / Admiralty area</strong><br/>Serves workers from Sembawang Shipyard and northern industrial belt<br/>Marine and construction workforce</p>
+      <div class="loc-tags"><span class="tag">Marine</span><span class="tag">Shipyard</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number">15</span>
+      <p class="loc-name">Tuas Dormitory (T08)</p>
+      <p class="loc-area">📍 Tuas</p>
+      <p class="loc-meta"><strong>Tuas South industrial area</strong><br/>One of multiple Tuas-area worker housing facilities<br/>Serves the dense Tuas industrial and petrochemical corridor</p>
+      <div class="loc-tags"><span class="tag">Petrochemical</span><span class="tag">Construction</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number">16</span>
+      <p class="loc-name">Caven Dormitory</p>
+      <p class="loc-area">📍 Tuas / Pioneer</p>
+      <p class="loc-meta"><strong>Pioneer Road North area</strong><br/>Western Singapore dorm cluster<br/>Serves Jurong Island and Tuas marine industry workers</p>
+      <div class="loc-tags"><span class="tag">Marine</span><span class="tag">PCM</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number">17</span>
+      <p class="loc-name">Pasir Ris Lodge</p>
+      <p class="loc-area">📍 Pasir Ris</p>
+      <p class="loc-meta"><strong>Pasir Ris industrial area</strong><br/>Serves the Pasir Ris Drive industrial estate<br/>Workers from construction and logistics sectors</p>
+      <div class="loc-tags"><span class="tag">Logistics</span><span class="tag">East Zone</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number">18</span>
+      <p class="loc-name">Jurong Island Dormitory</p>
+      <p class="loc-area">📍 Jurong Island</p>
+      <p class="loc-meta"><strong>Jurong Island</strong><br/>On-island accommodation for petrochemical workers<br/>Workers from ExxonMobil, Shell, Jurong Aromatics and contractors</p>
+      <div class="loc-tags"><span class="tag">Petrochemical</span><span class="tag">Process</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number">19</span>
+      <p class="loc-name">Punggol Dormitory</p>
+      <p class="loc-area">📍 Punggol / Sengkang</p>
+      <p class="loc-meta"><strong>Punggol / Serangoon North area</strong><br/>Serves construction workers for north-east Singapore<br/>Growth corridor with multiple active build sites</p>
+      <div class="loc-tags"><span class="tag">Construction</span><span class="tag">North-East</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number">20</span>
+      <p class="loc-name">Buona Vista / One-North Lodge</p>
+      <p class="loc-area">📍 Queenstown / West</p>
+      <p class="loc-meta"><strong>West corridor worker housing</strong><br/>Serves construction workers in the Queenstown and Buona Vista development belt<br/>Central-west location</p>
+      <div class="loc-tags"><span class="tag">Construction</span><span class="tag">Central-West</span></div>
+    </div>
+
+  </div><!-- /dormitories -->
+
+  <!-- SECTION 2: DOMESTIC WORKER SPOTS -->
+  <div class="section-header">
+    <div class="section-icon teal">🛍️</div>
+    <div>
+      <h2>Domestic Worker Gathering Spots</h2>
+      <p>Top 10 locations where foreign domestic workers (FDWs) gather on days off — Sundays &amp; public holidays</p>
+    </div>
+  </div>
+
+  <div class="cards">
+
+    <div class="loc-card">
+      <span class="loc-number teal">01</span>
+      <p class="loc-name">Lucky Plaza</p>
+      <p class="loc-area teal">📍 Orchard Road · Orchard MRT</p>
+      <p class="loc-meta"><strong>304 Orchard Road</strong><br/>The #1 hub for Filipino domestic workers — estimated 80,000 FDWs from the Philippines gather here on Sundays. Money transfer, Filipino food, hair salons, agencies.</p>
+      <div class="loc-tags"><span class="tag">Filipino</span><span class="tag">Largest FDW hub</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number teal">02</span>
+      <p class="loc-name">Peninsula Plaza</p>
+      <p class="loc-area teal">📍 City Centre · City Hall MRT</p>
+      <p class="loc-meta"><strong>111 North Bridge Road</strong><br/>Popular with Myanmar and Filipino FDWs. Packed on Sundays with personal services, food stalls, remittance shops and community gatherings.</p>
+      <div class="loc-tags"><span class="tag">Myanmar</span><span class="tag">Filipino</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number teal">03</span>
+      <p class="loc-name">City Plaza</p>
+      <p class="loc-area teal">📍 Geylang · Aljunied MRT</p>
+      <p class="loc-meta"><strong>810 Geylang Road</strong><br/>The Indonesian FDW hub. Surrounded by open fields where workers picnic and socialise. Multiple maid agencies and Indonesian grocery shops inside.</p>
+      <div class="loc-tags"><span class="tag">Indonesian</span><span class="tag">Community Hub</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number teal">04</span>
+      <p class="loc-name">Mustafa Centre</p>
+      <p class="loc-area teal">📍 Little India · Farrer Park MRT</p>
+      <p class="loc-meta"><strong>145 Syed Alwi Road</strong><br/>24-hour shopping complex popular with South Asian and Southeast Asian FDWs. Affordable groceries, electronics, clothing and money exchange under one roof.</p>
+      <div class="loc-tags"><span class="tag">South Asian</span><span class="tag">Multi-community</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number teal">05</span>
+      <p class="loc-name">Jurong Point</p>
+      <p class="loc-area teal">📍 Jurong West · Boon Lay MRT</p>
+      <p class="loc-meta"><strong>1 Jurong West Central 2</strong><br/>Large suburban mall serving FDWs in the western dormitory belt. Close proximity to Tuas and Pioneer worker dormitories makes it a natural rest-day destination.</p>
+      <div class="loc-tags"><span class="tag">Multi-community</span><span class="tag">West Zone</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number teal">06</span>
+      <p class="loc-name">Katong / Joo Chiat</p>
+      <p class="loc-area teal">📍 East Coast · Paya Lebar MRT</p>
+      <p class="loc-meta"><strong>Mountbatten Rd / Joo Chiat area</strong><br/>Katong Shopping Centre hosts several maid agencies. Popular with FDWs working in the eastern residential belt — Tampines, Bedok, Marine Parade.</p>
+      <div class="loc-tags"><span class="tag">Agencies</span><span class="tag">East Zone</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number teal">07</span>
+      <p class="loc-name">East Coast Park</p>
+      <p class="loc-area teal">📍 East Coast · Bus from Bedok MRT</p>
+      <p class="loc-meta"><strong>East Coast Parkway</strong><br/>Popular outdoor gathering spot for FDWs on Sundays. Picnicking, cycling, beach walks. Groups of workers from Philippines, Indonesia and Myanmar commonly seen along the beachfront.</p>
+      <div class="loc-tags"><span class="tag">Outdoor</span><span class="tag">Picnic</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number teal">08</span>
+      <p class="loc-name">Changi City Point</p>
+      <p class="loc-area teal">📍 Changi · Expo MRT</p>
+      <p class="loc-meta"><strong>5 Changi Business Park Central 1</strong><br/>Growing gathering point for FDWs in the east. Affordable dining, retail, and proximity to eastern residential zones where many FDWs are employed.</p>
+      <div class="loc-tags"><span class="tag">East Zone</span><span class="tag">Emerging</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number teal">09</span>
+      <p class="loc-name">Woodlands Civic Centre</p>
+      <p class="loc-area teal">📍 Woodlands · Woodlands MRT</p>
+      <p class="loc-meta"><strong>Woodlands Square / Causeway Point</strong><br/>Hub for FDWs in the north — close to Sembawang, Woodlands and Kranji industrial zones. Causeway Point mall is a popular Sunday hangout.</p>
+      <div class="loc-tags"><span class="tag">North Zone</span><span class="tag">Multi-community</span></div>
+    </div>
+
+    <div class="loc-card">
+      <span class="loc-number teal">10</span>
+      <p class="loc-name">Holland Village / Buona Vista</p>
+      <p class="loc-area teal">📍 Holland Village · Holland Village MRT</p>
+      <p class="loc-meta"><strong>Lorong Mambong / Holland Road</strong><br/>Gathering spot for FDWs working in the affluent Holland, Bukit Timah and Tanglin residential belt. Cafes, eateries and open public spaces popular on Sundays.</p>
+      <div class="loc-tags"><span class="tag">West Zone</span><span class="tag">Community</span></div>
+    </div>
+
+  </div><!-- /fdw spots -->
+
+  <div class="footer">
+    © 2025 Elitez Group &nbsp;·&nbsp; WhatsApp <strong>+65 8363 8499</strong><br/>
+    Empowering Singapore's workforce community · Free delivery on orders S$40+ · S$15 below
+  </div>
+
+</div><!-- /wrapper -->
+
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+</html>
+  // ── Google Translate init ─────────────────────
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+      pageLanguage: 'en',
+      includedLanguages: 'en,hi,ta,my,id',
+      autoDisplay: false
+    }, 'google_translate_element');
+  }
+
+  function setLang(lang, btn) {
+    // Update active button
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // Trigger Google Translate
+    const tryTranslate = (attempts) => {
+      const select = document.querySelector('.goog-te-combo');
+      if (select) {
+        select.value = lang;
+        select.dispatchEvent(new Event('change'));
+      } else if (attempts > 0) {
+        setTimeout(() => tryTranslate(attempts - 1), 300);
+      }
+    };
+    tryTranslate(10);
+
+    // Restore English by reloading without cookie if 'en'
+    if (lang === 'en') {
+      const cookie = document.cookie.match(/googtrans=([^;]+)/);
+      if (cookie) {
+        document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+        document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + location.hostname;
+        location.reload();
+      }
+    }
+  }
+
+  // Sync active button to current language on load
+  window.addEventListener('DOMContentLoaded', () => {
+    const cookie = document.cookie.match(/googtrans=\/en\/([a-z]+)/);
+    if (cookie) {
+      const lang = cookie[1];
+      document.querySelectorAll('.lang-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.lang === lang);
+      });
+    }
+  });
+

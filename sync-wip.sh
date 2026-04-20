@@ -13,6 +13,8 @@ cd "$(dirname "$0")"
 
 # Format: <github-repo-name>:<local-folder-name>
 WIP_REPOS=(
+  "Elitez_MRI:aevum"
+  "discounter:discounter"
   "Passage:passage"
   "elitez-security:elitez-security"
   "elitezaviation:elitezaviation"
