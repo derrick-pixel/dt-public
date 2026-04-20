@@ -17,7 +17,6 @@ WIP_REPOS=(
   "discounter:discounter"
   "Passage:passage"
   "elitez-security:elitez-security"
-  "elitezaviation:elitezaviation"
   "elitezai-website:elitezai"
   "elix-eor:elix-eor"
   "ElixCraft:elixcraft"
