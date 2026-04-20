@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AEVUM — Reserve your scan</title>
+<meta name="description" content="Secure your AEVUM scan booking with a 30% PayNow deposit." />
+<meta name="robots" content="noindex" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+
+<style>
+  :root, [data-theme="light"] {
+    --bg: #F4F6F8;
+    --surface: #FFFFFF;
+    --surface-2: #ECF0F4;
+    --line: #DDE3E9;
+    --line-2: #C5CDD6;
+    --ink: #0B2948;
+    --ink-2: #1F3858;
+    --text: #0B2948;
+    --text-2: #2E4060;
+    --muted: #5C6B82;
+    --sage: #4A7C7E;
+    --sage-soft: #E0EBEB;
+    --sage-deep: #2E5557;
+    --gold: #B8965A;
+    --alert: #B33A3A;
+    --shadow-sm: 0 1px 2px rgba(11,41,72,0.06), 0 0 0 1px rgba(11,41,72,0.04);
+    --shadow-md: 0 8px 24px rgba(11,41,72,0.08);
+    --shadow-lg: 0 16px 48px rgba(11,41,72,0.12);
+  }
+  [data-theme="dark"] {
+    --bg: #0A1320;
+    --surface: #11192A;
+    --surface-2: #18233A;
+    --line: rgba(255,255,255,0.10);
+    --line-2: rgba(255,255,255,0.20);
+    --ink: #FFFFFF;
+    --ink-2: #E8EDF5;
+    --text: #F4F8FC;
+    --text-2: #C8D1DD;
+    --muted: #8B95A3;
+    --sage: #7BAEB0;
+    --sage-soft: rgba(123,174,176,0.16);
+    --sage-deep: #4A8587;
+    --gold: #D4B47A;
+    --alert: #E66B6B;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+    --shadow-md: 0 8px 24px rgba(0,0,0,0.4);
+    --shadow-lg: 0 16px 48px rgba(0,0,0,0.5);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 17px; line-height: 1.7; font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.4s, color 0.4s;
+  }
+  a { color: inherit; text-decoration: none; transition: color 0.2s; }
+  a.lk { color: var(--sage); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; font-weight: 600; }
+  a.lk:hover { color: var(--sage-deep); }
+
+  h1, h2, h3, h4, h5 { font-family: 'Source Serif 4', Georgia, serif; line-height: 1.1; letter-spacing: -0.015em; font-weight: 600; color: var(--ink); }
+  h2 { font-size: clamp(1.9rem, 4vw, 2.8rem); font-weight: 600; letter-spacing: -0.02em; }
+  h3 { font-size: clamp(1.35rem, 2.2vw, 1.7rem); font-weight: 600; }
+  h4 { font-size: 1.05rem; font-weight: 700; }
+  h5 { font-size: 0.84rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--sage); font-family: 'Inter', sans-serif; }
+  p { font-size: 1.02rem; line-height: 1.65; color: var(--text); font-weight: 500; }
+
+  .mono { font-family: 'JetBrains Mono', monospace; font-feature-settings: 'tnum'; }
+  .label {
+    font-family: 'Inter', sans-serif; font-size: 0.78rem;
+    letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700;
+    color: var(--sage); display: inline-flex; align-items: center; gap: 12px;
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+  @media (max-width: 768px) { .container { padding: 0 22px; } }
+
+  /* ── Nav (minimal) ─────────────────────────────── */
+  nav.bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(20px) saturate(1.2);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner { max-width: 1280px; margin: 0 auto; padding: 0 32px; height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+  .brand { display: flex; align-items: center; gap: 14px; font-weight: 800; font-size: 1.1rem; color: var(--ink); }
+  .brand-mark {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--ink); color: var(--surface);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: 'Source Serif 4', serif; font-style: italic; font-weight: 600;
+    font-size: 1.4rem; line-height: 1;
+  }
+  .brand-name { letter-spacing: 0.08em; font-weight: 800; font-size: 1.1rem; }
+  .nav-back {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.82rem;
+    color: var(--muted); letter-spacing: 0.04em;
+    padding: 6px 14px; border: 1px solid var(--line-2); border-radius: 100px;
+    transition: all 0.2s;
+  }
+  .nav-back:hover { color: var(--sage-deep); border-color: var(--sage); background: var(--surface-2); }
+
+  .theme-toggle { background: var(--surface); border: 1px solid var(--line-2); border-radius: 100px; padding: 4px; display: flex; gap: 2px; cursor: pointer; }
+  .theme-toggle:hover { border-color: var(--sage); }
+  .theme-toggle button { background: transparent; border: none; cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--muted); transition: all 0.25s; }
+  .theme-toggle button.active { background: var(--ink); color: var(--surface); }
+  .theme-toggle svg { width: 16px; height: 16px; }
+
+  @media (max-width: 600px) {
+    .nav-back span { display: none; }
+    .nav-back::before { content: '←'; }
+  }
+
+  /* ── Reserve shell ─────────────────────────────── */
+  .reserve-shell { padding: 130px 0 80px; }
+  .reserve-shell .sec-h { display: grid; grid-template-columns: 1fr auto; gap: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--line); margin-bottom: 48px; align-items: end; }
+  @media (max-width: 700px) { .reserve-shell .sec-h { grid-template-columns: 1fr; } }
+  .reserve-shell h2 { margin-top: 12px; }
+  .reserve-shell h2 .accent { color: var(--sage); font-style: italic; font-weight: 500; }
+  .reserve-shell .sec-h-r { display: flex; flex-direction: column; align-items: flex-end; justify-content: end; gap: 4px; }
+  @media (max-width: 700px) { .reserve-shell .sec-h-r { align-items: flex-start; } }
+  .reserve-shell .sec-h-r .num { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
+  .reserve-shell .sec-h-r .meta { font-size: 0.86rem; color: var(--muted); }
+
+  .reserve-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+  @media (max-width: 900px) { .reserve-grid { grid-template-columns: 1fr; } }
+
+  .tier-card, .payment-card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 18px;
+    padding: 36px; box-shadow: var(--shadow-sm);
+  }
+  @media (max-width: 600px) { .tier-card, .payment-card { padding: 26px; } }
+
+  .tier-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    color: var(--muted); letter-spacing: 0.08em; margin-bottom: 10px;
+  }
+  .tier-name {
+    font-family: 'Source Serif 4', serif; font-size: 1.85rem;
+    font-weight: 600; color: var(--ink); margin-bottom: 10px; letter-spacing: -0.015em;
+  }
+  .tier-sub { font-size: 0.98rem; color: var(--text-2); margin-bottom: 24px; line-height: 1.55; }
+
+  .tier-divider { height: 1px; background: var(--line); margin: 24px 0; }
+
+  .price-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 420px) { .price-row { grid-template-columns: 1fr; } }
+  .price-cell .k { font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 700; margin-bottom: 6px; }
+  .price-cell .myr { font-family: 'Source Serif 4', serif; font-size: 1.5rem; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; line-height: 1.1; }
+  .price-cell .sgd { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: var(--muted); margin-top: 4px; letter-spacing: 0.05em; }
+  .price-cell.deposit .myr { color: var(--sage-deep); }
+  .price-cell.deposit .sgd { color: var(--sage); }
+
+  .incl { list-style: none; padding: 0; }
+  .incl li { padding: 8px 0; font-size: 0.96rem; color: var(--text-2); display: flex; gap: 10px; align-items: start; }
+  .incl li::before { content: '✓'; color: var(--sage); font-weight: 800; flex-shrink: 0; }
+
+  /* Payment card */
+  .payment-card .pay-lede { font-size: 0.98rem; color: var(--text-2); margin: 8px 0 22px; line-height: 1.55; }
+
+  /* PayNow mechanic styling (adapted to site tokens) */
+  .mechanic-paynow__wrap {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 12px; padding: 24px; margin: 0 auto 24px;
+    background: var(--surface-2); border: 1px solid var(--line);
+    border-radius: 14px; max-width: 340px;
+  }
+  .mechanic-paynow__amount {
+    font-family: 'Source Serif 4', serif; font-size: 1.7rem;
+    font-weight: 700; color: var(--ink); letter-spacing: -0.02em;
+  }
+  .mechanic-paynow__verify {
+    font-size: 0.76rem; color: var(--ink-2); font-weight: 600;
+    background: rgba(184, 150, 90, 0.12); color: #7A5C2B;
+    padding: 6px 12px; border-radius: 6px;
+    border-left: 3px solid var(--gold);
+    line-height: 1.4;
+  }
+  [data-theme="dark"] .mechanic-paynow__verify { background: rgba(212, 180, 122, 0.12); color: var(--gold); }
+  .mechanic-paynow__qr {
+    background: #FFFFFF; padding: 14px; border-radius: 10px;
+    box-shadow: var(--shadow-sm);
+  }
+  .mechanic-paynow__ref {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.76rem;
+    color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .mechanic-paynow__error {
+    color: var(--alert); font-size: 0.88rem; text-align: center; font-weight: 600;
+  }
+
+  .pay-steps { list-style: none; padding: 0; margin: 0 0 22px; counter-reset: stepnum; }
+  .pay-steps li {
+    counter-increment: stepnum;
+    padding: 12px 0 12px 44px; position: relative;
+    font-size: 0.94rem; color: var(--text-2); line-height: 1.55;
+    border-bottom: 1px solid var(--line);
+  }
+  .pay-steps li:last-child { border-bottom: none; }
+  .pay-steps li::before {
+    content: counter(stepnum);
+    position: absolute; left: 0; top: 12px;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--sage-soft); color: var(--sage-deep);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.84rem;
+  }
+  .pay-steps code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.9em;
+    background: var(--surface-2); padding: 2px 8px; border-radius: 4px;
+    color: var(--ink); border: 1px solid var(--line);
+  }
+  .pay-steps strong { color: var(--ink); font-weight: 700; }
+
+  .note {
+    background: var(--surface-2); border-left: 3px solid var(--sage);
+    padding: 16px 20px; border-radius: 0 10px 10px 0;
+    font-size: 0.88rem; color: var(--text-2); line-height: 1.55;
+  }
+  .note strong { color: var(--ink); font-weight: 700; }
+  .note a { color: var(--sage); text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
+  .note a:hover { color: var(--sage-deep); }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--line); padding: 40px 0;
+    margin-top: 60px; color: var(--muted); font-size: 0.88rem;
+  }
+  .footer-row { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+  .footer-row a { color: var(--muted); }
+  .footer-row a:hover { color: var(--sage); }
+</style>
+  <!-- Favicon set -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
+  <link rel="mask-icon" href="safari-pinned-tab.svg" color="#c8860a" />
+  <meta name="theme-color" content="#0c0a09" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+</head>
+<body>
+
+<nav class="bar">
+  <div class="nav-inner">
+    <a href="index.html" class="brand">
+      <span class="brand-mark">A</span>
+      <span class="brand-name">AEVUM</span>
+    </a>
+    <div style="display: flex; gap: 12px; align-items: center;">
+      <div class="theme-toggle" id="themeToggle" title="Toggle theme">
+        <button data-mode="light" aria-label="Light mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
+        <button data-mode="dark" aria-label="Dark mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+      </div>
+      <a href="index.html#packages" class="nav-back"><span>Back to pricing</span></a>
+    </div>
+  </div>
+</nav>
+
+<section class="reserve-shell">
+  <div class="container">
+    <div class="sec-h">
+      <div class="sec-h-l">
+        <span class="label">Reservation · 30% deposit</span>
+        <h2>Reserve your <span class="accent" id="heroTierName">scan</span>.</h2>
+      </div>
+      <div class="sec-h-r">
+        <span class="num">/ § 12.01</span>
+        <span class="meta">via Singapore PayNow</span>
+      </div>
+    </div>
+
+    <div class="reserve-grid">
+
+      <div class="tier-card">
+        <div class="tier-tag" id="tierTag">[ Tier ... ]</div>
+        <div class="tier-name" id="tierName">Loading…</div>
+        <div class="tier-sub" id="tierSub"></div>
+
+        <div class="tier-divider"></div>
+
+        <div class="price-row">
+          <div class="price-cell">
+            <div class="k">Full price</div>
+            <div class="myr" id="priceMYR">—</div>
+            <div class="sgd" id="priceSGD">—</div>
+          </div>
+          <div class="price-cell deposit">
+            <div class="k">30% deposit</div>
+            <div class="myr" id="depositMYR">—</div>
+            <div class="sgd" id="depositSGD">—</div>
+          </div>
+        </div>
+
+        <div class="tier-divider"></div>
+
+        <h5 style="margin-bottom: 14px;">What's included</h5>
+        <ul class="incl" id="inclList"></ul>
+
+        <div class="tier-divider"></div>
+
+        <p style="font-size: 0.86rem; color: var(--muted); line-height: 1.55;">
+          Balance of <span id="balanceSGD" class="mono" style="color: var(--ink); font-weight: 600;">—</span> is settled on the day of your scan, on-site or via invoice.
+        </p>
+      </div>
+
+      <div class="payment-card">
+        <h5>Scan to pay · Step 1 of 1</h5>
+        <h3 style="margin: 10px 0 6px;">Open any PayNow-enabled SG bank app.</h3>
+        <p class="pay-lede">Your 30% deposit secures the booking slot. The remainder is due on scan day.</p>
+
+        <div id="paynow-qr-output" class="mechanic-paynow__wrap"></div>
+
+        <ol class="pay-steps">
+          <li>Open <strong>DBS PayLah, POSB, UOB TMRW, OCBC Pay Anyone</strong>, or any PayNow-enabled SG bank app.</li>
+          <li>Scan the QR and <strong>verify the amount</strong> matches the deposit shown above before confirming.</li>
+          <li>The reference <code id="refInline">—</code> is pre-filled — it helps our booking desk match your payment.</li>
+          <li>Our concierge will confirm your booking within <strong>one business day</strong> via WhatsApp or email.</li>
+        </ol>
+
+        <div class="note">
+          Deposit is charged in <strong>SGD</strong> via Singapore PayNow to <strong>+65 9847 9776</strong>. Indicative MYR amounts are for reference only.<br/><br/>
+          Prefer to speak first? <a href="index.html#inquiry">Submit an inquiry</a> or <a href="https://wa.me/6598479776?text=Hi%20AEVUM%2C%20I%27d%20like%20to%20ask%20about%20my%20reservation." target="_blank" rel="noopener">WhatsApp us</a>.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-row">
+      <span>© 2026 · AEVUM is a brand of Elitez Group of Companies · Act 586 licensed</span>
+      <div style="display: flex; gap: 20px;">
+        <a href="index.html">Home</a>
+        <a href="index.html#packages">Pricing</a>
+        <a href="compliance.html">Compliance</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── Theme toggle (shared with index.html via localStorage key) ───
+  (function() {
+    const saved = localStorage.getItem('aevum-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+    const toggle = document.getElementById('themeToggle');
+    function syncButtons() {
+      const cur = document.documentElement.getAttribute('data-theme');
+      toggle.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.mode === cur));
+    }
+    toggle.querySelectorAll('button').forEach(b => {
+      b.addEventListener('click', () => {
+        document.documentElement.setAttribute('data-theme', b.dataset.mode);
+        localStorage.setItem('aevum-theme', b.dataset.mode);
+        syncButtons();
+      });
+    });
+    syncButtons();
+  })();
+
+  // ── Tier catalog ─────────────────────────────────────────────────
+  const TIERS = {
+    core: {
+      tag: '[ Tier I ]',
+      name: 'Core Scan',
+      code: 'CORE',
+      sub: 'Recommended for first-time guests, ages 30–40, or annual follow-up.',
+      priceMYR: 1999,
+      priceSGD: 575,
+      includes: [
+        'Head, neck, abdomen, pelvis',
+        '1.5T MRI · 60-min scan',
+        '30-min consultant consult',
+        'Same-day written report'
+      ]
+    },
+    comprehensive: {
+      tag: '[ Tier II ]',
+      name: 'Comprehensive',
+      code: 'COMP',
+      sub: 'The annual workhorse for proactive guests, age 40+.',
+      priceMYR: 8699,
+      priceSGD: 2499,
+      includes: [
+        'Full-body MRI (head → pelvis)',
+        'Spine + hips + knees',
+        '1.5T or 3.0T as indicated',
+        'Double-read by 2 consultants',
+        '60-min in-person consult'
+      ]
+    },
+    ultimate: {
+      tag: '[ Tier III ]',
+      name: 'Legacy Ultimate',
+      code: 'ULTI',
+      sub: 'For the longevity-minded already working with experts.',
+      priceMYR: 17499,
+      priceSGD: 4999,
+      includes: [
+        'Everything in Comprehensive',
+        'MR angiography (head + neck)',
+        'Brain volumetrics, brain age',
+        'Body composition analysis',
+        '3.0T-only · 90-min consult'
+      ]
+    },
+    platinum: {
+      tag: '[ Tier IV ]',
+      name: 'Legacy Platinum',
+      code: 'PLAT',
+      sub: 'Our broadest tier — full-body MRI plus a low-dose CT and laboratory biomarker panel.',
+      priceMYR: 24499,
+      priceSGD: 6999,
+      includes: [
+        'Everything in Legacy Ultimate',
+        'Low-dose CT (heart + lungs)',
+        'Comprehensive blood biomarker panel',
+        '120-min consult · bound report',
+        '12-month follow-up reading'
+      ]
+    }
+  };
+
+  // ── PayNow QR mechanic (from dt-site-creator/mechanics/paynow-qr) ─
+  (function () {
+    'use strict';
+
+    function crc16ccitt(str) {
+      let crc = 0xFFFF;
+      for (let i = 0; i < str.length; i++) {
+        crc ^= str.charCodeAt(i) << 8;
+        for (let j = 0; j < 8; j++) {
+          crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+          crc &= 0xFFFF;
+        }
+      }
+      return crc.toString(16).toUpperCase().padStart(4, '0');
+    }
+
+    function tlv(id, value) {
+      return id + String(value.length).padStart(2, '0') + value;
+    }
+
+    function buildPaynowPayload(opts) {
+      const isUEN = /^\d{8,10}[A-Z]$/.test(opts.phoneOrUEN);
+      const proxyType = isUEN ? '2' : '0';
+      const normalizedPhone = isUEN
+        ? opts.phoneOrUEN
+        : (opts.phoneOrUEN.startsWith('+')
+            ? opts.phoneOrUEN
+            : '+65' + opts.phoneOrUEN.replace(/\D/g, ''));
+
+      const merchantAccount =
+        tlv('00', 'SG.PAYNOW') +
+        tlv('01', proxyType) +
+        tlv('02', normalizedPhone) +
+        tlv('03', '1');
+
+      const amount = (Math.round(opts.amountSGD * 100) / 100).toFixed(2);
+
+      let payload =
+        tlv('00', '01') +
+        tlv('01', '12') +
+        tlv('26', merchantAccount) +
+        tlv('52', '0000') +
+        tlv('53', '702') +
+        tlv('54', amount) +
+        tlv('58', 'SG') +
+        tlv('59', 'AEVUM') +
+        tlv('60', 'Singapore');
+
+      if (opts.referenceText) {
+        payload += tlv('62', tlv('01', opts.referenceText));
+      }
+
+      const toChecksum = payload + '6304';
+      return toChecksum + crc16ccitt(toChecksum);
+    }
+
+    window.renderPaynowQR = function (opts) {
+      const el = document.getElementById(opts.targetElementId);
+      if (!el) {
+        console.error('paynow-qr: target element not found:', opts.targetElementId);
+        return;
+      }
+
+      const payload = buildPaynowPayload(opts);
+      const amountStr = opts.amountSGD.toFixed(2);
+
+      if (!payload.includes(amountStr)) {
+        el.replaceChildren();
+        const warn = document.createElement('p');
+        warn.className = 'mechanic-paynow__error';
+        warn.textContent = 'Payment QR failed — amount mismatch. Please refresh.';
+        el.appendChild(warn);
+        return;
+      }
+
+      el.replaceChildren();
+
+      const amt = document.createElement('div');
+      amt.className = 'mechanic-paynow__amount';
+      amt.textContent = 'SGD ' + amountStr;
+      el.appendChild(amt);
+
+      const verify = document.createElement('div');
+      verify.className = 'mechanic-paynow__verify';
+      verify.textContent = 'Verify this amount before confirming in your bank app.';
+      el.appendChild(verify);
+
+      const qrWrap = document.createElement('div');
+      qrWrap.className = 'mechanic-paynow__qr';
+      const canvas = document.createElement('canvas');
+      canvas.id = 'paynow-canvas';
+      qrWrap.appendChild(canvas);
+      el.appendChild(qrWrap);
+
+      if (opts.referenceText) {
+        const ref = document.createElement('div');
+        ref.className = 'mechanic-paynow__ref';
+        ref.textContent = 'Ref · ' + opts.referenceText;
+        el.appendChild(ref);
+      }
+
+      if (typeof QRCode === 'undefined') {
+        console.error('paynow-qr: QRCode library not loaded');
+        return;
+      }
+      QRCode.toCanvas(canvas, payload, { width: 240, margin: 1 }, function (err) {
+        if (err) console.error('paynow-qr render error:', err);
+      });
+    };
+  })();
+
+  // ── Page wiring ─────────────────────────────────────────────────
+  (function renderReserve() {
+    const params = new URLSearchParams(window.location.search);
+    const tierKey = (params.get('tier') || 'comprehensive').toLowerCase();
+    const tier = TIERS[tierKey] || TIERS.comprehensive;
+
+    // Stable per-session reference so refresh/scan retries give same ref
+    const REF_STORE = 'aevum-reserve-ref-' + tier.code;
+    let shortRef = sessionStorage.getItem(REF_STORE);
+    if (!shortRef) {
+      // 4 alphanumeric chars (excluding look-alikes)
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      shortRef = '';
+      for (let i = 0; i < 4; i++) shortRef += chars[Math.floor(Math.random() * chars.length)];
+      sessionStorage.setItem(REF_STORE, shortRef);
+    }
+    const reference = 'AEVUM-' + tier.code + '-' + shortRef;
+
+    const depositSGD = Math.round(tier.priceSGD * 0.30 * 100) / 100;
+    const depositMYR = Math.round(tier.priceMYR * 0.30);
+    const balanceSGD = Math.round((tier.priceSGD - depositSGD) * 100) / 100;
+
+    const fmtMYR = (n) => 'RM ' + n.toLocaleString('en-US');
+    const fmtSGD = (n) => 'SGD ' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    // Populate summary
+    document.getElementById('heroTierName').textContent = tier.name;
+    document.title = 'AEVUM — Reserve ' + tier.name;
+    document.getElementById('tierTag').textContent = tier.tag;
+    document.getElementById('tierName').textContent = tier.name;
+    document.getElementById('tierSub').textContent = tier.sub;
+    document.getElementById('priceMYR').textContent = fmtMYR(tier.priceMYR);
+    document.getElementById('priceSGD').textContent = '~ SGD ' + tier.priceSGD.toLocaleString('en-US');
+    document.getElementById('depositMYR').textContent = '~ ' + fmtMYR(depositMYR);
+    document.getElementById('depositSGD').textContent = fmtSGD(depositSGD);
+    document.getElementById('balanceSGD').textContent = fmtSGD(balanceSGD);
+    document.getElementById('refInline').textContent = reference;
+
+    const incl = document.getElementById('inclList');
+    tier.includes.forEach((line) => {
+      const li = document.createElement('li');
+      li.textContent = line;
+      incl.appendChild(li);
+    });
+
+    // Generate QR
+    window.renderPaynowQR({
+      targetElementId: 'paynow-qr-output',
+      phoneOrUEN: '98479776',
+      amountSGD: depositSGD,
+      referenceText: reference
+    });
+  })();
+</script>
+
+</body>
+</html>

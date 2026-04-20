@@ -203,6 +203,7 @@
     aspect-ratio: 4/3; position: relative; overflow: hidden;
   }
   .scan-viewport svg { width: 100%; height: 100%; display: block; }
+  .scan-viewport .scan-photo { width: 100%; height: 100%; object-fit: cover; display: block; filter: contrast(1.02) saturate(0.95); }
   .scan-overlay {
     position: absolute; inset: 16px;
     pointer-events: none;
@@ -281,12 +282,25 @@
   @media (max-width: 900px) { .spec-grid { grid-template-columns: 1fr; } }
   .spec-card { background: var(--bg); border: 1px solid var(--line); border-radius: 16px; padding: 32px; transition: all 0.25s; }
   .spec-card:hover { border-color: var(--sage); transform: translateY(-3px); box-shadow: var(--shadow-md); }
-  .spec-avatar {
-    width: 72px; height: 72px; border-radius: 16px;
-    background: var(--ink); color: var(--surface);
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Source Serif 4', serif; font-style: italic;
-    font-size: 1.8rem; font-weight: 600; margin-bottom: 22px;
+  .spec-photo {
+    margin: -32px -32px 22px;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .spec-photo img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center center;
+    display: block;
+    transition: transform 0.6s ease;
+  }
+  .spec-card:hover .spec-photo img { transform: scale(1.025); }
+  .spec-photo::after {
+    content: ''; position: absolute; inset: 0;
+    box-shadow: inset 0 -40px 40px -30px rgba(11,41,72,0.15);
+    pointer-events: none;
   }
   .spec-card h4 { font-family: 'Source Serif 4', serif; font-size: 1.25rem; font-weight: 600; margin-bottom: 4px; }
   .spec-card .role { font-size: 0.86rem; color: var(--muted); margin-bottom: 20px; font-weight: 600; }
@@ -303,8 +317,8 @@
     background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 32px;
     box-shadow: var(--shadow-sm);
   }
-  .anatomy-svg-wrap { position: relative; aspect-ratio: 4/5; max-width: 360px; margin: 0 auto; }
-  .anatomy-svg-wrap svg { width: 100%; height: 100%; display: block; }
+  .anatomy-svg-wrap { position: relative; aspect-ratio: 1080/1180; max-width: 420px; margin: 0 auto; }
+  .anatomy-svg-wrap img { width: 100%; height: 100%; display: block; object-fit: contain; }
   .anatomy-list { list-style: none; }
   .anatomy-list li {
     display: flex; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line);
@@ -523,7 +537,7 @@
     overflow: hidden;
   }
   .img-slot > img {
-    position: absolute; inset: 0;
+    position: absolute; inset: 0; z-index: 2;
     width: 100%; height: 100%; object-fit: cover; display: block;
     transition: opacity 0.3s; opacity: 0;
   }
@@ -563,7 +577,95 @@
   }
   .gallery-aside a { color: var(--sage); font-weight: 700; border-bottom: 1px solid var(--sage); padding-bottom: 1px; }
   .gallery-aside a:hover { color: var(--sage-deep); }
+
+  /* Hero ambient banner — architectural establishing shot between hero and trust */
+  .hero-ambient-section { padding: 28px 0 48px; }
+  .hero-ambient-frame {
+    position: relative; border-radius: 20px; overflow: hidden;
+    border: 1px solid var(--line); box-shadow: var(--shadow-md);
+    aspect-ratio: 3 / 2; background: var(--surface-2);
+  }
+  @media (max-width: 768px) { .hero-ambient-frame { aspect-ratio: 4 / 5; } }
+  .hero-ambient-frame img {
+    width: 100%; height: 100%; object-fit: cover;
+    object-position: center 72%;
+    display: block;
+  }
+  .hero-ambient-frame .caption {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 22px 28px 24px;
+    display: flex; justify-content: space-between; align-items: end; gap: 20px;
+    background: linear-gradient(to top, rgba(11,41,72,0.55) 0%, rgba(11,41,72,0.15) 60%, transparent 100%);
+    color: rgba(255,255,255,0.96);
+    font-family: 'Inter', sans-serif;
+    flex-wrap: wrap;
+  }
+  .hero-ambient-frame .caption .eyebrow {
+    font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;
+    font-weight: 700; color: rgba(255,255,255,0.8);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .hero-ambient-frame .caption .eyebrow::before {
+    content: ''; width: 20px; height: 1.5px; background: rgba(255,255,255,0.7);
+  }
+  .hero-ambient-frame .caption h3 {
+    font-family: 'Source Serif 4', serif; font-size: clamp(1.1rem, 2vw, 1.4rem);
+    font-weight: 500; color: white; margin-top: 6px; letter-spacing: -0.01em;
+    max-width: 540px; line-height: 1.35;
+  }
+  .hero-ambient-frame .caption .note {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+    color: rgba(255,255,255,0.7); letter-spacing: 0.05em;
+    text-align: right;
+  }
+  @media (max-width: 600px) { .hero-ambient-frame .caption .note { display: none; } }
+
+  /* Section interludes — full-bleed wide banners (16:5 source) */
+  .interlude {
+    padding: 40px 0 48px; position: relative;
+  }
+  .interlude-frame {
+    position: relative; width: 100%;
+    aspect-ratio: 16 / 5; overflow: hidden;
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    background: var(--surface-2);
+  }
+  @media (max-width: 600px) { .interlude-frame { aspect-ratio: 16 / 9; } }
+  .interlude-frame img {
+    width: 100%; height: 100%; object-fit: cover;
+    object-position: center center; display: block;
+  }
+  .interlude-frame .interlude-meta {
+    position: absolute; left: 32px; bottom: 24px;
+    display: flex; gap: 14px; align-items: center;
+    padding: 10px 16px; border-radius: 100px;
+    background: rgba(11,41,72,0.72); backdrop-filter: blur(14px);
+    color: rgba(255,255,255,0.96); font-family: 'Inter', sans-serif;
+    font-size: 0.78rem; letter-spacing: 0.1em;
+    max-width: calc(100% - 64px);
+  }
+  .interlude-frame .interlude-meta .dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--sage);
+    flex-shrink: 0;
+  }
+  .interlude-frame .interlude-meta .txt {
+    font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em;
+    font-size: 0.72rem; color: rgba(255,255,255,0.88);
+  }
+  @media (max-width: 600px) {
+    .interlude-frame .interlude-meta { left: 16px; bottom: 14px; padding: 8px 12px; }
+  }
 </style>
+  <!-- Favicon set -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
+  <link rel="mask-icon" href="safari-pinned-tab.svg" color="#c8860a" />
+  <meta name="theme-color" content="#0c0a09" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
   <meta name="robots" content="noindex, nofollow">
 </head>
 <body>
@@ -637,66 +739,7 @@
           <span class="pid">SCAN-25.04 · DEMO</span>
         </div>
         <div class="scan-viewport">
-          <svg viewBox="0 0 400 300">
-            <defs>
-              <radialGradient id="brain" cx="50%" cy="50%">
-                <stop offset="0" stop-color="#7BAEB0" stop-opacity="0.5"/>
-                <stop offset="0.6" stop-color="#4A7C7E" stop-opacity="0.3"/>
-                <stop offset="1" stop-color="#0B2948" stop-opacity="0"/>
-              </radialGradient>
-              <radialGradient id="cortex" cx="50%" cy="50%">
-                <stop offset="0.7" stop-color="#7BAEB0" stop-opacity="0"/>
-                <stop offset="1" stop-color="#7BAEB0" stop-opacity="0.4"/>
-              </radialGradient>
-            </defs>
-
-            <!-- Sagittal head MRI representation -->
-            <!-- skull outline -->
-            <ellipse cx="200" cy="150" rx="135" ry="115" fill="#0E1A2E" stroke="rgba(123,174,176,0.6)" stroke-width="1.2"/>
-
-            <!-- brain matter -->
-            <ellipse cx="200" cy="148" rx="118" ry="98" fill="url(#brain)"/>
-            <ellipse cx="200" cy="148" rx="118" ry="98" fill="url(#cortex)"/>
-
-            <!-- brainstem / spine entry -->
-            <path d="M195 240 Q195 260 200 270 Q205 260 205 240 Z" fill="rgba(123,174,176,0.35)" stroke="rgba(123,174,176,0.5)" stroke-width="0.5"/>
-
-            <!-- ventricles -->
-            <ellipse cx="200" cy="148" rx="22" ry="38" fill="#0A1320" stroke="rgba(123,174,176,0.5)" stroke-width="0.8"/>
-            <ellipse cx="183" cy="142" rx="6" ry="14" fill="#0A1320"/>
-            <ellipse cx="217" cy="142" rx="6" ry="14" fill="#0A1320"/>
-
-            <!-- gyri / sulci suggestion -->
-            <g stroke="rgba(123,174,176,0.25)" stroke-width="0.4" fill="none">
-              <path d="M120 110 Q140 100 160 105"/>
-              <path d="M140 90 Q160 85 180 95"/>
-              <path d="M180 85 Q200 80 220 85"/>
-              <path d="M220 95 Q240 85 260 105"/>
-              <path d="M280 110 Q260 100 240 105"/>
-              <path d="M120 200 Q140 210 160 205"/>
-              <path d="M280 200 Q260 210 240 205"/>
-            </g>
-
-            <!-- crosshair -->
-            <line x1="200" y1="40" x2="200" y2="260" stroke="rgba(184,150,90,0.5)" stroke-width="0.5" stroke-dasharray="4 4"/>
-            <line x1="60" y1="150" x2="340" y2="150" stroke="rgba(184,150,90,0.5)" stroke-width="0.5" stroke-dasharray="4 4"/>
-
-            <!-- annotation pointers -->
-            <g stroke="rgba(123,174,176,0.7)" stroke-width="0.7" fill="none">
-              <line x1="320" y1="120" x2="240" y2="135"/>
-              <circle cx="240" cy="135" r="3" fill="#7BAEB0"/>
-              <line x1="80" y1="180" x2="160" y2="170"/>
-              <circle cx="160" cy="170" r="3" fill="#7BAEB0"/>
-              <line x1="200" y1="40" x2="200" y2="60"/>
-              <circle cx="200" cy="60" r="3" fill="#B8965A"/>
-            </g>
-
-            <g font-family="JetBrains Mono, monospace" font-size="8" fill="rgba(123,174,176,0.95)">
-              <text x="324" y="118">CORPUS CALLOSUM</text>
-              <text x="46" y="178">CEREBELLUM</text>
-              <text x="176" y="36">VERTEX · REF</text>
-            </g>
-          </svg>
+          <img src="assets/hero-scan.jpg" alt="Sagittal T2-weighted MRI — illustrative reference only, not an AEVUM patient scan" class="scan-photo" loading="lazy" />
           <div class="scan-overlay">
             <span class="corner tl"></span>
             <span class="corner tr"></span>
@@ -721,6 +764,21 @@
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="hero-ambient-section">
+  <div class="container animate">
+    <figure class="hero-ambient-frame">
+      <img src="assets/hero-ambient.jpg" alt="A quiet corner of the AEVUM guest lounge — natural daylight, a linen-cushioned bench, a single tote on a brushed-brass hook." loading="lazy" />
+      <figcaption class="caption">
+        <div>
+          <span class="eyebrow">Inside · guest lounge</span>
+          <h3>An unhurried, residential feel. No clipboards at the door, no fluorescent glare overhead.</h3>
+        </div>
+        <span class="note">Placeholder · pre-build facility imagery</span>
+      </figcaption>
+    </figure>
   </div>
 </section>
 
@@ -817,7 +875,9 @@
 
     <div class="spec-grid">
       <div class="spec-card">
-        <div class="spec-avatar">A.L.</div>
+        <div class="spec-photo">
+          <img src="assets/spec-01.jpg" alt="A radiologist's gloved hands holding a printed sagittal MRI film to window light — illustrative, no identifiable face." loading="lazy" />
+        </div>
         <h4>Dr. Aminah Lim</h4>
         <div class="role">Chief Radiologist · Medical Director</div>
         <ul class="creds">
@@ -828,7 +888,9 @@
         </ul>
       </div>
       <div class="spec-card">
-        <div class="spec-avatar">R.B.</div>
+        <div class="spec-photo">
+          <img src="assets/spec-02.jpg" alt="A radiologist's gloved hand pointing at an axial brain MRI on a high-resolution monitor — illustrative, no identifiable face." loading="lazy" />
+        </div>
         <h4>Dr. Rajesh Balachandran</h4>
         <div class="role">Consultant Radiologist</div>
         <ul class="creds">
@@ -839,7 +901,9 @@
         </ul>
       </div>
       <div class="spec-card">
-        <div class="spec-avatar">M.T.</div>
+        <div class="spec-photo">
+          <img src="assets/spec-03.jpg" alt="A radiologist in a white coat at a backlit film-viewing station, photographed from behind — illustrative, no identifiable face." loading="lazy" />
+        </div>
         <h4>Dr. Marcus Tan Wei Liang</h4>
         <div class="role">Consultant Radiologist</div>
         <ul class="creds">
@@ -873,62 +937,7 @@
     <div class="anatomy-grid">
       <div class="anatomy-l">
         <div class="anatomy-svg-wrap">
-          <svg viewBox="0 0 240 320">
-            <!-- body silhouette -->
-            <g stroke="var(--ink)" stroke-width="1.5" fill="var(--surface-2)">
-              <!-- head -->
-              <circle cx="120" cy="38" r="28"/>
-              <!-- neck -->
-              <rect x="110" y="62" width="20" height="14"/>
-              <!-- torso -->
-              <path d="M85 76 L155 76 L162 130 L168 200 L150 220 L90 220 L72 200 L78 130 Z"/>
-              <!-- pelvis -->
-              <path d="M86 220 L154 220 L160 260 L150 280 L90 280 L80 260 Z"/>
-              <!-- arms (suggested) -->
-              <path d="M85 78 L60 130 L58 180" fill="none"/>
-              <path d="M155 78 L180 130 L182 180" fill="none"/>
-              <!-- legs (suggested) -->
-              <path d="M100 280 L98 318" fill="none"/>
-              <path d="M140 280 L142 318" fill="none"/>
-            </g>
-
-            <!-- highlights for scan regions -->
-            <g opacity="0.7">
-              <!-- head -->
-              <circle cx="120" cy="38" r="28" fill="rgba(74,124,126,0.25)"/>
-              <!-- neck -->
-              <rect x="110" y="62" width="20" height="14" fill="rgba(74,124,126,0.25)"/>
-              <!-- thorax -->
-              <path d="M85 76 L155 76 L162 130 L160 160 L80 160 L78 130 Z" fill="rgba(74,124,126,0.18)"/>
-              <!-- abdomen -->
-              <path d="M80 160 L160 160 L165 200 L75 200 Z" fill="rgba(74,124,126,0.25)"/>
-              <!-- pelvis -->
-              <path d="M86 220 L154 220 L160 260 L150 280 L90 280 L80 260 Z" fill="rgba(74,124,126,0.20)"/>
-            </g>
-
-            <!-- annotation numbers -->
-            <g font-family="JetBrains Mono, monospace" font-size="11" font-weight="600" fill="var(--ink)">
-              <circle cx="200" cy="38" r="13" fill="var(--sage)" />
-              <text x="200" y="43" text-anchor="middle" fill="white">1</text>
-              <line x1="148" y1="38" x2="187" y2="38" stroke="var(--sage)" stroke-width="0.8"/>
-
-              <circle cx="200" cy="74" r="13" fill="var(--sage)" />
-              <text x="200" y="79" text-anchor="middle" fill="white">2</text>
-              <line x1="130" y1="74" x2="187" y2="74" stroke="var(--sage)" stroke-width="0.8"/>
-
-              <circle cx="40" cy="124" r="13" fill="var(--sage)" />
-              <text x="40" y="129" text-anchor="middle" fill="white">3</text>
-              <line x1="80" y1="124" x2="53" y2="124" stroke="var(--sage)" stroke-width="0.8"/>
-
-              <circle cx="200" cy="180" r="13" fill="var(--sage)" />
-              <text x="200" y="185" text-anchor="middle" fill="white">4</text>
-              <line x1="160" y1="180" x2="187" y2="180" stroke="var(--sage)" stroke-width="0.8"/>
-
-              <circle cx="40" cy="244" r="13" fill="var(--sage)" />
-              <text x="40" y="249" text-anchor="middle" fill="white">5</text>
-              <line x1="80" y1="244" x2="53" y2="244" stroke="var(--sage)" stroke-width="0.8"/>
-            </g>
-          </svg>
+          <img src="assets/anatomy-body.jpg" alt="Illustrative full-body anatomical rendering with MRI slice panels — cerebrum, cervical spine, thorax, and abdomen/pelvis regions highlighted. Editorial illustration, not a real patient scan." loading="lazy" />
         </div>
       </div>
       <div>
@@ -1002,7 +1011,7 @@
           <li>30-min consultant consult</li>
           <li>Same-day written report</li>
         </ul>
-        <button class="pkg-cta" onclick="document.getElementById('inquiry').scrollIntoView({behavior:'smooth'})">Reserve →</button>
+        <button class="pkg-cta" onclick="window.location.href='reserve.html?tier=core'">Reserve →</button>
       </div>
 
       <div class="pkg feat">
@@ -1020,7 +1029,7 @@
           <li>Double-read by 2 consultants</li>
           <li>60-min in-person consult</li>
         </ul>
-        <button class="pkg-cta" onclick="document.getElementById('inquiry').scrollIntoView({behavior:'smooth'})">Reserve →</button>
+        <button class="pkg-cta" onclick="window.location.href='reserve.html?tier=comprehensive'">Reserve →</button>
       </div>
 
       <div class="pkg">
@@ -1038,7 +1047,7 @@
           <li>Body composition analysis</li>
           <li>3.0T-only · 90-min consult</li>
         </ul>
-        <button class="pkg-cta" onclick="document.getElementById('inquiry').scrollIntoView({behavior:'smooth'})">Reserve →</button>
+        <button class="pkg-cta" onclick="window.location.href='reserve.html?tier=ultimate'">Reserve →</button>
       </div>
 
       <div class="pkg">
@@ -1056,7 +1065,7 @@
           <li>120-min consult · bound report</li>
           <li>12-month follow-up reading</li>
         </ul>
-        <button class="pkg-cta" onclick="document.getElementById('inquiry').scrollIntoView({behavior:'smooth'})">Reserve →</button>
+        <button class="pkg-cta" onclick="window.location.href='reserve.html?tier=platinum'">Reserve →</button>
       </div>
     </div>
   </div>
@@ -1099,6 +1108,16 @@
           <span>04.18.2026 · 11:42</span>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="interlude interlude-e1">
+  <div class="interlude-frame animate">
+    <img src="assets/interlude-brain.jpg" alt="Illustrative axial brain MRI slices in a fading filmstrip — editorial, not real patient data." loading="lazy" />
+    <div class="interlude-meta">
+      <span class="dot"></span>
+      <span class="txt">§ 06 · The evidence — honestly stated</span>
     </div>
   </div>
 </section>
@@ -1216,7 +1235,7 @@
     <div class="gallery-grid">
       <div class="gallery-cell">
         <div class="img-slot" data-slot="FAC-RECEPTION">
-          <img src="https://images.pexels.com/photos/18328707/pexels-photo-18328707.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="The lounge — guest reception interior" loading="lazy" onload="this.classList.add('loaded')" onerror="this.remove()" />
+          <img src="assets/fac-reception.jpg" alt="The AEVUM guest lounge — fiddle-leaf fig, sage-panelled accent wall, a linen couch, brass tea service on an oak table." loading="lazy" onload="this.classList.add('loaded')" onerror="this.remove()" />
           <svg class="illus" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs>
               <linearGradient id="rec-bg" x1="0" y1="0" x2="1" y2="1">
@@ -1261,7 +1280,7 @@
 
       <div class="gallery-cell">
         <div class="img-slot" data-slot="FAC-MAGNET">
-          <img src="https://images.pexels.com/photos/7089017/pexels-photo-7089017.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="MRI magnet suite" loading="lazy" onload="this.classList.add('loaded')" onerror="this.remove()" />
+          <img src="assets/fac-magnet.jpg" alt="The magnet suite — a Siemens MAGNETOM 3.0 Tesla scanner, soft backlit ceiling panels, a glimpse of the technician workstation through the doorway." loading="lazy" onload="this.classList.add('loaded')" onerror="this.remove()" />
           <svg class="illus" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs>
               <linearGradient id="mag-bg" x1="0" y1="0" x2="1" y2="1">
@@ -1308,7 +1327,7 @@
 
       <div class="gallery-cell">
         <div class="img-slot" data-slot="FAC-CONSULT">
-          <img src="https://images.pexels.com/photos/7789614/pexels-photo-7789614.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Private consultation room" loading="lazy" onload="this.classList.add('loaded')" onerror="this.remove()" />
+          <img src="assets/fac-consult.jpg" alt="The AEVUM consultation room — two leather club chairs on either side of an oak coffee table, a wall-mounted monitor on a sage-panelled accent wall, an AEVUM / Diagnostic Consultation desk plaque, a window framing tropical greenery." loading="lazy" onload="this.classList.add('loaded')" onerror="this.remove()" />
           <svg class="illus" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs>
               <linearGradient id="con-bg" x1="0" y1="0" x2="1" y2="1">
@@ -1351,7 +1370,7 @@
 
       <div class="gallery-cell">
         <div class="img-slot" data-slot="FAC-REPORT">
-          <img src="https://images.pexels.com/photos/6690902/pexels-photo-6690902.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Hand-bound diagnostic report" loading="lazy" onload="this.classList.add('loaded')" onerror="this.remove()" />
+          <img src="assets/fac-report.jpg" alt="An AEVUM bound diagnostic report on a leather desk — embossed monogram, the printed summary sheet beside it, a fountain pen, old books and a brass magnifying glass." loading="lazy" onload="this.classList.add('loaded')" onerror="this.remove()" />
           <svg class="illus" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs>
               <linearGradient id="rep-bg" x1="0" y1="0" x2="0" y2="1">
@@ -1522,6 +1541,16 @@
           <p>The first scan is a baseline. The second scan, twelve months later, is when subtle changes become visible. <strong>Without the longitudinal comparison, much of the value of preventative imaging is lost.</strong> Every AEVUM guest is enrolled in a 12-month re-read protocol at the time of their first scan.</p>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="interlude interlude-e2">
+  <div class="interlude-frame animate">
+    <img src="assets/interlude-facility.jpg" alt="A quiet clinic corridor — sage accent wall with a 'Radiology Consultation' wayfinding plaque, polished concrete floor, soft linear ceiling lighting." loading="lazy" />
+    <div class="interlude-meta">
+      <span class="dot"></span>
+      <span class="txt">§ 10 · Reserve a consultation</span>
     </div>
   </div>
 </section>
