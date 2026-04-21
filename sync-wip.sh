@@ -33,6 +33,7 @@ for entry in "${WIP_REPOS[@]}"; do
   rm -rf ".tmp-sync"
   git clone --quiet --depth=1 "https://github.com/derrick-pixel/$repo.git" ".tmp-sync"
   rm -rf ".tmp-sync/.git" ".tmp-sync/.github"
+  find ".tmp-sync" -name '.DS_Store' -delete
   rm -rf "./$folder"
   mv ".tmp-sync" "./$folder"
 
