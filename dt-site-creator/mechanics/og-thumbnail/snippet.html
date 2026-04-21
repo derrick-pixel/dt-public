@@ -1,0 +1,127 @@
+<!--
+  OG / WhatsApp Thumbnail mechanic.
+  This mechanic is about the IMAGE ASSET (og-image.jpg) itself — what it looks like.
+  For the <meta> tags that reference the image, use mechanic: og-social-meta.
+
+  File requirements:
+    - 1200×630 pixels (1.91:1 ratio — WhatsApp, Twitter, LinkedIn standard)
+    - JPEG or PNG, <8 MB
+    - Saved at project root as: og-image.jpg
+    - Referenced in <head> via: <meta property="og:image" content="...og-image.jpg">
+
+  Below is a ready-to-render HTML page that produces an OG image by screenshot.
+  Open og-image-builder.html in a browser, screenshot the 1200×630 div, save as og-image.jpg.
+  Customize the variables at the top of the <style> block for your brand.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>OG Image Builder — customize then screenshot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ── CUSTOMIZE THESE ─────────────────────────────────────── */
+    :root {
+      --og-bg:        #0d1117;   /* background base */
+      --og-accent-1:  #ffa657;   /* primary accent (bottom-right glow) */
+      --og-accent-2:  #d2a8ff;   /* secondary accent (top-left glow) */
+      --og-text:      #f0f6fc;
+      --og-muted:     #adbac7;
+      --og-tagline:   #ffa657;   /* title accent color (match primary) */
+    }
+    body { margin: 0; background: #000; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: 'Inter', sans-serif; }
+
+    /* The 1200×630 canvas — screenshot this div */
+    .og-canvas {
+      width: 1200px; height: 630px;
+      background: var(--og-bg);
+      position: relative; overflow: hidden;
+      color: var(--og-text);
+    }
+
+    /* Glow: bottom-right, primary accent */
+    .og-canvas::before {
+      content: ''; position: absolute;
+      right: -200px; bottom: -200px;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, var(--og-accent-1) 0%, transparent 65%);
+      opacity: 0.35;
+    }
+    /* Glow: top-left, secondary accent */
+    .og-canvas::after {
+      content: ''; position: absolute;
+      left: -150px; top: -150px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, var(--og-accent-2) 0%, transparent 65%);
+      opacity: 0.25;
+    }
+
+    .og-inner {
+      position: relative; z-index: 2;
+      padding: 72px;
+      height: 100%;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+
+    .og-title {
+      font-family: 'Manrope', 'Inter', sans-serif;
+      font-size: 96px; font-weight: 800;
+      letter-spacing: -0.02em; line-height: 1.05;
+      margin: 0 0 20px;
+    }
+    .og-tagline {
+      font-size: 40px; font-weight: 600;
+      color: var(--og-tagline);
+      margin: 0 0 24px;
+    }
+    .og-bullets {
+      font-size: 28px; color: var(--og-muted);
+      font-weight: 500;
+    }
+
+    .og-accent-bar {
+      width: 180px; height: 8px;
+      background: var(--og-accent-1);
+      margin: 32px 0 0;
+      border-radius: 100px;
+    }
+
+    .og-footer {
+      position: absolute;
+      bottom: 56px; left: 72px; right: 72px;
+      font-size: 22px; color: var(--og-muted);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+  </style>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+  <div class="og-canvas">
+    <div class="og-inner">
+      <!-- CUSTOMIZE THESE STRINGS ─────────────────────────── -->
+      <h1 class="og-title">Your Site Name</h1>
+      <p class="og-tagline">Your tagline or category</p>
+      <p class="og-bullets">Value prop A · Value prop B · Value prop C</p>
+      <div class="og-accent-bar"></div>
+    </div>
+    <div class="og-footer">
+      <span>yoursite.com</span>
+      <span>by You</span>
+    </div>
+  </div>
+</body>
+</html>
+
+<!--
+  HOW TO PRODUCE og-image.jpg FROM THIS:
+    1. Save this file as og-image-builder.html at your project root.
+    2. Open it in a desktop browser at 100% zoom.
+    3. Take a screenshot of the 1200×630 canvas at 1:1 (Mac: Cmd+Shift+4 → drag).
+    4. Save as og-image.jpg in your project root.
+    5. Reference via <meta property="og:image"> tag (see mechanic: og-social-meta).
+    6. Force cache-refresh via Facebook Debugger: developers.facebook.com/tools/debug/
+
+  OR: use a scripted generator (scripts/generate-placeholders.py in dt-site-creator
+  has a ready-to-adapt make_og_image() function using Python + PIL).
+-->

@@ -1,0 +1,78 @@
+<!--
+  PDF Pipeline mechanic — capture any DOM element as a multi-page PDF.
+  Test with >1 page of content; single-page PDF is NOT multi-page PDF.
+-->
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  // Render a DOM element to PDF, slicing tall content into multiple A4 pages.
+  // Usage:
+  //   renderPDF('report-root', { filename: 'report.pdf', marginMm: 10 })
+  window.renderPDF = async function(targetElementId, opts) {
+    opts = opts || {};
+    const filename = opts.filename || 'report.pdf';
+    const marginMm = opts.marginMm != null ? opts.marginMm : 10;
+
+    const el = document.getElementById(targetElementId);
+    if (!el) { console.error('renderPDF: target not found', targetElementId); return; }
+
+    // Render at 2x for crisp text
+    const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+
+    const pageWidthMm = pdf.internal.pageSize.getWidth();
+    const pageHeightMm = pdf.internal.pageSize.getHeight();
+    const contentWidthMm = pageWidthMm - (marginMm * 2);
+    const contentHeightMm = pageHeightMm - (marginMm * 2);
+
+    // Convert canvas pixel dimensions to mm at our chosen width
+    const mmPerPx = contentWidthMm / canvas.width;
+    const fullHeightMm = canvas.height * mmPerPx;
+
+    if (fullHeightMm <= contentHeightMm) {
+      // Fits on one page
+      const imgData = canvas.toDataURL('image/png');
+      pdf.addImage(imgData, 'PNG', marginMm, marginMm, contentWidthMm, fullHeightMm);
+    } else {
+      // Slice into multiple pages
+      const sliceHeightPx = Math.floor(contentHeightMm / mmPerPx);
+      let yPx = 0;
+      let pageNum = 0;
+
+      while (yPx < canvas.height) {
+        const thisSliceHeight = Math.min(sliceHeightPx, canvas.height - yPx);
+        // Build a temp canvas holding just this slice
+        const sliceCanvas = document.createElement('canvas');
+        sliceCanvas.width = canvas.width;
+        sliceCanvas.height = thisSliceHeight;
+        const sliceCtx = sliceCanvas.getContext('2d');
+        sliceCtx.drawImage(canvas, 0, yPx, canvas.width, thisSliceHeight, 0, 0, canvas.width, thisSliceHeight);
+
+        if (pageNum > 0) pdf.addPage();
+        const sliceData = sliceCanvas.toDataURL('image/png');
+        pdf.addImage(sliceData, 'PNG', marginMm, marginMm, contentWidthMm, thisSliceHeight * mmPerPx);
+
+        yPx += thisSliceHeight;
+        pageNum++;
+      }
+    }
+
+    pdf.save(filename);
+  };
+})();
+</script>
+
+<!--
+  Usage:
+    <div id="report-root">
+      <h1>Report title</h1>
+      <!-- ... any DOM you want captured ... -->
+    </div>
+    <button onclick="renderPDF('report-root', { filename: 'my-report.pdf' })">Download PDF</button>
+-->

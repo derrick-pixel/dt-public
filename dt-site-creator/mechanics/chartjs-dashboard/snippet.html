@@ -1,0 +1,102 @@
+<!--
+  Chart.js Dashboard mechanic — a line chart with:
+  - Flex-safe sizing (explicit container height + maintainAspectRatio: false)
+  - "Last updated X ago" subtitle that refreshes every 10s
+  Drop into any dashboard section. Call window.renderDashboardChart({...}) to populate.
+-->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<style>
+  .mechanic-chart__card {
+    background: var(--card, #1c2128);
+    border: 1px solid var(--border, rgba(255,255,255,0.08));
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .mechanic-chart__header {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .mechanic-chart__title { font-size: 1rem; font-weight: 600; color: var(--text, #f0f6fc); }
+  .mechanic-chart__updated { font-size: 0.72rem; color: var(--muted, #8b949e); }
+  /* Explicit height + relative position — avoids flex-collapse bug */
+  .mechanic-chart__wrap { position: relative; height: 300px; }
+</style>
+
+<div class="mechanic-chart__card">
+  <div class="mechanic-chart__header">
+    <span class="mechanic-chart__title" id="chart-title">Metric</span>
+    <span class="mechanic-chart__updated" id="chart-updated">—</span>
+  </div>
+  <div class="mechanic-chart__wrap">
+    <canvas id="dashboard-chart"></canvas>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  let chartInstance = null;
+  let lastUpdatedAt = null;
+
+  window.renderDashboardChart = function(opts) {
+    const titleEl = document.getElementById('chart-title');
+    if (titleEl && opts.title) titleEl.textContent = opts.title;
+
+    const canvas = document.getElementById('dashboard-chart');
+    if (!canvas) return;
+
+    if (chartInstance) chartInstance.destroy();
+
+    chartInstance = new Chart(canvas, {
+      type: opts.type || 'line',
+      data: {
+        labels: opts.labels || [],
+        datasets: [{
+          label: opts.datasetLabel || '',
+          data: opts.values || [],
+          borderColor: opts.color || '#ffa657',
+          backgroundColor: (opts.color || '#ffa657') + '33',
+          tension: 0.3,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,   // Critical: prevents flex-collapse
+        plugins: { legend: { display: !!opts.datasetLabel } },
+        scales: {
+          x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8b949e' } },
+          y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8b949e' } }
+        }
+      }
+    });
+
+    lastUpdatedAt = Date.now();
+    refreshUpdatedLabel();
+  };
+
+  function refreshUpdatedLabel() {
+    const el = document.getElementById('chart-updated');
+    if (!el || !lastUpdatedAt) return;
+    const seconds = Math.round((Date.now() - lastUpdatedAt) / 1000);
+    if (seconds < 60) el.textContent = 'Updated ' + seconds + 's ago';
+    else if (seconds < 3600) el.textContent = 'Updated ' + Math.round(seconds / 60) + 'm ago';
+    else el.textContent = 'Updated ' + Math.round(seconds / 3600) + 'h ago';
+  }
+
+  // Refresh the "X ago" label every 10s so it stays honest
+  setInterval(refreshUpdatedLabel, 10000);
+})();
+
+// Demo call — replace with your real data loader
+document.addEventListener('DOMContentLoaded', () => {
+  renderDashboardChart({
+    title: 'Revenue (demo)',
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    values: [12, 18, 15, 22, 28, 24, 30],
+    color: '#ffa657',
+    datasetLabel: 'SGD (k)'
+  });
+});
+</script>

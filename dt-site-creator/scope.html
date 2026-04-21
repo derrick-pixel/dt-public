@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DT Site Creator — 4-Question Scoping Quiz</title>
+  <meta name="description" content="Answer 4 questions → get archetype recommendations with weighted scoring. The guided path through the archive." />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://derrick-pixel.github.io/dt-site-creator/scope.html" />
+  <meta property="og:title" content="DT Site Creator — Methodology Archive" />
+  <meta property="og:description" content="Browse 5 project archetypes, 9 reusable mechanics, 40+ pitfalls." />
+  <meta property="og:image" content="https://derrick-pixel.github.io/dt-site-creator/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Favicon set (we dogfood the mechanic we ship) -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
+  <link rel="mask-icon" href="safari-pinned-tab.svg" color="#ffa657" />
+  <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#ffa657" media="(prefers-color-scheme: light)" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="dashboard/css/style.css" />
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+  <nav id="site-nav">
+    <a href="index.html" class="nav-logo">DT<span>.</span>site</a>
+    <ul class="nav-links">
+      <li><a href="#stage-1">Start</a></li>
+      <li><a href="pitfalls.html">Pitfalls</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+    <div class="nav-right">
+      <label class="teaching-toggle">
+        <input type="checkbox" id="teaching-toggle" />
+        <span>Teaching mode</span>
+      </label>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div id="mobile-menu" class="mobile-menu">
+    <a href="#stage-1">Start</a>
+    <a href="pitfalls.html">Pitfalls</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#about">About</a>
+  </div>
+
+  <main>
+    <!-- STAGE 1: Hero + intent capture -->
+    <section id="stage-1" class="stage active">
+      <div class="container">
+        <h1>What are you <em>building</em>?</h1>
+        <p class="hero-sub">Describe it in a sentence. We'll match the right archetype, mechanics, and pitfalls from 20+ past projects.</p>
+        <textarea id="project-description" rows="3" placeholder="e.g., A donation site for a wedding that routes red-packet money to a charity, with tax-relief calculation."></textarea>
+        <div class="quick-chips">
+          <button class="chip" data-chip="A marketing site for a new SaaS product">Marketing site</button>
+          <button class="chip" data-chip="An app that takes customer payments">Payment app</button>
+          <button class="chip" data-chip="An internal tool for operations team">Internal tool</button>
+        </div>
+        <button class="btn-primary" id="btn-find-archetype">Find my archetype →</button>
+      </div>
+    </section>
+
+    <!-- STAGE 2: Scoping wizard -->
+    <section id="stage-2" class="stage">
+      <div class="container">
+        <h2>4 quick questions</h2>
+        <p class="lead">We weight your answers across 5 archetypes to show the best fits.</p>
+        <div id="scoping-questions"></div>
+        <h3 style="margin-top: 32px;">Live match meter</h3>
+        <div class="match-meter" id="match-meter"></div>
+        <button class="btn-primary" id="btn-see-recommendations" disabled>See recommendations →</button>
+      </div>
+    </section>
+
+    <!-- STAGE 3: Archetype recommendations -->
+    <section id="stage-3" class="stage">
+      <div class="container">
+        <h2>Your top matches</h2>
+        <p class="lead">Pick one to dive into its playbook and mechanic menu.</p>
+        <div id="archetype-recommendations"></div>
+      </div>
+    </section>
+
+    <!-- STAGE 4: Archetype detail -->
+    <section id="stage-4" class="stage">
+      <div class="container">
+        <div id="archetype-detail"></div>
+      </div>
+    </section>
+
+    <!-- STAGE 5: Assembled prompt + context pack -->
+    <section id="stage-5" class="stage">
+      <div class="container">
+        <h2>Your assembled prompt</h2>
+        <p class="lead">Paste the main prompt into Claude Code. Commit the CONTEXT.md into your new project's repo so future sessions start pre-contextualized.</p>
+
+        <div class="prompt-output-wrap">
+          <div class="prompt-header">
+            <h3>Main prompt (paste into Claude)</h3>
+            <button class="btn-primary" id="btn-copy-prompt">📋 Copy prompt</button>
+          </div>
+          <pre id="assembled-prompt"></pre>
+        </div>
+
+        <div class="prompt-output-wrap">
+          <div class="prompt-header">
+            <h3>CONTEXT.md (commit to your new repo)</h3>
+            <button class="btn-outline" id="btn-copy-context">📋 Copy context pack</button>
+          </div>
+          <pre id="context-pack"></pre>
+        </div>
+
+        <button class="btn-outline" id="btn-generate-fresh">⚡ Generate fresh samples</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Generate-Fresh modal -->
+  <div class="modal-overlay" id="modal-generate-fresh">
+    <div class="modal">
+      <h3>Generate custom samples</h3>
+      <p>Copy this prompt, then paste it into a Claude Code session running in the <code>dt-site-creator/</code> folder. Claude will generate 4 mockup variants and drop them into <code>dashboard/samples/custom/</code> — they'll show up in the gallery on your next page load.</p>
+      <pre id="generate-fresh-prompt"></pre>
+      <button class="btn-primary" id="btn-copy-generate-prompt">📋 Copy</button>
+      <button class="btn-outline" id="btn-close-modal">Close</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <footer>
+    <div class="container">
+      <p>dt-site-creator — methodology archive by Derrick Teo.</p>
+      <p>
+        <a href="https://derrickteo.com">derrickteo.com</a>
+        ·
+        <a href="pitfalls.html">Pitfalls wall</a>
+        ·
+        <a href="https://derrickteo.com">derrickteo.com</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="dashboard/js/yaml-mini.js?v=2"></script>
+  <script src="dashboard/js/main.js?v=2"></script>
+  <script src="dashboard/js/scoping.js?v=2"></script>
+  <script src="dashboard/js/assemble.js?v=2"></script>
+</body>
+</html>

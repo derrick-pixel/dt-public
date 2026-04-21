@@ -1,0 +1,64 @@
+<!--
+  LocalStorage State mechanic — namespaced, versioned persistence wrapper.
+  Drop this <script> into any page. Use window.dtState to read/write/migrate.
+-->
+<script>
+(function() {
+  'use strict';
+
+  // Namespace all keys under "dtsite:" and suffix with version, e.g. "dtsite:cart:v1"
+  // so schema migrations can coexist cleanly.
+  window.dtState = {
+    _ns: 'dtsite',
+
+    get(key, defaultValue, version) {
+      if (version == null) version = 1;
+      try {
+        const raw = localStorage.getItem(this._ns + ':' + key + ':v' + version);
+        if (raw === null) return defaultValue;
+        return JSON.parse(raw);
+      } catch (e) {
+        console.warn('dtState.get failed for', key, e);
+        return defaultValue;
+      }
+    },
+
+    set(key, value, version) {
+      if (version == null) version = 1;
+      try {
+        localStorage.setItem(this._ns + ':' + key + ':v' + version, JSON.stringify(value));
+      } catch (e) {
+        console.error('dtState.set failed for', key, e);
+      }
+    },
+
+    remove(key, version) {
+      if (version == null) version = 1;
+      localStorage.removeItem(this._ns + ':' + key + ':v' + version);
+    },
+
+    // Migrate data from one schema version to another using a user-supplied function.
+    // Backs up the old value before writing the new one in case migration throws.
+    migrate(key, fromVersion, toVersion, migratorFn) {
+      const oldValue = this.get(key, null, fromVersion);
+      if (oldValue === null) return false;
+      try {
+        const newValue = migratorFn(oldValue);
+        this.set(key, newValue, toVersion);
+        this.remove(key, fromVersion);
+        return true;
+      } catch (e) {
+        console.error('dtState.migrate failed for', key, e);
+        return false;
+      }
+    }
+  };
+})();
+</script>
+
+<!--
+  Usage:
+    dtState.set('cart', [{ id: 'A', qty: 2 }]);
+    const cart = dtState.get('cart', []);
+    dtState.migrate('cart', 1, 2, (old) => old.map(i => ({ ...i, addedAt: Date.now() })));
+-->

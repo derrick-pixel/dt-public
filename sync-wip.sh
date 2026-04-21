@@ -23,6 +23,7 @@ WIP_REPOS=(
   "the-commons:the-commons"
   "vectorsky:vectorsky"
   "XinceAI:xinceai"
+  "dt-site-creator:dt-site-creator"
 )
 
 for entry in "${WIP_REPOS[@]}"; do

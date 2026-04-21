@@ -1,0 +1,128 @@
+<!--
+  Admin Auth Gate mechanic — dev-grade password gate.
+  NOT PRODUCTION SECURE. Use Supabase/NextAuth for real apps.
+  Suitable for internal admin pages, dogfood dashboards, sharing with trusted users.
+-->
+<style>
+  .mechanic-authgate__overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(10, 15, 30, 0.96);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .mechanic-authgate__box {
+    background: var(--card, #1c2128);
+    border: 1px solid var(--border2, rgba(255,255,255,0.16));
+    border-radius: 12px;
+    padding: 28px;
+    max-width: 360px; width: 90%;
+    color: var(--text, #f0f6fc);
+  }
+  .mechanic-authgate__box h3 { margin: 0 0 6px 0; font-size: 1.1rem; }
+  .mechanic-authgate__box p { margin: 0 0 16px 0; font-size: 0.85rem; color: var(--muted, #8b949e); }
+  .mechanic-authgate__input {
+    width: 100%; padding: 10px 12px;
+    background: var(--surface, #161b22);
+    border: 1px solid var(--border, rgba(255,255,255,0.08));
+    color: inherit; border-radius: 6px;
+    font-size: 0.9rem;
+  }
+  .mechanic-authgate__btn {
+    margin-top: 12px; width: 100%;
+    padding: 10px 16px; background: var(--accent, #ffa657); color: #0d1117;
+    border: none; border-radius: 6px; font-weight: 700; cursor: pointer;
+  }
+  .mechanic-authgate__err {
+    margin-top: 8px; color: #f85149; font-size: 0.8rem; min-height: 1em;
+  }
+</style>
+
+<script>
+(function() {
+  'use strict';
+
+  // ── Configure this ───────────────────────────────────────────
+  // SHA-256 of your password. Generate with:
+  //   echo -n 'your-password' | shasum -a 256
+  // or in DevTools console: window.dtAuthGate.hashPassword('your-password').then(console.log)
+  // Default hash below is for password "admin" — REPLACE before shipping.
+  const PASSWORD_HASH = '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918';
+  const STORAGE_KEY = 'dtsite:admin-authed';
+
+  async function sha256(text) {
+    const buf = new TextEncoder().encode(text);
+    const digest = await crypto.subtle.digest('SHA-256', buf);
+    return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  async function checkPassword(input) {
+    const hash = await sha256(input);
+    return hash === PASSWORD_HASH;
+  }
+
+  function showGate() {
+    const overlay = document.createElement('div');
+    overlay.className = 'mechanic-authgate__overlay';
+
+    const box = document.createElement('div');
+    box.className = 'mechanic-authgate__box';
+
+    const h3 = document.createElement('h3'); h3.textContent = 'Admin access'; box.appendChild(h3);
+    const p = document.createElement('p'); p.textContent = 'Enter password to continue.'; box.appendChild(p);
+
+    const input = document.createElement('input');
+    input.type = 'password';
+    input.className = 'mechanic-authgate__input';
+    input.placeholder = 'Password';
+    input.autocomplete = 'current-password';
+    box.appendChild(input);
+
+    const btn = document.createElement('button');
+    btn.className = 'mechanic-authgate__btn';
+    btn.textContent = 'Enter';
+    box.appendChild(btn);
+
+    const err = document.createElement('div');
+    err.className = 'mechanic-authgate__err';
+    box.appendChild(err);
+
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+    setTimeout(() => input.focus(), 50);
+
+    async function tryLogin() {
+      err.textContent = '';
+      const ok = await checkPassword(input.value);
+      if (ok) {
+        sessionStorage.setItem(STORAGE_KEY, '1');
+        overlay.remove();
+      } else {
+        err.textContent = 'Wrong password.';
+        input.value = '';
+        input.focus();
+      }
+    }
+    btn.addEventListener('click', tryLogin);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin(); });
+  }
+
+  function init() {
+    if (sessionStorage.getItem(STORAGE_KEY) === '1') return;
+    if (document.body) showGate();
+    else document.addEventListener('DOMContentLoaded', showGate);
+  }
+
+  window.dtAuthGate = {
+    hashPassword: sha256,
+    logout() { sessionStorage.removeItem(STORAGE_KEY); location.reload(); }
+  };
+
+  init();
+})();
+</script>
+
+<!--
+  To rotate the password:
+  1. In DevTools console: await dtAuthGate.hashPassword('new-password')
+  2. Copy the returned hash into PASSWORD_HASH above.
+  3. Commit + push.
+-->

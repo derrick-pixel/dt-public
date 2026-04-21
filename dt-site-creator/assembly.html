@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prompt Assembly — DT Site Creator</title>
+  <meta name="description" content="Your selected archetype + mechanics → one ready-to-paste prompt for Claude." />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://derrick-pixel.github.io/dt-site-creator/assembly.html" />
+  <meta property="og:title" content="Prompt Assembly — DT Site Creator" />
+  <meta property="og:description" content="Assemble your archetype + mechanics into a ready-to-paste Claude prompt." />
+  <meta property="og:image" content="https://derrick-pixel.github.io/dt-site-creator/og-image.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Favicon set (we dogfood the mechanic we ship) -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
+  <link rel="mask-icon" href="safari-pinned-tab.svg" color="#ffa657" />
+  <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#ffa657" media="(prefers-color-scheme: light)" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="dashboard/css/style.css?v=5" />
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body class="assembly-body">
+  <nav id="site-nav">
+    <a href="index.html" class="nav-logo">DT<span>.</span>site</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Archetypes</a></li>
+      <li><a href="mechanics.html">Mechanics</a></li>
+      <li><a href="assembly.html" class="active">Prompt Assembly</a></li>
+      <li><a href="showcase.html">Showcase</a></li>
+      <li><a href="pitfalls.html">Pitfalls</a></li>
+      <li><a href="setup.html">Setup</a></li>
+    </ul>
+    <div class="nav-right">
+      <a class="btn-outline btn-sm" href="index.html">← Back to Archetypes</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div id="mobile-menu" class="mobile-menu">
+    <a href="index.html">Archetypes</a>
+    <a href="mechanics.html">Mechanics</a>
+    <a href="assembly.html">Prompt Assembly</a>
+    <a href="showcase.html">Showcase</a>
+    <a href="pitfalls.html">Pitfalls</a>
+    <a href="setup.html">Setup</a>
+  </div>
+
+  <main class="assembly-main">
+    <!-- Hero -->
+    <section class="assembly-hero">
+      <div class="container assembly-narrow">
+        <div class="assembly-hero__badge">Prompt Assembly</div>
+        <h1>Your <em>ready-to-paste</em> prompt</h1>
+        <p class="hero-sub">Pick an archetype from the <a href="index.html">Archetypes page</a> + any mechanics from <a href="mechanics.html">Mechanics</a>, add a sentence about your project, and Claude gets everything it needs in one paste.</p>
+      </div>
+    </section>
+
+    <!-- 1. Project description -->
+    <section class="assembly-section">
+      <div class="container assembly-narrow">
+        <div class="assembly-step-head">
+          <span class="assembly-step-num">1</span>
+          <h2>Describe your project</h2>
+        </div>
+        <p class="lead">One sentence is enough. Claude fills in the rest.</p>
+        <textarea
+          id="project-description"
+          class="assembly-textarea"
+          rows="3"
+          placeholder="e.g., A donation site for a wedding that routes red-packet money to a charity, with tax-relief calculation."
+        ></textarea>
+      </div>
+    </section>
+
+    <!-- 2. Selected archetype -->
+    <section class="assembly-section">
+      <div class="container assembly-narrow">
+        <div class="assembly-step-head">
+          <span class="assembly-step-num">2</span>
+          <h2>Selected archetype</h2>
+        </div>
+        <p class="lead">One archetype per project. Pick from the <a href="index.html">Archetypes page</a>.</p>
+        <div id="selected-archetype" class="assembly-slot">
+          <!-- Rendered by assembly.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Selected mechanics -->
+    <section class="assembly-section">
+      <div class="container assembly-narrow">
+        <div class="assembly-step-head">
+          <span class="assembly-step-num">3</span>
+          <h2>Selected mechanics</h2>
+        </div>
+        <p class="lead">Any number. Pick from the <a href="mechanics.html">Mechanics page</a>.</p>
+        <div id="selected-mechanics" class="assembly-slot">
+          <!-- Rendered by assembly.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Assembled output -->
+    <section class="assembly-section assembly-section--output">
+      <div class="container assembly-narrow">
+        <div class="assembly-step-head">
+          <span class="assembly-step-num">4</span>
+          <h2>Copy &amp; paste into Claude</h2>
+        </div>
+
+        <div class="prompt-output-wrap">
+          <div class="prompt-header">
+            <h3>Main prompt</h3>
+            <button class="btn-primary" id="btn-copy-prompt">📋 Copy prompt</button>
+          </div>
+          <pre id="assembled-prompt">Pick an archetype to generate the prompt…</pre>
+        </div>
+
+        <div class="prompt-output-wrap">
+          <div class="prompt-header">
+            <h3>CONTEXT.md <span class="ctx-hint">— commit this to your new repo for future sessions</span></h3>
+            <button class="btn-outline" id="btn-copy-context">📋 Copy context pack</button>
+          </div>
+          <pre id="context-pack">—</pre>
+        </div>
+
+        <div class="assembly-actions">
+          <button class="btn-primary" id="btn-share-assembly">🔗 Share this assembly</button>
+          <button class="btn-outline" id="btn-clear-selection">Clear selection</button>
+          <a class="btn-outline btn-sm" href="index.html">← Back to Archetypes</a>
+        </div>
+        <p class="share-hint">The share URL captures your archetype + mechanics + project description. Anyone who opens it lands on this page with your exact selection pre-loaded. Perfect for sending trainees a starting point.</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <footer>
+    <div class="container">
+      <p>dt-site-creator by Derrick Teo.</p>
+      <p>
+        <a href="index.html">Archetypes</a>
+        ·
+        <a href="setup.html">Setup guide</a>
+        ·
+        <a href="pitfalls.html">Pitfalls</a>
+        ·
+        <a href="https://derrickteo.com">derrickteo.com</a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="dashboard/js/assembly.js?v=10"></script>
+</body>
+</html>

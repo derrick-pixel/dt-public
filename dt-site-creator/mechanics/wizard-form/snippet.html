@@ -1,0 +1,196 @@
+<!--
+  Wizard Form mechanic — 3-step form with progress bar + Next/Back/Submit.
+  Configure the `steps` array to match your form. Returns collected data via opts.onSubmit.
+-->
+<style>
+  .mechanic-wizard__wrap {
+    max-width: 520px; margin: 0 auto;
+    background: var(--card, #1c2128);
+    border: 1px solid var(--border, rgba(255,255,255,0.08));
+    border-radius: 12px; padding: 28px;
+    color: var(--text, #f0f6fc);
+  }
+  .mechanic-wizard__progress {
+    height: 6px; background: var(--surface, #161b22);
+    border-radius: 100px; overflow: hidden; margin-bottom: 20px;
+  }
+  .mechanic-wizard__progress-fill {
+    height: 100%; background: var(--accent, #ffa657);
+    width: 0%; transition: width 0.3s ease;
+  }
+  .mechanic-wizard__step-label {
+    font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--muted, #8b949e); margin-bottom: 8px;
+  }
+  .mechanic-wizard__step h3 { margin: 0 0 16px 0; }
+  .mechanic-wizard__field { margin-bottom: 14px; }
+  .mechanic-wizard__field label {
+    display: block; font-size: 0.85rem; margin-bottom: 6px;
+  }
+  .mechanic-wizard__field input[type=text],
+  .mechanic-wizard__field input[type=number],
+  .mechanic-wizard__field textarea {
+    width: 100%; padding: 10px 12px;
+    background: var(--surface, #161b22);
+    border: 1px solid var(--border, rgba(255,255,255,0.08));
+    color: inherit; border-radius: 6px; font-size: 0.9rem;
+    font-family: inherit;
+  }
+  .mechanic-wizard__options label { display: block; padding: 6px 0; cursor: pointer; }
+  .mechanic-wizard__nav {
+    display: flex; gap: 12px; margin-top: 20px;
+  }
+  .mechanic-wizard__btn {
+    flex: 1; padding: 10px 16px; border: none; border-radius: 6px;
+    font-weight: 700; cursor: pointer; font-size: 0.85rem;
+  }
+  .mechanic-wizard__btn-primary { background: var(--accent, #ffa657); color: #0d1117; }
+  .mechanic-wizard__btn-outline {
+    background: transparent; color: inherit;
+    border: 1px solid var(--border2, rgba(255,255,255,0.16));
+  }
+  .mechanic-wizard__btn:disabled { opacity: 0.4; cursor: not-allowed; }
+</style>
+
+<div id="wizard-form-root" class="mechanic-wizard__wrap"></div>
+
+<script>
+(function() {
+  'use strict';
+
+  // Configure this per your form. `type` can be 'text', 'number', 'textarea', 'radio', 'likert'
+  const defaultSteps = [
+    {
+      title: 'About you',
+      fields: [
+        { id: 'name', type: 'text', label: 'Your name' },
+        { id: 'email', type: 'text', label: 'Email' }
+      ]
+    },
+    {
+      title: 'Your goal',
+      fields: [
+        { id: 'goal', type: 'radio', label: 'What brings you here?', options: ['Learning', 'Work', 'Personal project'] }
+      ]
+    },
+    {
+      title: 'Confidence',
+      fields: [
+        { id: 'confidence', type: 'likert', label: 'How confident do you feel? (1 = not at all, 5 = very)' }
+      ]
+    }
+  ];
+
+  window.renderWizardForm = function(opts) {
+    opts = opts || {};
+    const steps = opts.steps || defaultSteps;
+    const onSubmit = opts.onSubmit || ((data) => console.log('Wizard submitted:', data));
+    const root = document.getElementById(opts.targetElementId || 'wizard-form-root');
+    if (!root) return;
+
+    const state = { currentStep: 0, answers: {} };
+
+    function render() {
+      root.replaceChildren();
+
+      // Progress bar
+      const progress = document.createElement('div'); progress.className = 'mechanic-wizard__progress';
+      const fill = document.createElement('div'); fill.className = 'mechanic-wizard__progress-fill';
+      fill.style.width = Math.round(((state.currentStep + 1) / steps.length) * 100) + '%';
+      progress.appendChild(fill);
+      root.appendChild(progress);
+
+      // Step label
+      const stepLabel = document.createElement('div'); stepLabel.className = 'mechanic-wizard__step-label';
+      stepLabel.textContent = 'Step ' + (state.currentStep + 1) + ' of ' + steps.length;
+      root.appendChild(stepLabel);
+
+      // Step content
+      const step = steps[state.currentStep];
+      const stepEl = document.createElement('div'); stepEl.className = 'mechanic-wizard__step';
+      const h3 = document.createElement('h3'); h3.textContent = step.title; stepEl.appendChild(h3);
+
+      step.fields.forEach(f => stepEl.appendChild(buildField(f)));
+      root.appendChild(stepEl);
+
+      // Nav
+      const nav = document.createElement('div'); nav.className = 'mechanic-wizard__nav';
+
+      const backBtn = document.createElement('button');
+      backBtn.className = 'mechanic-wizard__btn mechanic-wizard__btn-outline';
+      backBtn.textContent = '← Back';
+      backBtn.disabled = state.currentStep === 0;
+      backBtn.addEventListener('click', () => { state.currentStep--; render(); });
+      nav.appendChild(backBtn);
+
+      const forwardBtn = document.createElement('button');
+      forwardBtn.className = 'mechanic-wizard__btn mechanic-wizard__btn-primary';
+      const isLast = state.currentStep === steps.length - 1;
+      forwardBtn.textContent = isLast ? 'Submit' : 'Next →';
+      forwardBtn.addEventListener('click', () => {
+        if (isLast) onSubmit(state.answers);
+        else { state.currentStep++; render(); }
+      });
+      nav.appendChild(forwardBtn);
+
+      root.appendChild(nav);
+    }
+
+    function buildField(f) {
+      const wrap = document.createElement('div'); wrap.className = 'mechanic-wizard__field';
+      const label = document.createElement('label'); label.textContent = f.label; wrap.appendChild(label);
+
+      if (f.type === 'text' || f.type === 'number') {
+        const input = document.createElement('input');
+        input.type = f.type;
+        input.value = state.answers[f.id] || '';
+        input.addEventListener('input', e => { state.answers[f.id] = e.target.value; });
+        wrap.appendChild(input);
+      } else if (f.type === 'textarea') {
+        const ta = document.createElement('textarea');
+        ta.rows = 3;
+        ta.value = state.answers[f.id] || '';
+        ta.addEventListener('input', e => { state.answers[f.id] = e.target.value; });
+        wrap.appendChild(ta);
+      } else if (f.type === 'radio') {
+        const optsWrap = document.createElement('div'); optsWrap.className = 'mechanic-wizard__options';
+        f.options.forEach(o => {
+          const optLabel = document.createElement('label');
+          const r = document.createElement('input');
+          r.type = 'radio'; r.name = f.id; r.value = o;
+          r.checked = state.answers[f.id] === o;
+          r.addEventListener('change', () => { state.answers[f.id] = o; });
+          optLabel.appendChild(r);
+          optLabel.appendChild(document.createTextNode(' ' + o));
+          optsWrap.appendChild(optLabel);
+        });
+        wrap.appendChild(optsWrap);
+      } else if (f.type === 'likert') {
+        const optsWrap = document.createElement('div'); optsWrap.className = 'mechanic-wizard__options';
+        [1, 2, 3, 4, 5].forEach(n => {
+          const optLabel = document.createElement('label');
+          const r = document.createElement('input');
+          r.type = 'radio'; r.name = f.id; r.value = String(n);
+          r.checked = state.answers[f.id] === n;
+          r.addEventListener('change', () => { state.answers[f.id] = n; });
+          optLabel.appendChild(r);
+          optLabel.appendChild(document.createTextNode(' ' + n));
+          optsWrap.appendChild(optLabel);
+        });
+        wrap.appendChild(optsWrap);
+      }
+
+      return wrap;
+    }
+
+    render();
+  };
+
+  // Auto-render with defaults on load; callers can re-call renderWizardForm to override
+  document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('wizard-form-root')) {
+      renderWizardForm({});
+    }
+  });
+})();
+</script>

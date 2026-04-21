@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Set up Claude Code — DT Site Creator</title>
+  <meta name="description" content="Step-by-step guide to installing Claude Code on Mac and Windows. 15 minutes, newbie-friendly." />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://derrick-pixel.github.io/dt-site-creator/setup.html" />
+  <meta property="og:title" content="Set up Claude Code — DT Site Creator" />
+  <meta property="og:description" content="Mac + Windows setup guide for Claude Code. Start vibe-coding in 15 minutes." />
+  <meta property="og:image" content="https://derrick-pixel.github.io/dt-site-creator/og-image.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Favicon set (we dogfood the mechanic we ship) -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
+  <link rel="mask-icon" href="safari-pinned-tab.svg" color="#ffa657" />
+  <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#ffa657" media="(prefers-color-scheme: light)" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="dashboard/css/style.css?v=3" />
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body class="setup-body">
+  <nav id="site-nav">
+    <a href="index.html" class="nav-logo">DT<span>.</span>site</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Archetypes</a></li>
+      <li><a href="mechanics.html">Mechanics</a></li>
+      <li><a href="assembly.html">Prompt Assembly</a></li>
+      <li><a href="showcase.html">Showcase</a></li>
+      <li><a href="pitfalls.html">Pitfalls</a></li>
+      <li><a href="setup.html" class="active">Setup</a></li>
+    </ul>
+    <div class="nav-right">
+      <a class="btn-outline btn-sm" href="index.html">Browse archetypes →</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div id="mobile-menu" class="mobile-menu">
+    <a href="index.html">Archetypes</a>
+    <a href="mechanics.html">Mechanics</a>
+    <a href="assembly.html">Prompt Assembly</a>
+    <a href="showcase.html">Showcase</a>
+    <a href="pitfalls.html">Pitfalls</a>
+    <a href="setup.html">Setup</a>
+  </div>
+
+  <main class="setup-main">
+    <!-- Hero -->
+    <section class="setup-hero">
+      <div class="container">
+        <div class="setup-hero__badge">Setup guide · ~15 minutes</div>
+        <h1>Set up <em>Claude Code</em></h1>
+        <p class="hero-sub">The fastest way to start vibe-coding: a command-line tool that turns your terminal into an AI pair programmer. This guide gets you from zero to your first prompt in 15 minutes — works on Mac and Windows, no prior coding experience needed.</p>
+        <div class="setup-hero__toc">
+          <a href="#what">What is Claude Code?</a>
+          <a href="#prerequisites">Prerequisites</a>
+          <a href="#mac">Mac setup</a>
+          <a href="#windows">Windows setup</a>
+          <a href="#first-prompt">First prompt</a>
+          <a href="#plugins">Power-up plugins</a>
+          <a href="#troubleshooting">Troubleshooting</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- What is Claude Code -->
+    <section id="what" class="setup-section">
+      <div class="container setup-narrow">
+        <h2>What is Claude Code?</h2>
+        <p>Claude Code is a command-line tool from Anthropic. Instead of copy-pasting code between <a href="https://claude.ai">claude.ai</a> and your editor, you run <code>claude</code> in your terminal inside a project folder. Claude can then read your files, run commands, write code, and commit to git — all by talking to it in plain English.</p>
+        <p>Think of it as: <strong>claude.ai in chat window</strong> → good for questions. <strong>Claude Code in terminal</strong> → good for actually building software.</p>
+
+        <div class="callout callout--info">
+          <h4>💡 Why the terminal?</h4>
+          <p>Because Claude Code can touch your actual files, run your tests, commit to git, and iterate. A browser chat can only show text. Terminal-based Claude is the closest thing to working with a real junior developer who happens to be very fast.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Prerequisites -->
+    <section id="prerequisites" class="setup-section">
+      <div class="container setup-narrow">
+        <h2>Prerequisites</h2>
+        <p>Before you start, make sure you have these. Most are one-time setup.</p>
+        <div class="prereq-grid">
+          <div class="prereq-card">
+            <span class="prereq-card__icon">💻</span>
+            <h4>A Mac or Windows laptop</h4>
+            <p>Running macOS 12+ or Windows 10/11. Linux works too (not covered here).</p>
+          </div>
+          <div class="prereq-card">
+            <span class="prereq-card__icon">🌐</span>
+            <h4>Internet connection</h4>
+            <p>For installing tools and talking to Claude's servers.</p>
+          </div>
+          <div class="prereq-card">
+            <span class="prereq-card__icon">🔐</span>
+            <h4>A claude.ai account</h4>
+            <p>Free tier works for the first few prompts. A <strong>Pro subscription ($20/mo)</strong> is recommended — it unlocks Claude Code access without needing a separate API key.</p>
+          </div>
+          <div class="prereq-card">
+            <span class="prereq-card__icon">⌨️</span>
+            <h4>Comfort pasting commands</h4>
+            <p>You'll copy-paste ~8 commands into a terminal. That's it. No writing code required for setup.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MAC SETUP -->
+    <section id="mac" class="setup-section setup-section--accent">
+      <div class="container setup-narrow">
+        <div class="setup-section__header">
+          <span class="setup-section__badge">🍎 macOS</span>
+          <h2>Mac setup</h2>
+          <p class="lead">5 steps, ~10 minutes. Copy-paste each command exactly.</p>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="setup-step">
+          <div class="setup-step__num">1</div>
+          <div class="setup-step__body">
+            <h3>Open Terminal</h3>
+            <p>Press <kbd>Cmd</kbd> + <kbd>Space</kbd> to open Spotlight, type <strong>Terminal</strong>, press Enter.</p>
+            <p>A black (or white) window with a blinking cursor appears. That's your terminal. You'll type / paste commands here.</p>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="setup-step">
+          <div class="setup-step__num">2</div>
+          <div class="setup-step__body">
+            <h3>Install Homebrew</h3>
+            <p>Homebrew is a package manager — it installs command-line tools for you. It's the de-facto standard on Mac. Paste this into Terminal and press Enter:</p>
+            <div class="terminal-window">
+              <div class="terminal-window__bar">
+                <span class="terminal-window__dot terminal-window__dot--red"></span>
+                <span class="terminal-window__dot terminal-window__dot--yellow"></span>
+                <span class="terminal-window__dot terminal-window__dot--green"></span>
+                <span class="terminal-window__title">Terminal — install Homebrew</span>
+              </div>
+              <pre class="terminal-window__body">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</pre>
+            </div>
+            <p>It will ask for your Mac password — type it (you won't see the letters, that's normal) and press Enter. Then it'll install for 5-10 minutes.</p>
+            <div class="callout callout--warn">
+              <h4>⚠ When it finishes</h4>
+              <p>At the very end Homebrew prints 2-3 lines starting with <code>==></code> telling you to run some extra commands to "add Homebrew to your PATH". <strong>Copy those exact lines from YOUR terminal output and run them.</strong> They look something like:</p>
+              <div class="terminal-window">
+                <pre class="terminal-window__body">(echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"</pre>
+              </div>
+              <p>This is the #1 thing that trips up beginners — if you skip these lines, the <code>brew</code> command won't be found later.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="setup-step">
+          <div class="setup-step__num">3</div>
+          <div class="setup-step__body">
+            <h3>Install Node.js</h3>
+            <p>Claude Code runs on Node.js (a runtime for JavaScript). Install it via Homebrew:</p>
+            <div class="terminal-window">
+              <div class="terminal-window__bar">
+                <span class="terminal-window__dot terminal-window__dot--red"></span>
+                <span class="terminal-window__dot terminal-window__dot--yellow"></span>
+                <span class="terminal-window__dot terminal-window__dot--green"></span>
+                <span class="terminal-window__title">Terminal — install Node</span>
+              </div>
+              <pre class="terminal-window__body">brew install node</pre>
+            </div>
+            <p>Takes 2-3 minutes. When done, verify it installed correctly:</p>
+            <div class="terminal-window">
+              <pre class="terminal-window__body">node --version
+# Expected output: v22.x.x (or newer)
+
+npm --version
+# Expected output: 10.x.x (or newer)</pre>
+            </div>
+            <p>If you see version numbers (starting with <code>v</code>), you're good. If you see <em>"command not found"</em>, go back to Step 2 and make sure you ran the <code>eval</code> lines.</p>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="setup-step">
+          <div class="setup-step__num">4</div>
+          <div class="setup-step__body">
+            <h3>Install Claude Code</h3>
+            <p>Now the main event. npm (which comes with Node) installs Claude Code globally on your system:</p>
+            <div class="terminal-window">
+              <div class="terminal-window__bar">
+                <span class="terminal-window__dot terminal-window__dot--red"></span>
+                <span class="terminal-window__dot terminal-window__dot--yellow"></span>
+                <span class="terminal-window__dot terminal-window__dot--green"></span>
+                <span class="terminal-window__title">Terminal — install Claude Code</span>
+              </div>
+              <pre class="terminal-window__body">npm install -g @anthropic-ai/claude-code</pre>
+            </div>
+            <p>Takes about 30 seconds. Verify:</p>
+            <div class="terminal-window">
+              <pre class="terminal-window__body">claude --version
+# Expected: 1.x.x (or newer)</pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="setup-step">
+          <div class="setup-step__num">5</div>
+          <div class="setup-step__body">
+            <h3>First run + sign in</h3>
+            <p>Make a folder for your first project, go into it, then run <code>claude</code>:</p>
+            <div class="terminal-window">
+              <div class="terminal-window__bar">
+                <span class="terminal-window__dot terminal-window__dot--red"></span>
+                <span class="terminal-window__dot terminal-window__dot--yellow"></span>
+                <span class="terminal-window__dot terminal-window__dot--green"></span>
+                <span class="terminal-window__title">Terminal — first run</span>
+              </div>
+              <pre class="terminal-window__body">mkdir ~/my-first-claude-project
+cd ~/my-first-claude-project
+claude</pre>
+            </div>
+            <p>The first time you run <code>claude</code>, it opens your browser for sign-in. Click the link in the terminal output — it'll take you to <strong>claude.ai</strong> — sign in with your account, click "Authorize", then close the browser tab.</p>
+            <p>Back in terminal: you now see a cursor waiting for your first prompt. You're in. 🎉</p>
+          </div>
+        </div>
+
+        <div class="callout callout--success">
+          <h4>✅ Mac setup complete</h4>
+          <p>Skip ahead to <a href="#first-prompt">Your first prompt</a>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- WINDOWS SETUP -->
+    <section id="windows" class="setup-section setup-section--accent-alt">
+      <div class="container setup-narrow">
+        <div class="setup-section__header">
+          <span class="setup-section__badge">🪟 Windows 10/11</span>
+          <h2>Windows setup</h2>
+          <p class="lead">5 steps, ~10 minutes. Use PowerShell or Windows Terminal (not old cmd.exe).</p>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="setup-step">
+          <div class="setup-step__num">1</div>
+          <div class="setup-step__body">
+            <h3>Install Windows Terminal (if you don't have it)</h3>
+            <p>Windows Terminal is Microsoft's modern terminal app — way nicer than cmd.exe. On Windows 11 it's usually pre-installed. On Windows 10, install it from the Microsoft Store:</p>
+            <ol>
+              <li>Open <strong>Microsoft Store</strong></li>
+              <li>Search for <strong>Windows Terminal</strong></li>
+              <li>Click Install</li>
+            </ol>
+            <p>Open it after install. You'll see a dark window with a PowerShell prompt (<code>PS C:\Users\you&gt;</code>).</p>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="setup-step">
+          <div class="setup-step__num">2</div>
+          <div class="setup-step__body">
+            <h3>Install Node.js</h3>
+            <p>Two easy paths — pick one:</p>
+
+            <h4>Path A — Installer (simpler for first-timers)</h4>
+            <ol>
+              <li>Go to <a href="https://nodejs.org/" target="_blank" rel="noopener">nodejs.org</a></li>
+              <li>Download the <strong>LTS</strong> version (big green button)</li>
+              <li>Run the installer, click Next through all defaults</li>
+              <li><strong>Close and reopen</strong> Windows Terminal after install</li>
+            </ol>
+
+            <h4>Path B — Via winget (if you like the command line)</h4>
+            <div class="terminal-window">
+              <div class="terminal-window__bar">
+                <span class="terminal-window__dot terminal-window__dot--red"></span>
+                <span class="terminal-window__dot terminal-window__dot--yellow"></span>
+                <span class="terminal-window__dot terminal-window__dot--green"></span>
+                <span class="terminal-window__title">PowerShell</span>
+              </div>
+              <pre class="terminal-window__body">winget install OpenJS.NodeJS.LTS</pre>
+            </div>
+            <p>Verify install in Windows Terminal:</p>
+            <div class="terminal-window">
+              <pre class="terminal-window__body">node --version
+# Expected: v22.x.x
+
+npm --version
+# Expected: 10.x.x</pre>
+            </div>
+            <div class="callout callout--warn">
+              <h4>⚠ If commands aren't found</h4>
+              <p>You probably didn't close + reopen Windows Terminal. The installer adds Node to your PATH but existing terminal windows don't pick it up automatically. Close, reopen, try again.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="setup-step">
+          <div class="setup-step__num">3</div>
+          <div class="setup-step__body">
+            <h3>Install Claude Code</h3>
+            <p>In Windows Terminal:</p>
+            <div class="terminal-window">
+              <div class="terminal-window__bar">
+                <span class="terminal-window__dot terminal-window__dot--red"></span>
+                <span class="terminal-window__dot terminal-window__dot--yellow"></span>
+                <span class="terminal-window__dot terminal-window__dot--green"></span>
+                <span class="terminal-window__title">PowerShell</span>
+              </div>
+              <pre class="terminal-window__body">npm install -g @anthropic-ai/claude-code</pre>
+            </div>
+            <p>Takes about 30 seconds. Verify:</p>
+            <div class="terminal-window">
+              <pre class="terminal-window__body">claude --version
+# Expected: 1.x.x</pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="setup-step">
+          <div class="setup-step__num">4</div>
+          <div class="setup-step__body">
+            <h3>Create a project folder</h3>
+            <p>In Windows Terminal, create a folder anywhere you like and navigate into it:</p>
+            <div class="terminal-window">
+              <pre class="terminal-window__body">mkdir $env:USERPROFILE\my-first-claude-project
+cd $env:USERPROFILE\my-first-claude-project</pre>
+            </div>
+            <p>This creates <code>C:\Users\&lt;you&gt;\my-first-claude-project</code> and moves into it.</p>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="setup-step">
+          <div class="setup-step__num">5</div>
+          <div class="setup-step__body">
+            <h3>First run + sign in</h3>
+            <div class="terminal-window">
+              <pre class="terminal-window__body">claude</pre>
+            </div>
+            <p>The first time you run it, it opens your browser. Sign in at <strong>claude.ai</strong>, click Authorize, come back to the terminal. You're ready to prompt. 🎉</p>
+          </div>
+        </div>
+
+        <div class="callout callout--success">
+          <h4>✅ Windows setup complete</h4>
+          <p>Continue to <a href="#first-prompt">Your first prompt</a>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FIRST PROMPT -->
+    <section id="first-prompt" class="setup-section">
+      <div class="container setup-narrow">
+        <h2>Your first prompt with dt-site-creator</h2>
+        <p>You're in the Claude Code prompt. Let's use the dt-site-creator archetypes library to build your first site.</p>
+
+        <h3>Option A — Use the archetypes library directly</h3>
+        <p>Tell Claude what you're building and point it at an archetype:</p>
+        <div class="terminal-window">
+          <div class="terminal-window__bar">
+            <span class="terminal-window__dot terminal-window__dot--red"></span>
+            <span class="terminal-window__dot terminal-window__dot--yellow"></span>
+            <span class="terminal-window__dot terminal-window__dot--green"></span>
+            <span class="terminal-window__title">Claude Code prompt</span>
+          </div>
+          <pre class="terminal-window__body">I want to build a [marketing site / payment app / internal tool / quiz / game].
+
+Use the dt-site-creator methodology (derrickteo.com) — pick the matching
+archetype from the 5 available, and follow its 5-file contract
+(CLAUDE.md, prompt.md, examples.md, mechanic-fit.md, pitfalls.md).</pre>
+        </div>
+        <p>Claude will fetch the library, scope your project, and start building.</p>
+
+        <h3>Option B — Copy a prompt from the <a href="index.html">archetypes page</a></h3>
+        <ol>
+          <li>Open the <a href="index.html">archetypes page</a> on this site</li>
+          <li>Click <strong>Show prompt ▾</strong> on the archetype that fits your project</li>
+          <li>Click <strong>📋 Copy prompt</strong></li>
+          <li>Paste into Claude Code, replace <code>&#123;&#123;project_description&#125;&#125;</code> with your actual project</li>
+          <li>Press Enter</li>
+        </ol>
+
+        <div class="callout callout--info">
+          <h4>💡 Tip: start small</h4>
+          <p>Your first prompt doesn't have to be ambitious. Try something concrete like: <em>"Build me a single-page marketing site for a coffee shop called Orbit. Dark theme, warm amber accents."</em> Watch how Claude reads files, writes code, and asks questions along the way. That's the vibe-coding loop.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLUGINS -->
+    <section id="plugins" class="setup-section setup-section--plugins">
+      <div class="container setup-narrow">
+        <span class="setup-section__badge">🔌 Power-ups</span>
+        <h2>Recommended plugins</h2>
+        <p class="lead">Claude Code is great out of the box. These plugins make it <em>great at specific things</em> — rigor, design, security. Install them once, they teach Claude to behave differently on every future task.</p>
+
+        <div class="callout callout--info">
+          <h4>💡 How to install any plugin</h4>
+          <p>Inside Claude Code, type <code>/plugin</code> and hit Enter. A menu opens. Browse the official marketplace, pick a plugin, install — Claude restarts with the new skills loaded. You can also manage plugins via <code>~/.claude/settings.json</code>, but the <code>/plugin</code> menu is much easier.</p>
+          <div class="terminal-window">
+            <div class="terminal-window__bar">
+              <span class="terminal-window__dot terminal-window__dot--red"></span>
+              <span class="terminal-window__dot terminal-window__dot--yellow"></span>
+              <span class="terminal-window__dot terminal-window__dot--green"></span>
+              <span class="terminal-window__title">Claude Code · plugin menu</span>
+            </div>
+            <pre class="terminal-window__body">/plugin
+# → Browse marketplaces
+# → claude-plugins-official
+# → pick plugin → Install</pre>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 36px;">The plugins that matter most</h3>
+
+        <div class="plugin-grid">
+
+          <!-- SUPERPOWERS -->
+          <article class="plugin-card plugin-card--featured">
+            <header class="plugin-card__header">
+              <span class="plugin-card__icon">🧠</span>
+              <div>
+                <h4 class="plugin-card__name">Superpowers</h4>
+                <span class="plugin-card__tag">Discipline · Must-have</span>
+              </div>
+            </header>
+            <p class="plugin-card__desc">A battle-tested suite of <strong>discipline skills</strong> that make Claude behave like a senior engineer. Forces brainstorming before coding, TDD before writing, systematic debugging instead of guess-and-check, planning before executing, verification before "it's done."</p>
+            <ul class="plugin-card__bullets">
+              <li><strong>brainstorming</strong> — Claude asks clarifying questions before building anything</li>
+              <li><strong>test-driven-development</strong> — test first, then code (not the reverse)</li>
+              <li><strong>systematic-debugging</strong> — no fixes without root-cause investigation</li>
+              <li><strong>writing-plans / executing-plans</strong> — break work into task-by-task plans with review checkpoints</li>
+              <li><strong>verification-before-completion</strong> — never claim "done" without running the verification command</li>
+            </ul>
+            <div class="plugin-card__footer">
+              <span class="plugin-card__when"><strong>Install when:</strong> Day 1. Every non-trivial coding session benefits.</span>
+              <div class="plugin-card__install">
+                <code>/plugin</code> → <em>claude-plugins-official</em> → <em>superpowers</em>
+              </div>
+            </div>
+          </article>
+
+          <!-- FRONTEND DESIGN -->
+          <article class="plugin-card plugin-card--featured">
+            <header class="plugin-card__header">
+              <span class="plugin-card__icon">🎨</span>
+              <div>
+                <h4 class="plugin-card__name">Frontend Design</h4>
+                <span class="plugin-card__tag">Design · Anti-AI-slop</span>
+              </div>
+            </header>
+            <p class="plugin-card__desc">Default LLM-generated UIs all look the same — centered cards, muted gradients, Inter fonts, rounded corners. <strong>Frontend Design</strong> breaks that pattern. It creates distinctive, production-grade interfaces with real aesthetic sensibility.</p>
+            <ul class="plugin-card__bullets">
+              <li>Generates components, full pages, or apps with intentional visual identity</li>
+              <li>Avoids the generic "AI aesthetic" that makes every vibe-coded site look identical</li>
+              <li>Pairs perfectly with dt-site-creator archetypes — feed it an archetype's palette, it produces a unique treatment every time</li>
+            </ul>
+            <div class="plugin-card__footer">
+              <span class="plugin-card__when"><strong>Install when:</strong> You're building any site or app with a UI.</span>
+              <div class="plugin-card__install">
+                <code>/plugin</code> → search <em>frontend-design</em>
+              </div>
+            </div>
+          </article>
+
+          <!-- SECURITY / CSO -->
+          <article class="plugin-card plugin-card--featured">
+            <header class="plugin-card__header">
+              <span class="plugin-card__icon">🛡</span>
+              <div>
+                <h4 class="plugin-card__name">Security Review (CSO mode)</h4>
+                <span class="plugin-card__tag">Security · Before-ship</span>
+              </div>
+            </header>
+            <p class="plugin-card__desc">Vibe-coded apps ship fast — and often leak secrets, miss RLS policies, use hardcoded passwords, or violate OWASP basics. <strong>Security Review</strong> plugins audit your codebase for these failures before you ship.</p>
+            <ul class="plugin-card__bullets">
+              <li><strong>Secrets archaeology</strong> — finds API keys, tokens, passwords committed in history</li>
+              <li><strong>Dependency supply chain</strong> — checks packages for known vulnerabilities</li>
+              <li><strong>OWASP Top 10</strong> — SQL injection, XSS, CSRF, insecure auth patterns</li>
+              <li><strong>STRIDE threat modeling</strong> — systematic risk assessment on new designs</li>
+              <li><strong>CI/CD hardening</strong> — GitHub Actions, secrets management, branch protection</li>
+            </ul>
+            <div class="plugin-card__footer">
+              <span class="plugin-card__when"><strong>Install when:</strong> Before your first public deploy. Mandatory if handling payments, PII, or auth.</span>
+              <div class="plugin-card__install">
+                Options: the built-in <code>/security-review</code> slash command works out of the box for PR-level scans. For deeper work, install a plugin like <em>gstack</em> (includes CSO mode) or <em>superpowers:code-review</em> via <code>/plugin</code>.
+              </div>
+            </div>
+          </article>
+
+          <!-- CODE REVIEW -->
+          <article class="plugin-card">
+            <header class="plugin-card__header">
+              <span class="plugin-card__icon">🔍</span>
+              <div>
+                <h4 class="plugin-card__name">Code Review</h4>
+                <span class="plugin-card__tag">Quality · Pre-merge</span>
+              </div>
+            </header>
+            <p class="plugin-card__desc">An independent second-pair-of-eyes reviewer skill. Runs on your diff, finds bugs, suggests improvements, flags anti-patterns — the kind of review a senior engineer would give on a PR.</p>
+            <div class="plugin-card__footer">
+              <span class="plugin-card__when"><strong>Install when:</strong> You want rigor on code quality, not just "does it work."</span>
+              <div class="plugin-card__install">
+                <code>/plugin</code> → search <em>code-review</em>
+              </div>
+            </div>
+          </article>
+
+          <!-- STITCH MCP -->
+          <article class="plugin-card">
+            <header class="plugin-card__header">
+              <span class="plugin-card__icon">🪡</span>
+              <div>
+                <h4 class="plugin-card__name">Stitch (design MCP)</h4>
+                <span class="plugin-card__tag">Design system · MCP</span>
+              </div>
+            </header>
+            <p class="plugin-card__desc">An MCP (Model Context Protocol) server that generates design systems and screen mockups. Pair with Frontend Design: Stitch produces the visual direction, Frontend Design codes it up.</p>
+            <div class="plugin-card__footer">
+              <span class="plugin-card__when"><strong>Install when:</strong> Starting a new project and want visual exploration before coding.</span>
+              <div class="plugin-card__install">
+                Add via <code>~/.claude/settings.json</code>'s <code>mcpServers</code> config, or via Claude Code's <code>/mcp</code> menu.
+              </div>
+            </div>
+          </article>
+
+          <!-- BROWSE FOR MORE -->
+          <article class="plugin-card plugin-card--cta">
+            <header class="plugin-card__header">
+              <span class="plugin-card__icon">🔭</span>
+              <div>
+                <h4 class="plugin-card__name">Browse the marketplace</h4>
+                <span class="plugin-card__tag">Discover more</span>
+              </div>
+            </header>
+            <p class="plugin-card__desc">Dozens of other plugins exist — for benchmarking, learning, deploy pipelines, domain-specific work. Browse them inside Claude Code with <code>/plugin</code>.</p>
+            <div class="plugin-card__footer">
+              <div class="plugin-card__install">
+                <code>/plugin</code> → <em>Browse marketplaces</em>
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+        <div class="callout callout--warn" style="margin-top: 32px;">
+          <h4>⚠ Plugin hygiene</h4>
+          <p>Each plugin adds to what Claude thinks about on every turn. More plugins = more context spent describing capabilities you may not need on this task. Start with 2-3 high-leverage plugins (Superpowers, Frontend Design, Security). Add others only when you find yourself manually doing the thing the plugin automates.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TROUBLESHOOTING -->
+    <section id="troubleshooting" class="setup-section">
+      <div class="container setup-narrow">
+        <h2>Common issues &amp; fixes</h2>
+
+        <details class="troubleshoot">
+          <summary><strong>"command not found: brew" (Mac)</strong></summary>
+          <p>You skipped the post-Homebrew <code>eval</code> commands in Step 2. Scroll up in your Terminal — Homebrew printed the exact lines you need. Usually:</p>
+          <div class="terminal-window">
+            <pre class="terminal-window__body">(echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"</pre>
+          </div>
+        </details>
+
+        <details class="troubleshoot">
+          <summary><strong>"command not found: node" or "npm"</strong></summary>
+          <p>Either Node isn't installed, or your terminal hasn't picked it up yet. Quit and reopen Terminal / Windows Terminal. On Windows also try: <code>$env:PATH</code> to see if Node's path is listed.</p>
+        </details>
+
+        <details class="troubleshoot">
+          <summary><strong>"EACCES: permission denied" when installing Claude Code (Mac)</strong></summary>
+          <p>npm is trying to write to a system folder. Don't use <code>sudo</code> — that causes more problems. Instead, run:</p>
+          <div class="terminal-window">
+            <pre class="terminal-window__body">mkdir -p ~/.npm-global
+npm config set prefix ~/.npm-global
+echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.zprofile
+source ~/.zprofile
+npm install -g @anthropic-ai/claude-code</pre>
+          </div>
+        </details>
+
+        <details class="troubleshoot">
+          <summary><strong>Sign-in browser tab doesn't open</strong></summary>
+          <p>Copy the URL from the terminal output and paste it into your browser manually. After signing in, paste the code back into the terminal.</p>
+        </details>
+
+        <details class="troubleshoot">
+          <summary><strong>"Claude is slow / rate-limited"</strong></summary>
+          <p>Free-tier claude.ai has daily message limits. Upgrade to Pro ($20/month) on claude.ai for 5× the limit plus access to Claude Code without a separate API key.</p>
+        </details>
+
+        <details class="troubleshoot">
+          <summary><strong>How do I exit Claude Code?</strong></summary>
+          <p>Type <code>/exit</code> or press <kbd>Ctrl</kbd> + <kbd>C</kbd> twice.</p>
+        </details>
+
+        <details class="troubleshoot">
+          <summary><strong>Where are my files saved?</strong></summary>
+          <p>In the folder you were in when you ran <code>claude</code>. Claude Code edits files on your disk — open the folder in Finder (Mac) or Explorer (Windows) to see them. It also runs <code>git</code> commands if you ask.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- NEXT -->
+    <section class="setup-section setup-section--final">
+      <div class="container setup-narrow setup-next">
+        <h2>You're ready. What now?</h2>
+        <div class="setup-next__grid">
+          <a href="index.html" class="setup-next__card">
+            <h3>📚 Browse archetypes</h3>
+            <p>5 archetype prompts, 9 mechanics, ready to copy-paste.</p>
+          </a>
+          <a href="scope.html" class="setup-next__card">
+            <h3>❓ Not sure what to build?</h3>
+            <p>Take the 4-question quiz for archetype recommendations.</p>
+          </a>
+          <a href="pitfalls.html" class="setup-next__card">
+            <h3>⚠ Learn from mistakes</h3>
+            <p>40+ pitfalls from 20+ past projects — filter by severity.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <footer>
+    <div class="container">
+      <p>dt-site-creator by Derrick Teo.</p>
+      <p>
+        <a href="index.html">Archetypes</a>
+        ·
+        <a href="assembly.html">Prompt Assembly</a>
+        ·
+        <a href="pitfalls.html">Pitfalls</a>
+        ·
+        <a href="https://derrickteo.com">derrickteo.com</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('hamburger').addEventListener('click', function() {
+      this.classList.toggle('open');
+      document.getElementById('mobile-menu').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!--
+  Multi-Page Scaffold mechanic — shared nav + footer + mobile hamburger.
+
+  Usage:
+    1. Set <body data-current-page="index"> (or "pricing", "faq", etc.)
+    2. Include this snippet once per page.
+    3. Customize the NAV_ITEMS array below for your site.
+
+  The current-page link auto-highlights based on data-current-page.
+-->
+<style>
+  .mechanic-scaffold__nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px;
+    background: rgba(13, 17, 23, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border, rgba(255,255,255,0.08));
+  }
+  .mechanic-scaffold__logo {
+    font-weight: 800; color: var(--text, #f0f6fc);
+    text-decoration: none; letter-spacing: -0.02em;
+  }
+  .mechanic-scaffold__links {
+    display: flex; gap: 24px; list-style: none; padding: 0; margin: 0;
+  }
+  .mechanic-scaffold__links a {
+    color: var(--muted2, #adbac7); text-decoration: none;
+    font-size: 0.78rem; font-weight: 500; letter-spacing: 0.03em;
+    transition: color 0.2s;
+  }
+  .mechanic-scaffold__links a:hover,
+  .mechanic-scaffold__links a.active { color: var(--accent, #ffa657); }
+  .mechanic-scaffold__cta {
+    background: var(--accent, #ffa657); color: #0d1117;
+    padding: 8px 16px; border-radius: 6px; font-weight: 700;
+    font-size: 0.78rem; text-decoration: none;
+  }
+  .mechanic-scaffold__hamburger {
+    display: none; cursor: pointer; background: none; border: none;
+    padding: 8px;
+  }
+  .mechanic-scaffold__hamburger span {
+    display: block; width: 20px; height: 2px; margin: 4px 0;
+    background: var(--text, #f0f6fc); transition: 0.3s;
+  }
+  .mechanic-scaffold__hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .mechanic-scaffold__hamburger.open span:nth-child(2) { opacity: 0; }
+  .mechanic-scaffold__hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+  .mechanic-scaffold__mobile-menu {
+    position: fixed; top: 64px; left: 0; right: 0;
+    background: var(--surface, #161b22);
+    border-bottom: 1px solid var(--border, rgba(255,255,255,0.08));
+    padding: 20px 24px;
+    transform: translateY(-100%); transition: transform 0.3s; z-index: 199;
+    display: none;
+  }
+  .mechanic-scaffold__mobile-menu.open { transform: translateY(0); }
+  .mechanic-scaffold__mobile-menu a {
+    display: block; padding: 12px 0; color: var(--text, #f0f6fc);
+    text-decoration: none; border-bottom: 1px solid var(--border, rgba(255,255,255,0.04));
+  }
+
+  @media (max-width: 768px) {
+    .mechanic-scaffold__links, .mechanic-scaffold__cta { display: none; }
+    .mechanic-scaffold__hamburger { display: block; }
+    .mechanic-scaffold__mobile-menu { display: block; }
+  }
+
+  .mechanic-scaffold__footer {
+    border-top: 1px solid var(--border, rgba(255,255,255,0.08));
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--muted, #8b949e);
+    font-size: 0.85rem;
+  }
+  .mechanic-scaffold__footer a { color: var(--muted2, #adbac7); }
+
+  /* Push content below the fixed nav */
+  body { padding-top: 64px; }
+</style>
+
+<div id="scaffold-nav-mount"></div>
+<div id="scaffold-footer-mount"></div>
+
+<script>
+(function() {
+  'use strict';
+
+  // Configure these for your site
+  const SITE_NAME = 'Your Site';
+  const NAV_ITEMS = [
+    { id: 'index', label: 'Home', href: 'index.html' },
+    { id: 'features', label: 'Features', href: 'features.html' },
+    { id: 'pricing', label: 'Pricing', href: 'pricing.html' },
+    { id: 'faq', label: 'FAQ', href: 'faq.html' }
+  ];
+  const CTA_LABEL = 'Get started';
+  const CTA_HREF = '#';
+  const FOOTER_COPY = 'Your Site, built with dt-site-creator.';
+
+  function buildNav() {
+    const currentPage = document.body.dataset.currentPage || 'index';
+
+    const nav = document.createElement('nav'); nav.className = 'mechanic-scaffold__nav';
+    const logo = document.createElement('a'); logo.className = 'mechanic-scaffold__logo';
+    logo.href = 'index.html'; logo.textContent = SITE_NAME; nav.appendChild(logo);
+
+    const ul = document.createElement('ul'); ul.className = 'mechanic-scaffold__links';
+    NAV_ITEMS.forEach(item => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = item.href; a.textContent = item.label;
+      if (item.id === currentPage) a.classList.add('active');
+      li.appendChild(a); ul.appendChild(li);
+    });
+    nav.appendChild(ul);
+
+    const right = document.createElement('div');
+    right.style.display = 'flex'; right.style.alignItems = 'center'; right.style.gap = '12px';
+    const cta = document.createElement('a'); cta.className = 'mechanic-scaffold__cta';
+    cta.href = CTA_HREF; cta.textContent = CTA_LABEL;
+    right.appendChild(cta);
+    const hb = document.createElement('button'); hb.className = 'mechanic-scaffold__hamburger';
+    hb.setAttribute('aria-label', 'Menu');
+    for (let i = 0; i < 3; i++) hb.appendChild(document.createElement('span'));
+    right.appendChild(hb);
+    nav.appendChild(right);
+
+    // Mobile menu panel
+    const mobileMenu = document.createElement('div'); mobileMenu.className = 'mechanic-scaffold__mobile-menu';
+    NAV_ITEMS.forEach(item => {
+      const a = document.createElement('a');
+      a.href = item.href; a.textContent = item.label;
+      if (item.id === currentPage) a.classList.add('active');
+      mobileMenu.appendChild(a);
+    });
+
+    hb.addEventListener('click', () => {
+      hb.classList.toggle('open');
+      mobileMenu.classList.toggle('open');
+    });
+
+    const mount = document.getElementById('scaffold-nav-mount');
+    mount.appendChild(nav);
+    mount.appendChild(mobileMenu);
+  }
+
+  function buildFooter() {
+    const foot = document.createElement('footer'); foot.className = 'mechanic-scaffold__footer';
+    const p = document.createElement('p'); p.textContent = FOOTER_COPY;
+    foot.appendChild(p);
+    document.getElementById('scaffold-footer-mount').appendChild(foot);
+  }
+
+  function init() {
+    if (document.getElementById('scaffold-nav-mount')) buildNav();
+    if (document.getElementById('scaffold-footer-mount')) buildFooter();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>

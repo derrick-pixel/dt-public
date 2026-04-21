@@ -1,0 +1,170 @@
+<!--
+  PayNow QR mechanic — self-contained paste-in block.
+  Drop the <script>, <style>, and <div id="paynow-qr-output"> into any page.
+  Call: renderPaynowQR({ targetElementId, phoneOrUEN, amountSGD, referenceText })
+-->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<style>
+  .mechanic-paynow__wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 24px;
+    background: var(--card, #fff);
+    border: 1px solid var(--border, #eee);
+    border-radius: 12px;
+    max-width: 360px;
+  }
+  .mechanic-paynow__amount {
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+  .mechanic-paynow__verify {
+    font-size: 0.78rem;
+    background: rgba(245, 158, 11, 0.08);
+    padding: 6px 12px;
+    border-radius: 6px;
+    border-left: 3px solid #f59e0b;
+  }
+  .mechanic-paynow__qr {
+    background: #fff;
+    padding: 12px;
+    border-radius: 8px;
+  }
+  .mechanic-paynow__ref {
+    font-size: 0.7rem;
+    color: var(--muted, #555);
+    letter-spacing: 0.05em;
+  }
+  .mechanic-paynow__error {
+    color: #dc2626;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+</style>
+
+<div id="paynow-qr-output" class="mechanic-paynow__wrap"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── CRC16-CCITT (initial 0xFFFF, polynomial 0x1021) ───────────
+  function crc16ccitt(str) {
+    let crc = 0xFFFF;
+    for (let i = 0; i < str.length; i++) {
+      crc ^= str.charCodeAt(i) << 8;
+      for (let j = 0; j < 8; j++) {
+        crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+        crc &= 0xFFFF;
+      }
+    }
+    return crc.toString(16).toUpperCase().padStart(4, '0');
+  }
+
+  // ── TLV (tag-length-value) field encoder ──────────────────────
+  function tlv(id, value) {
+    return id + String(value.length).padStart(2, '0') + value;
+  }
+
+  // ── Build EMVCo PayNow payload ────────────────────────────────
+  // Field IDs: 00=payload-format, 01=point-of-initiation, 26=merchant-account,
+  //            52=MCC, 53=currency (702=SGD), 54=amount, 58=country,
+  //            59=merchant-name, 60=merchant-city, 62=additional-data, 63=CRC
+  function buildPaynowPayload(opts) {
+    const isUEN = /^\d{8,10}[A-Z]$/.test(opts.phoneOrUEN);
+    const proxyType = isUEN ? '2' : '0';
+    const normalizedPhone = isUEN
+      ? opts.phoneOrUEN
+      : (opts.phoneOrUEN.startsWith('+')
+          ? opts.phoneOrUEN
+          : '+65' + opts.phoneOrUEN.replace(/\D/g, ''));
+
+    const merchantAccount =
+      tlv('00', 'SG.PAYNOW') +
+      tlv('01', proxyType) +
+      tlv('02', normalizedPhone) +
+      tlv('03', '1');
+
+    const amount = (Math.round(opts.amountSGD * 100) / 100).toFixed(2);
+
+    let payload =
+      tlv('00', '01') +
+      tlv('01', '12') +
+      tlv('26', merchantAccount) +
+      tlv('52', '0000') +
+      tlv('53', '702') +
+      tlv('54', amount) +
+      tlv('58', 'SG') +
+      tlv('59', 'NA') +
+      tlv('60', 'Singapore');
+
+    if (opts.referenceText) {
+      payload += tlv('62', tlv('01', opts.referenceText));
+    }
+
+    // CRC is computed over the payload including the CRC tag/length (6304)
+    const toChecksum = payload + '6304';
+    return toChecksum + crc16ccitt(toChecksum);
+  }
+
+  // ── Render function (exposed globally) ────────────────────────
+  window.renderPaynowQR = function (opts) {
+    const el = document.getElementById(opts.targetElementId);
+    if (!el) {
+      console.error('paynow-qr: target element not found:', opts.targetElementId);
+      return;
+    }
+
+    const payload = buildPaynowPayload(opts);
+    const amountStr = opts.amountSGD.toFixed(2);
+
+    // Safety check: payload MUST include the declared amount.
+    // Guards against the "$20 QR that says $200" pitfall.
+    if (!payload.includes(amountStr)) {
+      el.replaceChildren();
+      const warn = document.createElement('p');
+      warn.className = 'mechanic-paynow__error';
+      warn.textContent = 'Payment QR failed — amount mismatch. Please refresh.';
+      el.appendChild(warn);
+      return;
+    }
+
+    // Build DOM via createElement (no innerHTML with interpolation)
+    el.replaceChildren();
+
+    const amt = document.createElement('div');
+    amt.className = 'mechanic-paynow__amount';
+    amt.textContent = 'SGD ' + amountStr;
+    el.appendChild(amt);
+
+    const verify = document.createElement('div');
+    verify.className = 'mechanic-paynow__verify';
+    verify.textContent = '⚠ Verify this amount matches what you expect to pay';
+    el.appendChild(verify);
+
+    const qrWrap = document.createElement('div');
+    qrWrap.className = 'mechanic-paynow__qr';
+    const canvas = document.createElement('canvas');
+    canvas.id = 'paynow-canvas';
+    qrWrap.appendChild(canvas);
+    el.appendChild(qrWrap);
+
+    if (opts.referenceText) {
+      const ref = document.createElement('div');
+      ref.className = 'mechanic-paynow__ref';
+      ref.textContent = 'Ref: ' + opts.referenceText;
+      el.appendChild(ref);
+    }
+
+    if (typeof QRCode === 'undefined') {
+      console.error('paynow-qr: QRCode library not loaded');
+      return;
+    }
+    QRCode.toCanvas(canvas, payload, { width: 240, margin: 1 }, function (err) {
+      if (err) console.error('paynow-qr render error:', err);
+    });
+  };
+})();
+</script>

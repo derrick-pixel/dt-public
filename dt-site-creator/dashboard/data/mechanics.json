@@ -1,0 +1,158 @@
+{
+  "mechanics": [
+    {
+      "id": "paynow-qr",
+      "name": "PayNow QR Generator",
+      "summary": "Singapore QR code for instant bank-app payments.",
+      "icon": "💳",
+      "fits": { "static-informational": "rare", "transactional": "core", "simulator-educational": "rare", "game": "rare", "dashboard-analytics": "optional" },
+      "past_uses": ["altru", "discounter"],
+      "complexity": "medium",
+      "details": {
+        "plain": "Generates a scannable QR code so Singapore customers can pay you directly from their bank app (DBS, UOB, OCBC, etc.). No credit-card fees, instant settlement.",
+        "when_use": "Any site that takes SG payments: donations, checkout, invoicing, event tickets.",
+        "when_skip": "International customers can't scan PayNow QRs — use Stripe or PayPal instead if your audience is outside Singapore."
+      }
+    },
+    {
+      "id": "localstorage-state",
+      "name": "LocalStorage State",
+      "summary": "Saves user data in their browser so it survives page refresh.",
+      "icon": "💾",
+      "fits": { "static-informational": "rare", "transactional": "core", "simulator-educational": "core", "game": "core", "dashboard-analytics": "core" },
+      "past_uses": ["elixcraft", "elix-resume", "dtws-works"],
+      "complexity": "low",
+      "details": {
+        "plain": "Stores data in the user's own browser — if they refresh the page or come back tomorrow, their stuff is still there. Think of it like the browser remembering what's in your shopping cart.",
+        "when_use": "Cart contents, quiz progress, game save, editor drafts, filter preferences, onboarding state.",
+        "when_skip": "Data you need across devices (laptop + phone) — that needs a real database. LocalStorage is browser-local only."
+      }
+    },
+    {
+      "id": "admin-auth-gate",
+      "name": "Admin Auth Gate",
+      "summary": "Password screen that hides a page from casual visitors.",
+      "icon": "🔐",
+      "fits": { "static-informational": "optional", "transactional": "core", "simulator-educational": "optional", "game": "optional", "dashboard-analytics": "core" },
+      "past_uses": ["dtws-works", "the-commons", "elixcraft"],
+      "complexity": "low",
+      "details": {
+        "plain": "Shows a password prompt before letting visitors see the page. Only people who know the password get in. It's the 'lock on the door' for internal pages.",
+        "when_use": "Admin dashboards, internal tools, pre-release demos shared with trusted users, competitor-analytics panels.",
+        "when_skip": "Real user accounts with sign-up flows — this is a shared-password gate (dev-grade), not a production auth system. Use Supabase or NextAuth for that."
+      }
+    },
+    {
+      "id": "canvas-hero",
+      "name": "Canvas Hero",
+      "summary": "Moving background for your hero section (stars, particles, etc.).",
+      "icon": "🌌",
+      "fits": { "static-informational": "optional", "transactional": "optional", "simulator-educational": "rare", "game": "core", "dashboard-analytics": "rare" },
+      "past_uses": ["elixcraft", "vectorsky", "elitezaviation"],
+      "complexity": "medium",
+      "details": {
+        "plain": "An animated background at the top of your page — drifting stars, flowing particles, geometric shapes. Makes the hero section feel alive instead of static.",
+        "when_use": "Tech, gaming, defence, aviation, sci-fi brands — anywhere motion reinforces the vibe.",
+        "when_skip": "Warm, editorial, healthcare, or minimalist brands. Motion can feel out of place and annoying. Also skip for users on slow devices — it costs CPU."
+      }
+    },
+    {
+      "id": "chartjs-dashboard",
+      "name": "Chart.js Dashboard",
+      "summary": "Turn numbers into line/bar/pie charts with a 'last updated' badge.",
+      "icon": "📊",
+      "fits": { "static-informational": "rare", "transactional": "optional", "simulator-educational": "optional", "game": "optional", "dashboard-analytics": "core" },
+      "past_uses": ["eco-dashboard", "elitez-csuite", "market-tracker"],
+      "complexity": "medium",
+      "details": {
+        "plain": "Renders interactive graphs — line charts for trends, bar charts for comparisons, pie charts for proportions. Includes a 'Last updated X ago' badge so users can tell if the data is fresh or stale.",
+        "when_use": "Dashboards, KPI widgets, analytics pages, simulator output, revenue/cashflow visuals.",
+        "when_skip": "If you just need one tiny sparkline, Chart.js is overkill (270KB library). Use an inline SVG instead."
+      }
+    },
+    {
+      "id": "pdf-pipeline",
+      "name": "PDF Pipeline",
+      "summary": "Turn any section of your page into a downloadable PDF.",
+      "icon": "📄",
+      "fits": { "static-informational": "rare", "transactional": "optional", "simulator-educational": "optional", "game": "rare", "dashboard-analytics": "optional" },
+      "past_uses": ["market-tracker", "studioelitez", "quotation-preparer"],
+      "complexity": "high",
+      "details": {
+        "plain": "Captures any part of your webpage — charts, tables, forms, text — and packages it into a downloadable PDF. Handles multi-page reports automatically so content doesn't get cut off.",
+        "when_use": "Report generators, resume exports, invoices, quotations, certificates, summary documents users want to save or print.",
+        "when_skip": "If users just need to print, they can use browser Print (Ctrl+P). Also avoid if users need to copy text from the PDF — this method produces image-based PDFs."
+      }
+    },
+    {
+      "id": "wizard-form",
+      "name": "Wizard Form",
+      "summary": "Break a long form into small steps with a progress bar.",
+      "icon": "🪜",
+      "fits": { "static-informational": "optional", "transactional": "core", "simulator-educational": "core", "game": "core", "dashboard-analytics": "optional" },
+      "past_uses": ["wsg-jrplus", "elix-resume", "quotation-preparer"],
+      "complexity": "medium",
+      "details": {
+        "plain": "Instead of overwhelming users with a wall of form fields, split it into small steps (Step 1 of 4, Step 2 of 4…) with a progress bar and Next/Back buttons. People finish long forms at higher rates this way.",
+        "when_use": "Multi-step checkout, character creation, onboarding, quiz engines, diagnostics, application forms with 5+ fields.",
+        "when_skip": "Short forms (2-3 fields) — wizards add friction where none was needed. Just show all fields at once."
+      }
+    },
+    {
+      "id": "multi-page-scaffold",
+      "name": "Multi-Page Scaffold",
+      "summary": "A standard nav bar + footer shown on every page automatically.",
+      "icon": "🗂️",
+      "fits": { "static-informational": "core", "transactional": "core", "simulator-educational": "optional", "game": "optional", "dashboard-analytics": "optional" },
+      "past_uses": ["casket", "altru", "elitez-security"],
+      "complexity": "low",
+      "details": {
+        "plain": "A consistent top nav bar and footer that appears on every page of your site, automatically highlighting which page you're currently on. Includes a mobile hamburger menu for phones.",
+        "when_use": "Any site with more than one page — marketing sites, multi-step stories, product catalogs with detail pages.",
+        "when_skip": "Single-page sites (landing pages, one-shot calculators) — you don't need nav links to nowhere."
+      }
+    },
+    {
+      "id": "og-social-meta",
+      "name": "OG / Social Meta",
+      "summary": "Makes your link show a nice preview when shared on WhatsApp, Twitter, etc.",
+      "icon": "📱",
+      "fits": { "static-informational": "core", "transactional": "core", "simulator-educational": "core", "game": "core", "dashboard-analytics": "core" },
+      "past_uses": ["all sites"],
+      "complexity": "low",
+      "details": {
+        "plain": "When someone pastes your site URL into WhatsApp, Twitter, Slack, iMessage, LinkedIn, or Discord, this is what makes a preview card appear — image + title + description — instead of a boring raw link. Gets 3-5× more clicks.",
+        "when_use": "Every site, every page. Mandatory. Pairs with og-thumbnail (which designs the image itself).",
+        "when_skip": "Never."
+      }
+    },
+    {
+      "id": "og-thumbnail",
+      "name": "OG / WhatsApp Thumbnail",
+      "summary": "The 1200×630 image asset that powers WhatsApp / Twitter / iMessage link previews.",
+      "icon": "📸",
+      "fits": { "static-informational": "core", "transactional": "core", "simulator-educational": "core", "game": "core", "dashboard-analytics": "core" },
+      "past_uses": ["all sites"],
+      "complexity": "low",
+      "details": {
+        "plain": "The actual IMAGE file that sits behind your site's shared-link preview. Whereas og-social-meta is the <meta> tags, this mechanic covers how to DESIGN a good 1200×630 thumbnail: layout patterns, text treatment, visual anchors, brand expression, CTA placement. 7 mix-and-match factors in the README.",
+        "when_use": "Every site. Pair with og-social-meta — the tags point to the image this produces.",
+        "when_skip": "Never — a site without a shared-link preview looks broken on WhatsApp."
+      }
+    },
+    {
+      "id": "favicon",
+      "name": "Favicon Set",
+      "summary": "The little icon in every browser tab, bookmark, and phone home screen.",
+      "icon": "🪪",
+      "fits": { "static-informational": "core", "transactional": "core", "simulator-educational": "core", "game": "core", "dashboard-analytics": "core" },
+      "past_uses": ["all sites"],
+      "complexity": "low",
+      "details": {
+        "plain": "The tiny icon users see in every browser tab, bookmark list, and phone home screen. A site without one feels unfinished — visitors notice the blank globe and trust drops. Design-at-16×16 is its own craft; picking the right shape/color/format strategy matters.",
+        "when_use": "Every site, mandatory. Mix-and-match 5 factors (shape × color × format × theme × mobile-treatment) — README has 3 ready-made recipes.",
+        "when_skip": "Only for throwaway prototypes."
+      }
+    }
+  ]
+}

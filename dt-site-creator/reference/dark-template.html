@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PROJECT_NAME — Subtitle</title>
+  <meta name="description" content="DESCRIPTION" />
+
+  <!-- Open Graph / WhatsApp preview -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://derrick-pixel.github.io/REPO_NAME/" />
+  <meta property="og:title" content="PROJECT_NAME" />
+  <meta property="og:description" content="DESCRIPTION" />
+  <meta property="og:image" content="https://derrick-pixel.github.io/REPO_NAME/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="PROJECT_NAME" />
+  <meta name="twitter:description" content="DESCRIPTION" />
+  <meta name="twitter:image" content="https://derrick-pixel.github.io/REPO_NAME/og-image.jpg" />
+
+  <!-- Fonts — swap for your chosen pair -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── RESET & VARIABLES ─────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #0a0f1e;
+      --surface: #0f172a;
+      --card:    #111827;
+      --border:  rgba(255,255,255,0.07);
+      --border2: rgba(255,255,255,0.13);
+      --text:    #f1f5f9;
+      --muted:   #64748b;
+      --muted2:  #94a3b8;
+      --accent:  #38bdf8;       /* ← CHANGE per domain */
+      --accent2: #818cf8;       /* ← secondary accent */
+      --green:   #34d399;
+      --gold:    #f59e0b;
+      --red:     #f87171;
+      --nav-h:   64px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ── TYPOGRAPHY ────────────────────────────────────────────────────────── */
+    h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+    h2 { font-size: clamp(1.5rem, 3.5vw, 2.4rem); font-weight: 700; letter-spacing: -0.01em; }
+    h3 { font-size: clamp(1.1rem, 2vw, 1.5rem); font-weight: 600; }
+    .label {
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    /* ── NAV ───────────────────────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: var(--nav-h);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+      background: rgba(10,15,30,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-weight: 700; font-size: 0.85rem; letter-spacing: 0.02em; }
+    .nav-links { display: flex; align-items: center; gap: 24px; }
+    .nav-links a { font-size: 0.72rem; font-weight: 500; color: var(--muted); transition: color 0.15s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-cta {
+      background: var(--accent); color: var(--bg);
+      padding: 8px 18px; border-radius: 8px;
+      font-size: 0.72rem; font-weight: 700; transition: all 0.2s;
+    }
+    .nav-cta:hover { filter: brightness(1.15); }
+
+    /* Hamburger */
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+    .hamburger span { display: block; width: 20px; height: 2px; background: var(--text); transition: all 0.3s; }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .mobile-menu {
+        display: none; position: fixed; top: var(--nav-h); left: 0; right: 0;
+        background: rgba(10,15,30,0.98); backdrop-filter: blur(12px);
+        padding: 20px 24px; border-bottom: 1px solid var(--border);
+        flex-direction: column; gap: 16px;
+      }
+      .mobile-menu.open { display: flex; }
+      .mobile-menu a { font-size: 0.85rem; color: var(--muted2); }
+    }
+
+    /* ── LAYOUT ────────────────────────────────────────────────────────────── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 80px 0; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    @media (max-width: 1024px) { .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 768px) {
+      section { padding: 48px 0; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    }
+
+    /* ── HERO ──────────────────────────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding-top: var(--nav-h);
+    }
+    .hero-label { margin-bottom: 16px; }
+    .hero h1 { margin-bottom: 20px; }
+    .hero-desc { font-size: 1rem; color: var(--muted2); max-width: 540px; line-height: 1.7; margin-bottom: 32px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* ── CARDS ─────────────────────────────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      transition: all 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border2);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+    }
+
+    /* ── BUTTONS ───────────────────────────────────────────────────────────── */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent); color: var(--bg);
+      padding: 12px 24px; border: none; border-radius: 8px;
+      font-family: inherit; font-size: 0.78rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-primary:hover { filter: brightness(1.15); transform: translateY(-1px); }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: var(--muted2);
+      padding: 12px 24px; border: 1.5px solid var(--border2); border-radius: 8px;
+      font-family: inherit; font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── BADGES ────────────────────────────────────────────────────────────── */
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 100px;
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .badge-blue   { background: rgba(56,189,248,0.1);  color: #38bdf8; }
+    .badge-green  { background: rgba(52,211,153,0.1);  color: #34d399; }
+    .badge-gold   { background: rgba(245,158,11,0.1);  color: #f59e0b; }
+    .badge-purple { background: rgba(129,140,248,0.1); color: #818cf8; }
+    .badge-red    { background: rgba(248,113,113,0.1); color: #f87171; }
+
+    /* ── MODAL ─────────────────────────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,0.65); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--surface); border: 1px solid var(--border2); border-radius: 14px;
+      padding: 28px; max-width: 520px; width: 100%;
+      transform: translateY(12px); transition: transform 0.2s;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+
+    /* ── TOAST ─────────────────────────────────────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--surface); border: 1px solid var(--border2);
+      padding: 10px 20px; border-radius: 8px;
+      font-size: 0.78rem; color: var(--text);
+      opacity: 0; transition: all 0.3s; z-index: 600; pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── SCROLL ANIMATION ─────────────────────────────────────────────────── */
+    .animate { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .animate.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── FOOTER ────────────────────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+  </style>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <span class="nav-logo">PROJECT_NAME</span>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#features">Features</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <a href="#contact" class="nav-cta">Get Started</a>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#about" onclick="toggleMenu()">About</a>
+  <a href="#features" onclick="toggleMenu()">Features</a>
+  <a href="#contact" onclick="toggleMenu()">Contact</a>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="container">
+    <div class="label hero-label">LABEL TEXT</div>
+    <h1>Hero Headline <span class="gradient-text">With Accent</span></h1>
+    <p class="hero-desc">A compelling one or two sentence description that explains the value proposition clearly.</p>
+    <div class="hero-actions">
+      <button class="btn-primary">Primary Action</button>
+      <button class="btn-outline">Secondary Action</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ── -->
+<section id="features">
+  <div class="container">
+    <div class="label" style="margin-bottom:12px">FEATURES</div>
+    <h2 style="margin-bottom:40px">Section Headline</h2>
+    <div class="grid-3">
+      <div class="card animate">
+        <span class="badge badge-blue">Category</span>
+        <h3 style="margin:12px 0 8px">Feature Title</h3>
+        <p style="color:var(--muted2);font-size:0.85rem">Feature description goes here with enough detail to be useful.</p>
+      </div>
+      <div class="card animate">
+        <span class="badge badge-green">Category</span>
+        <h3 style="margin:12px 0 8px">Feature Title</h3>
+        <p style="color:var(--muted2);font-size:0.85rem">Feature description goes here with enough detail to be useful.</p>
+      </div>
+      <div class="card animate">
+        <span class="badge badge-purple">Category</span>
+        <h3 style="margin:12px 0 8px">Feature Title</h3>
+        <p style="color:var(--muted2);font-size:0.85rem">Feature description goes here with enough detail to be useful.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="container">
+    <p>&copy; 2026 PROJECT_NAME &middot; Singapore</p>
+  </div>
+</footer>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Menu Toggle ──────────────────────────────────────────────────────────────
+function toggleMenu() {
+  document.getElementById('mobile-menu').classList.toggle('open');
+  document.getElementById('hamburger').classList.toggle('open');
+}
+
+// ── Toast ────────────────────────────────────────────────────────────────────
+function showToast(msg, duration = 2200) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ── Scroll Reveal ────────────────────────────────────────────────────────────
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.animate').forEach(el => observer.observe(el));
+
+// ── Smooth Scroll ────────────────────────────────────────────────────────────
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+    toggleMenu(); // close mobile menu if open
+  });
+});
+
+// ── Counter Animation (use on stat elements) ────────────────────────────────
+function animateCounter(el, target, suffix = '') {
+  const duration = 1800;
+  const start = performance.now();
+  function tick(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(target * eased) + suffix;
+    if (progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+// ── Escape HTML ──────────────────────────────────────────────────────────────
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+</script>
+</body>
+</html>
