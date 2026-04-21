@@ -271,6 +271,19 @@
       .print-only { display: block !important; }
     }
     .print-only { display: none; }
+    .print-only .print-method { page-break-before: always; margin-top: 24px; font-size: 11px; color: #333; }
+    .print-only .po-method-head { font-family: Arial, sans-serif; font-size: 16px; margin-bottom: 8px; color: #222; }
+    .print-only .po-method-intro { font-size: 11px; color: #444; margin-bottom: 12px; line-height: 1.55; }
+    .print-only .po-method-meta { display: flex; gap: 20px; margin-bottom: 12px; font-size: 11px; color: #333; }
+    .print-only .po-method-meta b { color: #222; }
+    .print-only .po-method-table { width: 100%; border-collapse: collapse; font-size: 10.5px; margin-bottom: 12px; }
+    .print-only .po-method-table th, .print-only .po-method-table td { padding: 6px 8px; border: 1px solid #ccc; text-align: left; vertical-align: top; }
+    .print-only .po-method-table thead th { background: #f2efe9; font-weight: 700; color: #222; }
+    .print-only .po-method-table td.num { text-align: right; font-family: monospace; }
+    .print-only .po-method-table td.pos { color: #0a6a2a; }
+    .print-only .po-method-table td.neg { color: #a02020; }
+    .print-only .po-method-note { font-size: 10.5px; color: #555; line-height: 1.5; }
+    .print-only .po-method-note b { color: #222; }
     .print-only .po-footer { margin-top: 30px; padding-top: 12px; border-top: 1px solid #ccc; font-size: 11px; color: #555; text-align: center; }
   </style>
   <meta name="robots" content="noindex, nofollow">
@@ -408,6 +421,33 @@
         <button type="button" class="btn btn-ghost" id="cta-download">▸ Download as PDF</button>
         <a href="index.html#workflows" class="btn btn-ghost">▸ Browse all workflows</a>
       </div>
+    </div>
+
+    <!-- Print-only: IMDA methodology transparency -->
+    <div class="print-only print-method">
+      <h3 class="po-method-head">How this benchmark was calculated</h3>
+      <p class="po-method-intro">Peer averages are derived from <b>IMDA Singapore Digital Economy Report 2024/2025</b>. Baseline scores are anchored to real SME adoption stats (95.1% adopted at least one digital area, averaging 2.3 of 6; 14.5% AI adoption; function-level AI use from IMDA Fig 10). Your sector selection applies a per-axis modifier derived from the sector-specific digital intensity in IMDA Fig 5.</p>
+      <div class="po-method-meta">
+        <span><b>Your sector:</b> <span id="po-sector">—</span></span>
+        <span><b>Generated:</b> <span id="po-date">—</span></span>
+      </div>
+      <table class="po-method-table">
+        <thead>
+          <tr>
+            <th>Axis</th>
+            <th>IMDA base</th>
+            <th>Sector modifier</th>
+            <th>= Peer benchmark</th>
+            <th>AI target</th>
+            <th>Your score</th>
+            <th>Gap to target</th>
+          </tr>
+        </thead>
+        <tbody id="po-method-body"></tbody>
+      </table>
+      <p class="po-method-note">
+        <b>Formula:</b> Peer benchmark = IMDA base + sector modifier (clamped 15201380). Your score is averaged across your 7 answers (and any drilldown refinement). Gap = AI target − your score.
+      </p>
     </div>
 
     <!-- Print-only footer -->
@@ -1169,11 +1209,44 @@
     renderImpact();
     renderRecs();
     renderCTA(tier);
+    populatePrintMethodology();
     setupDrilldown();
 
     const res = document.getElementById('results');
     res.classList.add('show');
     setTimeout(() => res.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+  }
+
+  // ── Print-only methodology table ──────────────────────────────────
+  function populatePrintMethodology() {
+    const ind = INDUSTRIES.find(i => i.key === state.industry);
+    const sectorEl = document.getElementById('po-sector');
+    if (sectorEl) sectorEl.textContent = ind ? ind.label : 'Other';
+    const dateEl = document.getElementById('po-date');
+    if (dateEl) dateEl.textContent = new Date().toLocaleDateString('en-SG', { year: 'numeric', month: 'short', day: 'numeric' });
+    const body = document.getElementById('po-method-body');
+    if (!body) return;
+    while (body.firstChild) body.removeChild(body.firstChild);
+    QUESTIONS.forEach((q, i) => {
+      const tr = document.createElement('tr');
+      const mod = ind.mods[i];
+      const cells = [
+        { text: q.axis },
+        { text: AVG_BASE[i], cls: 'num' },
+        { text: (mod >= 0 ? '+' : '') + mod, cls: 'num ' + (mod > 0 ? 'pos' : mod < 0 ? 'neg' : '') },
+        { text: state.bench[i], cls: 'num' },
+        { text: TARGET[i], cls: 'num' },
+        { text: state.axisScores[i], cls: 'num' },
+        { text: Math.max(0, TARGET[i] - state.axisScores[i]), cls: 'num' }
+      ];
+      cells.forEach(c => {
+        const td = document.createElement('td');
+        if (c.cls) td.className = c.cls;
+        td.textContent = c.text;
+        tr.appendChild(td);
+      });
+      body.appendChild(tr);
+    });
   }
 
   // ── Init ─────────────────────────────────────────────────────────────
