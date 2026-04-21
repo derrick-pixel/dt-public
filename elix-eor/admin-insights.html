@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elitez EOR — Market &amp; Pricing Insights</title>
+  <meta name="description" content="Market insights, pricing strategies, and target personas for Elitez EOR" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://derrick-pixel.github.io/elix-eor/admin-insights.html" />
+  <meta property="og:title" content="Elitez EOR — Market Insights" />
+  <meta property="og:description" content="Pricing strategies, personas, and market analysis" />
+  <meta property="og:image" content="https://derrick-pixel.github.io/elix-eor/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #FAFAFA; --surface: #FFFFFF; --card: #FFFFFF;
+      --border: #E5E5E5; --border2: #D1D1D1;
+      --text: #191919; --muted: #6B6B6B; --muted2: #4A4A4A;
+      --accent: #1E3A5F; --accent2: #F57A20;
+      --accent-glow: rgba(30,58,95,0.08); --accent2-glow: rgba(245,122,32,0.08);
+      --red: #1E3A5F; --red-glow: rgba(30,58,95,0.06);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.6; color: var(--text); background: var(--bg); -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent); text-decoration: none; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 60px 0; }
+
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; background: rgba(255,255,255,0.92); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+    .nav-logo { display: flex; align-items: center; gap: 10px; }
+    .nav-logo img { height: 20px; width: auto; display: block; }
+    .nav-logo .logo-admin {
+      color: var(--accent2); font-weight: 700; font-size: 0.7rem;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      display: inline-flex; align-items: center;
+    }
+    .nav-logo .logo-admin::before {
+      content: "\B7"; color: var(--muted); margin-right: 10px;
+      font-weight: 700; font-size: 1.4em; line-height: 1;
+    }
+    .admin-nav { display: flex; gap: 20px; align-items: center; }
+    .admin-nav a { font-size: 0.72rem; font-weight: 500; color: var(--muted2); text-transform: uppercase; letter-spacing: 0.04em; transition: color 0.2s; }
+    .admin-nav a:hover, .admin-nav a.active { color: var(--accent); }
+
+    h1 { font-size: clamp(1.5rem, 4vw, 2.4rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; }
+    h2 { font-size: clamp(1.2rem, 3vw, 1.8rem); font-weight: 700; letter-spacing: -0.01em; }
+    h3 { font-size: 1.1rem; font-weight: 700; }
+    .label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); display: inline-block; margin-bottom: 12px; }
+
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 28px; transition: all 0.2s; }
+    .card:hover { border-color: var(--border2); }
+
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+    .badge-green { background: var(--accent-glow); color: var(--accent); }
+    .badge-gold { background: var(--accent2-glow); color: var(--accent2); }
+    .badge-red { background: var(--red-glow); color: var(--red); }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+    .page-header { padding-top: 96px; padding-bottom: 20px; }
+    .section-header { margin-bottom: 32px; }
+    .section-header p { margin-top: 8px; color: var(--muted2); font-size: 0.9rem; }
+
+    .persona-card { position: relative; overflow: hidden; }
+    .persona-avatar { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 12px; }
+    .persona-name { font-weight: 800; font-size: 1.1rem; margin-bottom: 4px; }
+    .persona-title { font-size: 0.78rem; color: var(--muted); margin-bottom: 16px; }
+    .persona-detail { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; }
+    .persona-detail:last-child { border-bottom: none; }
+    .persona-detail-label { font-weight: 600; color: var(--muted2); margin-bottom: 2px; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    .persona-detail-value { color: var(--text); }
+
+    .strategy-card { position: relative; }
+    .strategy-card h3 { margin-bottom: 8px; }
+    .strategy-price { font-size: 1.8rem; font-weight: 900; margin-bottom: 8px; }
+    .strategy-price.recommended { color: var(--accent); }
+    .strategy-desc { font-size: 0.85rem; color: var(--muted2); margin-bottom: 16px; }
+    .pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .pros h4, .cons h4 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    .pros h4 { color: var(--accent); }
+    .cons h4 { color: var(--red); }
+    .pros li, .cons li { font-size: 0.78rem; color: var(--muted2); padding: 4px 0; list-style: none; }
+    .pros li::before { content: '+ '; color: var(--accent); font-weight: 700; }
+    .cons li::before { content: '- '; color: var(--red); font-weight: 700; }
+
+    .alt-card { padding: 20px; }
+    .alt-card h4 { font-size: 0.9rem; margin-bottom: 4px; }
+    .alt-desc { font-size: 0.82rem; color: var(--muted2); margin-bottom: 12px; }
+    .alt-metrics { display: flex; gap: 16px; }
+    .alt-metric { font-size: 0.72rem; }
+    .alt-metric-label { color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .alt-metric-value { font-weight: 700; color: var(--accent2); }
+
+    .wtp-bar { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .wtp-bar:last-child { border-bottom: none; }
+    .wtp-label { width: 140px; font-size: 0.82rem; color: var(--muted2); flex-shrink: 0; }
+    .wtp-track { flex: 1; height: 8px; background: var(--surface); border-radius: 4px; overflow: hidden; position: relative; }
+    .wtp-fill { height: 100%; border-radius: 4px; }
+    .wtp-value { font-size: 0.78rem; font-weight: 700; min-width: 70px; text-align: right; }
+    .wtp-note { font-size: 0.68rem; color: var(--muted); }
+
+    .recommended-tag { position: absolute; top: 12px; right: 12px; }
+
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--surface); border: 1px solid var(--border2); padding: 10px 20px; border-radius: 8px; font-size: 0.78rem; color: var(--text); opacity: 0; transition: all 0.3s; z-index: 600; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 768px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .admin-nav { display: none; }
+      section { padding: 40px 0; }
+      .pros-cons { grid-template-columns: 1fr; }
+    }
+  </style>
+  <!-- Favicon set -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
+  <link rel="mask-icon" href="safari-pinned-tab.svg" color="#F57A20" />
+  <meta name="theme-color" content="#1E3A5F" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo" aria-label="Elitez EOR home">
+      <img src="assets/elitez-wordmark.png" alt="Elitez" />
+      <span class="logo-admin">Admin</span>
+    </a>
+    <div class="admin-nav">
+      <a href="admin.html">Competitor Analytics</a>
+      <a href="admin-insights.html" class="active">Market Insights</a>
+      <a href="index.html">Back to Site</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+
+      <div class="page-header">
+        <span class="label" style="color:var(--accent2);">Market Intelligence</span>
+        <h1>Pricing Strategies, Personas &amp; Market Analysis</h1>
+        <p style="color:var(--muted2);margin-top:8px;">Deep-dive into target segments, willingness to pay, and competitive positioning</p>
+      </div>
+
+      <!-- ── Pricing Strategies ──────────────────────────────────────── -->
+      <section style="padding-top:20px;">
+        <div class="section-header">
+          <h2>Pricing Strategies</h2>
+          <p>Four approaches evaluated for Elitez EOR's micro business market</p>
+        </div>
+
+        <div class="grid-2">
+          <div class="card strategy-card" style="border-color:var(--accent);">
+            <span class="badge badge-green recommended-tag">Recommended</span>
+            <h3>Flat Fee Model</h3>
+            <div class="strategy-price recommended">$59/mo per employee</div>
+            <div class="strategy-desc">Simple, predictable pricing that undercuts all competitors by 5-10x. No percentage-based fees, no tiers, no complexity. The micro business owner knows exactly what they pay.</div>
+            <div class="pros-cons">
+              <div class="pros">
+                <h4>Pros</h4>
+                <ul>
+                  <li>Radical price transparency</li>
+                  <li>Removes price as a barrier</li>
+                  <li>Easy to communicate &amp; sell</li>
+                  <li>Scales with employee count</li>
+                  <li>Compatible with CardUp miles narrative</li>
+                </ul>
+              </div>
+              <div class="cons">
+                <h4>Cons</h4>
+                <ul>
+                  <li>Low margin per employee</li>
+                  <li>Need high volume to be profitable</li>
+                  <li>May be perceived as "too cheap"</li>
+                  <li>Limited upsell opportunity</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="card strategy-card">
+            <h3>Tiered Pricing</h3>
+            <div class="strategy-price">$30 / $50 / $80</div>
+            <div class="strategy-desc">Basic (payroll + CPF only), Standard (+ WICA + IR8A), Premium (+ healthcare + CardUp). Allows customers to pick their level of service.</div>
+            <div class="pros-cons">
+              <div class="pros">
+                <h4>Pros</h4>
+                <ul>
+                  <li>Higher ARPU from premium tier</li>
+                  <li>Entry point still very low</li>
+                  <li>Natural upsell path</li>
+                  <li>Flexible for different needs</li>
+                </ul>
+              </div>
+              <div class="cons">
+                <h4>Cons</h4>
+                <ul>
+                  <li>Adds complexity for micro business</li>
+                  <li>Dilutes the "everything included" message</li>
+                  <li>May confuse price-sensitive buyers</li>
+                  <li>Harder to market as "just $30"</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="card strategy-card">
+            <h3>Percentage of Payroll</h3>
+            <div class="strategy-price">0.5-1% of gross salary</div>
+            <div class="strategy-desc">Charge a percentage of the employee's gross salary. Scales with salary levels. Common model for payroll outsourcers.</div>
+            <div class="pros-cons">
+              <div class="pros">
+                <h4>Pros</h4>
+                <ul>
+                  <li>Revenue scales with salary</li>
+                  <li>Industry-standard model</li>
+                  <li>Higher margins on high salaries</li>
+                </ul>
+              </div>
+              <div class="cons">
+                <h4>Cons</h4>
+                <ul>
+                  <li>Penalises higher-paying businesses</li>
+                  <li>Less transparent</li>
+                  <li>Harder to communicate in marketing</li>
+                  <li>Doesn't fit the "flat fee" narrative</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="card strategy-card">
+            <h3>Freemium + Upsell</h3>
+            <div class="strategy-price">$0 + $59/mo premium</div>
+            <div class="strategy-desc">Free CPF submission tool, then charge for full EOR service. Build trust with free value before converting to paid.</div>
+            <div class="pros-cons">
+              <div class="pros">
+                <h4>Pros</h4>
+                <ul>
+                  <li>Zero barrier to entry</li>
+                  <li>Builds user base fast</li>
+                  <li>Free tier creates brand awareness</li>
+                  <li>Natural conversion funnel</li>
+                </ul>
+              </div>
+              <div class="cons">
+                <h4>Cons</h4>
+                <ul>
+                  <li>High support cost for free users</li>
+                  <li>Conversion rates may be low</li>
+                  <li>Distracts from core EOR service</li>
+                  <li>Requires building software (not lean)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Target Personas ─────────────────────────────────────────── -->
+      <section>
+        <div class="section-header">
+          <h2>Target User Personas</h2>
+          <p>Detailed profiles of Elitez EOR's ideal customers</p>
+        </div>
+
+        <div class="grid-3">
+          <div class="card persona-card">
+            <div class="persona-avatar" style="background:rgba(0,230,138,0.12);">&#128187;</div>
+            <div class="persona-name">Freelancer-Turned-Founder</div>
+            <div class="persona-title">Solo consultant who hired their first employee</div>
+            <div class="persona-detail">
+              <div class="persona-detail-label">Demographics</div>
+              <div class="persona-detail-value">Age 28-40, tech-savvy, runs a digital services consultancy or creative agency</div>
+            </div>
+            <div class="persona-detail">
+              <div class="persona-detail-label">Pain Points</div>
+              <div class="persona-detail-value">Was a freelancer, never dealt with CPF/WICA/IR8A. Overwhelmed by employer obligations. Doesn't want to learn payroll compliance.</div>
+            </div>
+            <div class="persona-detail">
+              <div class="persona-detail-label">Behaviour</div>
+              <div class="persona-detail-value">Googles "do I need to pay CPF for my employee", researches on Reddit/HWZ, compares SaaS tools, price-sensitive but values convenience</div>
+            </div>
+            <div class="persona-detail">
+              <div class="persona-detail-label">Decision Factor</div>
+              <div class="persona-detail-value">Wants the absolute simplest solution. "Just take care of it for me." Miles bonus is a delightful surprise.</div>
+            </div>
+            <div class="persona-detail">
+              <div class="persona-detail-label">Willingness to Pay</div>
+              <div class="persona-detail-value" style="color:var(--accent);font-weight:700;">$20-50/mo — sweet spot</div>
+            </div>
+          </div>
+
+          <div class="card persona-card">
+            <div class="persona-avatar" style="background:rgba(255,184,77,0.12);">&#127978;</div>
+            <div class="persona-name">Traditional SME Owner</div>
+            <div class="persona-title">Family business or trade, employing 2-3 staff</div>
+            <div class="persona-detail">
+              <div class="persona-detail-label">Demographics</div>
+              <div class="persona-detail-value">Age 40-60, runs a retail shop, F&amp;B outlet, or professional services firm. May rely on spouse or part-time bookkeeper for payroll.</div>
+            </div>
+            <div class="persona-detail">
+              <div class="persona-detail-label">Pain Points</div>
+              <div class="persona-detail-value">Has been doing CPF manually for years. Dreads IR8A season. Overpaying for individual WICA. Can't get group health insurance rates.</div>
+            </div>
+            <div class="persona-detail">
+              <div class="persona-detail-label">Behaviour</div>
+              <div class="persona-detail-value">Asks accountant friends for advice. May use an Excel template. Tends to hear about solutions via word-of-mouth, WhatsApp groups, or trade associations.</div>
+            </div>
+            <div class="persona-detail">
+              <div class="persona-detail-label">Decision Factor</div>
+              <div class="persona-detail-value">Cost savings on WICA + healthcare is the hook. Miles bonus is icing. Needs trust — "Elitez Group" brand provides credibility.</div>
+            </div>
+            <div class="persona-detail">
+              <div class="persona-detail-label">Willingness to Pay</div>
+              <div class="persona-detail-value" style="color:var(--accent);font-weight:700;">$30-80/mo — value-driven</div>
+            </div>
+          </div>
+
+          <div class="card persona-card">
+            <div class="persona-avatar" style="background:rgba(56,189,248,0.12);">&#9992;&#65039;</div>
+            <div class="persona-name">Miles Maximiser</div>
+            <div class="persona-title">Business owner who optimises credit card rewards</div>
+            <div class="persona-detail">
+              <div class="persona-detail-label">Demographics</div>
+              <div class="persona-detail-value">Age 30-50, reads MileLion/MainlyMiles, has multiple credit cards optimised for mpd. Already uses CardUp for other expenses.</div>
+            </div>
+            <div class="persona-detail">
+              <div class="persona-detail-label">Pain Points</div>
+              <div class="persona-detail-value">Wants to maximise miles from every dollar spent. Currently pays salary via GIRO (earns 0 miles). Knows CardUp but hasn't applied it to payroll.</div>
+            </div>
+            <div class="persona-detail">
+              <div class="persona-detail-label">Behaviour</div>
+              <div class="persona-detail-value">Calculates mpd religiously. Reads blog reviews. Optimises card pairings. Will sign up if the miles math works out. Shares deals with friends.</div>
+            </div>
+            <div class="persona-detail">
+              <div class="persona-detail-label">Decision Factor</div>
+              <div class="persona-detail-value">The miles. 92K miles = business class ticket. "$850 for a $4,000 ticket" is the killer pitch. EOR convenience is secondary.</div>
+            </div>
+            <div class="persona-detail">
+              <div class="persona-detail-label">Willingness to Pay</div>
+              <div class="persona-detail-value" style="color:var(--accent);font-weight:700;">$30-100/mo — ROI-focused</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Willingness to Pay ──────────────────────────────────────── -->
+      <section>
+        <div class="section-header">
+          <h2>Willingness to Pay Analysis</h2>
+          <p>Price sensitivity by segment, benchmarked against competitors</p>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3 style="margin-bottom:20px;">Price Sensitivity by Segment</h3>
+            <div class="wtp-bar">
+              <div class="wtp-label">Freelancer-Founders</div>
+              <div class="wtp-track"><div class="wtp-fill" style="width:35%;background:var(--accent);"></div></div>
+              <div class="wtp-value" style="color:var(--accent);">$20-50/mo</div>
+            </div>
+            <div class="wtp-bar">
+              <div class="wtp-label">Traditional SMEs</div>
+              <div class="wtp-track"><div class="wtp-fill" style="width:55%;background:var(--accent2);"></div></div>
+              <div class="wtp-value" style="color:var(--accent2);">$30-80/mo</div>
+            </div>
+            <div class="wtp-bar">
+              <div class="wtp-label">Miles Maximisers</div>
+              <div class="wtp-track"><div class="wtp-fill" style="width:65%;background:#38bdf8;"></div></div>
+              <div class="wtp-value" style="color:#38bdf8;">$30-100/mo</div>
+            </div>
+            <div class="wtp-bar">
+              <div class="wtp-label">Professional Svcs</div>
+              <div class="wtp-track"><div class="wtp-fill" style="width:75%;background:#818cf8;"></div></div>
+              <div class="wtp-value" style="color:#818cf8;">$50-150/mo</div>
+            </div>
+            <div style="margin-top:16px;padding:12px;border-radius:10px;background:var(--accent-glow);border:1px solid rgba(30,58,95,0.12);">
+              <div style="font-size:0.78rem;font-weight:600;color:var(--accent);">Elitez at $59/mo sits at the bottom of ALL segments' willingness-to-pay range, maximising conversion.</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 style="margin-bottom:20px;">Competitor Pricing Benchmarks</h3>
+            <div class="wtp-bar">
+              <div class="wtp-label">DIY (free tools)</div>
+              <div class="wtp-track"><div class="wtp-fill" style="width:0%;"></div></div>
+              <div class="wtp-value">$0</div>
+            </div>
+            <div class="wtp-bar">
+              <div class="wtp-label">Payroll SaaS</div>
+              <div class="wtp-track"><div class="wtp-fill" style="width:12%;background:var(--accent2);"></div></div>
+              <div class="wtp-value" style="color:var(--accent2);">$5-15/mo</div>
+            </div>
+            <div class="wtp-bar">
+              <div class="wtp-label" style="font-weight:700;color:var(--accent);">Elitez EOR</div>
+              <div class="wtp-track"><div class="wtp-fill" style="width:18%;background:var(--accent);"></div></div>
+              <div class="wtp-value" style="color:var(--accent);font-weight:700;">$59/mo</div>
+            </div>
+            <div class="wtp-bar">
+              <div class="wtp-label">Payroll Outsource</div>
+              <div class="wtp-track"><div class="wtp-fill" style="width:45%;background:var(--red);"></div></div>
+              <div class="wtp-value" style="color:var(--red);">$60-150/mo</div>
+            </div>
+            <div class="wtp-bar">
+              <div class="wtp-label">Global EOR</div>
+              <div class="wtp-track"><div class="wtp-fill" style="width:100%;background:var(--red);"></div></div>
+              <div class="wtp-value" style="color:var(--red);">$199-800/mo</div>
+            </div>
+            <div class="wtp-note" style="margin-top:12px;">
+              Elitez is priced higher than DIY tools (which require your time) but dramatically lower than any outsourced or EOR solution. The value gap is the selling point.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Next Best Alternatives ──────────────────────────────────── -->
+      <section>
+        <div class="section-header">
+          <h2>Next Best Alternatives</h2>
+          <p>What micro business owners turn to if they don't use Elitez — and why we're better</p>
+        </div>
+
+        <div class="grid-2">
+          <div class="card alt-card">
+            <span class="badge badge-red" style="margin-bottom:12px;">Most Common</span>
+            <h4>DIY — CPF Board + IRAS Portal</h4>
+            <div class="alt-desc">Manually calculate CPF, log into CPF e-Submit, prepare IR8A forms in Excel, source WICA individually.</div>
+            <div class="alt-metrics">
+              <div class="alt-metric"><div class="alt-metric-label">Cost</div><div class="alt-metric-value">$0</div></div>
+              <div class="alt-metric"><div class="alt-metric-label">Time</div><div class="alt-metric-value">66 hrs/yr</div></div>
+              <div class="alt-metric"><div class="alt-metric-label">Switching Cost</div><div class="alt-metric-value">Very Low</div></div>
+              <div class="alt-metric"><div class="alt-metric-label">Risk</div><div class="alt-metric-value">Medium (errors)</div></div>
+            </div>
+          </div>
+
+          <div class="card alt-card">
+            <span class="badge badge-gold" style="margin-bottom:12px;">Growing</span>
+            <h4>Payroll SaaS (Talenox, Payboy, Justlogin)</h4>
+            <div class="alt-desc">Software automates calculations but you still press the buttons, manage WICA separately, and handle benefits yourself.</div>
+            <div class="alt-metrics">
+              <div class="alt-metric"><div class="alt-metric-label">Cost</div><div class="alt-metric-value">$5-15/mo</div></div>
+              <div class="alt-metric"><div class="alt-metric-label">Time</div><div class="alt-metric-value">30 hrs/yr</div></div>
+              <div class="alt-metric"><div class="alt-metric-label">Switching Cost</div><div class="alt-metric-value">Low</div></div>
+              <div class="alt-metric"><div class="alt-metric-label">Risk</div><div class="alt-metric-value">Low-Med</div></div>
+            </div>
+          </div>
+
+          <div class="card alt-card">
+            <h4>Accountant / Bookkeeper</h4>
+            <div class="alt-desc">Outsource payroll to your accountant as part of a monthly accounting package. Common for SMEs already using a bookkeeper.</div>
+            <div class="alt-metrics">
+              <div class="alt-metric"><div class="alt-metric-label">Cost</div><div class="alt-metric-value">$100-300/mo</div></div>
+              <div class="alt-metric"><div class="alt-metric-label">Time</div><div class="alt-metric-value">5 hrs/yr</div></div>
+              <div class="alt-metric"><div class="alt-metric-label">Switching Cost</div><div class="alt-metric-value">Medium</div></div>
+              <div class="alt-metric"><div class="alt-metric-label">Risk</div><div class="alt-metric-value">Low</div></div>
+            </div>
+          </div>
+
+          <div class="card alt-card">
+            <h4>Do Nothing / Non-Compliance</h4>
+            <div class="alt-desc">Some micro businesses operate informally — paying cash, not filing CPF properly, skipping WICA. High risk of penalties.</div>
+            <div class="alt-metrics">
+              <div class="alt-metric"><div class="alt-metric-label">Cost</div><div class="alt-metric-value">$0 (until caught)</div></div>
+              <div class="alt-metric"><div class="alt-metric-label">Time</div><div class="alt-metric-value">0 hrs</div></div>
+              <div class="alt-metric"><div class="alt-metric-label">Switching Cost</div><div class="alt-metric-value">Very Low</div></div>
+              <div class="alt-metric"><div class="alt-metric-label">Risk</div><div class="alt-metric-value" style="color:var(--red);">Very High</div></div>
+            </div>
+          </div>
+
+          <div class="card alt-card">
+            <h4>Spouse / Family Member</h4>
+            <div class="alt-desc">Common in micro businesses: the owner's spouse handles payroll and admin. Zero cost but creates dependency and isn't scalable.</div>
+            <div class="alt-metrics">
+              <div class="alt-metric"><div class="alt-metric-label">Cost</div><div class="alt-metric-value">$0 (hidden)</div></div>
+              <div class="alt-metric"><div class="alt-metric-label">Time</div><div class="alt-metric-value">50+ hrs/yr</div></div>
+              <div class="alt-metric"><div class="alt-metric-label">Switching Cost</div><div class="alt-metric-value">Emotional</div></div>
+              <div class="alt-metric"><div class="alt-metric-label">Risk</div><div class="alt-metric-value">Medium</div></div>
+            </div>
+          </div>
+
+          <div class="card alt-card" style="border-color:var(--accent);background:rgba(30,58,95,0.03);">
+            <span class="badge badge-green" style="margin-bottom:12px;">Our Position</span>
+            <h4>Elitez EOR</h4>
+            <div class="alt-desc">Full outsourced EOR with group-rate benefits and CardUp miles. Zero admin, zero risk. The only option that turns a cost into a reward.</div>
+            <div class="alt-metrics">
+              <div class="alt-metric"><div class="alt-metric-label">Cost</div><div class="alt-metric-value" style="color:var(--accent);">$59/mo</div></div>
+              <div class="alt-metric"><div class="alt-metric-label">Time</div><div class="alt-metric-value" style="color:var(--accent);">0 hrs</div></div>
+              <div class="alt-metric"><div class="alt-metric-label">Switching Cost</div><div class="alt-metric-value">Low</div></div>
+              <div class="alt-metric"><div class="alt-metric-label">Risk</div><div class="alt-metric-value" style="color:var(--accent);">Zero</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Key Insights Summary ────────────────────────────────────── -->
+      <section>
+        <div class="card" style="border-color:var(--accent2);">
+          <h2 style="margin-bottom:20px;">Key Strategic Insights</h2>
+          <div class="grid-2">
+            <div>
+              <h4 style="font-size:0.85rem;color:var(--accent);margin-bottom:8px;">1. Price is our moat</h4>
+              <p style="font-size:0.82rem;color:var(--muted2);margin-bottom:16px;">At $59/mo, we're in a pricing tier no competitor can match without fundamentally rethinking their business model. Enterprise EORs can't serve micro businesses profitably at this price. Payroll SaaS tools are cheaper but don't solve the problem (you still do the work). We sit in an uncontested zone.</p>
+
+              <h4 style="font-size:0.85rem;color:var(--accent);margin-bottom:8px;">2. Miles = virality</h4>
+              <p style="font-size:0.82rem;color:var(--muted2);margin-bottom:16px;">The CardUp miles angle is unique across all EOR/payroll providers globally. Singapore's miles-obsessed community (MileLion, HWZ Miles threads, CardUp users) is a built-in distribution channel. "Pay $850, fly business class" is inherently shareable.</p>
+            </div>
+            <div>
+              <h4 style="font-size:0.85rem;color:var(--accent);margin-bottom:8px;">3. Elitez = trust</h4>
+              <p style="font-size:0.82rem;color:var(--muted2);margin-bottom:16px;">Micro business owners are cautious about who legally employs their staff. Having Elitez Group (12+ years, 9 offices, established brand) as the entity provides instant credibility. Elitez is the brand, Elitez is the trust.</p>
+
+              <h4 style="font-size:0.85rem;color:var(--accent);margin-bottom:8px;">4. Acquisition channels</h4>
+              <p style="font-size:0.82rem;color:var(--muted2);">Primary: Miles/travel blogs (MileLion, MainlyMiles, SingSaver), CardUp partnership co-marketing, SME Facebook/WhatsApp groups. Secondary: Google Ads ("CPF submission service"), IRAS/CPF Board forums, trade association newsletters. The miles angle opens doors that "EOR service" alone cannot.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <div class="toast" id="toast"></div>
+</body>
+</html>
