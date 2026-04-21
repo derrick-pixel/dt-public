@@ -44,7 +44,28 @@ for entry in "${WIP_REPOS[@]}"; do
       perl -i -CSD -0777 -pe 's|</head>|  <meta name="robots" content="noindex, nofollow">\n</head>|' "$f"
     fi
   done < <(find "./$folder" -name "*.html" -type f)
+
+  # Security hardening: add SRI hashes to CDN script tags so a jsdelivr
+  # compromise cannot silently inject code. Each transform pins the script
+  # URL to an exact version and adds integrity + crossorigin attributes.
+  # Regenerate hashes with:  curl -sL <URL> | openssl dgst -sha384 -binary | openssl base64 -A
+  while IFS= read -r f; do
+    perl -i -pe 's|<script src="https://cdn\.jsdelivr\.net/npm/chart\.js\@4\.4\.0/dist/chart\.umd\.min\.js"></script>|<script src="https://cdn.jsdelivr.net/npm/chart.js\@4.4.0/dist/chart.umd.min.js" integrity="sha384-e6nUZLBkQ86NJ6TVVKAeSaK8jWa3NhkYWZFomE39AvDbQWeie9PlQqM3pmYW5d1g" crossorigin="anonymous"></script>|g;
+              s|<script src="https://cdn\.jsdelivr\.net/npm/chart\.js\@4\.4\.7/dist/chart\.umd\.min\.js"></script>|<script src="https://cdn.jsdelivr.net/npm/chart.js\@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous"></script>|g;
+              s|<script src="https://cdn\.jsdelivr\.net/npm/chart\.js\@4"></script>|<script src="https://cdn.jsdelivr.net/npm/chart.js\@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous"></script>|g;
+              s|<script src="https://cdn\.jsdelivr\.net/npm/marked\@12/marked\.min\.js"></script>|<script src="https://cdn.jsdelivr.net/npm/marked\@12.0.2/marked.min.js" integrity="sha384-/TQbtLCAerC3jgaim+N78RZSDYV7ryeoBCVqTuzRrFec2akfBkHS7ACQ3PQhvMVi" crossorigin="anonymous"></script>|g;
+              s|<script src="https://cdn\.jsdelivr\.net/npm/dompurify\@3/dist/purify\.min\.js"></script>|<script src="https://cdn.jsdelivr.net/npm/dompurify\@3.1.7/dist/purify.min.js" integrity="sha384-XQqX/4yiUGu+oyr87jvWzRuqBUK/adrY0DunhL+tID9m/9dwSpV8h9Fk/Sg6ifVQ" crossorigin="anonymous"></script>|g;
+              s|<script src="https://cdn\.jsdelivr\.net/npm/qrcode\@1\.5\.1/build/qrcode\.min\.js"></script>|<script src="https://cdn.jsdelivr.net/npm/qrcode\@1.5.1/build/qrcode.min.js" integrity="sha384-HGmnkDZJy7mRkoARekrrj0VjEFSh9a0Z8qxGri/kTTAJkgR8hqD1lHsYSh3JdzRi" crossorigin="anonymous"></script>|g;
+              s|<script src="https://cdn\.jsdelivr\.net/npm/qrcode\@1\.5\.3/build/qrcode\.min\.js"></script>|<script src="https://cdn.jsdelivr.net/npm/qrcode\@1.5.3/build/qrcode.min.js" integrity="sha384-Izc791esqyEy3BEIC42q7jbE0AaOkACziN+dyyXgYeDmpeMCLz0xA+xYN3aCd5zz" crossorigin="anonymous"></script>|g;
+              s|<script src="https://cdn\.jsdelivr\.net/npm/jspdf\@2\.5\.1/dist/jspdf\.umd\.min\.js"></script>|<script src="https://cdn.jsdelivr.net/npm/jspdf\@2.5.1/dist/jspdf.umd.min.js" integrity="sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk" crossorigin="anonymous"></script>|g;
+              s|<script src="https://cdn\.jsdelivr\.net/npm/html2canvas\@1\.4\.1/dist/html2canvas\.min\.js"></script>|<script src="https://cdn.jsdelivr.net/npm/html2canvas\@1.4.1/dist/html2canvas.min.js" integrity="sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H" crossorigin="anonymous"></script>|g' "$f"
+  done < <(find "./$folder" -name "*.html" -type f)
+
 done
+
+# NOTE on Passage admin: the upstream Passage repo ships admin.html with a
+# SHA-256 gate followed by "// Auth removed" code that bypasses it. Fix
+# upstream (derrick-pixel/Passage) — don't rely on this sync script to patch it.
 
 echo ""
 echo "✓ Sync complete."
