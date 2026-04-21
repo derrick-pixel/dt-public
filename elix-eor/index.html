@@ -1240,7 +1240,7 @@
     var SDL_MAX = 11.25;
     var CARDUP_FEE = 0.017;
     var MILES_PER_DOLLAR = 1.6;
-    var CENTS_PER_MILE = { business: 3.4, first: 3.8 };
+    var CENTS_PER_MILE = { low: 2.9, high: 4.0 };
 
     // KrisFlyer Saver award — SIN to destination, RETURN (2x one-way). Source: milelion.com 2025-12
     var DESTINATIONS = [
@@ -1269,9 +1269,12 @@
 
     function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
     function fmtDec(n) { return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
-    function retailValue(miles, cls) {
-      var rate = CENTS_PER_MILE[cls];
-      return Math.round(miles * rate / 100 / 100) * 100;
+    function retailValue(miles) {
+      // 2.9c-4c per mile range, rounded to nearest $100
+      return {
+        low:  Math.round(miles * CENTS_PER_MILE.low  / 100 / 100) * 100,
+        high: Math.round(miles * CENTS_PER_MILE.high / 100 / 100) * 100
+      };
     }
     function clearNode(el) { while (el.firstChild) el.removeChild(el.firstChild); }
     function makeEl(tag, className, text) {
@@ -1377,7 +1380,7 @@
       var card = makeEl('div', 'destination-card');
       if (!d) return card;
       var multiplier = Math.floor(annualMiles / d.miles);
-      var retail = retailValue(d.miles, d.cls);
+      var retail = retailValue(d.miles);
       var clsLabel = d.cls === 'first' ? 'First Class Return' : 'Business Class Return';
 
       var header = makeEl('div', 'dest-header');
@@ -1396,7 +1399,7 @@
       miles.appendChild(makeEl('span', 'dest-miles-label', 'miles needed'));
       details.appendChild(miles);
       var val = makeEl('div', 'dest-value');
-      val.appendChild(makeEl('span', 'dest-value-num', '$' + retail.toLocaleString()));
+      val.appendChild(makeEl("span", "dest-value-num", "$" + retail.low.toLocaleString() + " – $" + retail.high.toLocaleString()));
       val.appendChild(makeEl('span', 'dest-value-label', 'retail ticket value'));
       details.appendChild(val);
       card.appendChild(details);
@@ -1439,8 +1442,8 @@
       });
 
       var maxReward = Math.max(
-        state.primary  ? retailValue(state.primary.miles,  state.primary.cls)  : 0,
-        state.secondary ? retailValue(state.secondary.miles, state.secondary.cls) : 0
+        state.primary  ? retailValue(state.primary.miles).high  : 0,
+        state.secondary ? retailValue(state.secondary.miles).high : 0
       );
       document.getElementById('roi-cost').textContent = fmt(state.annualCost);
       document.getElementById('roi-reward').textContent = '$' + maxReward.toLocaleString();
