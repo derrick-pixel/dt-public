@@ -1241,8 +1241,8 @@
       <div class="container">
         <div class="cta-inner animate">
           <span class="badge badge-green">Ready to simplify?</span>
-          <h2 style="margin-top:12px;">Pay <span class="gradient-text">$850/year</span>.<br>Fly Business Class.</h2>
-          <p>Stop wasting 66 hours a year on payroll admin. Let Elitez handle your compliance while you earn enough miles for a business class ticket worth $3,500-5,000.</p>
+          <h2 style="margin-top:12px;">Pay <span class="gradient-text" id="cta-cost">from $850/year</span>.<br><span id="cta-cabin">Fly Business Class.</span></h2>
+          <p id="cta-subhead">Stop wasting 66 hours a year on payroll admin. Let Elitez handle your compliance while you earn enough miles for a business class ticket worth $3,500–$5,000.</p>
           <div class="cta-buttons">
             <a href="mailto:eor@elitez.asia?subject=Elitez%20EOR%20Enquiry" class="btn-primary">Get Started &rarr;</a>
             <a href="#calculator" class="btn-outline">Try the Calculator</a>
@@ -1572,6 +1572,27 @@
       );
       document.getElementById('roi-cost').textContent = fmt(state.annualCost);
       document.getElementById('roi-reward').textContent = '$' + maxReward.toLocaleString();
+
+      renderCTA();
+    }
+
+    function renderCTA() {
+      if (!state.primary) return;
+      var costEl    = document.getElementById('cta-cost');
+      var cabinEl   = document.getElementById('cta-cabin');
+      var subheadEl = document.getElementById('cta-subhead');
+      if (!costEl || !cabinEl || !subheadEl) return;
+
+      var cabinNoun = state.primary.cls === 'first' ? 'First' : 'Business';
+      var range = retailValue(state.primary.miles, state.primary.cls);
+
+      costEl.textContent  = fmt(state.annualCost) + '/year';
+      cabinEl.textContent = 'Fly ' + cabinNoun + ' Class.';
+      subheadEl.textContent =
+        'Stop wasting 66 hours a year on payroll admin. Let Elitez handle your compliance ' +
+        'while you earn enough miles for a ' + cabinNoun.toLowerCase() + ' class ticket ' +
+        'to ' + state.primary.city + ' worth $' +
+        range.low.toLocaleString() + '\u2013$' + range.high.toLocaleString() + '.';
     }
 
     function swapPrimary(destId) {
