@@ -1320,7 +1320,10 @@
     var SDL_MAX = 11.25;
     var CARDUP_FEE = 0.017;
     var MILES_PER_DOLLAR = 1.6;
-    var CENTS_PER_MILE = { low: 2.9, high: 4.0 };
+    var CENTS_PER_MILE = {
+      business: { low: 2.9, high: 4.0 },
+      first:    { low: 3.8, high: 5.5 }
+    };
 
     // KrisFlyer Saver award — SIN to destination, RETURN (2x one-way). Source: milelion.com 2025-12
     var DESTINATIONS = [
@@ -1379,11 +1382,12 @@
 
     function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
     function fmtDec(n) { return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
-    function retailValue(miles) {
-      // 2.9c-4c per mile range, rounded to nearest $100
+    function retailValue(miles, cls) {
+      // Business: 2.9c-4c per mile. First: 3.8c-5.5c per mile. Rounded to nearest $100.
+      var r = CENTS_PER_MILE[cls] || CENTS_PER_MILE.business;
       return {
-        low:  Math.round(miles * CENTS_PER_MILE.low  / 100 / 100) * 100,
-        high: Math.round(miles * CENTS_PER_MILE.high / 100 / 100) * 100
+        low:  Math.round(miles * r.low  / 100 / 100) * 100,
+        high: Math.round(miles * r.high / 100 / 100) * 100
       };
     }
     function clearNode(el) { while (el.firstChild) el.removeChild(el.firstChild); }
@@ -1490,7 +1494,7 @@
       var card = makeEl('div', 'destination-card');
       if (!d) return card;
       var multiplier = Math.floor(annualMiles / d.miles);
-      var retail = retailValue(d.miles);
+      var retail = retailValue(d.miles, d.cls);
       var clsLabel = d.cls === 'first' ? 'First Class Return' : 'Business Class Return';
 
       var header = makeEl('div', 'dest-header');
@@ -1552,8 +1556,8 @@
       });
 
       var maxReward = Math.max(
-        state.primary  ? retailValue(state.primary.miles).high  : 0,
-        state.secondary ? retailValue(state.secondary.miles).high : 0
+        state.primary  ? retailValue(state.primary.miles, state.primary.cls).high  : 0,
+        state.secondary ? retailValue(state.secondary.miles, state.secondary.cls).high : 0
       );
       document.getElementById('roi-cost').textContent = fmt(state.annualCost);
       document.getElementById('roi-reward').textContent = '$' + maxReward.toLocaleString();
