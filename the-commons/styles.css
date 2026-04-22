@@ -3,6 +3,104 @@
    Vibrant, tropical, unapologetically fun
    ============================================ */
 
+/* --- Dark mode overrides (loaded first; v1 tokens beneath) --- */
+html[data-theme="dark"] {
+  --sand: #0f1420;
+  --sand-dark: #1a2032;
+  --navy: #f7fafc;
+  --navy-light: #e5e9f0;
+  --slate: #94a3b8;
+  --mist: #0b0f1a;
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-white: rgba(26, 32, 50, 0.9);
+}
+html[data-theme="dark"] body { background: var(--sand); color: var(--navy); }
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .stat-card { background: var(--sand-dark); color: var(--navy); }
+html[data-theme="dark"] .event-card { background: var(--sand-dark); }
+html[data-theme="dark"] .event-card-body h4 { color: var(--navy); }
+html[data-theme="dark"] .progress-bar { background: rgba(255,255,255,0.08); }
+html[data-theme="dark"] .modal { background: var(--sand-dark); color: var(--navy); }
+html[data-theme="dark"] .form-group input,
+html[data-theme="dark"] .form-group select,
+html[data-theme="dark"] .form-group textarea { background: rgba(255,255,255,0.06); color: var(--navy); border-color: rgba(255,255,255,0.15); }
+html[data-theme="dark"] table { color: var(--navy); }
+html[data-theme="dark"] thead { background: rgba(255,255,255,0.04); color: var(--slate); }
+html[data-theme="dark"] .navbar.scrolled { background: rgba(15,20,32,0.92); }
+html[data-theme="dark"] .footer { background: #060a14; }
+html[data-theme="dark"] .search-bar input { background: rgba(255,255,255,0.05); color: var(--navy); }
+html[data-theme="dark"] .btn-secondary { background: rgba(255,255,255,0.05); color: var(--navy); border-color: rgba(255,255,255,0.15); }
+html[data-theme="dark"] .btn-outline { background: transparent; color: var(--navy); border-color: rgba(255,255,255,0.25); }
+html[data-theme="dark"] .badge-white { background: rgba(255,255,255,0.1); color: var(--navy); }
+
+/* Theme toggle button */
+.theme-toggle {
+  width: 36px; height: 36px; border-radius: 50%; border: none;
+  background: var(--sand-dark); color: var(--navy); cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: all 0.2s; font-size: 1rem;
+}
+.theme-toggle:hover { transform: scale(1.1); }
+
+/* Cover image helpers */
+.event-card-img { position: relative; overflow: hidden; }
+.event-card-img .cover-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center; z-index: 0;
+}
+.event-card-img > *:not(.cover-img) { position: relative; z-index: 2; }
+.event-card-img::after {
+  content: ''; position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45) 100%);
+  pointer-events: none;
+}
+
+.ev-hero-wrap { position: relative; height: 360px; overflow: hidden; }
+.ev-hero-wrap .ev-hero-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center; z-index: 0;
+}
+.ev-hero-wrap::after {
+  content: ''; position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.6) 100%);
+  pointer-events: none;
+}
+.ev-hero-wrap > * { position: relative; z-index: 2; }
+.ev-hero-wrap .ev-hero-img { z-index: 0; }
+
+/* Rating stars */
+.star-row { display: inline-flex; gap: 4px; font-size: 1.2rem; color: #fbbf24; }
+.star-row .star { cursor: pointer; transition: transform 0.15s; user-select: none; }
+.star-row .star:hover { transform: scale(1.15); }
+
+/* Comment feed */
+.comment-list { display: flex; flex-direction: column; gap: 10px; }
+.comment { display: flex; gap: 12px; padding: 14px; background: var(--sand); border-radius: var(--radius-sm); }
+html[data-theme="dark"] .comment { background: rgba(255,255,255,0.04); }
+.comment .body { flex: 1; }
+.comment .body .author { font-weight: 700; font-size: 0.9rem; margin-bottom: 2px; }
+.comment .body .meta { font-size: 0.72rem; color: var(--slate); margin-bottom: 6px; }
+.comment .body .text { font-size: 0.92rem; line-height: 1.55; white-space: pre-wrap; }
+.comment .body .tag-organiser { display: inline-block; margin-left: 6px; font-size: 0.64rem; padding: 2px 6px; background: var(--coral); color: white; border-radius: 100px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+
+/* Referral banner */
+.ref-banner {
+  background: linear-gradient(135deg, rgba(0,210,255,0.12), rgba(0,230,118,0.12));
+  border: 1px solid rgba(0,210,255,0.3);
+  padding: 10px 14px; border-radius: var(--radius-sm);
+  font-size: 0.84rem; margin-bottom: 16px;
+}
+.ref-banner strong { color: var(--ocean); }
+
+/* Waitlist banner */
+.waitlist-banner {
+  background: linear-gradient(135deg, rgba(255,107,107,0.12), rgba(255,142,83,0.12));
+  border: 1px solid rgba(255,107,107,0.3);
+  padding: 12px 16px; border-radius: var(--radius-sm);
+  font-size: 0.88rem; margin-bottom: 16px; text-align: center;
+}
+
 /* --- CSS Variables --- */
 :root {
   /* Primary: Sunset Coral → Mango */

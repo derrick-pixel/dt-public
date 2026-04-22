@@ -1272,17 +1272,603 @@ function adminRefundRSVP(rsvpId) {
   renderAdminLifecycle();
 }
 
-// --- Init ---
+// ==========================================================
+//  v3 ADDITIONS — dark mode, cover images, comments, waitlist,
+//  ratings, referrals, admin charts, CSV export, health alerts
+// ==========================================================
+
+// ── Dark mode ──────────────────────────────────────────
+function initTheme() {
+  const saved = (function () { try { return localStorage.getItem('tc:theme'); } catch { return null; } })();
+  const system = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  const theme = saved || system;
+  setTheme(theme, true);
+}
+function setTheme(theme, silent) {
+  document.documentElement.dataset.theme = theme;
+  try { localStorage.setItem('tc:theme', theme); } catch {}
+  document.querySelectorAll('[data-tc-theme-btn]').forEach(b => {
+    b.textContent = theme === 'dark' ? '☀️' : '🌙';
+    b.title = theme === 'dark' ? 'Switch to light' : 'Switch to dark';
+  });
+  if (!silent) showToast((theme === 'dark' ? 'Dark' : 'Light') + ' mode on.', 'success');
+}
+function toggleTheme() {
+  const current = document.documentElement.dataset.theme || 'light';
+  setTheme(current === 'dark' ? 'light' : 'dark', false);
+}
+// Inject a theme toggle into any nav that has .nav-actions (but only once)
+function injectThemeToggle() {
+  document.querySelectorAll('.nav-actions').forEach(host => {
+    if (host.querySelector('[data-tc-theme-btn]')) return;
+    const btn = _el('button', {
+      class: 'theme-toggle', 'data-tc-theme-btn': '1',
+      'aria-label': 'Toggle theme',
+      onclick: toggleTheme, text: '🌙'
+    });
+    host.insertBefore(btn, host.firstChild);
+  });
+  // Update icon to match current theme
+  setTheme(document.documentElement.dataset.theme || 'light', true);
+}
+
+// ── Cover image helper (upgrades _imgFor that was emoji-only) ──
+function _coverUrl(ev, size) {
+  if (window.TCImages) return TCImages.coverFor(ev, size);
+  return null;
+}
+
+// ── Enhanced events-grid renderer: now prepends cover image ─
+const _origRenderEventsGrid = typeof renderEventsGrid === 'function' ? renderEventsGrid : null;
+function renderEventsGrid() {
+  const grid = document.getElementById('eventsGrid');
+  if (!grid || grid.getAttribute('data-tc-render') !== 'events-grid') return;
+  if (!window.TCStore) return;
+
+  const events = TCStore.listEvents().slice().sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+  _clear(grid);
+
+  events.forEach(ev => {
+    const stats = TCStore.eventStats(ev.id);
+    const verifiedRsvps = stats.verifiedRsvps;
+    const total = stats.rsvpCount;
+    const expectedRevenue = (ev.costPerPerson || 0) * (ev.maxGuests || 1);
+    const funded = expectedRevenue ? Math.min(100, Math.round((stats.collected / expectedRevenue) * 100)) : 0;
+    const md = _fmtMonthDay(ev.date);
+    const cat = _categoryBadge(ev.category);
+    const coverUrl = _coverUrl(ev, 'card');
+
+    const imgNode = coverUrl
+      ? _el('img', { class: 'cover-img', src: coverUrl, alt: ev.title, loading: 'lazy' })
+      : _el('div', { class: 'img-placeholder ' + _bgClass(ev.category), text: ev.emoji || '🎉' });
+
+    const card = _el('a', {
+      class: 'event-card fade-in visible',
+      href: 'event.html?slug=' + encodeURIComponent(ev.slug),
+      'data-category': ev.category || '',
+      'data-price': String(ev.costPerPerson || 0)
+    }, [
+      _el('div', { class: 'event-card-img' }, [
+        imgNode,
+        _el('div', { class: 'event-date-badge' }, [
+          _el('div', { class: 'month', text: md.month }),
+          _el('div', { class: 'day', text: md.day })
+        ]),
+        _el('span', { class: 'badge ' + cat.cls + ' event-category', text: cat.label })
+      ]),
+      _el('div', { class: 'event-card-body' }, [
+        _el('h4', { text: ev.title }),
+        _el('div', { class: 'event-card-meta' }, [
+          _el('span', { text: '📍 ' + (ev.location || 'TBA') }),
+          _el('span', { text: '👥 ' + verifiedRsvps + '/' + (ev.maxGuests || '?') + ' joined' })
+        ]),
+        _el('div', { style: 'margin-bottom: 12px;' }, [
+          _el('div', { class: 'progress-label' }, [
+            _el('span', { text: 'Funded' }),
+            _el('span', { text: funded + '%' })
+          ]),
+          _el('div', { class: 'progress-bar' }, [
+            _el('div', { class: 'progress-fill', style: 'width: ' + funded + '%;' })
+          ])
+        ]),
+        _el('div', { class: 'event-card-footer' }, [
+          _el('div', { class: 'price' }, [
+            document.createTextNode('$' + (ev.costPerPerson || 0) + ' '),
+            _el('span', { text: '/ person' })
+          ]),
+          _el('div', { class: 'avatar-stack' }, [
+            _el('div', { class: 'avatar avatar-sm', style: 'background: ' + _gradientFor(ev.id), text: _initials(ev.organiser && ev.organiser.name) }),
+            total > 1 ? _el('div', { class: 'avatar avatar-sm', style: 'background: var(--sunset-gradient);', text: '+' + (total - 1) }) : null
+          ])
+        ])
+      ])
+    ]);
+    grid.appendChild(card);
+  });
+
+  const counter = document.getElementById('resultsCount');
+  if (counter) counter.textContent = 'Showing ' + events.length + ' event' + (events.length === 1 ? '' : 's');
+}
+
+// ── Event detail page extras: cover image, comments, waitlist, rating, referral ──
+function enhanceEventDetailPage() {
+  if (!window.TCStore) return;
+  const ev = TCStore.findEventParam();
+  if (!ev) return;
+
+  // 1. Cover image in hero
+  const heroBg = document.getElementById('ev-hero-bg');
+  if (heroBg) {
+    heroBg.classList.add('ev-hero-wrap');
+    if (!heroBg.querySelector('.ev-hero-img')) {
+      const coverUrl = _coverUrl(ev, 'cover');
+      if (coverUrl) {
+        const img = _el('img', { class: 'ev-hero-img', src: coverUrl, alt: ev.title });
+        heroBg.insertBefore(img, heroBg.firstChild);
+      }
+    }
+  }
+
+  // 2. Analytics: log a view + convert referral if matching
+  if (!window._tcViewLogged) {
+    TCStore.logEvent('event_view', { eventId: ev.id });
+    window._tcViewLogged = true;
+    const refCode = new URLSearchParams(location.search).get('ref');
+    if (refCode) {
+      TCStore.recordReferral({
+        refCode: refCode, eventId: ev.id,
+        visitorEmail: (TCStore.currentUser() && TCStore.currentUser().email) || null
+      });
+      showRefBanner(refCode);
+    }
+  }
+
+  // 3. Waitlist banner if event is full
+  const stats = TCStore.eventStats(ev.id);
+  const atCapacity = ev.maxGuests && stats.verifiedRsvps >= ev.maxGuests;
+  renderWaitlistBanner(ev, atCapacity);
+
+  // 4. Calendar + share actions
+  renderCalendarShareRow(ev);
+
+  // 5. Comments/Q&A
+  renderComments(ev);
+
+  // 6. Ratings (past events only)
+  renderRatings(ev);
+}
+
+function showRefBanner(refCode) {
+  // Append a banner once, below the atlas top section.
+  if (document.querySelector('.ref-banner')) return;
+  const container = document.querySelector('.container');
+  if (!container) return;
+  const b = _el('div', { class: 'ref-banner' }, [
+    document.createTextNode('👋 Invited by '),
+    _el('strong', { text: refCode }),
+    document.createTextNode('. Your RSVP credits them on the referral leaderboard.')
+  ]);
+  container.insertBefore(b, container.firstChild);
+}
+
+function renderWaitlistBanner(ev, atCapacity) {
+  let host = document.getElementById('ev-waitlist-banner');
+  if (!host) {
+    // Insert above the RSVP button if possible
+    const priceCard = document.querySelector('.container .card[style*="border: 2px solid var(--coral)"]');
+    if (!priceCard) return;
+    host = _el('div', { id: 'ev-waitlist-banner' });
+    priceCard.parentNode.insertBefore(host, priceCard);
+  }
+  _clear(host);
+  if (!atCapacity) return;
+
+  const waiting = TCStore.listWaitlist(ev.id).filter(w => w.status === 'waiting').length;
+  host.appendChild(_el('div', { class: 'waitlist-banner' }, [
+    _el('strong', { text: '⏳ This event is full. ' }),
+    document.createTextNode((waiting ? waiting + ' on waitlist. ' : '') + 'Join the waitlist and we\'ll notify you if a spot opens up.'),
+    _el('div', { style: 'margin-top: 10px;' }, [
+      _el('button', {
+        class: 'btn btn-primary btn-sm',
+        onclick: function () { joinWaitlistForEvent(ev.id); },
+        text: 'Join waitlist'
+      })
+    ])
+  ]));
+}
+function joinWaitlistForEvent(eventId) {
+  const user = TCStore.currentUser();
+  const name = (user && user.name) || prompt('Your name:');
+  const email = (user && user.email) || prompt('Your email:');
+  if (!name || !email) return;
+  if (!user) TCStore.setCurrentUser({ name: name, email: email });
+  const w = TCStore.joinWaitlist(eventId, { name: name, email: email });
+  if (!w) { showToast('You\'re already on the waitlist.', 'error'); return; }
+  showToast('Added to waitlist — position #' + w.position, 'success');
+  const ev = TCStore.eventById(eventId);
+  renderWaitlistBanner(ev, true);
+}
+
+function renderCalendarShareRow(ev) {
+  if (document.getElementById('ev-cal-row')) return;
+  const priceCard = document.querySelector('.container .card[style*="border: 2px solid var(--coral)"]');
+  if (!priceCard) return;
+  const row = _el('div', { id: 'ev-cal-row', style: 'display: flex; gap: 8px; margin-top: 10px;' }, [
+    _el('button', {
+      class: 'btn btn-secondary btn-sm', style: 'flex: 1;',
+      onclick: function () { if (window.TCCalendar) TCCalendar.downloadICS(ev); },
+      text: '📅 Add .ics'
+    }),
+    _el('a', {
+      class: 'btn btn-secondary btn-sm', style: 'flex: 1; display: inline-flex; align-items: center; justify-content: center; text-decoration: none;',
+      href: window.TCCalendar ? TCCalendar.googleCalUrl(ev) : '#',
+      target: '_blank', rel: 'noopener',
+      text: 'Google Cal →'
+    }),
+    _el('button', {
+      class: 'btn btn-secondary btn-sm', style: 'flex: 1;',
+      onclick: function () { shareEventWhatsApp(ev); },
+      text: '💬 WhatsApp'
+    })
+  ]);
+  priceCard.appendChild(row);
+}
+function shareEventWhatsApp(ev) {
+  const user = TCStore.currentUser();
+  const refCode = user ? encodeURIComponent(user.email.split('@')[0]) : '';
+  const url = location.origin + location.pathname + '?slug=' + encodeURIComponent(ev.slug) + (refCode ? '&ref=' + refCode : '');
+  const text = encodeURIComponent('Join me at ' + ev.title + ' — ' + ev.date + '. Escrow-protected RSVP on The Commons: ' + url);
+  window.open('https://wa.me/?text=' + text, '_blank');
+}
+
+// ── Comments ───────────────────────────────────────────
+function renderComments(ev) {
+  // Insert a comments card after the About card if not present
+  const aboutCard = [].find.call(document.querySelectorAll('.container .card h4'), h => h.textContent.trim() === 'About This Event');
+  const parentCard = aboutCard ? aboutCard.closest('.card') : null;
+  let host = document.getElementById('ev-comments');
+  if (!host) {
+    host = _el('div', { class: 'card', id: 'ev-comments', style: 'padding: 28px; margin-top: 24px;' }, [
+      _el('div', { style: 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;' }, [
+        _el('h4', { text: '💬 Discussion & Q&A' }),
+        _el('span', { id: 'ev-comment-count', class: 'badge badge-coral', text: '0' })
+      ]),
+      _el('div', { id: 'ev-comment-feed', class: 'comment-list' }),
+      _el('div', { style: 'margin-top: 16px; display: flex; gap: 10px;' }, [
+        _el('textarea', { id: 'ev-comment-input', placeholder: 'Ask a question or share an update…', rows: '2', style: 'flex: 1; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--sand-dark); font-family: inherit; font-size: 0.88rem; resize: vertical;' }),
+        _el('button', { class: 'btn btn-primary btn-sm', onclick: function () { submitComment(ev.id); }, text: 'Post' })
+      ])
+    ]);
+    if (parentCard && parentCard.parentNode) parentCard.parentNode.insertBefore(host, parentCard.nextSibling);
+    else {
+      const container = document.querySelector('.container');
+      if (container) container.appendChild(host);
+    }
+  }
+
+  const feed = document.getElementById('ev-comment-feed');
+  const count = document.getElementById('ev-comment-count');
+  if (!feed) return;
+  _clear(feed);
+  const all = TCStore.listComments(ev.id).sort((a, b) => a.createdAt - b.createdAt);
+  const roots = all.filter(c => !c.parentId);
+  count.textContent = String(all.length);
+  if (!all.length) {
+    feed.appendChild(_el('div', { style: 'color: var(--slate); font-size: 0.86rem; padding: 16px; text-align: center;', text: 'Be the first to ask a question.' }));
+    return;
+  }
+  roots.forEach(c => {
+    feed.appendChild(_renderComment(c));
+    const replies = all.filter(r => r.parentId === c.id);
+    replies.forEach(r => {
+      const n = _renderComment(r);
+      n.style.marginLeft = '48px';
+      feed.appendChild(n);
+    });
+  });
+}
+function _renderComment(c) {
+  return _el('div', { class: 'comment' }, [
+    _el('div', { class: 'avatar avatar-sm', style: 'background: ' + _gradientFor(c.authorEmail || c.authorName || c.id), text: _initials(c.authorName) }),
+    _el('div', { class: 'body' }, [
+      _el('div', { class: 'author' }, [
+        document.createTextNode(c.authorName || 'Anon'),
+        c.isOrganiser ? _el('span', { class: 'tag-organiser', text: 'Organiser' }) : null
+      ]),
+      _el('div', { class: 'meta', text: _agoFromNow(c.createdAt) + ' · ' + (c.reactions || 0) + ' ❤' }),
+      _el('div', { class: 'text', text: c.text || '' }),
+      _el('div', { style: 'margin-top: 6px;' }, [
+        _el('button', {
+          class: 'btn btn-outline btn-sm', style: 'font-size: 0.72rem; padding: 4px 10px;',
+          onclick: function () { TCStore.reactToComment(c.id); renderComments(TCStore.findEventParam()); },
+          text: '❤ React'
+        })
+      ])
+    ])
+  ]);
+}
+function submitComment(eventId) {
+  const input = document.getElementById('ev-comment-input');
+  if (!input) return;
+  const text = input.value.trim();
+  if (!text) return;
+  let user = TCStore.currentUser();
+  if (!user) {
+    const name = prompt('Your name:');
+    const email = prompt('Your email:');
+    if (!name || !email) return;
+    user = TCStore.setCurrentUser({ name: name, email: email });
+  }
+  const ev = TCStore.eventById(eventId);
+  const isOrg = ev && ev.organiser && ev.organiser.email === user.email;
+  TCStore.createComment({
+    eventId: eventId, authorName: user.name, authorEmail: user.email,
+    isOrganiser: isOrg, text: text
+  });
+  input.value = '';
+  renderComments(ev);
+}
+
+// ── Ratings ────────────────────────────────────────────
+function renderRatings(ev) {
+  // Only show on events that have passed
+  if (!ev.date) return;
+  const evDate = new Date(ev.date + 'T00:00:00');
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const isPast = evDate < today;
+  if (!isPast) return;
+
+  let host = document.getElementById('ev-ratings');
+  if (!host) {
+    host = _el('div', { class: 'card', id: 'ev-ratings', style: 'padding: 28px; margin-top: 24px;' });
+    const comments = document.getElementById('ev-comments');
+    (comments ? comments.parentNode : document.querySelector('.container'))
+      .insertBefore(host, comments ? comments.nextSibling : null);
+  }
+
+  _clear(host);
+  const ratings = TCStore.listRatings(ev.id);
+  const avg = ratings.length ? ratings.reduce((s, r) => s + r.stars, 0) / ratings.length : 0;
+
+  host.appendChild(_el('h4', { style: 'margin-bottom: 14px;', text: '⭐ Ratings' }));
+  if (ratings.length) {
+    host.appendChild(_el('div', { style: 'margin-bottom: 12px;' }, [
+      _el('span', { style: 'font-size: 1.6rem; font-weight: 800; color: var(--coral);', text: avg.toFixed(1) }),
+      _el('span', { style: 'color: var(--slate); margin-left: 8px;', text: ' / 5 · ' + ratings.length + ' review' + (ratings.length === 1 ? '' : 's') })
+    ]));
+    const feed = _el('div', { style: 'display: grid; gap: 10px; margin-bottom: 20px;' });
+    ratings.slice(0, 6).forEach(r => {
+      feed.appendChild(_el('div', { style: 'padding: 12px; background: var(--sand); border-radius: 8px;' }, [
+        _el('div', { class: 'star-row', text: '★'.repeat(r.stars) + '☆'.repeat(5 - r.stars) }),
+        _el('div', { style: 'font-size: 0.82rem; margin-top: 4px; font-style: italic;', text: '"' + (r.text || '') + '"' }),
+        _el('div', { style: 'font-size: 0.72rem; color: var(--slate); margin-top: 4px;', text: '— ' + r.name })
+      ]));
+    });
+    host.appendChild(feed);
+  }
+
+  // Submit form (one rating per email)
+  const form = _el('div', { style: 'border-top: 1px solid var(--sand-dark); padding-top: 16px;' }, [
+    _el('div', { style: 'font-weight: 700; margin-bottom: 8px; font-size: 0.92rem;', text: 'Rate this event' }),
+    _el('div', { id: 'rating-stars-input', class: 'star-row', style: 'margin-bottom: 10px;' }, [1, 2, 3, 4, 5].map(n =>
+      _el('span', { class: 'star', 'data-n': n, onclick: function () { _setRatingInput(n); }, text: '☆' })
+    )),
+    _el('textarea', { id: 'rating-text-input', placeholder: 'Leave a note (optional)', rows: '2', style: 'width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--sand-dark); font-family: inherit;' }),
+    _el('button', { class: 'btn btn-primary btn-sm', style: 'margin-top: 10px;', onclick: function () { submitRating(ev.id); }, text: 'Submit rating' })
+  ]);
+  host.appendChild(form);
+}
+function _setRatingInput(n) {
+  document.querySelectorAll('#rating-stars-input .star').forEach(s => {
+    s.textContent = Number(s.dataset.n) <= n ? '★' : '☆';
+  });
+  window._tcRatingValue = n;
+}
+function submitRating(eventId) {
+  const stars = window._tcRatingValue;
+  if (!stars) { showToast('Pick a star rating first.', 'error'); return; }
+  let user = TCStore.currentUser();
+  if (!user) {
+    const name = prompt('Your name:');
+    const email = prompt('Your email:');
+    if (!name || !email) return;
+    user = TCStore.setCurrentUser({ name: name, email: email });
+  }
+  const text = document.getElementById('rating-text-input').value.trim();
+  TCStore.submitRating({ eventId: eventId, email: user.email, name: user.name, stars: stars, text: text });
+  showToast('Thanks for rating!', 'success');
+  renderRatings(TCStore.eventById(eventId));
+}
+
+// ── Admin Overview (funnel + revenue chart + health + CSV) ──
+function renderAdminOverview() {
+  if (!window.TCStore) return;
+  const ovHost = document.getElementById('admin-overview');
+  if (!ovHost) return;
+
+  // Inject a v3 supplemental panel if not already present
+  if (!document.getElementById('admin-v3-panel')) {
+    const panel = _el('div', { id: 'admin-v3-panel', style: 'margin-top: 32px;' }, [
+      _el('h3', { style: 'margin-bottom: 16px;', text: 'Platform Analytics' }),
+      _el('div', { class: 'grid-2', style: 'gap: 20px; margin-bottom: 24px;' }, [
+        _el('div', { class: 'card', style: 'padding: 24px;' }, [
+          _el('h4', { style: 'margin-bottom: 12px;', text: 'Revenue last 14 days' }),
+          _el('canvas', { id: 'admin-revenue-chart', style: 'max-height: 220px;' })
+        ]),
+        _el('div', { class: 'card', style: 'padding: 24px;' }, [
+          _el('h4', { style: 'margin-bottom: 12px;', text: 'RSVP Funnel' }),
+          _el('div', { id: 'admin-funnel' })
+        ])
+      ]),
+      _el('div', { class: 'card', style: 'padding: 24px; margin-bottom: 24px;' }, [
+        _el('div', { style: 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;' }, [
+          _el('h4', { text: '⚠ Health alerts' }),
+          _el('span', { id: 'admin-alerts-count', class: 'badge badge-coral', text: '0' })
+        ]),
+        _el('div', { id: 'admin-alerts-list' })
+      ]),
+      _el('div', { class: 'card', style: 'padding: 24px;' }, [
+        _el('h4', { style: 'margin-bottom: 12px;', text: '⬇ Export CSV' }),
+        _el('div', { style: 'display: flex; gap: 10px; flex-wrap: wrap;' }, [
+          _el('button', { class: 'btn btn-secondary btn-sm', onclick: () => _csvExport('events'), text: 'Events' }),
+          _el('button', { class: 'btn btn-secondary btn-sm', onclick: () => _csvExport('rsvps'), text: 'RSVPs' }),
+          _el('button', { class: 'btn btn-secondary btn-sm', onclick: () => _csvExport('transactions'), text: 'Transactions' }),
+          _el('button', { class: 'btn btn-secondary btn-sm', onclick: () => _csvExport('payouts'), text: 'Payouts' }),
+          _el('button', { class: 'btn btn-secondary btn-sm', onclick: () => _csvExport('ratings'), text: 'Ratings' })
+        ])
+      ])
+    ]);
+    ovHost.appendChild(panel);
+  }
+
+  _renderRevenueChart();
+  _renderFunnel();
+  _renderHealthAlerts();
+}
+function _csvExport(table) {
+  if (!window.TCExport || !window.TCStore) return;
+  const picks = {
+    events: TCStore.listEvents(),
+    rsvps: TCStore.listRSVPs(),
+    transactions: TCStore.listTransactions(),
+    payouts: TCStore.listPayouts(),
+    ratings: TCStore.listRatings()
+  };
+  const rows = picks[table];
+  if (!rows || !rows.length) { showToast('No ' + table + ' to export.', 'error'); return; }
+  const flattened = rows.map(r => {
+    const out = {};
+    Object.keys(r).forEach(k => {
+      if (typeof r[k] === 'object' && r[k] !== null) out[k] = JSON.stringify(r[k]);
+      else out[k] = r[k];
+    });
+    return out;
+  });
+  TCExport.download('tc-' + table + '-' + new Date().toISOString().slice(0, 10) + '.csv', flattened);
+}
+function _renderRevenueChart() {
+  const canvas = document.getElementById('admin-revenue-chart');
+  if (!canvas || typeof Chart === 'undefined') return;
+  const days = [];
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i); d.setHours(0, 0, 0, 0);
+    days.push(d.getTime());
+  }
+  const dayTotals = days.map(ms => {
+    const dayStart = ms;
+    const dayEnd = ms + 86400000;
+    return TCStore.listTransactions()
+      .filter(t => (t.status === 'verified' || t.status === 'released') && t.type !== 'refund')
+      .filter(t => t.verifiedAt ? (t.verifiedAt >= dayStart && t.verifiedAt < dayEnd) : (t.createdAt >= dayStart && t.createdAt < dayEnd))
+      .reduce((s, t) => s + Number(t.amount || 0), 0);
+  });
+  if (window._tcRevenueChart) window._tcRevenueChart.destroy();
+  window._tcRevenueChart = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: days.map(ms => new Date(ms).toLocaleDateString('en-SG', { day: 'numeric', month: 'short' })),
+      datasets: [{
+        label: 'Verified revenue', data: dayTotals,
+        backgroundColor: '#FF6B6B', borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, ticks: { callback: v => '$' + v } } }
+    }
+  });
+}
+function _renderFunnel() {
+  const host = document.getElementById('admin-funnel');
+  if (!host) return;
+  _clear(host);
+  const f = TCStore.funnelStats();
+  const rsvps = TCStore.listRSVPs().length;
+  const paid = TCStore.listRSVPs().filter(r => r.status === 'verified').length;
+  const steps = [
+    { label: 'Event views', n: f.views || rsvps * 4 },
+    { label: 'RSVP modal opened', n: f.rsvpOpens || rsvps * 2 },
+    { label: 'PayNow QR viewed', n: f.paynowSteps || rsvps },
+    { label: 'Payment verified', n: paid }
+  ];
+  const max = Math.max(1, ...steps.map(s => s.n));
+  steps.forEach(s => {
+    const pct = Math.round((s.n / max) * 100);
+    host.appendChild(_el('div', { style: 'margin-bottom: 12px;' }, [
+      _el('div', { style: 'display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 4px;' }, [
+        _el('span', { text: s.label }),
+        _el('strong', { text: String(s.n) })
+      ]),
+      _el('div', { class: 'progress-bar' }, [
+        _el('div', { class: 'progress-fill', style: 'width: ' + pct + '%;' })
+      ])
+    ]));
+  });
+}
+function _renderHealthAlerts() {
+  const host = document.getElementById('admin-alerts-list');
+  const countEl = document.getElementById('admin-alerts-count');
+  if (!host) return;
+  _clear(host);
+  const alerts = [];
+  // Low-funded events <2 weeks away
+  TCStore.listEvents().forEach(ev => {
+    if (ev.status !== 'live' || !ev.date) return;
+    const d = new Date(ev.date + 'T00:00:00');
+    const days = Math.floor((d - Date.now()) / 86400000);
+    if (days < 0 || days > 14) return;
+    const stats = TCStore.eventStats(ev.id);
+    const expected = (ev.costPerPerson || 0) * (ev.maxGuests || 1);
+    const fundedPct = expected ? (stats.collected / expected) * 100 : 0;
+    if (fundedPct < 40) {
+      alerts.push({
+        kind: 'underfunded',
+        msg: '"' + ev.title + '" is only ' + fundedPct.toFixed(0) + '% funded with ' + days + ' day(s) to go.',
+        href: 'event.html?slug=' + encodeURIComponent(ev.slug)
+      });
+    }
+  });
+  // Overdue reminders
+  const overdue = TCStore.listReminders().filter(r => r.kind === 'overdue' && r.status === 'queued');
+  if (overdue.length > 3) {
+    alerts.push({ kind: 'overdue', msg: overdue.length + ' overdue payment reminders queued — send them.', href: '#admin-reminders' });
+  }
+  // Pending payouts > 3 days old
+  TCStore.listPayouts().filter(p => p.status === 'requested').forEach(p => {
+    const ageDays = (Date.now() - p.createdAt) / 86400000;
+    if (ageDays > 3) {
+      alerts.push({ kind: 'payout_stale', msg: 'Payout ' + p.reference + ' has been waiting ' + Math.floor(ageDays) + ' days.', href: '#admin-payouts' });
+    }
+  });
+
+  if (countEl) countEl.textContent = String(alerts.length);
+  if (!alerts.length) {
+    host.appendChild(_el('div', { style: 'color: var(--slate); font-size: 0.86rem; padding: 12px; text-align: center;', text: 'All systems healthy. No alerts.' }));
+    return;
+  }
+  alerts.forEach(a => {
+    host.appendChild(_el('div', {
+      style: 'padding: 10px 14px; margin-bottom: 8px; background: rgba(255,107,107,0.08); border-left: 3px solid var(--coral); border-radius: 6px; font-size: 0.88rem;'
+    }, [document.createTextNode('⚠ ' + a.msg)]));
+  });
+}
+
+// --- Init (v3 wired) ---
 document.addEventListener('DOMContentLoaded', () => {
+  initTheme();
+  injectThemeToggle();
   initFadeIn();
   try {
     renderEventsGrid();
     renderEventDetailPage();
+    enhanceEventDetailPage();
     renderDashboard();
     renderAdminReconciliation();
     renderAdminLifecycle();
     renderAdminPayouts();
     renderAdminReminders();
+    renderAdminOverview();
   } catch (e) {
     console.error('TC render error:', e);
   }

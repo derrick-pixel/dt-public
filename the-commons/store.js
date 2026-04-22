@@ -23,11 +23,17 @@
     transactions: 'tc:transactions',
     payouts: 'tc:payouts',
     reminders: 'tc:reminders',
+    comments: 'tc:comments',
+    waitlist: 'tc:waitlist',
+    ratings: 'tc:ratings',
+    referrals: 'tc:referrals',
+    analytics: 'tc:analytics',
     currentUser: 'tc:currentUser',
+    theme: 'tc:theme',
     seeded: 'tc:seeded',
     seededVersion: 'tc:seededVersion'
   };
-  const SEED_VERSION = '3';
+  const SEED_VERSION = '4';
 
   // ── IO helpers ─────────────────────────────────────────
   function read(key) {
@@ -262,6 +268,153 @@
     list[i] = Object.assign({}, list[i], changes);
     write(KEYS.reminders, list);
     return list[i];
+  }
+
+  // ── Comments / Q&A ─────────────────────────────────────
+  function listComments(eventId) {
+    const all = read(KEYS.comments);
+    return eventId ? all.filter(c => c.eventId === eventId) : all;
+  }
+  function createComment(data) {
+    const list = read(KEYS.comments);
+    const c = Object.assign({
+      id: uid('cm'), createdAt: Date.now(),
+      parentId: null, reactions: 0
+    }, data);
+    list.push(c);
+    write(KEYS.comments, list);
+    return c;
+  }
+  function reactToComment(id) {
+    const list = read(KEYS.comments);
+    const i = list.findIndex(c => c.id === id);
+    if (i < 0) return null;
+    list[i].reactions = (list[i].reactions || 0) + 1;
+    write(KEYS.comments, list);
+    return list[i];
+  }
+
+  // ── Waitlist ───────────────────────────────────────────
+  function listWaitlist(eventId) {
+    const all = read(KEYS.waitlist);
+    return eventId ? all.filter(w => w.eventId === eventId) : all;
+  }
+  function joinWaitlist(eventId, payer) {
+    const list = read(KEYS.waitlist);
+    if (list.find(w => w.eventId === eventId && w.email === payer.email)) return null;
+    const position = list.filter(w => w.eventId === eventId).length + 1;
+    const w = {
+      id: uid('wl'), eventId: eventId,
+      name: payer.name, email: payer.email, phone: payer.phone || '',
+      position: position, createdAt: Date.now(), status: 'waiting'
+    };
+    list.push(w);
+    write(KEYS.waitlist, list);
+    return w;
+  }
+  // Auto-promote: if RSVP count drops below capacity and waitlist is non-empty,
+  // mark first position 'promoted' so admin/organiser can trigger the real invite.
+  function promoteNextFromWaitlist(eventId) {
+    const ev = eventById(eventId);
+    if (!ev) return null;
+    const live = listRSVPs(eventId).filter(r => r.status !== 'refunded' && r.status !== 'cancelled').length;
+    if (live >= (ev.maxGuests || Infinity)) return null;
+    const waiters = listWaitlist(eventId).filter(w => w.status === 'waiting')
+      .sort((a, b) => a.position - b.position);
+    if (!waiters.length) return null;
+    const list = read(KEYS.waitlist);
+    const idx = list.findIndex(x => x.id === waiters[0].id);
+    list[idx].status = 'promoted';
+    list[idx].promotedAt = Date.now();
+    write(KEYS.waitlist, list);
+    return list[idx];
+  }
+
+  // ── Ratings ────────────────────────────────────────────
+  function listRatings(eventId) {
+    const all = read(KEYS.ratings);
+    return eventId ? all.filter(r => r.eventId === eventId) : all;
+  }
+  function submitRating(data) {
+    const list = read(KEYS.ratings);
+    // One rating per (eventId, email)
+    const dup = list.find(r => r.eventId === data.eventId && r.email === data.email);
+    if (dup) {
+      dup.stars = data.stars;
+      dup.text = data.text;
+      dup.updatedAt = Date.now();
+      write(KEYS.ratings, list);
+      return dup;
+    }
+    const r = Object.assign({
+      id: uid('rt'), createdAt: Date.now()
+    }, data);
+    list.push(r);
+    write(KEYS.ratings, list);
+    return r;
+  }
+  function organiserRatingStats(email) {
+    const events = eventsByOrganiser(email);
+    const eventIds = events.map(e => e.id);
+    const allRatings = read(KEYS.ratings).filter(r => eventIds.includes(r.eventId));
+    if (!allRatings.length) return { avg: 0, count: 0 };
+    const sum = allRatings.reduce((s, r) => s + Number(r.stars || 0), 0);
+    return { avg: sum / allRatings.length, count: allRatings.length };
+  }
+
+  // ── Referrals ──────────────────────────────────────────
+  function listReferrals(filter) {
+    const all = read(KEYS.referrals);
+    if (!filter) return all;
+    return all.filter(r => Object.keys(filter).every(k => r[k] === filter[k]));
+  }
+  function recordReferral(data) {
+    const list = read(KEYS.referrals);
+    const r = Object.assign({
+      id: uid('ref'), createdAt: Date.now(), converted: false
+    }, data);
+    list.push(r);
+    write(KEYS.referrals, list);
+    return r;
+  }
+  function convertReferral(email, eventId) {
+    const list = read(KEYS.referrals);
+    // Find latest non-converted referral click for this event + visitor
+    const match = list.slice().reverse().find(r =>
+      r.eventId === eventId && r.visitorEmail === email && !r.converted
+    );
+    if (!match) return null;
+    match.converted = true;
+    match.convertedAt = Date.now();
+    write(KEYS.referrals, list);
+    return match;
+  }
+  function referralStats(refCode) {
+    const clicks = listReferrals({ refCode: refCode });
+    return {
+      clicks: clicks.length,
+      converted: clicks.filter(r => r.converted).length
+    };
+  }
+
+  // ── Analytics (funnel) ─────────────────────────────────
+  function logEvent(kind, data) {
+    const list = read(KEYS.analytics);
+    list.push({
+      id: uid('a'), kind: kind, at: Date.now(),
+      data: data || {}
+    });
+    // Cap at 2000 to prevent bloat
+    if (list.length > 2000) list.splice(0, list.length - 2000);
+    write(KEYS.analytics, list);
+  }
+  function funnelStats() {
+    const events = read(KEYS.analytics);
+    const views = events.filter(e => e.kind === 'event_view').length;
+    const modals = events.filter(e => e.kind === 'rsvp_open').length;
+    const paidClicks = events.filter(e => e.kind === 'rsvp_paynow').length;
+    const confirms = events.filter(e => e.kind === 'rsvp_confirmed').length;
+    return { views: views, rsvpOpens: modals, paynowSteps: paidClicks, confirms: confirms };
   }
 
   // ── Lifecycle: escrow release ──────────────────────────
@@ -746,6 +899,37 @@
     write(KEYS.bookings, allBookings);
     write(KEYS.payouts, []);
     write(KEYS.reminders, []);
+    write(KEYS.analytics, []);
+    write(KEYS.referrals, []);
+
+    // Seed a few comments on the yacht event so the Q&A tab isn't empty.
+    const commentsSeed = [
+      { id: 'cm-1', eventId: 'evt-yacht', authorName: 'Jamie Ong', authorEmail: 'jamie@thecommons.asia', isOrganiser: true,
+        text: 'Meeting point confirmed: ONE°15 Marina jetty A3. Please arrive 15 min early for the safety brief!',
+        createdAt: Date.now() - 86400000 * 4, parentId: null, reactions: 7 },
+      { id: 'cm-2', eventId: 'evt-yacht', authorName: 'Priya Kumar', authorEmail: 'priya@example.com', isOrganiser: false,
+        text: 'Any vegetarian BBQ options? Asking for two of us.',
+        createdAt: Date.now() - 86400000 * 3, parentId: null, reactions: 2 },
+      { id: 'cm-3', eventId: 'evt-yacht', authorName: 'Jamie Ong', authorEmail: 'jamie@thecommons.asia', isOrganiser: true,
+        text: 'Yes — grilled portobello + haloumi skewers + chef Rajan is also prepping paneer tikka. DM dietary notes.',
+        createdAt: Date.now() - 86400000 * 2, parentId: 'cm-2', reactions: 4 }
+    ];
+    write(KEYS.comments, commentsSeed);
+
+    // Seed a couple of completed-event ratings for past event so organiser
+    // rating stats are non-zero on first load.
+    const ratingsSeed = [
+      { id: 'rt-1', eventId: 'evt-past', email: 'gabe@example.com', name: 'Gabriel Lim',
+        stars: 5, text: 'Perfect golden hour. The picnic spread was thoughtful.', createdAt: Date.now() - 86400000 * 2 },
+      { id: 'rt-2', eventId: 'evt-past', email: 'yasmin@example.com', name: 'Yasmin Iskandar',
+        stars: 5, text: 'Jamie always runs a tight ship. Already signed up for the next one.', createdAt: Date.now() - 86400000 * 1 },
+      { id: 'rt-3', eventId: 'evt-past', email: 'derek@example.com', name: 'Derek Chua',
+        stars: 4, text: 'Great vibe. Ran 20 min behind schedule but worth it.', createdAt: Date.now() - 86400000 * 2 }
+    ];
+    write(KEYS.ratings, ratingsSeed);
+
+    // Seed empty waitlist
+    write(KEYS.waitlist, []);
 
     localStorage.setItem(KEYS.seeded, '1');
     localStorage.setItem(KEYS.seededVersion, SEED_VERSION);
@@ -783,6 +967,17 @@
     markPayoutSent: markPayoutSent, rejectPayout: rejectPayout,
     // reminders
     listReminders: listReminders, createReminder: createReminder, updateReminder: updateReminder,
+    // comments
+    listComments: listComments, createComment: createComment, reactToComment: reactToComment,
+    // waitlist
+    listWaitlist: listWaitlist, joinWaitlist: joinWaitlist, promoteNextFromWaitlist: promoteNextFromWaitlist,
+    // ratings
+    listRatings: listRatings, submitRating: submitRating, organiserRatingStats: organiserRatingStats,
+    // referrals
+    listReferrals: listReferrals, recordReferral: recordReferral,
+    convertReferral: convertReferral, referralStats: referralStats,
+    // analytics
+    logEvent: logEvent, funnelStats: funnelStats,
     // aggregates
     eventStats: eventStats, platformStats: platformStats,
     // utils
@@ -790,7 +985,8 @@
     // danger: full reset
     resetAll: function () {
       [KEYS.events, KEYS.rsvps, KEYS.bookings, KEYS.transactions, KEYS.payouts,
-       KEYS.reminders, KEYS.currentUser, KEYS.seeded, KEYS.seededVersion]
+       KEYS.reminders, KEYS.comments, KEYS.waitlist, KEYS.ratings, KEYS.referrals,
+       KEYS.analytics, KEYS.currentUser, KEYS.seeded, KEYS.seededVersion]
         .forEach(k => localStorage.removeItem(k));
       window.dispatchEvent(new CustomEvent('tc:reset'));
     }
