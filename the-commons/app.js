@@ -284,6 +284,8 @@ function copyShareLink() {
 function openRSVPModal() {
   const modal = document.getElementById('rsvpModal');
   if (modal) modal.classList.add('open');
+  // Reset to form step whenever modal reopens
+  backToRSVPForm();
 }
 
 function closeRSVPModal() {
@@ -291,12 +293,62 @@ function closeRSVPModal() {
   if (modal) modal.classList.remove('open');
 }
 
-function confirmRSVP() {
-  closeRSVPModal();
-  showToast('You\'re in! Deposit of $50 secured in escrow.', 'success');
+function backToRSVPForm() {
+  const step1 = document.getElementById('rsvpStepForm');
+  const step2 = document.getElementById('rsvpStepPayNow');
+  if (step1) step1.style.display = 'block';
+  if (step2) step2.style.display = 'none';
 }
 
-// --- Booking Modal ---
+// Build PayNow QR for the RSVP deposit step.
+// opts: { amount, eventTitle, balanceDue, refPrefix }
+function proceedToPayNow(opts) {
+  opts = opts || {};
+  const agreeEl = document.getElementById('rsvp-agree');
+  if (agreeEl && !agreeEl.checked) {
+    showToast('Please agree to the escrow terms first.', 'error');
+    return;
+  }
+
+  const amount = opts.amount || 50;
+  const reference = (window.TCPayNow && TCPayNow.makeReference(opts.refPrefix || 'TC-RSVP')) || 'TC-RSVP';
+
+  // Update on-screen details
+  const amtFmt = '$' + amount.toFixed(2) + ' SGD';
+  const amtShort = '$' + amount.toFixed(2);
+  const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  setText('payAmount', amtFmt);
+  setText('payAmountInline', amtShort);
+  setText('payReference', reference);
+  setText('payRefInline', reference);
+
+  // Render QR
+  const host = document.getElementById('paynowQrHost');
+  if (host && window.TCPayNow) {
+    TCPayNow.render(host, { amount: amount, reference: reference });
+  }
+
+  // Swap step visibility
+  const step1 = document.getElementById('rsvpStepForm');
+  const step2 = document.getElementById('rsvpStepPayNow');
+  if (step1) step1.style.display = 'none';
+  if (step2) step2.style.display = 'block';
+
+  // Persist for confirmRSVP
+  window._tcRSVPPending = {
+    amount: amount, reference: reference, eventTitle: opts.eventTitle || 'Event',
+    balanceDue: opts.balanceDue || 0
+  };
+}
+
+function confirmRSVP() {
+  const p = window._tcRSVPPending || { amount: 50, reference: '—' };
+  closeRSVPModal();
+  showToast('Deposit of $' + p.amount.toFixed(2) + ' received. Ref: ' + p.reference, 'success');
+  window._tcRSVPPending = null;
+}
+
+// --- Booking Modal (marketplace) ---
 function openBookingModal(name, price) {
   const modal = document.getElementById('bookingModal');
   const title = document.getElementById('bookingTitle');
@@ -304,6 +356,8 @@ function openBookingModal(name, price) {
   if (title) title.textContent = `Book ${name}`;
   if (priceEl) priceEl.textContent = price;
   if (modal) modal.classList.add('open');
+  backToBookingForm();
+  window._tcBookingMeta = { name: name, price: price };
 }
 
 function closeBookingModal() {
@@ -311,9 +365,51 @@ function closeBookingModal() {
   if (modal) modal.classList.remove('open');
 }
 
+function backToBookingForm() {
+  const step1 = document.getElementById('bookingStepForm');
+  const step2 = document.getElementById('bookingStepPayNow');
+  if (step1) step1.style.display = 'block';
+  if (step2) step2.style.display = 'none';
+}
+
+// Parse price like "$300", "$25/pax", "$300-500" — returns number best-effort.
+function _parsePriceSGD(price) {
+  if (!price) return 0;
+  const m = String(price).match(/\d+(?:\.\d+)?/);
+  return m ? Number(m[0]) : 0;
+}
+
+function proceedToBookingPayNow(opts) {
+  opts = opts || {};
+  const meta = window._tcBookingMeta || { name: 'Provider', price: '$0' };
+  const amount = opts.amount != null ? opts.amount : _parsePriceSGD(meta.price);
+  const reference = (window.TCPayNow && TCPayNow.makeReference('TC-BOOK')) || 'TC-BOOK';
+
+  const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  setText('bookPayAmount', '$' + amount.toFixed(2) + ' SGD');
+  setText('bookPayAmountInline', '$' + amount.toFixed(2));
+  setText('bookPayReference', reference);
+  setText('bookPayRefInline', reference);
+  setText('bookPayProvider', meta.name);
+
+  const host = document.getElementById('bookingPaynowQrHost');
+  if (host && window.TCPayNow) {
+    TCPayNow.render(host, { amount: amount, reference: reference });
+  }
+
+  const step1 = document.getElementById('bookingStepForm');
+  const step2 = document.getElementById('bookingStepPayNow');
+  if (step1) step1.style.display = 'none';
+  if (step2) step2.style.display = 'block';
+
+  window._tcBookingPending = { amount: amount, reference: reference, name: meta.name };
+}
+
 function confirmBooking() {
+  const p = window._tcBookingPending || { amount: 0, reference: '—', name: 'Provider' };
   closeBookingModal();
-  showToast('Booking request sent! Provider will confirm within 24h.', 'success');
+  showToast('Booking confirmed with ' + p.name + '. Ref: ' + p.reference, 'success');
+  window._tcBookingPending = null;
 }
 
 // --- Provider Signup Modal ---

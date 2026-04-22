@@ -317,54 +317,94 @@
   <!-- RSVP Modal -->
   <div class="modal-overlay" id="rsvpModal">
     <div class="modal">
-      <div class="modal-header">
-        <h3>&#127881; Join Sunset Yacht Party</h3>
-        <button class="modal-close" onclick="closeRSVPModal()">&times;</button>
-      </div>
-      <div style="background: var(--sand); border-radius: var(--radius-sm); padding: 20px; margin-bottom: 24px;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-          <span>Cost per person</span>
-          <strong>$180 SGD</strong>
+      <!-- Step 1: Form -->
+      <div id="rsvpStepForm">
+        <div class="modal-header">
+          <h3>&#127881; Join Sunset Yacht Party</h3>
+          <button class="modal-close" onclick="closeRSVPModal()">&times;</button>
         </div>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-          <span>Deposit due now</span>
-          <strong style="color: var(--coral);">$50 SGD</strong>
+        <div style="background: var(--sand); border-radius: var(--radius-sm); padding: 20px; margin-bottom: 24px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span>Cost per person</span>
+            <strong>$180 SGD</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span>Deposit due now</span>
+            <strong style="color: var(--coral);">$50 SGD</strong>
+          </div>
+          <div style="font-size: 0.8rem; color: var(--slate); margin-top: 8px;">
+            Remaining $130 due in 2 milestones before event day
+          </div>
         </div>
-        <div style="font-size: 0.8rem; color: var(--slate); margin-top: 8px;">
-          Remaining $130 due in 2 milestones before event day
+
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="rsvp-name" placeholder="Full name">
         </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="rsvp-email" placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label>Phone (for updates)</label>
+          <input type="tel" id="rsvp-phone" placeholder="+65 9xxx xxxx">
+        </div>
+
+        <div style="background: rgba(0, 210, 255, 0.06); border: 1px solid rgba(0, 210, 255, 0.2); border-radius: var(--radius-sm); padding: 16px; margin: 20px 0;">
+          <div style="display: flex; align-items: start; gap: 10px;">
+            <span>&#128274;</span>
+            <p style="font-size: 0.8rem; margin: 0;">Your $50 deposit goes into escrow at <strong>The Commons (PayNow 9100&nbsp;2050)</strong>. If the event is cancelled, you get a full refund. Payment reminders sent 48h before each milestone.</p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="rsvp-agree">
+            I agree to the payment schedule and escrow terms
+          </label>
+        </div>
+
+        <button class="btn btn-primary btn-lg" style="width: 100%;" onclick="proceedToPayNow({ amount: 50, eventTitle: 'Sunset Yacht Party', balanceDue: 130 })">
+          Continue to PayNow &#8594;
+        </button>
       </div>
 
-      <div class="form-group">
-        <label>Your Name</label>
-        <input type="text" placeholder="Full name">
-      </div>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" placeholder="you@example.com">
-      </div>
-      <div class="form-group">
-        <label>Phone (for updates)</label>
-        <input type="tel" placeholder="+65 9xxx xxxx">
-      </div>
+      <!-- Step 2: PayNow QR -->
+      <div id="rsvpStepPayNow" style="display: none;">
+        <div class="modal-header">
+          <h3>&#128274; Pay via PayNow</h3>
+          <button class="modal-close" onclick="closeRSVPModal()">&times;</button>
+        </div>
 
-      <div style="background: rgba(0, 210, 255, 0.06); border: 1px solid rgba(0, 210, 255, 0.2); border-radius: var(--radius-sm); padding: 16px; margin: 20px 0;">
-        <div style="display: flex; align-items: start; gap: 10px;">
-          <span>&#128274;</span>
-          <p style="font-size: 0.8rem; margin: 0;">Your $50 deposit goes into escrow. If the event is cancelled, you get a full refund. Payment reminders will be sent 48h before each milestone.</p>
+        <div style="background: var(--sand); border-radius: var(--radius-sm); padding: 16px 20px; margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <div style="font-size: 0.7rem; color: var(--slate); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;">Amount due</div>
+              <div style="font-size: 1.8rem; font-weight: 900; color: var(--coral); line-height: 1.1; margin-top: 4px;" id="payAmount">$50.00 SGD</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 0.7rem; color: var(--slate); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;">Reference</div>
+              <div style="font-family: ui-monospace, monospace; font-size: 0.9rem; font-weight: 700; color: var(--navy); margin-top: 6px;" id="payReference">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: center; margin: 8px 0 20px;" id="paynowQrHost"></div>
+
+        <div style="background: rgba(255, 142, 83, 0.08); border: 1px solid rgba(255, 142, 83, 0.3); border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 16px;">
+          <div style="font-size: 0.72rem; color: var(--slate); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-bottom: 6px;">Manual instructions</div>
+          <div style="font-size: 0.88rem; color: var(--navy); line-height: 1.6;">
+            PayNow to mobile <strong style="font-family: ui-monospace, monospace;">9100&nbsp;2050</strong> (The Commons)<br/>
+            Reference: <strong style="font-family: ui-monospace, monospace;" id="payRefInline">—</strong><br/>
+            Exact amount: <strong id="payAmountInline">$50.00</strong>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <button class="btn btn-outline btn-lg" onclick="backToRSVPForm()">&#8592; Back</button>
+          <button class="btn btn-primary btn-lg" onclick="confirmRSVP()">I&rsquo;ve Paid &#10003;</button>
         </div>
       </div>
-
-      <div class="form-group">
-        <label class="checkbox-label">
-          <input type="checkbox">
-          I agree to the payment schedule and escrow terms
-        </label>
-      </div>
-
-      <button class="btn btn-primary btn-lg" style="width: 100%;" onclick="confirmRSVP()">
-        Pay $50 Deposit & Join &#8594;
-      </button>
     </div>
   </div>
 
@@ -391,6 +431,8 @@
 
   <div class="toast" id="toast"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" integrity="sha384-Izc791esqyEy3BEIC42q7jbE0AaOkACziN+dyyXgYeDmpeMCLz0xA+xYN3aCd5zz" crossorigin="anonymous"></script>
+  <script src="paynow.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

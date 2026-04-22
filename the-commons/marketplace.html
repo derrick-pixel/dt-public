@@ -290,44 +290,93 @@
   <!-- Booking Modal -->
   <div class="modal-overlay" id="bookingModal">
     <div class="modal">
-      <div class="modal-header">
-        <h3 id="bookingTitle">Book Provider</h3>
-        <button class="modal-close" onclick="closeBookingModal()">&times;</button>
+      <!-- Step 1: Form -->
+      <div id="bookingStepForm">
+        <div class="modal-header">
+          <h3 id="bookingTitle">Book Provider</h3>
+          <button class="modal-close" onclick="closeBookingModal()">&times;</button>
+        </div>
+        <div style="background: var(--sand); border-radius: var(--radius-sm); padding: 20px; margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between;">
+            <span>Starting from</span>
+            <strong id="bookingPrice">$300</strong>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Select Your Event</label>
+          <select>
+            <option>Sunset Yacht Party — Apr 26</option>
+            <option>Rooftop Cocktail Night — May 24</option>
+            <option>+ Create New Event</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Event Date</label>
+          <input type="date">
+        </div>
+        <div class="form-group">
+          <label>Expected Guests</label>
+          <input type="number" placeholder="e.g. 25">
+        </div>
+        <div class="form-group">
+          <label>Special Requests</label>
+          <textarea placeholder="Any specific requirements, song requests, dietary needs..." rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label>How should this be funded?</label>
+          <select>
+            <option>Include in per-person event cost</option>
+            <option>Pay separately (organiser covers)</option>
+          </select>
+        </div>
+        <div style="background: rgba(0, 210, 255, 0.06); border: 1px solid rgba(0, 210, 255, 0.2); border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 20px;">
+          <div style="font-size: 0.8rem; color: var(--slate); line-height: 1.6;">
+            &#128274; <strong>Escrow booking</strong> — your deposit is held by The Commons (PayNow 9100&nbsp;2050) until the provider confirms the date. No-show from them? Full refund.
+          </div>
+        </div>
+        <button class="btn btn-primary btn-lg" style="width: 100%;" onclick="proceedToBookingPayNow()">Continue to PayNow &#8594;</button>
       </div>
-      <div style="background: var(--sand); border-radius: var(--radius-sm); padding: 20px; margin-bottom: 20px;">
-        <div style="display: flex; justify-content: space-between;">
-          <span>Starting from</span>
-          <strong id="bookingPrice">$300</strong>
+
+      <!-- Step 2: PayNow QR -->
+      <div id="bookingStepPayNow" style="display: none;">
+        <div class="modal-header">
+          <h3>&#128274; Pay Booking Deposit</h3>
+          <button class="modal-close" onclick="closeBookingModal()">&times;</button>
+        </div>
+
+        <div style="background: var(--sand); border-radius: var(--radius-sm); padding: 16px 20px; margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+            <div>
+              <div style="font-size: 0.7rem; color: var(--slate); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;">Booking</div>
+              <div style="font-size: 1rem; font-weight: 700; color: var(--navy); margin-top: 4px;" id="bookPayProvider">Provider</div>
+            </div>
+            <div>
+              <div style="font-size: 0.7rem; color: var(--slate); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;">Amount</div>
+              <div style="font-size: 1.5rem; font-weight: 900; color: var(--coral); line-height: 1.1; margin-top: 4px;" id="bookPayAmount">$0.00</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 0.7rem; color: var(--slate); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;">Reference</div>
+              <div style="font-family: ui-monospace, monospace; font-size: 0.88rem; font-weight: 700; color: var(--navy); margin-top: 6px;" id="bookPayReference">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: center; margin: 8px 0 20px;" id="bookingPaynowQrHost"></div>
+
+        <div style="background: rgba(255, 142, 83, 0.08); border: 1px solid rgba(255, 142, 83, 0.3); border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 16px;">
+          <div style="font-size: 0.72rem; color: var(--slate); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-bottom: 6px;">Manual instructions</div>
+          <div style="font-size: 0.88rem; color: var(--navy); line-height: 1.6;">
+            PayNow to mobile <strong style="font-family: ui-monospace, monospace;">9100&nbsp;2050</strong> (The Commons)<br/>
+            Reference: <strong style="font-family: ui-monospace, monospace;" id="bookPayRefInline">—</strong><br/>
+            Exact amount: <strong id="bookPayAmountInline">$0.00</strong>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <button class="btn btn-outline btn-lg" onclick="backToBookingForm()">&#8592; Back</button>
+          <button class="btn btn-primary btn-lg" onclick="confirmBooking()">I&rsquo;ve Paid &#10003;</button>
         </div>
       </div>
-      <div class="form-group">
-        <label>Select Your Event</label>
-        <select>
-          <option>Sunset Yacht Party — Apr 26</option>
-          <option>Rooftop Cocktail Night — May 24</option>
-          <option>+ Create New Event</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Event Date</label>
-        <input type="date">
-      </div>
-      <div class="form-group">
-        <label>Expected Guests</label>
-        <input type="number" placeholder="e.g. 25">
-      </div>
-      <div class="form-group">
-        <label>Special Requests</label>
-        <textarea placeholder="Any specific requirements, song requests, dietary needs..." rows="3"></textarea>
-      </div>
-      <div class="form-group">
-        <label>How should this be funded?</label>
-        <select>
-          <option>Include in per-person event cost</option>
-          <option>Pay separately (organiser covers)</option>
-        </select>
-      </div>
-      <button class="btn btn-primary btn-lg" style="width: 100%;" onclick="confirmBooking()">Send Booking Request &#8594;</button>
     </div>
   </div>
 
@@ -396,6 +445,8 @@
 
   <div class="toast" id="toast"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" integrity="sha384-Izc791esqyEy3BEIC42q7jbE0AaOkACziN+dyyXgYeDmpeMCLz0xA+xYN3aCd5zz" crossorigin="anonymous"></script>
+  <script src="paynow.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
