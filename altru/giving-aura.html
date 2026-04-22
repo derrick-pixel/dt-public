@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Giving Aura — Altru</title>
+  <meta property="og:title" content="Our Wedding Giving Aura — Altru" />
+  <meta property="og:description" content="We're celebrating our wedding by giving back. Join us in blessing a charity we love. Send your red packet gift via PayNow." />
+  <meta property="og:image" content="https://derrick-pixel.github.io/altru/images/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://derrick-pixel.github.io/altru/giving-aura.html" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://derrick-pixel.github.io/altru/images/og-image.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    /* ── Giving Aura exclusive styles ── */
+    .aura-page { background: var(--bg); }
+
+    .aura-petals {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .petal {
+      position: absolute;
+      font-size: 1.2rem;
+      opacity: 0;
+      animation: fall linear infinite;
+    }
+    @keyframes fall {
+      0%   { transform: translateY(-40px) rotate(0deg);   opacity: 0.7; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0;   }
+    }
+
+    .couple-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 50px;
+      padding: 0.5rem 1.25rem;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.9);
+      backdrop-filter: blur(6px);
+      margin-bottom: 1rem;
+    }
+
+    .aura-charity-showcase {
+      background: white;
+      border: 2px solid var(--gold);
+      border-radius: var(--radius);
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(201,151,58,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    .aura-charity-showcase::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--gold-light), var(--red-light));
+      opacity: 0.5;
+    }
+    .aura-charity-showcase > * { position: relative; z-index: 1; }
+
+    .aura-charity-big-icon {
+      font-size: 4rem;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .donor-wall {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+    .donor-bubble {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.75rem 0.5rem;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 8px var(--shadow);
+      text-align: center;
+    }
+    .donor-bubble-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--red-mid), var(--pink));
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .donor-bubble-name { font-size: 0.8rem; font-weight: 700; color: var(--text); }
+    .donor-bubble-amt  { font-size: 0.75rem; color: var(--red); font-weight: 700; }
+
+    .gift-cta-card {
+      background: linear-gradient(135deg, #3D0812 0%, #9B0B20 50%, #C8102E 100%);
+      border-radius: var(--radius);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    .gift-cta-card::before {
+      content: '囍';
+      position: absolute;
+      font-size: 12rem;
+      opacity: 0.06;
+      bottom: -2rem;
+      right: -1rem;
+      user-select: none;
+    }
+    .gift-cta-card h2 { color: white; margin-bottom: 0.75rem; }
+    .gift-cta-card p  { color: rgba(255,255,255,0.8); margin-bottom: 1.75rem; }
+
+    .milestone-row {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+    .milestone {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      background: var(--gold-light);
+      color: var(--gold);
+      border: 1px solid var(--gold);
+    }
+    .milestone.reached { background: var(--red-light); color: var(--red); border-color: var(--red); }
+
+    .not-found-view { text-align: center; padding: 5rem 1.25rem; }
+  </style>
+  <!-- Favicon set -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
+  <link rel="mask-icon" href="safari-pinned-tab.svg" color="#dc2626" />
+  <meta name="theme-color" content="#fef3c7" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body class="aura-page">
+
+  <!-- ─── Header ─────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <img src="altru-logo.jpg" alt="Altru" class="logo-img">
+        Altru
+      </a>
+      <button class="menu-toggle" id="menuToggle" onclick="toggleMenu()" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav-links" id="mainNav">
+        <a href="index.html">Home</a>
+        <a href="angbao-guide.html">Ang Bao Guide 🧧</a>
+        <a href="wedding-venues.html">Venue Guide 🏨</a>
+        <a href="donor.html">Send a Gift</a>
+        <a href="giving-weddings.html">Giving Stories ✨</a>
+        <a href="couple.html" class="btn btn-primary btn-sm">💍 I'm Getting Married</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ─── NOT FOUND ───────────────────────────────────────── -->
+  <div id="viewNotFound" class="hidden">
+    <div class="not-found-view">
+      <div style="font-size:4rem;margin-bottom:1rem;">🔍</div>
+      <h2>Page Not Found</h2>
+      <p class="lead mb-3">We couldn't find this couple's Giving Aura page.</p>
+      <a href="index.html" class="btn btn-primary">← Go Home</a>
+    </div>
+  </div>
+
+  <!-- ─── GIVING AURA PAGE ─────────────────────────────────── -->
+  <div id="viewAura" class="hidden">
+
+    <!-- Hero -->
+    <div class="aura-hero" style="position:relative;">
+      <div class="aura-petals" id="petalsContainer"></div>
+      <div class="container" style="position:relative;z-index:1;">
+        <div class="couple-badge">
+          <span>💍</span>
+          <span id="auraBadgeDate">Celebrating Love &amp; Giving</span>
+        </div>
+        <div class="aura-hearts">🌸 ❤️ 🌸</div>
+        <div class="aura-couple-names" id="auraCoupleName">— &amp; —</div>
+        <div class="aura-subtitle" id="auraSubtitle">invite you to give with heart on their big day</div>
+      </div>
+    </div>
+
+    <main class="section-sm">
+      <div class="container-sm">
+
+        <!-- Couple's Charity Showcase -->
+        <div class="aura-charity-showcase mb-3 fade-in-up">
+          <span class="caption text-muted" style="letter-spacing:0.08em;text-transform:uppercase;font-weight:700;">Our Giving Wish</span>
+          <div class="aura-charity-big-icon" id="auraCharityIcon">🤝</div>
+          <h2 id="auraCharityName" style="color:var(--text);margin-bottom:0.4rem;">—</h2>
+          <p id="auraCharityDesc" class="mb-3">—</p>
+          <span class="badge badge-gold">IPC Certified · 250% Tax Deductible</span>
+        </div>
+
+        <!-- Fundraising Progress -->
+        <div class="card mb-3 fade-in-up">
+          <div class="card-body">
+            <div class="d-flex justify-between align-center mb-2">
+              <h4 style="margin:0;color:var(--red);">💝 Giving Progress</h4>
+              <span class="badge badge-red" id="auraGiftCount">0 gifts</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="auraProgress" style="width:0%"></div>
+            </div>
+            <div class="d-flex justify-between caption text-muted mt-1 mb-2">
+              <span><strong id="auraRaised" class="text-red">S$0</strong> raised for charity</span>
+              <span>Goal: <strong id="auraGoal">—</strong></span>
+            </div>
+
+            <!-- Milestones -->
+            <div class="milestone-row" id="auraMilestones"></div>
+          </div>
+        </div>
+
+        <!-- Donor Wall -->
+        <div class="card mb-3 fade-in-up">
+          <div class="card-header">
+            <h4 style="margin:0;color:var(--red);">🧧 Givers Wall</h4>
+          </div>
+          <div class="card-body">
+            <p class="caption text-muted mb-2">Those who have given with heart:</p>
+            <div class="donor-wall" id="auraDonorWall">
+              <p class="text-muted caption">Be the first to give!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA Card -->
+        <div class="gift-cta-card fade-in-up">
+          <div style="font-size:2rem;margin-bottom:0.75rem;">🧧</div>
+          <h2>Send a Meaningful Gift</h2>
+          <p id="ctaDesc">Give a red packet that blesses both the couple and a charity in their name.</p>
+          <a id="ctaSendBtn" href="donor.html" class="btn btn-gold btn-lg pulse">
+            🌸 Send an Altru Gift
+          </a>
+          <div class="mt-3">
+            <p style="color:rgba(255,255,255,0.6);font-size:0.82rem;">
+              Part of your gift goes directly to the couple.<br>
+              The rest is donated to <strong id="ctaCharityName" style="color:var(--pink);">their chosen charity</strong> in their name — with <a href="https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-reliefs-rebates-and-deductions/deductions-on-donations" target="_blank" rel="noopener" style="color:var(--pink);font-weight:700;">250% tax relief</a> for them.
+            </p>
+          </div>
+        </div>
+
+        <!-- How it works (condensed) -->
+        <div class="card mt-3 fade-in-up">
+          <div class="card-body">
+            <h4 style="color:var(--red);margin-bottom:1rem;">How an Altru gift works</h4>
+            <div style="display:flex;flex-direction:column;gap:0.75rem;">
+              <div class="d-flex align-center gap-1">
+                <span style="font-size:1.4rem;width:2rem;text-align:center;">🧧</span>
+                <div><strong>You choose an amount</strong> — e.g. S$188 or S$388</div>
+              </div>
+              <div class="d-flex align-center gap-1">
+                <span style="font-size:1.4rem;width:2rem;text-align:center;">⚖️</span>
+                <div><strong>You set the split</strong> — how much to the couple, how much to charity</div>
+              </div>
+              <div class="d-flex align-center gap-1">
+                <span style="font-size:1.4rem;width:2rem;text-align:center;">💳</span>
+                <div><strong>Pay via PayNow</strong> — scan QR and transfer instantly</div>
+              </div>
+              <div class="d-flex align-center gap-1">
+                <span style="font-size:1.4rem;width:2rem;text-align:center;">🏛️</span>
+                <div><strong>Couple gets tax relief</strong> — <a href="https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-reliefs-rebates-and-deductions/deductions-on-donations" target="_blank" rel="noopener" style="color:var(--pink);font-weight:700;">250% deduction</a> on the charity portion</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Share this page -->
+        <div class="card mt-3 mb-4 fade-in-up" style="background:var(--red-light);border-color:var(--red);">
+          <div class="card-body text-center">
+            <p class="fw-bold mb-2" style="color:var(--red);">Know someone attending this wedding?</p>
+            <p class="caption text-muted mb-2">Share this Giving Aura page with them too! 💌</p>
+            <button class="btn btn-primary" onclick="shareThisPage()">📤 Share This Page</button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ─── Footer ─────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <p>囍 Altru &nbsp;|&nbsp; <a href="index.html">Home</a> &nbsp;·&nbsp; <a href="donor.html">Send a Gift</a></p>
+  </footer>
+
+  <script src="js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const coupleId = getParam('couple');
+      if (!coupleId) { showNotFound(); return; }
+
+      const couple = getCouple(coupleId);
+      if (!couple) { showNotFound(); return; }
+
+      showAura(couple);
+      spawnPetals();
+    });
+
+    function showNotFound() {
+      document.getElementById('viewNotFound').classList.remove('hidden');
+    }
+
+    function showAura(couple) {
+      document.getElementById('viewAura').classList.remove('hidden');
+
+      // Couple info
+      document.getElementById('auraCoupleName').textContent = couple.coupleName;
+      document.title = `${couple.coupleName} — Altru`;
+      if (couple.weddingDate) {
+        const d = new Date(couple.weddingDate);
+        document.getElementById('auraBadgeDate').textContent =
+          `Wedding: ${d.toLocaleDateString('en-SG',{day:'numeric',month:'long',year:'numeric'})}`;
+      }
+
+      // Charity
+      const charity = getCharity(couple.featuredCharityId) || {
+        name: couple.featuredCharityName,
+        icon: couple.featuredCharityIcon || '🤝',
+        desc: 'IPC-registered charity',
+      };
+      document.getElementById('auraCharityIcon').textContent = charity.icon;
+      document.getElementById('auraCharityName').textContent = charity.name;
+      document.getElementById('auraCharityDesc').textContent = charity.desc;
+      document.getElementById('ctaCharityName').textContent  = charity.name;
+
+      // CTA link pre-filled with couple name + charity
+      const ctaUrl = buildUrl('donor.html', {
+        couple:  encodeURIComponent(couple.coupleName),
+        charity: couple.featuredCharityId,
+      });
+      document.getElementById('ctaSendBtn').href = ctaUrl;
+      document.getElementById('ctaDesc').textContent =
+        `Show ${couple.coupleName} some love — a gift that gives twice.`;
+
+      // Gifts / progress
+      const gifts = (couple.giftIds || []).map(id => getGift(id)).filter(Boolean);
+      const totalCharity = gifts.reduce((s,g) => s + g.charityAmount, 0);
+      const goal = Math.max(totalCharity * 2, 1000);
+      const pct  = Math.min((totalCharity / goal) * 100, 100);
+
+      document.getElementById('auraRaised').textContent  = fmt(totalCharity);
+      document.getElementById('auraGoal').textContent    = fmt(goal);
+      document.getElementById('auraGiftCount').textContent = `${gifts.length} gift${gifts.length !== 1 ? 's' : ''}`;
+      document.getElementById('auraProgress').style.width = pct + '%';
+
+      // Milestones
+      const milestones = [500, 1000, 2000, 5000];
+      document.getElementById('auraMilestones').innerHTML = milestones.map(m => `
+        <div class="milestone ${totalCharity >= m ? 'reached' : ''}">
+          ${totalCharity >= m ? '✓' : '🎯'} ${fmt(m)}
+        </div>
+      `).join('');
+
+      // Donor wall
+      const wallEl = document.getElementById('auraDonorWall');
+      if (gifts.length === 0) {
+        wallEl.innerHTML = '<p class="caption text-muted" style="grid-column:1/-1;">Be the first to give! 🌸</p>';
+      } else {
+        // Sort by total amount desc
+        const sorted = [...gifts].sort((a,b) => b.totalAmount - a.totalAmount);
+        wallEl.innerHTML = sorted.map(g => `
+          <div class="donor-bubble">
+            <div class="donor-bubble-avatar">${g.donorName[0].toUpperCase()}</div>
+            <div class="donor-bubble-name">${g.donorName.split(' ')[0]}</div>
+            <div class="donor-bubble-amt">${fmtShort(g.totalAmount)}</div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function shareThisPage() {
+      const couple = getCouple(getParam('couple'));
+      shareOrCopy(
+        window.location.href,
+        `${couple?.coupleName || 'A couple'}'s Giving Aura`,
+        `Join the celebration — give a meaningful gift that blesses both the couple and a charity! 💖`
+      );
+    }
+
+    /* ── Falling petals animation ── */
+    function spawnPetals() {
+      const container = document.getElementById('petalsContainer');
+      const emojis = ['🌸', '🌺', '❤️', '💕', '✨', '🌹'];
+      for (let i = 0; i < 18; i++) {
+        const petal = document.createElement('span');
+        petal.className = 'petal';
+        petal.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        petal.style.left     = Math.random() * 100 + '%';
+        petal.style.animationDuration  = (4 + Math.random() * 6) + 's';
+        petal.style.animationDelay     = (Math.random() * 8) + 's';
+        petal.style.fontSize = (0.8 + Math.random() * 1.2) + 'rem';
+        container.appendChild(petal);
+      }
+    }
+  </script>
+</body>
+</html>

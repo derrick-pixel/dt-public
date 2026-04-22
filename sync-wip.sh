@@ -23,6 +23,7 @@ WIP_REPOS=(
   "the-commons:the-commons"
   "vectorsky:vectorsky"
   "XinceAI:xinceai"
+  "altru:altru"
   "dt-site-creator:dt-site-creator"
 )
 

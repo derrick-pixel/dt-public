@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Altru — White Space Atlas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --red: #C8102E; --red-dark: #9B0B20; --red-mid: #E5234A; --red-light: #FDEEF1;
+      --pink: #F4A0B5; --pink-light: #FFF0F4;
+      --gold: #C9973A; --gold-light: #FBF5DC;
+      --white: #FFFFFF; --warm-white: #FFF8F8; --bg: #FFF4F6;
+      --text: #2D1010; --text-muted: #8A5C5C; --border: #F0CECE;
+      --shadow: rgba(200,16,46,0.10);
+      --green: #2E8B57; --green-bg: rgba(46,139,87,0.12);
+      --amber: #C9973A; --amber-bg: rgba(201,151,58,0.14);
+      --alert-red: #9B0B20; --alert-bg: rgba(155,11,32,0.10);
+      --radius: 16px; --radius-sm: 10px;
+      --font-head: 'Playfair Display', Georgia, serif;
+      --font-body: 'Lato', 'Segoe UI', sans-serif;
+    }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; }
+    a { color: var(--red); text-decoration: none; }
+
+    /* ── LOGIN ── */
+    #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 50%, #5a0510 100%); padding: 20px; }
+    .login-box { background: var(--white); border-radius: var(--radius); padding: 48px 40px; width: 100%; max-width: 400px; box-shadow: 0 30px 60px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
+    .login-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, var(--red), var(--gold), var(--red)); }
+    .login-logo { font-family: var(--font-head); font-size: 2.2rem; font-weight: 700; color: var(--red); letter-spacing: 0.04em; margin-bottom: 6px; text-align: center; }
+    .login-logo span { color: var(--gold); }
+    .login-sub { font-size: 0.76rem; color: var(--text-muted); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 32px; text-align: center; font-weight: 700; }
+    .login-box label { display: block; font-size: 0.74rem; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; margin-top: 18px; }
+    .login-box input { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 0.95rem; font-family: var(--font-body); outline: none; transition: border-color 0.2s; background: var(--warm-white); color: var(--text); }
+    .login-box input:focus { border-color: var(--red); }
+    .login-btn { margin-top: 22px; width: 100%; padding: 13px 18px; background: var(--red); color: var(--white); border: none; border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 0.92rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+    .login-btn:hover { background: var(--red-dark); transform: translateY(-1px); box-shadow: 0 10px 20px var(--shadow); }
+    .login-error { display: none; margin-top: 14px; padding: 10px 12px; background: var(--alert-bg); color: var(--alert-red); font-size: 0.82rem; border-radius: var(--radius-sm); text-align: center; font-weight: 600; }
+    .login-error.show { display: block; }
+
+    /* ── ATLAS ── */
+    #dashboard { display: none; }
+    .atlas-body { max-width: 1340px; margin: 0 auto; padding: 24px 24px 80px; }
+
+    .atlas-nav { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; box-shadow: 0 4px 12px var(--shadow); flex-wrap: wrap; gap: 12px; }
+    .atlas-nav .brand { font-family: var(--font-head); font-size: 1.4rem; font-weight: 700; color: var(--red); letter-spacing: 0.04em; display: flex; align-items: center; gap: 10px; }
+    .atlas-nav .brand span { color: var(--gold); }
+    .atlas-nav .admin-pill { font-size: 0.66rem; background: var(--gold-light); color: var(--gold); padding: 4px 10px; border-radius: 100px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid var(--gold); }
+    .atlas-nav-links { display: flex; gap: 8px; align-items: center; }
+    .atlas-nav-links a { font-size: 0.82rem; color: var(--text-muted); padding: 7px 14px; border-radius: var(--radius-sm); font-weight: 600; }
+    .atlas-nav-links a:hover { background: var(--red-light); color: var(--red); }
+    .atlas-nav-links a.active { background: var(--red); color: var(--white); }
+    .atlas-nav-links .logout-link { border: 1.5px solid var(--border); color: var(--text-muted); cursor: pointer; background: none; font-family: var(--font-body); font-size: 0.82rem; padding: 7px 14px; border-radius: var(--radius-sm); font-weight: 600; }
+
+    .atlas-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
+    .atlas-tag { display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--red); background: var(--red-light); padding: 6px 14px; border-radius: 100px; margin-bottom: 10px; }
+    .atlas-title { font-family: var(--font-head); font-size: clamp(1.8rem, 3.8vw, 2.6rem); font-weight: 700; letter-spacing: -0.01em; line-height: 1.15; color: var(--text); }
+    .atlas-meta { font-size: 0.78rem; color: var(--text-muted); text-align: right; font-family: ui-monospace, monospace; letter-spacing: 0.04em; }
+
+    .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 32px; }
+    .kpi { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: 0 4px 12px var(--shadow); }
+    .kpi-val { font-family: var(--font-head); font-size: 2rem; font-weight: 700; color: var(--red); letter-spacing: -0.02em; line-height: 1; }
+    .kpi-val.green { color: var(--green); }
+    .kpi-val.amber { color: var(--amber); }
+    .kpi-val.red { color: var(--alert-red); }
+    .kpi-val.gold { color: var(--gold); }
+    .kpi-lbl { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-top: 8px; }
+
+    .artifact { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 30px; margin-bottom: 24px; box-shadow: 0 4px 12px var(--shadow); }
+    .art-num { display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); background: var(--gold-light); padding: 5px 12px; border-radius: 100px; margin-bottom: 10px; border: 1px solid var(--gold); }
+    .art-title { font-family: var(--font-head); font-size: 1.5rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; margin-bottom: 8px; }
+    .art-desc { font-size: 0.92rem; color: var(--text-muted); max-width: 820px; line-height: 1.6; margin-bottom: 22px; }
+
+    .canvas-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start; }
+    @media (max-width: 900px) { .canvas-wrap { grid-template-columns: 1fr; } }
+    #strategy-canvas { width: 100%; max-width: 820px; height: 420px; }
+    .canvas-legend { display: flex; flex-direction: column; gap: 6px; font-size: 0.84rem; }
+    .canvas-legend .leg { display: flex; align-items: center; gap: 8px; }
+    .canvas-legend .sw { width: 28px; height: 4px; flex-shrink: 0; border-radius: 2px; }
+    .canvas-legend .us { font-weight: 700; color: var(--red); }
+
+    .heatmap-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--warm-white); }
+    .heatmap { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 0.72rem; }
+    .heatmap th, .heatmap td { border: 1px solid var(--border); padding: 7px 6px; text-align: center; vertical-align: middle; }
+    .heatmap thead th { background: var(--red-dark); color: var(--white); font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.06em; padding: 10px 5px; font-weight: 700; }
+    .heatmap thead th:first-child { text-align: left; min-width: 200px; }
+    .heatmap tbody th { text-align: left; background: var(--red-light); color: var(--text); font-size: 0.82rem; font-weight: 700; padding: 8px 12px; }
+    .heatmap tbody th small { display: block; font-size: 0.66rem; color: var(--text-muted); font-weight: 400; margin-top: 2px; font-family: ui-monospace, monospace; }
+    .cell { cursor: pointer; font-weight: 800; transition: filter 0.1s; user-select: none; font-size: 0.92rem; font-family: ui-monospace, monospace; }
+    .cell:hover { filter: brightness(0.94); outline: 2px solid var(--red); outline-offset: -2px; }
+    .cell.green { background: var(--green-bg); color: var(--green); }
+    .cell.amber { background: var(--amber-bg); color: var(--amber); }
+    .cell.red   { background: var(--alert-bg); color: var(--alert-red); }
+
+    .heatmap-legend { display: flex; gap: 18px; margin-top: 14px; flex-wrap: wrap; font-size: 0.82rem; color: var(--text-muted); }
+    .heatmap-legend .dot { display: inline-block; width: 14px; height: 14px; margin-right: 6px; vertical-align: middle; border-radius: 4px; }
+
+    #heatmap-detail { display: none; margin-top: 14px; padding: 16px 20px; background: var(--red-light); border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 0.9rem; color: var(--text-muted); line-height: 1.55; }
+    #heatmap-detail.show { display: block; }
+    #heatmap-detail b { color: var(--text); }
+    #heatmap-detail .tag { display: inline-block; padding: 3px 12px; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-right: 10px; border-radius: 100px; }
+    #heatmap-detail .tag.green { background: var(--green-bg); color: var(--green); border: 1px solid var(--green); }
+    #heatmap-detail .tag.amber { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber); }
+    #heatmap-detail .tag.red   { background: var(--alert-bg); color: var(--alert-red); border: 1px solid var(--alert-red); }
+
+    .attack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+    .niche { background: linear-gradient(160deg, var(--green-bg), var(--white) 80%); border: 2px solid var(--green); border-radius: var(--radius); padding: 24px 26px; }
+    .niche-rank { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--green); margin-bottom: 6px; font-family: ui-monospace, monospace; }
+    .niche-name { font-family: var(--font-head); font-size: 1.15rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; margin-bottom: 10px; }
+    .niche-icp { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px dashed var(--border); font-style: italic; line-height: 1.6; }
+    .niche-row { display: grid; grid-template-columns: 72px 1fr; gap: 10px; font-size: 0.84rem; padding: 6px 0; }
+    .niche-row .k { font-size: 0.64rem; font-weight: 700; color: var(--red); letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px; font-family: ui-monospace, monospace; }
+    .niche-row .v { color: var(--text-muted); line-height: 1.55; }
+
+    .comp-controls { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+    .comp-search, .comp-filter { padding: 10px 14px; border: 1.5px solid var(--border); background: var(--warm-white); color: var(--text); font-family: var(--font-body); font-size: 0.88rem; border-radius: var(--radius-sm); outline: none; }
+    .comp-search:focus, .comp-filter:focus { border-color: var(--red); }
+    .comp-search { flex: 1; min-width: 220px; }
+    .comp-count { font-size: 0.78rem; color: var(--text-muted); font-family: ui-monospace, monospace; }
+
+    .comp-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    .comp-table thead th { background: var(--red-dark); color: var(--white); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.68rem; padding: 10px 12px; text-align: left; }
+    .comp-table tbody td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .comp-table tbody tr:hover { background: var(--red-light); }
+    .badge { display: inline-block; padding: 2px 10px; font-size: 0.64rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; border-radius: 100px; font-family: ui-monospace, monospace; }
+    .b-cat { background: var(--gold-light); color: var(--gold); border: 1px solid var(--gold); }
+    .b-threat-high { background: var(--alert-bg); color: var(--alert-red); border: 1px solid var(--alert-red); }
+    .b-threat-medium { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber); }
+    .b-threat-low { background: var(--green-bg); color: var(--green); border: 1px solid var(--green); }
+    .b-beat-easy { background: var(--green-bg); color: var(--green); border: 1px solid var(--green); }
+    .b-beat-moderate { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber); }
+    .b-beat-hard { background: var(--alert-bg); color: var(--alert-red); border: 1px solid var(--alert-red); }
+    .comp-name { font-weight: 700; color: var(--text); }
+    .comp-target { font-size: 0.76rem; color: var(--text-muted); margin-top: 2px; }
+    .loading { color: var(--text-muted); font-size: 0.86rem; padding: 24px; text-align: center; font-family: ui-monospace, monospace; }
+  </style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">Altru<span>.</span></div>
+    <div class="login-sub">White Space Atlas · Admin</div>
+    <form id="login-form" onsubmit="return false;">
+      <label for="un">Username</label>
+      <input id="un" type="text" placeholder="Username" autocomplete="username" />
+      <label for="pw">Password</label>
+      <input id="pw" type="password" placeholder="Password" autocomplete="current-password" />
+      <button type="submit" class="login-btn" onclick="doLogin(event)">Enter Atlas</button>
+      <p class="login-error" id="login-err">Incorrect username or password.</p>
+    </form>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard">
+  <div class="atlas-body">
+
+    <nav class="atlas-nav">
+      <a href="index.html" class="brand">Altru<span>.</span>
+        <span class="admin-pill">Admin</span>
+      </a>
+      <div class="atlas-nav-links">
+        <a href="index.html">Public Site</a>
+        <a href="admin-whitespace.html" class="active">◆ White Space</a>
+        <button class="logout-link" onclick="doLogout()">Sign out</button>
+      </div>
+    </nav>
+
+    <div class="atlas-top">
+      <div>
+        <div class="atlas-tag">◆ White Space Atlas · Altru v1</div>
+        <h1 class="atlas-title">Wedding-specific + IPC tax relief + PayNow<br/><span style="color: var(--text-muted); font-weight: 400;">No other platform owns that intersection.</span></h1>
+      </div>
+      <div class="atlas-meta">
+        <div>Refreshed <span id="refresh-date">2026-04-22</span></div>
+        <div><span id="comp-count-hdr">—</span> competitors · 8 segments · 8 needs · admin-only</div>
+      </div>
+    </div>
+
+    <div class="kpi-strip">
+      <div class="kpi"><div class="kpi-val gold" id="kpi-n-comp">—</div><div class="kpi-lbl">Competitors</div></div>
+      <div class="kpi"><div class="kpi-val green" id="kpi-green">—</div><div class="kpi-lbl">White-space cells</div></div>
+      <div class="kpi"><div class="kpi-val amber" id="kpi-amber">—</div><div class="kpi-lbl">Contested cells</div></div>
+      <div class="kpi"><div class="kpi-val red" id="kpi-red">—</div><div class="kpi-lbl">Crowded cells</div></div>
+      <div class="kpi"><div class="kpi-val gold" id="kpi-threats">—</div><div class="kpi-lbl">High-threat rivals</div></div>
+    </div>
+
+    <section class="artifact">
+      <div class="art-num">Artifact 01</div>
+      <h2 class="art-title">Strategy Canvas</h2>
+      <p class="art-desc">Blue-Ocean radar. Each line plots a platform across 8 dimensions couples actually evaluate. Altru's shape must break away on wedding-specific UX + IPC tax relief + PayNow — Giving.sg wins on price, but loses on wedding-day flow.</p>
+      <div class="canvas-wrap">
+        <canvas id="strategy-canvas" width="820" height="420"></canvas>
+        <div class="canvas-legend" id="canvas-legend"></div>
+      </div>
+    </section>
+
+    <section class="artifact">
+      <div class="art-num">Artifact 02</div>
+      <h2 class="art-title">Segment × Need Heatmap — 8 × 8</h2>
+      <p class="art-desc">Each cell: count of platforms serving that pair (score ≥3). Click any cell for detail.</p>
+      <div class="heatmap-wrap">
+        <table class="heatmap" id="heatmap"><thead></thead><tbody></tbody></table>
+      </div>
+      <div class="heatmap-legend">
+        <span><span class="dot" style="background:var(--green)"></span>Green 0–1 · white space</span>
+        <span><span class="dot" style="background:var(--amber)"></span>Amber 2–3 · contested</span>
+        <span><span class="dot" style="background:var(--alert-red)"></span>Red 4+ · crowded</span>
+      </div>
+      <div id="heatmap-detail"></div>
+    </section>
+
+    <section class="artifact">
+      <div class="art-num">Artifact 03</div>
+      <h2 class="art-title">Attack Plan — Top 3 Underserved Niches</h2>
+      <p class="art-desc">Where Altru attacks first. Each card: ICP, TAM, why-gap, why-we-win, GTM.</p>
+      <div class="attack-grid" id="attack-grid"></div>
+    </section>
+
+    <section class="artifact">
+      <div class="art-num">Artifact 04</div>
+      <h2 class="art-title">Competitor Deep-dive</h2>
+      <p class="art-desc">All <span id="comp-count-inline">—</span> platforms with fee structures, threat level, and our wedge.</p>
+      <div class="comp-controls">
+        <input type="search" id="comp-search" class="comp-search" placeholder="Search name, target, strengths..." />
+        <select id="comp-cat" class="comp-filter"><option value="">All categories</option></select>
+        <select id="comp-threat" class="comp-filter">
+          <option value="">All threats</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+        <span class="comp-count" id="comp-count-tbl">—</span>
+      </div>
+      <table class="comp-table" id="comp-table">
+        <thead><tr><th>Name / target</th><th>Category</th><th>Fees</th><th>Threat</th><th>Beat</th><th>Strengths</th><th>Weaknesses</th></tr></thead>
+        <tbody id="comp-tbody"><tr><td colspan="7" class="loading">Loading competitor data…</td></tr></tbody>
+      </table>
+    </section>
+
+  </div>
+</div>
+
+<script>
+  // ── Auth ── (client-side gate; page is noindex,nofollow)
+  const ADMIN_USER_HASH = '8740ec05f8a139bb7d692e8f65cf7517a59ab7f87583a07c23a377d2e39e3ad0';
+  const ADMIN_PASS_HASH = '96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e';
+  const AUTH_KEY = 'altru_whitespace_auth';
+
+  async function _sha256Hex(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  async function doLogin(e) {
+    if (e) e.preventDefault();
+    const un = document.getElementById('un').value.trim();
+    const pw = document.getElementById('pw').value;
+    const [unH, pwH] = await Promise.all([_sha256Hex(un), _sha256Hex(pw)]);
+    if (unH === ADMIN_USER_HASH && pwH === ADMIN_PASS_HASH) {
+      sessionStorage.setItem(AUTH_KEY, '1');
+      showDashboard();
+    } else {
+      document.getElementById('login-err').classList.add('show');
+    }
+    return false;
+  }
+
+  function doLogout() {
+    sessionStorage.removeItem(AUTH_KEY);
+    location.reload();
+  }
+
+  function showDashboard() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    initAtlas();
+  }
+
+  document.getElementById('login-form').addEventListener('submit', doLogin);
+  document.getElementById('pw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(e); });
+
+  if (sessionStorage.getItem(AUTH_KEY) === '1') {
+    showDashboard();
+  }
+</script>
+
+<script>
+function initAtlas() {
+  const CANVAS_DIMS = [
+    'Low couple fee',
+    '250% IRAS tax relief',
+    'PayNow native',
+    'Wedding-specific UX',
+    'IPC charity breadth',
+    'Guest donor flow',
+    'Corporate / company match',
+    'Couple dashboard'
+  ];
+  const CANVAS_LINES = [
+    { name: 'Altru',          us: true, color: '#C8102E', scores: [5, 5, 5, 5, 4, 5, 2, 4] },
+    { name: 'Giving.sg',                color: '#9B0B20', scores: [5, 5, 5, 1, 5, 3, 4, 2] },
+    { name: 'DBS PayLah eAB',           color: '#E5234A', scores: [5, 0, 5, 2, 0, 5, 1, 0] },
+    { name: 'Direct PayNow→UEN',        color: '#7a0515', scores: [5, 5, 5, 0, 5, 2, 0, 0] },
+    { name: 'Ray of Hope',              color: '#C9973A', scores: [5, 5, 4, 0, 3, 3, 2, 1] },
+    { name: 'Simply Giving',            color: '#a67020', scores: [1, 4, 2, 1, 4, 3, 3, 3] },
+    { name: 'Honeyfund / Zola',         color: '#F4A0B5', scores: [2, 0, 0, 4, 0, 4, 1, 3] },
+    { name: 'GlobalGiving',             color: '#2E8B57', scores: [2, 0, 0, 0, 5, 3, 3, 2] },
+    { name: 'OneThreeOneFour',          color: '#8A5C5C', scores: [1, 0, 2, 5, 0, 2, 1, 0] },
+    { name: 'Community Chest',          color: '#2D1010', scores: [5, 5, 4, 0, 5, 2, 5, 1] }
+  ];
+
+  const SEGMENTS = [
+    { id: 'sg_couple_values_led',     label: 'SG couple, values-led',             note: '28-38, income 100K+, IRAS aware' },
+    { id: 'sg_couple_traditional',    label: 'SG couple, traditional',            note: 'Chinese / Malay / Indian ceremony' },
+    { id: 'sg_couple_expat',          label: 'SG expat couple',                   note: 'Non-citizen, cash SG wedding' },
+    { id: 'sg_couple_religious',      label: 'SG couple, religious',              note: 'Church / temple / mosque flow' },
+    { id: 'sg_couple_intimate',       label: 'SG couple, intimate <80',           note: 'Solemnization + restaurant' },
+    { id: 'sg_couple_large_ballroom', label: 'SG couple, large ballroom 300+',    note: 'Hotel ballroom' },
+    { id: 'corporate_wedding_gift',   label: 'Corporate guest gift',              note: 'Company guest giving' },
+    { id: 'cross_border_malaysia',    label: 'Cross-border (MY spouse)',          note: 'MY guests, RM/MYR flow' }
+  ];
+  const NEEDS = [
+    { id: 'low_platform_fee',        label: 'Under 10% total fee',           short: '<10% fee' },
+    { id: 'ipc_tax_relief',          label: '250% IRAS tax relief',          short: 'IPC' },
+    { id: 'paynow_frictionless',     label: 'PayNow / QR frictionless',      short: 'PayNow' },
+    { id: 'wedding_day_integration', label: 'Works on wedding day live',     short: 'Wedding day' },
+    { id: 'charity_breadth',         label: 'Wide IPC charity choice',       short: 'IPC breadth' },
+    { id: 'guest_experience',        label: '<30-sec guest flow',            short: 'Guest UX' },
+    { id: 'cultural_fit',            label: 'CN/MY/IN wedding fit',          short: 'Cultural' },
+    { id: 'corporate_match',         label: 'Corporate / company match',     short: 'Corp match' }
+  ];
+
+  function scoreCompetitor(c, segId, needId) {
+    const tm = (c.target_market || '').toLowerCase();
+    const vp = (c.primary_value_prop || '').toLowerCase();
+    const str = (c.strengths || []).join(' ').toLowerCase();
+    const cat = c.category || '';
+    const fee = Number(c.platform_fee_percent || 0);
+    const ipc = !!c.has_ipc_tax_relief;
+    const paynow = !!c.has_paynow_native;
+    const wedding = !!c.wedding_specific;
+    const sgLocal = Number(c.sg_localisation_score || 0);
+    const bundle = (str + ' ' + vp + ' ' + tm).toLowerCase();
+
+    const segMap = {
+      sg_couple_values_led:     (wedding && sgLocal >= 3 ? 4 : (cat === 'charity_platform' && sgLocal >= 3 ? 3 : 0)),
+      sg_couple_traditional:    (wedding && /chinese|malay|indian|cultural|heritage/.test(bundle) ? 4 : (cat === 'wedding_registry' || cat === 'wedding_vendor_platform' ? 3 : 0)),
+      sg_couple_expat:          (wedding && sgLocal >= 3 ? 4 : (cat === 'wedding_vendor_platform' ? 3 : 0)),
+      sg_couple_religious:      (cat === 'religious_community' ? 5 : (/church|temple|mosque|religious/.test(bundle) ? 4 : 0)),
+      sg_couple_intimate:       (wedding ? 4 : 0),
+      sg_couple_large_ballroom: (wedding && /300|ballroom|hotel|large|scale/.test(bundle) ? 4 : (cat === 'wedding_registry' ? 3 : 0)),
+      corporate_wedding_gift:   (/corporate|company|employer|cs[rR]|matching/.test(bundle) ? 4 : (cat === 'donor_advised_fund' ? 3 : 0)),
+      cross_border_malaysia:    (/malaysia|my|cross.?border|ringgit/.test(bundle) ? 4 : 0)
+    };
+    const segScore = segMap[segId] || 0;
+
+    const needMap = {
+      low_platform_fee:        (fee <= 5 ? 5 : fee <= 8 ? 3 : fee <= 10 ? 2 : (cat === 'diy_fundraiser' && fee <= 1 ? 5 : 0)),
+      ipc_tax_relief:          ipc ? 5 : 0,
+      paynow_frictionless:     paynow ? 5 : (sgLocal >= 3 ? 2 : 0),
+      wedding_day_integration: wedding ? 5 : (cat === 'wedding_registry' ? 4 : 0),
+      charity_breadth:         (cat === 'charity_platform' || cat === 'donor_advised_fund' || cat === 'diy_fundraiser' ? 5 : (ipc ? 3 : 0)),
+      guest_experience:        (/guest|donor|seamless|one-click|qr|tap/.test(bundle) ? 4 : (paynow ? 4 : 2)),
+      cultural_fit:            (sgLocal >= 4 && wedding ? 5 : (sgLocal >= 4 ? 3 : (cat === 'religious_community' ? 3 : 0))),
+      corporate_match:         (/corporate|company match|cs[rR]|matching|employer/.test(bundle) ? 5 : (cat === 'recurring_charity_fintech' || cat === 'donor_advised_fund' ? 3 : 0))
+    };
+    const needScore = needMap[needId] || 0;
+    return Math.min(segScore, needScore);
+  }
+
+  function ourScore(segId, needId) {
+    const s = { sg_couple_values_led:5, sg_couple_traditional:4, sg_couple_expat:3, sg_couple_religious:3, sg_couple_intimate:4, sg_couple_large_ballroom:5, corporate_wedding_gift:2, cross_border_malaysia:3 }[segId] || 3;
+    const n = { low_platform_fee:4, ipc_tax_relief:5, paynow_frictionless:5, wedding_day_integration:5, charity_breadth:3, guest_experience:5, cultural_fit:5, corporate_match:2 }[needId] || 3;
+    return Math.min(s, n);
+  }
+
+  const STATE = { competitors: [], matrix: null, research_date: '2026-04-22' };
+
+  const NICHES = [
+    {
+      rank: '01',
+      name: 'Values-Led SG Couple — Wedding as Statement',
+      icp: 'SG couples aged 28-38 with household income S$100K+, marrying in 2026-2027, actively looking for ways to make their wedding "mean something". Both partners already donate regularly, IRAS-tax-aware, comfortable with PayNow/QR. Most will host 150-300 guests.',
+      tam: '~4,200 SG weddings per year fitting the profile (~23K annual marriages × ~18% values-led segment per Wedding Planners SG surveys × income filter).',
+      why_underserved: 'Giving.sg is free and has IPC but zero wedding flow — couples have to stitch QR to table card manually. Wedding registries (Honeyfund, Zola) are US-first, no PayNow, no IPC. Direct PayNow-to-charity works but loses the couple-branded tribute page and guest thank-you loop. No platform combines wedding flow + IPC + PayNow + guest experience.',
+      why_we_win: '(1) Only platform combining wedding_specific + has_ipc_tax_relief + has_paynow_native + sg_localisation 5/5 — the exact gap the competitive map shows. (2) Couple-branded landing page per wedding + live donation tally at dinner = social proof at the table. (3) 95% to charity (above industry median ~88% for DIY-safe platforms). (4) Guest donor gets e-receipt + personal thank-you from couple = better UX than generic Giving.sg receipt.',
+      gtm: {
+        pricing: '5% couple-side fee. 95% to chosen charity. Zero guest fee — donor never touched.',
+        channel: 'Wedding vendor partnerships (OneThreeOneFour, Blissful Brides, Wedding Scoop) as "add-on recommendation" at wedding planning sign-up. Direct IG + TikTok content ("this is how our wedding gave back $40K"). Corporate wellness team partnerships (DBS Treasures, OCBC Premier).',
+        pitch: '"Your wedding table just donated $28,000 and every guest got a tax receipt. That\'s a reception you\'ll talk about for ten years."',
+        content: '"The Values-Led Wedding Planning Kit" — gated PDF with 12 IPC charity matches by theme + budget calculator + sample table-card QR artwork.'
+      }
+    },
+    {
+      rank: '02',
+      name: 'Corporate Wedding Gift Channel — Employer Match',
+      icp: 'SG HR / CSR teams attending a colleague\'s wedding and wanting to gift with impact. Corporate ang bao often pooled (S$500-3,000 from the department) — couples don\'t use cash, company can deduct as CSR. Altru captures the employer-match dollar AND the tax relief dollar.',
+      tam: '~2,100 SG weddings per year where a company is a guest donor (23K weddings × ~9% corporate-gift rate per HR surveys). Average corporate gift S$800-2,500.',
+      why_underserved: 'Community Chest and DAF foundations handle corporate giving but don\'t do wedding gifts. Simply Giving and GlobalGiving lack the wedding context. No one routes a corporate ang bao into a CSR-booked + IPC-receipt line item for the company AND a couple-themed thank-you.',
+      why_we_win: '(1) Altru can generate corporate CSR-ready invoices for employer with GST + company name routing. (2) Employer match option ("HR doubles your department\'s gift") makes Altru the easiest place to combine. (3) Feeds B2B channel — 20 weddings × 1 corp gift each = 20 new companies touched per quarter.',
+      gtm: {
+        pricing: '5% standard (couple-side) + 0.5% flat for corporate CSR reporting add-on (charged to company, not to couple).',
+        channel: 'SG HR networks (IHRP, SHRI). Corporate CSR leads (Mercer, WTW benefits advisors). Co-marketing with SG wedding vendors at the "invite-corporate-partners" touchpoint.',
+        pitch: '"Your department is going to pool $1,800 for Aaron\'s wedding. Double it, deduct it, and get a tax receipt. We handle the paperwork your finance team won\'t."',
+        content: '"The HR Wedding Gift Playbook" — template gift pool workflow + CSR reporting matrix.'
+      }
+    },
+    {
+      rank: '03',
+      name: 'Intimate Solemnization (<80 guests) — Low-Friction Launch',
+      icp: 'SG couples hosting intimate solemnization + restaurant dinner, 30-80 guests, wedding budget S$15-50K. Not running a ballroom. Won\'t pay for wedding planners. The "DIY couple" segment. Currently uses WhatsApp group + PayNow QR on a name card.',
+      tam: '~5,400 SG intimate weddings per year (~23% of SG marriages × solemnization-only rate per ROMM data).',
+      why_underserved: 'Wedding registries are designed for 200+ guest events. Giving.sg feels bureaucratic for intimate settings. DIY PayNow works but leaves the couple with no tracking, no thank-you loop, no photo-ready receipt. This segment is price-sensitive (can\'t absorb 8-10% Simply Giving fee) AND experience-conscious (wants a beautiful branded page).',
+      why_we_win: '(1) 5% fee keeps total cost under S$150 even for a S$3K pool — affordable at intimate scale. (2) Launch-friendly: pre-made intimate-wedding templates (family-charity, single-IPC, dual-charity couple-choice). (3) Share-friendly: couple posts Altru page once in WhatsApp group → guests donate without downloading anything. (4) This segment becomes Altru\'s advocacy base — intimate couples are the most likely to share their wedding story publicly.',
+      gtm: {
+        pricing: 'Same 5% flat. Free pre-made intimate template library unlocks only for <80-seat weddings.',
+        channel: 'ROMM (Registry of Marriages) partnership for soft onboarding post-solemnization. SG couple FB groups + subreddits + Reddit r/askSingapore. Instagram organic via real couple case studies.',
+        pitch: '"Thirty friends. One charity. No wedding planner. Done in an hour."',
+        content: '"Intimate Wedding Giving Mini-Template" — pre-filled Altru page with 3 charity choices, ready for solemnization-only couples.'
+      }
+    }
+  ];
+
+  function clearNode(el) { while (el.firstChild) el.removeChild(el.firstChild); }
+  function makeEl(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+  function renderStrategyCanvas() {
+    const ctx = document.getElementById('strategy-canvas').getContext('2d');
+    const datasets = CANVAS_LINES.map(l => ({
+      label: l.name, data: l.scores,
+      backgroundColor: l.us ? 'rgba(200,16,46,0.18)' : 'transparent',
+      borderColor: l.color, borderWidth: l.us ? 3 : 1.5,
+      pointRadius: l.us ? 4 : 2.5, pointBackgroundColor: l.color, tension: 0.15
+    }));
+    new Chart(ctx, {
+      type: 'radar', data: { labels: CANVAS_DIMS, datasets },
+      options: {
+        scales: { r: {
+          suggestedMin: 0, suggestedMax: 5,
+          ticks: { stepSize: 1, backdropColor: 'rgba(0,0,0,0)', color: '#8A5C5C', font: { size: 10 } },
+          grid: { color: 'rgba(200,16,46,0.08)' },
+          angleLines: { color: 'rgba(200,16,46,0.12)' },
+          pointLabels: { color: '#2D1010', font: { family: 'Lato, sans-serif', size: 11, weight: 700 } }
+        } },
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: x => x.dataset.label + ': ' + x.raw } } },
+        responsive: true, maintainAspectRatio: false
+      }
+    });
+    const leg = document.getElementById('canvas-legend'); clearNode(leg);
+    CANVAS_LINES.forEach(l => {
+      const r = makeEl('div', 'leg');
+      const sw = makeEl('span', 'sw'); sw.style.background = l.color;
+      if (l.us) sw.style.boxShadow = '0 0 10px ' + l.color;
+      const n = makeEl('span', null, l.name); if (l.us) n.classList.add('us');
+      r.appendChild(sw); r.appendChild(n); leg.appendChild(r);
+    });
+  }
+
+  function buildMatrix() {
+    const mx = {};
+    SEGMENTS.forEach(s => { mx[s.id] = {}; NEEDS.forEach(n => {
+      const scoring = STATE.competitors.map(c => ({ name: c.name, score: scoreCompetitor(c, s.id, n.id) }));
+      const strong = scoring.filter(x => x.score >= 3).sort((a,b) => b.score - a.score);
+      mx[s.id][n.id] = { count: strong.length, servers: strong, us: ourScore(s.id, n.id) };
+    }); });
+    return mx;
+  }
+  function levelFor(count) { return count <= 1 ? 'green' : count <= 3 ? 'amber' : 'red'; }
+
+  function renderHeatmap() {
+    const thead = document.querySelector('#heatmap thead'); const tbody = document.querySelector('#heatmap tbody');
+    clearNode(thead); clearNode(tbody);
+    const hdr = makeEl('tr'); hdr.appendChild(makeEl('th', null, 'Segment \\ Need'));
+    NEEDS.forEach(n => { const th = makeEl('th', null, n.short); th.title = n.label; hdr.appendChild(th); });
+    thead.appendChild(hdr);
+    SEGMENTS.forEach(s => {
+      const tr = makeEl('tr');
+      const th = makeEl('th'); th.appendChild(makeEl('span', null, s.label)); th.appendChild(makeEl('small', null, s.note));
+      tr.appendChild(th);
+      NEEDS.forEach(n => {
+        const cell = STATE.matrix[s.id][n.id];
+        const td = makeEl('td', 'cell ' + levelFor(cell.count), String(cell.count));
+        td.addEventListener('click', () => showCellDetail(s, n, cell));
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+  }
+
+  function showCellDetail(seg, need, cell) {
+    const detail = document.getElementById('heatmap-detail'); clearNode(detail);
+    const lvl = levelFor(cell.count);
+    const lvlTag = makeEl('span', 'tag ' + lvl, lvl === 'green' ? 'White space · attack' : lvl === 'amber' ? 'Contested · winnable' : 'Crowded · avoid');
+    detail.appendChild(lvlTag);
+    detail.appendChild(makeEl('b', null, seg.label + ' × ' + need.label));
+    const p = makeEl('p', null, cell.count + ' platform(s) serve this pair well (score ≥3). Our score: ' + cell.us + '/5.');
+    p.style.marginTop = '8px'; detail.appendChild(p);
+    if (cell.servers.length) {
+      const list = makeEl('div', null, 'Platforms serving: ' + cell.servers.slice(0, 8).map(c => c.name + ' (' + c.score + ')').join(', '));
+      list.style.marginTop = '6px'; list.style.fontSize = '0.82rem'; detail.appendChild(list);
+    }
+    detail.classList.add('show');
+  }
+
+  function renderNiches() {
+    const host = document.getElementById('attack-grid'); clearNode(host);
+    NICHES.forEach(n => {
+      const c = makeEl('div', 'niche');
+      c.appendChild(makeEl('div', 'niche-rank', 'Niche ' + n.rank));
+      c.appendChild(makeEl('div', 'niche-name', n.name));
+      c.appendChild(makeEl('div', 'niche-icp', n.icp));
+      [['TAM', n.tam], ['Why gap', n.why_underserved], ['Our win', n.why_we_win],
+       ['Pricing', n.gtm.pricing], ['Channel', n.gtm.channel], ['Pitch', n.gtm.pitch], ['Content', n.gtm.content]]
+      .forEach(pair => {
+        const row = makeEl('div', 'niche-row');
+        row.appendChild(makeEl('div', 'k', pair[0]));
+        row.appendChild(makeEl('div', 'v', pair[1]));
+        c.appendChild(row);
+      });
+      host.appendChild(c);
+    });
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('comp-tbody'); clearNode(tbody);
+    const q = document.getElementById('comp-search').value.toLowerCase();
+    const catF = document.getElementById('comp-cat').value;
+    const threatF = document.getElementById('comp-threat').value;
+    const filtered = STATE.competitors.filter(c => {
+      if (catF && c.category !== catF) return false;
+      if (threatF && c.threat_level_to_altru !== threatF) return false;
+      if (q) {
+        const blob = [c.name, c.target_market, (c.strengths||[]).join(' '), (c.weaknesses||[]).join(' '), c.category].join(' ').toLowerCase();
+        if (!blob.includes(q)) return false;
+      }
+      return true;
+    });
+    document.getElementById('comp-count-tbl').textContent = filtered.length + ' / ' + STATE.competitors.length;
+    if (!filtered.length) {
+      const tr = makeEl('tr'); const td = makeEl('td', 'loading', 'No platforms match — adjust filters');
+      td.colSpan = 7; tr.appendChild(td); tbody.appendChild(tr); return;
+    }
+    filtered.forEach(c => {
+      const tr = makeEl('tr');
+      const tdN = makeEl('td'); tdN.appendChild(makeEl('div', 'comp-name', c.name)); tdN.appendChild(makeEl('div', 'comp-target', c.target_market || ''));
+      const tdC = makeEl('td'); tdC.appendChild(makeEl('span', 'badge b-cat', (c.category || '').replace(/_/g, ' ')));
+      const tdP = makeEl('td', null, c.pricing_notes || (c.platform_fee_percent ? c.platform_fee_percent + '%' : '—')); tdP.style.fontFamily = 'ui-monospace, monospace'; tdP.style.fontSize = '0.78rem'; tdP.style.color = 'var(--red)';
+      const tdT = makeEl('td'); tdT.appendChild(makeEl('span', 'badge b-threat-' + (c.threat_level_to_altru || 'low'), c.threat_level_to_altru || '—'));
+      const tdB = makeEl('td'); tdB.appendChild(makeEl('span', 'badge b-beat-' + (c.beatability || 'moderate'), c.beatability || '—'));
+      const tdS = makeEl('td', null, (c.strengths || []).slice(0, 3).join('; ')); tdS.style.fontSize = '0.78rem'; tdS.style.color = 'var(--green)';
+      const tdW = makeEl('td', null, (c.weaknesses || []).slice(0, 3).join('; ')); tdW.style.fontSize = '0.78rem'; tdW.style.color = 'var(--alert-red)';
+      [tdN, tdC, tdP, tdT, tdB, tdS, tdW].forEach(td => tr.appendChild(td));
+      tbody.appendChild(tr);
+    });
+  }
+
+  function populateCatFilter() {
+    const sel = document.getElementById('comp-cat');
+    const cats = Array.from(new Set(STATE.competitors.map(c => c.category))).sort();
+    cats.forEach(cat => { const opt = document.createElement('option'); opt.value = cat; opt.textContent = cat.replace(/_/g,' '); sel.appendChild(opt); });
+  }
+
+  function updateKpis() {
+    const cells = SEGMENTS.flatMap(s => NEEDS.map(n => STATE.matrix[s.id][n.id]));
+    const green = cells.filter(c => c.count <= 1).length;
+    const amber = cells.filter(c => c.count >= 2 && c.count <= 3).length;
+    const red   = cells.filter(c => c.count >= 4).length;
+    const threats = STATE.competitors.filter(c => c.threat_level_to_altru === 'high').length;
+    document.getElementById('kpi-n-comp').textContent = STATE.competitors.length;
+    document.getElementById('kpi-green').textContent = green;
+    document.getElementById('kpi-amber').textContent = amber;
+    document.getElementById('kpi-red').textContent = red;
+    document.getElementById('kpi-threats').textContent = threats;
+    document.getElementById('comp-count-hdr').textContent = STATE.competitors.length;
+    document.getElementById('comp-count-inline').textContent = STATE.competitors.length;
+    document.getElementById('refresh-date').textContent = STATE.research_date || '2026-04-22';
+  }
+
+  async function loadData() {
+    try {
+      const res = await fetch('data/whitespace-competitors.json');
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      STATE.competitors = data.competitors || [];
+      STATE.research_date = data.research_date || '2026-04-22';
+    } catch (e) {
+      const tbody = document.getElementById('comp-tbody'); clearNode(tbody);
+      const tr = makeEl('tr'); const td = makeEl('td', 'loading', 'Failed to load data/whitespace-competitors.json: ' + e.message);
+      td.colSpan = 7; tr.appendChild(td); tbody.appendChild(tr); return;
+    }
+    STATE.matrix = buildMatrix();
+    renderStrategyCanvas(); renderHeatmap(); renderNiches(); populateCatFilter(); renderTable(); updateKpis();
+    ['comp-search','comp-cat','comp-threat'].forEach(id => document.getElementById(id).addEventListener('input', renderTable));
+  }
+
+  loadData();
+}
+</script>
+</body>
+</html>

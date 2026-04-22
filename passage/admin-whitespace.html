@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Passage — White Space Atlas</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #32332d;
+      --secondary: #596060;
+      --gold: #725b3f;
+      --surface: #fcf9f5;
+      --surface-1: #f0ece4;
+      --surface-2: #e4e0d8;
+      --border: #d8d4cc;
+      --muted: #7b7b74;
+      --white: #ffffff;
+      --green: #3a7a50;
+      --amber: #b07020;
+      --blue: #2a5080;
+      --red: #8b2020;
+      --purple: #5a3878;
+      --radius: 8px;
+      --radius-lg: 14px;
+      --font: 'Segoe UI', system-ui, sans-serif;
+      --serif: Georgia, 'Times New Roman', serif;
+    }
+    body { font-family: var(--font); background: var(--surface); color: var(--primary); min-height: 100vh; }
+
+    /* ── LOGIN ── */
+    #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--primary); }
+    .login-box { background: var(--white); border-radius: var(--radius-lg); padding: 48px 40px; width: 100%; max-width: 380px; box-shadow: 0 24px 48px rgba(0,0,0,0.3); }
+    .login-logo { font-family: var(--serif); font-size: 1.8rem; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; margin-bottom: 4px; text-align: center; }
+    .login-logo span { color: var(--gold); }
+    .login-sub { font-size: 0.78rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 32px; text-align: center; }
+    .login-box label { display: block; font-size: 0.74rem; font-weight: 600; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; margin-top: 16px; }
+    .login-box input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--radius); font-size: 0.95rem; font-family: var(--font); outline: none; transition: border-color 0.2s; background: var(--surface); }
+    .login-box input:focus { border-color: var(--gold); }
+    .login-btn { margin-top: 20px; width: 100%; padding: 12px 18px; background: var(--primary); color: var(--white); border: none; border-radius: var(--radius); font-family: var(--serif); font-size: 0.95rem; font-weight: 600; letter-spacing: 0.06em; cursor: pointer; transition: background 0.2s; }
+    .login-btn:hover { background: var(--gold); }
+    .login-error { display: none; margin-top: 12px; padding: 10px 12px; background: rgba(139,32,32,0.08); color: var(--red); font-size: 0.82rem; border-radius: var(--radius); text-align: center; }
+    .login-error.show { display: block; }
+
+    /* ── ATLAS ── */
+    #dashboard { display: none; }
+    .atlas-body { max-width: 1340px; margin: 0 auto; padding: 32px 24px 80px; }
+    .atlas-nav { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 28px; }
+    .atlas-nav .brand { font-family: var(--serif); font-size: 1.2rem; font-weight: 700; letter-spacing: 0.08em; color: var(--primary); }
+    .atlas-nav .brand span { color: var(--gold); }
+    .atlas-nav-links { display: flex; gap: 12px; align-items: center; }
+    .atlas-nav-links a { font-size: 0.8rem; color: var(--secondary); padding: 6px 12px; border-radius: var(--radius); text-decoration: none; transition: background 0.15s; }
+    .atlas-nav-links a:hover { background: var(--surface-1); }
+    .atlas-nav-links a.active { background: var(--gold); color: var(--white); font-weight: 600; }
+    .atlas-nav-links .logout-link { border: 1px solid var(--border); color: var(--muted); cursor: pointer; background: none; font-family: var(--font); font-size: 0.8rem; padding: 6px 12px; border-radius: var(--radius); }
+
+    .atlas-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
+    .atlas-tag { font-family: var(--serif); font-size: 0.76rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+    .atlas-title { font-family: var(--serif); font-size: clamp(1.7rem, 3.5vw, 2.4rem); font-weight: 700; letter-spacing: -0.01em; line-height: 1.15; color: var(--primary); }
+    .atlas-meta { font-size: 0.78rem; color: var(--muted); text-align: right; font-family: ui-monospace, monospace; letter-spacing: 0.04em; }
+
+    .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 32px; }
+    .kpi { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; }
+    .kpi-val { font-family: var(--serif); font-size: 2rem; font-weight: 700; color: var(--primary); letter-spacing: -0.02em; line-height: 1; }
+    .kpi-val.green { color: var(--green); }
+    .kpi-val.amber { color: var(--amber); }
+    .kpi-val.red { color: var(--red); }
+    .kpi-val.gold { color: var(--gold); }
+    .kpi-lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-top: 8px; }
+
+    .artifact { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px 28px; margin-bottom: 22px; }
+    .art-num { font-size: 0.72rem; color: var(--gold); letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
+    .art-title { font-family: var(--serif); font-size: 1.35rem; font-weight: 700; color: var(--primary); letter-spacing: -0.01em; margin-bottom: 8px; }
+    .art-desc { font-size: 0.92rem; color: var(--muted); max-width: 820px; line-height: 1.6; margin-bottom: 22px; }
+
+    .canvas-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start; }
+    @media (max-width: 900px) { .canvas-wrap { grid-template-columns: 1fr; } }
+    #strategy-canvas { width: 100%; max-width: 820px; height: 420px; }
+    .canvas-legend { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; }
+    .canvas-legend .leg { display: flex; align-items: center; gap: 8px; }
+    .canvas-legend .sw { width: 28px; height: 4px; flex-shrink: 0; border-radius: 2px; }
+    .canvas-legend .us { font-weight: 700; color: var(--gold); }
+
+    .heatmap-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+    .heatmap { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 0.7rem; font-family: ui-monospace, monospace; }
+    .heatmap th, .heatmap td { border: 1px solid var(--border); padding: 7px 6px; text-align: center; vertical-align: middle; }
+    .heatmap thead th { background: var(--primary); color: var(--surface); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; padding: 10px 5px; font-weight: 600; }
+    .heatmap thead th:first-child { text-align: left; min-width: 200px; }
+    .heatmap tbody th { text-align: left; background: var(--surface-1); color: var(--primary); font-family: var(--font); font-size: 0.82rem; font-weight: 600; padding: 8px 12px; }
+    .heatmap tbody th small { display: block; font-size: 0.66rem; color: var(--muted); font-weight: 400; margin-top: 2px; font-family: ui-monospace, monospace; }
+    .cell { cursor: pointer; font-weight: 700; transition: filter 0.1s; user-select: none; font-size: 0.88rem; }
+    .cell:hover { filter: brightness(0.94); outline: 2px solid var(--gold); outline-offset: -2px; }
+    .cell.green { background: rgba(58,122,80,0.12); color: var(--green); }
+    .cell.amber { background: rgba(176,112,32,0.14); color: var(--amber); }
+    .cell.red   { background: rgba(139,32,32,0.10); color: var(--red); }
+
+    .heatmap-legend { display: flex; gap: 18px; margin-top: 14px; flex-wrap: wrap; font-size: 0.78rem; color: var(--muted); }
+    .heatmap-legend .dot { display: inline-block; width: 13px; height: 13px; margin-right: 6px; vertical-align: middle; border-radius: 3px; }
+
+    #heatmap-detail { display: none; margin-top: 14px; padding: 16px 20px; background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.88rem; color: var(--muted); line-height: 1.55; }
+    #heatmap-detail.show { display: block; }
+    #heatmap-detail b { color: var(--primary); }
+    #heatmap-detail .tag { display: inline-block; padding: 3px 10px; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-right: 10px; border-radius: 100px; }
+    #heatmap-detail .tag.green { background: rgba(58,122,80,0.12); color: var(--green); border: 1px solid var(--green); }
+    #heatmap-detail .tag.amber { background: rgba(176,112,32,0.14); color: var(--amber); border: 1px solid var(--amber); }
+    #heatmap-detail .tag.red   { background: rgba(139,32,32,0.10); color: var(--red); border: 1px solid var(--red); }
+
+    .attack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+    .niche { background: linear-gradient(160deg, rgba(58,122,80,0.08), var(--white) 80%); border: 1.5px solid var(--green); border-radius: var(--radius-lg); padding: 22px 24px; }
+    .niche-rank { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--green); margin-bottom: 6px; font-family: ui-monospace, monospace; }
+    .niche-name { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; color: var(--primary); letter-spacing: -0.01em; margin-bottom: 10px; }
+    .niche-icp { font-size: 0.88rem; color: var(--muted); margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px dashed var(--border); font-style: italic; line-height: 1.6; }
+    .niche-row { display: grid; grid-template-columns: 72px 1fr; gap: 10px; font-size: 0.84rem; padding: 6px 0; }
+    .niche-row .k { font-size: 0.64rem; font-weight: 700; color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px; font-family: ui-monospace, monospace; }
+    .niche-row .v { color: var(--muted); line-height: 1.55; }
+
+    .comp-controls { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+    .comp-search, .comp-filter { padding: 9px 14px; border: 1.5px solid var(--border); background: var(--surface); color: var(--primary); font-family: var(--font); font-size: 0.88rem; border-radius: var(--radius); outline: none; }
+    .comp-search:focus, .comp-filter:focus { border-color: var(--gold); }
+    .comp-search { flex: 1; min-width: 220px; }
+    .comp-count { font-size: 0.78rem; color: var(--muted); font-family: ui-monospace, monospace; }
+    .comp-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    .comp-table thead th { background: var(--primary); color: var(--surface); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.66rem; padding: 10px 12px; text-align: left; }
+    .comp-table tbody td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .comp-table tbody tr:hover { background: var(--surface-1); }
+    .badge { display: inline-block; padding: 2px 8px; font-size: 0.64rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; font-family: ui-monospace, monospace; border-radius: 100px; }
+    .b-cat { background: rgba(114,91,63,0.12); color: var(--gold); border: 1px solid rgba(114,91,63,0.3); }
+    .b-threat-high { background: rgba(139,32,32,0.10); color: var(--red); border: 1px solid var(--red); }
+    .b-threat-medium { background: rgba(176,112,32,0.14); color: var(--amber); border: 1px solid var(--amber); }
+    .b-threat-low { background: rgba(58,122,80,0.12); color: var(--green); border: 1px solid var(--green); }
+    .b-beat-easy { background: rgba(58,122,80,0.12); color: var(--green); border: 1px solid var(--green); }
+    .b-beat-moderate { background: rgba(176,112,32,0.14); color: var(--amber); border: 1px solid var(--amber); }
+    .b-beat-hard { background: rgba(139,32,32,0.10); color: var(--red); border: 1px solid var(--red); }
+    .comp-name { font-weight: 700; color: var(--primary); }
+    .comp-target { font-size: 0.76rem; color: var(--muted); margin-top: 2px; }
+    .loading { color: var(--muted); font-size: 0.86rem; padding: 24px; text-align: center; font-family: ui-monospace, monospace; }
+  </style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">PASSAGE<span>.</span></div>
+    <div class="login-sub">White Space Atlas</div>
+    <form id="login-form" onsubmit="return false;">
+      <label for="un">Username</label>
+      <input id="un" type="text" placeholder="Username" autocomplete="username" />
+      <label for="pw">Password</label>
+      <input id="pw" type="password" placeholder="Password" autocomplete="current-password" />
+      <button type="submit" class="login-btn" onclick="doLogin(event)">Enter Atlas</button>
+      <p class="login-error" id="login-err">Incorrect username or password.</p>
+    </form>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard">
+  <div class="atlas-body">
+
+    <nav class="atlas-nav">
+      <a href="admin.html" class="brand">PASSAGE<span>.</span></a>
+      <div class="atlas-nav-links">
+        <a href="admin.html">Orders</a>
+        <a href="admin-whitespace.html" class="active">White Space</a>
+        <a href="index.html">Site</a>
+        <button class="logout-link" onclick="doLogout()">Sign out</button>
+      </div>
+    </nav>
+
+    <div class="atlas-top">
+      <div>
+        <div class="atlas-tag">◆ White Space Atlas · v1</div>
+        <h1 class="atlas-title">Because grief is burden enough.<br/><span style="color: var(--muted); font-weight: 400;">And the market hasn't been designed for it.</span></h1>
+      </div>
+      <div class="atlas-meta">
+        <div>Refreshed <span id="refresh-date">2026-04-22</span></div>
+        <div><span id="comp-count-hdr">—</span> competitors · 8 segments · 8 needs</div>
+      </div>
+    </div>
+
+    <div class="kpi-strip">
+      <div class="kpi"><div class="kpi-val gold" id="kpi-n-comp">—</div><div class="kpi-lbl">Competitors</div></div>
+      <div class="kpi"><div class="kpi-val green" id="kpi-green">—</div><div class="kpi-lbl">White-space cells</div></div>
+      <div class="kpi"><div class="kpi-val amber" id="kpi-amber">—</div><div class="kpi-lbl">Contested cells</div></div>
+      <div class="kpi"><div class="kpi-val red" id="kpi-red">—</div><div class="kpi-lbl">Crowded cells</div></div>
+      <div class="kpi"><div class="kpi-val gold" id="kpi-threats">—</div><div class="kpi-lbl">High-threat rivals</div></div>
+    </div>
+
+    <section class="artifact">
+      <div class="art-num">Artifact 01</div>
+      <h2 class="art-title">Strategy Canvas</h2>
+      <p class="art-desc">Blue-Ocean radar. Each line plots a provider across 8 customer-valued dimensions. Passage's shape must break away on digital-first ordering + post-funeral admin + grief-sensitive UX — dimensions traditional parlours structurally cannot follow.</p>
+      <div class="canvas-wrap">
+        <canvas id="strategy-canvas" width="820" height="420"></canvas>
+        <div class="canvas-legend" id="canvas-legend"></div>
+      </div>
+    </section>
+
+    <section class="artifact">
+      <div class="art-num">Artifact 02</div>
+      <h2 class="art-title">Segment × Need Heatmap — 8 × 8</h2>
+      <p class="art-desc">Each cell: count of providers serving that pair (score ≥3). Click any cell for detail.</p>
+      <div class="heatmap-wrap">
+        <table class="heatmap" id="heatmap"><thead></thead><tbody></tbody></table>
+      </div>
+      <div class="heatmap-legend">
+        <span><span class="dot" style="background:var(--green)"></span>Green 0–1 · white space</span>
+        <span><span class="dot" style="background:var(--amber)"></span>Amber 2–3 · contested</span>
+        <span><span class="dot" style="background:var(--red)"></span>Red 4+ · crowded</span>
+      </div>
+      <div id="heatmap-detail"></div>
+    </section>
+
+    <section class="artifact">
+      <div class="art-num">Artifact 03</div>
+      <h2 class="art-title">Attack Plan — Top 3 Underserved Niches</h2>
+      <p class="art-desc">Where Passage attacks first. Each card: ICP, TAM, why-gap, why-we-win, GTM.</p>
+      <div class="attack-grid" id="attack-grid"></div>
+    </section>
+
+    <section class="artifact">
+      <div class="art-num">Artifact 04</div>
+      <h2 class="art-title">Competitor Deep-dive</h2>
+      <p class="art-desc">All <span id="comp-count-inline">—</span> providers with pricing, threat level, and our wedge.</p>
+      <div class="comp-controls">
+        <input type="search" id="comp-search" class="comp-search" placeholder="Search name, target, strengths..." />
+        <select id="comp-cat" class="comp-filter"><option value="">All categories</option></select>
+        <select id="comp-threat" class="comp-filter">
+          <option value="">All threats</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+        <span class="comp-count" id="comp-count-tbl">—</span>
+      </div>
+      <table class="comp-table" id="comp-table">
+        <thead><tr><th>Name / target</th><th>Category</th><th>Pricing (SGD)</th><th>Threat</th><th>Beat</th><th>Strengths</th><th>Weaknesses</th></tr></thead>
+        <tbody id="comp-tbody"><tr><td colspan="7" class="loading">Loading competitor data…</td></tr></tbody>
+      </table>
+    </section>
+
+  </div>
+</div>
+
+<script>
+  // ── Auth ── (client-side gate; admin-only page is noindex,nofollow)
+  const ADMIN_USER_HASH = '8740ec05f8a139bb7d692e8f65cf7517a59ab7f87583a07c23a377d2e39e3ad0';
+  const ADMIN_PASS_HASH = '96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e';
+  const AUTH_KEY = 'passage_whitespace_auth';
+
+  async function _sha256Hex(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  async function doLogin(e) {
+    if (e) e.preventDefault();
+    const un = document.getElementById('un').value.trim();
+    const pw = document.getElementById('pw').value;
+    const [unH, pwH] = await Promise.all([_sha256Hex(un), _sha256Hex(pw)]);
+    if (unH === ADMIN_USER_HASH && pwH === ADMIN_PASS_HASH) {
+      sessionStorage.setItem(AUTH_KEY, '1');
+      showDashboard();
+    } else {
+      document.getElementById('login-err').classList.add('show');
+    }
+    return false;
+  }
+
+  function doLogout() {
+    sessionStorage.removeItem(AUTH_KEY);
+    location.reload();
+  }
+
+  function showDashboard() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    initAtlas();
+  }
+
+  document.getElementById('login-form').addEventListener('submit', doLogin);
+  document.getElementById('pw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(e); });
+
+  if (sessionStorage.getItem(AUTH_KEY) === '1') {
+    showDashboard();
+  }
+</script>
+
+<script>
+// ── Atlas renderer ──
+function initAtlas() {
+  const CANVAS_DIMS = [
+    'Price accessibility',
+    'Digital-first ordering',
+    'Ritual authenticity',
+    'Post-funeral admin',
+    'Livestream / memorial',
+    'Grief-sensitive UX',
+    'Speed to set-up',
+    'Multi-faith coverage'
+  ];
+  const CANVAS_LINES = [
+    { name: 'Passage',           us: true, color: '#725b3f', scores: [5, 5, 4, 5, 5, 5, 5, 4] },
+    { name: 'Singapore Casket',            color: '#8b2020', scores: [2, 1, 5, 1, 2, 2, 4, 4] },
+    { name: 'Ang Chin Moh',                color: '#b07020', scores: [3, 2, 5, 1, 2, 3, 4, 4] },
+    { name: 'Direct Funeral',              color: '#2a5080', scores: [4, 3, 4, 2, 3, 3, 5, 4] },
+    { name: 'Trinity Casket',              color: '#5a3878', scores: [3, 2, 4, 1, 2, 3, 4, 3] },
+    { name: 'Nirvana (ash / columb)',      color: '#3a7a50', scores: [3, 3, 4, 2, 2, 3, 2, 5] },
+    { name: 'WillCraft (admin only)',      color: '#596060', scores: [2, 5, 0, 4, 0, 2, 2, 3] },
+    { name: 'Church-led (Catholic)',       color: '#2a5080', scores: [4, 1, 5, 1, 1, 4, 3, 1] },
+    { name: 'DIY / community',             color: '#7b7b74', scores: [5, 0, 3, 0, 1, 1, 2, 3] },
+    { name: 'MOH funeral aid',             color: '#b07020', scores: [5, 1, 3, 2, 0, 3, 3, 2] }
+  ];
+
+  const SEGMENTS = [
+    { id: 'buddhist_traditional',    label: 'Buddhist traditional 3-day', note: 'Wake + 49-day rites' },
+    { id: 'christian_catholic',      label: 'Christian / Catholic',        note: 'Church-led, simpler flow' },
+    { id: 'taoist_traditional',      label: 'Taoist traditional',          note: 'Bak Gwa, paper offerings' },
+    { id: 'secular_simple',          label: 'Secular / simple',            note: 'Cremation, no rites' },
+    { id: 'muslim_islamic',          label: 'Muslim / Islamic',            note: 'Janazah, 24hr burial' },
+    { id: 'expat_cross_border',      label: 'Expat / cross-border',        note: 'Repatriation, embassy' },
+    { id: 'hdb_subsidised',          label: 'HDB / MOH-funded',            note: 'MOH aid, lean budget' },
+    { id: 'pre_arrangement_senior',  label: 'Pre-arrangement senior',      note: 'Living senior planning' }
+  ];
+  const NEEDS = [
+    { id: 'lowest_total_price',    label: 'Lowest package price',         short: 'Price' },
+    { id: 'ritual_authenticity',   label: 'Ritual authenticity / priest', short: 'Ritual' },
+    { id: 'digital_ordering',      label: 'Online ordering',              short: 'Digital' },
+    { id: 'post_admin_workflow',   label: 'CPF / bank / estate admin',    short: 'Admin' },
+    { id: 'livestream_memorial',   label: 'Livestream + memorial page',   short: 'Livestream' },
+    { id: 'grief_support',         label: 'Grief counselling follow-up',  short: 'Grief' },
+    { id: 'same_day_speed',        label: '<24hr setup',                  short: 'Speed' },
+    { id: 'transparent_fixed',     label: 'Fixed published price',        short: 'Transparent' }
+  ];
+
+  function scoreCompetitor(c, segId, needId) {
+    const tm = (c.target_market || '').toLowerCase();
+    const vp = (c.primary_value_prop || '').toLowerCase();
+    const str = (c.strengths || []).join(' ').toLowerCase();
+    const cat = c.category || '';
+    const price = Number(c.package_price_sgd || 0);
+    const dig = Number(c.digital_tools_score || 0);
+    const faiths = (c.religious_affinity || []).map(f => f.toLowerCase());
+    const bundle = (str + ' ' + vp + ' ' + tm).toLowerCase();
+
+    const segMap = {
+      buddhist_traditional:   faiths.includes('buddhist') ? 5 : (/buddhist|三日|49-day|taoist|chinese/.test(bundle) ? 3 : (cat === 'sg_religious_community' ? 3 : 0)),
+      christian_catholic:     faiths.includes('christian') ? 5 : (/church|christian|catholic|wake service/.test(bundle) ? 4 : 0),
+      taoist_traditional:     faiths.includes('taoist') ? 5 : (/taoist|chinese traditional|bak gwa|paper offering/.test(bundle) ? 4 : 0),
+      secular_simple:         (/secular|simple|direct cremation|no religion|non-religious/.test(bundle) ? 4 : (cat === 'sg_digital_startup' ? 3 : 0)),
+      muslim_islamic:         faiths.includes('muslim') ? 5 : (/muslim|islamic|janazah|burial/.test(bundle) ? 4 : 0),
+      expat_cross_border:     (/expat|foreigner|repatriation|embassy|cross-border/.test(bundle) ? 4 : (cat === 'cross_border_specialist' ? 5 : 0)),
+      hdb_subsidised:         (/subsidised|moh|lean|affordable|government aid|hdb/.test(bundle) ? 4 : (price && price < 3500 ? 3 : 0)),
+      pre_arrangement_senior: (/pre-arrange|pre-planning|senior|advance/.test(bundle) ? 4 : 0)
+    };
+    const segScore = segMap[segId] || 0;
+
+    const needMap = {
+      lowest_total_price:  (price && price <= 4000 ? 5 : price <= 6000 ? 3 : price <= 10000 ? 1 : 0),
+      ritual_authenticity: (faiths.length >= 2 ? 4 : faiths.length === 1 ? 4 : (/ritual|rites|priest|monk|imam/.test(bundle) ? 3 : 1)),
+      digital_ordering:    dig >= 4 ? 5 : dig >= 3 ? 3 : dig >= 2 ? 2 : 0,
+      post_admin_workflow: (/cpf|bank|estate|acra|mytax|post.?funeral|admin|paperwork/.test(bundle) ? 5 : (cat === 'admin_specialist' ? 5 : 0)),
+      livestream_memorial: (/livestream|memorial page|virtual|online memorial|tribute page/.test(bundle) ? 4 : (cat === 'livestream_specialist' ? 5 : 0)),
+      grief_support:       (/grief|counsell|support|bereavement|post-care/.test(bundle) ? 4 : 1),
+      same_day_speed:      (/same day|24 hour|fast|rapid|immediate|urgent/.test(bundle) ? 4 : (cat === 'sg_traditional_parlour' ? 4 : 2)),
+      transparent_fixed:   (c.pricing_flag === 'public' ? 5 : c.pricing_flag === 'partial' ? 2 : 0)
+    };
+    const needScore = needMap[needId] || 0;
+    return Math.min(segScore, needScore);
+  }
+
+  function ourScore(segId, needId) {
+    const s = { buddhist_traditional:4, christian_catholic:5, taoist_traditional:3, secular_simple:5, muslim_islamic:2, expat_cross_border:3, hdb_subsidised:4, pre_arrangement_senior:4 }[segId] || 3;
+    const n = { lowest_total_price:4, ritual_authenticity:4, digital_ordering:5, post_admin_workflow:5, livestream_memorial:5, grief_support:4, same_day_speed:5, transparent_fixed:5 }[needId] || 3;
+    return Math.min(s, n);
+  }
+
+  const STATE = { competitors: [], matrix: null, research_date: '2026-04-22' };
+
+  const NICHES = [
+    {
+      rank: '01',
+      name: 'Digital-First Secular / Christian — "One Click, One Burden Less"',
+      icp: 'SG secular or Christian families who want a dignified wake without calling 5 parlours. Comfortable with web ordering. Want fixed price, livestream, online memorial, and post-funeral admin (CPF, banks, estate) in one package.',
+      tam: '~6,200 SG deaths annually in the secular / Christian / Catholic segments with household income above median (MOH death records + Christian denomination % + income deciles).',
+      why_underserved: 'Traditional parlours (Singapore Casket, Ang Chin Moh) require phone calls, quote on call, and stop at the cremation. No one in SG bundles wake + livestream + memorial page + post-funeral admin workflow (CPF/bank/ACRA). WillCraft and similar admin-only vendors leave the wake to someone else.',
+      why_we_win: '(1) Fixed-price published package with livestream + memorial page by default. (2) Post-funeral admin workflow (CPF claim, bank account closure, ACRA estate, MyTax) bundled — unique in SG. (3) Grief-sensitive UX — no upsell guilt. (4) Sub-24hr digital setup vs 2-3 days phone back-and-forth.',
+      gtm: {
+        pricing: 'S$5,888 Heritage package: wake + cremation + livestream + memorial page + post-funeral admin. Upsell flowers and catering only via in-package add-on.',
+        channel: 'Partnership with SG grief counsellors (SCS Bereavement Care, SAMH) + SG hospital palliative care teams + Christian denomination church networks. Google Ads on "SG funeral services quote".',
+        pitch: '"One package. One price. One less person to call during the hardest week of your life."',
+        content: 'Post-funeral Admin Checklist — email-gated 20-step PDF covering CPF, bank accounts, ACRA, SingPass-for-deceased, MyTax, insurance claims.'
+      }
+    },
+    {
+      rank: '02',
+      name: 'Post-Funeral Admin as the Wedge',
+      icp: 'SG families who\'ve already used a traditional parlour but are stuck navigating CPF claims, bank account closure, ACRA estate, SingPass-for-deceased, and insurance. Passage sells the admin layer stand-alone even if wake was elsewhere.',
+      tam: '~21,000 SG deaths/year → 100% need admin workflow → ~12,000 households would pay for concierge support (MOH death records + informal survey of estate-admin pain).',
+      why_underserved: 'WillCraft handles pre-death wills. Parlours stop at cremation. Banks each have their own form. SingPass-for-deceased launched in 2023 but is self-serve. No concierge post-death admin service exists in SG today.',
+      why_we_win: '(1) Can sell stand-alone for S$499-1,299 even to families who went elsewhere for the wake. (2) First touchpoint = we\'re present in the grief window for future pre-arrangement referrals. (3) Builds the CPF/ACRA/bank playbook as product IP. (4) Natural B2B wedge for SG estate lawyers (referral split).',
+      gtm: {
+        pricing: 'S$499 "Admin Concierge Lite" (8 tasks, 30-day window). S$1,299 "Estate Full Concierge" (30 tasks + lawyer intro). Both stand-alone.',
+        channel: 'Direct sales to SG estate lawyers (10-15% referral). Landing page for SEO on "CPF claim after death Singapore" + "closing bank account after death Singapore". Funeral-parlour partnerships (they get a partner kickback for referrals).',
+        pitch: '"Someone died. The banks need 14 things. We do all 14."',
+        content: '"What To Do In The First 30 Days After a Death In Singapore" — gated 25-page PDF + CPF & ACRA walk-through videos.'
+      }
+    },
+    {
+      rank: '03',
+      name: 'Pre-Arrangement for the Digital-Native 55+',
+      icp: 'SG baby-boomers and early-retirees (55-70) who are planning ahead — either for elderly parents or for themselves. Comfortable with digital tools (SingPass, banking apps). Want to set up their funeral preferences, beneficiaries, and post-death admin in advance.',
+      tam: '~380,000 SG residents aged 55-70 with HH income >S$100K (SingStat + CPF member data) — of whom ~3% are actively considering pre-arrangement = 11,400.',
+      why_underserved: 'Parlours sell "pre-need" contracts but require meeting in person. Trust-based pre-funds (e.g., pre-paid plans) are opaque on where the money sits. WillCraft covers will but not funeral preferences. No digital-first pre-arrangement product exists in SG.',
+      why_we_win: '(1) Digital form captures wake preferences + beneficiaries + CPF nominations in 30 min from home. (2) Funds sit in escrow (not general revenue) — trust story. (3) Integrates with WillCraft / digital-will products as partner. (4) Creates a long-term customer relationship with a decade-plus horizon.',
+      gtm: {
+        pricing: '"Pre-Arrangement Lite" S$199 one-time (digital capture). "Full Pre-Paid Plan" starting S$4,888 held in escrow, locks 2026 pricing for 10 years.',
+        channel: 'SG silver-community Facebook groups, ActiveSG senior programmes, church senior ministries, financial-advisor partnerships (IFA referral split on the pre-paid plan).',
+        pitch: '"Your family won\'t have to guess. Capture your preferences in thirty minutes, funded only if you want it."',
+        content: '"Singapore Pre-Arrangement Readiness Quiz" — email-gated 12-question quiz producing a preference-capture PDF.'
+      }
+    }
+  ];
+
+  function clearNode(el) { while (el.firstChild) el.removeChild(el.firstChild); }
+  function makeEl(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+  function renderStrategyCanvas() {
+    const ctx = document.getElementById('strategy-canvas').getContext('2d');
+    const datasets = CANVAS_LINES.map(l => ({
+      label: l.name, data: l.scores,
+      backgroundColor: l.us ? 'rgba(114,91,63,0.18)' : 'transparent',
+      borderColor: l.color, borderWidth: l.us ? 3 : 1.5,
+      pointRadius: l.us ? 4 : 2.5, pointBackgroundColor: l.color, tension: 0.15
+    }));
+    new Chart(ctx, {
+      type: 'radar', data: { labels: CANVAS_DIMS, datasets },
+      options: {
+        scales: { r: {
+          suggestedMin: 0, suggestedMax: 5,
+          ticks: { stepSize: 1, backdropColor: 'rgba(0,0,0,0)', color: '#7b7b74', font: { size: 10 } },
+          grid: { color: 'rgba(50,51,45,0.08)' },
+          angleLines: { color: 'rgba(50,51,45,0.1)' },
+          pointLabels: { color: '#32332d', font: { family: 'Georgia, serif', size: 11, weight: 600 } }
+        } },
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: x => x.dataset.label + ': ' + x.raw } } },
+        responsive: true, maintainAspectRatio: false
+      }
+    });
+    const leg = document.getElementById('canvas-legend'); clearNode(leg);
+    CANVAS_LINES.forEach(l => {
+      const r = makeEl('div', 'leg');
+      const sw = makeEl('span', 'sw'); sw.style.background = l.color;
+      if (l.us) sw.style.boxShadow = '0 0 10px ' + l.color;
+      const n = makeEl('span', null, l.name); if (l.us) n.classList.add('us');
+      r.appendChild(sw); r.appendChild(n); leg.appendChild(r);
+    });
+  }
+
+  function buildMatrix() {
+    const mx = {};
+    SEGMENTS.forEach(s => { mx[s.id] = {}; NEEDS.forEach(n => {
+      const scoring = STATE.competitors.map(c => ({ name: c.name, score: scoreCompetitor(c, s.id, n.id) }));
+      const strong = scoring.filter(x => x.score >= 3).sort((a,b) => b.score - a.score);
+      mx[s.id][n.id] = { count: strong.length, servers: strong, us: ourScore(s.id, n.id) };
+    }); });
+    return mx;
+  }
+  function levelFor(count) { return count <= 1 ? 'green' : count <= 3 ? 'amber' : 'red'; }
+
+  function renderHeatmap() {
+    const thead = document.querySelector('#heatmap thead'); const tbody = document.querySelector('#heatmap tbody');
+    clearNode(thead); clearNode(tbody);
+    const hdr = makeEl('tr'); hdr.appendChild(makeEl('th', null, 'Segment \\ Need'));
+    NEEDS.forEach(n => { const th = makeEl('th', null, n.short); th.title = n.label; hdr.appendChild(th); });
+    thead.appendChild(hdr);
+    SEGMENTS.forEach(s => {
+      const tr = makeEl('tr');
+      const th = makeEl('th'); th.appendChild(makeEl('span', null, s.label)); th.appendChild(makeEl('small', null, s.note));
+      tr.appendChild(th);
+      NEEDS.forEach(n => {
+        const cell = STATE.matrix[s.id][n.id];
+        const td = makeEl('td', 'cell ' + levelFor(cell.count), String(cell.count));
+        td.addEventListener('click', () => showCellDetail(s, n, cell));
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+  }
+
+  function showCellDetail(seg, need, cell) {
+    const detail = document.getElementById('heatmap-detail'); clearNode(detail);
+    const lvl = levelFor(cell.count);
+    const lvlTag = makeEl('span', 'tag ' + lvl, lvl === 'green' ? 'White space · attack' : lvl === 'amber' ? 'Contested · winnable' : 'Crowded · avoid');
+    detail.appendChild(lvlTag);
+    detail.appendChild(makeEl('b', null, seg.label + ' × ' + need.label));
+    const p = makeEl('p', null, cell.count + ' provider(s) serve this pair well (score ≥3). Our score: ' + cell.us + '/5.');
+    p.style.marginTop = '8px'; detail.appendChild(p);
+    if (cell.servers.length) {
+      const list = makeEl('div', null, 'Providers serving: ' + cell.servers.slice(0, 8).map(c => c.name + ' (' + c.score + ')').join(', '));
+      list.style.marginTop = '6px'; list.style.fontSize = '0.82rem'; detail.appendChild(list);
+    }
+    detail.classList.add('show');
+  }
+
+  function renderNiches() {
+    const host = document.getElementById('attack-grid'); clearNode(host);
+    NICHES.forEach(n => {
+      const c = makeEl('div', 'niche');
+      c.appendChild(makeEl('div', 'niche-rank', 'Niche ' + n.rank));
+      c.appendChild(makeEl('div', 'niche-name', n.name));
+      c.appendChild(makeEl('div', 'niche-icp', n.icp));
+      [['TAM', n.tam], ['Why gap', n.why_underserved], ['Our win', n.why_we_win],
+       ['Pricing', n.gtm.pricing], ['Channel', n.gtm.channel], ['Pitch', n.gtm.pitch], ['Content', n.gtm.content]]
+      .forEach(pair => {
+        const row = makeEl('div', 'niche-row');
+        row.appendChild(makeEl('div', 'k', pair[0]));
+        row.appendChild(makeEl('div', 'v', pair[1]));
+        c.appendChild(row);
+      });
+      host.appendChild(c);
+    });
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('comp-tbody'); clearNode(tbody);
+    const q = document.getElementById('comp-search').value.toLowerCase();
+    const catF = document.getElementById('comp-cat').value;
+    const threatF = document.getElementById('comp-threat').value;
+    const filtered = STATE.competitors.filter(c => {
+      if (catF && c.category !== catF) return false;
+      if (threatF && c.threat_level_to_passage !== threatF) return false;
+      if (q) {
+        const blob = [c.name, c.target_market, (c.strengths||[]).join(' '), (c.weaknesses||[]).join(' '), c.category].join(' ').toLowerCase();
+        if (!blob.includes(q)) return false;
+      }
+      return true;
+    });
+    document.getElementById('comp-count-tbl').textContent = filtered.length + ' / ' + STATE.competitors.length;
+    if (!filtered.length) {
+      const tr = makeEl('tr'); const td = makeEl('td', 'loading', 'No providers match — adjust filters');
+      td.colSpan = 7; tr.appendChild(td); tbody.appendChild(tr); return;
+    }
+    filtered.forEach(c => {
+      const tr = makeEl('tr');
+      const tdN = makeEl('td'); tdN.appendChild(makeEl('div', 'comp-name', c.name)); tdN.appendChild(makeEl('div', 'comp-target', c.target_market || ''));
+      const tdC = makeEl('td'); tdC.appendChild(makeEl('span', 'badge b-cat', (c.category || '').replace(/_/g, ' ')));
+      const tdP = makeEl('td', null, c.pricing_range_published || '—'); tdP.style.fontFamily = 'ui-monospace, monospace'; tdP.style.fontSize = '0.78rem'; tdP.style.color = 'var(--gold)';
+      const tdT = makeEl('td'); tdT.appendChild(makeEl('span', 'badge b-threat-' + (c.threat_level_to_passage || 'low'), c.threat_level_to_passage || '—'));
+      const tdB = makeEl('td'); tdB.appendChild(makeEl('span', 'badge b-beat-' + (c.beatability || 'moderate'), c.beatability || '—'));
+      const tdS = makeEl('td', null, (c.strengths || []).slice(0, 3).join('; ')); tdS.style.fontSize = '0.78rem'; tdS.style.color = 'var(--green)';
+      const tdW = makeEl('td', null, (c.weaknesses || []).slice(0, 3).join('; ')); tdW.style.fontSize = '0.78rem'; tdW.style.color = 'var(--red)';
+      [tdN, tdC, tdP, tdT, tdB, tdS, tdW].forEach(td => tr.appendChild(td));
+      tbody.appendChild(tr);
+    });
+  }
+
+  function populateCatFilter() {
+    const sel = document.getElementById('comp-cat');
+    const cats = Array.from(new Set(STATE.competitors.map(c => c.category))).sort();
+    cats.forEach(cat => { const opt = document.createElement('option'); opt.value = cat; opt.textContent = cat.replace(/_/g,' '); sel.appendChild(opt); });
+  }
+
+  function updateKpis() {
+    const cells = SEGMENTS.flatMap(s => NEEDS.map(n => STATE.matrix[s.id][n.id]));
+    const green = cells.filter(c => c.count <= 1).length;
+    const amber = cells.filter(c => c.count >= 2 && c.count <= 3).length;
+    const red   = cells.filter(c => c.count >= 4).length;
+    const threats = STATE.competitors.filter(c => c.threat_level_to_passage === 'high').length;
+    document.getElementById('kpi-n-comp').textContent = STATE.competitors.length;
+    document.getElementById('kpi-green').textContent = green;
+    document.getElementById('kpi-amber').textContent = amber;
+    document.getElementById('kpi-red').textContent = red;
+    document.getElementById('kpi-threats').textContent = threats;
+    document.getElementById('comp-count-hdr').textContent = STATE.competitors.length;
+    document.getElementById('comp-count-inline').textContent = STATE.competitors.length;
+    document.getElementById('refresh-date').textContent = STATE.research_date || '2026-04-22';
+  }
+
+  async function loadData() {
+    try {
+      const res = await fetch('data/whitespace-competitors.json');
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      STATE.competitors = data.competitors || [];
+      STATE.research_date = data.research_date || '2026-04-22';
+    } catch (e) {
+      const tbody = document.getElementById('comp-tbody'); clearNode(tbody);
+      const tr = makeEl('tr'); const td = makeEl('td', 'loading', 'Failed to load data/whitespace-competitors.json: ' + e.message);
+      td.colSpan = 7; tr.appendChild(td); tbody.appendChild(tr); return;
+    }
+    STATE.matrix = buildMatrix();
+    renderStrategyCanvas(); renderHeatmap(); renderNiches(); populateCatFilter(); renderTable(); updateKpis();
+    ['comp-search','comp-cat','comp-threat'].forEach(id => document.getElementById(id).addEventListener('input', renderTable));
+  }
+
+  loadData();
+}
+</script>
+</body>
+</html>

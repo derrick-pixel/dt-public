@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Singapore Wedding Venue Guide 2026 — Altru</title>
+  <meta property="og:title" content="Singapore Wedding Venue Guide 2026 — Altru" />
+  <meta property="og:description" content="Compare Singapore wedding venues by price, tier and availability. Top 10 spotlight, auspicious dates, and booking timelines — all in one guide for couples." />
+  <meta property="og:image" content="https://derrick-pixel.github.io/altru/images/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://derrick-pixel.github.io/altru/wedding-venues.html" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://derrick-pixel.github.io/altru/images/og-image.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+
+    /* ── Page Hero ── */
+    .venue-hero {
+      background: linear-gradient(150deg, #1a0408 0%, #3D0812 35%, #7A1020 65%, #C8102E 100%);
+      color: white;
+      padding: 4.5rem 1.25rem 3.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .venue-hero::before {
+      content: '囍';
+      position: absolute;
+      font-size: 22rem;
+      opacity: 0.04;
+      top: -3rem; right: -2rem;
+      user-select: none;
+    }
+    .venue-hero::after {
+      content: '🏨';
+      position: absolute;
+      font-size: 14rem;
+      opacity: 0.04;
+      bottom: -3rem; left: -1rem;
+      user-select: none;
+    }
+    .venue-hero h1 { color: white; }
+    .venue-hero p  { color: rgba(255,255,255,0.8); }
+
+    /* ── Venue Table ── */
+    .venue-filters {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .filter-btn {
+      padding: 0.35rem 0.9rem;
+      border-radius: 50px;
+      border: 2px solid var(--border);
+      background: var(--white);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      border-color: var(--red);
+      color: var(--red);
+      background: var(--red-light);
+    }
+    .venue-search {
+      width: 100%;
+      padding: 0.65rem 1rem;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+      outline: none;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+    .venue-search:focus { border-color: var(--pink); }
+
+    .venue-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 10px var(--shadow);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      background: var(--white);
+    }
+    thead {
+      background: linear-gradient(135deg, var(--red-dark), var(--red-mid));
+      color: white;
+    }
+    thead th {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+    }
+    thead th:hover { opacity: 0.85; }
+    thead th .sort-arrow { margin-left: 0.3rem; opacity: 0.6; }
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    tbody tr:hover { background: var(--red-light); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody td { padding: 0.65rem 1rem; vertical-align: middle; }
+    .venue-name { font-weight: 700; color: var(--text); }
+    .venue-note { font-size: 0.75rem; color: var(--text-muted); }
+    .tier-badge {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 50px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .tier-luxury   { background: #FBF5DC; color: #8a6a00; border: 1px solid #D4AF37; }
+    .tier-premium  { background: var(--red-light); color: var(--red-dark); border: 1px solid var(--red); }
+    .tier-classic  { background: #EEF4FF; color: #1E3A8A; border: 1px solid #93C5FD; }
+    .tier-boutique { background: #EDFAF3; color: #14532D; border: 1px solid #86EFAC; }
+    .amount-cell { font-weight: 700; color: var(--red); white-space: nowrap; }
+    .amount-na { color: var(--text-muted); font-style: italic; font-weight: 400; }
+
+    .no-results {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* ── Spotlight Card ── */
+    .spotlight-card {
+      background: white;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .spotlight-card:hover {
+      box-shadow: 0 8px 30px rgba(200,16,46,0.15);
+      transform: translateY(-2px);
+    }
+    .spotlight-card.featured {
+      border-color: var(--gold);
+      box-shadow: 0 4px 20px rgba(212,175,55,0.2);
+    }
+
+    /* ── Auspicious Dates ── */
+    .date-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 0.9rem;
+    }
+
+    /* ── Sticky Table Header ── */
+    .section-sticky-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--warm-white);
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── Page Tabs ── */
+    .page-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    .page-tab {
+      padding: 0.75rem 1.25rem;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.15s;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .page-tab:hover { color: var(--red); }
+    .page-tab.active { color: var(--red); border-bottom-color: var(--red); }
+
+    /* ── Stats Strip ── */
+    .stats-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+    .stat-item {
+      text-align: center;
+      padding: 1.25rem 0.75rem;
+      background: white;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--red);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.35rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .featured-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #D4AF37, #F0C060);
+      color: #5a3e00;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.15rem 0.55rem;
+      border-radius: 50px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-left: 0.4rem;
+      vertical-align: middle;
+    }
+
+    .enquire-btn {
+      display: inline-block;
+      padding: 0.4rem 0.9rem;
+      background: var(--red);
+      color: white;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .enquire-btn:hover { background: var(--red-dark); }
+    .enquire-btn.outline {
+      background: transparent;
+      color: var(--red);
+      border: 1px solid var(--red);
+    }
+    .enquire-btn.outline:hover { background: var(--red-light); }
+
+    .list-venue-cta {
+      background: linear-gradient(135deg, #1a1a2e, #2d1b4e);
+      border-radius: var(--radius);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      color: white;
+      margin-top: 1.5rem;
+    }
+    .list-venue-cta h3 { color: white; margin-bottom: 0.5rem; }
+    .list-venue-cta p  { color: rgba(255,255,255,0.75); margin-bottom: 1.5rem; font-size: 0.95rem; }
+
+    @media (max-width: 700px) {
+      .page-tabs { overflow-x: auto; }
+      .page-tab  { padding: 0.65rem 0.9rem; font-size: 0.82rem; }
+    }
+  </style>
+  <!-- Favicon set -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
+  <link rel="mask-icon" href="safari-pinned-tab.svg" color="#dc2626" />
+  <meta name="theme-color" content="#fef3c7" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+
+  <!-- ─── Header ─────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <img src="altru-logo.jpg" alt="Altru" class="logo-img">
+        Altru
+      </a>
+      <button class="menu-toggle" id="menuToggle" onclick="toggleMenu()" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav-links" id="mainNav">
+        <a href="index.html">Home</a>
+        <a href="angbao-guide.html">Ang Bao Guide 🧧</a>
+        <a href="wedding-venues.html">Venue Guide 🏨</a>
+        <a href="donor.html">Send a Gift</a>
+        <a href="giving-weddings.html">Giving Stories ✨</a>
+        <a href="couple.html" class="btn btn-primary btn-sm">💍 I'm Getting Married</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ─── Hero ────────────────────────────────────────────── -->
+  <div class="venue-hero">
+    <div class="container">
+      <div class="hero-badge" style="margin:0 auto 1rem;">🏨 &nbsp;2026 Edition · Updated April 2026</div>
+      <h1>Singapore Wedding<br>Venue Guide</h1>
+      <p class="lead" style="max-width:560px;margin:0.75rem auto 1.25rem;">
+        Compare venues by price, tier and availability. Find your perfect ballroom — then celebrate with a wedding that gives back.
+      </p>
+      <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
+        <a href="#venue-table" class="btn btn-gold">🔍 Compare Venues</a>
+        <a href="#top10" class="btn btn-outline" style="color:white;border-color:rgba(255,255,255,0.5);">🏆 Top 10 Spotlight</a>
+        <a href="#auspicious-dates" class="btn btn-outline" style="color:white;border-color:rgba(255,255,255,0.5);">🗓️ Auspicious Dates</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Stats Strip ───────────────────────────────────────── -->
+  <section style="background:var(--warm-white);padding:1.5rem 0;">
+    <div class="container">
+      <div class="stats-strip">
+        <div class="stat-item">
+          <div class="stat-number">40+</div>
+          <div class="stat-label">Venues Listed</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">4</div>
+          <div class="stat-label">Venue Tiers</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">S$160–</div>
+          <div class="stat-label">Starting / pax</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">2026</div>
+          <div class="stat-label">Pricing Updated</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Page Tabs ─────────────────────────────────────────── -->
+  <div style="background:var(--warm-white);border-bottom:1px solid var(--border);">
+    <div class="container">
+      <div class="page-tabs">
+        <a href="#venue-table" class="page-tab active">📊 All Venues</a>
+        <a href="#top10" class="page-tab">🏆 Top 10</a>
+        <a href="#auspicious-dates" class="page-tab">🗓️ Auspicious Dates</a>
+        <a href="#booking-tips" class="page-tab">⏳ Booking Tips</a>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <div class="container" style="padding-top:2.5rem;padding-bottom:1rem;">
+
+      <!-- ─── Venue Table ─────────────────────────────────── -->
+      <div id="venue-table" style="scroll-margin-top:80px;">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-bottom:1.25rem;">
+          <div>
+            <h2 style="margin:0;font-size:1.5rem;">🏨 Venue Ang Bao Rates 2026</h2>
+            <p style="color:var(--text-muted);font-size:0.88rem;margin:0.35rem 0 0;">Per-seat cost estimates for 2026. Double the amount if attending with a partner.</p>
+          </div>
+          <a href="angbao-guide.html" class="btn btn-outline" style="font-size:0.82rem;flex-shrink:0;">🧧 Ang Bao Guide →</a>
+        </div>
+
+        <input type="text" class="venue-search" id="venueSearch"
+               placeholder="🔍  Search venue name or area..."
+               oninput="filterVenues()" />
+
+        <div class="venue-filters" id="tierFilters">
+          <button class="filter-btn active" data-tier="all"     onclick="setTier('all',this)">All</button>
+          <button class="filter-btn" data-tier="luxury"   onclick="setTier('luxury',this)">⭐ Luxury</button>
+          <button class="filter-btn" data-tier="premium"  onclick="setTier('premium',this)">🥂 Premium</button>
+          <button class="filter-btn" data-tier="classic"  onclick="setTier('classic',this)">🏛️ Classic</button>
+          <button class="filter-btn" data-tier="boutique" onclick="setTier('boutique',this)">🌿 Boutique</button>
+        </div>
+
+        <div class="venue-table-wrap">
+          <table id="venueTable">
+            <thead>
+              <tr>
+                <th onclick="sortTable('name')">Venue <span class="sort-arrow">↕</span></th>
+                <th onclick="sortTable('tier')">Tier <span class="sort-arrow">↕</span></th>
+                <th onclick="sortTable('lunch')">Lunch / pax <span class="sort-arrow">↕</span></th>
+                <th onclick="sortTable('dinner')">Dinner / pax <span class="sort-arrow">↕</span></th>
+              </tr>
+            </thead>
+            <tbody id="venueBody"></tbody>
+          </table>
+          <div class="no-results hidden" id="noResults">No venues match your search.</div>
+        </div>
+
+        <p class="caption text-muted mt-2" style="font-size:0.78rem;">
+          * Per-seat benchmarks based on 2026 banquet packages (incl. service charge &amp; GST). Always verify with your venue. Sources: SingaporeBrides, EmpathyWeddings, BlissfulBrides, YouTrip 2026.
+        </p>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ─── Top 10 Venue Spotlight ───────────────────────────── -->
+  <section id="top10" style="background:var(--warm-white);padding:3rem 0 3.5rem;scroll-margin-top:70px;">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:2rem;">
+        <div class="title-accent" style="display:block;margin:0 auto 0.75rem;"></div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--text);margin-bottom:0.5rem;">🏆 Top 10 Most Popular Venues</h2>
+        <p style="color:var(--text-muted);font-size:0.95rem;">Per-table prices (10 pax, dinner, all-in nett est.), booking lead time &amp; 2026 availability.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.25rem;" id="top10Grid"></div>
+
+      <!-- List Your Venue CTA -->
+      <div class="list-venue-cta">
+        <div style="font-size:2rem;margin-bottom:0.75rem;">🏨</div>
+        <h3>Are You a Wedding Venue?</h3>
+        <p>Get listed and reach engaged couples actively planning their big day. Featured listings get priority placement and an enquiry button direct to your sales team.</p>
+        <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
+          <a href="mailto:venues@altru.sg" class="btn btn-gold">✉️ List Your Venue</a>
+          <a href="mailto:venues@altru.sg" class="btn btn-outline" style="color:white;border-color:rgba(255,255,255,0.4);">📣 Get Featured</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Auspicious Dates ──────────────────────────────────── -->
+  <section id="auspicious-dates" style="padding:3rem 0;scroll-margin-top:70px;">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:2rem;">
+        <div class="title-accent" style="display:block;margin:0 auto 0.75rem;"></div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--text);margin-bottom:0.5rem;">🗓️ Auspicious Wedding Dates 2026</h2>
+        <p style="color:var(--text-muted);font-size:0.95rem;">Good-fortune dates per the Chinese Lunar Calendar. Popular dates at top venues book out 12–18 months ahead — plan early.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.75rem;" id="auspGrid"></div>
+
+      <div style="margin-top:1.25rem;background:#fff8f0;border-left:3px solid #e67e22;padding:0.85rem 1.1rem;border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-size:0.84rem;color:var(--text-muted);">
+        <strong style="color:#e67e22;">⚠️ Dates to avoid:</strong> 3rd Lunar Month (26 Mar–16 May 2026) · 7th Lunar Month Ghost Festival (13 Aug–10 Sep 2026) · Year Breaker Month (7 Dec 2026–4 Jan 2027). Venues may still be available on these dates but some families prefer to avoid them.
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Booking Tips ─────────────────────────────────────── -->
+  <section id="booking-tips" style="background:var(--warm-white);padding:3rem 0;scroll-margin-top:70px;">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:2rem;">
+        <div class="title-accent" style="display:block;margin:0 auto 0.75rem;"></div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--text);margin-bottom:0.5rem;">⏳ How Far Ahead Should You Book?</h2>
+        <p style="color:var(--text-muted);font-size:0.95rem;">Lead time varies hugely by tier. Here's a realistic planning timeline.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem;margin-bottom:2rem;">
+        <div class="card" style="text-align:center;">
+          <div class="card-body">
+            <div style="font-size:2.2rem;margin-bottom:0.6rem;">⭐</div>
+            <h4 style="color:var(--red);margin-bottom:0.4rem;">Luxury / Iconic</h4>
+            <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--text);margin-bottom:0.3rem;">18–24 months</div>
+            <p style="font-size:0.82rem;color:var(--text-muted);">MBS, Capella, Raffles, Fullerton. If you want a 2027 wedding at these venues, start now.</p>
+          </div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="card-body">
+            <div style="font-size:2.2rem;margin-bottom:0.6rem;">🥂</div>
+            <h4 style="color:var(--red);margin-bottom:0.4rem;">Premium 5-Star</h4>
+            <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--text);margin-bottom:0.3rem;">12–18 months</div>
+            <p style="font-size:0.82rem;color:var(--text-muted);">Fairmont, Grand Hyatt, Mandarin Oriental, Shangri-La. Auspicious weekends disappear fast.</p>
+          </div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="card-body">
+            <div style="font-size:2.2rem;margin-bottom:0.6rem;">🏛️</div>
+            <h4 style="color:var(--red);margin-bottom:0.4rem;">Classic Hotels</h4>
+            <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--text);margin-bottom:0.3rem;">9–12 months</div>
+            <p style="font-size:0.82rem;color:var(--text-muted);">Goodwood Park, PARKROYAL, Carlton. Solid options with more flexibility on dates.</p>
+          </div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="card-body">
+            <div style="font-size:2.2rem;margin-bottom:0.6rem;">🌿</div>
+            <h4 style="color:var(--red);margin-bottom:0.4rem;">Boutique / Unique</h4>
+            <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--text);margin-bottom:0.3rem;">6–12 months</div>
+            <p style="font-size:0.82rem;color:var(--text-muted);">CHIJMES, Andaz, Wheeler's Estate. Smaller capacities fill quickly for peak weekends.</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:linear-gradient(135deg,var(--red-light),var(--gold-light));border-radius:var(--radius);padding:1.5rem;border:1px solid var(--border);">
+        <h3 style="margin-bottom:0.75rem;font-size:1.05rem;">💡 Insider Tips Before You Sign</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;" class="booking-tips-grid">
+          <div style="display:flex;align-items:flex-start;gap:0.5rem;font-size:0.86rem;"><span>✓</span><span><strong>Visit on a banquet night</strong> — see the real setup, lighting and crowd flow before committing.</span></div>
+          <div style="display:flex;align-items:flex-start;gap:0.5rem;font-size:0.86rem;"><span>✓</span><span><strong>Ask about F&amp;B minimum</strong> — some venues charge a minimum spend on top of the per-table price.</span></div>
+          <div style="display:flex;align-items:flex-start;gap:0.5rem;font-size:0.86rem;"><span>✓</span><span><strong>Clarify GST &amp; service charge</strong> — always ask for the nett all-in price, not the ++ price.</span></div>
+          <div style="display:flex;align-items:flex-start;gap:0.5rem;font-size:0.86rem;"><span>✓</span><span><strong>Weekend premium</strong> — Saturday dinner slots can cost 15–25% more than a weekday dinner.</span></div>
+          <div style="display:flex;align-items:flex-start;gap:0.5rem;font-size:0.86rem;"><span>✓</span><span><strong>Menu tasting</strong> — reputable venues include a complimentary tasting — insist on it before signing.</span></div>
+          <div style="display:flex;align-items:flex-start;gap:0.5rem;font-size:0.86rem;"><span>✓</span><span><strong>Cancellation policy</strong> — read the deposit forfeiture clause carefully, especially for peak dates.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Altru CTA ─────────────────────────────────────────── -->
+  <section style="background:linear-gradient(135deg,#3D0812,#C8102E);padding:3rem 0;text-align:center;">
+    <div class="container">
+      <div style="font-size:2rem;margin-bottom:0.75rem;">🧧</div>
+      <h2 style="color:white;margin-bottom:0.6rem;">Found Your Venue? Set Up Your Altru Gift Page.</h2>
+      <p style="color:rgba(255,255,255,0.8);max-width:520px;margin:0 auto 1.75rem;font-size:0.95rem;">
+        Let guests send ang baos that also donate to a charity you love — unlocking <a href="https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-reliefs-rebates-and-deductions/deductions-on-donations" target="_blank" rel="noopener" style="color:var(--gold);font-weight:700;">250% tax deductions</a> for you. Works with any venue, any date.
+      </p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+        <a href="couple.html" class="btn btn-gold btn-lg">💍 Set Up My Wedding Page</a>
+        <a href="index.html" class="btn btn-outline btn-lg" style="color:white;border-color:rgba(255,255,255,0.5);">Learn How It Works</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Footer ─────────────────────────────────────────────── -->
+  <script src="js/app.js"></script>
+  <footer class="site-footer">
+    <div class="container">
+      <div class="logo" style="justify-content:center;color:var(--pink);margin-bottom:0.75rem;">
+        <img src="altru-logo.jpg" alt="Altru" class="logo-img"> Altru
+      </div>
+      <p>Turning every wedding into a celebration of generosity. &nbsp;|&nbsp; All donations go to IPC-registered charities.</p>
+      <p style="margin-top:0.5rem;">
+        <a href="index.html">Home</a> &nbsp;·&nbsp;
+        <a href="angbao-guide.html">Ang Bao Guide</a> &nbsp;·&nbsp;
+        <a href="donor.html">Send a Gift</a> &nbsp;·&nbsp;
+        <a href="couple.html">Couple Portal</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+  /* ── Venue Data ── */
+  const VENUES = [
+    // Luxury / Iconic
+    { name: "Raffles Hotel Singapore",      tier: "luxury",   lunch: 310, dinner: 350, note: "Historic landmark · City Hall" },
+    { name: "Capella Singapore",            tier: "luxury",   lunch: 350, dinner: 430, note: "Sentosa island resort" },
+    { name: "The Capitol Kempinski",        tier: "luxury",   lunch: 340, dinner: 400, note: "Heritage precinct · City Hall" },
+    { name: "Marina Bay Sands",             tier: "luxury",   lunch: 290, dinner: 350, note: "Iconic skyline views · Marina Bay" },
+    { name: "The Fullerton Hotel",          tier: "luxury",   lunch: 280, dinner: 310, note: "Heritage landmark · Marina Bay" },
+    { name: "Four Seasons Hotel Singapore", tier: "luxury",   lunch: 270, dinner: 350, note: "Orchard Road" },
+    { name: "JW Marriott South Beach",      tier: "luxury",   lunch: 290, dinner: 340, note: "Marina Bay" },
+    { name: "Shangri-La Singapore",         tier: "luxury",   lunch: 270, dinner: 330, note: "Valley Wing · Orchard" },
+    { name: "Mandarin Oriental Singapore",  tier: "luxury",   lunch: 240, dinner: 300, note: "Marina Bay" },
+    { name: "The Barracks Hotel Sentosa",   tier: "luxury",   lunch: null, dinner: 780, note: "Ultra-luxury, small wedding · Sentosa" },
+    // Premium 5-Star
+    { name: "Grand Hyatt Singapore",        tier: "premium",  lunch: 260, dinner: 280, note: "Orchard Road" },
+    { name: "Hilton Singapore Orchard",     tier: "premium",  lunch: 240, dinner: 280, note: "Orchard" },
+    { name: "Pan Pacific Singapore",        tier: "premium",  lunch: 240, dinner: 280, note: "Marina Square" },
+    { name: "Pan Pacific Orchard",          tier: "premium",  lunch: 240, dinner: 280, note: "Orchard" },
+    { name: "Fairmont Singapore",           tier: "premium",  lunch: 240, dinner: 280, note: "City Hall" },
+    { name: "Swissôtel The Stamford",       tier: "premium",  lunch: 220, dinner: 260, note: "City Hall" },
+    { name: "Conrad Singapore Marina Bay",  tier: "premium",  lunch: 240, dinner: 260, note: "Marina Bay" },
+    { name: "Shangri-La Rasa Sentosa",      tier: "premium",  lunch: 280, dinner: 310, note: "Beachfront · Sentosa" },
+    { name: "Sofitel Sentosa Resort & Spa", tier: "premium",  lunch: 200, dinner: 240, note: "Sentosa hilltop" },
+    { name: "W Singapore – Sentosa Cove",   tier: "premium",  lunch: 280, dinner: 280, note: "Marina views · Sentosa" },
+    { name: "Sheraton Towers Singapore",    tier: "premium",  lunch: 220, dinner: 250, note: "Orchard" },
+    { name: "The St. Regis Singapore",      tier: "premium",  lunch: 260, dinner: 300, note: "Tanglin" },
+    // Classic / City
+    { name: "Goodwood Park Hotel",          tier: "classic",  lunch: 210, dinner: 240, note: "Heritage hotel · Orchard" },
+    { name: "PARKROYAL Marina Bay",         tier: "classic",  lunch: 220, dinner: 280, note: "Marina Bay" },
+    { name: "PARKROYAL Beach Road",         tier: "classic",  lunch: 200, dinner: 250, note: "Beach Road" },
+    { name: "InterContinental Singapore",   tier: "classic",  lunch: 210, dinner: 270, note: "Bugis" },
+    { name: "Conrad Singapore Orchard",     tier: "classic",  lunch: 270, dinner: 290, note: "Orchard" },
+    { name: "Orchard Hotel Singapore",      tier: "classic",  lunch: 200, dinner: 280, note: "Orchard" },
+    { name: "Mandarin Orchard Singapore",   tier: "classic",  lunch: 200, dinner: 240, note: "Orchard" },
+    { name: "Carlton Hotel Singapore",      tier: "classic",  lunch: 190, dinner: 220, note: "City Hall" },
+    { name: "Grand Copthorne Waterfront",   tier: "classic",  lunch: 200, dinner: 240, note: "Robertson Quay" },
+    { name: "York Hotel Singapore",         tier: "classic",  lunch: 180, dinner: 210, note: "Orchard area" },
+    { name: "Novotel Singapore Clarke Quay",tier: "classic",  lunch: 180, dinner: 210, note: "Clarke Quay" },
+    { name: "Holiday Inn Singapore Orchard",tier: "classic",  lunch: 180, dinner: 200, note: "Orchard" },
+    // Boutique / Unique
+    { name: "CHIJMES Hall",                 tier: "boutique", lunch: 180, dinner: 200, note: "Heritage chapel · City Hall" },
+    { name: "The Alkaff Mansion",           tier: "boutique", lunch: 180, dinner: 200, note: "Telok Blangah" },
+    { name: "Andaz Singapore",              tier: "boutique", lunch: 200, dinner: 220, note: "Rooftop garden · Kampong Glam" },
+    { name: "Wheeler's Estate",             tier: "boutique", lunch: 160, dinner: 180, note: "Pastoral setting · Seletar" },
+    { name: "1-Arden",                      tier: "boutique", lunch: 180, dinner: 220, note: "Rooftop · CapitaSpring" },
+    { name: "The Clifford Pier",            tier: "boutique", lunch: 200, dinner: 260, note: "Heritage waterfront · Marina Bay" },
+    { name: "The White Rabbit",             tier: "boutique", lunch: 160, dinner: 190, note: "Dempsey Hill chapel" },
+    { name: "The Summerhouse",              tier: "boutique", lunch: 150, dinner: 180, note: "Seletar garden" },
+  ];
+
+  /* ── Top 10 Spotlight Data ── */
+  const TOP10 = [
+    {
+      rank: 1, name: "Marina Bay Sands", tier: "luxury", area: "Marina Bay",
+      dinner: "S$2,900 – S$3,500", lunch: "S$2,400 – S$2,900",
+      minTables: 30, capacity: "up to 6,600 guests",
+      feature: "Southeast Asia's largest ballroom, iconic skyline backdrop",
+      leadTime: "18–24 months", icon: "🌃",
+      slots: ["Jan 2026 (limited weekday)", "Feb 2026 (limited)", "Jun–Jul 2026", "Oct–Nov 2026"],
+      avail: "limited", featured: false
+    },
+    {
+      rank: 2, name: "Capella Singapore", tier: "luxury", area: "Sentosa Island",
+      dinner: "S$3,500 – S$4,300", lunch: "S$3,000 – S$3,800",
+      minTables: 10, capacity: "up to 250 guests",
+      feature: "Island resort exclusivity, lush colonial estate, destination wedding feel",
+      leadTime: "18–24 months", icon: "🌴",
+      slots: ["Mar 2026 (select dates)", "Sep 2026 (some availability)", "Nov 2026"],
+      avail: "limited", featured: false
+    },
+    {
+      rank: 3, name: "Raffles Hotel Singapore", tier: "luxury", area: "City Hall",
+      dinner: "S$3,100 – S$3,800", lunch: "S$2,800 – S$3,200",
+      minTables: 15, capacity: "up to 400 guests",
+      feature: "Historic 1887 landmark, Jubilee Ballroom, 8-course Chinese menus",
+      leadTime: "18–24 months", icon: "🏛️",
+      slots: ["Jan 2026 (weekdays)", "Apr 2026", "Oct–Nov 2026"],
+      avail: "limited", featured: false
+    },
+    {
+      rank: 4, name: "The Fullerton Hotel", tier: "luxury", area: "Marina Bay",
+      dinner: "S$2,800 – S$3,100", lunch: "S$2,500 – S$2,800",
+      minTables: 20, capacity: "up to 48 tables",
+      feature: "Neoclassical heritage building, The Ballroom and intimate Straits Room",
+      leadTime: "12–18 months", icon: "🏦",
+      slots: ["Feb 2026", "May–Jun 2026", "Sep–Oct 2026"],
+      avail: "moderate", featured: false
+    },
+    {
+      rank: 5, name: "Shangri-La Singapore", tier: "luxury", area: "Orchard",
+      dinner: "S$2,700 – S$3,300", lunch: "S$2,400 – S$2,900",
+      minTables: 20, capacity: "up to 1,000 guests",
+      feature: "Pillarless Island Ballroom, 20m curved LED wall, lush Valley Wing garden",
+      leadTime: "12–18 months", icon: "🌺",
+      slots: ["Jan–Feb 2026", "Jun 2026", "Oct–Dec 2026"],
+      avail: "moderate", featured: false
+    },
+    {
+      rank: 6, name: "Four Seasons Hotel Singapore", tier: "luxury", area: "Orchard",
+      dinner: "S$2,700 – S$3,500", lunch: "S$2,400 – S$2,800",
+      minTables: 12, capacity: "120–400 guests",
+      feature: "Michelin-recommended Jiang-Nan Chun Cantonese cuisine, honeymoon suite",
+      leadTime: "12–18 months", icon: "🌸",
+      slots: ["Mar 2026", "Jun–Jul 2026", "Nov 2026"],
+      avail: "moderate", featured: false
+    },
+    {
+      rank: 7, name: "Fairmont Singapore", tier: "premium", area: "City Hall",
+      dinner: "S$2,400 – S$2,800", lunch: "S$2,000 – S$2,400",
+      minTables: 15, capacity: "up to 150 tables",
+      feature: "Pillar-free Fairmont Ballroom, world's largest chandeliers, flexible layout",
+      leadTime: "12–18 months", icon: "✨",
+      slots: ["Jan 2026", "Apr–May 2026", "Aug 2026", "Oct 2026"],
+      avail: "moderate", featured: false
+    },
+    {
+      rank: 8, name: "Grand Hyatt Singapore", tier: "premium", area: "Orchard",
+      dinner: "S$2,200 – S$2,600", lunch: "S$1,800 – S$2,100",
+      minTables: 15, capacity: "up to 500 guests",
+      feature: "Multiple ballroom configurations, Chinese & Western menus, city views",
+      leadTime: "9–12 months", icon: "🥂",
+      slots: ["Feb 2026", "May 2026", "Aug–Sep 2026", "Nov–Dec 2026"],
+      avail: "good", featured: false
+    },
+    {
+      rank: 9, name: "Goodwood Park Hotel", tier: "classic", area: "Orchard",
+      dinner: "S$1,900 – S$2,400", lunch: "S$1,600 – S$2,000",
+      minTables: 10, capacity: "up to 35 tables",
+      feature: "Heritage hotel, intimate Tudor & Windsor Ballrooms, old-world charm",
+      leadTime: "9–12 months", icon: "🏰",
+      slots: ["Jan–Feb 2026", "Apr 2026", "Jul–Aug 2026", "Oct–Nov 2026"],
+      avail: "good", featured: false
+    },
+    {
+      rank: 10, name: "Andaz Singapore", tier: "boutique", area: "Kampong Glam",
+      dinner: "S$2,000 – S$2,600", lunch: "S$1,800 – S$2,200",
+      minTables: 10, capacity: "up to 280 guests",
+      feature: "Jewel-box Glasshouse with floor-to-ceiling windows, outdoor garden terrace",
+      leadTime: "6–12 months", icon: "🪟",
+      slots: ["Feb–Mar 2026", "May–Jun 2026", "Sep 2026", "Nov–Dec 2026"],
+      avail: "good", featured: false
+    }
+  ];
+
+  const AVAIL_STYLE = {
+    limited:  { bg: "#fff0f0", color: "#c0392b", label: "Highly Limited" },
+    moderate: { bg: "#fff8e1", color: "#e67e22", label: "Limited Slots" },
+    good:     { bg: "#f0fff4", color: "#27ae60", label: "Slots Available" }
+  };
+
+  const TIER_LABEL = { luxury: "⭐ Luxury", premium: "🥂 Premium", classic: "🏛️ Classic", boutique: "🌿 Boutique" };
+
+  /* ── State ── */
+  let activeTier = 'all';
+  let sortKey = 'name';
+  let sortAsc = true;
+
+  /* ── Init ── */
+  document.addEventListener('DOMContentLoaded', () => {
+    renderVenues();
+    renderTop10();
+    renderDates();
+  });
+
+  /* ── Venue Table ── */
+  function renderVenues() {
+    const search = document.getElementById('venueSearch').value.toLowerCase();
+    let list = VENUES.filter(v => {
+      const matchTier = activeTier === 'all' || v.tier === activeTier;
+      const matchSearch = v.name.toLowerCase().includes(search) || v.note.toLowerCase().includes(search);
+      return matchTier && matchSearch;
+    });
+
+    list.sort((a, b) => {
+      let av = a[sortKey], bv = b[sortKey];
+      if (sortKey === 'name' || sortKey === 'tier') {
+        av = av || ''; bv = bv || '';
+        return sortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+      }
+      av = av || 0; bv = bv || 0;
+      return sortAsc ? av - bv : bv - av;
+    });
+
+    const tbody = document.getElementById('venueBody');
+    const noRes = document.getElementById('noResults');
+
+    if (list.length === 0) {
+      tbody.innerHTML = '';
+      noRes.classList.remove('hidden');
+      return;
+    }
+    noRes.classList.add('hidden');
+
+    const tierLabel = { luxury: 'Luxury', premium: 'Premium', classic: 'Classic', boutique: 'Boutique' };
+    const tierClass = { luxury: 'tier-luxury', premium: 'tier-premium', classic: 'tier-classic', boutique: 'tier-boutique' };
+
+    tbody.innerHTML = list.map(v => `
+      <tr>
+        <td>
+          <div class="venue-name">${v.name}</div>
+          <div class="venue-note">${v.note}</div>
+        </td>
+        <td><span class="tier-badge ${tierClass[v.tier]}">${tierLabel[v.tier]}</span></td>
+        <td class="${v.lunch ? 'amount-cell' : 'amount-na'}">${v.lunch ? `S$${v.lunch}` : 'N/A'}</td>
+        <td class="${v.dinner ? 'amount-cell' : 'amount-na'}">${v.dinner ? `S$${v.dinner}` : 'N/A'}</td>
+      </tr>
+    `).join('');
+  }
+
+  function filterVenues() { renderVenues(); }
+
+  function setTier(tier, btn) {
+    activeTier = tier;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderVenues();
+  }
+
+  function sortTable(key) {
+    if (sortKey === key) sortAsc = !sortAsc;
+    else { sortKey = key; sortAsc = true; }
+    renderVenues();
+  }
+
+  /* ── Top 10 Grid ── */
+  function renderTop10() {
+    const grid = document.getElementById('top10Grid');
+    TOP10.forEach(v => {
+      const av = AVAIL_STYLE[v.avail];
+      const featuredBadge = v.featured ? '<span class="featured-badge">★ Featured</span>' : '';
+      const card = document.createElement('div');
+      card.className = 'spotlight-card' + (v.featured ? ' featured' : '');
+      card.innerHTML = `
+        <div style="background:linear-gradient(135deg,#3D0812,#C8102E);padding:1rem 1.25rem;display:flex;align-items:center;gap:0.75rem;">
+          <div style="font-size:1.8rem;flex-shrink:0;">${v.icon}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:white;line-height:1.2;">${v.name}${featuredBadge}</div>
+            <div style="font-size:0.75rem;color:rgba(255,255,255,0.65);margin-top:0.2rem;">${v.area} &nbsp;·&nbsp; ${TIER_LABEL[v.tier]}</div>
+          </div>
+          <div style="background:rgba(201,151,58,0.3);color:#F0C060;font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${v.rank}</div>
+        </div>
+        <div style="padding:1rem 1.25rem;flex:1;display:flex;flex-direction:column;gap:0.6rem;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+            <div style="background:var(--warm-white);border-radius:var(--radius-sm);padding:0.5rem 0.65rem;">
+              <div style="font-size:0.7rem;color:var(--text-muted);font-weight:700;letter-spacing:0.5px;text-transform:uppercase;">Dinner / table</div>
+              <div style="font-size:0.92rem;font-weight:700;color:var(--red);margin-top:0.1rem;">${v.dinner}</div>
+            </div>
+            <div style="background:var(--warm-white);border-radius:var(--radius-sm);padding:0.5rem 0.65rem;">
+              <div style="font-size:0.7rem;color:var(--text-muted);font-weight:700;letter-spacing:0.5px;text-transform:uppercase;">Lunch / table</div>
+              <div style="font-size:0.92rem;font-weight:700;color:var(--text);margin-top:0.1rem;">${v.lunch}</div>
+            </div>
+          </div>
+          <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.4;">📌 ${v.feature}</div>
+          <div style="font-size:0.8rem;color:var(--text-muted);">Min <strong style="color:var(--text);">${v.minTables} tables</strong> &nbsp;·&nbsp; ${v.capacity}</div>
+          <div style="background:${av.bg};border-radius:var(--radius-sm);padding:0.55rem 0.75rem;margin-top:auto;">
+            <div style="font-size:0.72rem;font-weight:700;color:${av.color};text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.3rem;">🗓 2026 Availability — ${av.label}</div>
+            <div style="font-size:0.78rem;color:var(--text-muted);">${v.slots.join(' &nbsp;·&nbsp; ')}</div>
+            <div style="font-size:0.74rem;color:var(--text-muted);margin-top:0.25rem;">⏳ Book <strong>${v.leadTime}</strong> in advance</div>
+          </div>
+          <a href="mailto:venues@altru.sg?subject=Enquiry: ${encodeURIComponent(v.name)}" class="enquire-btn" style="text-align:center;margin-top:0.25rem;">Enquire Now →</a>
+        </div>`;
+      grid.appendChild(card);
+    });
+  }
+
+  /* ── Auspicious Dates ── */
+  function renderDates() {
+    const DATES = [
+      { month: "January 2026",  dates: "3, 5, 7, 8, 10, 16, 17, 19, 22, 29", note: "Strong start to lunar year" },
+      { month: "February 2026", dates: "7, 8, 10, 11, 14, 19, 22, 25, 26",   note: "Post-CNY; 8 Feb especially lucky" },
+      { month: "March 2026",    dates: "3, 6, 9, 10, 13, 15, 18, 21",         note: "Before 3rd Lunar Month" },
+      { month: "April 2026",    dates: "3, 8, 12, 15, 18, 22",                note: "⚠️ Avoid after 16 Apr (3rd Lunar Month)" },
+      { month: "June 2026",     dates: "6, 8, 12, 16, 18, 22, 26",            note: "Popular peak month" },
+      { month: "July 2026",     dates: "2, 6, 8, 12, 18, 22",                 note: "Before Ghost Month; book early" },
+      { month: "October 2026",  dates: "4, 8, 10, 14, 18, 22, 28",            note: "Popular autumn slot" },
+      { month: "November 2026", dates: "6, 8, 12, 14, 18, 22, 28",            note: "Year-end rush begins" },
+    ];
+    const ag = document.getElementById('auspGrid');
+    DATES.forEach(d => {
+      const el = document.createElement('div');
+      el.className = 'date-card';
+      el.innerHTML = `<div style="font-weight:700;color:var(--red);font-size:0.9rem;margin-bottom:0.3rem;">${d.month}</div><div style="font-size:0.8rem;color:var(--text);">${d.dates}</div><div style="font-size:0.74rem;color:var(--text-muted);margin-top:0.25rem;">${d.note}</div>`;
+      ag.appendChild(el);
+    });
+  }
+  </script>
+
+  <style>
+    @media (max-width: 600px) {
+      .booking-tips-grid { grid-template-columns: 1fr !important; }
+    }
+  </style>
+
+</body>
+</html>
