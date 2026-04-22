@@ -233,6 +233,9 @@
         <ul class="sidebar-nav">
           <li><a href="#" class="active" onclick="showAdminTab(this, 'overview')">&#128202; Dashboard</a></li>
           <li><a href="#" onclick="showAdminTab(this, 'reconciliation'); if(typeof renderAdminReconciliation==='function') renderAdminReconciliation();">&#9679; PayNow Reconciliation</a></li>
+          <li><a href="#" onclick="showAdminTab(this, 'lifecycle'); if(typeof renderAdminLifecycle==='function') renderAdminLifecycle();">&#9733; Event Lifecycle</a></li>
+          <li><a href="#" onclick="showAdminTab(this, 'payouts'); if(typeof renderAdminPayouts==='function') renderAdminPayouts();">&#128184; Payouts</a></li>
+          <li><a href="#" onclick="showAdminTab(this, 'reminders'); if(typeof renderAdminReminders==='function') renderAdminReminders();">&#128276; Reminders</a></li>
           <li><a href="#" onclick="showAdminTab(this, 'analytics')">&#128200; Analytics</a></li>
         </ul>
       </div>
@@ -480,6 +483,130 @@
                 </tr>
               </thead>
               <tbody id="admin-verified-list"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== EVENT LIFECYCLE TAB ===== -->
+      <div id="admin-lifecycle" style="display: none;" data-tc-render="admin-lifecycle">
+        <div class="admin-header">
+          <div>
+            <h2 style="margin-bottom: 4px;">&#9733; Event Lifecycle</h2>
+            <p>Release escrow when an event delivers. Cancel + refund all when it doesn&rsquo;t.</p>
+          </div>
+        </div>
+        <div class="card" style="padding: 24px;">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Event</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>RSVPs</th>
+                  <th>Escrow collected</th>
+                  <th>Released</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-lifecycle-list"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PAYOUTS TAB ===== -->
+      <div id="admin-payouts" style="display: none;" data-tc-render="admin-payouts">
+        <div class="admin-header">
+          <div>
+            <h2 style="margin-bottom: 4px;">&#128184; Organiser Payouts</h2>
+            <p>Organisers request payouts from released escrow. Approve → you transfer via PayNow → mark sent.</p>
+          </div>
+        </div>
+        <div class="grid-4" style="margin-bottom: 24px;">
+          <div class="stat-card" style="border-left: 4px solid var(--coral);">
+            <div class="stat-value text-gradient" id="payouts-pending-count">0</div>
+            <div class="stat-label">Requested</div>
+          </div>
+          <div class="stat-card" style="border-left: 4px solid var(--ocean);">
+            <div class="stat-value" style="color: var(--deep-ocean);" id="payouts-pending-amount">$0</div>
+            <div class="stat-label">Pending approval</div>
+          </div>
+          <div class="stat-card" style="border-left: 4px solid var(--palm);">
+            <div class="stat-value" style="color: #059669;" id="payouts-sent-count">0</div>
+            <div class="stat-label">Sent this month</div>
+          </div>
+          <div class="stat-card" style="border-left: 4px solid var(--pink);">
+            <div class="stat-value" style="color: var(--pink);" id="payouts-ready-amount">$0</div>
+            <div class="stat-label">Escrow ready to pay</div>
+          </div>
+        </div>
+        <div class="card" style="padding: 24px;">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Reference</th>
+                  <th>Event</th>
+                  <th>Organiser</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Requested</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-payouts-list"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== REMINDERS TAB ===== -->
+      <div id="admin-reminders" style="display: none;" data-tc-render="admin-reminders">
+        <div class="admin-header">
+          <div>
+            <h2 style="margin-bottom: 4px;">&#128276; Payment Reminders</h2>
+            <p id="reminders-transport-note">Log-only mode — set <code>TC_FORMSPREE_ID</code> in reminders.js to send real emails.</p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-secondary btn-sm" onclick="adminRecomputeReminders()">&#8635; Recompute queue</button>
+            <button class="btn btn-primary btn-sm" onclick="adminSendAllReminders()">&#9889; Send all queued</button>
+          </div>
+        </div>
+        <div class="grid-4" style="margin-bottom: 24px;">
+          <div class="stat-card" style="border-left: 4px solid var(--coral);">
+            <div class="stat-value text-gradient" id="reminders-queued">0</div>
+            <div class="stat-label">Queued</div>
+          </div>
+          <div class="stat-card" style="border-left: 4px solid var(--pink);">
+            <div class="stat-value" style="color: var(--pink);" id="reminders-overdue">0</div>
+            <div class="stat-label">Overdue</div>
+          </div>
+          <div class="stat-card" style="border-left: 4px solid var(--palm);">
+            <div class="stat-value" style="color: #059669;" id="reminders-sent">0</div>
+            <div class="stat-label">Sent</div>
+          </div>
+          <div class="stat-card" style="border-left: 4px solid var(--ocean);">
+            <div class="stat-value" style="color: var(--deep-ocean);" id="reminders-dismissed">0</div>
+            <div class="stat-label">Dismissed</div>
+          </div>
+        </div>
+        <div class="card" style="padding: 24px;">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Kind</th>
+                  <th>Recipient</th>
+                  <th>Event · milestone</th>
+                  <th>Amount</th>
+                  <th>Due</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-reminders-list"></tbody>
             </table>
           </div>
         </div>
@@ -1429,6 +1556,7 @@
   <div class="toast" id="toast"></div>
 
   <script src="store.js"></script>
+  <script src="reminders.js"></script>
   <script src="app.js"></script>
   <script>
     // Admin tab switching

@@ -356,9 +356,10 @@ function proceedToPayNow(opts) {
       eventId: ev.id, name: name, email: email, phone: phone,
       status: 'pending_verification', amountPaid: 0
     });
+    const firstMilestone = (ev.milestones && ev.milestones[0]) || { id: 'm1' };
     txnRecord = TCStore.createTransaction({
       type: 'rsvp_deposit', amount: amount, reference: reference,
-      eventId: ev.id, rsvpId: rsvpRecord.id,
+      eventId: ev.id, rsvpId: rsvpRecord.id, milestoneId: firstMilestone.id,
       payerName: name, payerEmail: email,
       status: 'pending_verification'
     });
@@ -848,22 +849,30 @@ function renderDashboard() {
       mine.forEach(ev => {
         const stats = TCStore.eventStats(ev.id);
         const md = _fmtMonthDay(ev.date);
-        mineHost.appendChild(_el('a', { class: 'card', href: 'event.html?slug=' + encodeURIComponent(ev.slug), style: 'display: block; padding: 20px; margin-bottom: 12px; text-decoration: none; color: inherit;' }, [
-          _el('div', { style: 'display: flex; gap: 16px; align-items: center;' }, [
+        const canPayout = stats.escrowAvailable > 0;
+        const row = _el('div', { class: 'card', style: 'padding: 20px; margin-bottom: 12px;' }, [
+          _el('div', { style: 'display: flex; gap: 16px; align-items: center; flex-wrap: wrap;' }, [
             _el('div', { class: 'event-date-badge', style: 'position: static;' }, [
               _el('div', { class: 'month', text: md.month }),
               _el('div', { class: 'day', text: md.day })
             ]),
-            _el('div', { style: 'flex: 1;' }, [
-              _el('strong', { style: 'display: block; font-size: 1rem; color: var(--navy); margin-bottom: 4px;', text: ev.title }),
-              _el('div', { style: 'font-size: 0.82rem; color: var(--slate);', text: ev.location + ' · ' + stats.verifiedRsvps + ' / ' + (ev.maxGuests || '?') + ' joined' })
+            _el('div', { style: 'flex: 1; min-width: 180px;' }, [
+              _el('a', { href: 'event.html?slug=' + encodeURIComponent(ev.slug), style: 'text-decoration: none; color: inherit;' }, [
+                _el('strong', { style: 'display: block; font-size: 1rem; color: var(--navy); margin-bottom: 4px;', text: ev.title })
+              ]),
+              _el('div', { style: 'font-size: 0.82rem; color: var(--slate);', text: ev.location + ' · ' + stats.verifiedRsvps + ' / ' + (ev.maxGuests || '?') + ' joined · status: ' + (ev.status || 'live') })
             ]),
-            _el('div', { style: 'text-align: right;' }, [
+            _el('div', { style: 'text-align: right; min-width: 100px;' }, [
               _el('div', { style: 'font-weight: 800; font-size: 1.1rem; color: var(--coral);', text: '$' + Math.round(stats.collected) }),
               _el('div', { style: 'font-size: 0.76rem; color: var(--slate);', text: 'in escrow' })
-            ])
+            ]),
+            canPayout ? _el('div', { style: 'text-align: right; min-width: 140px;' }, [
+              _el('div', { style: 'font-weight: 800; font-size: 1rem; color: var(--palm);', text: '$' + Math.round(stats.escrowAvailable) + ' released' }),
+              _el('button', { class: 'btn btn-primary btn-sm', style: 'margin-top: 6px;', onclick: function () { organiserRequestPayout(ev.id); }, text: 'Request payout' })
+            ]) : null
           ])
-        ]));
+        ]);
+        mineHost.appendChild(row);
       });
     }
   }
@@ -1024,11 +1033,243 @@ function adminRejectTxn(id) {
   renderAdminReconciliation();
 }
 
+// ── Organiser actions ──────────────────────────────────
+function organiserRequestPayout(eventId) {
+  if (!window.TCStore) return;
+  const paynow = prompt('Your PayNow mobile / UEN for payout:', '9100 2050');
+  if (!paynow) return;
+  const p = TCStore.requestPayout(eventId, { paynowTo: paynow });
+  if (!p) {
+    showToast('No released escrow available for payout yet.', 'error');
+    return;
+  }
+  showToast('Payout of $' + p.amount.toFixed(2) + ' requested. Ref ' + p.reference, 'success');
+  renderDashboard();
+}
+
 function adminResetDemo() {
   if (!confirm('Wipe all local data (events, RSVPs, transactions, bookings)? Seed demo data will re-populate on next load.')) return;
   TCStore.resetAll();
   showToast('Store reset. Reloading…', 'success');
   setTimeout(() => location.reload(), 500);
+}
+
+// ── Admin Lifecycle (release + cancel/refund) ──────────
+function renderAdminLifecycle() {
+  const hook = document.querySelector('[data-tc-render="admin-lifecycle"]');
+  if (!hook || !window.TCStore) return;
+  const host = document.getElementById('admin-lifecycle-list');
+  if (!host) return;
+  _clear(host);
+  const events = TCStore.listEvents().slice().sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+  events.forEach(ev => {
+    const stats = TCStore.eventStats(ev.id);
+    const md = _fmtMonthDay(ev.date);
+    const statusLabel = ev.status === 'cancelled' ? 'Cancelled'
+                      : ev.status === 'released' ? 'Released'
+                      : 'Live';
+    const statusCls = ev.status === 'cancelled' ? 'badge-coral'
+                    : ev.status === 'released' ? 'badge-green'
+                    : 'badge-ocean';
+    const row = _el('tr', {}, [
+      _el('td', {}, [
+        _el('strong', { text: ev.title }),
+        _el('div', { style: 'font-size: 0.76rem; color: var(--slate);', text: ev.location + ' · ' + (ev.organiser && ev.organiser.name || '') })
+      ]),
+      _el('td', { style: 'font-family: ui-monospace, monospace; font-size: 0.82rem;', text: md.month + ' ' + md.day }),
+      _el('td', {}, [_el('span', { class: 'badge ' + statusCls, text: statusLabel })]),
+      _el('td', { text: stats.verifiedRsvps + ' / ' + (ev.maxGuests || '—') }),
+      _el('td', { style: 'font-weight: 700; color: var(--coral);', text: '$' + Math.round(stats.collected) }),
+      _el('td', { style: 'font-weight: 700; color: var(--palm);', text: '$' + Math.round(stats.released) }),
+      _el('td', {}, [
+        ev.status === 'live' ? _el('button', {
+          class: 'btn btn-primary btn-sm', style: 'margin-right: 6px;',
+          onclick: function () { adminReleaseEvent(ev.id); },
+          text: 'Release escrow'
+        }) : null,
+        ev.status !== 'cancelled' ? _el('button', {
+          class: 'btn btn-secondary btn-sm',
+          onclick: function () { adminCancelEvent(ev.id); },
+          text: 'Cancel + refund all'
+        }) : null
+      ])
+    ]);
+    host.appendChild(row);
+  });
+}
+function adminReleaseEvent(eventId) {
+  const ev = TCStore.eventById(eventId);
+  if (!ev) return;
+  if (!confirm('Release escrow for "' + ev.title + '"? All verified deposits become available to the organiser for payout.')) return;
+  const n = TCStore.releaseEscrow(eventId, 'Manually released by admin');
+  showToast(n + ' transaction(s) released.', 'success');
+  renderAdminLifecycle();
+  renderAdminReconciliation();
+}
+function adminCancelEvent(eventId) {
+  const ev = TCStore.eventById(eventId);
+  if (!ev) return;
+  const reason = prompt('Reason for cancelling "' + ev.title + '"? (shown in refund ledger)');
+  if (reason == null) return;
+  const res = TCStore.cancelEventAndRefundAll(eventId, reason);
+  showToast('Cancelled: ' + (res ? res.refunded : 0) + ' attendee(s) refunded.', 'success');
+  renderAdminLifecycle();
+  renderAdminReconciliation();
+}
+
+// ── Admin Payouts ──────────────────────────────────────
+function renderAdminPayouts() {
+  const hook = document.querySelector('[data-tc-render="admin-payouts"]');
+  if (!hook || !window.TCStore) return;
+  const host = document.getElementById('admin-payouts-list');
+  const setText = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+  const payouts = TCStore.listPayouts().slice().sort((a, b) => b.createdAt - a.createdAt);
+
+  const requested = payouts.filter(p => p.status === 'requested');
+  const sentThisMonth = payouts.filter(p => {
+    if (p.status !== 'sent') return false;
+    const d = new Date(p.sentAt || 0);
+    const now = new Date();
+    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+  });
+  const stats = TCStore.platformStats();
+  setText('payouts-pending-count', String(requested.length));
+  setText('payouts-pending-amount', '$' + Math.round(requested.reduce((s, p) => s + Number(p.amount || 0), 0)).toLocaleString());
+  setText('payouts-sent-count', String(sentThisMonth.length));
+  setText('payouts-ready-amount', '$' + Math.round(stats.releasedBalance).toLocaleString());
+
+  if (!host) return;
+  _clear(host);
+  if (!payouts.length) {
+    host.appendChild(_el('tr', {}, [_el('td', { colspan: '7', style: 'text-align: center; padding: 28px; color: var(--slate);', text: 'No payout requests yet.' })]));
+    return;
+  }
+  payouts.forEach(p => {
+    const ev = TCStore.eventById(p.eventId);
+    const statusCls = p.status === 'sent' ? 'badge-green'
+                     : p.status === 'approved' ? 'badge-ocean'
+                     : p.status === 'rejected' ? 'badge-coral'
+                     : 'badge-pink';
+    host.appendChild(_el('tr', {}, [
+      _el('td', { style: 'font-family: ui-monospace, monospace; font-size: 0.78rem;', text: p.reference || '—' }),
+      _el('td', { text: ev ? ev.title : '—' }),
+      _el('td', {}, [
+        _el('div', { text: (p.requestedBy && p.requestedBy.name) || '—' }),
+        _el('div', { style: 'font-size: 0.74rem; color: var(--slate);', text: (p.requestedBy && p.requestedBy.email) || '' })
+      ]),
+      _el('td', { style: 'font-weight: 700; color: var(--coral);', text: '$' + Number(p.amount || 0).toFixed(2) }),
+      _el('td', {}, [_el('span', { class: 'badge ' + statusCls, text: p.status })]),
+      _el('td', { style: 'font-size: 0.78rem; color: var(--slate);', text: _agoFromNow(p.createdAt) }),
+      _el('td', {}, [
+        p.status === 'requested' ? _el('button', { class: 'btn btn-primary btn-sm', style: 'margin-right: 4px;', onclick: function () { adminApprovePayout(p.id); }, text: 'Approve' }) : null,
+        p.status === 'approved' ? _el('button', { class: 'btn btn-primary btn-sm', style: 'margin-right: 4px;', onclick: function () { adminMarkPayoutSent(p.id); }, text: 'Mark sent' }) : null,
+        (p.status === 'requested' || p.status === 'approved') ? _el('button', { class: 'btn btn-secondary btn-sm', onclick: function () { adminRejectPayout(p.id); }, text: 'Reject' }) : null
+      ])
+    ]));
+  });
+}
+function adminApprovePayout(id) {
+  TCStore.approvePayout(id, 'admin');
+  showToast('Payout approved. Transfer via PayNow then mark sent.', 'success');
+  renderAdminPayouts();
+}
+function adminMarkPayoutSent(id) {
+  TCStore.markPayoutSent(id, 'admin');
+  showToast('Payout marked as sent.', 'success');
+  renderAdminPayouts();
+}
+function adminRejectPayout(id) {
+  const reason = prompt('Reason for rejecting this payout?');
+  if (reason == null) return;
+  TCStore.rejectPayout(id, reason);
+  showToast('Payout rejected.', 'error');
+  renderAdminPayouts();
+}
+
+// ── Admin Reminders ────────────────────────────────────
+function renderAdminReminders() {
+  const hook = document.querySelector('[data-tc-render="admin-reminders"]');
+  if (!hook || !window.TCStore) return;
+
+  const note = document.getElementById('reminders-transport-note');
+  if (note) {
+    note.textContent = (window.TCReminders && TCReminders.FORMSPREE_CONFIGURED)
+      ? 'Formspree configured — clicking Send delivers a real email.'
+      : 'Log-only mode — set TC_FORMSPREE_ID in reminders.js to send real emails.';
+  }
+
+  const setText = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+  const all = TCStore.listReminders().slice().sort((a, b) => b.createdAt - a.createdAt);
+  setText('reminders-queued', String(all.filter(r => r.status === 'queued').length));
+  setText('reminders-overdue', String(all.filter(r => r.kind === 'overdue' && (r.status === 'queued' || r.status === 'sent' || r.status === 'sent_local')).length));
+  setText('reminders-sent', String(all.filter(r => r.status === 'sent' || r.status === 'sent_local').length));
+  setText('reminders-dismissed', String(all.filter(r => r.status === 'dismissed').length));
+
+  const host = document.getElementById('admin-reminders-list');
+  if (!host) return;
+  _clear(host);
+  if (!all.length) {
+    host.appendChild(_el('tr', {}, [_el('td', { colspan: '7', style: 'text-align: center; padding: 28px; color: var(--slate);', text: 'No reminders queued. Click "Recompute queue" to scan for due payments.' })]));
+    return;
+  }
+  all.slice(0, 50).forEach(r => {
+    const ev = TCStore.eventById(r.eventId);
+    const kindCls = r.kind === 'overdue' ? 'badge-coral' : (r.kind === 'due_tomorrow' ? 'badge-pink' : 'badge-ocean');
+    const statusCls = r.status === 'sent' || r.status === 'sent_local' ? 'badge-green'
+                     : r.status === 'dismissed' ? 'badge-ocean'
+                     : r.status === 'failed' ? 'badge-coral'
+                     : 'badge-pink';
+    host.appendChild(_el('tr', {}, [
+      _el('td', {}, [_el('span', { class: 'badge ' + kindCls, text: (r.kind || '').replace(/_/g, ' ') })]),
+      _el('td', {}, [
+        _el('div', { text: r.toName || '—' }),
+        _el('div', { style: 'font-size: 0.74rem; color: var(--slate);', text: r.toEmail || '' })
+      ]),
+      _el('td', { style: 'font-size: 0.82rem;', text: (ev ? ev.title : '—') }),
+      _el('td', { style: 'font-weight: 700; color: var(--coral);', text: '$' + Number(r.amount || 0).toFixed(2) }),
+      _el('td', { style: 'font-family: ui-monospace, monospace; font-size: 0.76rem;', text: r.dueDate || '—' }),
+      _el('td', {}, [_el('span', { class: 'badge ' + statusCls, text: (r.status || '').replace(/_/g, ' ') })]),
+      _el('td', {}, [
+        r.status === 'queued' ? _el('button', { class: 'btn btn-primary btn-sm', style: 'margin-right: 4px;', onclick: function () { adminSendReminder(r.id); }, text: 'Send' }) : null,
+        r.status === 'queued' ? _el('button', { class: 'btn btn-secondary btn-sm', onclick: function () { adminDismissReminder(r.id); }, text: 'Dismiss' }) : null
+      ])
+    ]));
+  });
+}
+function adminRecomputeReminders() {
+  if (!window.TCReminders) return;
+  const r = TCReminders.computeDueReminders();
+  showToast('Queued ' + r.queued + ' new reminder(s).', 'success');
+  renderAdminReminders();
+}
+async function adminSendReminder(id) {
+  if (!window.TCReminders) return;
+  const r = await TCReminders.sendReminder(id);
+  const logged = r && (r.status === 'sent_local');
+  showToast(logged ? 'Reminder logged locally (Formspree not configured).' : 'Reminder sent.', 'success');
+  renderAdminReminders();
+}
+async function adminSendAllReminders() {
+  if (!window.TCReminders) return;
+  const res = await TCReminders.sendAllQueued();
+  showToast('Sent ' + res.sent + ' / ' + res.total + ' reminder(s).', 'success');
+  renderAdminReminders();
+}
+function adminDismissReminder(id) {
+  if (!window.TCReminders) return;
+  TCReminders.dismissReminder(id);
+  renderAdminReminders();
+}
+
+// ── Row-level refund button (wired from reconciliation / lifecycle views) ──
+function adminRefundRSVP(rsvpId) {
+  const reason = prompt('Reason for refund?');
+  if (reason == null) return;
+  const t = TCStore.refundRSVP(rsvpId, { reason: reason });
+  if (!t) { showToast('Nothing to refund — this RSVP has no verified payments.', 'error'); return; }
+  showToast('Refunded $' + t.amount.toFixed(2) + '. Escrow updated.', 'success');
+  renderAdminReconciliation();
+  renderAdminLifecycle();
 }
 
 // --- Init ---
@@ -1039,6 +1280,9 @@ document.addEventListener('DOMContentLoaded', () => {
     renderEventDetailPage();
     renderDashboard();
     renderAdminReconciliation();
+    renderAdminLifecycle();
+    renderAdminPayouts();
+    renderAdminReminders();
   } catch (e) {
     console.error('TC render error:', e);
   }

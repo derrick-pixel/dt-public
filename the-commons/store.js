@@ -21,9 +21,13 @@
     rsvps: 'tc:rsvps',
     bookings: 'tc:bookings',
     transactions: 'tc:transactions',
+    payouts: 'tc:payouts',
+    reminders: 'tc:reminders',
     currentUser: 'tc:currentUser',
-    seeded: 'tc:seeded'
+    seeded: 'tc:seeded',
+    seededVersion: 'tc:seededVersion'
   };
+  const SEED_VERSION = '3';
 
   // ── IO helpers ─────────────────────────────────────────
   function read(key) {
@@ -201,18 +205,225 @@
     return list[i];
   }
 
+  // ── Payouts ────────────────────────────────────────────
+  function listPayouts(filter) {
+    const all = read(KEYS.payouts);
+    if (!filter) return all;
+    return all.filter(p => Object.keys(filter).every(k => p[k] === filter[k]));
+  }
+  function createPayout(data) {
+    const list = read(KEYS.payouts);
+    const p = Object.assign({
+      id: uid('payout'),
+      createdAt: Date.now(),
+      status: 'requested'
+    }, data);
+    list.push(p);
+    write(KEYS.payouts, list);
+    return p;
+  }
+  function updatePayout(id, changes) {
+    const list = read(KEYS.payouts);
+    const i = list.findIndex(p => p.id === id);
+    if (i < 0) return null;
+    list[i] = Object.assign({}, list[i], changes);
+    write(KEYS.payouts, list);
+    return list[i];
+  }
+
+  // ── Reminders ──────────────────────────────────────────
+  function listReminders(filter) {
+    const all = read(KEYS.reminders);
+    if (!filter) return all;
+    return all.filter(r => Object.keys(filter).every(k => r[k] === filter[k]));
+  }
+  function createReminder(data) {
+    const list = read(KEYS.reminders);
+    // Dedupe: skip if same {eventId, rsvpId, milestoneId, kind} already queued
+    const dup = list.find(r =>
+      r.eventId === data.eventId && r.rsvpId === data.rsvpId &&
+      r.milestoneId === data.milestoneId && r.kind === data.kind &&
+      r.status !== 'sent' && r.status !== 'dismissed'
+    );
+    if (dup) return dup;
+    const r = Object.assign({
+      id: uid('rem'),
+      createdAt: Date.now(),
+      status: 'queued'
+    }, data);
+    list.push(r);
+    write(KEYS.reminders, list);
+    return r;
+  }
+  function updateReminder(id, changes) {
+    const list = read(KEYS.reminders);
+    const i = list.findIndex(r => r.id === id);
+    if (i < 0) return null;
+    list[i] = Object.assign({}, list[i], changes);
+    write(KEYS.reminders, list);
+    return list[i];
+  }
+
+  // ── Lifecycle: escrow release ──────────────────────────
+  // All verified transactions for an event are marked 'released',
+  // meaning the escrow is conceptually available to the organiser
+  // (a subsequent payout request moves the money out).
+  function releaseEscrow(eventId, note) {
+    const txns = read(KEYS.transactions);
+    let changed = 0;
+    txns.forEach(t => {
+      if (t.eventId === eventId && t.status === 'verified') {
+        t.status = 'released';
+        t.releasedAt = Date.now();
+        if (note) t.releaseNote = note;
+        changed++;
+      }
+    });
+    write(KEYS.transactions, txns);
+
+    // Flip event status to 'released' so dashboards can filter
+    const ev = eventById(eventId);
+    if (ev && ev.status !== 'released') {
+      updateEvent(eventId, { status: 'released', releasedAt: Date.now() });
+    }
+    return changed;
+  }
+
+  // Sweep: any event with date strictly before today → auto-release.
+  // Called once on load. Idempotent.
+  function autoReleaseIfDue() {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const released = [];
+    listEvents().forEach(ev => {
+      if (!ev.date || ev.status === 'cancelled' || ev.status === 'released') return;
+      const evDate = new Date(ev.date + 'T00:00:00');
+      const releaseAfter = new Date(evDate); releaseAfter.setDate(releaseAfter.getDate() + 1);
+      if (today >= releaseAfter) {
+        const n = releaseEscrow(ev.id, 'Auto-released on ' + today.toISOString().slice(0, 10));
+        if (n) released.push({ eventId: ev.id, count: n });
+      }
+    });
+    return released;
+  }
+
+  // ── Lifecycle: refund ──────────────────────────────────
+  // Refund a single RSVP: creates a negative 'refund' transaction,
+  // flips RSVP to 'refunded', and decreases escrow balance.
+  function refundRSVP(rsvpId, opts) {
+    opts = opts || {};
+    const rsvps = read(KEYS.rsvps);
+    const r = rsvps.find(x => x.id === rsvpId);
+    if (!r) return null;
+    // Only refund what was already verified for this RSVP
+    const txns = read(KEYS.transactions);
+    const verifiedForRSVP = txns.filter(t => t.rsvpId === rsvpId && t.status === 'verified');
+    if (!verifiedForRSVP.length && !opts.allowEmpty) return null;
+    const refundAmount = opts.amount != null
+      ? Number(opts.amount)
+      : verifiedForRSVP.reduce((s, t) => s + Number(t.amount || 0), 0);
+
+    const refundTxn = createTransaction({
+      type: 'refund',
+      amount: refundAmount,
+      reference: 'TC-REFUND-' + new Date().toISOString().slice(2, 10).replace(/-/g, '') + '-' + Math.random().toString(36).slice(2, 6).toUpperCase(),
+      eventId: r.eventId,
+      rsvpId: rsvpId,
+      reason: opts.reason || 'Admin-issued refund',
+      status: 'verified', // refund is verified immediately when issued
+      payerName: r.name,
+      payerEmail: r.email
+    });
+    // Flip original verified txns to 'refunded' so escrow balance excludes them
+    verifiedForRSVP.forEach(t => updateTransaction(t.id, { status: 'refunded', refundedAt: Date.now() }));
+    // Flip RSVP status
+    updateRSVP(rsvpId, { status: 'refunded', refundedAt: Date.now(), amountPaid: 0 });
+    return refundTxn;
+  }
+
+  // Cancel an event and refund all verified RSVPs.
+  function cancelEventAndRefundAll(eventId, reason) {
+    const ev = eventById(eventId);
+    if (!ev) return null;
+    updateEvent(eventId, { status: 'cancelled', cancelledAt: Date.now(), cancelReason: reason || '' });
+    const rsvps = listRSVPs(eventId).filter(r => r.status !== 'refunded' && r.status !== 'cancelled');
+    let refunded = 0;
+    rsvps.forEach(r => {
+      const t = refundRSVP(r.id, { reason: 'Event cancelled: ' + (reason || 'no reason given') });
+      if (t) refunded++;
+    });
+    return { eventId: eventId, refunded: refunded };
+  }
+
+  // ── Lifecycle: payout ──────────────────────────────────
+  // Organiser requests payout of released escrow for an event.
+  function requestPayout(eventId, opts) {
+    opts = opts || {};
+    const ev = eventById(eventId);
+    if (!ev) return null;
+    // Sum of 'released' transactions minus previous payouts for this event
+    const txns = read(KEYS.transactions);
+    const releasedSum = txns
+      .filter(t => t.eventId === eventId && t.status === 'released' && t.type !== 'refund')
+      .reduce((s, t) => s + Number(t.amount || 0), 0);
+    const previousPayouts = listPayouts({ eventId: eventId })
+      .filter(p => p.status === 'sent' || p.status === 'approved')
+      .reduce((s, p) => s + Number(p.amount || 0), 0);
+    const available = Math.max(0, releasedSum - previousPayouts);
+    if (available <= 0) return null;
+
+    return createPayout({
+      eventId: eventId,
+      amount: opts.amount != null ? Math.min(Number(opts.amount), available) : available,
+      paynowTo: opts.paynowTo || (ev.organiser && ev.organiser.paynow) || '',
+      requestedBy: ev.organiser || currentUser(),
+      status: 'requested',
+      reference: 'TC-PAYOUT-' + new Date().toISOString().slice(2, 10).replace(/-/g, '') + '-' + Math.random().toString(36).slice(2, 6).toUpperCase(),
+      note: opts.note || ''
+    });
+  }
+  function approvePayout(id, actor) {
+    return updatePayout(id, {
+      status: 'approved',
+      approvedAt: Date.now(),
+      approvedBy: actor || 'admin'
+    });
+  }
+  function markPayoutSent(id, actor) {
+    return updatePayout(id, {
+      status: 'sent',
+      sentAt: Date.now(),
+      sentBy: actor || 'admin'
+    });
+  }
+  function rejectPayout(id, reason) {
+    return updatePayout(id, {
+      status: 'rejected',
+      rejectedAt: Date.now(),
+      rejectReason: reason || ''
+    });
+  }
+
   // ── Aggregates ─────────────────────────────────────────
   function eventStats(eventId) {
     const rr = listRSVPs(eventId);
     const txns = listTransactions().filter(t => t.eventId === eventId);
-    const verified = txns.filter(t => t.status === 'verified');
+    const verified = txns.filter(t => t.status === 'verified' && t.type !== 'refund');
+    const released = txns.filter(t => t.status === 'released' && t.type !== 'refund');
+    const refunds = txns.filter(t => t.type === 'refund' && t.status === 'verified');
     const pending = txns.filter(t => t.status === 'pending_verification');
     const collected = verified.reduce((s, t) => s + Number(t.amount || 0), 0);
+    const releasedAmt = released.reduce((s, t) => s + Number(t.amount || 0), 0);
+    const refundedAmt = refunds.reduce((s, t) => s + Number(t.amount || 0), 0);
     const pendingAmount = pending.reduce((s, t) => s + Number(t.amount || 0), 0);
+    const payoutsSent = listPayouts({ eventId: eventId }).filter(p => p.status === 'sent')
+      .reduce((s, p) => s + Number(p.amount || 0), 0);
     return {
       rsvpCount: rr.length,
       verifiedRsvps: rr.filter(r => r.status === 'verified').length,
       collected: collected,
+      released: releasedAmt,
+      refunded: refundedAmt,
+      escrowAvailable: Math.max(0, releasedAmt - payoutsSent),
       pendingAmount: pendingAmount,
       txnCount: txns.length
     };
@@ -220,22 +431,38 @@
 
   function platformStats() {
     const txns = read(KEYS.transactions);
-    const verified = txns.filter(t => t.status === 'verified');
+    const verified = txns.filter(t => t.status === 'verified' && t.type !== 'refund');
+    const released = txns.filter(t => t.status === 'released' && t.type !== 'refund');
+    const refunds = txns.filter(t => t.status === 'verified' && t.type === 'refund');
     const pending = txns.filter(t => t.status === 'pending_verification');
+    const payoutsSent = read(KEYS.payouts).filter(p => p.status === 'sent').reduce((s, p) => s + Number(p.amount || 0), 0);
+
+    const escrowBalance = verified.reduce((s, t) => s + Number(t.amount || 0), 0)
+                         - refunds.reduce((s, t) => s + Number(t.amount || 0), 0);
+    const releasedBalance = released.reduce((s, t) => s + Number(t.amount || 0), 0) - payoutsSent;
+
     return {
       events: listEvents().length,
       rsvps: read(KEYS.rsvps).length,
       bookings: read(KEYS.bookings).length,
-      escrowBalance: verified.reduce((s, t) => s + (t.type === 'refund' ? -t.amount : Number(t.amount || 0)), 0),
+      escrowBalance: escrowBalance,
+      releasedBalance: releasedBalance,
       pendingVerification: pending.length,
-      pendingAmount: pending.reduce((s, t) => s + Number(t.amount || 0), 0)
+      pendingAmount: pending.reduce((s, t) => s + Number(t.amount || 0), 0),
+      pendingPayouts: read(KEYS.payouts).filter(p => p.status === 'requested').length,
+      pendingReminders: read(KEYS.reminders).filter(r => r.status === 'queued').length
     };
   }
 
-  // ── Demo seed (only on first run) ──────────────────────
+  // ── Demo seed (only on first run, or if seed version bumped) ───
   function seedIfEmpty() {
-    if (localStorage.getItem(KEYS.seeded)) return;
-    if (listEvents().length > 0) { localStorage.setItem(KEYS.seeded, '1'); return; }
+    const currentVersion = localStorage.getItem(KEYS.seededVersion);
+    if (localStorage.getItem(KEYS.seeded) && currentVersion === SEED_VERSION) return;
+    // Fresh seed or version upgrade: wipe and reseed
+    if (currentVersion && currentVersion !== SEED_VERSION) {
+      [KEYS.events, KEYS.rsvps, KEYS.transactions, KEYS.bookings, KEYS.payouts, KEYS.reminders]
+        .forEach(k => localStorage.removeItem(k));
+    }
 
     const events = [
       {
@@ -373,6 +600,29 @@
         organiser: { name: 'Amara Lim', email: 'amara@thecommons.asia' },
         status: 'live',
         createdAt: Date.now() - 86400000 * 2
+      },
+      // A past event so auto-release + payout can be demoed out of the box
+      {
+        id: 'evt-past',
+        slug: 'botanic-gardens-picnic',
+        title: 'Botanic Gardens Sunset Picnic',
+        emoji: '🧺',
+        category: 'party',
+        description: 'Bring a blanket. Cheese, wine, strawberries, and live acoustic guitar by the lake.',
+        date: addDaysISO(-3),
+        time: '17:30',
+        location: 'Singapore Botanic Gardens, Lawn G',
+        costPerPerson: 45,
+        depositAmount: 20,
+        maxGuests: 20,
+        milestones: [
+          { id: 'm1', label: 'Deposit', amount: 20, dueOffset: 0 },
+          { id: 'm2', label: 'Final Payment', amount: 25, dueOffset: 2 }
+        ],
+        providers: [],
+        organiser: { name: 'Jamie Ong', email: 'jamie@thecommons.asia' },
+        status: 'live',
+        createdAt: Date.now() - 86400000 * 14
       }
     ];
     write(KEYS.events, events);
@@ -413,7 +663,7 @@
       txnsSeed.push({
         id: tid, type: 'rsvp_deposit', amount: 50,
         reference: 'TC-RSVP-260422-' + String(1000 + i).slice(1),
-        eventId: 'evt-yacht', rsvpId: rid,
+        eventId: 'evt-yacht', rsvpId: rid, milestoneId: 'm1',
         createdAt: Date.now() - (86400000 * (10 - i * 0.3)),
         status: a.verified ? 'verified' : 'pending_verification',
         payerName: a.name, payerEmail: a.email
@@ -429,6 +679,7 @@
     txnsSeed.push({
       id: 'txn-fest-1', type: 'rsvp_deposit', amount: 40,
       reference: 'TC-RSVP-260420-AZ3', eventId: 'evt-festival', rsvpId: 'rsvp-fest-1',
+      milestoneId: 'm1',
       createdAt: Date.now() - 86400000 * 2, status: 'verified',
       payerName: 'Samantha Yeo', payerEmail: 'sam@example.com'
     });
@@ -440,6 +691,7 @@
     txnsSeed.push({
       id: 'txn-hike-1', type: 'rsvp_deposit', amount: 35,
       reference: 'TC-RSVP-260421-B4K', eventId: 'evt-hike', rsvpId: 'rsvp-hike-1',
+      milestoneId: 'm1',
       createdAt: Date.now() - 86400000 * 1, status: 'verified',
       payerName: 'Tom Park', payerEmail: 'tom@example.com'
     });
@@ -457,19 +709,53 @@
     ];
 
     // Write everything
+    // Past event: 8 fully verified deposits + final payments so it's ready to release
+    for (let i = 0; i < 8; i++) {
+      const rid = 'rsvp-past-' + i;
+      rsvpsSeed.push({
+        id: rid, eventId: 'evt-past',
+        name: ['Gabriel Lim','Yasmin Iskandar','Derek Chua','Pei Wen','Matt Tan','Rohan Das','Serene Ho','Iris Ng'][i],
+        email: ['gabe','yasmin','derek','peiwen','matt','rohan','serene','iris'][i] + '@example.com',
+        phone: '',
+        createdAt: Date.now() - 86400000 * 20 + i * 3600000,
+        status: 'verified', amountPaid: 45
+      });
+      txnsSeed.push({
+        id: 'txn-past-d-' + i, type: 'rsvp_deposit', amount: 20,
+        reference: 'TC-RSVP-260410-P' + i + 'D',
+        eventId: 'evt-past', rsvpId: rid, milestoneId: 'm1',
+        createdAt: Date.now() - 86400000 * 20 + i * 3600000,
+        status: 'verified', payerName: rsvpsSeed[rsvpsSeed.length - 1].name,
+        payerEmail: rsvpsSeed[rsvpsSeed.length - 1].email
+      });
+      txnsSeed.push({
+        id: 'txn-past-f-' + i, type: 'rsvp_milestone', amount: 25,
+        reference: 'TC-RSVP-260417-P' + i + 'F',
+        eventId: 'evt-past', rsvpId: rid, milestoneId: 'm2',
+        createdAt: Date.now() - 86400000 * 7 + i * 3600000,
+        status: 'verified', payerName: rsvpsSeed[rsvpsSeed.length - 1].name,
+        payerEmail: rsvpsSeed[rsvpsSeed.length - 1].email
+      });
+    }
+
     const allRsvps = read(KEYS.rsvps).concat(rsvpsSeed);
     const allTxns = read(KEYS.transactions).concat(txnsSeed);
     const allBookings = read(KEYS.bookings).concat(bookingsSeed);
     write(KEYS.rsvps, allRsvps);
     write(KEYS.transactions, allTxns);
     write(KEYS.bookings, allBookings);
+    write(KEYS.payouts, []);
+    write(KEYS.reminders, []);
 
     localStorage.setItem(KEYS.seeded, '1');
+    localStorage.setItem(KEYS.seededVersion, SEED_VERSION);
   }
 
   // Auto-seed once DOM is available (no side effects in SSR)
   if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
     seedIfEmpty();
+    // Auto-release any past events on every load (idempotent).
+    try { autoReleaseIfDue(); } catch (e) { /* noop */ }
   }
 
   window.TCStore = {
@@ -488,13 +774,23 @@
     updateTransaction: updateTransaction,
     // bookings
     listBookings: listBookings, createBooking: createBooking, updateBooking: updateBooking,
+    // lifecycle
+    releaseEscrow: releaseEscrow, autoReleaseIfDue: autoReleaseIfDue,
+    refundRSVP: refundRSVP, cancelEventAndRefundAll: cancelEventAndRefundAll,
+    // payouts
+    listPayouts: listPayouts, createPayout: createPayout, updatePayout: updatePayout,
+    requestPayout: requestPayout, approvePayout: approvePayout,
+    markPayoutSent: markPayoutSent, rejectPayout: rejectPayout,
+    // reminders
+    listReminders: listReminders, createReminder: createReminder, updateReminder: updateReminder,
     // aggregates
     eventStats: eventStats, platformStats: platformStats,
     // utils
     uid: uid, slugify: slugify, addDaysISO: addDaysISO, todayISO: todayISO,
     // danger: full reset
     resetAll: function () {
-      [KEYS.events, KEYS.rsvps, KEYS.bookings, KEYS.transactions, KEYS.currentUser, KEYS.seeded]
+      [KEYS.events, KEYS.rsvps, KEYS.bookings, KEYS.transactions, KEYS.payouts,
+       KEYS.reminders, KEYS.currentUser, KEYS.seeded, KEYS.seededVersion]
         .forEach(k => localStorage.removeItem(k));
       window.dispatchEvent(new CustomEvent('tc:reset'));
     }
