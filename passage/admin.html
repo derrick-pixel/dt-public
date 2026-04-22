@@ -752,8 +752,41 @@
     event.currentTarget.classList.add('active');
   }
 
-  // Demo dashboard — publicly accessible mirror of the Passage admin UI.
-  // Orders live in the visitor's own localStorage; no real data backend.
+  // ── Auth ──
+  // WARNING: This is a client-side gate only. Anyone can view source
+  // and see the structure. The gate password is stored as a SHA-256
+  // hash so it does not appear in plain text. For real production use,
+  // this admin panel MUST be moved behind a server-side session
+  // (the page itself should not be publicly reachable).
+  // Current demo creds: username "elitez", password "passage-admin-2026"
+  const ADMIN_USER_HASH = '7719857f86d8940e4eff5791871b30eb537c677997aa3c51266521163ddc65fb';
+  const ADMIN_PASS_HASH = 'bbb01725722616ecefc899d9638e338dbbf38b26427bfd4d557d77e87c1a5b21';
+
+  async function _sha256Hex(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  async function doLogin(e) {
+    e.preventDefault();
+    const un = document.getElementById('un').value.trim();
+    const pw = document.getElementById('pw').value;
+    const [unH, pwH] = await Promise.all([_sha256Hex(un), _sha256Hex(pw)]);
+    if (unH === ADMIN_USER_HASH && pwH === ADMIN_PASS_HASH) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      sessionStorage.setItem('admin_auth', '1');
+      renderOrders();
+      updateStats();
+    } else {
+      document.getElementById('login-err').style.display = 'block';
+    }
+  }
+  function doLogout() {
+    sessionStorage.removeItem('admin_auth');
+    window.location.href = 'index.html';
+  }
+  // Auth removed — dashboard is open access.
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('dashboard').style.display = 'block';
   sessionStorage.setItem('admin_auth', '1');

@@ -52,12 +52,17 @@
   }
 
   async function loadData() {
-    const [archetypes, mechanics, examples] = await Promise.all([
+    const [archetypes, mechanicsPayload, examples] = await Promise.all([
       fetch('dashboard/data/archetypes.json').then(r => r.json()).then(d => d.archetypes),
-      fetch('dashboard/data/mechanics.json').then(r => r.json()).then(d => d.mechanics),
+      fetch('dashboard/data/mechanics.json').then(r => r.json()),
       fetch('dashboard/data/examples.json').then(r => r.json()).then(d => d.examples)
     ]);
-    return { archetypes, mechanics, examples };
+    return {
+      archetypes,
+      mechanics: mechanicsPayload.mechanics,
+      mechanicCategories: mechanicsPayload.categories || [],
+      examples
+    };
   }
 
   // ── Built-with gallery ─────────────────────────────────────
@@ -496,6 +501,39 @@
     return card;
   }
 
+  // ── Mechanic category header ───────────────────────────────
+  function buildMechanicCategoryHeader(cat, count) {
+    const header = document.createElement('div');
+    header.className = 'mechanic-category__header';
+    header.id = 'cat-' + cat.id;
+
+    const iconEl = document.createElement('span');
+    iconEl.className = 'mechanic-category__icon';
+    iconEl.textContent = cat.icon || '🧩';
+    header.appendChild(iconEl);
+
+    const titleBlock = document.createElement('div');
+    titleBlock.className = 'mechanic-category__titles';
+    const h2 = document.createElement('h2');
+    h2.className = 'mechanic-category__title';
+    h2.textContent = cat.title;
+    titleBlock.appendChild(h2);
+    if (cat.sub) {
+      const sub = document.createElement('p');
+      sub.className = 'mechanic-category__sub';
+      sub.textContent = cat.sub;
+      titleBlock.appendChild(sub);
+    }
+    header.appendChild(titleBlock);
+
+    const countEl = document.createElement('span');
+    countEl.className = 'mechanic-category__count';
+    countEl.textContent = String(count);
+    header.appendChild(countEl);
+
+    return header;
+  }
+
   function buildWhenRow(labelText, variant, body) {
     const row = document.createElement('div');
     row.className = 'mechanic-browse__detail-row';
@@ -641,7 +679,7 @@
     loadAssembly();
     wireStorageListener();
     try {
-      const { archetypes, mechanics, examples } = await loadData();
+      const { archetypes, mechanics, mechanicCategories, examples } = await loadData();
 
       // Each page only has some of these containers — guard accordingly.
       const archetypesList = document.getElementById('archetypes-list');
@@ -651,7 +689,34 @@
 
       const mechanicsList = document.getElementById('mechanics-list');
       if (mechanicsList) {
-        mechanics.forEach(m => mechanicsList.appendChild(buildMechanicCard(m)));
+        if (mechanicCategories.length) {
+          const byCategory = {};
+          mechanics.forEach(m => {
+            const cid = m.category || 'misc';
+            if (!byCategory[cid]) byCategory[cid] = [];
+            byCategory[cid].push(m);
+          });
+          mechanicCategories.forEach(cat => {
+            const items = byCategory[cat.id];
+            if (!items || !items.length) return;
+            mechanicsList.appendChild(buildMechanicCategoryHeader(cat, items.length));
+            items.forEach(m => mechanicsList.appendChild(buildMechanicCard(m)));
+          });
+          const orphanIds = Object.keys(byCategory).filter(cid =>
+            !mechanicCategories.find(c => c.id === cid)
+          );
+          orphanIds.forEach(cid => {
+            const items = byCategory[cid];
+            mechanicsList.appendChild(buildMechanicCategoryHeader(
+              { id: cid, title: 'Other', sub: '', icon: '🧩' },
+              items.length
+            ));
+            items.forEach(m => mechanicsList.appendChild(buildMechanicCard(m)));
+          });
+        } else {
+          // Fallback: flat render if categories missing
+          mechanics.forEach(m => mechanicsList.appendChild(buildMechanicCard(m)));
+        }
       }
 
       if (document.getElementById('gallery-grid')) {

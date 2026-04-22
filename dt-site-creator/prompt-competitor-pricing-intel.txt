@@ -1,0 +1,208 @@
+================================================================
+PROMPT: COMPETITOR / PRICING / WTP INTEL — "WHITE SPACE ATLAS"
+================================================================
+
+Copy-paste this prompt into Claude / ChatGPT / any LLM with web
+access. Replace <PROJECT_NAME>, <ONE_LINE_DESCRIPTION>, and
+<MARKET_GEOGRAPHY> in the first paragraph, then run.
+
+Expected output: 4 structured artifacts + a complete JSON data file
+ready to embed in an admin-whitespace.html page.
+
+Time to complete: 20–45 min depending on web-access + grid size.
+
+----------------------------------------------------------------
+
+I need a complete White Space Atlas for <PROJECT_NAME>, which is
+<ONE_LINE_DESCRIPTION> serving <MARKET_GEOGRAPHY>.
+
+Goal: identify the customer segments × needs where no competitor
+serves well, so we can attack that niche with asymmetric advantage.
+
+Produce the following 4 artifacts in order. Do NOT skip steps.
+Do NOT estimate pricing when real pricing is findable on a public
+pricing page — scrape it.
+
+================================================================
+ARTIFACT 1: COMPETITOR UNIVERSE MAP
+================================================================
+
+Research 25–50 real competitors in this space. Group them into
+3–7 categories (e.g., global vendors, regional vendors, local SME
+software, bundled-service firms, DIY alternatives).
+
+For EACH competitor, return:
+- name
+- url
+- category (one of the groups you defined)
+- hq (country)
+- target_market (who they actually chase — be precise: "mid-market
+  MNCs 50–500 employees" not "SMEs")
+- pricing: object with the actual pricing pulled from their public
+  /pricing page. Include currency. If hidden, mark
+  `"source": "hidden — estimated based on [reason]"`.
+- primary_value_prop (one short sentence)
+- strengths (3 bullets)
+- weaknesses (3 bullets)
+- estimated_customers_in_geography: "<50" | "50-200" | "200-1000" |
+  ">1000" | "unknown"
+- threat_level_to_us: "low" | "medium" | "high"
+- beatability: "easy" | "moderate" | "hard"
+
+IMPORTANT — pricing rules:
+- ALWAYS try to fetch the pricing page first.
+- If pricing is hidden (contact-for-quote), state that explicitly
+  AND provide a reasoned estimate with the justification.
+- NEVER mix estimated and real pricing without flagging which is
+  which. One contaminated number poisons the downstream analysis.
+
+Output as: `competitors.json`
+
+================================================================
+ARTIFACT 2: STRATEGY CANVAS (BLUE OCEAN STYLE)
+================================================================
+
+Define 6–8 strategic dimensions that differentiate competitors in
+this space. Examples:
+- Price (0 = cheapest, 5 = most expensive)
+- Local expertise
+- Compliance depth
+- Benefit stacking
+- Technology integration
+- Onboarding speed
+- Human support
+- Multi-country coverage
+- Customisation
+- Grant/subsidy eligibility
+
+Dimensions must be CUSTOMER-VALUED, not operational. "Years in
+business" is not a dimension. "Time to first invoice" is.
+
+Score each major competitor (top 8–10 most threatening) + your
+project on each dimension (0–5).
+
+Output as JSON:
+{
+  "dimensions": ["Price", "Local expertise", ...],
+  "lines": [
+    { "name": "Competitor A", "scores": [4, 2, 5, ...] },
+    { "name": "Our project",  "scores": [2, 5, 5, ...] }
+  ]
+}
+
+Visualize the clustering: where are many competitors high together?
+That's crowded. Where is every competitor low together, INCLUDING
+us? That's unclaimed white space — decide if we should claim it
+or deliberately skip it.
+
+================================================================
+ARTIFACT 3: SEGMENT × NEED HEATMAP (15×15 DEFAULT)
+================================================================
+
+Define:
+- 15 customer segments — granular ICPs (not "SMEs" but "micro F&B
+  operators with 2–5 staff relying on foreign workers"). Segments
+  must span size × industry × worker-type × lifecycle.
+- 15 customer needs — mix of operational, strategic, commercial,
+  emotional. Must include at least: price-sensitivity, compliance,
+  speed, local expertise, tech integration, scalability,
+  transparency.
+
+For every (segment × need) cell:
+- Count how many competitors score ≥3 (i.e., genuinely serve this
+  segment on this need).
+- Bucket: 0–1 competitors = GREEN (white space). 2–4 = AMBER
+  (contested). 5+ = RED (crowded).
+- List the competitors that serve each cell well.
+
+Output as JSON:
+{
+  "segments": [ { "id": ..., "label": ..., "note": ... } ],
+  "needs": [ { "id": ..., "label": ..., "axis": ... } ],
+  "cells": {
+    "solo_founder__lowest_price": {
+      "intensity": 1,
+      "level": "green",
+      "competitors_serving": ["Competitor X"]
+    }
+  }
+}
+
+DO NOT over-segment. If every cell is amber, your segments are too
+broad — subdivide. If every cell is red, your segments are too
+generic — add industry/lifecycle dimensions.
+
+================================================================
+ARTIFACT 4: ATTACK PLAN — TOP 3 UNDERSERVED NICHES
+================================================================
+
+From the green cells in Artifact 3, pick the 3 niches with the
+strongest combination of:
+- Large TAM (enough target customers to be a real business)
+- Weak incumbent (easy to win against who's there)
+- Strong fit with YOUR asymmetric advantages
+- Operational proximity (you can serve them with minimal new product
+  or delivery work)
+
+For each niche, produce:
+- name — memorable short phrase, the thing you'll say out loud
+- icp — one-sentence description of the ideal customer
+- tam_estimate — rough count of matching companies in geography,
+  with source (BizFile, ACRA, industry associations, etc.)
+- why_underserved — which competitors leave the gap and why
+  (structural reason, not accidental)
+- why_we_win — 2–3 specific asymmetric advantages we have in this
+  niche (not in general)
+- gtm_tactics — object with:
+    pricing: specific pricing move (not just a number — the move)
+    channel: where this niche concentrates, how to reach them
+    pitch: one-sentence positioning statement (what we'd literally
+      say to a prospect)
+    content: specific asset (diagnostic, calculator, case study,
+      webinar, etc.) that would convert this niche
+
+Output as JSON array of 3 niches.
+
+================================================================
+BONUS ARTIFACT: EXECUTIVE SUMMARY
+================================================================
+
+In 200 words:
+- What is the market structure (crowded at top? commoditized?
+  fragmented?)
+- Who are our 2–3 biggest real threats and why
+- The single most important white-space niche we should attack
+  first
+- What would make this analysis wrong in 12 months (leading
+  indicators to watch)
+
+================================================================
+DELIVERABLES (all JSON + 1 markdown exec summary)
+================================================================
+
+1. competitors.json (Artifact 1)
+2. strategy-canvas.json (Artifact 2)
+3. segment-need-heatmap.json (Artifact 3)
+4. attack-plan.json (Artifact 4)
+5. exec-summary.md (200 words)
+
+Assemble all into a single JSON file `white-space-atlas.json` with
+top-level keys: `competitors`, `canvas`, `heatmap`, `niches`,
+`exec_summary`, `research_date`, `research_notes`.
+
+================================================================
+ANTI-PATTERNS (DO NOT DO)
+================================================================
+
+1. DO NOT make up competitor pricing. Flag estimates explicitly.
+2. DO NOT use "SMEs" as a segment. Too broad. Segment by
+   size × industry × worker-type × lifecycle.
+3. DO NOT list every theoretical competitor. 25–50 real threats
+   beats 200 irrelevant ones.
+4. DO NOT put this on a public page. Admin-only. Publish only
+   the distilled positioning derived from it.
+5. DO NOT conclude "we should serve everyone better." That's not
+   a strategy. Pick 3 niches, ignore the rest deliberately.
+6. DO NOT over-tool the grid. 15×15 is the max useful size.
+
+================================================================

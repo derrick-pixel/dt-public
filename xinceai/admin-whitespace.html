@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self';" />
+  <title>XinceAI — White Space Atlas</title>
+  <meta name="description" content="Strategic competitive intelligence: competitor universe, strategy canvas, segment x need coverage heatmap, attack plan for underserved AI-workflow niches. Admin-only." />
+  <meta name="robots" content="noindex, nofollow" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #140f0c; --surface: #1e1714; --card: #28201b; --card-hi: #332a24;
+      --border: rgba(255,136,68,0.08); --border2: rgba(255,136,68,0.18); --border3: rgba(255,136,68,0.35);
+      --text: #f5ede6; --muted: #7a6a5a; --muted2: #a89888;
+      --cyan: #00e5ff; --amber: #ff8844; --neon: #00ff88; --violet: #c084fc; --rose: #ff4466;
+      --gradient: linear-gradient(135deg, var(--amber), var(--cyan));
+      --glow-c: rgba(0,229,255,0.12); --glow-a: rgba(255,136,68,0.15);
+      --font-head: 'Rajdhani', sans-serif; --font-body: 'Inter', sans-serif; --font-mono: 'Share Tech Mono', monospace;
+      --nav-h: 60px; --radius: 4px;
+      --atlas-green: #00ff88; --atlas-green-bg: rgba(0,255,136,0.10);
+      --atlas-amber: #ff8844; --atlas-amber-bg: rgba(255,136,68,0.10);
+      --atlas-red: #ff4466; --atlas-red-bg: rgba(255,68,102,0.10);
+    }
+    [data-theme="light"] {
+      --bg: #f5f0eb; --surface: #ebe5de; --card: #ffffff; --card-hi: #f8f4f0;
+      --border: rgba(140,90,40,0.10); --border2: rgba(140,90,40,0.18);
+      --text: #1a1410; --muted: #8a7a6a; --muted2: #6a5a4a;
+      --amber: #d06010; --cyan: #0088aa; --neon: #0a8a4a; --violet: #7040b0; --rose: #c82040;
+      --atlas-green: #0a8a4a; --atlas-green-bg: rgba(10,138,74,0.10);
+      --atlas-amber: #d06010; --atlas-amber-bg: rgba(208,96,16,0.10);
+      --atlas-red: #c82040; --atlas-red-bg: rgba(200,32,64,0.08);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body); background: var(--bg); color: var(--text);
+      font-size: 16px; line-height: 1.65; overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,136,68,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,136,68,0.015) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    .theme-toggle {
+      display: flex; align-items: center; gap: 0;
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 100px; overflow: hidden;
+    }
+    .theme-toggle button {
+      font-family: var(--font-mono); font-size: 0.68rem; padding: 5px 12px;
+      background: none; border: none; color: var(--muted); cursor: pointer;
+      transition: all 0.2s; letter-spacing: 0.04em;
+    }
+    .theme-toggle button.active { background: var(--amber); color: var(--bg); font-weight: 700; }
+
+    .admin-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: var(--nav-h); display: flex; align-items: center; justify-content: space-between;
+      padding: 0 clamp(16px, 3vw, 32px);
+      background: rgba(20,15,12,0.85); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .admin-nav::after {
+      content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--amber), transparent); opacity: 0.3;
+    }
+    .admin-nav-left { display: flex; align-items: center; gap: 14px; }
+    .nav-brand { display: flex; align-items: center; gap: 10px; }
+    .nav-mark {
+      width: 34px; height: 34px; border: 1.5px solid var(--amber); display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-head); font-weight: 700; font-size: 0.9rem; color: var(--amber);
+      clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+      box-shadow: 0 0 12px var(--glow-a);
+    }
+    .nav-wordmark { font-family: var(--font-head); font-weight: 700; font-size: 1.15rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    .nav-wordmark em { font-style: normal; color: var(--amber); }
+    .admin-badge {
+      font-family: var(--font-mono); font-size: 0.65rem; padding: 4px 12px; border-radius: 0;
+      background: rgba(255,136,68,0.10); border: 1px solid rgba(255,136,68,0.25);
+      color: var(--amber); letter-spacing: 0.08em; text-transform: uppercase;
+      clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+    }
+    .admin-links { display: flex; gap: 8px; align-items: center; }
+    .admin-links a {
+      font-family: var(--font-mono); font-size: 0.8rem; font-weight: 400; color: var(--muted2); padding: 6px 14px;
+      transition: color 0.15s; letter-spacing: 0.04em;
+    }
+    .admin-links a:hover, .admin-links a.active { color: var(--amber); }
+
+    .wrap { max-width: 1340px; margin: 0 auto; padding: 0 24px; }
+    .page-body { padding-top: calc(var(--nav-h) + 40px); padding-bottom: 80px; }
+    .page-head { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 28px; }
+    .page-tag {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--amber); margin-bottom: 8px;
+      font-family: var(--font-mono);
+    }
+    .page-title {
+      font-family: var(--font-head); font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; line-height: 1.15;
+    }
+    .page-meta { font-family: var(--font-mono); font-size: 0.76rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; text-align: right; }
+
+    .kpi-strip {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 32px;
+    }
+    .kpi {
+      padding: 18px 20px; background: var(--card); border: 1px solid var(--border); position: relative;
+    }
+    .kpi::before, .kpi::after {
+      content: ''; position: absolute; width: 10px; height: 10px; pointer-events: none;
+    }
+    .kpi::before { top: -1px; left: -1px; border-top: 1.5px solid var(--amber); border-left: 1.5px solid var(--amber); }
+    .kpi::after  { bottom: -1px; right: -1px; border-bottom: 1.5px solid var(--amber); border-right: 1.5px solid var(--amber); }
+    .kpi-val { font-family: var(--font-head); font-size: 2rem; font-weight: 700; color: var(--cyan); letter-spacing: -0.01em; line-height: 1; }
+    .kpi-val.green { color: var(--atlas-green); }
+    .kpi-val.amber { color: var(--atlas-amber); }
+    .kpi-val.red { color: var(--atlas-red); }
+    .kpi-lbl { font-family: var(--font-mono); font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 8px; }
+
+    .artifact {
+      background: var(--card); border: 1px solid var(--border);
+      padding: 24px 28px; margin-bottom: 24px; position: relative;
+    }
+    .artifact::before, .artifact::after {
+      content: ''; position: absolute; width: 12px; height: 12px; pointer-events: none;
+    }
+    .artifact::before { top: -1px; left: -1px; border-top: 1.5px solid var(--amber); border-left: 1.5px solid var(--amber); }
+    .artifact::after { bottom: -1px; right: -1px; border-bottom: 1.5px solid var(--amber); border-right: 1.5px solid var(--amber); }
+    .art-num { font-family: var(--font-mono); font-size: 0.72rem; color: var(--amber); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+    .art-title { font-family: var(--font-head); font-size: 1.4rem; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; margin-bottom: 8px; }
+    .art-desc { font-size: 0.92rem; color: var(--muted2); max-width: 820px; line-height: 1.55; margin-bottom: 20px; }
+
+    .canvas-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start; }
+    @media (max-width: 900px) { .canvas-wrap { grid-template-columns: 1fr; } }
+    #strategy-canvas { width: 100%; max-width: 820px; height: 420px; }
+    .canvas-legend { display: flex; flex-direction: column; gap: 6px; font-size: 0.84rem; font-family: var(--font-mono); }
+    .canvas-legend .leg { display: flex; align-items: center; gap: 8px; }
+    .canvas-legend .sw { width: 28px; height: 4px; flex-shrink: 0; }
+    .canvas-legend .us { font-weight: 700; color: var(--amber); }
+
+    .heatmap-wrap { overflow-x: auto; border: 1px solid var(--border2); background: var(--surface); }
+    .heatmap { border-collapse: collapse; width: 100%; min-width: 820px; font-family: var(--font-mono); font-size: 0.72rem; }
+    .heatmap th, .heatmap td { border: 1px solid var(--border); padding: 7px 6px; text-align: center; vertical-align: middle; line-height: 1.15; }
+    .heatmap thead th { background: var(--card-hi); color: var(--muted2); font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.04em; padding: 10px 5px; font-weight: 600; }
+    .heatmap thead th:first-child { text-align: left; min-width: 200px; }
+    .heatmap tbody th { text-align: left; background: var(--card-hi); color: var(--text); font-size: 0.78rem; font-weight: 700; padding: 8px 12px; font-family: var(--font-body); }
+    .heatmap tbody th small { display: block; font-size: 0.62rem; color: var(--muted); font-weight: 400; margin-top: 2px; font-family: var(--font-mono); }
+    .cell { cursor: pointer; font-weight: 700; transition: filter 0.1s; user-select: none; font-size: 0.9rem; }
+    .cell:hover { filter: brightness(1.25); outline: 2px solid var(--amber); outline-offset: -2px; }
+    .cell.green { background: var(--atlas-green-bg); color: var(--atlas-green); }
+    .cell.amber { background: var(--atlas-amber-bg); color: var(--atlas-amber); }
+    .cell.red { background: var(--atlas-red-bg); color: var(--atlas-red); }
+
+    .heatmap-legend { display: flex; align-items: center; gap: 18px; margin-top: 14px; font-size: 0.78rem; color: var(--muted); flex-wrap: wrap; font-family: var(--font-mono); }
+    .heatmap-legend .swatch { display: inline-flex; align-items: center; gap: 6px; }
+    .heatmap-legend .dot { width: 14px; height: 14px; }
+
+    #heatmap-detail {
+      margin-top: 14px; padding: 14px 18px; background: var(--surface);
+      border: 1px solid var(--border2); font-size: 0.88rem; color: var(--muted2); line-height: 1.55;
+      display: none;
+    }
+    #heatmap-detail.show { display: block; }
+    #heatmap-detail b { color: var(--text); }
+    #heatmap-detail .tag {
+      display: inline-block; padding: 2px 10px; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; margin-right: 8px; font-family: var(--font-mono);
+    }
+    #heatmap-detail .tag.green { background: var(--atlas-green-bg); color: var(--atlas-green); border: 1px solid var(--atlas-green); }
+    #heatmap-detail .tag.amber { background: var(--atlas-amber-bg); color: var(--atlas-amber); border: 1px solid var(--atlas-amber); }
+    #heatmap-detail .tag.red { background: var(--atlas-red-bg); color: var(--atlas-red); border: 1px solid var(--atlas-red); }
+
+    .attack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+    .niche {
+      padding: 22px 24px; background: var(--card);
+      border: 1.5px solid var(--atlas-green); position: relative;
+    }
+    .niche::before, .niche::after {
+      content: ''; position: absolute; width: 12px; height: 12px; pointer-events: none;
+    }
+    .niche::before { top: -1px; left: -1px; border-top: 1.5px solid var(--atlas-green); border-left: 1.5px solid var(--atlas-green); }
+    .niche::after { bottom: -1px; right: -1px; border-bottom: 1.5px solid var(--atlas-green); border-right: 1.5px solid var(--atlas-green); }
+    .niche-rank { font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--atlas-green); margin-bottom: 6px; }
+    .niche-name { font-family: var(--font-head); font-size: 1.08rem; font-weight: 700; margin-bottom: 10px; color: var(--text); letter-spacing: 0.02em; text-transform: uppercase; }
+    .niche-icp { font-size: 0.86rem; color: var(--muted2); margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px dashed var(--border2); font-style: italic; }
+    .niche-row { display: grid; grid-template-columns: 72px 1fr; gap: 10px; font-size: 0.82rem; padding: 6px 0; }
+    .niche-row .k { font-family: var(--font-mono); font-size: 0.66rem; font-weight: 700; color: var(--amber); letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px; }
+    .niche-row .v { color: var(--muted2); line-height: 1.55; }
+
+    .comp-controls { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+    .comp-search, .comp-filter {
+      padding: 9px 14px; border: 1px solid var(--border2); background: var(--surface); color: var(--text);
+      font-family: var(--font-body); font-size: 0.86rem; outline: none;
+    }
+    .comp-search:focus, .comp-filter:focus { border-color: var(--amber); }
+    .comp-search { flex: 1; min-width: 220px; }
+    .comp-count { font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); }
+    .comp-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .comp-table thead th {
+      background: var(--card-hi); color: var(--muted2); font-family: var(--font-mono); font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.68rem;
+      padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border2);
+    }
+    .comp-table tbody td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .comp-table tbody tr:hover { background: rgba(255,136,68,0.03); }
+    .badge {
+      display: inline-block; padding: 2px 8px; font-size: 0.64rem;
+      font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; font-family: var(--font-mono);
+    }
+    .b-cat { background: rgba(0,229,255,0.10); color: var(--cyan); border: 1px solid rgba(0,229,255,0.20); }
+    .b-threat-high   { background: var(--atlas-red-bg); color: var(--atlas-red); border: 1px solid var(--atlas-red); }
+    .b-threat-medium { background: var(--atlas-amber-bg); color: var(--atlas-amber); border: 1px solid var(--atlas-amber); }
+    .b-threat-low    { background: var(--atlas-green-bg); color: var(--atlas-green); border: 1px solid var(--atlas-green); }
+    .b-beat-easy     { background: var(--atlas-green-bg); color: var(--atlas-green); border: 1px solid var(--atlas-green); }
+    .b-beat-moderate { background: var(--atlas-amber-bg); color: var(--atlas-amber); border: 1px solid var(--atlas-amber); }
+    .b-beat-hard     { background: var(--atlas-red-bg); color: var(--atlas-red); border: 1px solid var(--atlas-red); }
+    .comp-name { font-weight: 700; color: var(--text); font-family: var(--font-head); }
+    .comp-target { font-size: 0.76rem; color: var(--muted); margin-top: 2px; }
+    .loading { color: var(--muted); font-size: 0.86rem; font-family: var(--font-mono); padding: 24px; text-align: center; }
+
+    @media (max-width: 768px) {
+      .admin-nav { flex-direction: column; height: auto; padding: 12px 16px; gap: 8px; }
+      .admin-nav-left { width: 100%; justify-content: space-between; }
+      .admin-links { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="admin-nav">
+  <div class="admin-nav-left">
+    <div class="theme-toggle" id="theme-toggle">
+      <button onclick="setTheme('dark')" class="active" id="btn-dark">DARK</button>
+      <button onclick="setTheme('light')" id="btn-light">LIGHT</button>
+    </div>
+    <a href="index.html" class="nav-brand">
+      <div class="nav-mark">X</div>
+      <div class="nav-wordmark">XINCE<em>AI</em></div>
+    </a>
+    <span class="admin-badge">Admin</span>
+  </div>
+  <div class="admin-links">
+    <a href="index.html">Public Site</a>
+    <a href="admin.html">Analytics</a>
+    <a href="admin-insights.html">Insights</a>
+    <a href="admin-whitespace.html" class="active">White Space</a>
+  </div>
+</nav>
+
+<div class="page-body">
+  <div class="wrap">
+
+    <div class="page-head">
+      <div>
+        <div class="page-tag">◆ White Space Atlas — XinceAI v1</div>
+        <h1 class="page-title">Where AI vendors skip — <br/>and we dominate.</h1>
+      </div>
+      <div class="page-meta">
+        <div>Refreshed <span id="refresh-date">2026-04-22</span></div>
+        <div><span id="comp-count-hdr">—</span> competitors · 10 segments · 8 needs · admin-only</div>
+      </div>
+    </div>
+
+    <div class="kpi-strip">
+      <div class="kpi"><div class="kpi-val" id="kpi-n-comp">—</div><div class="kpi-lbl">Competitors</div></div>
+      <div class="kpi"><div class="kpi-val green" id="kpi-green">—</div><div class="kpi-lbl">White-space cells</div></div>
+      <div class="kpi"><div class="kpi-val amber" id="kpi-amber">—</div><div class="kpi-lbl">Contested cells</div></div>
+      <div class="kpi"><div class="kpi-val red" id="kpi-red">—</div><div class="kpi-lbl">Crowded cells</div></div>
+      <div class="kpi"><div class="kpi-val" id="kpi-threats">—</div><div class="kpi-lbl">High-threat rivals</div></div>
+    </div>
+
+    <section class="artifact">
+      <div class="art-num">Artifact 01</div>
+      <h2 class="art-title">Strategy Canvas</h2>
+      <p class="art-desc">Blue-Ocean radar. Each line plots a competitor across 8 dimensions customers actually evaluate. Our line should break the cluster on PSG eligibility, 48-hour speed, and SG localisation — where global vendors cannot follow.</p>
+      <div class="canvas-wrap">
+        <canvas id="strategy-canvas" width="820" height="420"></canvas>
+        <div class="canvas-legend" id="canvas-legend"></div>
+      </div>
+    </section>
+
+    <section class="artifact">
+      <div class="art-num">Artifact 02</div>
+      <h2 class="art-title">Segment × Need Heatmap — 10 × 8</h2>
+      <p class="art-desc">Each cell: count of competitors genuinely serving that pair (score ≥3). Click any cell for detail.</p>
+      <div class="heatmap-wrap">
+        <table class="heatmap" id="heatmap"><thead></thead><tbody></tbody></table>
+      </div>
+      <div class="heatmap-legend">
+        <span class="swatch"><span class="dot" style="background:var(--atlas-green)"></span> Green 0–1 · white space</span>
+        <span class="swatch"><span class="dot" style="background:var(--atlas-amber)"></span> Amber 2–3 · contested</span>
+        <span class="swatch"><span class="dot" style="background:var(--atlas-red)"></span> Red 4+ · crowded</span>
+      </div>
+      <div id="heatmap-detail"></div>
+    </section>
+
+    <section class="artifact">
+      <div class="art-num">Artifact 03</div>
+      <h2 class="art-title">Attack Plan — Top 3 Underserved Niches</h2>
+      <p class="art-desc">Where XinceAI attacks first. Each niche: ICP, TAM, why the gap exists, why we win, GTM moves.</p>
+      <div class="attack-grid" id="attack-grid"></div>
+    </section>
+
+    <section class="artifact">
+      <div class="art-num">Artifact 04</div>
+      <h2 class="art-title">Competitor Deep-dive</h2>
+      <p class="art-desc">All <span id="comp-count-inline">—</span> AI workflow / automation vendors with SG pricing, threat level, and our wedge.</p>
+      <div class="comp-controls">
+        <input type="search" id="comp-search" class="comp-search" placeholder="Search name, target, strengths..." />
+        <select id="comp-cat" class="comp-filter"><option value="">All categories</option></select>
+        <select id="comp-threat" class="comp-filter">
+          <option value="">All threats</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+        <span class="comp-count" id="comp-count-tbl">—</span>
+      </div>
+      <table class="comp-table" id="comp-table">
+        <thead>
+          <tr>
+            <th>Name / target</th><th>Category</th><th>SG pricing</th><th>Threat</th><th>Beat</th><th>Strengths</th><th>Weaknesses</th>
+          </tr>
+        </thead>
+        <tbody id="comp-tbody"><tr><td colspan="7" class="loading">Loading competitor data...</td></tr></tbody>
+      </table>
+    </section>
+
+  </div>
+</div>
+
+<script>
+  function setTheme(t) {
+    document.documentElement.dataset.theme = t;
+    document.getElementById('btn-dark').classList.toggle('active', t === 'dark');
+    document.getElementById('btn-light').classList.toggle('active', t === 'light');
+    try { localStorage.setItem('xinceai-theme', t); } catch {}
+  }
+  (function() { try { const t = localStorage.getItem('xinceai-theme'); if (t) setTheme(t); } catch {} })();
+</script>
+<script>
+(function() {
+  const CANVAS_DIMS = [
+    'Price accessibility',
+    'SG localisation',
+    'Pre-built workflows',
+    'Deployment speed',
+    'PSG eligibility',
+    'Founder-led support',
+    'WhatsApp native',
+    'Xero/SG accounting native'
+  ];
+  const CANVAS_LINES = [
+    { name: 'XinceAI',             us: true, color: '#ff8844', scores: [4, 5, 5, 5, 5, 5, 5, 4] },
+    { name: 'Voltade (Envoy)',               color: '#e64a4a', scores: [5, 4, 3, 4, 5, 2, 4, 2] },
+    { name: '41 Labs',                       color: '#d16b6b', scores: [4, 4, 3, 3, 4, 4, 3, 2] },
+    { name: 'Zapier',                        color: '#c44a4a', scores: [4, 1, 2, 4, 0, 1, 2, 1] },
+    { name: 'Make.com',                      color: '#aa3e3e', scores: [4, 1, 3, 4, 0, 1, 2, 1] },
+    { name: 'Respond.io',                    color: '#8e2f2f', scores: [3, 3, 3, 3, 1, 2, 5, 1] },
+    { name: 'NCS (Big-SI)',                  color: '#2c5a8a', scores: [1, 4, 1, 1, 2, 3, 1, 2] },
+    { name: 'Accenture SG',                  color: '#1a4a7a', scores: [0, 4, 2, 1, 1, 2, 1, 2] },
+    { name: 'In-house dev hire',             color: '#4a7a1a', scores: [2, 5, 1, 2, 0, 5, 3, 3] },
+    { name: 'DIY ChatGPT + Gsuite',          color: '#6a4a8a', scores: [5, 2, 0, 5, 0, 0, 0, 0] }
+  ];
+
+  const SEGMENTS = [
+    { id: 'solo_operator',             label: 'Solo operator',              note: '1 person biz · hand-prompts ChatGPT' },
+    { id: 'micro_b2c_stuck',           label: 'Micro B2C stuck',            note: 'F&B / retail 5–20 emp · WhatsApp chaos' },
+    { id: 'sg_sme_sales_heavy',        label: 'Sales-heavy SME',            note: 'RE / insurance / recruitment' },
+    { id: 'sg_sme_ops_heavy',          label: 'Ops-heavy SME',              note: 'Logistics / construction' },
+    { id: 'sg_sme_service_firm',       label: 'Service firm',               note: 'Legal / accounting / consulting' },
+    { id: 'mid_market_digital_mature', label: 'Mid-market mature',          note: '50–200 emp · already on Hubspot/Xero' },
+    { id: 'family_business_gen2',      label: 'Gen-2 family biz',           note: '20yr+ SME · first AI investment' },
+    { id: 'funded_startup_scale',      label: 'Funded startup scaling',     note: 'Seed/A · burn-clock ops cost' },
+    { id: 'healthcare_clinic_chain',   label: 'Clinic chain',               note: 'Multi-branch healthcare ops' },
+    { id: 'ngo_grant_funded',          label: 'NGO / social ent',           note: 'Grant-funded · cost justification' }
+  ];
+  const NEEDS = [
+    { id: 'psg_eligible',          label: 'PSG grant-eligible (50%)',   short: 'PSG' },
+    { id: 'sg_localisation',       label: 'SG localisation',            short: 'SG-local' },
+    { id: 'deployment_48hr',       label: 'Live in 48 hours',           short: '48hr' },
+    { id: 'founder_led_setup',     label: 'Founder-led setup',          short: 'Founder' },
+    { id: 'prebuilt_workflows',    label: 'Pre-built workflows',        short: 'Pre-built' },
+    { id: 'low_monthly_under_500', label: 'Under S$500/mo',             short: '<S$500' },
+    { id: 'whatsapp_native',       label: 'WhatsApp Business native',   short: 'WhatsApp' },
+    { id: 'compliance_safe',       label: 'PDPA / audit-safe',          short: 'PDPA' }
+  ];
+
+  function scoreCompetitor(c, segId, needId) {
+    const tm = (c.target_market || '').toLowerCase();
+    const vp = (c.primary_value_prop || '').toLowerCase();
+    const str = (c.strengths || []).join(' ').toLowerCase();
+    const cat = c.category || '';
+    const hq = (c.hq || '').toLowerCase();
+    const price = Number(c.sg_monthly_sgd || 0);
+    const psg = !!c.psg_eligible;
+    const localScore = Number(c.sg_localisation || 0);
+    const depDays = Number(c.deployment_speed_days || 999);
+    const bundle = (str + ' ' + vp + ' ' + tm).toLowerCase();
+
+    const segMap = {
+      solo_operator:             (tm.match(/solo|freelanc|1 person|creator|individual/) ? 4 : (cat === 'diy_alt' ? 4 : (cat === 'global_workflow' ? 3 : 0))),
+      micro_b2c_stuck:           (tm.match(/micro|f&b|retail|small|5-20|hospitality|fnb|consumer/) ? 4 : (cat === 'whatsapp_ai' ? 3 : (cat === 'diy_alt' ? 2 : 0))),
+      sg_sme_sales_heavy:        (tm.match(/sales|lead|crm|real estate|insurance|recruitment|agent/) ? 4 : (cat === 'whatsapp_ai' ? 4 : 0)),
+      sg_sme_ops_heavy:          (tm.match(/logistics|construction|operation|dispatch|scheduling/) ? 4 : (cat === 'global_workflow' ? 3 : 0)),
+      sg_sme_service_firm:       (tm.match(/legal|accounting|consulting|document|law firm|service firm|profession/) ? 4 : (cat === 'accounting_ai' ? 4 : 0)),
+      mid_market_digital_mature: (tm.match(/mid-market|50-|enterprise|mature|hubspot|salesforce|erp/) ? 4 : (cat === 'big_si' ? 4 : (cat === 'global_workflow' ? 3 : 0))),
+      family_business_gen2:      (tm.match(/family|traditional|legacy|gen-2|second generation|modernising/) ? 4 : 0),
+      funded_startup_scale:      (tm.match(/startup|seed|series|saas|scale|growth|funded/) ? 4 : (cat === 'global_workflow' ? 3 : 0)),
+      healthcare_clinic_chain:   (tm.match(/clinic|healthcare|medical|health|hospital|patient/) ? 4 : 0),
+      ngo_grant_funded:          (tm.match(/non-profit|npo|ngo|social enterprise|grant/) ? 4 : 0)
+    };
+    const segScore = segMap[segId] || 0;
+
+    const needMap = {
+      psg_eligible:          psg ? 5 : 0,
+      sg_localisation:       localScore >= 4 ? 5 : localScore >= 3 ? 4 : localScore >= 2 ? 2 : 1,
+      deployment_48hr:       depDays <= 2 ? 5 : depDays <= 7 ? 3 : depDays <= 30 ? 2 : 0,
+      founder_led_setup:     (/founder|senior|consultant|dedicated|high-touch|concierge|white.glove|hand-hold/.test(bundle) ? 4 : (cat === 'big_si' ? 3 : (cat === 'inhouse_build' ? 5 : 1))),
+      prebuilt_workflows:    (/pre-built|ready|template|out-of-the-box|ready-made|off-the-shelf/.test(bundle) ? 5 : (cat === 'global_workflow' ? 2 : (cat === 'psg_vendor' ? 4 : 1))),
+      low_monthly_under_500: (price && price > 0 && price <= 500 ? 5 : (price && price <= 1000 ? 2 : (cat === 'diy_alt' ? 5 : (cat === 'global_workflow' && price <= 200 ? 4 : 0)))),
+      whatsapp_native:       (/whatsapp|wa business|wati|respond|twilio/.test(bundle) ? 5 : (cat === 'whatsapp_ai' ? 5 : 0)),
+      compliance_safe:       (/pdpa|audit|compliance|soc2|iso|data resident|singapore data|sg region/.test(bundle) ? 4 : (cat === 'big_si' ? 3 : (hq === 'singapore' || hq === 'sg' ? 2 : 1)))
+    };
+    const needScore = needMap[needId] || 0;
+    return Math.min(segScore, needScore);
+  }
+
+  function ourScore(segId, needId) {
+    const s = {
+      solo_operator: 3, micro_b2c_stuck: 5, sg_sme_sales_heavy: 5, sg_sme_ops_heavy: 4,
+      sg_sme_service_firm: 5, mid_market_digital_mature: 3, family_business_gen2: 4,
+      funded_startup_scale: 3, healthcare_clinic_chain: 3, ngo_grant_funded: 4
+    }[segId] || 3;
+    const n = {
+      psg_eligible: 5, sg_localisation: 5, deployment_48hr: 5, founder_led_setup: 5,
+      prebuilt_workflows: 5, low_monthly_under_500: 5, whatsapp_native: 5, compliance_safe: 4
+    }[needId] || 3;
+    return Math.min(s, n);
+  }
+
+  const STATE = { competitors: [], matrix: null, research_date: '2026-04-22' };
+
+  const NICHES = [
+    {
+      rank: '01',
+      name: 'Micro B2C Stuck in WhatsApp Chaos',
+      icp: 'F&B / retail / service-commerce with 5–20 employees manually running WhatsApp orders, customer support, reservations. Currently no automation at all. Scared of "AI" jargon, wants real help.',
+      tam: '~12,400 SG micro B2C operators (ACRA SSIC retail + F&B + personal services, 5–20 emp band).',
+      why_underserved: 'Zapier / Make / n8n require technical owner — this segment cannot build their own. Big SIs (NCS, Accenture) are S$80K+ engagements, unreachable price. WhatsApp-first vendors (Respond.io, Wati) charge per seat and leave workflow design to the buyer. Nobody packages pre-built WhatsApp + Xero + customer-recovery workflows at PSG-eligible sub-S$500 for this sector.',
+      why_we_win: '(1) 3 of our 9 pre-built workflows are made for this exact segment: WhatsApp quote-reply, Xero invoice chase, customer recovery. (2) PSG pre-approved means true out-of-pocket is S$250/mo. (3) 48-hour deploy matches the "fix it this week" mindset of micro-operators.',
+      gtm: {
+        pricing: 'S$490/mo flat for up to 3 workflows. Net PSG = S$245/mo. First month free if no PSG approval.',
+        channel: 'RAS / SRA / SG Restaurant member newsletters. Hawker 2.0 digitalisation grant hook. F&B supplier partner bundling (e.g. Oddle, EasyOrders).',
+        pitch: '"Your WhatsApp does not need to own your nights. Three workflows, live in 48 hours, half paid by PSG."',
+        content: 'F&B WhatsApp Automation Calculator — show time saved + PSG subsidy in one score. Gated as email capture.'
+      }
+    },
+    {
+      rank: '02',
+      name: 'SG Service Firm — Document AI at SME Price',
+      icp: 'Legal / accounting / consulting firms 10–40 employees, document-heavy work (contracts, engagement letters, deliverables). Senior partners do not have time to configure AI. Need a pre-built extraction + draft engine, PDPA-clean.',
+      tam: '~4,800 SG service firms in the 10–40 band (Law Society + ISCA + SBF professional services roll).',
+      why_underserved: 'Big 4 / Big SIs price at S$100K+ project — unreachable for SME partners. Global document-AI tools (Harvey AI, Casetext) are US-first and lack SG locality (CPF forms, IRAS templates, SG contract conventions). Zapier/Make cannot handle document structure. Nobody packages document-AI as a pre-built workflow at sub-S$500/mo with PDPA residency.',
+      why_we_win: '(1) Pre-built "contract review + engagement letter draft + client onboarding pack" workflow. (2) Data resident in SG (PDPA audit-safe). (3) Founder-led setup = partner-to-partner conversation, not junior dev. (4) PSG eligible.',
+      gtm: {
+        pricing: 'S$490/mo per partner seat (3 workflows). PSG net = S$245. Paid pilot: S$1,500 for a 10-doc review.',
+        channel: 'Law Society of Singapore CPD events + ISCA SME-tech track + legal-tech LinkedIn groups. SALT SG + SGUnited Mid-Career.',
+        pitch: '"Your associates stop retyping. Your partners stop missing engagement letter clauses. SG-data, PDPA-safe, under a grant."',
+        content: '"Contract Review Time Audit" calculator — shows hours per week lost to manual review + PSG savings projection.'
+      }
+    },
+    {
+      rank: '03',
+      name: 'NGO / Social Enterprise — Grant-Ready AI',
+      icp: 'Grant-funded NGOs, IPCs, social enterprises (SSIC 94.99 / 87.90 / 88.99). Need to show donors "we use AI responsibly" but have 0 budget + 0 engineers. Grant officers measure outputs per dollar.',
+      tam: '~1,900 active SG charities + IPCs (Charities.gov.sg registry), ~620 social enterprises (raiSE member + registered).',
+      why_underserved: 'Zapier / Make / Workato assume paid SaaS stack — NGOs run on free Google Workspace + donated Xero. Big SIs skip sub-S$10K engagements. IMDA-approved vendors focus on commercial SME — no grant-aligned offering for NGO workflows (donor report drafts, volunteer coordination, grant writing aid). NCSS Tech&GO programme supports this but vendor-side is thin.',
+      why_we_win: '(1) Bespoke "NGO starter pack" — 3 workflows: donor report draft, volunteer coordination WhatsApp, grant-application first-draft. (2) NCSS Tech&GO + IMDA PSG stack = near-zero out-of-pocket. (3) Founder-led means a human cares about mission fit. (4) Case studies become sector credibility leverage.',
+      gtm: {
+        pricing: 'S$390/mo flat (pre-discount) → net S$0–S$120/mo with NCSS Tech&GO + PSG stacking.',
+        channel: 'NCSS Tech&GO programme + raiSE member roll + National Council of Social Service events. Sponsor 1 free deployment per quarter for PR.',
+        pitch: '"Your donors get a drafted impact report every Friday. Your programme officers stop writing grants at midnight. Net cost: a coffee a day."',
+        content: '"NGO AI Starter Pack — 3 workflows funded by NCSS+PSG" explainer + 1-page application helper PDF.'
+      }
+    }
+  ];
+
+  function clearNode(el) { while (el.firstChild) el.removeChild(el.firstChild); }
+  function makeEl(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+  function renderStrategyCanvas() {
+    const ctx = document.getElementById('strategy-canvas').getContext('2d');
+    const datasets = CANVAS_LINES.map(l => ({
+      label: l.name,
+      data: l.scores,
+      backgroundColor: l.us ? 'rgba(255,136,68,0.18)' : 'transparent',
+      borderColor: l.color,
+      borderWidth: l.us ? 3 : 1.5,
+      pointRadius: l.us ? 4 : 2.5,
+      pointBackgroundColor: l.color,
+      tension: 0.15
+    }));
+    new Chart(ctx, {
+      type: 'radar',
+      data: { labels: CANVAS_DIMS, datasets },
+      options: {
+        scales: {
+          r: {
+            suggestedMin: 0, suggestedMax: 5,
+            ticks: { stepSize: 1, backdropColor: 'rgba(0,0,0,0)', color: '#a89888', font: { size: 10 } },
+            grid: { color: 'rgba(255,136,68,0.08)' },
+            angleLines: { color: 'rgba(255,136,68,0.12)' },
+            pointLabels: { color: '#f5ede6', font: { family: 'Share Tech Mono, monospace', size: 11 } }
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: ctx2 => ctx2.dataset.label + ': ' + ctx2.raw } }
+        },
+        responsive: true, maintainAspectRatio: false
+      }
+    });
+    const leg = document.getElementById('canvas-legend');
+    clearNode(leg);
+    CANVAS_LINES.forEach(l => {
+      const r = makeEl('div', 'leg');
+      const sw = makeEl('span', 'sw'); sw.style.background = l.color;
+      if (l.us) sw.style.boxShadow = '0 0 10px ' + l.color;
+      const n = makeEl('span', null, l.name);
+      if (l.us) n.classList.add('us');
+      r.appendChild(sw); r.appendChild(n);
+      leg.appendChild(r);
+    });
+  }
+
+  function buildMatrix() {
+    const mx = {};
+    SEGMENTS.forEach(s => {
+      mx[s.id] = {};
+      NEEDS.forEach(n => {
+        const scoring = STATE.competitors.map(c => ({ name: c.name, score: scoreCompetitor(c, s.id, n.id) }));
+        const strong = scoring.filter(x => x.score >= 3).sort((a,b) => b.score - a.score);
+        mx[s.id][n.id] = { count: strong.length, servers: strong, us: ourScore(s.id, n.id) };
+      });
+    });
+    return mx;
+  }
+  function levelFor(count) { return count <= 1 ? 'green' : count <= 3 ? 'amber' : 'red'; }
+
+  function renderHeatmap() {
+    const thead = document.querySelector('#heatmap thead');
+    const tbody = document.querySelector('#heatmap tbody');
+    clearNode(thead); clearNode(tbody);
+    const hdr = makeEl('tr');
+    hdr.appendChild(makeEl('th', null, 'Segment \\ Need'));
+    NEEDS.forEach(n => {
+      const th = makeEl('th', null, n.short);
+      th.title = n.label;
+      hdr.appendChild(th);
+    });
+    thead.appendChild(hdr);
+    SEGMENTS.forEach(s => {
+      const tr = makeEl('tr');
+      const th = makeEl('th');
+      th.appendChild(makeEl('span', null, s.label));
+      th.appendChild(makeEl('small', null, s.note));
+      tr.appendChild(th);
+      NEEDS.forEach(n => {
+        const cell = STATE.matrix[s.id][n.id];
+        const td = makeEl('td', 'cell ' + levelFor(cell.count), String(cell.count));
+        td.addEventListener('click', () => showCellDetail(s, n, cell));
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+  }
+
+  function showCellDetail(seg, need, cell) {
+    const detail = document.getElementById('heatmap-detail');
+    clearNode(detail);
+    const lvl = levelFor(cell.count);
+    const lvlTag = makeEl('span', 'tag ' + lvl,
+      lvl === 'green' ? 'White space · attack' : lvl === 'amber' ? 'Contested · winnable' : 'Crowded · avoid');
+    detail.appendChild(lvlTag);
+    detail.appendChild(makeEl('b', null, seg.label + ' × ' + need.label));
+    const p = makeEl('p', null, cell.count + ' competitor(s) serve this pair well (score ≥3). Our score: ' + cell.us + '/5.');
+    p.style.marginTop = '8px';
+    detail.appendChild(p);
+    if (cell.servers.length) {
+      const list = makeEl('div', null, 'Competitors serving: ' + cell.servers.slice(0, 8).map(c => c.name + ' (' + c.score + ')').join(', '));
+      list.style.marginTop = '6px'; list.style.fontSize = '0.82rem';
+      detail.appendChild(list);
+    }
+    detail.classList.add('show');
+  }
+
+  function renderNiches() {
+    const host = document.getElementById('attack-grid');
+    clearNode(host);
+    NICHES.forEach(n => {
+      const c = makeEl('div', 'niche');
+      c.appendChild(makeEl('div', 'niche-rank', 'Niche ' + n.rank));
+      c.appendChild(makeEl('div', 'niche-name', n.name));
+      c.appendChild(makeEl('div', 'niche-icp', n.icp));
+      [
+        ['TAM', n.tam],
+        ['Why gap', n.why_underserved],
+        ['Our win', n.why_we_win],
+        ['Pricing', n.gtm.pricing],
+        ['Channel', n.gtm.channel],
+        ['Pitch', n.gtm.pitch],
+        ['Content', n.gtm.content]
+      ].forEach(pair => {
+        const row = makeEl('div', 'niche-row');
+        row.appendChild(makeEl('div', 'k', pair[0]));
+        row.appendChild(makeEl('div', 'v', pair[1]));
+        c.appendChild(row);
+      });
+      host.appendChild(c);
+    });
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('comp-tbody');
+    clearNode(tbody);
+    const q = document.getElementById('comp-search').value.toLowerCase();
+    const catF = document.getElementById('comp-cat').value;
+    const threatF = document.getElementById('comp-threat').value;
+    const filtered = STATE.competitors.filter(c => {
+      if (catF && c.category !== catF) return false;
+      if (threatF && c.threat_level_to_xinceai !== threatF) return false;
+      if (q) {
+        const blob = [c.name, c.target_market, (c.strengths||[]).join(' '), (c.weaknesses||[]).join(' '), c.category].join(' ').toLowerCase();
+        if (!blob.includes(q)) return false;
+      }
+      return true;
+    });
+    document.getElementById('comp-count-tbl').textContent = filtered.length + ' / ' + STATE.competitors.length;
+    if (!filtered.length) {
+      const tr = makeEl('tr');
+      const td = makeEl('td', 'loading', 'No competitors match - adjust filters');
+      td.colSpan = 7; tr.appendChild(td); tbody.appendChild(tr); return;
+    }
+    filtered.forEach(c => {
+      const tr = makeEl('tr');
+      const tdN = makeEl('td');
+      tdN.appendChild(makeEl('div', 'comp-name', c.name));
+      tdN.appendChild(makeEl('div', 'comp-target', c.target_market || ''));
+      const tdC = makeEl('td');
+      tdC.appendChild(makeEl('span', 'badge b-cat', (c.category || '').replace(/_/g, ' ')));
+      const tdP = makeEl('td', null, c.sg_pricing_range_published || '—');
+      tdP.style.fontFamily = 'var(--font-mono)'; tdP.style.fontSize = '0.76rem'; tdP.style.color = 'var(--amber)';
+      const tdT = makeEl('td');
+      tdT.appendChild(makeEl('span', 'badge b-threat-' + (c.threat_level_to_xinceai || 'low'), c.threat_level_to_xinceai || '—'));
+      const tdB = makeEl('td');
+      tdB.appendChild(makeEl('span', 'badge b-beat-' + (c.beatability || 'moderate'), c.beatability || '—'));
+      const tdS = makeEl('td', null, (c.strengths || []).slice(0, 3).join('; ')); tdS.style.fontSize = '0.78rem'; tdS.style.color = 'var(--neon)';
+      const tdW = makeEl('td', null, (c.weaknesses || []).slice(0, 3).join('; ')); tdW.style.fontSize = '0.78rem'; tdW.style.color = 'var(--rose)';
+      [tdN, tdC, tdP, tdT, tdB, tdS, tdW].forEach(td => tr.appendChild(td));
+      tbody.appendChild(tr);
+    });
+  }
+
+  function populateCatFilter() {
+    const sel = document.getElementById('comp-cat');
+    const cats = Array.from(new Set(STATE.competitors.map(c => c.category))).sort();
+    cats.forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat; opt.textContent = cat.replace(/_/g, ' ');
+      sel.appendChild(opt);
+    });
+  }
+
+  function updateKpis() {
+    const cells = SEGMENTS.flatMap(s => NEEDS.map(n => STATE.matrix[s.id][n.id]));
+    const green = cells.filter(c => c.count <= 1).length;
+    const amber = cells.filter(c => c.count >= 2 && c.count <= 3).length;
+    const red   = cells.filter(c => c.count >= 4).length;
+    const threats = STATE.competitors.filter(c => c.threat_level_to_xinceai === 'high').length;
+    document.getElementById('kpi-n-comp').textContent = STATE.competitors.length;
+    document.getElementById('kpi-green').textContent = green;
+    document.getElementById('kpi-amber').textContent = amber;
+    document.getElementById('kpi-red').textContent = red;
+    document.getElementById('kpi-threats').textContent = threats;
+    document.getElementById('comp-count-hdr').textContent = STATE.competitors.length;
+    document.getElementById('comp-count-inline').textContent = STATE.competitors.length;
+    document.getElementById('refresh-date').textContent = STATE.research_date || '2026-04-22';
+  }
+
+  async function init() {
+    try {
+      const res = await fetch('data/whitespace-competitors.json');
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      STATE.competitors = data.competitors || [];
+      STATE.research_date = data.research_date || '2026-04-22';
+    } catch (e) {
+      const tbody = document.getElementById('comp-tbody');
+      clearNode(tbody);
+      const tr = makeEl('tr');
+      const td = makeEl('td', 'loading', 'Failed to load data/whitespace-competitors.json: ' + e.message);
+      td.colSpan = 7; tr.appendChild(td); tbody.appendChild(tr);
+      return;
+    }
+    STATE.matrix = buildMatrix();
+    renderStrategyCanvas();
+    renderHeatmap();
+    renderNiches();
+    populateCatFilter();
+    renderTable();
+    updateKpis();
+    ['comp-search','comp-cat','comp-threat'].forEach(id => {
+      document.getElementById(id).addEventListener('input', renderTable);
+    });
+  }
+  init();
+})();
+</script>
+</body>
+</html>
