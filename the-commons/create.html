@@ -611,6 +611,113 @@
       // Initialize display
       syncSliders(1);
     });
+
+    // ── Step navigation (if not already wired elsewhere) ─────────────────
+    if (typeof goToStep !== 'function') {
+      window.goToStep = function(step) {
+        for (let i = 1; i <= 3; i++) {
+          const panel = document.getElementById('step' + i);
+          if (panel) panel.style.display = i === step ? '' : 'none';
+        }
+        document.querySelectorAll('[data-step]').forEach(e => {
+          e.classList.toggle('active', Number(e.dataset.step) === step);
+        });
+        // Populate review when landing on step 3
+        if (step === 3) populateReview();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+    }
+
+    function populateReview() {
+      const setText = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+      setText('reviewName', document.getElementById('eventName').value || '—');
+      const date = document.getElementById('eventDate').value;
+      const time = document.getElementById('eventTime').value;
+      setText('reviewDate', (date ? new Date(date + 'T00:00:00').toLocaleDateString('en-SG', { weekday: 'short', day: 'numeric', month: 'short' }) : '—') + (time ? ' · ' + time : ''));
+      setText('reviewLocation', document.getElementById('eventLocation').value || '—');
+      const cost = document.getElementById('totalCost').value;
+      setText('reviewCost', cost ? '$' + Number(cost).toFixed(2) : '—');
+      setText('reviewMax', document.getElementById('maxAttendees').value || '—');
+      const v1 = Number(document.getElementById('slider1').value);
+      const v2 = Number(document.getElementById('slider2').value);
+      const v3 = Number(document.getElementById('slider3').value);
+      setText('reviewMilestones', v1 + '% / ' + v2 + '% / ' + v3 + '%');
+    }
+
+    // ── Publish event → TCStore + redirect ───────────────────────────────
+    function publishEvent() {
+      if (!window.TCStore) { alert('Store not loaded.'); return; }
+      const agree = document.getElementById('agreeTerms');
+      if (agree && !agree.checked) {
+        if (window.showToast) showToast('Please accept the terms + escrow policy.', 'error');
+        else alert('Please accept the terms + escrow policy.');
+        return;
+      }
+
+      const title = document.getElementById('eventName').value.trim();
+      if (!title) { showToast && showToast('Please give your event a title.', 'error'); return; }
+
+      const cost = Number(document.getElementById('totalCost').value) || 0;
+      const v1 = Number(document.getElementById('slider1').value);
+      const v2 = Number(document.getElementById('slider2').value);
+      const v3 = Number(document.getElementById('slider3').value);
+      const m1 = Math.round(cost * v1 / 100 * 100) / 100;
+      const m2 = Math.round(cost * v2 / 100 * 100) / 100;
+      const m3 = Math.round(cost * v3 / 100 * 100) / 100;
+      const milestones = [];
+      if (m1) milestones.push({ id: 'm1', label: 'Deposit', amount: m1, dueOffset: 21 });
+      if (m2) milestones.push({ id: 'm2', label: '2nd Payment', amount: m2, dueOffset: 14 });
+      if (m3) milestones.push({ id: 'm3', label: 'Final Payment', amount: m3, dueOffset: 7 });
+
+      // Require organiser profile
+      let organiser = TCStore.currentUser();
+      if (!organiser) {
+        const name = prompt('Your name (as organiser):');
+        const email = prompt('Your email:');
+        if (!name || !email) { showToast && showToast('Organiser info required.', 'error'); return; }
+        organiser = TCStore.setCurrentUser({ name: name.trim(), email: email.trim() });
+      }
+
+      // Category → emoji default
+      const catMap = { yacht: '⛵', festival: '🎪', hike: '🥾', party: '🎉', travel: '✈️', food: '🍲', learn: '🎓', sport: '🏃' };
+      const category = document.getElementById('eventCategory').value || 'party';
+
+      const ev = TCStore.createEvent({
+        title: title,
+        emoji: catMap[category] || '🎉',
+        category: category,
+        description: document.getElementById('eventDesc').value || '',
+        date: document.getElementById('eventDate').value || TCStore.addDaysISO(14),
+        time: document.getElementById('eventTime').value || '19:00',
+        location: document.getElementById('eventLocation').value || 'TBA',
+        costPerPerson: cost,
+        depositAmount: m1,
+        maxGuests: Number(document.getElementById('maxAttendees').value) || 20,
+        milestones: milestones,
+        providers: [],
+        organiser: organiser
+      });
+
+      // Update share link in success modal
+      const shareLink = document.getElementById('shareLink');
+      if (shareLink) shareLink.value = location.origin + location.pathname.replace('create.html', 'event.html') + '?slug=' + encodeURIComponent(ev.slug);
+      const viewBtn = document.querySelector('#successModal a[href="event.html"]');
+      if (viewBtn) viewBtn.href = 'event.html?slug=' + encodeURIComponent(ev.slug);
+
+      // Show success
+      const modal = document.getElementById('successModal');
+      if (modal) modal.classList.add('open');
+    }
+
+    function copyShareLink() {
+      const input = document.getElementById('shareLink');
+      if (!input) return;
+      input.select();
+      try { navigator.clipboard && navigator.clipboard.writeText(input.value); } catch {}
+      if (window.showToast) showToast('Link copied!', 'success');
+    }
   </script>
+  <script src="store.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

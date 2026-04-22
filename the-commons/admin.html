@@ -232,6 +232,7 @@
         <div class="sidebar-section-title">Overview</div>
         <ul class="sidebar-nav">
           <li><a href="#" class="active" onclick="showAdminTab(this, 'overview')">&#128202; Dashboard</a></li>
+          <li><a href="#" onclick="showAdminTab(this, 'reconciliation'); if(typeof renderAdminReconciliation==='function') renderAdminReconciliation();">&#9679; PayNow Reconciliation</a></li>
           <li><a href="#" onclick="showAdminTab(this, 'analytics')">&#128200; Analytics</a></li>
         </ul>
       </div>
@@ -409,6 +410,78 @@
             <p style="font-size: 0.8rem; margin: 0;">Auto-reminders sent. 3 are 7+ days overdue — may need escalation.</p>
           </div>
           <button class="btn btn-secondary btn-sm" onclick="showAdminTab(document.querySelector('[onclick*=escrow]'), 'escrow')">View</button>
+        </div>
+      </div>
+
+      <!-- ===== PAYNOW RECONCILIATION TAB ===== -->
+      <div id="admin-reconciliation" style="display: none;" data-tc-render="admin-reconciliation">
+        <div class="admin-header">
+          <div>
+            <h2 style="margin-bottom: 4px;">&#128274; PayNow Reconciliation</h2>
+            <p>When an attendee clicks "I&rsquo;ve paid", their transaction lands here. Cross-check against your DBS / OCBC / UOB inbox and mark received to release the escrow row.</p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn btn-secondary btn-sm" onclick="adminResetDemo()">&#9851; Reset Demo Data</button>
+          </div>
+        </div>
+
+        <!-- Snapshot -->
+        <div class="grid-4" style="margin-bottom: 28px;">
+          <div class="stat-card" style="border-left: 4px solid var(--coral);">
+            <div class="stat-value text-gradient" id="admin-pending-count">0</div>
+            <div class="stat-label">Pending verifications</div>
+          </div>
+          <div class="stat-card" style="border-left: 4px solid var(--ocean);">
+            <div class="stat-value" style="color: var(--deep-ocean);" id="admin-pending-amount">$0</div>
+            <div class="stat-label">Pending amount</div>
+          </div>
+          <div class="stat-card" style="border-left: 4px solid var(--palm);">
+            <div class="stat-value" style="color: #059669;" id="admin-escrow-total">$0</div>
+            <div class="stat-label">Verified escrow</div>
+          </div>
+          <div class="stat-card" style="border-left: 4px solid var(--pink);">
+            <div class="stat-value" style="color: var(--pink);"><span id="admin-events-count">0</span> / <span id="admin-rsvps-count">0</span></div>
+            <div class="stat-label">Events / RSVPs</div>
+          </div>
+        </div>
+
+        <!-- Pending list -->
+        <div class="card" style="padding: 24px; margin-bottom: 24px;">
+          <h3 style="margin-bottom: 16px;">Pending — waiting on PayNow receipt</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Reference</th>
+                  <th>Payer</th>
+                  <th>For</th>
+                  <th>Amount</th>
+                  <th>Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-pending-list"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Verified list -->
+        <div class="card" style="padding: 24px;">
+          <h3 style="margin-bottom: 16px;">Verified — escrow holding</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Reference</th>
+                  <th>Payer</th>
+                  <th>For</th>
+                  <th>Amount</th>
+                  <th>Verified</th>
+                </tr>
+              </thead>
+              <tbody id="admin-verified-list"></tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -1355,6 +1428,7 @@
 
   <div class="toast" id="toast"></div>
 
+  <script src="store.js"></script>
   <script src="app.js"></script>
   <script>
     // Admin tab switching
