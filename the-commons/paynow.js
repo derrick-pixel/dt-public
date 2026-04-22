@@ -76,7 +76,8 @@
     return p + '-' + date + '-' + rand;
   }
 
-  // ── Render QR into a DOM element using qrcode.js ───────
+  // ── Render QR into a DOM element using qrcodejs (davidshimjs) ─
+  // API: new QRCode(element, { text, width, height, colorDark, colorLight, correctLevel })
   function render(containerEl, opts) {
     if (!containerEl) return null;
     const options = Object.assign({}, opts);
@@ -99,29 +100,34 @@
       pre.style.borderRadius = '8px';
       pre.textContent = payload;
       containerEl.appendChild(pre);
-      return { payload, reference: options.reference, fallback: true };
+      return { payload: payload, reference: options.reference, fallback: true };
     }
 
-    // qrcode@1.5.3 exposes QRCode.toCanvas
-    const canvas = document.createElement('canvas');
-    canvas.style.maxWidth = '240px';
-    canvas.style.width = '100%';
-    canvas.style.height = 'auto';
-    containerEl.appendChild(canvas);
+    // Wrapper so qrcodejs can draw into a dedicated node and we style the frame.
+    const wrap = document.createElement('div');
+    wrap.style.display = 'inline-block';
+    wrap.style.padding = '12px';
+    wrap.style.background = '#FFFFFF';
+    wrap.style.borderRadius = '12px';
+    wrap.style.boxShadow = '0 4px 20px rgba(0,0,0,0.08)';
+    containerEl.appendChild(wrap);
 
-    QRCode.toCanvas(canvas, payload, {
-      margin: 2,
-      width: 260,
-      color: { dark: '#1A1A2E', light: '#FFFFFF' },
-      errorCorrectionLevel: 'M'
-    }, function (err) {
-      if (err) {
-        // eslint-disable-next-line no-console
-        console.error('PayNow QR render failed:', err);
-      }
-    });
+    try {
+      /* eslint-disable no-new */
+      new QRCode(wrap, {
+        text: payload,
+        width: 240,
+        height: 240,
+        colorDark: '#1A1A2E',
+        colorLight: '#FFFFFF',
+        correctLevel: (QRCode.CorrectLevel && QRCode.CorrectLevel.M) || 0
+      });
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('PayNow QR render failed:', e);
+    }
 
-    return { payload, reference: options.reference, canvas };
+    return { payload: payload, reference: options.reference };
   }
 
   // ── Public surface ─────────────────────────────────────
