@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>White Space Atlas — Elitez Security Admin</title>
+  <meta name="description" content="Strategic competitive intelligence: competitor universe, strategy canvas, segment x need coverage heatmap, attack plan. Admin-only.">
+  <meta name="robots" content="noindex, nofollow">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous"></script>
+
+  <style>
+    :root {
+      --atlas-green: #34d399;
+      --atlas-green-bg: rgba(52,211,153,0.14);
+      --atlas-amber: #f59e0b;
+      --atlas-amber-bg: rgba(245,158,11,0.14);
+      --atlas-red: #f87171;
+      --atlas-red-bg: rgba(248,113,113,0.14);
+    }
+    .atlas-body { padding-top: 92px; padding-bottom: 80px; max-width: 1360px; margin: 0 auto; padding-left: 24px; padding-right: 24px; }
+    .atlas-top { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
+    .atlas-tag { font-family: 'Share Tech Mono', monospace; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--atlas-green); margin-bottom: 10px; display: inline-block; }
+    .atlas-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: clamp(1.9rem, 4.2vw, 2.8rem); line-height: 1.05; color: var(--text); }
+    .atlas-meta { font-family: 'Share Tech Mono', monospace; font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; text-align: right; }
+
+    .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 32px; }
+    .kpi { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+    .kpi-val { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 2rem; color: var(--accent); line-height: 1; }
+    .kpi-val.green { color: var(--atlas-green); }
+    .kpi-val.amber { color: var(--atlas-amber); }
+    .kpi-val.red   { color: var(--atlas-red); }
+    .kpi-lbl { font-family: 'Share Tech Mono', monospace; font-size: 0.68rem; color: var(--muted2); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 8px; }
+
+    .artifact { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; margin-bottom: 24px; }
+    .art-num { font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
+    .art-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 1.5rem; color: var(--text); text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 8px; }
+    .art-desc { color: var(--muted); font-size: 0.94rem; max-width: 820px; line-height: 1.55; margin-bottom: 20px; }
+
+    .canvas-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start; }
+    @media (max-width: 900px) { .canvas-wrap { grid-template-columns: 1fr; } }
+    #strategy-canvas { width: 100%; max-width: 820px; height: 420px; }
+    .canvas-legend { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; font-family: 'Share Tech Mono', monospace; }
+    .canvas-legend .leg { display: flex; align-items: center; gap: 8px; }
+    .canvas-legend .sw { width: 28px; height: 4px; flex-shrink: 0; }
+    .canvas-legend .us { font-weight: 700; color: var(--accent); }
+
+    .heatmap-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+    .heatmap { border-collapse: collapse; width: 100%; min-width: 780px; font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; }
+    .heatmap th, .heatmap td { border: 1px solid var(--border); padding: 7px 6px; text-align: center; vertical-align: middle; line-height: 1.15; }
+    .heatmap thead th { background: #1e1e22; color: var(--muted2); font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.04em; padding: 10px 5px; font-weight: 700; }
+    .heatmap thead th:first-child { text-align: left; min-width: 200px; }
+    .heatmap tbody th { text-align: left; background: #1e1e22; color: var(--text); font-family: 'Barlow', sans-serif; font-size: 0.82rem; font-weight: 600; padding: 8px 12px; }
+    .heatmap tbody th small { display: block; font-size: 0.64rem; color: var(--muted2); font-weight: 400; margin-top: 2px; }
+    .cell { cursor: pointer; font-weight: 700; transition: filter 0.1s; user-select: none; font-size: 0.9rem; }
+    .cell:hover { filter: brightness(1.25); outline: 2px solid var(--accent); outline-offset: -2px; }
+    .cell.green { background: var(--atlas-green-bg); color: var(--atlas-green); }
+    .cell.amber { background: var(--atlas-amber-bg); color: var(--atlas-amber); }
+    .cell.red   { background: var(--atlas-red-bg); color: var(--atlas-red); }
+
+    .heatmap-legend { display: flex; align-items: center; gap: 18px; margin-top: 14px; font-family: 'Share Tech Mono', monospace; font-size: 0.76rem; color: var(--muted); flex-wrap: wrap; }
+    .heatmap-legend .dot { display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: middle; }
+
+    #heatmap-detail { display: none; margin-top: 14px; padding: 14px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--muted); font-size: 0.9rem; line-height: 1.55; }
+    #heatmap-detail.show { display: block; }
+    #heatmap-detail b { color: var(--text); }
+    #heatmap-detail .tag { display: inline-block; padding: 2px 10px; font-family: 'Share Tech Mono', monospace; font-size: 0.64rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-right: 8px; border-radius: 100px; }
+    #heatmap-detail .tag.green { background: var(--atlas-green-bg); color: var(--atlas-green); border: 1px solid var(--atlas-green); }
+    #heatmap-detail .tag.amber { background: var(--atlas-amber-bg); color: var(--atlas-amber); border: 1px solid var(--atlas-amber); }
+    #heatmap-detail .tag.red   { background: var(--atlas-red-bg); color: var(--atlas-red); border: 1px solid var(--atlas-red); }
+
+    .attack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+    .niche { background: linear-gradient(160deg, var(--atlas-green-bg), transparent 85%); border: 1.5px solid var(--atlas-green); border-radius: 12px; padding: 22px 24px; }
+    .niche-rank { font-family: 'Share Tech Mono', monospace; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--atlas-green); margin-bottom: 6px; }
+    .niche-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 1.1rem; color: var(--text); text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 10px; }
+    .niche-icp { color: var(--muted); font-size: 0.88rem; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px dashed var(--border); font-style: italic; }
+    .niche-row { display: grid; grid-template-columns: 72px 1fr; gap: 10px; font-size: 0.82rem; padding: 6px 0; }
+    .niche-row .k { font-family: 'Share Tech Mono', monospace; font-size: 0.64rem; font-weight: 700; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px; }
+    .niche-row .v { color: var(--muted); line-height: 1.55; }
+
+    .comp-controls { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+    .comp-search, .comp-filter { padding: 9px 14px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-family: 'Barlow', sans-serif; font-size: 0.88rem; border-radius: 6px; outline: none; }
+    .comp-search:focus, .comp-filter:focus { border-color: var(--accent); }
+    .comp-search { flex: 1; min-width: 220px; }
+    .comp-count { font-family: 'Share Tech Mono', monospace; font-size: 0.76rem; color: var(--muted2); }
+
+    .comp-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    .comp-table thead th { background: #1e1e22; color: var(--muted2); font-family: 'Share Tech Mono', monospace; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.66rem; padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+    .comp-table tbody td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .comp-table tbody tr:hover { background: rgba(52,211,153,0.04); }
+    .badge { display: inline-block; padding: 2px 8px; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; font-family: 'Share Tech Mono', monospace; border-radius: 100px; }
+    .b-cat { background: rgba(52,211,153,0.08); color: var(--accent); border: 1px solid rgba(52,211,153,0.2); }
+    .b-threat-high { background: var(--atlas-red-bg); color: var(--atlas-red); border: 1px solid var(--atlas-red); }
+    .b-threat-medium { background: var(--atlas-amber-bg); color: var(--atlas-amber); border: 1px solid var(--atlas-amber); }
+    .b-threat-low { background: var(--atlas-green-bg); color: var(--atlas-green); border: 1px solid var(--atlas-green); }
+    .b-beat-easy { background: var(--atlas-green-bg); color: var(--atlas-green); border: 1px solid var(--atlas-green); }
+    .b-beat-moderate { background: var(--atlas-amber-bg); color: var(--atlas-amber); border: 1px solid var(--atlas-amber); }
+    .b-beat-hard { background: var(--atlas-red-bg); color: var(--atlas-red); border: 1px solid var(--atlas-red); }
+    .comp-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; color: var(--text); font-size: 0.98rem; }
+    .comp-target { font-size: 0.76rem; color: var(--muted2); margin-top: 2px; }
+    .loading { color: var(--muted); font-family: 'Share Tech Mono', monospace; font-size: 0.86rem; padding: 24px; text-align: center; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Elitez Security</a>
+  <div class="nav-links">
+    <a href="services.html">Core Services</a>
+    <a href="command-center.html">Command Center</a>
+    <a href="robotics.html">Robotics</a>
+    <a href="admin.html">Analytics</a>
+    <a href="admin-insights.html">Insights</a>
+    <a href="admin-whitespace.html" style="color:var(--accent);">White Space</a>
+  </div>
+</nav>
+
+<div class="admin-nav container" style="margin-top:80px; padding-top:16px;">
+  <a href="admin.html">Competitor Analytics</a>
+  <a href="admin-insights.html">Market &amp; Pricing Insights</a>
+  <a href="admin-whitespace.html" class="active">White Space Atlas</a>
+</div>
+
+<main class="atlas-body">
+
+  <div class="atlas-top">
+    <div>
+      <div class="atlas-tag">◆ White Space Atlas — Security v1</div>
+      <h1 class="atlas-title">Where Certis skips, where Soverus bends —<br/>and we win mid-market.</h1>
+    </div>
+    <div class="atlas-meta">
+      <div>Refreshed <span id="refresh-date">2026-04-22</span></div>
+      <div><span id="comp-count-hdr">—</span> competitors · 8 segments · 8 needs · admin-only</div>
+    </div>
+  </div>
+
+  <div class="kpi-strip">
+    <div class="kpi"><div class="kpi-val" id="kpi-n-comp">—</div><div class="kpi-lbl">Competitors</div></div>
+    <div class="kpi"><div class="kpi-val green" id="kpi-green">—</div><div class="kpi-lbl">White-space cells</div></div>
+    <div class="kpi"><div class="kpi-val amber" id="kpi-amber">—</div><div class="kpi-lbl">Contested cells</div></div>
+    <div class="kpi"><div class="kpi-val red" id="kpi-red">—</div><div class="kpi-lbl">Crowded cells</div></div>
+    <div class="kpi"><div class="kpi-val" id="kpi-threats">—</div><div class="kpi-lbl">High-threat rivals</div></div>
+  </div>
+
+  <section class="artifact">
+    <div class="art-num">Artifact 01</div>
+    <h2 class="art-title">Strategy Canvas</h2>
+    <p class="art-desc">Blue-Ocean radar. Each line plots a competitor across 8 customer-valued dimensions. Our shape must break away on price accessibility, tech augmentation, and event surge — where premiums can't follow on price and mid-market can't follow on tech.</p>
+    <div class="canvas-wrap">
+      <canvas id="strategy-canvas" width="820" height="420"></canvas>
+      <div class="canvas-legend" id="canvas-legend"></div>
+    </div>
+  </section>
+
+  <section class="artifact">
+    <div class="art-num">Artifact 02</div>
+    <h2 class="art-title">Segment × Need Heatmap — 8 × 8</h2>
+    <p class="art-desc">Each cell: count of competitors who genuinely serve that pair (score ≥3). Click a cell for detail.</p>
+    <div class="heatmap-wrap">
+      <table class="heatmap" id="heatmap"><thead></thead><tbody></tbody></table>
+    </div>
+    <div class="heatmap-legend">
+      <span><span class="dot" style="background:var(--atlas-green)"></span>Green 0–1 · white space</span>
+      <span><span class="dot" style="background:var(--atlas-amber)"></span>Amber 2–3 · contested</span>
+      <span><span class="dot" style="background:var(--atlas-red)"></span>Red 4+ · crowded</span>
+    </div>
+    <div id="heatmap-detail"></div>
+  </section>
+
+  <section class="artifact">
+    <div class="art-num">Artifact 03</div>
+    <h2 class="art-title">Attack Plan — Top 3 Underserved Niches</h2>
+    <p class="art-desc">Where Elitez Security attacks first. Each card: ICP, TAM, why-gap, why-we-win, GTM.</p>
+    <div class="attack-grid" id="attack-grid"></div>
+  </section>
+
+  <section class="artifact">
+    <div class="art-num">Artifact 04</div>
+    <h2 class="art-title">Competitor Deep-dive</h2>
+    <p class="art-desc">All <span id="comp-count-inline">—</span> competitors with pricing, threat level, and our wedge.</p>
+    <div class="comp-controls">
+      <input type="search" id="comp-search" class="comp-search" placeholder="Search name, target, strengths...">
+      <select id="comp-cat" class="comp-filter"><option value="">All categories</option></select>
+      <select id="comp-threat" class="comp-filter">
+        <option value="">All threats</option>
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+      </select>
+      <span class="comp-count" id="comp-count-tbl">—</span>
+    </div>
+    <table class="comp-table" id="comp-table">
+      <thead>
+        <tr><th>Name / target</th><th>Category</th><th>Pricing (SG)</th><th>Threat</th><th>Beat</th><th>Strengths</th><th>Weaknesses</th></tr>
+      </thead>
+      <tbody id="comp-tbody"><tr><td colspan="7" class="loading">Loading competitor data…</td></tr></tbody>
+    </table>
+  </section>
+
+</main>
+
+<script>
+(function() {
+  const CANVAS_DIMS = [
+    'Price accessibility',
+    'PLRD / licensing',
+    'Manned-guard ops scale',
+    'Tech / AI augment',
+    'Event + ad-hoc flex',
+    'Onboarding speed',
+    'Aviation / specialist',
+    'Group-backed reliability'
+  ];
+  const CANVAS_LINES = [
+    { name: 'Elitez Security', us: true, color: '#34d399', scores: [5, 5, 4, 5, 5, 5, 4, 5] },
+    { name: 'Certis',                     color: '#f87171', scores: [1, 5, 5, 5, 3, 3, 5, 5] },
+    { name: 'Aetos',                      color: '#ef4444', scores: [2, 5, 5, 3, 3, 3, 3, 4] },
+    { name: 'Soverus',                    color: '#f59e0b', scores: [3, 4, 4, 3, 4, 3, 2, 3] },
+    { name: 'Metropolis',                 color: '#d97706', scores: [3, 4, 3, 2, 3, 3, 1, 3] },
+    { name: 'KH Security',                color: '#b45309', scores: [4, 3, 3, 2, 2, 3, 1, 2] },
+    { name: 'Arknight Security',          color: '#92400e', scores: [3, 3, 3, 4, 2, 3, 1, 2] },
+    { name: 'Otsaw (robotics)',           color: '#818cf8', scores: [2, 2, 1, 5, 1, 2, 1, 2] },
+    { name: 'Event boutique',             color: '#a78bfa', scores: [4, 3, 2, 2, 5, 5, 1, 2] },
+    { name: 'MySwak (gig DIY)',           color: '#6b7280', scores: [2, 1, 1, 3, 1, 5, 0, 1] }
+  ];
+
+  const SEGMENTS = [
+    { id: 'sme_commercial_building', label: 'SME commercial building',    note: '1-3 tenancies, <10K sqft' },
+    { id: 'retail_mall_cluster',     label: 'Retail mall / F&B cluster',   note: 'Multi-tenant, food courts' },
+    { id: 'event_concert_adhoc',     label: 'Event / concert / ad-hoc',    note: '1-day to 2-week surge' },
+    { id: 'enterprise_campus',       label: 'Enterprise corporate campus', note: '50+ guards steady' },
+    { id: 'govt_public_sector',      label: 'Gov / public-sector tender',  note: 'GeBiz, HDB, MOE' },
+    { id: 'aviation_logistics',      label: 'Aviation / logistics yard',   note: 'Air cargo, port-adjacent' },
+    { id: 'residential_condo',       label: 'Residential condo / estate',  note: 'MCST, 5-25 guards' },
+    { id: 'construction_site',       label: 'Construction / infra',        note: 'Active site, WP-heavy' }
+  ];
+  const NEEDS = [
+    { id: 'lowest_price',            label: 'Lowest price per guard',      short: 'Price' },
+    { id: 'plrd_compliance',         label: 'PLRD + MOM compliance',       short: 'PLRD' },
+    { id: 'fast_deployment',         label: '3-5 day deployment',          short: 'Speed' },
+    { id: 'tech_ai_augment',         label: 'AI / robotics augment',       short: 'Tech' },
+    { id: 'event_surge',             label: 'Event surge + demob',         short: 'Event' },
+    { id: 'aviation_specialist',     label: 'Aviation-qualified',          short: 'Aviation' },
+    { id: 'single_point_contract',   label: 'One contract, many sites',    short: 'Single-pt' },
+    { id: 'reporting_transparency',  label: 'Incident-report cadence',     short: 'Reporting' }
+  ];
+
+  function scoreCompetitor(c, segId, needId) {
+    const tm = (c.target_market || '').toLowerCase();
+    const vp = (c.primary_value_prop || '').toLowerCase();
+    const str = (c.strengths || []).join(' ').toLowerCase();
+    const cat = c.category || '';
+    const hq = (c.hq || '').toLowerCase();
+    const price = Number(c.sg_monthly_per_guard_sgd || 0);
+    const techScore = Number(c.tech_integration_score || 0);
+    const services = (c.services || []).map(s => s.toLowerCase());
+    const bundle = (str + ' ' + vp + ' ' + tm).toLowerCase();
+
+    const segMap = {
+      sme_commercial_building: (tm.match(/sme|small|mid|commercial|office|building/) ? 4 : (cat === 'mid_market_guard' ? 3 : 0)),
+      retail_mall_cluster:     (tm.match(/retail|mall|shopping|f&b|food/) ? 4 : (cat === 'tier1_premium' ? 3 : 0)),
+      event_concert_adhoc:     (services.includes('event_security') ? 5 : (cat === 'event_boutique' ? 5 : (tm.match(/event|concert|ad.?hoc/) ? 4 : 0))),
+      enterprise_campus:       (tm.match(/enterprise|corporate|mnc|large|campus/) ? 4 : (cat === 'tier1_premium' ? 5 : 0)),
+      govt_public_sector:      (tm.match(/govt|government|gebiz|public sector|ministry|statutory/) ? 5 : (cat === 'tier1_premium' ? 4 : 0)),
+      aviation_logistics:      (services.includes('aviation_security') ? 5 : (tm.match(/aviation|airport|cargo|logistics|port/) ? 4 : 0)),
+      residential_condo:       (tm.match(/residential|condo|estate|mcst|apartment/) ? 4 : (cat === 'mid_market_guard' ? 3 : 0)),
+      construction_site:       (tm.match(/construction|infrastructure|site|building works|contractor/) ? 4 : 0)
+    };
+    const segScore = segMap[segId] || 0;
+
+    const needMap = {
+      lowest_price:            (price && price <= 2400 ? 5 : price <= 3000 ? 3 : price <= 3500 ? 1 : 0),
+      plrd_compliance:         (hq === 'singapore' || hq === 'sg' ? (/plrd|grade a|licenc|mom compliant/.test(bundle) ? 5 : 3) : 2),
+      fast_deployment:         (/fast|rapid|quick|days|same day|expedite|3.?day/.test(bundle) ? 4 : (cat === 'event_boutique' ? 5 : 2)),
+      tech_ai_augment:         (techScore >= 4 ? 5 : techScore >= 3 ? 3 : techScore >= 2 ? 2 : 0),
+      event_surge:             (services.includes('event_security') ? 4 : (cat === 'event_boutique' ? 5 : 1)),
+      aviation_specialist:     (services.includes('aviation_security') ? 5 : (cat === 'aviation_specialist' ? 5 : 0)),
+      single_point_contract:   (services.length >= 4 ? 4 : services.length >= 3 ? 3 : 1),
+      reporting_transparency:  (/reporting|dashboard|transparent|live feed|soc|real.?time|incident/.test(bundle) ? 4 : 2)
+    };
+    const needScore = needMap[needId] || 0;
+    return Math.min(segScore, needScore);
+  }
+
+  function ourScore(segId, needId) {
+    const s = { sme_commercial_building:5, retail_mall_cluster:5, event_concert_adhoc:5, enterprise_campus:3, govt_public_sector:2, aviation_logistics:4, residential_condo:4, construction_site:4 }[segId] || 3;
+    const n = { lowest_price:5, plrd_compliance:5, fast_deployment:5, tech_ai_augment:5, event_surge:5, aviation_specialist:4, single_point_contract:4, reporting_transparency:5 }[needId] || 3;
+    return Math.min(s, n);
+  }
+
+  const STATE = { competitors: [], matrix: null, research_date: '2026-04-22' };
+
+  const NICHES = [
+    {
+      rank: '01',
+      name: 'Retail Mall & F&B Cluster — Tech-Augmented Mid-Market',
+      icp: 'SG retail malls + F&B clusters with 8-40 guards. Too small for Certis (which rejects sub-100-guard jobs), too demanding of tech for pure-guard mid-market. Needs AI-CCTV + human guard hybrid at mid-price.',
+      tam: '~620 SG malls and F&B clusters with on-site security (URA + SFA licensed F&B density + mall directory).',
+      why_underserved: 'Certis / AETOS are priced out of this scale. Soverus / Ademco run pure human-guard models. Otsaw sells robotics without the ops team. No one packages mid-price (S$2,700/guard) with robotics + AI-CCTV + 3-day deployment + incident-reporting dashboard.',
+      why_we_win: '(1) Otsaw robotics partnership at fleet discount. (2) S$2,700/guard/mo vs Certis S$3,800+. (3) 3-day onboard vs 2-week industry. (4) Live incident dashboard bundled.',
+      gtm: {
+        pricing: 'S$2,700/guard/mo + flat S$490/mo AI-CCTV analytics + 1 Otsaw patrol hour free.',
+        channel: 'SG REIT facility managers + MCST manager networks + mall operator association referral. LinkedIn ads targeting facility management titles.',
+        pitch: '"Certis quality at mall budget. Human guards + robotics + AI dashboard, under one contract."',
+        content: '"Incident Cost Calculator" — compute avoided-incident value from live feed. Gated lead capture.'
+      }
+    },
+    {
+      rank: '02',
+      name: 'Event Surge — Concert & Ad-Hoc Deploy/Demob',
+      icp: 'Event promoters, concert organisers, conference ops running 1-day to 2-week bursts needing 20-80 guards rapid deploy + rapid demob. Most mid-market refuse (low-margin, high-risk). Event boutiques lack PLRD depth or aviation adjacency.',
+      tam: '~1,400 SG ticketed events per year requiring >20 guards (STB + mega-event data + industry rolodex).',
+      why_underserved: 'Tier-1 premiums don\'t touch ad-hoc (their model needs steady billings). Mid-market is too linear (can\'t surge 50 guards in 72h). Event boutiques lack group insurance and PLRD Grade A. No one combines rapid surge + Grade A compliance + group insurance rates.',
+      why_we_win: '(1) Elitez Aviation sister company provides aviation-trained officers for stadium/airshow-adjacent events. (2) Group insurance at member rates vs solo boutique quotes. (3) Rapid deploy/demob ops SOP tested from aviation business. (4) Can layer Otsaw patrols for perimeter during high-risk events.',
+      gtm: {
+        pricing: 'Event surge day-rate S$180/guard (vs industry S$220+); 3-day minimum; group insurance included.',
+        channel: 'Event promoter associations (SISTIC partners, SEA), concert organiser rolodex, LinkedIn target for event ops roles. STB partner register.',
+        pitch: '"20 guards in 72 hours with aviation-grade SOP. Ad-hoc deploy, ad-hoc demob, never a dangling retainer."',
+        content: 'Event Security Surge Planner — calculator for guards × venue size × risk tier × insurance.'
+      }
+    },
+    {
+      rank: '03',
+      name: 'Aviation-Adjacent Logistics — Air Cargo & Port Yards',
+      icp: 'SG air-cargo agents, freight forwarders, port-adjacent yards (Changi airfreight hub, PSA yard operators). Needs aviation-adjacent compliance + heavy goods security + WP worker supervision. Most guard companies lack the aviation SOP; Certis/G4S too expensive.',
+      tam: '~180 SG air-cargo / port-yard operators with dedicated on-site security need (Changi Airport Group vendor roll + PSA operator list).',
+      why_underserved: 'Certis + G4S Aviation serve the airport itself at premium. Mid-market guards lack aviation SOP experience. Aviation-specialist firms (ICTS, Prosegur Aviation) focus on passenger/cargo inside-terminal work, not adjacent yards. No one packages aviation-grade SOP for OUTSIDE-the-fence logistics.',
+      why_we_win: '(1) Elitez Aviation sister company gives aviation-grade SOP + CAAS-touched officers. (2) Group overhead keeps rate competitive. (3) Can cross-deploy with Elitez Security commercial ops for back-office.',
+      gtm: {
+        pricing: 'S$3,100/guard/mo (aviation-trained), 20% below Certis aviation quoting.',
+        channel: 'Changi Airport Group vendor outreach + air freight forwarder association (AFSCA) + PSA yard operator intros via Elitez Aviation existing clients.',
+        pitch: '"Aviation-grade security outside the fence. At a price the terminal contractors cannot match."',
+        content: '"Air Cargo Security Gap Audit" — 10-question audit, emails back the shortlist of gaps.'
+      }
+    }
+  ];
+
+  function clearNode(el) { while (el.firstChild) el.removeChild(el.firstChild); }
+  function makeEl(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+  function renderStrategyCanvas() {
+    const ctx = document.getElementById('strategy-canvas').getContext('2d');
+    const datasets = CANVAS_LINES.map(l => ({
+      label: l.name, data: l.scores,
+      backgroundColor: l.us ? 'rgba(52,211,153,0.18)' : 'transparent',
+      borderColor: l.color, borderWidth: l.us ? 3 : 1.5,
+      pointRadius: l.us ? 4 : 2.5, pointBackgroundColor: l.color, tension: 0.15
+    }));
+    new Chart(ctx, {
+      type: 'radar', data: { labels: CANVAS_DIMS, datasets },
+      options: {
+        scales: { r: {
+          suggestedMin: 0, suggestedMax: 5,
+          ticks: { stepSize: 1, backdropColor: 'rgba(0,0,0,0)', color: '#888', font: { size: 10 } },
+          grid: { color: 'rgba(255,255,255,0.06)' },
+          angleLines: { color: 'rgba(255,255,255,0.08)' },
+          pointLabels: { color: '#fafafa', font: { family: 'Barlow, sans-serif', size: 11, weight: 600 } }
+        } },
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: x => x.dataset.label + ': ' + x.raw } } },
+        responsive: true, maintainAspectRatio: false
+      }
+    });
+    const leg = document.getElementById('canvas-legend'); clearNode(leg);
+    CANVAS_LINES.forEach(l => {
+      const r = makeEl('div', 'leg');
+      const sw = makeEl('span', 'sw'); sw.style.background = l.color;
+      if (l.us) sw.style.boxShadow = '0 0 10px ' + l.color;
+      const n = makeEl('span', null, l.name); if (l.us) n.classList.add('us');
+      r.appendChild(sw); r.appendChild(n); leg.appendChild(r);
+    });
+  }
+
+  function buildMatrix() {
+    const mx = {};
+    SEGMENTS.forEach(s => { mx[s.id] = {}; NEEDS.forEach(n => {
+      const scoring = STATE.competitors.map(c => ({ name: c.name, score: scoreCompetitor(c, s.id, n.id) }));
+      const strong = scoring.filter(x => x.score >= 3).sort((a,b) => b.score - a.score);
+      mx[s.id][n.id] = { count: strong.length, servers: strong, us: ourScore(s.id, n.id) };
+    }); });
+    return mx;
+  }
+  function levelFor(count) { return count <= 1 ? 'green' : count <= 3 ? 'amber' : 'red'; }
+
+  function renderHeatmap() {
+    const thead = document.querySelector('#heatmap thead'); const tbody = document.querySelector('#heatmap tbody');
+    clearNode(thead); clearNode(tbody);
+    const hdr = makeEl('tr'); hdr.appendChild(makeEl('th', null, 'Segment \\ Need'));
+    NEEDS.forEach(n => { const th = makeEl('th', null, n.short); th.title = n.label; hdr.appendChild(th); });
+    thead.appendChild(hdr);
+    SEGMENTS.forEach(s => {
+      const tr = makeEl('tr');
+      const th = makeEl('th'); th.appendChild(makeEl('span', null, s.label)); th.appendChild(makeEl('small', null, s.note));
+      tr.appendChild(th);
+      NEEDS.forEach(n => {
+        const cell = STATE.matrix[s.id][n.id];
+        const td = makeEl('td', 'cell ' + levelFor(cell.count), String(cell.count));
+        td.addEventListener('click', () => showCellDetail(s, n, cell));
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+  }
+
+  function showCellDetail(seg, need, cell) {
+    const detail = document.getElementById('heatmap-detail'); clearNode(detail);
+    const lvl = levelFor(cell.count);
+    const lvlTag = makeEl('span', 'tag ' + lvl, lvl === 'green' ? 'White space · attack' : lvl === 'amber' ? 'Contested · winnable' : 'Crowded · avoid');
+    detail.appendChild(lvlTag);
+    detail.appendChild(makeEl('b', null, seg.label + ' × ' + need.label));
+    const p = makeEl('p', null, cell.count + ' competitor(s) serve this pair well (score ≥3). Our score: ' + cell.us + '/5.');
+    p.style.marginTop = '8px'; detail.appendChild(p);
+    if (cell.servers.length) {
+      const list = makeEl('div', null, 'Competitors serving: ' + cell.servers.slice(0, 8).map(c => c.name + ' (' + c.score + ')').join(', '));
+      list.style.marginTop = '6px'; list.style.fontSize = '0.82rem'; detail.appendChild(list);
+    }
+    detail.classList.add('show');
+  }
+
+  function renderNiches() {
+    const host = document.getElementById('attack-grid'); clearNode(host);
+    NICHES.forEach(n => {
+      const c = makeEl('div', 'niche');
+      c.appendChild(makeEl('div', 'niche-rank', 'Niche ' + n.rank));
+      c.appendChild(makeEl('div', 'niche-name', n.name));
+      c.appendChild(makeEl('div', 'niche-icp', n.icp));
+      [['TAM', n.tam], ['Why gap', n.why_underserved], ['Our win', n.why_we_win],
+       ['Pricing', n.gtm.pricing], ['Channel', n.gtm.channel], ['Pitch', n.gtm.pitch], ['Content', n.gtm.content]]
+      .forEach(pair => {
+        const row = makeEl('div', 'niche-row');
+        row.appendChild(makeEl('div', 'k', pair[0]));
+        row.appendChild(makeEl('div', 'v', pair[1]));
+        c.appendChild(row);
+      });
+      host.appendChild(c);
+    });
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('comp-tbody'); clearNode(tbody);
+    const q = document.getElementById('comp-search').value.toLowerCase();
+    const catF = document.getElementById('comp-cat').value;
+    const threatF = document.getElementById('comp-threat').value;
+    const filtered = STATE.competitors.filter(c => {
+      if (catF && c.category !== catF) return false;
+      if (threatF && c.threat_level_to_elitez_security !== threatF) return false;
+      if (q) {
+        const blob = [c.name, c.target_market, (c.strengths||[]).join(' '), (c.weaknesses||[]).join(' '), c.category].join(' ').toLowerCase();
+        if (!blob.includes(q)) return false;
+      }
+      return true;
+    });
+    document.getElementById('comp-count-tbl').textContent = filtered.length + ' / ' + STATE.competitors.length;
+    if (!filtered.length) {
+      const tr = makeEl('tr'); const td = makeEl('td', 'loading', 'No competitors match — adjust filters');
+      td.colSpan = 7; tr.appendChild(td); tbody.appendChild(tr); return;
+    }
+    filtered.forEach(c => {
+      const tr = makeEl('tr');
+      const tdN = makeEl('td'); tdN.appendChild(makeEl('div', 'comp-name', c.name)); tdN.appendChild(makeEl('div', 'comp-target', c.target_market || ''));
+      const tdC = makeEl('td'); tdC.appendChild(makeEl('span', 'badge b-cat', (c.category || '').replace(/_/g, ' ')));
+      const tdP = makeEl('td', null, c.sg_pricing_range_published || '—'); tdP.style.fontFamily = 'Share Tech Mono, monospace'; tdP.style.fontSize = '0.76rem'; tdP.style.color = 'var(--accent)';
+      const tdT = makeEl('td'); tdT.appendChild(makeEl('span', 'badge b-threat-' + (c.threat_level_to_elitez_security || 'low'), c.threat_level_to_elitez_security || '—'));
+      const tdB = makeEl('td'); tdB.appendChild(makeEl('span', 'badge b-beat-' + (c.beatability || 'moderate'), c.beatability || '—'));
+      const tdS = makeEl('td', null, (c.strengths || []).slice(0, 3).join('; ')); tdS.style.fontSize = '0.78rem'; tdS.style.color = 'var(--atlas-green)';
+      const tdW = makeEl('td', null, (c.weaknesses || []).slice(0, 3).join('; ')); tdW.style.fontSize = '0.78rem'; tdW.style.color = 'var(--atlas-red)';
+      [tdN, tdC, tdP, tdT, tdB, tdS, tdW].forEach(td => tr.appendChild(td));
+      tbody.appendChild(tr);
+    });
+  }
+
+  function populateCatFilter() {
+    const sel = document.getElementById('comp-cat');
+    const cats = Array.from(new Set(STATE.competitors.map(c => c.category))).sort();
+    cats.forEach(cat => { const opt = document.createElement('option'); opt.value = cat; opt.textContent = cat.replace(/_/g,' '); sel.appendChild(opt); });
+  }
+
+  function updateKpis() {
+    const cells = SEGMENTS.flatMap(s => NEEDS.map(n => STATE.matrix[s.id][n.id]));
+    const green = cells.filter(c => c.count <= 1).length;
+    const amber = cells.filter(c => c.count >= 2 && c.count <= 3).length;
+    const red   = cells.filter(c => c.count >= 4).length;
+    const threats = STATE.competitors.filter(c => c.threat_level_to_elitez_security === 'high').length;
+    document.getElementById('kpi-n-comp').textContent = STATE.competitors.length;
+    document.getElementById('kpi-green').textContent = green;
+    document.getElementById('kpi-amber').textContent = amber;
+    document.getElementById('kpi-red').textContent = red;
+    document.getElementById('kpi-threats').textContent = threats;
+    document.getElementById('comp-count-hdr').textContent = STATE.competitors.length;
+    document.getElementById('comp-count-inline').textContent = STATE.competitors.length;
+    document.getElementById('refresh-date').textContent = STATE.research_date || '2026-04-22';
+  }
+
+  async function init() {
+    try {
+      const res = await fetch('data/whitespace-competitors.json');
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      STATE.competitors = data.competitors || [];
+      STATE.research_date = data.research_date || '2026-04-22';
+    } catch (e) {
+      const tbody = document.getElementById('comp-tbody'); clearNode(tbody);
+      const tr = makeEl('tr'); const td = makeEl('td', 'loading', 'Failed to load data/whitespace-competitors.json: ' + e.message);
+      td.colSpan = 7; tr.appendChild(td); tbody.appendChild(tr); return;
+    }
+    STATE.matrix = buildMatrix();
+    renderStrategyCanvas(); renderHeatmap(); renderNiches(); populateCatFilter(); renderTable(); updateKpis();
+    ['comp-search','comp-cat','comp-threat'].forEach(id => document.getElementById(id).addEventListener('input', renderTable));
+  }
+  init();
+})();
+</script>
+</body>
+</html>
