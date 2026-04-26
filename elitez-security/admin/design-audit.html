@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design Audit — Elitez Security Admin</title>
+  <meta name="description" content="5-dimension design audit benchmarking the top SG security competitors against Elitez Security.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .kpi-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+    .kpi { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; }
+    .kpi .v { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 2rem; color: var(--accent); line-height: 1.05; }
+    .kpi .l { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+
+    .audit-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 18px; transition: border-color 0.3s; }
+    .audit-card:hover { border-color: var(--border2); }
+    .audit-card.is-self { border-color: rgba(52,211,153,0.55); box-shadow: 0 0 0 1px rgba(52,211,153,0.15) inset; }
+
+    .audit-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
+    .audit-head h3 { margin: 0; }
+    .audit-head .url { font-size: 0.7rem; color: var(--accent); word-break: break-all; display: block; margin-top: 2px; }
+    .audit-overall { font-family: 'Share Tech Mono', monospace; font-size: 0.78rem; color: var(--muted); border: 1px solid var(--border); border-radius: 100px; padding: 4px 12px; flex-shrink: 0; }
+    .audit-overall .num { color: var(--accent); font-weight: 700; }
+    .self-tag { display: inline-block; padding: 2px 10px; border-radius: 100px; font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; background: rgba(52,211,153,0.15); color: var(--accent); margin-left: 8px; vertical-align: middle; }
+
+    .audit-verdict { font-size: 0.88rem; color: var(--muted); line-height: 1.6; margin: 8px 0 16px; }
+
+    .dim-row { display: grid; grid-template-columns: 180px 1fr 38px; gap: 12px; align-items: center; margin-bottom: 6px; }
+    .dim-label { font-size: 0.7rem; text-transform: uppercase; color: var(--muted); letter-spacing: 0.04em; }
+    .dim-bar { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+    .dim-fill { height: 100%; border-radius: 3px; background: var(--accent); transition: width 0.6s ease; }
+    .dim-val { font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: var(--muted); text-align: right; }
+
+    .dim-block { padding: 8px 0 14px; border-bottom: 1px solid var(--border); }
+    .dim-block:last-child { border-bottom: none; }
+    .dim-note { font-size: 0.78rem; color: var(--muted); margin: 6px 0 0 192px; line-height: 1.55; }
+
+    details.tenx { margin-top: 18px; border-top: 1px dashed var(--border); padding-top: 14px; }
+    details.tenx summary { cursor: pointer; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; text-transform: uppercase; font-size: 0.78rem; color: var(--accent); letter-spacing: 0.06em; list-style: none; }
+    details.tenx summary::-webkit-details-marker { display: none; }
+    details.tenx summary::before { content: '+ '; color: var(--accent); }
+    details.tenx[open] summary::before { content: '− '; }
+    details.tenx ul { list-style: none; padding: 12px 0 0; }
+    details.tenx li { font-size: 0.82rem; color: var(--muted); padding: 6px 0 6px 14px; position: relative; line-height: 1.55; }
+    details.tenx li::before { content: '→'; color: var(--accent); position: absolute; left: 0; }
+    details.tenx li strong { color: var(--text); font-weight: 600; }
+
+    .synth-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 28px; margin-top: 32px; }
+    .synth-card h3 { margin-bottom: 12px; }
+    .synth-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.7; margin-bottom: 12px; }
+    .synth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px; }
+    .synth-block { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 18px; }
+    .synth-block h4 { font-family: 'Barlow Condensed', sans-serif; font-size: 0.95rem; margin-bottom: 10px; }
+    .synth-block ul { list-style: none; padding: 0; }
+    .synth-block li { font-size: 0.82rem; color: var(--muted); padding: 6px 0 6px 18px; position: relative; line-height: 1.55; }
+    .synth-block li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); position: absolute; left: 4px; top: 12px; }
+    .synth-block.aspirations li::before { background: #facc15; }
+
+    @media (max-width: 768px) {
+      .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+      .dim-row { grid-template-columns: 110px 1fr 34px; gap: 8px; }
+      .dim-note { margin-left: 118px; }
+      .synth-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .kpi-strip { grid-template-columns: 1fr; }
+      .dim-row { grid-template-columns: 1fr; gap: 4px; }
+      .dim-note { margin-left: 0; }
+      .dim-val { text-align: left; }
+    }
+
+  /* ── MOBILE RESPONSIVE OVERRIDES (v2) ─────────────────── */
+  @media (max-width: 768px) {
+    body { font-size: 13px; }
+    h1, .page-title, .atlas-title, .ph h1 { font-size: 1.45rem !important; line-height: 1.2 !important; }
+    h2, .art-title, .section-title, .sec-h h2 { font-size: 1.05rem !important; line-height: 1.25 !important; }
+    h3 { font-size: 0.95rem !important; }
+    .page-meta, .atlas-meta, .topbar-meta { text-align: left !important; margin-top: 6px !important; font-size: 0.7rem !important; }
+    main, .container, .container-wide, .atlas-body, .page-body, .wrap, .page { padding-left: 14px !important; padding-right: 14px !important; }
+    .page-head, .atlas-top, .admin-header { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
+
+    .kpi-strip, .kpis, .summary-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; margin-bottom: 20px !important; }
+    .grid-2, .grid-3, .grid-4, .landscape-grid, .rationale-grid, .tier-strip, .top-list,
+    .attack-grid, .results-grid, .metrics-grid, .synth-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+
+    .kpi, .summary-card, .stat-card, .comp-card, .audit-card, .synth-card, .synth-block,
+    .tier, .model, .sent-card, .insight, .alert, .quote, .card,
+    .niche { padding: 14px 16px !important; border-radius: 10px !important; }
+    .kpi-val, .kpi .v, .summary-card .big, .stat-value { font-size: 1.35rem !important; line-height: 1.1 !important; }
+    .kpi-lbl, .kpi .l, .summary-card .sub, .stat-label { font-size: 0.6rem !important; letter-spacing: 0.06em !important; }
+
+    .artifact, section.panel, .landscape-section { padding: 18px 16px !important; margin-bottom: 14px !important; border-radius: 10px !important; }
+    .art-desc, .sec-h p { font-size: 0.82rem !important; margin-bottom: 14px !important; }
+
+    .heatmap-wrap { border-radius: 6px !important; overflow-x: auto !important; }
+    .heatmap { min-width: auto !important; font-size: 0.56rem !important; }
+
+    nav, .admin-nav, .atlas-nav, .topbar, .topbar-inner { flex-wrap: wrap !important; padding: 10px 14px !important; gap: 8px !important; }
+    .admin-nav { gap: 10px !important; }
+    .atlas-nav-links, .admin-links, .topbar-tabs { flex-wrap: wrap !important; gap: 6px !important; }
+    .atlas-nav-links a, .admin-links a, .topbar-tabs a { font-size: 0.72rem !important; padding: 5px 10px !important; }
+
+    .nav-inner { padding: 10px 14px !important; }
+    .nav-inner .nav-links { display: none !important; }
+    .mobile-toggle { display: inline-flex !important; }
+
+    .footer-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+  }
+
+  @media (max-width: 420px) {
+    .kpi-strip, .kpis, .summary-grid { grid-template-columns: 1fr !important; }
+    body { font-size: 12px; }
+    .kpi-val, .kpi .v, .summary-card .big, .stat-value { font-size: 1.2rem !important; }
+  }
+  /* ── END MOBILE OVERRIDES ─────────────────────────────── */
+
+  </style>
+  <!-- Favicon set -->
+  <link rel="icon" type="image/x-icon" href="../favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png" />
+  <link rel="manifest" href="../site.webmanifest" />
+  <link rel="mask-icon" href="../safari-pinned-tab.svg" color="#f59e0b" />
+  <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <a href="../index.html" class="nav-logo">Elitez Security</a>
+  <div class="nav-links">
+    <a href="../services.html">Core Services</a>
+    <a href="../command-center.html">Command Centre</a>
+    <a href="../robotics.html">Technology</a>
+    <a href="index.html#why">Why Elitez</a>
+    <a href="index.html#contact">Contact</a>
+    <a href="index.html">Analytics</a>
+  </div>
+  <a href="index.html#contact" class="nav-cta">Get Assessment</a>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div id="mobile-menu">
+  <a href="../services.html" onclick="toggleMenu()">Core Services</a>
+  <a href="../command-center.html">Command Center</a>
+  <a href="../robotics.html">Robotics</a>
+  <a href="index.html#why" onclick="toggleMenu()">Why Elitez</a>
+  <a href="index.html#contact" onclick="toggleMenu()">Contact</a>
+  <a href="index.html">Analytics</a>
+  <a href="insights.html">Insights</a>
+</div>
+
+<!-- Admin Sub-Nav -->
+<div class="admin-nav container" style="margin-top:80px; padding-top:16px;">
+  <a href="index.html">Competitor Analytics</a>
+  <a href="insights.html">Market &amp; Pricing Insights</a>
+  <a href="whitespace.html">White Space Atlas</a>
+  <a href="design-audit.html" class="active">Design Audit</a>
+  <a href="report.html">Report</a>
+</div>
+
+<!-- Audit -->
+<section style="padding-top: 0;">
+  <div class="container">
+    <div class="text-center animate">
+      <div class="label">Visual Benchmarking</div>
+      <h2>Design Audit</h2>
+      <p class="section-subtitle">A 5-dimension design and credibility review of the top Singapore security agencies and Elitez Security itself, scored 1-10 with "what would make it a 10" notes.</p>
+    </div>
+
+    <div class="kpi-strip animate" style="margin-top: 32px;">
+      <div class="kpi">
+        <div class="v" id="kpi-avg">--</div>
+        <div class="l">Industry Average</div>
+      </div>
+      <div class="kpi">
+        <div class="v" id="kpi-self">--</div>
+        <div class="l">Elitez Security Score</div>
+      </div>
+      <div class="kpi">
+        <div class="v" id="kpi-rank">--</div>
+        <div class="l">Rank (of 6)</div>
+      </div>
+      <div class="kpi">
+        <div class="v" id="kpi-gap">--</div>
+        <div class="l">Gap to Leader</div>
+      </div>
+    </div>
+
+    <p id="elitez-position" style="font-size:0.92rem; color:var(--muted); line-height:1.7; margin-bottom:32px;"></p>
+
+    <div id="audit-grid"></div>
+
+    <!-- Synthesis -->
+    <div class="synth-card animate" style="margin-top: 32px; margin-bottom: 48px;">
+      <div class="label">Strategic Read</div>
+      <h3>Synthesis &amp; Action Plan</h3>
+      <div class="synth-grid">
+        <div class="synth-block">
+          <h4>Easy Wins (next 2 weeks)</h4>
+          <ul id="synth-easy"></ul>
+        </div>
+        <div class="synth-block aspirations">
+          <h4>10x Aspirations (next quarter)</h4>
+          <ul id="synth-aspire"></ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <p>&copy; 2026 Elitez Security Pte Ltd (UEN 2017168644Z). A member organisation of Elitez Group. SSIA 2023 awarded · PWM+ accredited · bizSAFE Star · NS Mark Gold · ISO 45001:2018. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Scripts -->
+<script src="../js/main.js"></script>
+<script>
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  function buildDimRow(rubricItem, dimScore) {
+    var block = el('div', 'dim-block');
+
+    var row = el('div', 'dim-row');
+    row.appendChild(el('span', 'dim-label', rubricItem.label));
+
+    var bar = el('div', 'dim-bar');
+    var fill = el('div', 'dim-fill');
+    var pct = Math.max(0, Math.min(100, (dimScore.score || 0) * 10));
+    fill.style.width = pct + '%';
+    bar.appendChild(fill);
+    row.appendChild(bar);
+
+    row.appendChild(el('span', 'dim-val', dimScore.score + '/10'));
+    block.appendChild(row);
+
+    var note = el('div', 'dim-note');
+    note.textContent = dimScore.note || '';
+    block.appendChild(note);
+
+    return block;
+  }
+
+  function buildAuditCard(subject, rubric) {
+    var card = el('div', 'audit-card' + (subject.is_self ? ' is-self' : ''));
+
+    var head = el('div', 'audit-head');
+    var headLeft = el('div');
+    var h3 = el('h3');
+    h3.textContent = subject.name;
+    if (subject.is_self) {
+      var tag = el('span', 'self-tag', 'Self-Audit');
+      h3.appendChild(tag);
+    }
+    headLeft.appendChild(h3);
+    var url = el('a', 'url');
+    url.href = subject.url;
+    url.target = '_blank';
+    url.rel = 'noopener';
+    url.textContent = subject.url;
+    headLeft.appendChild(url);
+    head.appendChild(headLeft);
+
+    var pill = el('div', 'audit-overall');
+    pill.appendChild(document.createTextNode('OVERALL '));
+    var num = el('span', 'num');
+    num.textContent = (subject.overall_score != null ? subject.overall_score.toFixed(1) : '--') + '/10';
+    pill.appendChild(num);
+    head.appendChild(pill);
+    card.appendChild(head);
+
+    var verdict = el('p', 'audit-verdict', subject.verdict || '');
+    card.appendChild(verdict);
+
+    rubric.forEach(function(r) {
+      var dim = subject.scores && subject.scores[r.id];
+      if (!dim) return;
+      card.appendChild(buildDimRow(r, dim));
+    });
+
+    // 10x details
+    var det = el('details', 'tenx');
+    var sum = el('summary', null, 'What would make each dimension a 10');
+    det.appendChild(sum);
+    var ul = el('ul');
+    rubric.forEach(function(r) {
+      var dim = subject.scores && subject.scores[r.id];
+      if (!dim || !dim.to_reach_10) return;
+      var li = el('li');
+      var strong = el('strong', null, r.label + ': ');
+      li.appendChild(strong);
+      li.appendChild(document.createTextNode(dim.to_reach_10));
+      ul.appendChild(li);
+    });
+    det.appendChild(ul);
+    card.appendChild(det);
+
+    return card;
+  }
+
+  function renderAudit(data) {
+    var grid = document.getElementById('audit-grid');
+    grid.textContent = '';
+    var subjects = data.subjects.slice();
+
+    // Sort: self first, then by overall_score desc
+    subjects.sort(function(a, b) {
+      if (a.is_self && !b.is_self) return -1;
+      if (!a.is_self && b.is_self) return 1;
+      return (b.overall_score || 0) - (a.overall_score || 0);
+    });
+
+    subjects.forEach(function(s) {
+      grid.appendChild(buildAuditCard(s, data.rubric));
+    });
+
+    // KPIs
+    var avg = data.synthesis && data.synthesis.industry_average;
+    document.getElementById('kpi-avg').textContent = (avg != null ? avg.toFixed(1) : '--') + '/10';
+
+    var self = data.subjects.filter(function(s) { return s.is_self; })[0];
+    document.getElementById('kpi-self').textContent = self ? self.overall_score.toFixed(1) + '/10' : '--';
+
+    // Rank
+    var sorted = data.subjects.slice().sort(function(a, b) { return (b.overall_score || 0) - (a.overall_score || 0); });
+    var rank = self ? sorted.findIndex(function(s) { return s.is_self; }) + 1 : '--';
+    document.getElementById('kpi-rank').textContent = '#' + rank;
+
+    // Gap to leader
+    var leader = sorted[0];
+    if (leader && self) {
+      var gap = (leader.overall_score - self.overall_score).toFixed(1);
+      document.getElementById('kpi-gap').textContent = '+' + gap;
+    } else {
+      document.getElementById('kpi-gap').textContent = '--';
+    }
+
+    // Position blurb
+    if (data.synthesis && data.synthesis.elitez_position) {
+      document.getElementById('elitez-position').textContent = data.synthesis.elitez_position;
+    }
+
+    // Synthesis lists
+    var easyUl = document.getElementById('synth-easy');
+    easyUl.textContent = '';
+    (data.synthesis && data.synthesis.easy_wins_for_elitez || []).forEach(function(w) {
+      var li = el('li');
+      li.textContent = w;
+      easyUl.appendChild(li);
+    });
+
+    var aspireUl = document.getElementById('synth-aspire');
+    aspireUl.textContent = '';
+    (data.synthesis && data.synthesis.ten_x_aspirations || []).forEach(function(a) {
+      var li = el('li');
+      li.textContent = a;
+      aspireUl.appendChild(li);
+    });
+  }
+
+  fetch('../data/design-audit.json')
+    .then(function(r) { return r.json(); })
+    .then(function(data) { renderAudit(data); })
+    .catch(function(err) {
+      console.error('Failed to load design-audit data:', err);
+      var grid = document.getElementById('audit-grid');
+      var p = document.createElement('p');
+      p.style.cssText = 'color:var(--muted); text-align:center; padding:32px;';
+      p.textContent = 'Failed to load design-audit data. Ensure data/design-audit.json exists.';
+      grid.appendChild(p);
+    });
+</script>
+
+</body>
+</html>

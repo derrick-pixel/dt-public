@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Competitor Landscape — Discounter + FlashCart</title>
+  <link rel="stylesheet" href="../assets/css/site.css">
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+  <nav class="admin-nav">
+    <a href="index.html" class="active">Competitors</a>
+    <a href="insights.html">Market &amp; Pricing</a>
+    <a href="whitespace.html">Whitespace Atlas</a>
+    <a href="design-audit.html">Design Audit</a>
+    <a href="report.html">Report</a>
+    <a href="../index.html" style="margin-left: auto;">← Back to site</a>
+  </nav>
+
+  <main class="container-wide">
+    <h1>Competitor Landscape</h1>
+    <p id="count-line" style="opacity: 0.7;"></p>
+
+    <section style="margin: 32px 0;">
+      <h2>Top 5 threats</h2>
+      <div id="top5-list"></div>
+    </section>
+
+    <section>
+      <h2>Full competitor database</h2>
+      <input type="search" class="search-bar" id="search-input" placeholder="Search by name, value prop, HQ, feature...">
+      <div id="filters" style="display: flex; gap: 16px; margin-bottom: 16px;">
+        <select name="filter-category">
+          <option value="">All categories</option>
+          <option value="global_incumbent">Global incumbent</option>
+          <option value="sg_local">SG local</option>
+          <option value="regional_challenger">Regional challenger</option>
+          <option value="diy_alternative">DIY alternative</option>
+          <option value="adjacent">Adjacent</option>
+        </select>
+        <select name="filter-hqRegion">
+          <option value="">All regions</option>
+          <option value="SEA">SEA</option>
+          <option value="Global">Global</option>
+          <option value="APAC">APAC</option>
+        </select>
+        <select name="filter-threatLevelMin">
+          <option value="">Any threat level</option>
+          <option value="3">≥ 3</option>
+          <option value="4">≥ 4</option>
+          <option value="5">= 5</option>
+        </select>
+      </div>
+      <table class="competitor-table">
+        <thead><tr>
+          <th>Name</th><th>Category</th><th>HQ</th><th>S$/mo</th><th>Threat</th><th>Beatability</th><th>Design</th>
+        </tr></thead>
+        <tbody id="competitor-tbody"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script type="module">
+    import { loadAppData, mountSampleBanner } from '../assets/js/app.js';
+    import { wireSearch } from '../assets/js/viz/search.js';
+    import { h, mount } from '../assets/js/dom.js';
+
+    const data = await loadAppData();
+    mountSampleBanner();
+    const comps = data.competitors.competitors;
+    const byId = Object.fromEntries(comps.map(c => [c.id, c]));
+
+    const top5 = data.competitors.top_five.map(t => {
+      const c = byId[t.competitor_id];
+      return h('div', { class: 'top5-card' },
+        h('span', { class: 'rank' }, String(t.rank)),
+        h('strong', { style: { marginLeft: '12px', fontSize: '18px' } }, c?.name ?? t.competitor_id),
+        h('p', { style: { marginTop: '12px' } }, t.rationale)
+      );
+    });
+    mount(document.getElementById('top5-list'), ...top5);
+
+    const tbody = document.getElementById('competitor-tbody');
+    const countLine = document.getElementById('count-line');
+    const buildRow = c => h('tr', {},
+      h('td', {}, h('a', { href: c.url, target: '_blank', rel: 'noopener' }, c.name)),
+      h('td', {}, c.category),
+      h('td', {}, c.hq),
+      h('td', {}, c.sg_monthly_sgd ?? '—'),
+      h('td', {}, String(c.threat_level)),
+      h('td', {}, String(c.beatability)),
+      h('td', {}, c.website_design_rating ?? '—')
+    );
+    wireSearch({
+      input: document.getElementById('search-input'),
+      filtersEl: document.getElementById('filters'),
+      competitors: comps,
+      onUpdate: list => {
+        mount(tbody, ...list.map(buildRow));
+        countLine.textContent = `Showing ${list.length} of ${comps.length} competitors`;
+      }
+    });
+  </script>
+</body>
+</html>
