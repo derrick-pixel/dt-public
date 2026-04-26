@@ -24,6 +24,9 @@ WIP_REPOS=(
   "vectorsky:vectorsky"
   "XinceAI:xinceai"
   "altru:altru"
+  "elitez-pulse:pulse"
+  "competitor-intel-template:competitor-intel"
+  "Elitez-ESOP:esop"
   "dt-site-creator:dt-site-creator"
 )
 
@@ -88,6 +91,9 @@ else
     echo "⚠ CLOUDFLARE_API_TOKEN not set — skipping Worker deploy."
     echo "  To deploy: export CLOUDFLARE_API_TOKEN=<token> and re-run."
   else
+    # Account ID is required for wrangler; the token alone isn't enough
+    # because token-listed accounts need extra permission. Hardcode here:
+    export CLOUDFLARE_ACCOUNT_ID="${CLOUDFLARE_ACCOUNT_ID:-ec75357958e2e6fa472c28052edf4584}"
     echo "→ Syncing cloudflare/workers-autoconfig branch + deploying dt-public Worker"
     WORKER_TMP="$(mktemp -d -t dt-public-worker-XXXX)"
     git clone --quiet "$(git config --get remote.origin.url)" "$WORKER_TMP"
