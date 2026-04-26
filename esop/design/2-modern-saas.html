@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>02 · Modern SaaS · Elitez ESOP</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #F6F7F9;
+    --panel: #FFFFFF;
+    --surface: #F9FAFB;
+    --ink: #0B1F3A;
+    --ink-soft: #233651;
+    --muted: #5A6B82;
+    --border: rgba(11, 31, 58, 0.08);
+    --border-strong: rgba(11, 31, 58, 0.14);
+    --accent: #EE6A1F;
+    --accent-hover: #D95B15;
+    --accent-tint: #FEF2E9;
+    --good: #0E9F6E;
+    --good-tint: #E6F7F1;
+    --bad: #DC2626;
+    --bad-tint: #FDEDED;
+    --info: #2563EB;
+    --info-tint: #EEF4FF;
+    --shadow: 0 1px 2px rgba(11,31,58,0.04), 0 4px 12px rgba(11,31,58,0.04);
+    --shadow-lg: 0 8px 32px rgba(11,31,58,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: "Inter", -apple-system, sans-serif; font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; font-feature-settings: "cv11", "ss01"; }
+  a { color: inherit; text-decoration: none; }
+
+  .num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+  .mono { font-family: "JetBrains Mono", monospace; }
+  .muted { color: var(--muted); }
+
+  /* --- Topbar --------------------------------------------------- */
+  .topbar { background: var(--panel); border-bottom: 1px solid var(--border); padding: 0.9rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; backdrop-filter: blur(10px); background: rgba(255,255,255,0.9); }
+  .brand { display: flex; align-items: center; gap: 0.7rem; font-weight: 700; font-size: 1rem; letter-spacing: -0.01em; }
+  .brand img { height: 22px; width: auto; display: block; }
+  .brand .dot-sep { color: var(--muted); }
+  .brand .esop { color: var(--muted); font-weight: 500; }
+  nav { display: flex; gap: 0.2rem; background: var(--surface); padding: 4px; border-radius: 10px; border: 1px solid var(--border); }
+  nav a { font-size: 0.82rem; color: var(--muted); padding: 0.45rem 0.9rem; border-radius: 7px; font-weight: 500; transition: all 0.15s; }
+  nav a.active { background: var(--panel); color: var(--ink); box-shadow: var(--shadow); font-weight: 600; }
+  nav a:hover:not(.active) { color: var(--ink); }
+  .chip { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.85rem; border: 1px solid var(--border-strong); border-radius: 8px; font-size: 0.82rem; color: var(--muted); background: var(--panel); }
+  .chip .dot { width: 7px; height: 7px; background: var(--muted); border-radius: 50%; }
+
+  /* --- Buttons --------------------------------------------------- */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.7rem 1.2rem; border-radius: 10px; font-family: inherit; font-size: 0.88rem; font-weight: 600; cursor: pointer; border: 1px solid transparent; transition: all 0.15s; }
+  .btn--primary { background: var(--accent); color: #fff; }
+  .btn--primary:hover { background: var(--accent-hover); }
+  .btn--ghost { background: var(--panel); color: var(--ink); border-color: var(--border-strong); }
+  .btn--ghost:hover { background: var(--surface); }
+  .btn--full { width: 100%; }
+
+  /* --- Layout --------------------------------------------------- */
+  .page { max-width: 1240px; margin: 0 auto; padding: 2.8rem 2rem 4rem; }
+
+  /* --- Hero ----------------------------------------------------- */
+  .hero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 3rem; align-items: start; margin-bottom: 3rem; }
+  .chip-eyebrow { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0.8rem; background: var(--accent-tint); color: var(--accent); border-radius: 20px; font-size: 0.76rem; font-weight: 600; }
+  .chip-eyebrow .pulse { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+  .hero h1 { font-size: 3.2rem; font-weight: 800; line-height: 1.05; letter-spacing: -0.032em; margin: 1.2rem 0 1.2rem; }
+  .hero h1 em { color: var(--accent); font-style: normal; }
+  .hero .lede { font-size: 1.1rem; color: var(--muted); max-width: 50ch; line-height: 1.55; }
+  .hero .badges { display: flex; gap: 0.7rem; flex-wrap: wrap; margin-top: 1.8rem; }
+  .hero .badges .pill { padding: 0.45rem 0.85rem; background: var(--panel); border: 1px solid var(--border-strong); border-radius: 20px; font-size: 0.82rem; color: var(--muted); font-weight: 500; }
+
+  /* --- Sign in --------------------------------------------------- */
+  .signin { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 1.8rem 1.8rem 1.6rem; box-shadow: var(--shadow-lg); }
+  .signin h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.2rem; letter-spacing: -0.01em; }
+  .signin p.sub { color: var(--muted); font-size: 0.88rem; margin-bottom: 1.3rem; }
+  .tabs { display: flex; gap: 4px; padding: 4px; background: var(--surface); border-radius: 10px; margin-bottom: 1.2rem; }
+  .tabs button { flex: 1; background: none; border: none; padding: 0.55rem 0.9rem; border-radius: 7px; font-family: inherit; font-size: 0.82rem; color: var(--muted); cursor: pointer; font-weight: 600; }
+  .tabs button.active { background: var(--panel); color: var(--ink); box-shadow: var(--shadow); }
+  .field { margin-bottom: 0.9rem; }
+  .field label { display: block; font-size: 0.76rem; color: var(--muted); margin-bottom: 0.35rem; font-weight: 500; }
+  .field input, .field select { width: 100%; padding: 0.7rem 0.9rem; background: var(--panel); border: 1px solid var(--border-strong); border-radius: 9px; font-family: inherit; font-size: 0.9rem; color: var(--ink); }
+  .field input:focus, .field select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-tint); }
+
+  /* --- Cards ---------------------------------------------------- */
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); }
+
+  /* --- Stats row ------------------------------------------------- */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2.5rem; }
+  .stat { padding: 1.3rem 1.4rem; background: var(--panel); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); position: relative; }
+  .stat .head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 0.8rem; }
+  .stat .lbl { font-size: 0.78rem; color: var(--muted); font-weight: 500; }
+  .stat .icon { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; font-size: 14px; font-weight: 700; }
+  .stat .val { font-size: 1.9rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .stat .val.accent { color: var(--accent); }
+  .stat .sub { font-size: 0.78rem; color: var(--muted); margin-top: 0.5rem; font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 0.4rem; }
+  .stat .sub .trend { color: var(--good); font-weight: 600; }
+  .stat-orange .icon { background: var(--accent-tint); color: var(--accent); }
+  .stat-green .icon { background: var(--good-tint); color: var(--good); }
+  .stat-blue .icon { background: var(--info-tint); color: var(--info); }
+  .stat-gray .icon { background: var(--surface); color: var(--muted); }
+
+  /* --- Section header ------------------------------------------- */
+  .sec { margin-bottom: 2.5rem; }
+  .sec-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1rem; }
+  .sec-head h2 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.015em; }
+  .sec-head a { color: var(--accent); font-size: 0.85rem; font-weight: 600; }
+
+  /* --- Vesting -------------------------------------------------- */
+  .vesting { padding: 1.8rem; display: grid; grid-template-columns: 2fr 1fr; gap: 2.5rem; }
+  .vesting .meta h3 { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.3rem; }
+  .vesting .fy { color: var(--muted); font-size: 0.82rem; font-weight: 500; margin-bottom: 1rem; }
+  .progressbar { height: 10px; background: var(--surface); border-radius: 20px; overflow: hidden; margin-bottom: 1.2rem; position: relative; }
+  .progressbar span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent) 0%, #FF8B4A 100%); border-radius: 20px; }
+  .steps { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; margin-top: 1.2rem; }
+  .step { text-align: left; padding-left: 1rem; border-left: 2px solid var(--border-strong); }
+  .step.done { border-color: var(--accent); }
+  .step .label { font-size: 0.72rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .step .date { font-size: 0.82rem; color: var(--ink); font-weight: 600; margin-top: 0.2rem; }
+  .vesting .summary { padding: 1.6rem; background: var(--accent-tint); border-radius: 12px; }
+  .vesting .summary .pct { font-size: 3rem; font-weight: 800; color: var(--accent); line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .vesting .summary .label { font-size: 0.78rem; color: var(--accent); font-weight: 600; margin-top: 0.5rem; text-transform: uppercase; letter-spacing: 0.08em; }
+  .vesting .summary .desc { font-size: 0.85rem; color: var(--ink-soft); margin-top: 0.9rem; }
+  .grantkvs { margin-top: 1.5rem; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .grantkvs .kv { padding: 0.9rem; background: var(--surface); border-radius: 10px; }
+  .grantkvs .kv .k { font-size: 0.72rem; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+  .grantkvs .kv .v { font-size: 1.1rem; font-weight: 700; margin-top: 0.3rem; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+  .grantkvs .kv.highlight .v { color: var(--accent); }
+
+  /* --- Table ---------------------------------------------------- */
+  .tablecard { overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  table th, table td { text-align: left; padding: 0.9rem 1rem; }
+  table thead { background: var(--surface); }
+  table th { font-size: 0.72rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid var(--border-strong); }
+  table tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  table tbody tr:hover { background: var(--surface); }
+  table td { font-size: 0.88rem; }
+  table td.num, table th.num { text-align: right; }
+  table td.holder { display: flex; align-items: center; gap: 0.7rem; }
+  table .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; color: var(--muted); font-weight: 600; font-size: 0.75rem; border: 1px solid var(--border); }
+  table .avatar.orange { background: var(--accent-tint); color: var(--accent); }
+  table .holder .info .name { font-weight: 600; }
+  table .holder .info .title { color: var(--muted); font-size: 0.78rem; margin-top: 1px; }
+  .tag { display: inline-block; padding: 0.15rem 0.55rem; font-size: 0.72rem; font-weight: 600; border-radius: 6px; background: var(--surface); color: var(--muted); }
+  .tag.sales { background: var(--accent-tint); color: var(--accent); }
+  .tag.fin { background: var(--info-tint); color: var(--info); }
+  .tag.hr { background: var(--good-tint); color: var(--good); }
+  .pct-chip { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.1rem 0.5rem; border-radius: 6px; background: var(--good-tint); color: var(--good); font-size: 0.72rem; font-weight: 600; }
+
+  /* --- Leaver --------------------------------------------------- */
+  .leaver { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .lcard { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); padding: 1.5rem 1.5rem 1.6rem; position: relative; overflow: hidden; }
+  .lcard::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+  .lcard.bad::before { background: var(--bad); }
+  .lcard.good::before { background: var(--good); }
+  .lcard.exit::before { background: var(--accent); }
+  .lcard .label { font-size: 0.72rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .lcard h4 { font-size: 1.1rem; font-weight: 700; margin: 0.3rem 0 0.8rem; letter-spacing: -0.01em; }
+  .lcard .amt { font-size: 2rem; font-weight: 800; letter-spacing: -0.025em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .lcard.exit .amt { color: var(--accent); }
+  .lcard.good .amt { color: var(--good); }
+  .lcard.bad .amt { color: var(--bad); }
+  .lcard .note { font-size: 0.82rem; color: var(--muted); margin-top: 0.8rem; line-height: 1.55; }
+
+  /* --- Spec ------------------------------------------------------ */
+  .spec { margin-top: 3rem; padding: 2rem; background: var(--panel); border: 1px solid var(--border); border-radius: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+  .spec h4 { font-size: 0.72rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem; }
+  .swatches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.7rem; }
+  .swatch .chip-s { height: 56px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 0.4rem; }
+  .swatch .name { font-size: 0.78rem; font-weight: 600; }
+  .swatch .hex { font-family: "JetBrains Mono", monospace; font-size: 0.7rem; color: var(--muted); }
+  .typespec { color: var(--muted); font-size: 0.85rem; line-height: 1.6; }
+  .typespec .sample { color: var(--ink); margin-bottom: 0.8rem; }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; gap: 2rem; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .vesting { grid-template-columns: 1fr; }
+    .leaver, .spec { grid-template-columns: 1fr; }
+    .grantkvs { grid-template-columns: repeat(2, 1fr); }
+    .steps { grid-template-columns: repeat(3, 1fr); }
+    .hero h1 { font-size: 2.2rem; }
+    .topbar { flex-wrap: wrap; gap: 0.8rem; padding: 0.9rem 1rem; }
+    nav { order: 3; width: 100%; overflow-x: auto; }
+  }
+</style>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="brand">
+    <img src="../assets/brand/elitez-wordmark.png" alt="Elitez" />
+    <span class="dot-sep">·</span>
+    <span class="esop">ESOP</span>
+  </a>
+  <nav>
+    <a href="#" class="active">Home</a>
+    <a href="#">Portfolio</a>
+    <a href="#">Trading</a>
+    <a href="#">Committee</a>
+    <a href="#">Plan Rules</a>
+  </nav>
+  <span class="chip"><span class="dot"></span> Not signed in</span>
+</header>
+
+<div class="page">
+  <section class="hero">
+    <div>
+      <span class="chip-eyebrow"><span class="pulse"></span> The Elitez Employee Share Option Plan</span>
+      <h1>Your stake in <em>Elitez Group</em>, made legible.</h1>
+      <p class="lede">A private platform for Option Holders and the Committee. Vesting, value, windows, and the Plan rules — in one place, always current.</p>
+      <div class="badges">
+        <span class="pill">SHA-256 sessions</span>
+        <span class="pill">Clause-15 confidential</span>
+        <span class="pill">5-seat Committee voting</span>
+        <span class="pill">PDF Letters of Offer</span>
+      </div>
+    </div>
+    <div class="signin">
+      <h3>Sign in</h3>
+      <p class="sub">Confidential — Clause 15 of the Plan.</p>
+      <div class="tabs">
+        <button class="active" type="button">Holder</button>
+        <button type="button">Committee</button>
+      </div>
+      <div class="field">
+        <label>Who are you?</label>
+        <select><option>Select your name…</option></select>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" placeholder="••••••••" />
+      </div>
+      <button class="btn btn--primary btn--full">Enter your portfolio →</button>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="stat stat-orange">
+      <div class="head">
+        <div class="lbl">Fair Market Value</div>
+        <div class="icon">¢</div>
+      </div>
+      <div class="val accent">S$0.8555</div>
+      <div class="sub"><span class="trend">↑ 11.2%</span> vs FY2024 · EBITDA × 6</div>
+    </div>
+    <div class="stat stat-gray">
+      <div class="head">
+        <div class="lbl">Exercise Price</div>
+        <div class="icon">%</div>
+      </div>
+      <div class="val">S$0.0856</div>
+      <div class="sub">90% discount to FMV</div>
+    </div>
+    <div class="stat stat-blue">
+      <div class="head">
+        <div class="lbl">Authorised Pool</div>
+        <div class="icon">◆</div>
+      </div>
+      <div class="val">6,486,486</div>
+      <div class="sub">31.7% allocated · 4,429,546 free</div>
+    </div>
+    <div class="stat stat-orange">
+      <div class="head">
+        <div class="lbl">Nearest Exercise</div>
+        <div class="icon">→</div>
+      </div>
+      <div class="val accent">1 Jul 2027</div>
+      <div class="sub">FY2022 cohort · 366,000 options · 434 days</div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2>Your vesting schedule</h2>
+      <a href="#">See all grants →</a>
+    </div>
+    <div class="card vesting">
+      <div>
+        <div class="meta">
+          <h3>Tok Meiting · 60,000 options</h3>
+          <div class="fy">FY2022 grant · Issued 15 Jul 2022 · Exercise opens 1 Jul 2027</div>
+        </div>
+        <div class="progressbar"><span style="width: 75%"></span></div>
+        <div class="steps">
+          <div class="step done"><div class="label">Grant</div><div class="date">Jul 2022</div></div>
+          <div class="step done"><div class="label">Cliff · 20%</div><div class="date">Jul 2023</div></div>
+          <div class="step done"><div class="label">Year 2</div><div class="date">Jul 2024</div></div>
+          <div class="step done"><div class="label">Year 3</div><div class="date">Jul 2025</div></div>
+          <div class="step"><div class="label">Year 4</div><div class="date">Jul 2026</div></div>
+          <div class="step"><div class="label">Exercise</div><div class="date">Jul 2027</div></div>
+        </div>
+        <div class="grantkvs">
+          <div class="kv"><div class="k">Vested</div><div class="v">45,000</div></div>
+          <div class="kv"><div class="k">Unvested</div><div class="v">15,000</div></div>
+          <div class="kv"><div class="k">Exercise cost</div><div class="v">S$3,852</div></div>
+          <div class="kv highlight"><div class="k">Value @ FMV</div><div class="v">S$38,498</div></div>
+        </div>
+      </div>
+      <div class="summary">
+        <div class="pct">75.0%</div>
+        <div class="label">Vested today</div>
+        <div class="desc">The 12-month cliff plus 33 of 48 monthly tranches. 15,000 options remain to vest over the next 15 months.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2>Option holders</h2>
+      <a href="#">Export CSV →</a>
+    </div>
+    <div class="card tablecard">
+      <table>
+        <thead><tr><th>Holder</th><th>Dept</th><th class="num">Granted</th><th class="num">Vested</th><th class="num">Value @ FMV</th><th class="num">Exercise cost</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="holder"><span class="avatar orange">TM</span><div class="info"><div class="name">Tok Meiting</div><div class="title">HR Manager</div></div></td>
+            <td><span class="tag hr">HR</span></td>
+            <td class="num">171,995</td>
+            <td class="num">70,058 <span class="pct-chip">53%</span></td>
+            <td class="num">S$59,934.62</td>
+            <td class="num">S$5,996.96</td>
+          </tr>
+          <tr>
+            <td class="holder"><span class="avatar">WJ</span><div class="info"><div class="name">Wang Jiemin</div><div class="title">Associate Director</div></div></td>
+            <td><span class="tag sales">Sales</span></td>
+            <td class="num">151,961</td>
+            <td class="num">65,744 <span class="pct-chip">60%</span></td>
+            <td class="num">S$56,244.50</td>
+            <td class="num">S$5,627.69</td>
+          </tr>
+          <tr>
+            <td class="holder"><span class="avatar">LQ</span><div class="info"><div class="name">Li Qian</div><div class="title">Sr. Finance Manager</div></div></td>
+            <td><span class="tag fin">Finance</span></td>
+            <td class="num">171,995</td>
+            <td class="num">70,058 <span class="pct-chip">53%</span></td>
+            <td class="num">S$59,934.62</td>
+            <td class="num">S$5,996.96</td>
+          </tr>
+          <tr>
+            <td class="holder"><span class="avatar">ES</span><div class="info"><div class="name">Eevann Seah</div><div class="title">Senior Manager</div></div></td>
+            <td><span class="tag sales">Sales</span></td>
+            <td class="num">141,126</td>
+            <td class="num">50,148 <span class="pct-chip">49%</span></td>
+            <td class="num">S$42,901.60</td>
+            <td class="num">S$4,292.67</td>
+          </tr>
+          <tr>
+            <td class="holder"><span class="avatar">SL</span><div class="info"><div class="name">Sharon Lau Jie Joo</div><div class="title">Senior Manager</div></div></td>
+            <td><span class="tag sales">Sales</span></td>
+            <td class="num">116,626</td>
+            <td class="num">53,423 <span class="pct-chip">50%</span></td>
+            <td class="num">S$45,703.37</td>
+            <td class="num">S$4,573.01</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2>If you leave</h2>
+      <a href="#">Clause 9 →</a>
+    </div>
+    <div class="leaver">
+      <div class="lcard bad">
+        <div class="label">Terminated for cause</div>
+        <h4>Bad Leaver</h4>
+        <div class="amt">S$1</div>
+        <div class="note">One Singapore dollar for every vested option, combined. Unvested options always forfeit.</div>
+      </div>
+      <div class="lcard good">
+        <div class="label">Resign with Board approval</div>
+        <h4>Good Leaver</h4>
+        <div class="amt">S$5,990</div>
+        <div class="note">(0.20 × FMV − Exercise Price) per option. Committee may extend to the normal 5-year window.</div>
+      </div>
+      <div class="lcard exit">
+        <div class="label">IPO · Change of Control</div>
+        <h4>Exit Event</h4>
+        <div class="amt">S$132,419</div>
+        <div class="note">All unvested accelerate. Full spread (FMV − Exercise Price) on every option.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="spec">
+    <div>
+      <h4>Palette</h4>
+      <div class="swatches">
+        <div class="swatch"><div class="chip-s" style="background: #FFFFFF;"></div><div class="name">Panel</div><div class="hex">#FFFFFF</div></div>
+        <div class="swatch"><div class="chip-s" style="background: #0B1F3A;"></div><div class="name">Ink</div><div class="hex">#0B1F3A</div></div>
+        <div class="swatch"><div class="chip-s" style="background: #EE6A1F;"></div><div class="name">Accent</div><div class="hex">#EE6A1F</div></div>
+        <div class="swatch"><div class="chip-s" style="background: #0E9F6E;"></div><div class="name">Gain</div><div class="hex">#0E9F6E</div></div>
+      </div>
+    </div>
+    <div>
+      <h4>Typography</h4>
+      <div class="typespec">
+        <div class="sample" style="font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em;">S$27,745,614</div>
+        <div style="margin-bottom:0.2rem; font-weight:500;">Inter ExtraBold · display</div>
+        <div class="sample" style="margin-top:0.8rem;">The Committee administers the Plan and approves grants.</div>
+        <div>Inter 400 · body</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

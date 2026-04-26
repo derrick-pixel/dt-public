@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Whitespace Atlas — NoteFlow SAMPLE</title>
+  <link rel="stylesheet" href="../assets/css/site.css">
+  <script src="../assets/vendor/chart.umd.js"></script>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+  <nav class="admin-nav">
+    <a href="index.html">Competitors</a>
+    <a href="insights.html">Market &amp; Pricing</a>
+    <a href="whitespace.html" class="active">Whitespace Atlas</a>
+    <a href="design-audit.html">Design Audit</a>
+    <a href="report.html">Report</a>
+    <a href="../index.html" style="margin-left: auto;">← Back to site</a>
+  </nav>
+
+  <main class="container-wide">
+    <h1>Whitespace Atlas</h1>
+
+    <section class="radar-container" style="margin-bottom: 48px;">
+      <div class="artefact-label">ARTIFACT 01</div>
+      <h2>STRATEGY CANVAS</h2>
+      <p class="radar-thesis" id="thesis"></p>
+      <div style="height: 520px;"><canvas id="radar-canvas"></canvas></div>
+    </section>
+
+    <section style="margin-bottom: 48px;">
+      <div class="artefact-label">ARTIFACT 02</div>
+      <h2 id="heatmap-title">SEGMENT × NEED HEATMAP</h2>
+      <p>Each cell: count of competitors genuinely serving that pair (score ≥ 3). Click any cell for detail.</p>
+      <div id="heatmap"></div>
+      <div class="legend">
+        <span><span class="legend-swatch" style="background: #d8f5c3;"></span>Green 0–1 · white space</span>
+        <span><span class="legend-swatch" style="background: #fde68a;"></span>Amber 2–3 · contested</span>
+        <span><span class="legend-swatch" style="background: #fecaca;"></span>Red 4+ · crowded</span>
+      </div>
+      <div id="cell-detail" class="cell-detail" style="display: none;"></div>
+    </section>
+
+    <section>
+      <div class="artefact-label">ARTIFACT 03</div>
+      <h2>ATTACK PLANS</h2>
+      <div id="attack-plans"></div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { loadAppData, mountSampleBanner } from '../assets/js/app.js';
+    import { renderRadar } from '../assets/js/viz/radar.js';
+    import { renderHeatmap, renderCellDetail } from '../assets/js/viz/heatmap.js';
+    import { h, mount } from '../assets/js/dom.js';
+
+    const { whitespace } = await loadAppData();
+    mountSampleBanner();
+
+    document.getElementById('thesis').textContent = whitespace.strategy_canvas.headline_thesis;
+    renderRadar({ canvas: document.getElementById('radar-canvas'), dimensions: whitespace.strategy_canvas.dimensions, scores: whitespace.strategy_canvas.scores });
+
+    document.getElementById('heatmap-title').textContent = `SEGMENT × NEED HEATMAP — ${whitespace.heatmap.segments.length} × ${whitespace.heatmap.needs.length}`;
+    const panel = document.getElementById('cell-detail');
+    renderHeatmap({
+      container: document.getElementById('heatmap'),
+      segments: whitespace.heatmap.segments,
+      needs: whitespace.heatmap.needs,
+      cells: whitespace.heatmap.cells,
+      onCellClick: detail => {
+        panel.style.display = 'block';
+        renderCellDetail(panel, detail);
+        panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+
+    mount(document.getElementById('attack-plans'), ...whitespace.attack_plans.map(p =>
+      h('div', { class: 'attack-card' },
+        h('h3', {}, `#${p.rank} · ${p.niche_name}`),
+        h('p', {}, h('strong', {}, 'ICP: '), p.icp),
+        h('p', {}, h('strong', {}, 'TAM: '), `S$${p.tam_estimate_sgd.toLocaleString()} · `, h('em', {}, p.tam_reasoning)),
+        h('p', {}, h('strong', {}, 'Why gap: '), p.why_gap),
+        h('p', {}, h('strong', {}, 'Why we win: '), p.why_we_win),
+        h('h4', { style: { marginTop: '16px' } }, 'GTM'),
+        h('ul', {},
+          h('li', {}, h('strong', {}, 'Channel: '), p.gtm.channel),
+          h('li', {}, h('strong', {}, 'Pitch: '), p.gtm.pitch),
+          h('li', {}, h('strong', {}, 'Pricing: '), p.gtm.pricing),
+          h('li', {}, h('strong', {}, 'Content: '), p.gtm.content)
+        )
+      )
+    ));
+  </script>
+</body>
+</html>

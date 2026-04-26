@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>03 · Editorial · Elitez ESOP</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #FFFFFF;
+    --cream: #F8F4EA;
+    --ink: #0E2640;
+    --ink-deep: #05152A;
+    --text: #2A3648;
+    --muted: #667484;
+    --accent: #EE6A1F;
+    --accent-soft: #FDF0E6;
+    --line: #E6E8EB;
+    --line-strong: rgba(14, 38, 64, 0.35);
+    --serif: "Fraunces", "Times New Roman", serif;
+    --sans: "Inter", sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--paper); color: var(--text); font-family: var(--serif); font-size: 17px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  .num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+  .sans { font-family: var(--sans); }
+
+  /* --- Topbar --------------------------------------------------- */
+  .topbar { padding: 1rem 2.4rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); background: var(--paper); position: sticky; top: 0; z-index: 10; }
+  .brand { display: flex; align-items: center; gap: 0.8rem; text-decoration: none; color: var(--ink); }
+  .brand img { height: 20px; width: auto; display: block; }
+  .brand .pipe { width: 1px; height: 18px; background: var(--line-strong); }
+  .brand em { font-family: var(--serif); font-style: italic; font-size: 1.05rem; font-weight: 500; color: var(--ink); letter-spacing: 0.04em; }
+  nav { display: flex; gap: 2rem; font-family: var(--sans); }
+  nav a { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.22em; color: var(--text); text-decoration: none; font-weight: 600; border-bottom: 1px solid transparent; padding-bottom: 2px; }
+  nav a.active, nav a:hover { border-color: var(--accent); color: var(--accent); }
+  .chip { font-family: var(--sans); font-size: 0.7rem; padding: 0.3rem 0.7rem; border: 1px solid var(--line-strong); color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  /* --- Masthead band (navy full-bleed) -------------------------- */
+  .masthead { background: var(--ink-deep); color: #F5EEDF; padding: 3.6rem 2rem; text-align: center; background-image: radial-gradient(circle at 80% 20%, rgba(238,106,31,0.18), transparent 55%), radial-gradient(circle at 10% 90%, rgba(30,80,140,0.28), transparent 55%); }
+  .masthead .rule { border: none; border-top: 1px solid rgba(245,238,223,0.18); width: 160px; margin: 0 auto 1.6rem; }
+  .masthead .issue { font-family: var(--sans); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.28em; color: #D3B48B; font-weight: 600; margin-bottom: 0.6rem; }
+  .masthead-logo { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 0.9rem; }
+  .masthead-logo .wm { background: #F5EEDF; padding: 7px 12px; border-radius: 1px; display: inline-flex; }
+  .masthead-logo img { height: 30px; width: auto; display: block; }
+  .masthead-logo em { font-family: var(--serif); font-style: italic; font-size: 1.8rem; color: #F5EEDF; font-weight: 400; }
+  .masthead h1 { font-family: var(--serif); font-weight: 400; font-size: 4.8rem; line-height: 1.02; letter-spacing: -0.025em; max-width: 16ch; margin: 0 auto; font-style: italic; }
+  .masthead h1 span { color: var(--accent); }
+  .masthead .dek { font-family: var(--serif); font-size: 1.15rem; color: rgba(245,238,223,0.78); max-width: 56ch; margin: 1.6rem auto 0; line-height: 1.55; font-style: italic; }
+  .masthead .meta { font-family: var(--sans); font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; color: #D3B48B; margin-top: 2.2rem; display: flex; gap: 2rem; justify-content: center; }
+  .masthead .meta span:not(:last-child)::after { content: "·"; margin-left: 2rem; color: rgba(245,238,223,0.4); }
+
+  /* --- Body --------------------------------------------------- */
+  .col { max-width: 780px; margin: 0 auto; padding: 0 2rem; }
+  .col--wide { max-width: 1100px; }
+
+  .article-open { padding: 4.5rem 0 2.5rem; }
+  .byline { font-family: var(--sans); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.22em; color: var(--accent); margin-bottom: 1.4rem; font-weight: 600; }
+  .dropcap p { font-family: var(--serif); font-size: 1.3rem; line-height: 1.55; color: var(--text); }
+  .dropcap p::first-letter { font-family: var(--serif); font-size: 5.2rem; line-height: 0.85; float: left; padding-right: 0.8rem; padding-top: 0.5rem; color: var(--accent); font-weight: 500; font-style: italic; }
+
+  .article-open .signin-nav { font-family: var(--sans); font-size: 0.85rem; color: var(--muted); margin-top: 2.2rem; padding-top: 1.2rem; border-top: 1px solid var(--line); }
+  .article-open .signin-nav a { color: var(--accent); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+
+  /* --- Key facts ------------------------------------------------- */
+  .keyfacts { padding: 3rem 0 2rem; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin-top: 3rem; }
+  .keyfacts .kicker { text-align: center; font-family: var(--sans); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.22em; color: var(--muted); margin-bottom: 1.8rem; font-weight: 600; }
+  .kf-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+  .kf { padding: 0 1.6rem; text-align: left; border-left: 1px solid var(--line); }
+  .kf:first-child { border-left: none; padding-left: 0; }
+  .kf:last-child { padding-right: 0; }
+  .kf .val { font-family: var(--serif); font-style: italic; font-size: 2.4rem; line-height: 1; font-weight: 500; color: var(--ink); margin-bottom: 0.5rem; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .kf.orange .val { color: var(--accent); }
+  .kf .lbl { font-family: var(--sans); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--muted); font-weight: 600; margin-bottom: 0.3rem; }
+  .kf .caption { font-family: var(--serif); font-size: 0.88rem; color: var(--muted); line-height: 1.5; font-style: italic; }
+
+  /* --- Sign in card ---------------------------------------------- */
+  .signin-block { background: var(--cream); padding: 3.5rem 2rem; margin-top: 4rem; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .signin-wrap { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1.3fr 1fr; gap: 4rem; align-items: center; }
+  .signin-block h2 { font-family: var(--serif); font-size: 2.4rem; font-weight: 400; letter-spacing: -0.015em; line-height: 1.1; color: var(--ink); font-style: italic; }
+  .signin-block h2 em { color: var(--accent); font-style: italic; }
+  .signin-block p { font-family: var(--serif); font-size: 1.05rem; color: var(--muted); margin-top: 0.9rem; font-style: italic; line-height: 1.55; }
+  .signin-card { background: var(--paper); border: 1px solid var(--line-strong); padding: 1.8rem 1.8rem 1.6rem; }
+  .signin-card h3 { font-family: var(--serif); font-size: 1.25rem; font-weight: 500; margin-bottom: 0.2rem; }
+  .signin-card .sub { font-family: var(--sans); font-size: 0.8rem; color: var(--muted); margin-bottom: 1.3rem; }
+  .tabs { display: flex; border-bottom: 1px solid var(--line-strong); margin-bottom: 1.2rem; }
+  .tabs button { flex: 1; background: none; border: none; padding: 0.55rem 0.8rem; font-family: var(--sans); font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--muted); cursor: pointer; font-weight: 600; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  .tabs button.active { color: var(--ink); border-color: var(--accent); }
+  .field { margin-bottom: 0.9rem; }
+  .field label { display: block; font-family: var(--sans); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--muted); margin-bottom: 0.3rem; font-weight: 600; }
+  .field input, .field select { width: 100%; padding: 0.7rem 0.9rem; background: var(--paper); border: 1px solid var(--line-strong); font-family: var(--sans); font-size: 0.92rem; color: var(--ink); border-radius: 0; }
+  .btn { display: block; width: 100%; background: var(--ink); color: #F5EEDF; border: 1px solid var(--ink); padding: 0.85rem; font-family: var(--sans); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.18em; font-weight: 600; cursor: pointer; }
+  .btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* --- Feature article -------------------------------------- */
+  .feature { padding: 5rem 0 3rem; }
+  .feature .eyebrow { font-family: var(--sans); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.24em; color: var(--accent); font-weight: 600; margin-bottom: 1rem; }
+  .feature h2 { font-family: var(--serif); font-size: 3rem; line-height: 1.08; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 1rem; color: var(--ink); }
+  .feature h2 em { color: var(--accent); }
+  .feature .standfirst { font-family: var(--serif); font-style: italic; color: var(--muted); font-size: 1.15rem; line-height: 1.55; max-width: 58ch; margin-bottom: 2.5rem; }
+
+  .feature p { margin: 1rem 0; font-size: 1.05rem; line-height: 1.7; max-width: 62ch; }
+  .feature .inline-num { font-family: var(--serif); font-style: italic; color: var(--accent); font-variant-numeric: tabular-nums; font-weight: 500; }
+
+  .pullquote { margin: 2.5rem 0; padding-left: 1.6rem; border-left: 3px solid var(--accent); font-family: var(--serif); font-style: italic; font-size: 1.6rem; line-height: 1.4; color: var(--ink); max-width: 56ch; }
+  .pullquote cite { display: block; margin-top: 0.8rem; font-family: var(--sans); font-style: normal; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); font-weight: 600; }
+
+  .timeline { margin: 2.5rem 0 3rem; padding: 2rem 2rem 1.4rem; background: var(--cream); border-left: 3px solid var(--accent); }
+  .timeline .label { font-family: var(--sans); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.22em; color: var(--muted); font-weight: 600; margin-bottom: 0.8rem; }
+  .timeline .bar { height: 4px; background: #D9CEB0; position: relative; margin: 1.8rem 0 2rem; }
+  .timeline .bar .fill { position: absolute; top: 0; left: 0; height: 100%; background: var(--accent); }
+  .timeline .bar .today { position: absolute; top: -28px; transform: translateX(-50%); font-family: var(--serif); font-style: italic; color: var(--accent); font-size: 0.9rem; font-weight: 500; }
+  .timeline .bar .today::after { content: ""; display: block; width: 1px; height: 16px; background: var(--accent); margin: 4px auto 0; }
+  .timeline .steps { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.5rem; font-family: var(--sans); }
+  .timeline .steps > div { font-size: 0.74rem; color: var(--muted); }
+  .timeline .steps > div.done { color: var(--ink); }
+  .timeline .steps .name { font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.68rem; }
+  .timeline .steps .date { font-family: var(--serif); font-style: italic; font-size: 0.9rem; margin-top: 0.2rem; color: var(--ink); }
+  .timeline .steps > div:not(.done) .date { color: var(--muted); }
+
+  /* --- Data table (annual-report schedule) ------------------ */
+  .schedule { padding: 4rem 0; }
+  .schedule .kicker { text-align: center; font-family: var(--sans); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.22em; color: var(--muted); margin-bottom: 0.8rem; font-weight: 600; }
+  .schedule h2 { text-align: center; font-family: var(--serif); font-size: 2.4rem; font-weight: 400; letter-spacing: -0.015em; margin-bottom: 0.4rem; }
+  .schedule .subtitle { text-align: center; font-family: var(--serif); font-style: italic; color: var(--muted); margin-bottom: 2.5rem; }
+  table.schedule-table { width: 100%; border-collapse: collapse; margin: 0 auto; max-width: 920px; font-variant-numeric: tabular-nums; }
+  table.schedule-table th, table.schedule-table td { text-align: left; padding: 0.9rem 0.9rem; font-family: var(--sans); font-size: 0.88rem; border-bottom: 1px solid var(--line); }
+  table.schedule-table th { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--muted); font-weight: 600; border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); }
+  table.schedule-table td.num, table.schedule-table th.num { text-align: right; }
+  table.schedule-table .name { font-family: var(--serif); font-size: 1rem; }
+  table.schedule-table tr.total td { font-family: var(--serif); font-weight: 500; border-top: 1px solid var(--ink); border-bottom: none; padding-top: 1.2rem; }
+
+  /* --- Leaver section (editorial three-way) --------------- */
+  .leavers { padding: 4rem 0; background: var(--cream); margin-top: 5rem; border-top: 1px solid var(--line); }
+  .leavers .col { max-width: 1020px; }
+  .leavers .intro { text-align: center; margin-bottom: 3rem; }
+  .leavers h2 { font-family: var(--serif); font-size: 2.4rem; font-weight: 400; letter-spacing: -0.015em; }
+  .leavers h2 em { color: var(--accent); font-style: italic; }
+  .leavers p.standfirst { font-family: var(--serif); font-style: italic; color: var(--muted); font-size: 1.05rem; max-width: 50ch; margin: 0.8rem auto 0; line-height: 1.6; }
+  .leaver-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); }
+  .leaver-cell { padding: 2.2rem 1.6rem; border-left: 1px solid var(--line); }
+  .leaver-cell:first-child { border-left: none; }
+  .leaver-cell .tag { font-family: var(--sans); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.22em; color: var(--muted); font-weight: 600; margin-bottom: 0.5rem; }
+  .leaver-cell h3 { font-family: var(--serif); font-size: 1.25rem; font-weight: 500; margin-bottom: 0.9rem; }
+  .leaver-cell .amt { font-family: var(--serif); font-style: italic; font-size: 2.6rem; line-height: 1; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 0.9rem; font-variant-numeric: tabular-nums; }
+  .leaver-cell.exit .amt { color: var(--accent); }
+  .leaver-cell .note { font-family: var(--serif); font-size: 0.92rem; color: var(--muted); line-height: 1.6; font-style: italic; }
+
+  /* --- Colophon (specs) ---------------------------------- */
+  .colophon { padding: 4rem 0 5rem; text-align: left; }
+  .colophon .col { max-width: 1020px; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+  .colophon h4 { font-family: var(--sans); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.22em; color: var(--muted); font-weight: 600; margin-bottom: 1.2rem; }
+  .swatches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; }
+  .swatch .chip-s { height: 56px; border: 1px solid var(--line-strong); margin-bottom: 0.4rem; }
+  .swatch .name { font-family: var(--sans); font-weight: 600; font-size: 0.78rem; }
+  .swatch .hex { font-family: "JetBrains Mono", monospace; font-size: 0.72rem; color: var(--muted); }
+  .typedemo .big { font-family: var(--serif); font-style: italic; font-size: 2.8rem; color: var(--ink); line-height: 1; font-variant-numeric: tabular-nums; margin-bottom: 0.4rem; }
+  .typedemo .small { font-family: var(--sans); font-size: 0.82rem; color: var(--muted); margin-bottom: 0.8rem; }
+  .typedemo .prose { font-family: var(--serif); font-size: 1rem; color: var(--text); line-height: 1.55; }
+
+  @media (max-width: 900px) {
+    .masthead { padding: 2.6rem 1rem; }
+    .masthead h1 { font-size: 2.4rem; }
+    .masthead-logo em { font-size: 1.2rem; }
+    .kf-grid { grid-template-columns: 1fr 1fr; gap: 1.4rem; }
+    .kf { border-left: none !important; padding: 0; }
+    .signin-wrap, .colophon .col { grid-template-columns: 1fr; gap: 2rem; }
+    .feature h2, .signin-block h2, .leavers h2, .schedule h2 { font-size: 1.8rem; }
+    .dropcap p { font-size: 1.05rem; }
+    .leaver-grid { grid-template-columns: 1fr; }
+    .leaver-cell { border-left: none; border-top: 1px solid var(--line); }
+    .leaver-cell:first-child { border-top: none; }
+    .topbar { flex-wrap: wrap; gap: 0.6rem; padding: 0.9rem 1rem; }
+    .swatches { grid-template-columns: repeat(2, 1fr); }
+    .timeline .steps { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="brand">
+    <img src="../assets/brand/elitez-wordmark.png" alt="Elitez" />
+    <span class="pipe"></span>
+    <em>ESOP</em>
+  </a>
+  <nav>
+    <a href="#" class="active">Home</a>
+    <a href="#">Portfolio</a>
+    <a href="#">Trading</a>
+    <a href="#">Committee</a>
+    <a href="#">Plan Rules</a>
+  </nav>
+  <span class="chip">Not signed in</span>
+</header>
+
+<section class="masthead">
+  <div class="issue">Volume I · No. 1 · Fiscal 2026</div>
+  <div class="masthead-logo">
+    <span class="wm"><img src="../assets/brand/elitez-wordmark.png" alt="Elitez" /></span>
+    <em>ESOP</em>
+  </div>
+  <hr class="rule" />
+  <h1>Your stake in<br/><span>Elitez Group</span>,<br/>explained.</h1>
+  <p class="dek">A private register and operational platform for the Employee Share Option Plan, adopted 5 October 2025. For Option Holders, the Committee, and the Trustee — no one else.</p>
+  <div class="meta">
+    <span>Issued 23 April 2026</span>
+    <span>Clause 15 confidential</span>
+    <span>28 holders · S$27.7M firm value</span>
+  </div>
+</section>
+
+<div class="col">
+  <article class="article-open">
+    <div class="byline">Editor's note · Derrick Teo, CEO</div>
+    <div class="dropcap">
+      <p>Over the last four years Elitez Group has grown from a S$2.87M-EBITDA services company into a group with five subsidiaries, 28 Option Holders, and a fiscal-2025 EBITDA of S$4.62M. This platform exists because those holders deserve to see their stake the way a listed employee would — clearly, promptly, and without asking. That it is confidential under Clause 15 does not mean it should be opaque. It means the audience is you.</p>
+    </div>
+    <div class="signin-nav">Already a holder or Committee member? <a href="#signin">Sign in below</a>.</div>
+  </article>
+</div>
+
+<section class="keyfacts">
+  <div class="col col--wide">
+    <div class="kicker">Key facts · 23 April 2026</div>
+    <div class="kf-grid">
+      <div class="kf orange">
+        <div class="lbl">Fair Market Value</div>
+        <div class="val">S$0.8555</div>
+        <div class="caption">Up 11.2% on FY2024 audit; EBITDA × 6 / 32,432,432 shares.</div>
+      </div>
+      <div class="kf">
+        <div class="lbl">Exercise Price</div>
+        <div class="val">S$0.0856</div>
+        <div class="caption">A 90-per-cent discount to FMV, per Clause 10.4.</div>
+      </div>
+      <div class="kf">
+        <div class="lbl">Authorised Pool</div>
+        <div class="val">6,486,486</div>
+        <div class="caption">31.7% allocated, 4.43M options free for future cohorts.</div>
+      </div>
+      <div class="kf orange">
+        <div class="lbl">Nearest Exercise</div>
+        <div class="val">1 Jul 2027</div>
+        <div class="caption">366,000 FY2022 options — 434 days hence.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="signin-block" id="signin">
+  <div class="signin-wrap">
+    <div>
+      <h2>Come <em>inside</em>.</h2>
+      <p>The platform shows your vesting to the day, the cost and value of exercise at today's FMV, your dividend entitlements, and every Committee decision that touches your name. The Plan itself — all fourteen clauses — is one click away, in plain English.</p>
+    </div>
+    <div class="signin-card">
+      <h3>Sign in</h3>
+      <div class="sub">Confidential — Clause 15 of the Plan.</div>
+      <div class="tabs">
+        <button type="button" class="active">Holder</button>
+        <button type="button">Committee</button>
+      </div>
+      <div class="field">
+        <label>Who are you?</label>
+        <select><option>Select your name…</option></select>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" placeholder="Password" />
+      </div>
+      <button class="btn">Enter your portfolio</button>
+    </div>
+  </div>
+</section>
+
+<div class="col">
+  <article class="feature">
+    <div class="eyebrow">Feature · A case study</div>
+    <h2>Tok Meiting, <em>45,000 vested options</em>, and fifteen more months to the window.</h2>
+    <p class="standfirst">What does vesting look like in practice? Take one holder's FY2022 grant, halfway through its five-year life, and walk the numbers to the exercise date.</p>
+
+    <p>The <span class="inline-num">60,000-option</span> grant issued to Tok Meiting on 15 July 2022 was the company's largest first-round allocation to a non-founding executive. It vests in two parts: a 20-per-cent cliff at the first anniversary, then 80 per cent over forty-eight monthly tranches. Today — two years, nine months in — exactly <span class="inline-num">45,000 options</span> have vested, or 75 per cent.</p>
+
+    <div class="timeline">
+      <div class="label">Vesting timeline</div>
+      <div class="bar">
+        <div class="fill" style="width: 75%"></div>
+        <div class="today" style="left: 75%">Today</div>
+      </div>
+      <div class="steps">
+        <div class="done"><div class="name">Grant</div><div class="date">Jul 2022</div></div>
+        <div class="done"><div class="name">Cliff</div><div class="date">Jul 2023</div></div>
+        <div class="done"><div class="name">Year 2</div><div class="date">Jul 2024</div></div>
+        <div class="done"><div class="name">Year 3</div><div class="date">Jul 2025</div></div>
+        <div><div class="name">Year 4</div><div class="date">Jul 2026</div></div>
+        <div><div class="name">Exercise</div><div class="date">Jul 2027</div></div>
+      </div>
+    </div>
+
+    <p>At today's FMV of <span class="inline-num">S$0.8555</span>, those vested options are worth <span class="inline-num">S$38,497.50</span>. The cost to exercise is <span class="inline-num">S$3,852</span> — a ten-per-cent payment on each share she chooses to convert. The remaining <span class="inline-num">15,000 options</span> will finish vesting monthly until the exercise window opens on the grant's five-year anniversary: <span class="inline-num">1 July 2027</span>.</p>
+
+    <div class="pullquote">
+      "Holders keep wondering whether their options are worth anything yet. The answer has been sitting in our spreadsheets for three years — this platform finally publishes it to them."
+      <cite>Derrick Teo, CEO</cite>
+    </div>
+
+    <p>The same arithmetic runs for every one of the twenty-eight active holders, across their FY2022 and FY2024 grants. The next page — in full — shows where each of them stands today.</p>
+  </article>
+</div>
+
+<section class="schedule">
+  <div class="col col--wide">
+    <div class="kicker">Schedule A</div>
+    <h2>Option holders, at a glance</h2>
+    <p class="subtitle">Positions as at 23 April 2026, at the current FY2025 valuation.</p>
+    <table class="schedule-table">
+      <thead><tr><th>Holder</th><th>Department</th><th class="num">Granted</th><th class="num">Vested</th><th class="num">Value @ FMV</th><th class="num">Exercise cost</th></tr></thead>
+      <tbody>
+        <tr><td><span class="name">Tok Meiting</span></td><td>Human Resources</td><td class="num">171,995</td><td class="num">70,058</td><td class="num">S$59,934.62</td><td class="num">S$5,996.96</td></tr>
+        <tr><td><span class="name">Wang Jiemin (Jack)</span></td><td>Sales</td><td class="num">151,961</td><td class="num">65,744</td><td class="num">S$56,244.50</td><td class="num">S$5,627.69</td></tr>
+        <tr><td><span class="name">Li Qian</span></td><td>Finance</td><td class="num">171,995</td><td class="num">70,058</td><td class="num">S$59,934.62</td><td class="num">S$5,996.96</td></tr>
+        <tr><td><span class="name">Eevann Seah</span></td><td>Sales</td><td class="num">141,126</td><td class="num">50,148</td><td class="num">S$42,901.60</td><td class="num">S$4,292.67</td></tr>
+        <tr><td><span class="name">Sharon Lau Jie Joo</span></td><td>Sales</td><td class="num">116,626</td><td class="num">53,423</td><td class="num">S$45,703.37</td><td class="num">S$4,573.01</td></tr>
+        <tr class="total"><td colspan="2">Top 5 holders</td><td class="num">753,703</td><td class="num">309,431</td><td class="num">S$264,718.71</td><td class="num">S$26,487.29</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="leavers">
+  <div class="col">
+    <div class="intro">
+      <h2>What you keep — and what you lose — <em>if you leave</em>.</h2>
+      <p class="standfirst">Three scenarios, three very different outcomes. Clause 9 governs the arithmetic. The Committee determines the classification.</p>
+    </div>
+    <div class="leaver-grid">
+      <div class="leaver-cell">
+        <div class="tag">Terminated for cause</div>
+        <h3>Bad Leaver</h3>
+        <div class="amt">S$1</div>
+        <div class="note">One Singapore dollar — not per option, but in total — for every vested option you hold. Unvested options always forfeit on the last day.</div>
+      </div>
+      <div class="leaver-cell">
+        <div class="tag">Board-approved resignation</div>
+        <h3>Good Leaver</h3>
+        <div class="amt">S$5,990</div>
+        <div class="note">Calculated per option as (0.20 × FMV − Exercise Price). Alternatively, the Committee may let you keep the options until the normal five-year exercise window.</div>
+      </div>
+      <div class="leaver-cell exit">
+        <div class="tag">IPO or Change of Control</div>
+        <h3>Exit Event</h3>
+        <div class="amt">S$132,419</div>
+        <div class="note">All unvested accelerate and vest. You capture the full spread — FMV less Exercise Price — on every option you hold, vested or otherwise.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="colophon">
+  <div class="col">
+    <div>
+      <h4>Palette</h4>
+      <div class="swatches">
+        <div class="swatch"><div class="chip-s" style="background: #FFFFFF;"></div><div class="name">Paper</div><div class="hex">#FFFFFF</div></div>
+        <div class="swatch"><div class="chip-s" style="background: #05152A;"></div><div class="name">Deep Ink</div><div class="hex">#05152A</div></div>
+        <div class="swatch"><div class="chip-s" style="background: #EE6A1F;"></div><div class="name">Accent</div><div class="hex">#EE6A1F</div></div>
+        <div class="swatch"><div class="chip-s" style="background: #F8F4EA;"></div><div class="name">Aside</div><div class="hex">#F8F4EA</div></div>
+      </div>
+    </div>
+    <div class="typedemo">
+      <h4>Typography</h4>
+      <div class="big">S$27,745,614</div>
+      <div class="small">Fraunces Italic · display figure</div>
+      <div class="prose">Over the last four years Elitez Group has grown from a S$2.87M-EBITDA services company into a group with five subsidiaries, 28 Option Holders…</div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

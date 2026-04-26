@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>04 · Terminal · Elitez ESOP</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0A0E16;
+    --bg-raised: #111722;
+    --surface: #1A2230;
+    --ink: #ECE3CC;
+    --ink-dim: #B9B1A0;
+    --muted: #7E879A;
+    --accent: #FF7A2E;
+    --accent-dim: #B85618;
+    --good: #4ADE80;
+    --good-dim: #1F7A40;
+    --bad: #F87171;
+    --bad-dim: #8F2F2F;
+    --gold: #E8CD92;
+    --line: rgba(236, 227, 204, 0.08);
+    --line-strong: rgba(236, 227, 204, 0.20);
+    --line-bright: rgba(236, 227, 204, 0.35);
+    --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    --sans: "Inter", sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 13px; line-height: 1.5; -webkit-font-smoothing: antialiased; font-feature-settings: "ss01"; }
+  .num { font-family: var(--mono); font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+  .muted { color: var(--muted); }
+  .dim { color: var(--ink-dim); }
+
+  /* Scan-line texture on background (very subtle) */
+  body::before { content: ""; position: fixed; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(236,227,204,0.015) 1px, transparent 1px); background-size: 100% 3px; z-index: 1; }
+  body > * { position: relative; z-index: 2; }
+
+  /* --- Status bar (top thin strip) ---------------------------- */
+  .statusbar { background: var(--bg-raised); border-bottom: 1px solid var(--line); padding: 0.4rem 1.2rem; display: flex; gap: 2rem; font-family: var(--mono); font-size: 0.7rem; color: var(--muted); font-weight: 500; letter-spacing: 0.04em; }
+  .statusbar span.label { color: var(--accent); }
+  .statusbar span.ok { color: var(--good); }
+  .statusbar .spacer { margin-left: auto; }
+
+  /* --- Topbar ------------------------------------------------- */
+  .topbar { background: var(--bg-raised); border-bottom: 1px solid var(--line-strong); padding: 0.8rem 1.2rem; display: flex; align-items: center; justify-content: space-between; }
+  .brand { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; }
+  .brand .logo-plate { background: var(--ink); padding: 5px 9px; border-radius: 2px; display: inline-flex; align-items: center; }
+  .brand .logo-plate img { height: 18px; width: auto; display: block; }
+  .brand em { font-family: var(--mono); font-style: normal; font-size: 0.82rem; color: var(--accent); font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; }
+  nav { display: flex; gap: 0; border-left: 1px solid var(--line-strong); }
+  nav a { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); text-decoration: none; padding: 0.55rem 0.9rem; border-right: 1px solid var(--line); border-bottom: 2px solid transparent; margin-bottom: -2px; font-weight: 500; }
+  nav a:hover { color: var(--ink); background: var(--surface); }
+  nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .sess { font-family: var(--mono); font-size: 0.72rem; padding: 0.3rem 0.7rem; border: 1px solid var(--line-strong); color: var(--muted); display: inline-flex; align-items: center; gap: 0.4rem; }
+  .sess .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--good); box-shadow: 0 0 6px var(--good); }
+
+  /* --- Layout ------------------------------------------------- */
+  .page { padding: 1.2rem; max-width: 1400px; margin: 0 auto; }
+  .grid { display: grid; gap: 1rem; }
+  .panel { background: var(--bg-raised); border: 1px solid var(--line-strong); padding: 1rem; }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; padding-bottom: 0.7rem; margin-bottom: 0.9rem; border-bottom: 1px solid var(--line); }
+  .panel-head .title { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--accent); font-weight: 600; }
+  .panel-head .title-sub { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); }
+
+  /* --- Hero --------------------------------------------------- */
+  .hero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .hero-lead { padding: 1.8rem 1.6rem; background: linear-gradient(180deg, #0E1523 0%, #0A0E16 100%); border: 1px solid var(--line-strong); position: relative; overflow: hidden; }
+  .hero-lead::before { content: ""; position: absolute; top: 0; right: 0; width: 260px; height: 260px; background: radial-gradient(circle, rgba(255,122,46,0.15), transparent 70%); }
+  .hero-lead .eyebrow { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; font-weight: 600; }
+  .hero-lead h1 { font-family: var(--sans); font-size: 2.4rem; font-weight: 700; line-height: 1.05; letter-spacing: -0.025em; margin-bottom: 0.8rem; color: var(--ink); }
+  .hero-lead h1 em { color: var(--accent); font-style: normal; }
+  .hero-lead p { color: var(--ink-dim); font-size: 0.95rem; max-width: 46ch; line-height: 1.55; }
+  .hero-lead .meta-row { margin-top: 1.4rem; display: flex; gap: 1.8rem; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); letter-spacing: 0.04em; }
+  .hero-lead .meta-row strong { color: var(--ink); }
+
+  .signin { padding: 1.2rem 1.4rem; background: var(--bg-raised); border: 1px solid var(--line-strong); }
+  .signin .head { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 0.2rem; }
+  .signin h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.2rem; color: var(--ink); }
+  .signin .sub { font-size: 0.78rem; color: var(--muted); margin-bottom: 1rem; }
+  .tabs { display: flex; border-bottom: 1px solid var(--line); margin-bottom: 0.9rem; }
+  .tabs button { background: none; border: none; padding: 0.45rem 0.9rem; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); cursor: pointer; font-weight: 600; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  .tabs button.active { color: var(--accent); border-color: var(--accent); }
+  .field { margin-bottom: 0.7rem; }
+  .field label { display: block; font-family: var(--mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--muted); margin-bottom: 0.3rem; font-weight: 600; }
+  .field input, .field select { width: 100%; padding: 0.55rem 0.7rem; background: var(--bg); border: 1px solid var(--line-strong); font-family: var(--mono); font-size: 0.82rem; color: var(--ink); border-radius: 0; }
+  .field input:focus, .field select:focus { outline: 1px solid var(--accent); outline-offset: -1px; }
+  .btn { display: block; width: 100%; background: var(--accent); color: #0B0E14; border: 1px solid var(--accent); padding: 0.6rem 1rem; font-family: var(--mono); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.2em; font-weight: 700; cursor: pointer; }
+  .btn:hover { background: #FF8F4D; }
+
+  /* --- Ticker-stat cards (4 up) --------------------------------- */
+  .tickers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1rem; }
+  .ticker { background: var(--bg-raised); border: 1px solid var(--line-strong); padding: 1rem 1.1rem; position: relative; }
+  .ticker::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 1px; background: var(--accent); opacity: 0.6; }
+  .ticker.neutral::before { background: var(--line-strong); }
+  .ticker.good::before { background: var(--good); }
+  .ticker .row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.4rem; }
+  .ticker .code { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.16em; color: var(--accent); font-weight: 600; }
+  .ticker.neutral .code { color: var(--muted); }
+  .ticker.good .code { color: var(--good); }
+  .ticker .delta { font-family: var(--mono); font-size: 0.72rem; color: var(--good); }
+  .ticker .delta.flat { color: var(--muted); }
+  .ticker .val { font-family: var(--mono); font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1; margin: 0.2rem 0 0.5rem; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .ticker.accent .val { color: var(--accent); }
+  .ticker .desc { font-size: 0.74rem; color: var(--muted); }
+  .ticker .spark { margin-top: 0.7rem; height: 26px; display: flex; align-items: flex-end; gap: 2px; }
+  .ticker .spark span { flex: 1; background: var(--accent-dim); min-height: 3px; }
+  .ticker .spark span.hi { background: var(--accent); }
+
+  /* --- Vesting panel ------------------------------------------ */
+  .vesting { display: grid; grid-template-columns: 1.5fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .vesting-main .head-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--line); }
+  .vesting-main .head-row .ticker-name { font-family: var(--mono); font-size: 0.76rem; color: var(--accent); font-weight: 600; letter-spacing: 0.12em; }
+  .vesting-main .head-row .desc { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); letter-spacing: 0.06em; }
+  .vesting-main h3 { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.2rem; }
+  .vesting-main .sub { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); margin-bottom: 1.2rem; }
+  .bar-vest { height: 10px; background: var(--surface); border: 1px solid var(--line); position: relative; margin-bottom: 0.4rem; }
+  .bar-vest .fill { position: absolute; top: 0; left: 0; height: 100%; background: linear-gradient(90deg, var(--accent-dim) 0%, var(--accent) 100%); box-shadow: 0 0 10px rgba(255,122,46,0.5); }
+  .bar-vest .marker { position: absolute; top: -2px; height: 14px; width: 1px; background: var(--ink); }
+  .bar-marks { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 0.66rem; color: var(--muted); margin-bottom: 1.4rem; letter-spacing: 0.06em; }
+  .vesting-data { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line-strong); }
+  .vesting-data .cell { padding: 0.7rem 0.9rem; border-right: 1px solid var(--line); }
+  .vesting-data .cell:last-child { border-right: none; }
+  .vesting-data .cell .lbl { font-family: var(--mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); margin-bottom: 0.3rem; font-weight: 600; }
+  .vesting-data .cell .val { font-family: var(--mono); font-size: 1.1rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .vesting-data .cell.accent .val { color: var(--accent); }
+
+  .vesting-side { padding: 1.4rem 1.2rem; background: linear-gradient(180deg, #131B28 0%, #0D1420 100%); border: 1px solid var(--line-strong); text-align: center; }
+  .vesting-side .pct-label { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem; font-weight: 600; }
+  .vesting-side .pct { font-family: var(--mono); font-size: 4rem; font-weight: 600; color: var(--accent); line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; text-shadow: 0 0 18px rgba(255,122,46,0.3); }
+  .vesting-side .note { font-size: 0.82rem; color: var(--ink-dim); margin-top: 0.8rem; line-height: 1.5; }
+
+  /* --- Book / table -------------------------------------------- */
+  .book { margin-bottom: 1rem; }
+  table.tbl { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  table.tbl th, table.tbl td { text-align: left; padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--line); }
+  table.tbl th { font-family: var(--mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent); font-weight: 600; background: var(--surface); border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); }
+  table.tbl td { font-family: var(--mono); font-size: 0.82rem; color: var(--ink-dim); }
+  table.tbl td.name { font-family: var(--sans); font-weight: 600; color: var(--ink); }
+  table.tbl td.name .title { font-family: var(--sans); font-weight: 400; color: var(--muted); font-size: 0.72rem; margin-top: 1px; }
+  table.tbl td.num, table.tbl th.num { text-align: right; }
+  table.tbl tbody tr:hover { background: var(--surface); }
+  table.tbl td.tag { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; }
+  table.tbl td.tag.hr { color: var(--good); }
+  table.tbl td.tag.sales { color: var(--accent); }
+  table.tbl td.tag.fin { color: var(--gold); }
+  table.tbl td.vest-pct { color: var(--good); }
+
+  /* --- Leaver scenarios -------------------------------------- */
+  .leaver { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem; }
+  .leaver-card { background: var(--bg-raised); border: 1px solid var(--line-strong); padding: 1.2rem 1.3rem; position: relative; }
+  .leaver-card::before { content: ""; position: absolute; top: 0; left: 0; width: 3px; height: 100%; }
+  .leaver-card.bad::before { background: var(--bad); box-shadow: 0 0 10px rgba(248,113,113,0.35); }
+  .leaver-card.good::before { background: var(--good); box-shadow: 0 0 10px rgba(74,222,128,0.35); }
+  .leaver-card.exit::before { background: var(--accent); box-shadow: 0 0 10px rgba(255,122,46,0.5); }
+  .leaver-card .code { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 0.25rem; }
+  .leaver-card.bad .code { color: var(--bad); }
+  .leaver-card.good .code { color: var(--good); }
+  .leaver-card.exit .code { color: var(--accent); }
+  .leaver-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.8rem; color: var(--ink); }
+  .leaver-card .amt { font-family: var(--mono); font-size: 1.9rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .leaver-card.bad .amt { color: var(--bad); }
+  .leaver-card.good .amt { color: var(--good); }
+  .leaver-card.exit .amt { color: var(--accent); text-shadow: 0 0 16px rgba(255,122,46,0.35); }
+  .leaver-card .note { font-size: 0.8rem; color: var(--muted); margin-top: 0.8rem; line-height: 1.55; }
+
+  /* --- Spec bar ---------------------------------------------- */
+  .spec { padding: 1.4rem 1.2rem; background: var(--bg-raised); border: 1px solid var(--line-strong); display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .spec h4 { font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 1rem; font-weight: 600; }
+  .swatches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.7rem; }
+  .swatch .chip-s { height: 44px; border: 1px solid var(--line-strong); margin-bottom: 0.3rem; }
+  .swatch .name { font-family: var(--mono); font-size: 0.74rem; color: var(--ink); font-weight: 600; }
+  .swatch .hex { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); }
+  .typedemo { font-family: var(--mono); color: var(--muted); font-size: 0.8rem; line-height: 1.55; }
+  .typedemo .sample { color: var(--ink); margin-bottom: 0.7rem; }
+  .typedemo .big { font-family: var(--mono); font-size: 1.8rem; color: var(--accent); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; line-height: 1; }
+
+  @media (max-width: 900px) {
+    .hero, .vesting { grid-template-columns: 1fr; }
+    .tickers { grid-template-columns: repeat(2, 1fr); }
+    .leaver, .spec { grid-template-columns: 1fr; }
+    .vesting-data { grid-template-columns: repeat(2, 1fr); }
+    .vesting-data .cell:nth-child(2) { border-right: none; }
+    .vesting-data .cell:nth-child(1), .vesting-data .cell:nth-child(2) { border-bottom: 1px solid var(--line); }
+    .topbar { flex-wrap: wrap; gap: 0.6rem; padding: 0.9rem 1rem; }
+    .hero-lead h1 { font-size: 1.5rem; }
+    .statusbar { overflow-x: auto; white-space: nowrap; }
+  }
+</style>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+
+<!-- Thin terminal-style status strip -->
+<div class="statusbar">
+  <span><span class="label">EGPL:</span> <span class="num">0.8555</span> <span style="color:var(--good)">▲ 11.2%</span></span>
+  <span><span class="label">POOL:</span> <span class="num">31.70%</span></span>
+  <span><span class="label">FY25:</span> <span class="num">DRAFT · 535,300</span></span>
+  <span><span class="label">NEXT:</span> <span class="num">01-JUL-27</span></span>
+  <span class="spacer ok">● LIVE · 23-APR-26 23:58 SGT</span>
+</div>
+
+<header class="topbar">
+  <a href="index.html" class="brand">
+    <span class="logo-plate"><img src="../assets/brand/elitez-wordmark.png" alt="Elitez" /></span>
+    <em>ESOP // Terminal</em>
+  </a>
+  <nav>
+    <a href="#" class="active">DASH</a>
+    <a href="#">PORT</a>
+    <a href="#">TRADE</a>
+    <a href="#">CMTE</a>
+    <a href="#">RULES</a>
+  </nav>
+  <span class="sess"><span class="dot"></span> TEO · MAJOR · 24h SESS</span>
+</header>
+
+<div class="page">
+
+  <section class="hero">
+    <div class="hero-lead">
+      <div class="eyebrow">PRIVATE REGISTER · ELITEZ GROUP PTE LTD</div>
+      <h1>Your stake in <em>Elitez Group</em>,<br/>quantified.</h1>
+      <p>A terminal for Option Holders, the Committee and the Trustee. Every figure reconciled to the audited FY ending 30 April; every action logged to the resolution ledger.</p>
+      <div class="meta-row">
+        <div><strong>28</strong> <span>holders</span></div>
+        <div><strong>S$27.7M</strong> <span>firm value</span></div>
+        <div><strong>6.49M</strong> <span>pool</span></div>
+        <div><strong>31.7%</strong> <span>committed</span></div>
+      </div>
+    </div>
+    <aside class="signin">
+      <div class="head">// AUTH</div>
+      <h3>Sign in</h3>
+      <div class="sub">Clause 15 confidential · SHA-256 · 24h TTL</div>
+      <div class="tabs">
+        <button class="active" type="button">Holder</button>
+        <button type="button">Committee</button>
+      </div>
+      <div class="field">
+        <label>ID</label>
+        <select><option>Select holder…</option></select>
+      </div>
+      <div class="field">
+        <label>PW</label>
+        <input type="password" placeholder="••••••••" />
+      </div>
+      <button class="btn">→ Connect</button>
+    </aside>
+  </section>
+
+  <section class="tickers">
+    <div class="ticker accent">
+      <div class="row">
+        <span class="code">FMV · S$/share</span>
+        <span class="delta">▲ 11.2%</span>
+      </div>
+      <div class="val">0.8555</div>
+      <div class="desc">FY2025 EBITDA × 6 · vs 0.7693 FY24</div>
+      <div class="spark">
+        <span style="height: 30%"></span><span style="height: 52%"></span><span style="height: 12%"></span><span style="height: 40%"></span><span style="height: 78%"></span><span class="hi" style="height: 100%"></span>
+      </div>
+    </div>
+    <div class="ticker neutral">
+      <div class="row">
+        <span class="code">EXC · S$/share</span>
+        <span class="delta flat">— 10%</span>
+      </div>
+      <div class="val">0.0856</div>
+      <div class="desc">90% discount · per Clause 10.4</div>
+      <div class="spark">
+        <span style="height: 30%"></span><span style="height: 52%"></span><span style="height: 12%"></span><span style="height: 40%"></span><span style="height: 78%"></span><span style="height: 100%"></span>
+      </div>
+    </div>
+    <div class="ticker neutral">
+      <div class="row">
+        <span class="code">POOL · opts</span>
+        <span class="delta flat">—</span>
+      </div>
+      <div class="val">6,486,486</div>
+      <div class="desc">31.7% alloc · 4,429,546 free</div>
+      <div class="spark">
+        <span style="height: 20%"></span><span style="height: 35%"></span><span style="height: 38%"></span><span style="height: 40%"></span><span style="height: 42%"></span><span class="hi" style="height: 58%"></span>
+      </div>
+    </div>
+    <div class="ticker accent good">
+      <div class="row">
+        <span class="code">NEXT · T-days</span>
+        <span class="delta">434d</span>
+      </div>
+      <div class="val">01-JUL-27</div>
+      <div class="desc">FY22 cohort · 366,000 opts</div>
+      <div class="spark">
+        <span style="height: 100%"></span><span style="height: 88%"></span><span style="height: 76%"></span><span style="height: 64%"></span><span style="height: 52%"></span><span style="height: 40%"></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="vesting">
+    <div class="panel vesting-main">
+      <div class="head-row">
+        <div>
+          <span class="ticker-name">VESTING · TOK MEITING · FY2022</span>
+          <div style="margin-top: 0.6rem;">
+            <h3>60,000 options</h3>
+            <div class="sub">Granted 15-JUL-2022 · Exercise 01-JUL-2027 · 14d whole-not-partial</div>
+          </div>
+        </div>
+        <div class="desc">T+1013 / T+1826</div>
+      </div>
+      <div class="bar-vest">
+        <div class="fill" style="width: 75%"></div>
+        <div class="marker" style="left: 20%"></div>
+        <div class="marker" style="left: 40%"></div>
+        <div class="marker" style="left: 60%"></div>
+        <div class="marker" style="left: 80%"></div>
+      </div>
+      <div class="bar-marks">
+        <span>GRANT</span><span>CLIFF 20%</span><span>Y2</span><span>Y3</span><span>Y4</span><span>EXEC</span>
+      </div>
+      <div class="vesting-data">
+        <div class="cell"><div class="lbl">VESTED</div><div class="val">45,000</div></div>
+        <div class="cell"><div class="lbl">UNVESTED</div><div class="val">15,000</div></div>
+        <div class="cell"><div class="lbl">COST TO EXERCISE</div><div class="val">S$3,852</div></div>
+        <div class="cell accent"><div class="lbl">VALUE @ FMV</div><div class="val">S$38,498</div></div>
+      </div>
+    </div>
+    <div class="vesting-side">
+      <div class="pct-label">VESTED TODAY</div>
+      <div class="pct">75.0%</div>
+      <div class="note">Cliff (20%) + 33 of 48 monthly tranches. 15,000 opts remain to vest over the next 15 months.</div>
+    </div>
+  </section>
+
+  <section class="panel book">
+    <div class="panel-head">
+      <span class="title">// OPTION HOLDERS · TOP 5 BY GRANT</span>
+      <span class="title-sub">28 ACTIVE · ORDER: GRANT ↓</span>
+    </div>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>HOLDER</th>
+          <th>DEPT</th>
+          <th class="num">GRANT</th>
+          <th class="num">VEST</th>
+          <th class="num">%</th>
+          <th class="num">FMV VAL</th>
+          <th class="num">EX COST</th>
+          <th class="num">Δ UPSIDE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="name">Tok Meiting<div class="title">HR Manager</div></td>
+          <td class="tag hr">HR</td>
+          <td class="num">171,995</td>
+          <td class="num">70,058</td>
+          <td class="num vest-pct">53.2</td>
+          <td class="num">59,934.62</td>
+          <td class="num">5,996.96</td>
+          <td class="num vest-pct">+53,937.66</td>
+        </tr>
+        <tr>
+          <td class="name">Wang Jiemin<div class="title">Associate Director</div></td>
+          <td class="tag sales">SALES</td>
+          <td class="num">151,961</td>
+          <td class="num">65,744</td>
+          <td class="num vest-pct">60.3</td>
+          <td class="num">56,244.50</td>
+          <td class="num">5,627.69</td>
+          <td class="num vest-pct">+50,616.81</td>
+        </tr>
+        <tr>
+          <td class="name">Li Qian<div class="title">Sr. Finance Manager</div></td>
+          <td class="tag fin">FIN</td>
+          <td class="num">171,995</td>
+          <td class="num">70,058</td>
+          <td class="num vest-pct">53.2</td>
+          <td class="num">59,934.62</td>
+          <td class="num">5,996.96</td>
+          <td class="num vest-pct">+53,937.66</td>
+        </tr>
+        <tr>
+          <td class="name">Eevann Seah<div class="title">Senior Manager</div></td>
+          <td class="tag sales">SALES</td>
+          <td class="num">141,126</td>
+          <td class="num">50,148</td>
+          <td class="num vest-pct">49.4</td>
+          <td class="num">42,901.60</td>
+          <td class="num">4,292.67</td>
+          <td class="num vest-pct">+38,608.93</td>
+        </tr>
+        <tr>
+          <td class="name">Sharon Lau<div class="title">Senior Manager</div></td>
+          <td class="tag sales">SALES</td>
+          <td class="num">116,626</td>
+          <td class="num">53,423</td>
+          <td class="num vest-pct">50.0</td>
+          <td class="num">45,703.37</td>
+          <td class="num">4,573.01</td>
+          <td class="num vest-pct">+41,130.36</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="leaver">
+    <div class="leaver-card bad">
+      <div class="code">LVR · CAUSE</div>
+      <h4>Bad Leaver</h4>
+      <div class="amt">S$1</div>
+      <div class="note">Flat S$1 for ALL vested options (total, not per option). Unvested options always forfeit on last day. Ref: Clause 11.2.</div>
+    </div>
+    <div class="leaver-card good">
+      <div class="code">LVR · BOARD-APPROVED</div>
+      <h4>Good Leaver</h4>
+      <div class="amt">S$5,990</div>
+      <div class="note">(0.20 × FMV − Exercise Price) per option. Committee may defer to 5-yr window instead of immediate buyback.</div>
+    </div>
+    <div class="leaver-card exit">
+      <div class="code">EXIT · IPO / CoC</div>
+      <h4>Exit Event</h4>
+      <div class="amt">S$132,419</div>
+      <div class="note">Acceleration of all unvested options. Full spread (FMV − Exercise Price) captured per option.</div>
+    </div>
+  </section>
+
+  <section class="spec">
+    <div>
+      <h4>// PALETTE</h4>
+      <div class="swatches">
+        <div class="swatch"><div class="chip-s" style="background: #0A0E16;"></div><div class="name">BG</div><div class="hex">#0A0E16</div></div>
+        <div class="swatch"><div class="chip-s" style="background: #FF7A2E;"></div><div class="name">ACCENT</div><div class="hex">#FF7A2E</div></div>
+        <div class="swatch"><div class="chip-s" style="background: #4ADE80;"></div><div class="name">GAIN</div><div class="hex">#4ADE80</div></div>
+        <div class="swatch"><div class="chip-s" style="background: #ECE3CC;"></div><div class="name">INK</div><div class="hex">#ECE3CC</div></div>
+      </div>
+    </div>
+    <div>
+      <h4>// TYPOGRAPHY</h4>
+      <div class="typedemo">
+        <div class="big">S$27,745,614</div>
+        <div style="margin: 0.5rem 0 0.8rem;">JetBrains Mono 600 · data</div>
+        <div class="sample" style="font-family: var(--sans); color: var(--ink); font-weight: 600;">The Committee approves grants.</div>
+        <div>Inter 600 · headline</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

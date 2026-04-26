@@ -1,0 +1,35 @@
+name = "elitez-esop-api"
+main = "src/worker.js"
+compatibility_date = "2025-04-01"
+
+# D1 binding — created via:  wrangler d1 create elitez-esop-db
+[[d1_databases]]
+binding = "DB"
+database_name = "elitez-esop-db"
+database_id = "REPLACE_WITH_D1_ID_AFTER_CREATE"
+
+# Optional: bind the static site as Assets so this Worker also serves
+# the frontend. Pages route can still be used instead. Either is fine.
+# [assets]
+# directory = "../"
+# binding = "ASSETS"
+
+# Route: hook the API at esop.derrickteo.com/api/*
+# Add via dashboard (Workers & Pages → elitez-esop-api → Triggers → Routes):
+#   esop.derrickteo.com/api/*
+
+[vars]
+# Comma-separated list of email addresses considered Committee members.
+# (Identity for these comes from Cloudflare Access; this list maps email →
+# role. Holders are auto-detected from data.js.)
+COMMITTEE_DERRICK = "derrick@elitez.asia"
+COMMITTEE_CHEN    = "wayne@elitez.asia"
+COMMITTEE_LIM     = "rongjie@elitez.asia"
+COMMITTEE_YVONNE  = "yvonne@dhc.com.sg"
+# Cloudflare Access team domain for JWT validation, e.g. derrickteo.cloudflareaccess.com
+CF_ACCESS_TEAM_DOMAIN = "derrickteo.cloudflareaccess.com"
+# AUD tag from Cloudflare Access → Applications → Elitez ESOP → Overview → Application Audience (AUD) Tag
+CF_ACCESS_AUD = "REPLACE_WITH_AUD_TAG"
+
+[observability]
+enabled = true

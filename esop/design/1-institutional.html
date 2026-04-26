@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>01 · Institutional Report · Elitez ESOP</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #F5EFDC;
+    --panel: #FDF9E8;
+    --ink: #0E2640;
+    --ink-soft: #1F3A56;
+    --muted: #5E6B7A;
+    --accent: #EE6A1F;
+    --line: rgba(14, 38, 64, 0.12);
+    --line-strong: rgba(14, 38, 64, 0.30);
+    --serif: "Fraunces", "Cormorant Garamond", Georgia, serif;
+    --sans: "Inter", -apple-system, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.55; -webkit-font-smoothing: antialiased; font-feature-settings: "ss01"; }
+  .num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+  .serif { font-family: var(--serif); }
+  .muted { color: var(--muted); }
+  .eyebrow { font-family: var(--sans); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.22em; color: var(--muted); font-weight: 600; }
+  .eyebrow--accent { color: var(--accent); }
+
+  /* --- Topbar ------------------------------------------------------ */
+  .topbar { background: var(--paper); border-bottom: 1px solid var(--line-strong); padding: 0.9rem 2.4rem; display: flex; align-items: center; justify-content: space-between; }
+  .brand { display: flex; align-items: center; gap: 0.8rem; text-decoration: none; color: var(--ink); }
+  .brand img { height: 22px; width: auto; display: block; }
+  .brand .pipe { width: 1px; height: 20px; background: var(--line-strong); }
+  .brand em { font-family: var(--serif); font-style: italic; font-size: 1.15rem; color: var(--ink); letter-spacing: 0.04em; }
+  nav { display: flex; gap: 1.8rem; }
+  nav a { font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--ink); text-decoration: none; padding-bottom: 3px; border-bottom: 1px solid transparent; }
+  nav a.active, nav a:hover { border-color: var(--accent); color: var(--accent); }
+  .chip { font-size: 0.72rem; padding: 0.3rem 0.8rem; border: 1px solid var(--line-strong); color: var(--muted); display: inline-flex; align-items: center; gap: 0.4rem; }
+  .chip .dot { width: 6px; height: 6px; background: var(--muted); border-radius: 50%; }
+
+  /* --- Layout ----------------------------------------------------- */
+  .page { max-width: 980px; margin: 0 auto; padding: 3.2rem 2rem 5rem; }
+  .rule { border: none; border-top: 1px solid var(--line); margin: 3rem 0; }
+  .rule--strong { border-top: 1px solid var(--line-strong); }
+
+  /* --- Hero ------------------------------------------------------- */
+  .hero { display: grid; grid-template-columns: 1.5fr 1fr; gap: 4rem; align-items: start; padding: 3rem 0 2rem; border-bottom: 1px solid var(--line); margin-bottom: 3rem; }
+  .hero h1 { font-family: var(--serif); font-weight: 400; font-size: 3.2rem; line-height: 1.05; letter-spacing: -0.018em; margin: 1.2rem 0 1.4rem; }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero .lede { font-family: var(--serif); font-style: italic; color: var(--ink-soft); font-size: 1.2rem; line-height: 1.55; max-width: 38ch; }
+
+  /* --- Sign in panel --------------------------------------------- */
+  .signin { background: var(--panel); border: 1px solid var(--line-strong); padding: 1.6rem 1.8rem; }
+  .signin h3 { font-family: var(--serif); font-weight: 500; font-size: 1.3rem; margin-bottom: 0.3rem; }
+  .signin p.sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 1.2rem; }
+  .tabs { display: flex; border-bottom: 1px solid var(--line-strong); margin-bottom: 1.2rem; }
+  .tabs button { background: none; border: none; padding: 0.6rem 1rem; font-family: var(--sans); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--muted); cursor: pointer; font-weight: 600; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  .tabs button.active { color: var(--ink); border-color: var(--accent); }
+  .field { margin-bottom: 1rem; }
+  .field label { display: block; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--muted); margin-bottom: 0.4rem; font-weight: 600; }
+  .field input, .field select { width: 100%; padding: 0.65rem 0.8rem; background: var(--paper); border: 1px solid var(--line-strong); font-family: var(--sans); font-size: 0.9rem; color: var(--ink); border-radius: 0; }
+  .field input:focus, .field select:focus { outline: 1px solid var(--accent); outline-offset: -1px; }
+  .btn { display: block; width: 100%; background: var(--ink); color: var(--paper); border: 1px solid var(--ink); padding: 0.8rem 1.2rem; font-family: var(--sans); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.16em; cursor: pointer; font-weight: 600; text-align: center; }
+  .btn:hover { background: var(--accent); border-color: var(--accent); }
+
+  /* --- Stats ----------------------------------------------------- */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); }
+  .stat { padding: 1.6rem 1.4rem; border-right: 1px solid var(--line); }
+  .stat:last-child { border-right: none; }
+  .stat .lbl { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--muted); margin-bottom: 0.8rem; font-weight: 600; }
+  .stat .val { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 2.4rem; line-height: 1; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+  .stat--accent .val { color: var(--accent); }
+  .stat .sub { font-size: 0.78rem; color: var(--muted); margin-top: 0.6rem; font-variant-numeric: tabular-nums; }
+
+  /* --- Sections --------------------------------------------------- */
+  section.block { margin-top: 3.5rem; }
+  section.block > header { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 0.9rem; border-bottom: 1px solid var(--line-strong); margin-bottom: 1.5rem; }
+  section.block > header h2 { font-family: var(--serif); font-size: 1.8rem; font-weight: 400; letter-spacing: -0.01em; }
+
+  /* --- Vesting panel --------------------------------------------- */
+  .vesting { display: grid; grid-template-columns: 1.6fr 1fr; gap: 3rem; }
+  .vesting .meta { font-family: var(--serif); }
+  .vesting .meta h3 { font-size: 1.5rem; font-weight: 500; margin-bottom: 0.3rem; }
+  .vesting .meta .fy { color: var(--accent); font-style: italic; font-family: var(--serif); }
+  .kv { display: grid; grid-template-columns: 1fr auto; padding: 0.5rem 0; border-bottom: 1px dotted var(--line); font-size: 0.9rem; }
+  .kv .k { color: var(--muted); }
+  .kv .v { font-variant-numeric: tabular-nums; }
+  .kv:last-child { border: none; }
+  .timeline { position: relative; margin: 2.2rem 0 0; padding: 0 0.5rem; }
+  .timeline .track { position: relative; height: 2px; background: var(--line-strong); margin: 1.6rem 0; }
+  .timeline .fill { position: absolute; top: 0; left: 0; height: 100%; background: var(--accent); }
+  .timeline .mk { position: absolute; top: -7px; transform: translateX(-50%); text-align: center; }
+  .timeline .mk .pin { width: 1px; height: 14px; background: var(--ink); margin: 0 auto; }
+  .timeline .mk .pin--major { width: 2px; height: 20px; }
+  .timeline .mk .lbl { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); margin-top: 8px; white-space: nowrap; }
+  .timeline .today { position: absolute; top: -24px; transform: translateX(-50%); }
+  .timeline .today .pin { width: 2px; height: 12px; background: var(--accent); margin: 0 auto; }
+  .timeline .today .lbl { font-family: var(--serif); font-style: italic; font-size: 0.8rem; color: var(--accent); margin-bottom: 4px; }
+  .vestpct { font-family: var(--serif); font-style: italic; font-size: 3rem; color: var(--accent); line-height: 1; font-variant-numeric: tabular-nums; }
+
+  /* --- Table ----------------------------------------------------- */
+  table.data { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  table.data th, table.data td { text-align: left; padding: 0.8rem 0.6rem; border-bottom: 1px solid var(--line); }
+  table.data th { font-family: var(--sans); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--muted); font-weight: 600; }
+  table.data td { font-size: 0.92rem; }
+  table.data td .serif { font-family: var(--serif); font-size: 1rem; }
+  table.data td.num, table.data th.num { text-align: right; }
+
+  /* --- Leaver cards ----------------------------------------------- */
+  .leaver { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border: 1px solid var(--line-strong); }
+  .leaver > div { padding: 1.6rem 1.5rem; border-right: 1px solid var(--line); }
+  .leaver > div:last-child { border-right: none; }
+  .leaver .lbl { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--muted); font-weight: 600; margin-bottom: 0.4rem; }
+  .leaver h4 { font-family: var(--serif); font-size: 1.15rem; font-weight: 500; margin-bottom: 0.8rem; }
+  .leaver .amt { font-family: var(--serif); font-style: italic; font-size: 2rem; font-variant-numeric: tabular-nums; line-height: 1; }
+  .leaver .note { color: var(--muted); font-size: 0.82rem; margin-top: 0.7rem; line-height: 1.55; }
+  .leaver .exit .amt { color: var(--accent); }
+
+  /* --- Spec footer ----------------------------------------------- */
+  .spec { margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--line-strong); display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+  .swatches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; }
+  .swatch { font-size: 0.72rem; font-variant-numeric: tabular-nums; }
+  .swatch .chip-s { height: 64px; margin-bottom: 0.4rem; border: 1px solid var(--line-strong); }
+  .swatch .hex { font-family: "JetBrains Mono", monospace; font-size: 0.72rem; color: var(--muted); }
+  .swatch .name { font-weight: 600; font-size: 0.76rem; }
+  .typespec { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+  .typespec .label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--muted); margin-bottom: 0.2rem; }
+  .typespec .sample { color: var(--ink); margin-bottom: 1rem; }
+
+  @media (max-width: 900px) {
+    .hero, .vesting, .spec { grid-template-columns: 1fr; gap: 2rem; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .leaver { grid-template-columns: 1fr; }
+    .leaver > div { border-right: none; border-bottom: 1px solid var(--line); }
+    .page { padding: 2rem 1rem 4rem; }
+    .topbar { flex-wrap: wrap; gap: 0.8rem; }
+    .hero h1 { font-size: 2rem; }
+  }
+</style>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="brand">
+    <img src="../assets/brand/elitez-wordmark.png" alt="Elitez" />
+    <span class="pipe"></span>
+    <em>ESOP</em>
+  </a>
+  <nav>
+    <a href="#" class="active">Home</a>
+    <a href="#">Portfolio</a>
+    <a href="#">Trading</a>
+    <a href="#">Committee</a>
+    <a href="#">Plan Rules</a>
+  </nav>
+  <span class="chip"><span class="dot"></span> Not signed in</span>
+</header>
+
+<div class="page">
+  <section class="hero">
+    <div>
+      <div class="eyebrow eyebrow--accent">The Elitez Employee Share Option Plan</div>
+      <h1>Your stake in <em>Elitez Group</em>,<br/>explained.</h1>
+      <p class="lede">A private platform for Option Holders and the Committee — your vesting, your value, your windows, and the Plan rules in plain English.</p>
+    </div>
+    <div class="signin">
+      <h3>Sign in</h3>
+      <p class="sub">Confidential — Clause 15 of the Plan.</p>
+      <div class="tabs">
+        <button class="active" type="button">Holder</button>
+        <button type="button">Committee</button>
+      </div>
+      <div class="field">
+        <label>Who are you?</label>
+        <select><option>Select your name…</option></select>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" placeholder="Password" />
+      </div>
+      <button class="btn">Enter your portfolio</button>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Key facts, today</div>
+    <div class="stats" style="margin-top: 1rem;">
+      <div class="stat stat--accent">
+        <div class="lbl">Fair Market Value</div>
+        <div class="val">S$0.8555</div>
+        <div class="sub">FY2025 · EBITDA × 6</div>
+      </div>
+      <div class="stat">
+        <div class="lbl">Exercise Price</div>
+        <div class="val">S$0.0856</div>
+        <div class="sub">90% discount to FMV</div>
+      </div>
+      <div class="stat">
+        <div class="lbl">Authorised Pool</div>
+        <div class="val">6,486,486</div>
+        <div class="sub">31.7% allocated · FY25 draft incl.</div>
+      </div>
+      <div class="stat stat--accent">
+        <div class="lbl">Nearest Exercise</div>
+        <div class="val">1 Jul 2027</div>
+        <div class="sub">366,000 FY2022 options · 434 days</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <header>
+      <h2>Vesting, grant by grant</h2>
+      <span class="eyebrow">Tok Meiting · HR Manager</span>
+    </header>
+    <div class="vesting">
+      <div>
+        <div class="meta">
+          <div class="fy">FY2022 · Granted 15 Jul 2022</div>
+          <h3>60,000 options</h3>
+        </div>
+        <div class="timeline">
+          <div class="today" style="left: 75%"><div class="lbl serif">Today</div><div class="pin"></div></div>
+          <div class="track">
+            <div class="fill" style="width: 75%"></div>
+          </div>
+          <div style="position: relative; height: 34px;">
+            <div class="mk" style="left: 0%"><div class="pin pin--major"></div><div class="lbl">Grant</div></div>
+            <div class="mk" style="left: 20%"><div class="pin pin--major"></div><div class="lbl">Cliff · 20%</div></div>
+            <div class="mk" style="left: 40%"><div class="pin"></div><div class="lbl">Yr 2</div></div>
+            <div class="mk" style="left: 60%"><div class="pin"></div><div class="lbl">Yr 3</div></div>
+            <div class="mk" style="left: 80%"><div class="pin"></div><div class="lbl">Yr 4</div></div>
+            <div class="mk" style="left: 100%"><div class="pin pin--major"></div><div class="lbl">Exercise</div></div>
+          </div>
+        </div>
+        <hr class="rule" />
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.6rem;">
+          <div><div class="eyebrow" style="margin-bottom:0.3rem;">Vested shares</div><div class="serif num" style="font-size:1.35rem; font-style: italic;">45,000</div></div>
+          <div><div class="eyebrow" style="margin-bottom:0.3rem;">Unvested</div><div class="serif num" style="font-size:1.35rem; font-style: italic;">15,000</div></div>
+          <div><div class="eyebrow" style="margin-bottom:0.3rem;">Cost to exercise</div><div class="serif num" style="font-size:1.35rem; font-style: italic;">S$3,852</div></div>
+          <div><div class="eyebrow" style="margin-bottom:0.3rem;">Value at FMV</div><div class="serif num" style="font-size:1.35rem; font-style: italic; color: var(--accent);">S$38,498</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="eyebrow muted" style="margin-bottom: 0.6rem;">Vested today</div>
+        <div class="vestpct">75.0%</div>
+        <p class="muted" style="font-size: 0.82rem; margin-top: 1rem; font-family: var(--serif); font-style: italic;">Of the 60,000 options granted, 45,000 have vested — the 12-month cliff plus 33 of the 48 monthly tranches.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <header><h2>Option holders</h2><span class="eyebrow">28 active · FY22+FY24</span></header>
+    <table class="data">
+      <thead><tr><th>Holder</th><th>Dept</th><th class="num">Granted</th><th class="num">Vested</th><th class="num">Value @ FMV</th><th class="num">Exercise cost</th></tr></thead>
+      <tbody>
+        <tr><td><span class="serif">Tok Meiting</span><div class="muted" style="font-size:0.78rem;">HR Manager</div></td><td>HR</td><td class="num">171,995</td><td class="num">70,058 <span class="muted">(53.2%)</span></td><td class="num">S$59,934.62</td><td class="num">S$5,996.96</td></tr>
+        <tr><td><span class="serif">Wang Jiemin (Jack)</span><div class="muted" style="font-size:0.78rem;">Associate Director</div></td><td>SALES</td><td class="num">151,961</td><td class="num">65,744 <span class="muted">(60.3%)</span></td><td class="num">S$56,244.50</td><td class="num">S$5,627.69</td></tr>
+        <tr><td><span class="serif">Li Qian</span><div class="muted" style="font-size:0.78rem;">Sr. Finance Manager</div></td><td>FIN</td><td class="num">171,995</td><td class="num">70,058 <span class="muted">(53.2%)</span></td><td class="num">S$59,934.62</td><td class="num">S$5,996.96</td></tr>
+        <tr><td><span class="serif">Eevann Seah</span><div class="muted" style="font-size:0.78rem;">Senior Manager</div></td><td>SALES</td><td class="num">141,126</td><td class="num">50,148 <span class="muted">(49.4%)</span></td><td class="num">S$42,901.60</td><td class="num">S$4,292.67</td></tr>
+        <tr><td><span class="serif">Sharon Lau Jie Joo</span><div class="muted" style="font-size:0.78rem;">Senior Manager</div></td><td>SALES</td><td class="num">116,626</td><td class="num">53,423 <span class="muted">(50.0%)</span></td><td class="num">S$45,703.37</td><td class="num">S$4,573.01</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="block">
+    <header><h2>If you leave — three scenarios</h2><span class="eyebrow">Clause 9</span></header>
+    <div class="leaver">
+      <div>
+        <div class="lbl">Terminated for cause</div>
+        <h4>Bad Leaver</h4>
+        <div class="amt">S$1</div>
+        <div class="note">A single Singapore dollar for every vested option, combined. Unvested options always forfeit.</div>
+      </div>
+      <div>
+        <div class="lbl">Resign with Board approval</div>
+        <h4>Good Leaver</h4>
+        <div class="amt">S$5,990</div>
+        <div class="note">(0.20 × FMV − Exercise Price) per option, or the Committee may let you hold to the normal window.</div>
+      </div>
+      <div class="exit">
+        <div class="lbl eyebrow--accent">IPO · Change of Control</div>
+        <h4>Exit Event</h4>
+        <div class="amt">S$132,419</div>
+        <div class="note">All unvested accelerate. Full spread (FMV − Exercise Price) on every option.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="spec">
+    <div>
+      <div class="eyebrow" style="margin-bottom: 1rem;">Palette</div>
+      <div class="swatches">
+        <div class="swatch"><div class="chip-s" style="background: #F5EFDC;"></div><div class="name">Paper</div><div class="hex">#F5EFDC</div></div>
+        <div class="swatch"><div class="chip-s" style="background: #0E2640;"></div><div class="name">Ink</div><div class="hex">#0E2640</div></div>
+        <div class="swatch"><div class="chip-s" style="background: #EE6A1F;"></div><div class="name">Accent</div><div class="hex">#EE6A1F</div></div>
+        <div class="swatch"><div class="chip-s" style="background: #5E6B7A;"></div><div class="name">Muted</div><div class="hex">#5E6B7A</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="eyebrow" style="margin-bottom: 1rem;">Typography</div>
+      <div class="typespec">
+        <div class="label">Display · Fraunces 400/500</div>
+        <div class="sample serif" style="font-size: 1.6rem; font-style: italic;">S$27,745,614</div>
+        <div class="label">Body · Inter 400</div>
+        <div class="sample">The Committee administers the Plan and approves grants.</div>
+        <div class="label">Eyebrow · Inter 600 uppercase tracked 0.18em</div>
+        <div class="sample eyebrow" style="color: var(--accent);">Clause 10 · Exercise</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

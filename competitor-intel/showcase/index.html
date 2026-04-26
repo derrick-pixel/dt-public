@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>competitor-intel-template — Showcase</title>
+  <link rel="stylesheet" href="../template/assets/css/site.css">
+  <style>
+    .flow-steps {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+    .flow-step {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      border-top: 3px solid var(--brand-primary);
+    }
+    .flow-step + .flow-step::before {
+      content: "›";
+      position: absolute;
+      left: -14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 32px;
+      color: var(--brand-primary);
+      font-weight: 700;
+      line-height: 1;
+    }
+    .flow-num {
+      display: inline-flex;
+      width: 28px; height: 28px;
+      align-items: center; justify-content: center;
+      border-radius: 50%;
+      background: var(--brand-primary);
+      color: white;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .flow-step h3 {
+      font-size: 16px;
+      margin: 0 0 8px;
+      color: var(--brand-secondary);
+    }
+    .flow-step p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--neutral-dark);
+      opacity: 0.85;
+    }
+    .flow-step code {
+      background: var(--neutral-light);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+    }
+    .flow-foot {
+      margin-top: 24px;
+      font-size: 14px;
+      color: var(--neutral-dark);
+      opacity: 0.75;
+    }
+    .flow-foot a { color: var(--brand-primary); font-weight: 600; }
+    @media (max-width: 900px) {
+      .flow-steps { grid-template-columns: 1fr; gap: 28px; }
+      .flow-step + .flow-step::before {
+        content: "↓";
+        left: 50%;
+        top: -22px;
+        transform: translateX(-50%);
+      }
+    }
+  </style>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+  <main class="container">
+    <header style="padding: 64px 0;">
+      <h1 style="font-size: 44px;">competitor-intel-template</h1>
+      <p style="font-size: 18px;">Reusable static-site template for competitor / market analytics. Eight named Claude Code subagents. Downloadable full-bleed PDF report.</p>
+      <p style="margin-top: 16px;">
+        <a href="../template/admin/whitespace.html" style="padding: 12px 24px; background: var(--brand-primary); color: white; text-decoration: none; border-radius: 8px;">Live demo</a>
+        <a href="https://github.com/derrick-pixel/competitor-intel-template" style="padding: 12px 24px; margin-left: 12px; color: var(--brand-primary); text-decoration: none;">GitHub</a>
+      </p>
+    </header>
+    <section style="padding: 8px 0 48px;">
+      <h2 style="font-size: 28px; margin-bottom: 8px;">Get started in 5 steps</h2>
+      <p style="color: var(--neutral-dark); opacity: 0.75; margin: 0 0 32px;">Fork the template, brief Claude, run the agents, ship the PDF, curate the template forward.</p>
+      <ol class="flow-steps">
+        <li class="flow-step">
+          <span class="flow-num">1</span>
+          <h3>Fork</h3>
+          <p>Use GitHub's <em>Use this template</em> button or <code>gh repo create --template</code>. Enable Pages on <code>main</code> / root.</p>
+        </li>
+        <li class="flow-step">
+          <span class="flow-num">2</span>
+          <h3>Brief Claude</h3>
+          <p>Open <code>claude</code> in the new repo. Paste your company, market, and competitor scope. Claude reads <code>AGENT.md</code>.</p>
+        </li>
+        <li class="flow-step">
+          <span class="flow-num">3</span>
+          <h3>Run agents 1–6</h3>
+          <p>Research → market → pricing → whitespace → design audit → viz. Each agent writes to its slice of <code>template/data/</code> and commits.</p>
+        </li>
+        <li class="flow-step">
+          <span class="flow-num">4</span>
+          <h3>Ship the report</h3>
+          <p>Dispatch <code>report-generator</code> (agent 8). It compiles agents 1–6 into the full-bleed downloadable PDF.</p>
+        </li>
+        <li class="flow-step">
+          <span class="flow-num">5</span>
+          <h3>Curate back</h3>
+          <p>Run <code>methodology-curator</code> (agent 7). It diffs the finished project against the template and proposes improvements to merge upstream.</p>
+        </li>
+      </ol>
+      <p class="flow-foot">Full briefing: <a href="https://github.com/derrick-pixel/competitor-intel-template/blob/main/AGENT.md">AGENT.md</a> · Schema: <a href="https://github.com/derrick-pixel/competitor-intel-template/blob/main/methodology/FIELD-DICTIONARY.md">FIELD-DICTIONARY.md</a></p>
+    </section>
+    <section>
+      <h2>Exhibits — real projects built on this template</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+        <a href="exhibits/xinceai.md" class="top5-card" style="text-decoration: none; color: inherit;"><h3>XinceAI</h3><p>AI automation for SG SMEs. Reference implementation of the whitespace atlas pattern.</p></a>
+        <a href="exhibits/elix-eor.md" class="top5-card" style="text-decoration: none; color: inherit;"><h3>Elix EOR</h3><p>EOR for SG micro-businesses. Scaled the heatmap to 15×15 with rich regulatory metadata.</p></a>
+        <a href="exhibits/lumana.md" class="top5-card" style="text-decoration: none; color: inherit;"><h3>Lumana</h3><p>Aged-care ambient monitoring. Shows template works for hardware-adjacent markets.</p></a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

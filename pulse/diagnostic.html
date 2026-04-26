@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="sticker">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ROI Diagnostic — Elitez Pulse</title>
+  <meta name="description" content="Will marketing pay off for you? 2-minute ROI diagnostic. Scored report + recommended retainer + break-even maths.">
+  <meta property="og:title" content="ROI Diagnostic — Elitez Pulse">
+  <meta property="og:image" content="assets/og-1200x630.png">
+  <link rel="icon" href="assets/favicon/favicon.ico">
+  <link id="theme-css" rel="stylesheet" href="assets/theme.css">
+  <link rel="stylesheet" href="assets/base.css">
+  <link rel="stylesheet" href="assets/components.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <style>
+    .quiz { max-width: 680px; margin: 0 auto; }
+    .step { display: none; padding: 32px 0 48px; }
+    .step.active { display: block; animation: fadein 240ms ease; }
+    @keyframes fadein { from {opacity:0; transform:translateY(8px);} to {opacity:1; transform:none;} }
+
+    .progress { height: 6px; background: rgba(0,0,0,0.08); border-radius: 999px; overflow: hidden; margin-bottom: 32px; }
+    .progress__bar { height: 100%; background: var(--coral); transition: width 320ms ease; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .chip {
+      padding: 12px 18px;
+      border: 2px solid var(--ink);
+      border-radius: var(--radius-pill);
+      font-weight: 700;
+      font-size: 14px;
+      background: var(--white);
+      cursor: pointer;
+      transition: transform 120ms ease, background 120ms ease, color 120ms ease;
+    }
+    .chip:hover { transform: translateY(-2px); }
+    .chip.selected { background: var(--ink); color: var(--white); }
+
+    .slider-wrap { margin-top: 24px; }
+    .slider-wrap input[type=range] { width: 100%; accent-color: var(--coral); }
+    .slider-val { font-size: 32px; font-weight: 900; margin-top: 12px; }
+
+    .nav-btns { margin-top: 32px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+    .form label { display:block; margin:14px 0 6px; font-weight:700; font-size:14px; }
+    .form input { width:100%; padding:14px; border:2px solid var(--ink); border-radius: var(--radius-md); font-family: inherit; font-size:15px; background: var(--white); }
+
+    .score-ring {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 48px;
+      font-weight: 900;
+      border: 8px solid var(--coral);
+      margin: 0 auto 32px;
+      background: var(--white);
+      box-shadow: var(--shadow-sticker);
+    }
+    .score-ring.med { border-color: var(--mustard); }
+    .score-ring.high { border-color: var(--violet); }
+
+    .report-card {
+      padding: 24px;
+      background: var(--white);
+      border: 2px solid var(--ink);
+      border-radius: var(--radius-lg);
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sticker);
+    }
+  </style>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body data-base=".">
+  <div data-nav></div>
+
+  <section class="section">
+    <div class="container quiz">
+      <div class="progress"><div class="progress__bar" id="progress" style="width:10%"></div></div>
+
+      <div class="step active" data-step="0">
+        <span class="sticker sticker--mustard">2 MIN ✦ FREE REPORT</span>
+        <h1 style="margin-top:20px;">Will marketing <span class="scribble">pay off</span> for you?</h1>
+        <p class="hero__sub">7 quick questions. We'll tell you which package fits, what your break-even looks like, and honestly whether you'd be better off with a freelancer.</p>
+        <button type="button" class="btn btn--primary" data-next>Start →</button>
+      </div>
+
+      <div class="step" data-step="1">
+        <h2>What's your industry?</h2>
+        <div class="chips" data-q="industry">
+          <button type="button" class="chip" data-v="B2B Services">B2B Services</button>
+          <button type="button" class="chip" data-v="Education">Education</button>
+          <button type="button" class="chip" data-v="Professional Services">Professional Services</button>
+          <button type="button" class="chip" data-v="Logistics">Logistics</button>
+          <button type="button" class="chip" data-v="HR-Consulting">HR / Consulting</button>
+          <button type="button" class="chip" data-v="Other">Other</button>
+        </div>
+        <div class="nav-btns">
+          <button type="button" class="btn btn--outline" data-prev>← Back</button>
+          <button type="button" class="btn btn--primary" data-next data-req="industry">Next →</button>
+        </div>
+      </div>
+
+      <div class="step" data-step="2">
+        <h2>How many people in your company?</h2>
+        <div class="chips" data-q="headcount">
+          <button type="button" class="chip" data-v="<10">Less than 10</button>
+          <button type="button" class="chip" data-v="10-30">10–30</button>
+          <button type="button" class="chip" data-v="30-60">30–60</button>
+          <button type="button" class="chip" data-v="60-100">60–100</button>
+          <button type="button" class="chip" data-v=">100">More than 100</button>
+        </div>
+        <div class="nav-btns">
+          <button type="button" class="btn btn--outline" data-prev>← Back</button>
+          <button type="button" class="btn btn--primary" data-next data-req="headcount">Next →</button>
+        </div>
+      </div>
+
+      <div class="step" data-step="3">
+        <h2>Current marketing spend per month?</h2>
+        <div class="slider-wrap">
+          <input type="range" id="spend-slider" min="0" max="5000" step="500" value="1500">
+          <div class="slider-val" id="spend-val">SGD 1,500</div>
+        </div>
+        <div class="nav-btns">
+          <button type="button" class="btn btn--outline" data-prev>← Back</button>
+          <button type="button" class="btn btn--primary" data-next>Next →</button>
+        </div>
+      </div>
+
+      <div class="step" data-step="4">
+        <h2>Biggest pain right now? <span class="subtle" style="font-size:14px;">Pick any that apply.</span></h2>
+        <div class="chips" data-q="pains" data-multi="1">
+          <button type="button" class="chip" data-v="No consistent leads">No consistent leads</button>
+          <button type="button" class="chip" data-v="Content feels generic">Content feels generic</button>
+          <button type="button" class="chip" data-v="Website dead">Website dead</button>
+          <button type="button" class="chip" data-v="No team capacity">No team capacity</button>
+          <button type="button" class="chip" data-v="No clue what's working">No clue what's working</button>
+        </div>
+        <div class="nav-btns">
+          <button type="button" class="btn btn--outline" data-prev>← Back</button>
+          <button type="button" class="btn btn--primary" data-next>Next →</button>
+        </div>
+      </div>
+
+      <div class="step" data-step="5">
+        <h2>Primary goal in the next 6 months?</h2>
+        <div class="chips" data-q="goal">
+          <button type="button" class="chip" data-v="More qualified leads">More qualified leads</button>
+          <button type="button" class="chip" data-v="Better brand/website">Better brand / website</button>
+          <button type="button" class="chip" data-v="Launch campaigns faster">Launch campaigns faster</button>
+          <button type="button" class="chip" data-v="Cut costs">Cut costs</button>
+        </div>
+        <div class="nav-btns">
+          <button type="button" class="btn btn--outline" data-prev>← Back</button>
+          <button type="button" class="btn btn--primary" data-next data-req="goal">Next →</button>
+        </div>
+      </div>
+
+      <div class="step" data-step="6">
+        <h2>Average contract value per customer?</h2>
+        <div class="chips" data-q="dealSize">
+          <button type="button" class="chip" data-v="<1K">Less than $1K</button>
+          <button type="button" class="chip" data-v="1K-5K">$1K – $5K</button>
+          <button type="button" class="chip" data-v="5K-25K">$5K – $25K</button>
+          <button type="button" class="chip" data-v="25K+">$25K+</button>
+        </div>
+        <div class="nav-btns">
+          <button type="button" class="btn btn--outline" data-prev>← Back</button>
+          <button type="button" class="btn btn--primary" data-next data-req="dealSize">Next →</button>
+        </div>
+      </div>
+
+      <div class="step" data-step="7">
+        <h2>How soon are you looking to start?</h2>
+        <div class="chips" data-q="urgency">
+          <button type="button" class="chip" data-v="Yesterday">Yesterday</button>
+          <button type="button" class="chip" data-v="This month">This month</button>
+          <button type="button" class="chip" data-v="This quarter">This quarter</button>
+          <button type="button" class="chip" data-v="Just exploring">Just exploring</button>
+        </div>
+        <div class="nav-btns">
+          <button type="button" class="btn btn--outline" data-prev>← Back</button>
+          <button type="button" class="btn btn--primary" data-next data-req="urgency">Next →</button>
+        </div>
+      </div>
+
+      <div class="step" data-step="8">
+        <h2>Drop your details. <span class="scribble">Unlock your report.</span></h2>
+        <p class="subtle">We won't spam you. Report is generated instantly; if you want the PDF by email, use the button on the next screen.</p>
+        <form id="gate-form" class="form" style="margin-top:20px;" novalidate>
+          <label>Name <input type="text" name="name" required autocomplete="name"></label>
+          <label>Company <input type="text" name="company" required autocomplete="organization"></label>
+          <label>Work email <input type="email" name="email" required autocomplete="email"></label>
+          <div class="nav-btns">
+            <button type="button" class="btn btn--outline" data-prev>← Back</button>
+            <button type="submit" class="btn btn--primary">See my report →</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="step" data-step="9">
+        <div id="report"></div>
+      </div>
+    </div>
+  </section>
+
+  <div data-footer></div>
+
+  <script type="module" src="js/common.js?v=3"></script>
+  <script type="module" src="js/diagnostic.js?v=1"></script>
+</body>
+</html>

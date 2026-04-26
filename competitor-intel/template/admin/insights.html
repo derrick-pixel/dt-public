@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Market &amp; Pricing — NoteFlow SAMPLE</title>
+  <link rel="stylesheet" href="../assets/css/site.css">
+  <script src="../assets/vendor/chart.umd.js"></script>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+  <nav class="admin-nav">
+    <a href="index.html">Competitors</a>
+    <a href="insights.html" class="active">Market &amp; Pricing</a>
+    <a href="whitespace.html">Whitespace Atlas</a>
+    <a href="design-audit.html">Design Audit</a>
+    <a href="report.html">Report</a>
+    <a href="../index.html" style="margin-left: auto;">← Back to site</a>
+  </nav>
+
+  <main class="container-wide">
+    <h1>Market Intelligence</h1>
+    <section><h2>Market size</h2><div id="market-size"></div></section>
+    <section><h2>Policy landscape</h2><div id="policies"></div></section>
+    <section>
+      <h2>Country readiness</h2>
+      <table class="competitor-table"><thead><tr><th>Country</th><th>Regulatory</th><th>Tech</th><th>Price tolerance</th></tr></thead><tbody id="country-tbody"></tbody></table>
+    </section>
+    <section>
+      <h2>Target-market distribution</h2>
+      <div style="height: 300px;"><canvas id="market-donut"></canvas></div>
+    </section>
+
+    <h1 style="margin-top: 64px;">Pricing Strategy</h1>
+    <section><h2>Personas</h2><div id="personas"></div></section>
+    <section><h2>Recommended tiers</h2><div id="tiers" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;"></div></section>
+    <section><h2>Competitor price comparison</h2><div style="height: 500px;"><canvas id="price-bars"></canvas></div></section>
+  </main>
+
+  <script type="module">
+    import { loadAppData, mountSampleBanner } from '../assets/js/app.js';
+    import { renderPriceBars } from '../assets/js/viz/price-bars.js';
+    import { renderMarketDonut } from '../assets/js/viz/donut.js';
+    import { h, mount } from '../assets/js/dom.js';
+
+    const { competitors, market, pricing } = await loadAppData();
+    mountSampleBanner();
+
+    mount(document.getElementById('market-size'),
+      h('p', {},
+        h('strong', {}, 'TAM: '), `S$${market.market_size.tam_sgd.toLocaleString()} · `,
+        h('strong', {}, 'SAM: '), `S$${market.market_size.sam_sgd.toLocaleString()} · `,
+        h('strong', {}, 'SOM: '), `S$${market.market_size.som_sgd.toLocaleString()}`
+      ),
+      h('p', { style: { fontStyle: 'italic' } }, market.market_size.reasoning),
+      h('p', {}, h('strong', {}, 'Implication: '), market.market_size.implication_for_us)
+    );
+
+    const policyColor = s => s === 'support' ? 'var(--success)' : s === 'against' ? 'var(--danger)' : 'var(--neutral-dark)';
+    mount(document.getElementById('policies'), ...market.policies.map(p =>
+      h('div', { style: { background: 'white', padding: '16px', borderRadius: '8px', marginBottom: '12px', borderLeft: `4px solid ${policyColor(p.sentiment)}` } },
+        h('h3', {}, p.title),
+        h('p', {}, p.body),
+        h('p', { style: { opacity: '0.8' } }, h('strong', {}, 'Implication: '), p.implication_for_us)
+      )
+    ));
+
+    mount(document.getElementById('country-tbody'), ...market.adoption_patterns.country_readiness.map(r =>
+      h('tr', {},
+        h('td', {}, r.country),
+        h('td', {}, String(r.regulatory)),
+        h('td', {}, String(r.tech_maturity)),
+        h('td', {}, String(r.price_tolerance))
+      )
+    ));
+
+    mount(document.getElementById('personas'), ...pricing.personas.map(p =>
+      h('div', { style: { background: 'white', padding: '24px', marginBottom: '16px', borderRadius: '8px', boxShadow: 'var(--shadow-sm)' } },
+        h('h3', {}, p.name),
+        h('p', {}, h('em', {}, p.icp)),
+        h('p', {}, h('strong', {}, 'Pains: '), p.pains.join(' · ')),
+        h('p', {}, h('strong', {}, 'Current workaround: '), p.current_workaround),
+        h('p', {}, h('strong', {}, 'WTP band (S$/mo): '), `${p.wtp_band_sgd.low_anchor} – ${p.wtp_band_sgd.expected} – ${p.wtp_band_sgd.upper_stretch}`),
+        h('p', {}, h('strong', {}, 'NBA: '), p.nba)
+      )
+    ));
+
+    mount(document.getElementById('tiers'), ...pricing.recommended_tiers.map(t =>
+      h('div', { class: 'top5-card' },
+        h('h3', {}, t.name),
+        h('p', { style: { fontSize: '32px', fontWeight: '700', color: 'var(--brand-primary)' } },
+          `S$${t.price_sgd}`, h('span', { style: { fontSize: '14px', fontWeight: '400' } }, '/mo')
+        ),
+        h('p', {}, h('em', {}, t.target_persona)),
+        h('ul', {}, t.what_in.map(i => h('li', {}, i))),
+        h('p', { style: { fontStyle: 'italic', opacity: '0.8' } }, t.psychological_anchor),
+        h('p', {}, h('strong', {}, 'After PSG: '), `S$${t.effective_price_after_psg}/mo`)
+      )
+    ));
+
+    renderMarketDonut({ canvas: document.getElementById('market-donut'), competitors: competitors.competitors });
+    renderPriceBars({ canvas: document.getElementById('price-bars'), competitors: competitors.competitors, ourPriceSgd: pricing.recommended_tiers[1]?.price_sgd });
+  </script>
+</body>
+</html>
