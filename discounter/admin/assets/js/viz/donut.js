@@ -1,5 +1,7 @@
 // donut.js — target-market distribution donut.
 
+const PALETTE = ['#dc2626','#1e293b','#f59e0b','#0ea5e9','#16a34a','#a855f7','#ec4899','#64748b'];
+
 export function renderMarketDonut({ canvas, competitors }) {
   const counts = {};
   for (const c of competitors) for (const m of (c.target_market || [])) {
@@ -11,8 +13,14 @@ export function renderMarketDonut({ canvas, competitors }) {
     type: 'doughnut',
     data: {
       labels: entries.map(e => e[0]),
-      datasets: [{ data: entries.map(e => e[1]), backgroundColor: ['#2E6BFF','#FFB347','#EF4444','#22C55E','#A855F7','#EC4899','#06B6D4','#F59E0B'] }]
+      datasets: [{ data: entries.map(e => e[1]), backgroundColor: PALETTE, borderColor: '#ffffff', borderWidth: 2 }],
     },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '60%',
+      plugins: {
+        legend: { position: 'right', labels: { font: { family: 'Inter', size: 12 }, padding: 12, usePointStyle: true, boxWidth: 8 } },
+        tooltip: { backgroundColor: '#0f172a', padding: 10 },
+      },
+    },
   });
 }

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Competitor Landscape — Discounter + FlashCart</title>
   <link rel="stylesheet" href="assets/css/site.css">
-  <meta name="robots" content="noindex, nofollow">
+  <script src="assets/vendor/chart.umd.js"></script>
 </head>
 <body>
   <nav class="admin-nav">
@@ -18,18 +18,42 @@
   </nav>
 
   <main class="container-wide">
-    <h1>Competitor Landscape</h1>
-    <p id="count-line" style="opacity: 0.7;"></p>
+    <header class="page-header">
+      <div class="artefact-label">ARTIFACT 01 · COMPETITIVE LANDSCAPE</div>
+      <h1>Competitor Landscape</h1>
+      <p class="lead">Singapore FMCG-discount and vitamin-retail competitive set, mapped by threat level, beatability and category. Rest-day shoppers, dorm-canteen incumbents, and digital-pharmacy players grouped against the Discounter + FlashCart wedge.</p>
+    </header>
 
-    <section style="margin: 32px 0;">
-      <h2>Top 5 threats</h2>
+    <section id="kpis" class="kpi-grid"><!-- populated by JS --></section>
+
+    <section class="row-2">
+      <div class="chart-frame">
+        <div class="chart-title">Threat × Beatability map</div>
+        <div class="chart-sub">Each bubble is one competitor. Bubble size = SG market share %. Top-right = high threat &amp; hard to beat — defend posture. Bottom-left = low threat &amp; easy to beat — pass.</div>
+        <div class="chart-canvas" style="height: 420px;"><canvas id="threat-bubble"></canvas></div>
+      </div>
+      <div class="chart-frame">
+        <div class="chart-title">Category mix</div>
+        <div class="chart-sub">Composition of the 37-competitor universe by structural category.</div>
+        <div class="chart-canvas" style="height: 420px;"><canvas id="category-donut"></canvas></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-header">
+        <h2>Top 5 threats</h2>
+        <span class="meta">ranked by threat × (6 − beatability)</span>
+      </div>
       <div id="top5-list"></div>
     </section>
 
     <section>
-      <h2>Full competitor database</h2>
-      <input type="search" class="search-bar" id="search-input" placeholder="Search by name, value prop, HQ, feature...">
-      <div id="filters" style="display: flex; gap: 16px; margin-bottom: 16px;">
+      <div class="section-header">
+        <h2>Full competitor database</h2>
+        <span class="meta" id="count-line"></span>
+      </div>
+      <input type="search" class="search-bar" id="search-input" placeholder="Search by name, value prop, HQ, feature…">
+      <div id="filters" style="display: flex; gap: 12px; margin: 12px 0 16px;">
         <select name="filter-category">
           <option value="">All categories</option>
           <option value="global_incumbent">Global incumbent</option>
@@ -46,14 +70,20 @@
         </select>
         <select name="filter-threatLevelMin">
           <option value="">Any threat level</option>
-          <option value="3">≥ 3</option>
-          <option value="4">≥ 4</option>
-          <option value="5">= 5</option>
+          <option value="3">Threat ≥ 3</option>
+          <option value="4">Threat ≥ 4</option>
+          <option value="5">Threat = 5</option>
         </select>
       </div>
       <table class="competitor-table">
         <thead><tr>
-          <th>Name</th><th>Category</th><th>HQ</th><th>S$/mo</th><th>Threat</th><th>Beatability</th><th>Design</th>
+          <th>Name</th>
+          <th>Category</th>
+          <th>HQ</th>
+          <th>Share</th>
+          <th>Threat</th>
+          <th>Beatability</th>
+          <th>Design</th>
         </tr></thead>
         <tbody id="competitor-tbody"></tbody>
       </table>
@@ -63,33 +93,67 @@
   <script type="module">
     import { loadAppData, mountSampleBanner } from './assets/js/app.js';
     import { wireSearch } from './assets/js/viz/search.js';
+    import { renderThreatBubble, renderCategoryDonut } from './assets/js/viz/bubble.js';
     import { h, mount } from './assets/js/dom.js';
 
     const data = await loadAppData();
     mountSampleBanner();
+
     const comps = data.competitors.competitors;
     const byId = Object.fromEntries(comps.map(c => [c.id, c]));
 
+    /* ---- KPI tiles ---- */
+    const totalShare = comps.reduce((s, c) => s + (c.market_share_estimate_pct || 0), 0);
+    const top1 = [...comps].sort((a,b) => (b.threat_level * (6 - b.beatability)) - (a.threat_level * (6 - a.beatability)))[0];
+    const sgCount = comps.filter(c => c.hq_region === 'SEA').length;
+    const diyCount = comps.filter(c => c.category === 'diy_alternative').length;
+
+    const kpiTile = (label, value, unit, sub, mod) => h('div', { class: `kpi-tile ${mod || ''}` },
+      h('div', { class: 'kpi-label' }, label),
+      h('div', { class: 'kpi-value' }, value, unit ? h('span', { class: 'unit' }, unit) : null),
+      h('div', { class: 'kpi-sub' }, sub)
+    );
+    mount(document.getElementById('kpis'),
+      kpiTile('Competitors mapped', String(comps.length), '', `${sgCount} SEA · ${comps.length - sgCount} non-SEA`, ''),
+      kpiTile('Top threat', top1?.name || '—', '', top1 ? `Threat ${top1.threat_level} · beatability ${top1.beatability}` : '', 'slate'),
+      kpiTile('Mass share covered', totalShare.toFixed(0), '%', 'sum of named SG retail market share', 'accent'),
+      kpiTile('DIY alternatives', String(diyCount), '', 'workers’ status-quo behaviours we must displace', 'success'),
+    );
+
+    /* ---- Charts ---- */
+    renderThreatBubble({ canvas: document.getElementById('threat-bubble'), competitors: comps });
+    renderCategoryDonut({ canvas: document.getElementById('category-donut'), competitors: comps });
+
+    /* ---- Top-5 cards ---- */
     const top5 = data.competitors.top_five.map(t => {
       const c = byId[t.competitor_id];
       return h('div', { class: 'top5-card' },
-        h('span', { class: 'rank' }, String(t.rank)),
-        h('strong', { style: { marginLeft: '12px', fontSize: '18px' } }, c?.name ?? t.competitor_id),
-        h('p', { style: { marginTop: '12px' } }, t.rationale)
+        h('div', { class: 'rank' }, String(t.rank)),
+        h('div', { class: 'body' },
+          h('strong', {}, c?.name ?? t.competitor_id),
+          h('p', {}, t.rationale)
+        )
       );
     });
     mount(document.getElementById('top5-list'), ...top5);
 
+    /* ---- Table rows ---- */
     const tbody = document.getElementById('competitor-tbody');
     const countLine = document.getElementById('count-line');
+
+    const dotRow = (n, kind, max = 5) => {
+      const dots = [];
+      for (let i = 1; i <= max; i++) dots.push(h('span', { class: `dot ${i <= n ? 'on ' + kind : ''}` }));
+      return h('span', { class: 'dot-row', title: `${n}/${max}` }, ...dots);
+    };
     const buildRow = c => h('tr', {},
       h('td', {}, h('a', { href: c.url, target: '_blank', rel: 'noopener' }, c.name)),
-      h('td', {}, c.category),
-      h('td', {}, c.hq),
-      h('td', {}, c.sg_monthly_sgd ?? '—'),
-      h('td', {}, String(c.threat_level)),
-      h('td', {}, String(c.beatability)),
-      h('td', {}, c.website_design_rating ?? '—')
+      h('td', {}, h('span', { class: 'cat-pill', 'data-cat': c.category }, (c.category || '').replace(/_/g, ' '))),
+      h('td', { style: { color: 'var(--ink-3)' } }, c.hq),
+      h('td', { style: { fontFamily: 'var(--font-mono)' } }, c.market_share_estimate_pct != null ? `${c.market_share_estimate_pct}%` : '—'),
+      h('td', {}, dotRow(c.threat_level, 'threat')),
+      h('td', {}, dotRow(c.beatability, 'beatability')),
+      h('td', { style: { color: 'var(--ink-3)' } }, c.website_design_rating != null ? `${c.website_design_rating}/10` : '—')
     );
     wireSearch({
       input: document.getElementById('search-input'),
@@ -98,7 +162,7 @@
       onUpdate: list => {
         mount(tbody, ...list.map(buildRow));
         countLine.textContent = `Showing ${list.length} of ${comps.length} competitors`;
-      }
+      },
     });
   </script>
 </body>
