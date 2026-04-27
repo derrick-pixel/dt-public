@@ -6,6 +6,7 @@
   <title>Market &amp; Pricing — Discounter + FlashCart</title>
   <link rel="stylesheet" href="assets/css/site.css">
   <script src="assets/vendor/chart.umd.js"></script>
+  <meta name="robots" content="noindex, nofollow">
 </head>
 <body>
   <nav class="admin-nav">
@@ -31,10 +32,7 @@
         <span class="meta" id="market-source">research basis</span>
       </div>
       <div class="hero-stats" id="size-stats"></div>
-      <div class="prose-block">
-        <div class="prose-label">DERIVATION</div>
-        <p id="size-reasoning"></p>
-      </div>
+      <div id="deriv-flow"></div>
       <div class="callout">
         <div class="callout-label">Implication for us</div>
         <p id="size-implication"></p>
@@ -156,8 +154,57 @@
       stat('SAM', ms.sam_sgd, 'Share we can realistically reach with current channels and operating model.', 'sam'),
       stat('SOM', ms.som_sgd, 'Year-3 obtainable share — what the deck commits to.', 'som')
     );
-    document.getElementById('size-reasoning').textContent = ms.reasoning;
     document.getElementById('size-implication').textContent = ms.implication_for_us;
+
+    /* ---------- Derivation flow (TAM → SAM → SOM) ---------- */
+    const inputChip = i => h('span', { class: 'deriv-input' },
+      h('span', { class: 'lbl' }, i.label),
+      h('span', { class: 'val' }, i.value),
+    );
+    const stackCard = s => h('div', { class: 'deriv-stack' },
+      h('div', { class: 'deriv-stack-head' },
+        h('div', { class: 'deriv-stack-name' }, s.name),
+        h('div', { class: 'deriv-stack-result' }, s.result_label),
+      ),
+      h('div', { class: 'deriv-stack-source' }, s.source),
+      h('div', { class: 'deriv-inputs' }, ...s.inputs.map(inputChip)),
+      h('div', { class: 'deriv-equation' }, '= ', s.equation),
+    );
+    const stageBlock = (stage, mod) => h('div', { class: `deriv-stage ${mod}` },
+      h('div', { class: 'deriv-stage-head' },
+        h('div', { class: 'left' },
+          h('div', { class: 'deriv-stage-label' }, stage.stage_label),
+          h('p', { class: 'deriv-stage-subtitle' }, stage.subtitle),
+        ),
+        h('div', { class: 'deriv-stage-total' },
+          h('div', { class: 'label' }, 'TOTAL'),
+          h('div', { class: 'value' }, stage.result_label),
+        ),
+      ),
+      h('div', { class: 'deriv-stacks' }, ...stage.stacks.map(stackCard)),
+      h('div', { class: 'deriv-total' },
+        h('span', { class: 'eq' }, stage.total_equation),
+        h('span', { class: 'approx' }, '≈'),
+        h('span', { class: 'total' }, stage.result_label),
+      ),
+    );
+    const stageArrow = label => h('div', { class: 'deriv-arrow' },
+      h('div', { class: 'line' }),
+      h('div', { class: 'head' }),
+      h('div', { class: 'filter-tag' }, label),
+    );
+    const flow = ms.derivation_flow;
+    if (flow) {
+      mount(document.getElementById('deriv-flow'),
+        h('div', { class: 'deriv-flow' },
+          stageBlock(flow.tam, 'tam'),
+          stageArrow('Filter · channel reach'),
+          stageBlock(flow.sam, 'sam'),
+          stageArrow('Filter · Y3 capture'),
+          stageBlock(flow.som, 'som'),
+        ),
+      );
+    }
     if (ms.sources?.length) {
       document.getElementById('market-source').textContent = `${ms.sources.length} source${ms.sources.length>1?'s':''} cited`;
     }

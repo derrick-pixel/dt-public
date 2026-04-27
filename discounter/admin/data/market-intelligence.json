@@ -25,7 +25,113 @@
       { "title": "TWC2 — The Cost of Living for a Migrant Worker in Singapore (2024)", "url": "https://twc2.org.sg/2024/06/01/the-cost-of-living-for-a-migrant-worker-in-singapore/" },
       { "title": "NEA Singapore Food Waste Statistics", "url": "https://www.nea.gov.sg/our-services/waste-management/waste-statistics-and-overall-recycling" }
     ],
-    "implication_for_us": "SOM ceiling of ~SGD 9.6M by Year 3 is meaningful but capped by dormitory access (the 340k worker base is the binding constraint, not SG demand). Pricing must protect margin — Agent 3 should not price the Discounter staples basket below 60% of FairPrice equivalent, because volume is dorm-gated and we cannot escape the constraint by going wider. FlashCart vitamins is a higher-margin secondary engine — its SOM doubles per micro-store opened, so Agent 4 should treat physical store-count as the primary expansion lever after Year 1 dorm penetration is proven."
+    "implication_for_us": "SOM ceiling of ~SGD 9.6M by Year 3 is meaningful but capped by dormitory access (the 340k worker base is the binding constraint, not SG demand). Pricing must protect margin — Agent 3 should not price the Discounter staples basket below 60% of FairPrice equivalent, because volume is dorm-gated and we cannot escape the constraint by going wider. FlashCart vitamins is a higher-margin secondary engine — its SOM doubles per micro-store opened, so Agent 4 should treat physical store-count as the primary expansion lever after Year 1 dorm penetration is proven.",
+    "derivation_flow": {
+      "tam": {
+        "stage_label": "STAGE 1 · TAM",
+        "subtitle": "Total addressable spend across all eligible buyer pools — before any channel filter.",
+        "result_sgd": 1450000000,
+        "result_label": "S$1.45B",
+        "total_equation": "816 + 198 + 430",
+        "stacks": [
+          {
+            "name": "Migrant-worker FMCG → dorms",
+            "source": "MOM FEDA 2024 + NTU/TWC2 cost-of-living survey",
+            "inputs": [
+              { "label": "Dorm workers (FEDA-licensed)", "value": "340,000" },
+              { "label": "Avg discretionary FMCG / mo", "value": "S$200" },
+              { "label": "Months", "value": "12" }
+            ],
+            "equation": "340,000 × S$200 × 12",
+            "result_label": "S$816M"
+          },
+          {
+            "name": "Non-dorm work-permit / S-pass",
+            "source": "MOM Foreign Workforce Numbers Dec 2024",
+            "inputs": [
+              { "label": "FMCG-receptive workers", "value": "110,000" },
+              { "label": "Avg discretionary FMCG / mo", "value": "S$150" },
+              { "label": "Months", "value": "12" }
+            ],
+            "equation": "110,000 × S$150 × 12",
+            "result_label": "S$198M"
+          },
+          {
+            "name": "SG vitamins & OTC supplements",
+            "source": "Euromonitor / Statista 2025 (CAGR 5–7%)",
+            "inputs": [
+              { "label": "SG retail consumer-health spend", "value": "S$430M / yr" }
+            ],
+            "equation": "Direct retail estimate",
+            "result_label": "S$430M"
+          }
+        ]
+      },
+      "sam": {
+        "stage_label": "STAGE 2 · SAM",
+        "subtitle": "Filter applied — only the slice we can actually reach with batched-dorm + flash-sale channels.",
+        "result_sgd": 285000000,
+        "result_label": "S$285M",
+        "total_equation": "245 + 43",
+        "stacks": [
+          {
+            "name": "Dorm FMCG via batched delivery",
+            "source": "Excludes cold-chain & bulky-staples for now",
+            "inputs": [
+              { "label": "Dorm FMCG TAM", "value": "S$816M" },
+              { "label": "Channel reach", "value": "~30%" }
+            ],
+            "equation": "30% × S$816M",
+            "result_label": "S$245M"
+          },
+          {
+            "name": "Vitamins via flash-sale / pop-up",
+            "source": "Reachable through FlashCart format",
+            "inputs": [
+              { "label": "Vitamin TAM", "value": "S$430M" },
+              { "label": "Channel reach", "value": "~10%" }
+            ],
+            "equation": "10% × S$430M",
+            "result_label": "S$43M"
+          }
+        ]
+      },
+      "som": {
+        "stage_label": "STAGE 3 · SOM (Year 3)",
+        "subtitle": "Realistic Year-3 capture under our committed operating model — what the deck signs up to.",
+        "result_sgd": 9600000,
+        "result_label": "S$9.6M",
+        "total_equation": "6.1 + 3.5",
+        "stacks": [
+          {
+            "name": "Discounter — dorm batched delivery",
+            "source": "100 reachable dorms · 60% deliverable share",
+            "inputs": [
+              { "label": "Dorms", "value": "100" },
+              { "label": "Avg workers / dorm", "value": "3,400" },
+              { "label": "Penetration", "value": "25%" },
+              { "label": "Spend × months", "value": "S$200 × 12" },
+              { "label": "Basket capture", "value": "50%" },
+              { "label": "Deliverable share", "value": "60%" }
+            ],
+            "equation": "0.6 × 100 × 3,400 × 25% × S$200 × 12 × 50%",
+            "result_label": "S$6.1M"
+          },
+          {
+            "name": "FlashCart — vitamin pop-ups (Y3)",
+            "source": "Y1 base scaled to 6 micro-stores by Y3",
+            "inputs": [
+              { "label": "Y1 events / mo", "value": "12" },
+              { "label": "Buyers / event", "value": "80" },
+              { "label": "AOV", "value": "S$25" },
+              { "label": "Y3 micro-stores", "value": "6" }
+            ],
+            "equation": "Y1: 12 × 80 × S$25 × 12 ≈ S$290k  →  Y3 scale ≈ S$3.5M",
+            "result_label": "S$3.5M"
+          }
+        ]
+      }
+    }
   },
   "policies": [
     {

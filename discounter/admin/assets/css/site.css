@@ -414,6 +414,186 @@ section { margin-bottom: var(--space-8); }
 }
 .prose-block p:last-child { margin-bottom: 0; }
 
+/* ---------- Derivation flow (TAM → SAM → SOM funnel) ---------- */
+.deriv-flow {
+  display: flex; flex-direction: column;
+  gap: 0;
+  margin: var(--space-5) 0;
+}
+.deriv-stage {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  position: relative;
+  overflow: hidden;
+}
+.deriv-stage + .deriv-arrow + .deriv-stage { margin-top: 0; }
+.deriv-stage.tam { border-top: 4px solid var(--brand-primary); }
+.deriv-stage.sam { border-top: 4px solid var(--brand-secondary); }
+.deriv-stage.som { border-top: 4px solid var(--accent-d); }
+
+.deriv-stage-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: var(--space-5);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px dashed var(--line);
+  margin-bottom: var(--space-5);
+}
+.deriv-stage-head .left { flex: 1; min-width: 0; }
+.deriv-stage-label {
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight: 700;
+  color: var(--ink-3);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  margin-bottom: var(--space-2);
+}
+.deriv-stage.tam .deriv-stage-label { color: var(--brand-primary); }
+.deriv-stage.sam .deriv-stage-label { color: var(--brand-secondary); }
+.deriv-stage.som .deriv-stage-label { color: var(--accent-d); }
+
+.deriv-stage-title { font-size: 22px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; margin-bottom: var(--space-1); }
+.deriv-stage-subtitle { font-size: 13.5px; color: var(--ink-3); line-height: 1.5; max-width: 580px; }
+
+.deriv-stage-total { text-align: right; flex-shrink: 0; }
+.deriv-stage-total .label {
+  font-family: var(--font-mono);
+  font-size: 10px; color: var(--ink-3);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.deriv-stage-total .value {
+  font-family: var(--font-display);
+  font-size: 32px; font-weight: 800; line-height: 1;
+  letter-spacing: -0.025em; color: var(--ink);
+}
+.deriv-stage.tam .deriv-stage-total .value { color: var(--brand-primary); }
+.deriv-stage.sam .deriv-stage-total .value { color: var(--brand-secondary); }
+.deriv-stage.som .deriv-stage-total .value { color: var(--accent-d); }
+
+.deriv-stacks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-4);
+  align-items: stretch;
+  position: relative;
+}
+.deriv-stack {
+  background: linear-gradient(180deg, #ffffff, #fafbfc);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  display: flex; flex-direction: column;
+  gap: var(--space-3);
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+}
+.deriv-stack:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--line-2); }
+
+.deriv-stack-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-3); }
+.deriv-stack-name { font-size: 14px; font-weight: 700; color: var(--ink); line-height: 1.3; }
+.deriv-stack-result {
+  font-family: var(--font-display);
+  font-size: 20px; font-weight: 800; color: var(--ink);
+  letter-spacing: -0.02em; line-height: 1; flex-shrink: 0;
+}
+.deriv-stage.tam .deriv-stack-result { color: var(--brand-primary); }
+.deriv-stage.sam .deriv-stack-result { color: var(--brand-secondary); }
+.deriv-stage.som .deriv-stack-result { color: var(--accent-d); }
+
+.deriv-stack-source {
+  font-size: 11.5px; color: var(--ink-3);
+  font-style: italic; line-height: 1.4;
+  margin-top: -4px;
+}
+
+.deriv-inputs {
+  display: flex; flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--line);
+}
+.deriv-input {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  font-size: 11.5px;
+  display: inline-flex;
+  align-items: baseline; gap: 6px;
+  line-height: 1.3;
+}
+.deriv-input .lbl { color: var(--ink-3); font-weight: 500; }
+.deriv-input .val { color: var(--ink); font-weight: 700; font-family: var(--font-mono); }
+
+.deriv-equation {
+  font-family: var(--font-mono);
+  font-size: 12px; color: var(--ink-2);
+  background: var(--brand-secondary-d);
+  color: #e2e8f0;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  line-height: 1.4;
+  word-break: break-word;
+  margin-top: auto;
+}
+.deriv-stage.tam .deriv-equation { background: #1a1a1a; }
+.deriv-stage.sam .deriv-equation { background: var(--brand-secondary-d); }
+.deriv-stage.som .deriv-equation { background: #1f1611; color: #fde68a; }
+
+.deriv-total {
+  display: flex; justify-content: center; align-items: baseline;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 2px solid var(--ink);
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+.deriv-total .eq { color: var(--ink-3); }
+.deriv-total .approx { color: var(--ink-3); margin: 0 4px; }
+.deriv-total .total {
+  font-family: var(--font-display);
+  font-size: 22px; font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.deriv-stage.tam .deriv-total { border-top-color: var(--brand-primary); }
+.deriv-stage.tam .deriv-total .total { color: var(--brand-primary); }
+.deriv-stage.sam .deriv-total { border-top-color: var(--brand-secondary); }
+.deriv-stage.sam .deriv-total .total { color: var(--brand-secondary); }
+.deriv-stage.som .deriv-total { border-top-color: var(--accent-d); }
+.deriv-stage.som .deriv-total .total { color: var(--accent-d); }
+
+.deriv-arrow {
+  display: flex; flex-direction: column; align-items: center;
+  padding: var(--space-3) 0;
+  position: relative;
+}
+.deriv-arrow .line {
+  width: 2px; height: 28px;
+  background: linear-gradient(180deg, var(--line-2), var(--ink-3));
+}
+.deriv-arrow .filter-tag {
+  position: absolute;
+  top: 50%; transform: translateY(-50%);
+  left: calc(50% + 14px);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-family: var(--font-mono);
+  font-size: 10px; font-weight: 600;
+  color: var(--ink-3);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  white-space: nowrap;
+}
+.deriv-arrow .head {
+  width: 0; height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid var(--ink-3);
+}
+
 /* ---------- Policy / signal cards (sentiment-coloured) ---------- */
 .policy-grid {
   display: grid;
