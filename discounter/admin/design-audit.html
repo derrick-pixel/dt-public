@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Design Audit — Discounter + FlashCart</title>
-  <link rel="stylesheet" href="../assets/css/site.css">
+  <link rel="stylesheet" href="assets/css/site.css">
   <meta name="robots" content="noindex, nofollow">
 </head>
 <body>
@@ -22,8 +22,8 @@
     <div id="gallery" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; margin-top: 32px;"></div>
   </main>
   <script type="module">
-    import { loadAppData, mountSampleBanner } from '../assets/js/app.js';
-    import { h, mount } from '../assets/js/dom.js';
+    import { loadAppData, mountSampleBanner } from 'assets/js/app.js';
+    import { h, mount } from 'assets/js/dom.js';
     const { competitors } = await loadAppData();
     mountSampleBanner();
     const sorted = [...competitors.competitors].sort((a, b) => (b.website_design_rating ?? 0) - (a.website_design_rating ?? 0));
@@ -35,7 +35,7 @@
         ),
         h('p', { style: { opacity: '0.7', fontSize: '13px' } }, c.url),
         c.website_screenshot_path
-          ? h('img', { src: `../${c.website_screenshot_path}`, alt: c.name, style: { width: '100%', borderRadius: '4px', margin: '12px 0' } })
+          ? h('img', { src: c.website_screenshot_path, alt: c.name, style: { width: '100%', borderRadius: '4px', margin: '12px 0' } })
           : null,
         h('p', {}, c.website_design_notes || 'No notes.')
       )
