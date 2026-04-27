@@ -18,32 +18,43 @@
   </nav>
 
   <main class="container-wide">
-    <h1>Whitespace Atlas</h1>
+    <header class="page-header">
+      <div class="artefact-label">ARTIFACT 03 · WHITESPACE ATLAS</div>
+      <h1>Whitespace Atlas</h1>
+      <p class="lead">Where the SG FMCG-discount and vitamin-retail map is structurally vacant — segments × needs no incumbent serves credibly. The strategy canvas, segment-need heatmap, and three numbered attack plans where Discounter + FlashCart can win.</p>
+    </header>
 
-    <section class="radar-container" style="margin-bottom: 48px;">
-      <div class="artefact-label">ARTIFACT 01</div>
-      <h2>STRATEGY CANVAS</h2>
+    <!-- ============ STRATEGY CANVAS ============ -->
+    <section class="radar-container">
+      <div class="artefact-label">CANVAS · COMPETITIVE LINE</div>
+      <h2 style="margin: var(--space-2) 0 var(--space-4);">Strategy canvas</h2>
       <p class="radar-thesis" id="thesis"></p>
       <div style="height: 520px;"><canvas id="radar-canvas"></canvas></div>
     </section>
 
-    <section style="margin-bottom: 48px;">
-      <div class="artefact-label">ARTIFACT 02</div>
-      <h2 id="heatmap-title">SEGMENT × NEED HEATMAP</h2>
-      <p>Each cell: count of competitors genuinely serving that pair (score ≥ 3). Click any cell for detail.</p>
+    <!-- ============ HEATMAP ============ -->
+    <section>
+      <div class="section-header">
+        <h2 id="heatmap-title">Segment × need heatmap</h2>
+        <span class="meta">click any cell</span>
+      </div>
+      <p style="color: var(--ink-3); font-size: 14px; margin-top: -8px; margin-bottom: var(--space-4);">Each cell counts competitors genuinely serving that segment-need pair (score ≥ 3). Lighter = more vacant.</p>
       <div id="heatmap"></div>
       <div class="legend">
-        <span><span class="legend-swatch" style="background: #d8f5c3;"></span>Green 0–1 · white space</span>
-        <span><span class="legend-swatch" style="background: #fde68a;"></span>Amber 2–3 · contested</span>
-        <span><span class="legend-swatch" style="background: #fecaca;"></span>Red 4+ · crowded</span>
+        <span><span class="legend-swatch" style="background: #d1fae5;"></span>Green 0–1 · whitespace</span>
+        <span><span class="legend-swatch" style="background: #fef3c7;"></span>Amber 2–3 · contested</span>
+        <span><span class="legend-swatch" style="background: #fee2e2;"></span>Red 4+ · crowded</span>
       </div>
       <div id="cell-detail" class="cell-detail" style="display: none;"></div>
     </section>
 
+    <!-- ============ ATTACK PLANS ============ -->
     <section>
-      <div class="artefact-label">ARTIFACT 03</div>
-      <h2>ATTACK PLANS</h2>
-      <div id="attack-plans"></div>
+      <div class="section-header">
+        <h2>Attack plans</h2>
+        <span class="meta">3 ranked plays</span>
+      </div>
+      <div class="playbook-grid" id="attack-plans"></div>
     </section>
   </main>
 
@@ -59,7 +70,7 @@
     document.getElementById('thesis').textContent = whitespace.strategy_canvas.headline_thesis;
     renderRadar({ canvas: document.getElementById('radar-canvas'), dimensions: whitespace.strategy_canvas.dimensions, scores: whitespace.strategy_canvas.scores });
 
-    document.getElementById('heatmap-title').textContent = `SEGMENT × NEED HEATMAP — ${whitespace.heatmap.segments.length} × ${whitespace.heatmap.needs.length}`;
+    document.getElementById('heatmap-title').textContent = `Segment × need heatmap — ${whitespace.heatmap.segments.length} × ${whitespace.heatmap.needs.length}`;
     const panel = document.getElementById('cell-detail');
     renderHeatmap({
       container: document.getElementById('heatmap'),
@@ -70,25 +81,54 @@
         panel.style.display = 'block';
         renderCellDetail(panel, detail);
         panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
+      },
     });
 
-    mount(document.getElementById('attack-plans'), ...whitespace.attack_plans.map(p =>
-      h('div', { class: 'attack-card' },
-        h('h3', {}, `#${p.rank} · ${p.niche_name}`),
-        h('p', {}, h('strong', {}, 'ICP: '), p.icp),
-        h('p', {}, h('strong', {}, 'TAM: '), `S$${p.tam_estimate_sgd.toLocaleString()} · `, h('em', {}, p.tam_reasoning)),
-        h('p', {}, h('strong', {}, 'Why gap: '), p.why_gap),
-        h('p', {}, h('strong', {}, 'Why we win: '), p.why_we_win),
-        h('h4', { style: { marginTop: '16px' } }, 'GTM'),
-        h('ul', {},
-          h('li', {}, h('strong', {}, 'Channel: '), p.gtm.channel),
-          h('li', {}, h('strong', {}, 'Pitch: '), p.gtm.pitch),
-          h('li', {}, h('strong', {}, 'Pricing: '), p.gtm.pricing),
-          h('li', {}, h('strong', {}, 'Content: '), p.gtm.content)
+    /* ---------- Playbook cards ---------- */
+    const fmtTAM = n => {
+      if (n >= 1e6) return `S$${(n/1e6).toFixed(n >= 10e6 ? 0 : 1)}M`;
+      if (n >= 1e3) return `S$${(n/1e3).toFixed(0)}k`;
+      return `S$${n}`;
+    };
+    const playbookCard = p => h('div', { class: 'playbook-card' },
+      h('div', { class: 'pb-head' },
+        h('div', { class: 'pb-rank' }, String(p.rank)),
+        h('div', {},
+          h('div', { class: 'pb-title' }, p.niche_name),
+          h('div', { class: 'pb-tam' }, 'TAM ', h('strong', {}, fmtTAM(p.tam_estimate_sgd)))
+        )
+      ),
+      h('div', { class: 'pb-body' },
+        h('div', { class: 'pb-row' },
+          h('div', { class: 'pb-cell' },
+            h('div', { class: 'pb-cell-label' }, 'ICP'),
+            h('p', {}, p.icp)
+          ),
+          h('div', { class: 'pb-cell' },
+            h('div', { class: 'pb-cell-label' }, 'TAM derivation'),
+            h('p', {}, p.tam_reasoning)
+          )
+        ),
+        h('div', { class: 'pb-section' },
+          h('div', { class: 'pb-section-label' }, 'Why the gap exists'),
+          h('p', {}, p.why_gap)
+        ),
+        h('div', { class: 'pb-section' },
+          h('div', { class: 'pb-section-label' }, 'Why we win'),
+          h('p', {}, p.why_we_win)
+        ),
+        h('div', { class: 'pb-section' },
+          h('div', { class: 'pb-section-label' }, 'Go-to-market'),
+          h('div', { class: 'gtm-grid' },
+            h('div', { class: 'gtm-cell' }, h('div', { class: 'gtm-label' }, 'Channel'), h('p', {}, p.gtm.channel)),
+            h('div', { class: 'gtm-cell' }, h('div', { class: 'gtm-label' }, 'Pitch'),   h('p', {}, p.gtm.pitch)),
+            h('div', { class: 'gtm-cell' }, h('div', { class: 'gtm-label' }, 'Pricing'), h('p', {}, p.gtm.pricing)),
+            h('div', { class: 'gtm-cell' }, h('div', { class: 'gtm-label' }, 'Content'), h('p', {}, p.gtm.content))
+          )
         )
       )
-    ));
+    );
+    mount(document.getElementById('attack-plans'), ...whitespace.attack_plans.map(playbookCard));
   </script>
 </body>
 </html>

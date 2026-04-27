@@ -18,22 +18,107 @@
   </nav>
 
   <main class="container-wide">
-    <h1>Market Intelligence</h1>
-    <section><h2>Market size</h2><div id="market-size"></div></section>
-    <section><h2>Policy landscape</h2><div id="policies"></div></section>
+    <header class="page-header">
+      <div class="artefact-label">ARTIFACT 02 · MARKET INTELLIGENCE</div>
+      <h1>Market &amp; Pricing</h1>
+      <p class="lead">SG dorm-FMCG and vitamin-retail addressable size, regulatory tailwinds, cultural and economic signals shaping the Discounter + FlashCart wedge — and the pricing architecture that monetises it.</p>
+    </header>
+
+    <!-- ============ SECTION: MARKET SIZE ============ -->
     <section>
-      <h2>Country readiness</h2>
-      <table class="competitor-table"><thead><tr><th>Country</th><th>Regulatory</th><th>Tech</th><th>Price tolerance</th></tr></thead><tbody id="country-tbody"></tbody></table>
-    </section>
-    <section>
-      <h2>Target-market distribution</h2>
-      <div style="height: 300px;"><canvas id="market-donut"></canvas></div>
+      <div class="section-header">
+        <h2>Market size</h2>
+        <span class="meta" id="market-source">research basis</span>
+      </div>
+      <div class="hero-stats" id="size-stats"></div>
+      <div class="prose-block">
+        <div class="prose-label">DERIVATION</div>
+        <p id="size-reasoning"></p>
+      </div>
+      <div class="callout">
+        <div class="callout-label">Implication for us</div>
+        <p id="size-implication"></p>
+      </div>
     </section>
 
-    <h1 style="margin-top: 64px;">Pricing Strategy</h1>
-    <section><h2>Personas</h2><div id="personas"></div></section>
-    <section><h2>Recommended tiers</h2><div id="tiers" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;"></div></section>
-    <section><h2>Competitor price comparison</h2><div style="height: 500px;"><canvas id="price-bars"></canvas></div></section>
+    <!-- ============ SECTION: POLICY LANDSCAPE ============ -->
+    <section>
+      <div class="section-header">
+        <h2>Policy landscape</h2>
+        <span class="meta">regulatory gravity</span>
+      </div>
+      <div class="policy-grid" id="policies"></div>
+    </section>
+
+    <!-- ============ SECTION: CULTURAL + ECONOMIC SIGNALS ============ -->
+    <section>
+      <div class="section-header">
+        <h2>Cultural &amp; economic signals</h2>
+        <span class="meta">demand pulse</span>
+      </div>
+      <div class="policy-grid" id="signals"></div>
+    </section>
+
+    <!-- ============ SECTION: TRENDS ============ -->
+    <section>
+      <div class="section-header">
+        <h2>Trends shaping the window</h2>
+        <span class="meta">action timing</span>
+      </div>
+      <div class="policy-grid" id="trends"></div>
+    </section>
+
+    <!-- ============ SECTION: COUNTRY READINESS + DONUT ============ -->
+    <section class="row-2">
+      <div class="card card-pad-lg">
+        <div class="section-header" style="margin-bottom: var(--space-3);">
+          <h2 style="font-size:20px;">Country readiness</h2>
+        </div>
+        <table class="country-table">
+          <thead><tr><th>Market</th><th>Regulatory</th><th>Tech</th><th>Price tolerance</th></tr></thead>
+          <tbody id="country-tbody"></tbody>
+        </table>
+      </div>
+      <div class="chart-frame">
+        <div class="chart-title">Target-market distribution</div>
+        <div class="chart-sub">Top 8 buyer-segment frequencies across the 37 mapped competitors.</div>
+        <div class="chart-canvas" style="height: 360px;"><canvas id="market-donut"></canvas></div>
+      </div>
+    </section>
+
+    <!-- ============ DIVIDER -> PRICING ============ -->
+    <header class="page-header" style="margin-top: var(--space-10);">
+      <div class="artefact-label">ARTIFACT 02B · PRICING STRATEGY</div>
+      <h1>Pricing Strategy</h1>
+      <p class="lead">Five buyer personas, five productised tiers — anchored against the canteen-tax (30–50% dorm markup) and rest-day-tax (Sunday queue + bus-fare opportunity cost), not retail RRP.</p>
+    </header>
+
+    <!-- ============ SECTION: PERSONAS ============ -->
+    <section>
+      <div class="section-header">
+        <h2>Buyer personas</h2>
+        <span class="meta">5 ICPs</span>
+      </div>
+      <div class="persona-grid" id="personas"></div>
+    </section>
+
+    <!-- ============ SECTION: RECOMMENDED TIERS ============ -->
+    <section>
+      <div class="section-header">
+        <h2>Recommended tiers</h2>
+        <span class="meta">productised packs</span>
+      </div>
+      <div class="tier-grid" id="tiers"></div>
+    </section>
+
+    <!-- ============ SECTION: PRICE BARS ============ -->
+    <section>
+      <div class="chart-frame">
+        <div class="chart-title">Competitor price comparison</div>
+        <div class="chart-sub">Published S$/month-equivalent for the 20 competitors with public unit pricing. Dashed line = our planned tier midpoint.</div>
+        <div class="chart-canvas" style="height: 480px;"><canvas id="price-bars"></canvas></div>
+      </div>
+    </section>
   </main>
 
   <script type="module">
@@ -45,58 +130,125 @@
     const { competitors, market, pricing } = await loadAppData();
     mountSampleBanner();
 
-    mount(document.getElementById('market-size'),
-      h('p', {},
-        h('strong', {}, 'TAM: '), `S$${market.market_size.tam_sgd.toLocaleString()} · `,
-        h('strong', {}, 'SAM: '), `S$${market.market_size.sam_sgd.toLocaleString()} · `,
-        h('strong', {}, 'SOM: '), `S$${market.market_size.som_sgd.toLocaleString()}`
+    /* ---------- Helpers ---------- */
+    const fmtMoney = n => {
+      if (n >= 1e9) return [n / 1e9, 'B'];
+      if (n >= 1e6) return [n / 1e6, 'M'];
+      if (n >= 1e3) return [n / 1e3, 'k'];
+      return [n, ''];
+    };
+    const renderMoney = n => {
+      const [v, suf] = fmtMoney(n);
+      const num = v >= 100 ? v.toFixed(0) : v.toFixed(v >= 10 ? 0 : 1);
+      return [num + suf];
+    };
+    const sentimentClass = s => s === 'support' ? 'support' : s === 'against' ? 'against' : 'neutral';
+
+    /* ---------- Market size hero ---------- */
+    const ms = market.market_size;
+    const stat = (label, n, sub, mod) => h('div', { class: `hero-stat ${mod || ''}` },
+      h('div', { class: 'label' }, label),
+      h('div', { class: 'value' }, h('span', { class: 'currency' }, 'S$'), ...renderMoney(n)),
+      h('p', { class: 'sub' }, sub)
+    );
+    mount(document.getElementById('size-stats'),
+      stat('TAM', ms.tam_sgd, 'Total addressable spend across all eligible buyers, all geographies in scope.', ''),
+      stat('SAM', ms.sam_sgd, 'Share we can realistically reach with current channels and operating model.', 'sam'),
+      stat('SOM', ms.som_sgd, 'Year-3 obtainable share — what the deck commits to.', 'som')
+    );
+    document.getElementById('size-reasoning').textContent = ms.reasoning;
+    document.getElementById('size-implication').textContent = ms.implication_for_us;
+    if (ms.sources?.length) {
+      document.getElementById('market-source').textContent = `${ms.sources.length} source${ms.sources.length>1?'s':''} cited`;
+    }
+
+    /* ---------- Policy cards ---------- */
+    const policyCard = p => h('div', { class: `policy-card ${sentimentClass(p.sentiment)}` },
+      h('div', { class: 'header' },
+        h('div', { class: 'sentiment-dot' }),
+        h('div', { class: 'header-text' },
+          h('h3', {}, p.title),
+          h('div', { class: 'meta' }, [p.sentiment, p.effective_date].filter(Boolean).join(' · '))
+        )
       ),
-      h('p', { style: { fontStyle: 'italic' } }, market.market_size.reasoning),
-      h('p', {}, h('strong', {}, 'Implication: '), market.market_size.implication_for_us)
+      h('div', { class: 'body' }, h('p', {}, p.body)),
+      h('div', { class: 'implication' }, h('strong', {}, 'Implication: '), p.implication_for_us)
+    );
+    mount(document.getElementById('policies'), ...market.policies.map(policyCard));
+
+    /* ---------- Cultural + economic signals (combined) ---------- */
+    const signalCard = (title, body, implication) => h('div', { class: 'policy-card neutral' },
+      h('div', { class: 'header' },
+        h('div', { class: 'sentiment-dot' }),
+        h('div', { class: 'header-text' },
+          h('h3', {}, title),
+          h('div', { class: 'meta' }, 'signal')
+        )
+      ),
+      h('div', { class: 'body' }, h('p', {}, body)),
+      h('div', { class: 'implication' }, h('strong', {}, 'Implication: '), implication)
+    );
+    const signals = [
+      ...(market.cultural_signals || []).map(s => signalCard(s.observation, s.evidence, s.implication_for_us)),
+      ...(market.economic_signals || []).map(s => signalCard(s.indicator, s.value, s.implication_for_us)),
+    ];
+    mount(document.getElementById('signals'), ...signals);
+
+    /* ---------- Trends ---------- */
+    mount(document.getElementById('trends'), ...(market.trends || []).map(t => signalCard(t.title, t.evidence, t.implication_for_us)));
+
+    /* ---------- Country readiness ---------- */
+    const scoreBar = (n, mod) => {
+      const segs = [];
+      for (let i = 1; i <= 5; i++) segs.push(h('span', { class: `seg ${i <= n ? 'on' : ''}` }));
+      return h('span', { class: `score-bar ${mod || ''}` }, ...segs);
+    };
+    mount(document.getElementById('country-tbody'),
+      ...market.adoption_patterns.country_readiness.map(r =>
+        h('tr', {},
+          h('td', { class: 'country-name' }, r.country),
+          h('td', {}, scoreBar(r.regulatory)),
+          h('td', {}, scoreBar(r.tech_maturity, 'amber')),
+          h('td', {}, scoreBar(r.price_tolerance, 'brand'))
+        )
+      )
     );
 
-    const policyColor = s => s === 'support' ? 'var(--success)' : s === 'against' ? 'var(--danger)' : 'var(--neutral-dark)';
-    mount(document.getElementById('policies'), ...market.policies.map(p =>
-      h('div', { style: { background: 'white', padding: '16px', borderRadius: '8px', marginBottom: '12px', borderLeft: `4px solid ${policyColor(p.sentiment)}` } },
-        h('h3', {}, p.title),
-        h('p', {}, p.body),
-        h('p', { style: { opacity: '0.8' } }, h('strong', {}, 'Implication: '), p.implication_for_us)
-      )
-    ));
-
-    mount(document.getElementById('country-tbody'), ...market.adoption_patterns.country_readiness.map(r =>
-      h('tr', {},
-        h('td', {}, r.country),
-        h('td', {}, String(r.regulatory)),
-        h('td', {}, String(r.tech_maturity)),
-        h('td', {}, String(r.price_tolerance))
-      )
-    ));
-
-    mount(document.getElementById('personas'), ...pricing.personas.map(p =>
-      h('div', { style: { background: 'white', padding: '24px', marginBottom: '16px', borderRadius: '8px', boxShadow: 'var(--shadow-sm)' } },
+    /* ---------- Personas ---------- */
+    const initials = name => name.split(/[\s—-]+/).filter(Boolean).slice(0, 2).map(s => s[0] || '').join('').toUpperCase();
+    const personaCard = (p, idx) => h('div', { class: `persona-card ${idx % 2 ? 'alt' : ''}` },
+      h('div', { class: 'avatar' }, initials(p.name)),
+      h('div', { class: 'body' },
         h('h3', {}, p.name),
-        h('p', {}, h('em', {}, p.icp)),
-        h('p', {}, h('strong', {}, 'Pains: '), p.pains.join(' · ')),
-        h('p', {}, h('strong', {}, 'Current workaround: '), p.current_workaround),
-        h('p', {}, h('strong', {}, 'WTP band (S$/mo): '), `${p.wtp_band_sgd.low_anchor} – ${p.wtp_band_sgd.expected} – ${p.wtp_band_sgd.upper_stretch}`),
-        h('p', {}, h('strong', {}, 'NBA: '), p.nba)
+        h('div', { class: 'icp' }, p.icp),
+        h('div', { class: 'meta-row' },
+          h('div', {}, h('strong', {}, 'Pains'),    Array.isArray(p.pains) ? p.pains.slice(0,2).join('; ') : ''),
+          h('div', {}, h('strong', {}, 'Workaround today'), p.current_workaround || '—'),
+          h('div', {}, h('strong', {}, 'WTP band (S$/mo)'), p.wtp_band_sgd ? `${p.wtp_band_sgd.low_anchor} – ${p.wtp_band_sgd.expected} – ${p.wtp_band_sgd.upper_stretch}` : '—'),
+          h('div', {}, h('strong', {}, 'Next best alternative'), p.nba || '—')
+        )
       )
-    ));
+    );
+    mount(document.getElementById('personas'), ...pricing.personas.map(personaCard));
 
-    mount(document.getElementById('tiers'), ...pricing.recommended_tiers.map(t =>
-      h('div', { class: 'top5-card' },
-        h('h3', {}, t.name),
-        h('p', { style: { fontSize: '32px', fontWeight: '700', color: 'var(--brand-primary)' } },
-          `S$${t.price_sgd}`, h('span', { style: { fontSize: '14px', fontWeight: '400' } }, '/mo')
-        ),
-        h('p', {}, h('em', {}, t.target_persona)),
-        h('ul', {}, t.what_in.map(i => h('li', {}, i))),
-        h('p', { style: { fontStyle: 'italic', opacity: '0.8' } }, t.psychological_anchor),
-        h('p', {}, h('strong', {}, 'After PSG: '), `S$${t.effective_price_after_psg}/mo`)
+    /* ---------- Recommended tiers (fixed grid) ---------- */
+    const tierCard = (t, idx) => h('div', { class: `tier-card ${idx === 1 ? 'featured' : ''}` },
+      h('div', { class: 'tier-name' }, t.name),
+      h('div', { class: 'tier-persona' }, t.target_persona),
+      h('div', { class: 'tier-price' },
+        h('span', { class: 'amount' }, `S$${t.price_sgd}`),
+        h('span', { class: 'per' }, '/mo')
+      ),
+      h('ul', { class: 'tier-list' }, ...t.what_in.map(item => h('li', {}, item))),
+      h('p', { class: 'tier-anchor' }, t.psychological_anchor),
+      h('div', { class: 'tier-foot' },
+        h('span', {}, 'After PSG'),
+        h('strong', {}, `S$${t.effective_price_after_psg}/mo`)
       )
-    ));
+    );
+    mount(document.getElementById('tiers'), ...pricing.recommended_tiers.map(tierCard));
 
+    /* ---------- Charts ---------- */
     renderMarketDonut({ canvas: document.getElementById('market-donut'), competitors: competitors.competitors });
     renderPriceBars({ canvas: document.getElementById('price-bars'), competitors: competitors.competitors, ourPriceSgd: pricing.recommended_tiers[1]?.price_sgd });
   </script>
