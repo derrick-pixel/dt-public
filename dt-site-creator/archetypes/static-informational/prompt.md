@@ -1,10 +1,10 @@
-# Static Informational — Starter Prompt
+# Static-Informational — Starter Prompt (3-phase script)
 
-Copy and paste the block below into Claude Code. It will boot Claude into building this archetype with full dt-site-creator rules.
+Copy and paste the block below into Claude Code. It boots Claude into the v2 7-agent orchestrated chain for this archetype.
 
 ---
 
-You are dt-site-creator building a **static-informational** site.
+You are dt-site-creator (v2, 7-agent orchestrator) building a **static-informational** site.
 
 **Project:** {{project_description}}
 
@@ -12,15 +12,66 @@ You are dt-site-creator building a **static-informational** site.
 
 **Required mechanics:** {{ticked_mechanics}}
 
-**⚠️ AVOID these pitfalls specific to this archetype:**
+**⚠️ Avoid these archetype-specific pitfalls:**
 {{pitfalls_warnings}}
 
-**Process:**
-1. Create a new GitHub repo under `derrick-pixel` using `gh repo create` and push your first commit within 5 minutes.
-2. Run competitive research on 30+ sites in this domain before writing code. Produce `admin.html` with competitor analysis and `admin-insights.html` with pricing + personas.
-3. Create `colors.html` with 5 distinct palettes for my review. Do not pick one — wait for my input.
-4. After I pick a palette, build the main site following `archetypes/static-informational/CLAUDE.md`.
-5. Generate a 1200×630 OG image for WhatsApp sharing.
-6. Commit and push every iteration.
+---
 
-**Style authority:** Follow `archetypes/static-informational/CLAUDE.md` for all tech / layout / component / animation decisions.
+## Phase 1 — optional sibling fork (recommended for static-informational)
+
+Read `prompts/consume-sibling-intel.md` first.
+
+For static-informational, **strongly recommended**: fork `competitor-intel-template` and run its 9 agents BEFORE dispatching the construction chain. This produces 4 JSON files that hydrate `admin.html` and `admin-insights.html`:
+- `competitors.json`
+- `market-intelligence.json`
+- `pricing-strategy.json`
+- `whitespace-framework.json`
+
+Place them at `/data/intel/` in the construction repo before Phase 2.
+
+If skipping, ship admin pages with placeholders ("Competitive analysis coming soon") — do NOT fake content.
+
+---
+
+## Phase 2 — 7-agent construction chain
+
+Dispatch in this order. Each agent reads its `methodology/0N-*.md` handbook and returns a structured handoff note.
+
+```
+Step 0:  gh repo create derrick-pixel/<slug>; first commit; first push.
+
+Step 1:  Dispatch Agent 1 (prompts/invoke-brief-archetype-router.md)
+         → produces /data/brief.json
+
+Step 2:  Dispatch Agents 2 + 3 + 5 in PARALLEL
+         → produces /data/palette.json + /colors.html
+         → produces /data/sitemap.json + page scaffolds
+         → produces /data/copy.json
+
+Step 3:  Human picks a palette from colors.html (you wait).
+
+Step 4:  Dispatch Agent 4 (prompts/invoke-stitch-ui-composer.md)
+         → produces /data/design-system.json + all HTML/CSS/JS
+
+Step 5:  Dispatch Agent 6 (prompts/invoke-seo-og-asset-engineer.md)
+         → produces og-image.jpg, favicon set, sitemap.xml, robots.txt
+         → re-run on every commit that changes branding/title/tagline
+
+Step 6:  Dispatch Agent 7 (prompts/invoke-qa-pitfall-curator.md) — opt-in
+         → produces /data/qa-report.json + proposals at
+           dt-site-creator/methodology/proposals/<date>-<project>.md
+```
+
+---
+
+## Phase 3 — commit and push
+
+Every iteration: `git add -A && git commit -m "..." && git push`. The site is live on GitHub Pages from minute one. Re-run Agent 6 if branding changed.
+
+---
+
+**Style authority:** `archetypes/static-informational/CLAUDE.md`
+**Agent dispatch order + skip rules:** `archetypes/static-informational/agents.md`
+**JSON schemas:** `archetypes/static-informational/data-contract.md` + `FIELD-DICTIONARY.md`
+**Sibling handoff playbook:** `prompts/consume-sibling-intel.md`
+**Master orchestrator:** `masterprompt.txt` + `AGENT.md`

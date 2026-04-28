@@ -1,0 +1,41 @@
+<!--
+  Canonical meta-tag block — inject into <head> of every page.
+  Placeholders: filled by Agent 6 from sitemap.json + brief.json + copy.json + palette.json.
+-->
+
+<!-- SEO -->
+<title>{{global.site_title}} — {{pages.<id>.hero_headline}}</title>
+<meta name="description" content="{{sitemap.pages[<id>].og.description}}" />
+<link rel="canonical" href="{{brief.live_url}}{{sitemap.pages[<id>].path}}" />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{brief.live_url}}{{sitemap.pages[<id>].path}}" />
+<meta property="og:title" content="{{sitemap.pages[<id>].og.title}}" />
+<meta property="og:description" content="{{sitemap.pages[<id>].og.description}}" />
+<meta property="og:image" content="{{brief.live_url}}{{sitemap.pages[<id>].og.image}}" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content="{{og_locale_from_target_geo}}" />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="{{sitemap.pages[<id>].og.title}}" />
+<meta name="twitter:description" content="{{sitemap.pages[<id>].og.description}}" />
+<meta name="twitter:image" content="{{brief.live_url}}{{sitemap.pages[<id>].og.image}}" />
+
+<!-- Geo (if target_geo non-default) -->
+<meta name="geo.region" content="{{brief.target_geo[0]}}" />
+<meta name="geo.placename" content="{{geo_placename_from_target_geo}}" />
+
+<!-- Theme -->
+<meta name="theme-color" content="{{palette.chosen.tokens.--bg}}" />
+
+<!-- Favicons -->
+<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="{{palette.chosen.tokens.--accent}}" />
+<link rel="manifest" href="/site.webmanifest" />

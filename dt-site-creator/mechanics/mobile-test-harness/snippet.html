@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Mobile Test Harness</title>
+<style>
+  body { margin: 0; font: 14px/1.4 system-ui; background: #1a1a1a; color: #e5e5e5; }
+  .toolbar { padding: 12px 24px; background: #0f172a; display: flex; gap: 16px; align-items: center; border-bottom: 1px solid #334155; }
+  .toolbar input { flex: 1; padding: 8px 12px; background: #1e293b; border: 1px solid #334155; color: #e5e5e5; border-radius: 6px; font-size: 14px; }
+  .toolbar button { padding: 8px 16px; background: #38bdf8; color: #0a0f1e; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; }
+  .frames { display: flex; gap: 24px; padding: 24px; flex-wrap: wrap; justify-content: center; }
+  .frame { background: #fff; border-radius: 12px; overflow: hidden; }
+  .frame .label { padding: 8px 12px; background: #0f172a; color: #94a3b8; font-size: 0.78rem; text-align: center; border-bottom: 1px solid #334155; }
+  .frame iframe { display: block; border: none; }
+  .iphone { width: 390px; }      .iphone iframe { width: 390px; height: 844px; }
+  .pixel { width: 412px; }       .pixel iframe { width: 412px; height: 915px; }
+  .ipad { width: 768px; }        .ipad iframe { width: 768px; height: 1024px; }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <strong>Mobile Test Harness</strong>
+  <input type="text" id="url-input" placeholder="https://derrick-pixel.github.io/your-project/" />
+  <button onclick="loadAll()">Reload</button>
+</div>
+
+<div class="frames">
+  <div class="frame iphone">
+    <div class="label">iPhone 13 — 390×844</div>
+    <iframe id="iphone-frame" src=""></iframe>
+  </div>
+  <div class="frame pixel">
+    <div class="label">Pixel 7 — 412×915</div>
+    <iframe id="pixel-frame" src=""></iframe>
+  </div>
+  <div class="frame ipad">
+    <div class="label">iPad — 768×1024</div>
+    <iframe id="ipad-frame" src=""></iframe>
+  </div>
+</div>
+
+<script>
+  // Read URL from query string OR default to current origin
+  const params = new URLSearchParams(location.search);
+  const initialUrl = params.get('url') || location.origin + '/';
+  document.getElementById('url-input').value = initialUrl;
+
+  function loadAll() {
+    const url = document.getElementById('url-input').value;
+    document.getElementById('iphone-frame').src = url;
+    document.getElementById('pixel-frame').src = url;
+    document.getElementById('ipad-frame').src = url;
+  }
+
+  loadAll();
+</script>
+
+</body>
+</html>

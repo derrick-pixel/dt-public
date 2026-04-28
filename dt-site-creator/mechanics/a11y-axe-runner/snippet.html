@@ -1,0 +1,41 @@
+<!--
+  a11y-axe-runner — drop into every page's <body> end, or include via a shared partial.
+  Activates only on localhost OR when ?a11y=1 query param present. Zero shipping cost.
+-->
+
+<script>
+  (function() {
+    if (location.hostname !== 'localhost' && !location.search.includes('a11y=1')) return;
+
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.10.0/axe.min.js';
+    s.onload = function() {
+      window.axe.run(document).then(function(r) {
+        if (r.violations.length === 0) {
+          console.log('%c[a11y] 0 violations', 'color: #34d399; font-weight: bold;');
+          return;
+        }
+        const summary = r.violations.map(function(v) {
+          return { rule: v.id, impact: v.impact, count: v.nodes.length, help: v.help };
+        });
+        console.group('%c[a11y] ' + r.violations.length + ' violations', 'color: #f87171; font-weight: bold;');
+        console.table(summary);
+        r.violations.forEach(function(v) {
+          console.groupCollapsed('[' + v.impact + '] ' + v.id + ' — ' + v.nodes.length + ' node(s)');
+          v.nodes.forEach(function(n) {
+            console.log(n.target.join(' '), '→', n.failureSummary);
+          });
+          console.groupEnd();
+        });
+        console.groupEnd();
+
+        // Surface a banner so dev mode is visible
+        const banner = document.createElement('div');
+        banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#fee2e2;color:#991b1b;padding:8px 16px;font:14px/1.4 system-ui;z-index:99999;text-align:center;';
+        banner.textContent = '[a11y] ' + r.violations.length + ' violation(s) — see console';
+        document.body.appendChild(banner);
+      });
+    };
+    document.head.appendChild(s);
+  })();
+</script>

@@ -1,0 +1,73 @@
+<!--
+  copy-deck.js — drop into /assets/js/copy-deck.js
+  Usage:
+    import { bindCopy } from './assets/js/copy-deck.js';
+    const copy = await (await fetch('/data/copy.json')).json();
+    bindCopy(document.body, copy);
+-->
+
+<script type="module">
+function getNested(obj, path) {
+  return path.split('.').reduce((o, k) => (o == null ? o : o[k]), obj);
+}
+
+// Tiny safe Markdown parser: bold, italic, links. Returns DOM nodes.
+// Does NOT support headings, lists, or any HTML-string injection.
+function parseInlineMd(text) {
+  const out = [];
+  const re = /(\*\*([^*]+)\*\*)|(\*([^*]+)\*)|(\[([^\]]+)\]\(([^)]+)\))/g;
+  let last = 0;
+  for (const m of text.matchAll(re)) {
+    if (m.index > last) out.push(document.createTextNode(text.slice(last, m.index)));
+    if (m[2]) {
+      const b = document.createElement('strong');
+      b.textContent = m[2];
+      out.push(b);
+    } else if (m[4]) {
+      const i = document.createElement('em');
+      i.textContent = m[4];
+      out.push(i);
+    } else if (m[6] && m[7]) {
+      const a = document.createElement('a');
+      a.href = m[7];
+      a.textContent = m[6];
+      out.push(a);
+    }
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) out.push(document.createTextNode(text.slice(last)));
+  return out;
+}
+
+export function bindCopy(target, copy) {
+  // Plain copy: data-copy="path.to.key" — sets textContent
+  target.querySelectorAll('[data-copy]').forEach(el => {
+    const key = el.getAttribute('data-copy');
+    const val = getNested(copy, key);
+    if (val == null) {
+      console.warn('copy-deck: missing key', key);
+      return;
+    }
+    el.textContent = String(val);
+  });
+
+  // Markdown copy: data-copy-md="path.to.key" — parses inline MD safely
+  target.querySelectorAll('[data-copy-md]').forEach(el => {
+    const key = el.getAttribute('data-copy-md');
+    const val = getNested(copy, key);
+    if (val == null) {
+      console.warn('copy-deck: missing key', key);
+      return;
+    }
+    while (el.firstChild) el.removeChild(el.firstChild);
+    parseInlineMd(String(val)).forEach(n => el.appendChild(n));
+  });
+}
+
+// Helper for re-binding after copy mutation
+export async function loadCopy(path = '/data/copy.json') {
+  const res = await fetch(path);
+  if (!res.ok) throw new Error(`copy-deck: ${path} returned ${res.status}`);
+  return res.json();
+}
+</script>

@@ -3,10 +3,28 @@
 The 1200×630 image that appears when someone pastes your URL into WhatsApp, Twitter, LinkedIn, Slack, iMessage, or Discord. Good thumbnails drive 3–5× more clicks than bare links.
 
 ## What it does
-Provides the VISUAL ASSET for link previews. This mechanic covers the *image design + generation*. Its sibling mechanic `og-social-meta` covers the `<meta>` tags that point to this file.
+Provides the VISUAL ASSET for link previews. This mechanic covers the *image design + generation*. Its sibling mechanic `og-social-meta` covers the `<meta>` tags that point to this file. In v2, both are wired together by `meta-tags-generator`.
 
 ## When to plug in
 **Every site, every page where visitors might share the URL.** Core across all 5 archetypes.
+
+## v2 canonical contract (added 2026-04-28)
+
+The contract Agent 6 (SEO / OG / Asset Engineer) enforces:
+
+1. **Filename:** `/og-image.jpg` for homepage. Per-page variants: `/og-image-<page-id>.jpg`.
+2. **Dimensions:** exactly 1200 × 630.
+3. **Format:** JPEG q85, ≤200 KB. Use PNG only if transparency needed (rare for OG).
+4. **Design at 600 px wide:** legible at half-size (mobile preview width). Test by halving in your viewer.
+5. **Regeneration triggers** (any of these → regenerate):
+   - `brief.project_description` changed
+   - `copy.json.global.site_title` or `site_tagline` changed
+   - `palette.json.chosen` changed
+   - `sitemap.json.pages[].nav_label` for homepage changed
+   - >7 days since last gen AND any commit changed visible site copy
+6. **Fingerprint in assets-manifest.json:** `og_images[].generated_at` ISO timestamp ≥ last commit that changed brand. Stale OG is a high-severity pitfall (`seo-stale-og`).
+
+Agent 6 checks the trigger list on every commit. Don't regenerate blindly (wastes CI time and dirties git history); regenerate only when triggered.
 
 ## Trade-offs
 - **Pro:** 3–5× click-through on shared links vs plain text. Free social ad.

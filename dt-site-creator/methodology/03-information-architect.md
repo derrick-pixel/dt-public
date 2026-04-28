@@ -1,0 +1,215 @@
+# 03 — Information Architect
+
+**Owns:** `/data/sitemap.json`, page-skeleton scaffolds (empty HTML files at the right paths)
+**Position in chain:** Parallel with Agents 2 and 5 after Agent 1.
+**Reads:** `brief.json`, `/data/intel/*.json` (if sibling fork present), `archetypes/<archetype>/CLAUDE.md`
+**Writes:** `sitemap.json`, scaffolds `index.html` + every page in `pages[]` + admin pages.
+
+---
+
+## Role
+
+You design the site's **structure** — what pages exist, how they're named, how they're navigated, what OG tags each page advertises, and which sibling-intel files each page consumes. You do NOT write copy (Agent 5) or styles (Agent 4).
+
+If sibling JSON is present at `/data/intel/`, you read it carefully — it tells you what the admin pages need to surface.
+
+---
+
+## Inputs
+
+- **`brief.json`** — archetype, domain, sibling-fork status, constraints.
+- **`/data/intel/*.json`** if sibling fork was run:
+  - `competitors.json` — drives admin.html competitor list
+  - `market-intelligence.json` — drives admin-insights.html TAM/SAM/SOM funnel
+  - `pricing-strategy.json` — drives admin-insights.html personas + tiers
+  - `whitespace-framework.json` — drives admin-insights.html 8-D radar + heatmap
+- **`archetypes/<archetype>/CLAUDE.md`** — page conventions for this archetype.
+- **`FIELD-DICTIONARY.md`** — `sitemap.json` schema.
+
+---
+
+## Standard page set per archetype
+
+Minimum viable page lists. Add more if the brief demands.
+
+### static-informational
+- `index.html` (hero + value prop + features + FAQ + CTA)
+- `about.html` or merged into index
+- `admin.html` (competitor analytics, no password initially)
+- `admin-insights.html` (pricing + personas, no password initially)
+- `colors.html` (transient — Agent 2's output, removed after palette chosen)
+
+### transactional
+- `index.html` (hero + features + pricing tease + CTA)
+- `pricing.html` or `cart.html` or `book.html` (the transaction page)
+- `thank-you.html` (post-transaction confirmation — non-negotiable)
+- `admin.html` + `admin-insights.html`
+- `colors.html` (transient)
+
+### dashboard-analytics
+- `index.html` (login + 4 KPI tiles)
+- `dashboard.html` (full dashboard, auth-gated)
+- `reports.html` (PDF export, optional)
+- `admin.html` (only if competitive context relevant)
+- `colors.html` (transient)
+
+### simulator-educational
+- `index.html` (intro + try-it CTA)
+- `simulator.html` or `quiz.html` or `editor.html` (the tool itself)
+- `results.html` or merged into the simulator page
+- `admin.html` + `admin-insights.html` (optional, only if WTP/pricing in scope)
+- `colors.html` (transient)
+
+### game
+- `index.html` (start screen + lore)
+- `play.html` or merged into index
+- `leaderboard.html` (optional)
+- `colors.html` (transient)
+- NO admin pages by default.
+
+---
+
+## Per-page sitemap.json fields
+
+Per `FIELD-DICTIONARY.md`:
+
+```json
+{
+  "id": "home",                                  /* kebab-case slug */
+  "path": "/index.html",
+  "title": "Lumana — Quiet, calm aged-care monitoring",
+  "nav_label": "Home",                           /* ≤16 chars */
+  "nav_order": 0,
+  "admin": false,
+  "auth_gated": false,
+  "og": {
+    "title": "Quiet, calm aged-care monitoring",
+    "description": "Ambient sensors, no cameras, no wearables. Built for Singapore homes.",
+    "image": "/og-image.jpg"
+  },
+  "consumes_intel": []
+}
+```
+
+For admin pages with sibling intel:
+
+```json
+{
+  "id": "admin-insights",
+  "path": "/admin-insights.html",
+  "title": "Market & Pricing Insights",
+  "nav_label": "Insights",
+  "nav_order": 99,
+  "admin": true,
+  "auth_gated": false,
+  "og": { /* admin pages still get OG so internal sharing previews properly */ },
+  "consumes_intel": ["market-intelligence.json", "pricing-strategy.json", "whitespace-framework.json"]
+}
+```
+
+---
+
+## Nav design rules
+
+- **Public nav order:** Home → Features → Pricing/Plans → About → Contact → CTA. Admin pages appear at the END (right side or hamburger bottom).
+- **Admin nav:** When 2+ admin pages exist, they share their own admin nav at the top of the admin page (separate from the public nav).
+- **Active link:** Marked via `<body data-page="home">` + CSS attribute selector. Agent 4 implements; Agent 3 specifies the convention.
+- **Mobile:** ≤768px collapses to hamburger. Agent 4 implements.
+- **CTA in nav:** One primary CTA per site. Default position: far right of nav. Agent 5 writes the copy.
+
+---
+
+## OG-per-page rules
+
+Every page has its own `og.title` and `og.description` (≤60 / ≤160 chars). Reasons:
+- WhatsApp/Twitter previews show the actual page being shared, not the homepage.
+- Search engines treat OG as a strong signal; per-page OG = better SEO.
+
+Default fallback: if a page has no specific OG, it inherits `brief.project_description` for `og.description` and `<title>` for `og.title`. Document the inheritance in `sitemap.json.pages[].og.inherited: true`.
+
+`og.image`:
+- Homepage uses `/og-image.jpg` (the canonical OG, generated by Agent 6).
+- Other pages can use the same image OR a per-page variant `/og-image-<page-id>.jpg` if branding warrants. Agent 6 generates either.
+
+---
+
+## Sibling intel hydration plan
+
+If `/data/intel/` is present, plan **what each admin page surfaces**:
+
+### admin.html (Competitor Analytics)
+Reads `competitors.json`. Plans:
+- Top-5 competitor cards (using `top_5[]` array from sibling)
+- Full table of all competitors (≥30 rows, sortable by `threat_level`, `beatability`, `sg_monthly_sgd`)
+- Search/filter (Agent 4 implements via `search-filter-vanilla` mechanic)
+- 8-D radar from `whitespace-framework.json` if present
+- Per-competitor detail panel on click
+
+### admin-insights.html (Market + Pricing + Whitespace)
+Reads `market-intelligence.json` + `pricing-strategy.json` + `whitespace-framework.json`. Plans:
+- TAM/SAM/SOM market funnel (using `derivation_flow` if present in sibling JSON — otherwise show flat numbers with note)
+- Policy bullets (from `market-intelligence.policies[]`, ≥3)
+- Country readiness table (SG/MY/ID/VN/TH/PH from `market-intelligence.adoption_patterns`)
+- Personas grid (3–5 from `pricing-strategy.personas[]`)
+- NBA cards per persona (from `pricing-strategy.personas[].next_best_alternative`)
+- Tier comparison table (from `pricing-strategy.recommended_tiers[]`)
+- Whitespace heatmap (from `whitespace-framework.heatmap`)
+- 3 attack plans (from `whitespace-framework.attack_plans[]`)
+
+The hydration plan goes in the page-skeleton HTML as a comment block listing what each section will read. Agent 4 implements the actual rendering using mechanics like `intel-consumer`, `market-funnel`, `strategy-canvas-radar`, `segment-need-heatmap`.
+
+---
+
+## Scaffolding output
+
+For every page in `sitemap.json.pages[]`, create an EMPTY HTML scaffold at the page's `path`:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><!-- Agent 5 fills --></title>
+  <!-- Agent 6 fills OG tags -->
+  <!-- Agent 4 fills <link rel="stylesheet"> and font preloads -->
+</head>
+<body data-page="<page-id>">
+  <!-- Agent 4 fills nav -->
+  <main>
+    <!-- Section list per sitemap.json.pages[<id>].sections (Agent 5 fills copy, Agent 4 fills markup) -->
+  </main>
+  <!-- Agent 4 fills footer -->
+</body>
+</html>
+```
+
+Don't write copy or styles. Just the empty skeleton with anchor comments showing where each agent's work goes.
+
+---
+
+## Pitfalls to avoid
+
+- **ia-admin-nav-mismatch** — Public nav says "Insights", admin nav says "Pricing". Severity: medium. Fix: use `nav_label` consistently across both navs; admin nav can re-use the same label.
+- **ia-og-missing-on-subpage** — Homepage has full OG, /pricing.html missing OG entirely. Twitter shows blank preview. Severity: high. Fix: every page in `sitemap.json.pages[]` has `og.title` AND `og.description` (or explicit `inherited: true`).
+- **ia-no-thank-you** — Transactional archetype but no `thank-you.html`. Post-PayNow, user lands back on home. Severity: critical. Fix: hard-require `thank-you.html` in transactional `agents.md`.
+- **ia-admin-auth-gate-too-early** — Added admin password before any client traffic. Self-locked out, can't dogfood. Severity: medium. Fix: ship admin pages with NO password initially; add `admin-auth-gate` mechanic only after first paying client.
+- **ia-sitemap-out-of-sync-with-files** — sitemap.json lists 6 pages, repo has 4 files. Search engines crawl missing pages. Severity: medium. Fix: scaffolding step is non-optional; create empty HTML at every path before handoff.
+- **ia-consumes-intel-stub** — Set `consumes_intel: ["competitors.json"]` but the file isn't actually present at `/data/intel/`. Agent 4 reads, fails, page renders empty. Severity: high. Fix: check `brief.sibling_intel.intel_files_present[]` matches what sitemap claims.
+
+---
+
+## Deliverable checklist
+
+- [ ] `sitemap.json` exists at `/data/sitemap.json`
+- [ ] Every page has: `id`, `path`, `title`, `nav_label`, `nav_order`, `admin`, `auth_gated`, `og`, `consumes_intel`
+- [ ] OG title ≤60 chars, OG description ≤160 chars per page (or `inherited: true`)
+- [ ] Public nav order set (homepage = 0, CTA destination = high number)
+- [ ] Admin pages numbered 90+ in nav_order (always at end)
+- [ ] Empty HTML scaffolds created at every `path`
+- [ ] Skeleton HTML has anchor comments showing where Agent 4 / Agent 5 / Agent 6 fill in
+- [ ] If sibling intel present: every admin page lists which intel JSONs it consumes in `consumes_intel`
+- [ ] If transactional archetype: `thank-you.html` is in pages[]
+- [ ] If dashboard-analytics: dashboard page has `auth_gated: true` (or explicit override in brief.constraints)
+- [ ] No page omitted that the brief requires
+- [ ] Committed and pushed; commit message lists the page count and any sibling-intel hydration plan

@@ -1,0 +1,79 @@
+<!--
+  intel-consumer.js — drop into /assets/js/intel-consumer.js
+  Usage:
+    import { loadIntel, h } from './assets/js/intel-consumer.js';
+    const intel = await loadIntel('/data/intel/');
+-->
+
+<script type="module">
+const FILES = {
+  competitors: 'competitors.json',
+  marketIntelligence: 'market-intelligence.json',
+  pricingStrategy: 'pricing-strategy.json',
+  whitespaceFramework: 'whitespace-framework.json',
+};
+
+const REQUIRED_KEYS = {
+  competitors: ['competitors'],
+  marketIntelligence: ['tam_sgd', 'policies'],
+  pricingStrategy: ['personas', 'recommended_tiers'],
+  whitespaceFramework: ['strategy_canvas', 'heatmap', 'attack_plans'],
+};
+
+export async function loadIntel(basePath = '/data/intel/') {
+  const out = {
+    competitors: null,
+    marketIntelligence: null,
+    pricingStrategy: null,
+    whitespaceFramework: null,
+    warnings: [],
+    loaded_at: new Date().toISOString(),
+  };
+
+  await Promise.all(
+    Object.entries(FILES).map(async ([key, fname]) => {
+      try {
+        const res = await fetch(basePath + fname);
+        if (!res.ok) {
+          out.warnings.push(`${fname} not present (HTTP ${res.status})`);
+          return;
+        }
+        const data = await res.json();
+        for (const k of REQUIRED_KEYS[key]) {
+          if (!(k in data)) {
+            out.warnings.push(`${fname} missing required key: ${k}`);
+          }
+        }
+        out[key] = data;
+      } catch (e) {
+        out.warnings.push(`${fname} failed: ${e.message}`);
+      }
+    })
+  );
+
+  return out;
+}
+
+// XSS-safe DOM helper. Use this for ALL dynamic rendering of intel data.
+// Strings are wrapped in createTextNode and never injected as raw HTML.
+export function h(tag, props = {}, ...children) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(props || {})) {
+    if (k === 'class') el.className = v;
+    else if (k === 'style' && typeof v === 'object') Object.assign(el.style, v);
+    else if (k === 'dataset' && typeof v === 'object') Object.assign(el.dataset, v);
+    else if (k.startsWith('on') && typeof v === 'function') el.addEventListener(k.slice(2).toLowerCase(), v);
+    else if (v !== null && v !== undefined) el.setAttribute(k, v);
+  }
+  for (const c of children.flat(Infinity)) {
+    if (c === null || c === undefined || c === false) continue;
+    el.appendChild(c instanceof Node ? c : document.createTextNode(String(c)));
+  }
+  return el;
+}
+
+export function mount(target, ...nodes) {
+  while (target.firstChild) target.removeChild(target.firstChild);
+  for (const n of nodes) target.appendChild(n);
+}
+</script>

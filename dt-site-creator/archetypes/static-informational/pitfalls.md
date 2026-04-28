@@ -111,4 +111,249 @@ Scar tissue from past sites. Dashboard parses this file's YAML block.
     Scroll threshold 0.12 with 0.6s transition — no faster.
   lesson: "Animation is a seasoning, not a main course."
   mechanic: null
+
+# ─── v2 categories (added 2026-04-28 with 7-agent paradigm) ──────────────────
+
+- id: brief-archetype-mispick
+  title: "Picked dashboard-analytics for an internal static tool"
+  severity: medium
+  phase: planning
+  story: "Brief said 'internal team needs to see KPIs'. Routed to dashboard-analytics. But there was no live data feed — just a static page with last-quarter numbers. Wasted Next.js + base-ui scaffold."
+  source: "Internal Elitez tool, Apr 2026"
+  fix: |
+    Re-read scoping Q4. "no" means no live data layer. Static-informational with admin auth fits this case.
+    Agent 1 (Brief & Archetype Router) follows the table strictly — overrides need a stated reason.
+  lesson: "Having data ≠ having a data layer. KPIs in a JSON file with last-quarter numbers is static."
+  mechanic: null
+
+- id: brief-no-clarifications
+  title: "Wrote brief.json from a 1-line brief"
+  severity: high
+  phase: planning
+  story: "Brief: 'build a site for X.' Wrote brief.json by inferring all 4 scoping answers. Picked wrong archetype. Downstream chain rebuilt twice."
+  source: "Universal — Agent 1 methodology"
+  fix: |
+    Agent 1 asks up to 3 clarifying questions before writing brief.json if scoping answers can't be derived from the brief.
+    Don't infer — ask.
+  lesson: "Three minutes of questions saves three hours of rework."
+  mechanic: null
+
+- id: brief-sibling-fork-missed
+  title: "Static-informational site shipped without sibling fork"
+  severity: medium
+  phase: planning
+  story: "Built a marketing site. admin.html ended up with platitudes ('we serve our clients well') because no competitive research had been done. Client noticed at review."
+  source: "Universal — Agent 1 methodology"
+  fix: |
+    Default to recommending sibling fork (competitor-intel-template) for static-informational and transactional archetypes.
+    Skip only if Derrick explicitly opts out.
+  lesson: "admin pages are the value prop for marketing sites. Don't ship them empty."
+  mechanic: intel-consumer
+
+- id: palette-five-cyans
+  title: "Five dark cyan variants because it's a tech site"
+  severity: medium
+  phase: planning
+  story: "Generated colors.html with 5 dark cyan/blue palettes. All on the same Mode + Temperature pole. Human had to ask for a re-roll."
+  source: "Universal — Agent 2 methodology"
+  fix: |
+    Walk the 5 diametric axes (Mode, Temperature, Saturation, Hue family, Texture).
+    Variants must span ≥4 of them.
+  lesson: "Diametric means visually distinct, not 5 shades of the same colour."
+  mechanic: palette-tryout
+
+- id: palette-no-card-hi
+  title: "Hover states invisible because --card-hi == --card"
+  severity: low
+  phase: building
+  story: "Picked a palette without realising --card-hi was identical to --card. Card hover lift had no visual change."
+  source: "Universal — Agent 2 methodology"
+  fix: |
+    Require all 12 canonical tokens.
+    --card-hi must differ from --card by ≥4% lightness.
+  lesson: "Tokens that mean different things must look different."
+  mechanic: palette-tryout
+
+- id: palette-bad-contrast
+  title: "Body text fails WCAG AA"
+  severity: high
+  phase: planning
+  story: "Picked --muted too close to --bg. axe scan flagged --muted body copy at 3.2:1, fails AA (need 4.5:1)."
+  source: "Universal — Agent 2 + Agent 7"
+  fix: |
+    Contrast check at palette-pick time:
+    --text vs --bg ≥ 7:1 (AAA body)
+    --muted vs --bg ≥ 4.5:1 (AA body)
+  lesson: "Accessibility starts at palette selection, not at QA."
+  mechanic: palette-tryout
+
+- id: ia-admin-nav-mismatch
+  title: "Admin nav says 'Pricing', public nav says 'Insights'"
+  severity: medium
+  phase: building
+  story: "Same page (admin-insights.html) had two different labels in two navs. Stakeholder clicked back-and-forth confused. Took 20 minutes to spot."
+  source: "Universal — Agent 3 methodology"
+  fix: |
+    Use sitemap.json.pages[].nav_label consistently across both public and admin navs.
+    Admin nav re-uses the same label as public nav for the same page.
+  lesson: "Nav labels are a contract — pick once, apply everywhere."
+  mechanic: null
+
+- id: ia-og-missing-on-subpage
+  title: "/pricing.html shared on Slack, blank preview"
+  severity: high
+  phase: shipping
+  story: "Homepage had full OG. Pricing page had nothing. Shared the pricing URL — Slack showed bare URL with no card."
+  source: "Universal — Agent 3 + Agent 6"
+  fix: |
+    Every page in sitemap.json.pages[] has og.title (≤60 chars) AND og.description (≤160 chars).
+    Or explicit og.inherited: true to use homepage defaults.
+    Agent 6 audits at every commit.
+  lesson: "Per-page OG is not optional in 2026."
+  mechanic: meta-tags-generator
+
+- id: copy-hardcoded-in-html
+  title: "Hero headline hardcoded in index.html"
+  severity: medium
+  phase: building
+  story: "Wrote 'Welcome to Lumana' directly in HTML. Agent 5 had it as a different headline in copy.json. Two sources of truth, drifted."
+  source: "Universal — Agent 4 + Agent 5"
+  fix: |
+    Every string >12 chars rendered on the site lives in copy.json with a key.
+    HTML uses data-copy='path.to.key' to bind.
+    Agent 7 grep-audits HTML for any literal headline.
+  lesson: "Copy in HTML is technical debt the moment you write it."
+  mechanic: copy-deck
+
+- id: copy-no-persona-voice
+  title: "Generic 'AI-powered analytics' hero"
+  severity: high
+  phase: building
+  story: "Wrote hero subhead from imagination instead of reading sibling personas. Result: didn't speak to the buyer. Bounce rate confirmed."
+  source: "Universal — Agent 5 methodology"
+  fix: |
+    If pricing-strategy.json (sibling) exists, identify the dominant persona (highest WTP).
+    Hero subhead names that persona's top pain in their language.
+  lesson: "Speak to a real persona, not 'a SaaS buyer'."
+  mechanic: copy-deck
+
+- id: copy-cta-vague
+  title: "'Get started' with no destination"
+  severity: low
+  phase: building
+  story: "Every CTA was 'Get started', 'Learn more', 'Click here'. Funnel conversion was 30% lower than competitor ranges."
+  source: "Universal — Agent 5 methodology"
+  fix: |
+    Every CTA names the destination action: 'Book a home visit', 'Buy a starter kit', 'Try the simulator'.
+    No 'Click here'.
+  lesson: "Vague CTAs are a tax on conversion."
+  mechanic: null
+
+- id: seo-stale-og
+  title: "OG image two weeks behind the rebrand"
+  severity: high
+  phase: shipping
+  story: "Site rebranded last sprint. og-image.jpg never regenerated. WhatsApp showed old logo + old tagline."
+  source: "Universal — Agent 6 methodology"
+  fix: |
+    Agent 6 checks the regeneration trigger list on every commit:
+    - project_description changed
+    - site_title or site_tagline changed
+    - palette.chosen changed
+    - >7 days since last gen + visible site copy changed
+    Regenerate when triggered. Update assets-manifest.og_images[].generated_at.
+  lesson: "OG image is a published asset, not a build artefact."
+  mechanic: og-thumbnail
+
+- id: seo-missing-favicon-set
+  title: "Only favicon.ico — iOS home screen blurry"
+  severity: medium
+  phase: shipping
+  story: "Shipped with one .ico file. iOS user added to home screen. Icon was blurry default. Looked unfinished."
+  source: "Universal — Agent 6 methodology"
+  fix: |
+    Ship all 8 favicon files via the favicon mechanic.
+    Plus site.webmanifest with theme_color.
+  lesson: "Modern sites need 8 favicons. The .ico era ended in 2014."
+  mechanic: favicon
+
+- id: seo-robots-disallow-everything
+  title: "Copied WIP Disallow:/ to production. Site removed from Google index."
+  severity: critical
+  phase: shipping
+  story: "WIP/mirror sites use Disallow: / to stay out of indexes. Copied that file when scaffolding production. Google deindexed the site within 48h."
+  source: "Universal — Agent 6 methodology"
+  fix: |
+    Production robots.txt: Allow: / + Disallow: /admin/.
+    WIP robots.txt: Disallow: / (separate file, separate origin).
+    Agent 6 confirms which mode the site is in via brief.live_url and explicit constraints.
+  lesson: "Robots.txt is one of the most dangerous files in the repo. Treat with care."
+  mechanic: meta-tags-generator
+
+- id: qa-skipped-axe
+  title: "Site shipped with 12 critical axe violations"
+  severity: critical
+  phase: shipping
+  story: "Skipped accessibility scan because 'site looks fine'. Client's accessibility audit found 12 critical violations. Emergency rework."
+  source: "Universal — Agent 7 methodology"
+  fix: |
+    axe scan is non-optional before pitfall curation begins.
+    0 critical, 0 serious — otherwise QA gate fails and site doesn't ship.
+  lesson: "Looks fine ≠ accessible. Use axe."
+  mechanic: a11y-axe-runner
+
+- id: qa-mobile-not-tested
+  title: "Hamburger broken on actual phone"
+  severity: high
+  phase: shipping
+  story: "Tested in DevTools' phone emulator, looked fine. Real iPhone — hamburger didn't open. Touchstart vs click bug."
+  source: "Universal — Agent 7 methodology"
+  fix: |
+    Test on real device OR via mobile-test-harness mechanic at 3 phone widths.
+    Don't trust DevTools alone.
+  lesson: "Touch is a different input model. Test it on a touch device."
+  mechanic: mobile-test-harness
+
+- id: qa-direct-edit
+  title: "Agent 7 edited pitfalls.md directly, bypassed review"
+  severity: high
+  phase: live
+  story: "Agent 7 wrote new pitfall directly into archetypes/static-informational/pitfalls.md. Skipped the proposals workflow. Human couldn't review or veto."
+  source: "Universal — Agent 7 methodology"
+  fix: |
+    Agent 7 writes proposals to methodology/proposals/<date>-<project>.md ONLY.
+    Human reviews, ✅-marks, and merges. METHODS.md gets a version bump entry.
+  lesson: "The curator proposes; the human disposes."
+  mechanic: null
+
+- id: intel-stale-fork
+  title: "Sibling intel forked 14 months ago"
+  severity: medium
+  phase: live
+  story: "Reused last year's competitor-intel-template fork for a new project. Pricing landscape had shifted. NBA cards showed prices that no longer existed."
+  source: "Universal — sibling consumption"
+  fix: |
+    Refresh sibling intel:
+    - Competitor pricing: every 6 months
+    - Policies: every 12 months
+    - TAM/SAM/SOM: every 12 months unless macro shock
+    - Personas: every 18 months
+    Agent 7 flags stale intel as qa-stale-intel proposal.
+  lesson: "Intel ages. Plan refreshes."
+  mechanic: intel-consumer
+
+- id: intel-partial-files
+  title: "Only competitors.json present, admin-insights renders empty"
+  severity: medium
+  phase: building
+  story: "Forked sibling but only Agent 1 of sibling completed. competitors.json was there; market-intelligence + pricing-strategy + whitespace JSONs missing. admin-insights.html had three blank sections."
+  source: "Universal — sibling consumption"
+  fix: |
+    intel-consumer mechanic surfaces missing files as warnings.
+    Agent 4 either:
+    - renders fallback ('Coming soon — analysis in progress'), OR
+    - omits the dependent admin sections entirely from sitemap.json
+    Don't ship blank sections.
+  lesson: "Partial intel = explicit fallback, not empty divs."
+  mechanic: intel-consumer
 ```
