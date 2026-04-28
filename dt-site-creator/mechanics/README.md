@@ -39,6 +39,12 @@ Cross-archetype reusable building blocks. Each mechanic folder has a 5-file cont
 | 18 | [a11y-axe-runner](./a11y-axe-runner/) | Browser-side axe-core integration (dev-mode banner + Agent 7 batch) | Agent 7 |
 | 19 | [mobile-test-harness](./mobile-test-harness/) | iframe spot-check at iPhone / Pixel / iPad widths | Agent 7 |
 
+## v2.1 mechanics (added 2026-04-29 — SEO rigor track)
+
+| # | ID | Summary | Owned by |
+|---|---|---|---|
+| 20 | [schema-jsonld](./schema-jsonld/) | Schema.org JSON-LD: Organization, WebSite, BreadcrumbList, FAQPage, Product, LocalBusiness, Article, Person | Agent 6 |
+
 See `../METHODS.md` for the full v2 changelog.
 
 ## How Claude uses mechanics

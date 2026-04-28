@@ -4,6 +4,35 @@ Append-only. Every methodology change gets a dated entry. Agent 7 (Pitfall Curat
 
 ---
 
+## v2.1.0 — 2026-04-29 — SEO rigor track (Week 1 of 7)
+
+**Why:** 2026-Q1 audit of 6 dt-site-creator-shipped sites (Lumana, Passage, ELIX EOR, XinceAI, Elitez Pulse, Aevum MRI) found **0 of 6 had any structured data**. The single biggest under-shipped SEO win in vanilla-HTML projects is JSON-LD. Schema-rich pages outrank schema-less peers by 20–35%, and LLM-era search (ChatGPT, Claude, Perplexity citations) parses JSON-LD natively. We must close this gap systematically before more sites ship.
+
+**Scope:** This is Week 1 of a 7-week SEO rigor track. Subsequent weeks add `semantic-html-audit` (Week 2), site-wide audit + ranked fix list (Week 3), top-5-site fixes (Week 4), and `content-publishing` archetype pilot via Astro (Weeks 5–7).
+
+**Added:**
+- `mechanics/schema-jsonld/` — 4-file mechanic with builder functions for 8 schema types: Organization, WebSite (with optional SearchAction), BreadcrumbList, FAQPage, Product, LocalBusiness (and subtypes), Article, Person.
+
+**Changed:**
+- `methodology/06-seo-og-asset-engineer.md` — Agent 6 now owns JSON-LD blocks. Added required-schemas-per-archetype matrix, regeneration triggers, validation flow (Google + Schema.org + Bing), and 4 critical rules (never hand-write, exactly-one-Organization, FAQPage-only-if-primary, LocalBusiness-needs-real-data).
+- Agent 6 deliverable checklist gained 7 new schema-related items.
+
+**Added pitfalls (4):**
+- `seo-no-jsonld` (high) — site has zero structured data
+- `seo-jsonld-stale` (medium) — schema lists old phone/address/price
+- `seo-jsonld-multiple-organization` (high) — two Organization blocks confuses Google
+- `seo-jsonld-broken-syntax` (critical) — trailing comma / smart-quote / unescaped quote disables ALL rich snippets
+
+**Roadmap (next weeks):**
+- Week 2: `semantic-html-audit` mechanic + Agent 7 integration
+- Week 3: SEO audit across 20+ shipped sites; produce ranked fix list
+- Week 4: Fix top 5 sites by SEO score
+- Weeks 5–7: Pilot `content-publishing` archetype using Astro for content-heavy sites
+
+**Backward compatibility:** Existing v2 archetype prompts continue to work. JSON-LD is added at Agent 6 stage, which already runs every commit.
+
+---
+
 ## v2.0.0 — 2026-04-28 — Paradigm shift to 7-agent orchestration
 
 **Why:** competitor-intel-template (sibling repo) introduced 9-agent specialist architecture with handoff contracts, methodology-as-code, and curator loop. Old monolithic `masterprompt.txt` (v1.0, 2026-04-09) couldn't scale to that level of rigour. Adopt the same paradigm here, scoped to construction.

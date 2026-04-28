@@ -3,6 +3,8 @@
 | Mechanic | Fit | Notes |
 |---|---|---|
 | og-social-meta | core | Mandatory |
+| meta-tags-generator | core | Per-page OG/Twitter/canonical/sitemap.xml (v2) |
+| schema-jsonld | recommended | Organization + WebSite + VideoGame (v2.1) |
 | canvas-hero | core | Most games want a visual hero / game canvas |
 | localstorage-state | core | Save game |
 | wizard-form | core | Onboarding / character creation |

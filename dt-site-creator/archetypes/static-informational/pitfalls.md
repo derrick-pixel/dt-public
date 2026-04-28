@@ -356,4 +356,67 @@ Scar tissue from past sites. Dashboard parses this file's YAML block.
     Don't ship blank sections.
   lesson: "Partial intel = explicit fallback, not empty divs."
   mechanic: intel-consumer
+
+# ── SEO rigor track (added 2026-04-29) ─────────────────────────────────────
+
+- id: seo-no-jsonld
+  title: "Site has zero structured data — invisible to LLM crawlers"
+  severity: high
+  phase: shipping
+  story: "2026-Q1 audit of 6 dt-site-creator-shipped sites found 0 of 6 had any JSON-LD. Result: ChatGPT/Claude/Perplexity ground-truth queries about Lumana, Passage, ELIX EOR returned generic competitor descriptions instead of the actual site copy. Google rich-result eligibility was zero across the board."
+  source: "Universal — 2026-04-29 SEO audit"
+  fix: |
+    Use the schema-jsonld mechanic. Minimum:
+    - Organization on every page
+    - WebSite on every page (with optional SearchAction)
+    - Per-page BreadcrumbList for multi-page sites
+    Add archetype-specific schemas: Product (transactional), FAQPage (where FAQ is primary content), LocalBusiness (SG service biz), Person (portfolio).
+    Validate with Google Rich Results Test before declaring done.
+  lesson: "JSON-LD is the cheapest 20–35% SEO uplift available. No build pipeline. ~15 min per site."
+  mechanic: schema-jsonld
+
+- id: seo-jsonld-stale
+  title: "Schema lists last quarter's phone, address, and price"
+  severity: medium
+  phase: live
+  story: "Site changed pricing from $30/mo to $35/mo in copy.json. Hero, pricing page, and OG image all updated. JSON-LD Product offers.price still said 30.00. Customers reading Google Knowledge Panel saw $30 and complained when checkout showed $35."
+  source: "Anticipated — schema is invisible to humans, drifts first"
+  fix: |
+    Agent 6 runs every commit. Add schema regeneration to its trigger list:
+    - brief.json changed → regenerate Organization
+    - copy.json.global changed → regenerate Organization + WebSite
+    - product price changed → regenerate Product
+    - FAQ entry changed → regenerate FAQPage
+    - sitemap.json.pages changed → regenerate BreadcrumbList on affected pages
+    Track schema_validated_at in assets-manifest.json.
+  lesson: "What humans don't see is what drifts first. Automate the regen trigger."
+  mechanic: schema-jsonld
+
+- id: seo-jsonld-multiple-organization
+  title: "Two Organization blocks confuses Google into dropping all rich snippets"
+  severity: high
+  phase: shipping
+  story: "Site had Organization in <head> from schema-jsonld mechanic AND a leftover Organization block in a CMS template footer with old branding (no logo, old name). Google's Rich Results Test flagged 'multiple Organization entities' as a warning. ALL rich snippets disabled site-wide for 2 weeks until detected."
+  source: "Anticipated — common when migrating sites between toolkits"
+  fix: |
+    Exactly ONE Organization per page. Before shipping schema-jsonld:
+    - grep the codebase for application/ld+json — make sure only the new mechanic emits it
+    - check footer templates, theme partials, third-party widgets
+    - if a CMS or template forces an Organization block, override it via the mechanic's clearJsonLd() then renderJsonLd()
+    Run Google Rich Results Test on every commit that touches schema.
+  lesson: "Two Organizations = zero rich snippets. Audit before adding."
+  mechanic: schema-jsonld
+
+- id: seo-jsonld-broken-syntax
+  title: "Trailing comma disables every rich snippet site-wide"
+  severity: critical
+  phase: shipping
+  story: "Hand-typed JSON-LD in an early draft had a trailing comma in the offers object. JSON.parse failed silently in Google's crawler. Site-wide rich-result eligibility dropped to zero. Took 3 days for Google to recrawl after fix."
+  source: "Anticipated — every hand-typed JSON-LD has this risk"
+  fix: |
+    Never hand-write JSON-LD. Always use schema-jsonld builder functions + JSON.stringify(obj, null, 2).
+    The mechanic's renderJsonLd() does this automatically.
+    Validate with https://validator.schema.org/ on any commit that touches schema.
+  lesson: "JSON syntax errors are silent killers. Serialize, never hand-type."
+  mechanic: schema-jsonld
 ```

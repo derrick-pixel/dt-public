@@ -3,6 +3,8 @@
 | Mechanic | Fit | Notes |
 |---|---|---|
 | og-social-meta | core | Mandatory |
+| meta-tags-generator | core | Per-page OG/Twitter/canonical (v2) |
+| schema-jsonld | optional | Organization + WebSite only — admin pages auth-gated, low SEO value (v2.1) |
 | chartjs-dashboard | core | Data visualization backbone |
 | admin-auth-gate | core | Dashboards must be auth-gated |
 | localstorage-state | core | Filter / view preferences |

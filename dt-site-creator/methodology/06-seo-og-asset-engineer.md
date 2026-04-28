@@ -1,9 +1,9 @@
 # 06 — SEO / OG / Asset Engineer
 
-**Owns:** `og-image.jpg`, all favicons, `sitemap.xml`, `robots.txt`, all `<meta>` tags in `<head>`, `/data/assets-manifest.json`
+**Owns:** `og-image.jpg`, all favicons, `sitemap.xml`, `robots.txt`, all `<meta>` tags in `<head>`, **all JSON-LD blocks in `<head>`**, `/data/assets-manifest.json`
 **Position in chain:** Runs every commit (after Agent 4 builds the markup; on every subsequent change).
 **Reads:** `brief.json`, `sitemap.json`, `palette.json`, `copy.json`, `design-system.json`
-**Writes:** OG images, favicon set, sitemap.xml, robots.txt, meta-tag injections, `assets-manifest.json`.
+**Writes:** OG images, favicon set, sitemap.xml, robots.txt, meta-tag injections, JSON-LD scripts, `assets-manifest.json`.
 
 ---
 
@@ -206,6 +206,59 @@ WIP / mirrored sites (`dt-public/<slug>/`): apply `noindex` meta + `Disallow: /`
 
 ---
 
+## Schema.org JSON-LD (added 2026-04-29)
+
+**Mandatory on every page.** Use the `schema-jsonld` mechanic.
+
+JSON-LD is the most under-shipped SEO win in vanilla-HTML sites. It tells Google/Bing/LLM crawlers the typed entity behind each page (Organization, WebSite, Product, FAQPage, etc.) so they don't have to NLP-guess from prose. Schema-rich pages outrank schema-less peers by 20–35% in our 2026-Q1 audit.
+
+### Required schemas per archetype
+
+| Archetype | Always | Often | Sometimes |
+|---|---|---|---|
+| static-informational | Organization + WebSite + per-page BreadcrumbList | LocalBusiness (SG service biz) | FAQPage, Person |
+| transactional | Organization + WebSite + BreadcrumbList + Product (or Service) | FAQPage, LocalBusiness | AggregateRating |
+| simulator-educational | Organization + WebSite + BreadcrumbList | LearningResource per lesson | Article |
+| game | Organization + WebSite + VideoGame | — | — |
+| dashboard-analytics | Organization + WebSite | — | — (admin pages auth-gated, low SEO value) |
+
+### Where to inject
+
+Every page in `sitemap.json.pages[]` (excluding `auth_gated: true` admin pages) gets:
+
+- **Site-wide schemas** (Organization, WebSite, LocalBusiness if applicable) — same on every page
+- **Per-page schemas** (BreadcrumbList for the current page; FAQPage if FAQ is primary content; Product if a product page; Person if a profile page) — varies per page
+
+Use `mechanics/schema-jsonld/snippet.html` builder functions. Inject as `<script type="application/ld+json">` blocks in `<head>`, AFTER `<title>` and meta tags but BEFORE `<link rel="stylesheet">`.
+
+### Regeneration triggers
+
+Regenerate JSON-LD any of these:
+- `brief.json` changed (live_url, project_name, project_description, target_geo)
+- `copy.json.global.site_title` or `site_tagline` changed
+- Any product price changed (transactional sites)
+- Any FAQ entry added/edited (FAQPage sites)
+- New page added to `sitemap.json.pages[]` (BreadcrumbList affects multiple pages)
+- Address/phone/hours changed (LocalBusiness sites)
+
+### Validation (every commit that touched schema)
+
+Run all three:
+1. **Google Rich Results Test** — https://search.google.com/test/rich-results — paste live URL. Confirms schema parses + lists eligible rich-result types + flags errors.
+2. **Schema.org Validator** — https://validator.schema.org/ — broader; catches off-vocabulary properties.
+3. **Bing Markup Validator** — https://www.bing.com/webmaster/tools/markup-validator — Bing parses slightly differently; sanity-check.
+
+When all three pass clean, set `assets-manifest.json.schema_validated_at` to ISO timestamp.
+
+### Critical rules
+
+- **Never hand-write JSON-LD.** Always serialize via `JSON.stringify(obj, null, 2)`. Hand-typed JSON breaks on smart-quotes, trailing commas, or unescaped descriptions — and a broken JSON-LD block disables ALL rich snippets for the page.
+- **Exactly ONE Organization per page.** Two Organization blocks (e.g., one with logo and one without) confuses Google enough to drop ALL rich snippets site-wide.
+- **FAQPage only on pages where FAQ is primary content.** Don't put FAQPage on a marketing page that has one footer FAQ — Google penalizes this.
+- **LocalBusiness needs a real address + phone.** Don't ship `streetAddress: "—"` placeholders to production. Either populate them or use `Organization` instead.
+
+---
+
 ## SEO white-space (sibling-intel pattern)
 
 If `competitors.json` is present, scan their meta descriptions (where available in `competitors[].website_design_notes` or via WebFetch on their URLs). Identify angles competitors don't cover.
@@ -261,6 +314,10 @@ Do at least WhatsApp on every commit that changes branding. Twitter + LinkedIn w
 - **seo-robots-disallow-everything** — Copied a `Disallow: /` from a WIP site to production. Site removed from Google index. Severity: critical. Fix: distinguish WIP (`Disallow: /`) from production (`Allow: /, Disallow: /admin/`).
 - **seo-sitemap-stale** — sitemap.xml lists 4 pages, repo has 6. New pages don't get crawled. Severity: medium. Fix: regenerate sitemap.xml every time `sitemap.json` changes; date-bump `lastmod`.
 - **seo-og-illegible-at-mobile** — OG image typography too thin, illegible at 600px wide. Severity: medium. Fix: design at 600px first, then upscale to 1200×630. Test by viewing at 50%.
+- **seo-no-jsonld** — Site has zero structured data. Severity: high. The default state of every vanilla-HTML site we shipped pre-2026-04. Fix: ship at minimum Organization + WebSite + per-page BreadcrumbList via `schema-jsonld` mechanic.
+- **seo-jsonld-stale** — Schema lists old phone, old address, old price. Severity: medium. Schema is the FIRST thing to drift after a content update because no human visually checks it. Fix: regenerate on every commit that touches `brief.json`, `copy.json`, or product `pricing` fields.
+- **seo-jsonld-multiple-organization** — Two different Organization blocks (one with logo, one without; or one with old name). Severity: high. Confuses Google enough to drop ALL rich snippets. Fix: exactly ONE Organization per page.
+- **seo-jsonld-broken-syntax** — Trailing comma, smart-quotes, unescaped quotes in description. Severity: critical (rich results disabled site-wide). Fix: never hand-write JSON-LD; always serialize via `JSON.stringify(obj, null, 2)`.
 
 ---
 
@@ -280,4 +337,11 @@ Do at least WhatsApp on every commit that changes branding. Twitter + LinkedIn w
 - [ ] Geo meta tags set if `brief.target_geo` is non-default
 - [ ] `assets-manifest.json` updated with all paths and timestamps
 - [ ] WhatsApp preview tested (paste URL, confirm card renders)
+- [ ] Every page has Organization + WebSite JSON-LD (minimum)
+- [ ] Multi-page sites have BreadcrumbList per page
+- [ ] SG service businesses have LocalBusiness (or correct subtype) JSON-LD
+- [ ] Pages with primary FAQ content have FAQPage JSON-LD
+- [ ] Transactional pages with prices have Product JSON-LD
+- [ ] Google Rich Results Test passes clean for at least 3 representative URLs
+- [ ] `assets-manifest.json.schema_validated_at` timestamp updated
 - [ ] Committed and pushed; commit message lists OG-regenerated and any meta drift fixed

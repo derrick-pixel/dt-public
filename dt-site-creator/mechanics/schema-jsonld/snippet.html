@@ -1,0 +1,179 @@
+<!--
+schema-jsonld snippet — drop into <head> as /assets/js/schema-jsonld.js (strip the wrapper).
+
+Two responsibilities:
+  1. Builder functions: pure (input → schema object). Easy to test.
+  2. renderJsonLd(schemas): mounts <script type="application/ld+json"> into <head>.
+
+All builders accept typed inputs (brief, copy, sitemap, ...) and return a plain object.
+The mounting step always uses JSON.stringify to avoid hand-typed-syntax errors.
+
+Idempotent: existing blocks with data-schema-id are replaced, not duplicated.
+-->
+<script type="module">
+// ---- Builders -----------------------------------------------------------
+
+export function buildOrganizationSchema(brief, copy, opts = {}) {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": opts.type || "Organization",
+    "name": copy?.global?.site_title || brief?.project_name,
+    "url": brief?.live_url,
+    "description": copy?.global?.site_tagline || brief?.project_description
+  };
+  if (opts.logo) schema.logo = opts.logo;
+  if (brief?.target_geo?.length) {
+    schema.address = {
+      "@type": "PostalAddress",
+      "addressCountry": brief.target_geo[0],
+      "addressLocality": brief.target_geo[0] === "SG" ? "Singapore" : undefined
+    };
+  }
+  if (opts.sameAs?.length) schema.sameAs = opts.sameAs;
+  if (opts.telephone) schema.telephone = opts.telephone;
+  return schema;
+}
+
+export function buildWebSiteSchema(brief, copy, opts = {}) {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": copy?.global?.site_title || brief?.project_name,
+    "url": brief?.live_url
+  };
+  if (opts.searchUrl) {
+    schema.potentialAction = {
+      "@type": "SearchAction",
+      "target": `${opts.searchUrl}?q={search_term_string}`,
+      "query-input": "required name=search_term_string"
+    };
+  }
+  return schema;
+}
+
+export function buildBreadcrumbSchema(sitemap, currentPageId) {
+  const page = sitemap?.pages?.find(p => p.id === currentPageId);
+  if (!page) return null;
+  const trail = [];
+  trail.push({ "@type": "ListItem", "position": 1, "name": "Home", "item": sitemap.live_url || "/" });
+  if (page.id !== "home") {
+    trail.push({
+      "@type": "ListItem",
+      "position": trail.length + 1,
+      "name": page.nav_label || page.id,
+      "item": (sitemap.live_url || "") + page.path
+    });
+  }
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": trail
+  };
+}
+
+export function buildFaqPageSchema(faqs) {
+  if (!Array.isArray(faqs) || faqs.length === 0) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map(f => ({
+      "@type": "Question",
+      "name": f.q,
+      "acceptedAnswer": { "@type": "Answer", "text": f.a }
+    }))
+  };
+}
+
+export function buildProductSchema(product, brief) {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.name,
+    "description": product.description,
+    "brand": { "@type": "Brand", "name": product.brand || brief?.project_name }
+  };
+  if (product.image) schema.image = product.image;
+  if (product.price) {
+    schema.offers = {
+      "@type": "Offer",
+      "price": String(product.price),
+      "priceCurrency": product.currency || "SGD",
+      "availability": product.availability || "https://schema.org/InStock",
+      "url": product.url
+    };
+  }
+  return schema;
+}
+
+export function buildLocalBusinessSchema(brief, copy, business) {
+  return {
+    "@context": "https://schema.org",
+    "@type": business.subtype || "ProfessionalService",
+    "name": copy?.global?.site_title || brief?.project_name,
+    "image": business.image,
+    "url": brief?.live_url,
+    "telephone": business.telephone,
+    "priceRange": business.priceRange || "$$",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": business.streetAddress,
+      "addressLocality": business.addressLocality || "Singapore",
+      "postalCode": business.postalCode,
+      "addressCountry": business.addressCountry || "SG"
+    },
+    "openingHours": business.openingHours
+  };
+}
+
+export function buildArticleSchema(article, brief, copy) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": article.headline,
+    "image": article.images || [],
+    "datePublished": article.publishedAt,
+    "dateModified": article.modifiedAt || article.publishedAt,
+    "author": { "@type": "Person", "name": article.authorName },
+    "publisher": {
+      "@type": "Organization",
+      "name": copy?.global?.site_title || brief?.project_name,
+      "logo": { "@type": "ImageObject", "url": article.publisherLogo }
+    }
+  };
+}
+
+export function buildPersonSchema(person) {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": person.name,
+    "url": person.url,
+    "jobTitle": person.jobTitle
+  };
+  if (person.image) schema.image = person.image;
+  if (person.worksFor) schema.worksFor = { "@type": "Organization", "name": person.worksFor };
+  if (person.sameAs?.length) schema.sameAs = person.sameAs;
+  return schema;
+}
+
+// ---- Mount --------------------------------------------------------------
+
+const SCHEMA_ID_ATTR = "data-schema-id";
+
+export function renderJsonLd(schemas) {
+  const list = (Array.isArray(schemas) ? schemas : [schemas]).filter(Boolean);
+  list.forEach((schema, i) => {
+    const id = schema["@type"] ? `jsonld-${schema["@type"].toLowerCase()}-${i}` : `jsonld-${i}`;
+    document.querySelectorAll(`script[${SCHEMA_ID_ATTR}="${id}"]`).forEach(n => n.remove());
+    const node = document.createElement("script");
+    node.type = "application/ld+json";
+    node.setAttribute(SCHEMA_ID_ATTR, id);
+    node.textContent = JSON.stringify(schema, null, 2);
+    document.head.appendChild(node);
+  });
+}
+
+export function clearJsonLd() {
+  document.querySelectorAll(`script[type="application/ld+json"][${SCHEMA_ID_ATTR}]`).forEach(n => n.remove());
+}
+</script>

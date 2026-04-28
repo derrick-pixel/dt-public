@@ -5,6 +5,8 @@ Human-readable summary. Authoritative source: each mechanic's `meta.json.fits["s
 | Mechanic | Fit | Notes |
 |---|---|---|
 | og-social-meta | core | Mandatory on every site |
+| meta-tags-generator | core | Per-page OG/Twitter/canonical/sitemap.xml (v2) |
+| schema-jsonld | core | Organization + WebSite + BreadcrumbList minimum (v2.1) |
 | multi-page-scaffold | core | Standard for content-heavy sites |
 | formspree-form | core | Lead capture / contact form for sites without a backend |
 | admin-insights-panel | optional | For strategy-heavy marketing sites (pairs with /admin.html competitor dashboard) |

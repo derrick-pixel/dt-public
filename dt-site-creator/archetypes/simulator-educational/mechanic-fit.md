@@ -3,6 +3,8 @@
 | Mechanic | Fit | Notes |
 |---|---|---|
 | og-social-meta | core | Mandatory |
+| meta-tags-generator | core | Per-page OG/Twitter/canonical/sitemap.xml (v2) |
+| schema-jsonld | recommended | Organization + WebSite + BreadcrumbList; LearningResource per lesson (v2.1) |
 | localstorage-state | core | Draft / progress persistence |
 | wizard-form | core | Input gathering + multi-step flows |
 | multi-page-scaffold | optional | For multi-tool platforms |
