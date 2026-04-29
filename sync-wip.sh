@@ -79,71 +79,8 @@ done
 echo ""
 echo "✓ Source sync complete."
 echo ""
-
-# ────────────────────────────────────────────────────────────────────
-# Worker auto-deploy (Option A)
-# After mirror is updated, also push the same content to the
-# cloudflare/workers-autoconfig branch and redeploy via wrangler.
-# Otherwise the Cloudflare Worker (which serves derrickteo.com) keeps
-# serving its last bundled snapshot.
-# Set TC_SKIP_WORKER=1 to skip this step.
-# Requires: $CLOUDFLARE_API_TOKEN env var (Workers Scripts: Edit + Cache Purge).
-# ────────────────────────────────────────────────────────────────────
-if [ "${TC_SKIP_WORKER}" = "1" ]; then
-  echo "↷ Skipping Worker deploy (TC_SKIP_WORKER=1 set)."
-else
-  if [ -z "${CLOUDFLARE_API_TOKEN}" ]; then
-    echo "⚠ CLOUDFLARE_API_TOKEN not set — skipping Worker deploy."
-    echo "  To deploy: export CLOUDFLARE_API_TOKEN=<token> and re-run."
-  else
-    # Account ID is required for wrangler; the token alone isn't enough
-    # because token-listed accounts need extra permission. Hardcode here:
-    export CLOUDFLARE_ACCOUNT_ID="${CLOUDFLARE_ACCOUNT_ID:-ec75357958e2e6fa472c28052edf4584}"
-    echo "→ Syncing cloudflare/workers-autoconfig branch + deploying dt-public Worker"
-    WORKER_TMP="$(mktemp -d -t dt-public-worker-XXXX)"
-    git clone --quiet "$(git config --get remote.origin.url)" "$WORKER_TMP"
-    # Defensive cleanup — macOS .DS_Store files can block branch checkout
-    # if they exist as untracked files in a state git considers "would be overwritten".
-    find "$WORKER_TMP" -name '.DS_Store' -delete 2>/dev/null || true
-    (
-      cd "$WORKER_TMP" || exit 1
-      git checkout cloudflare/workers-autoconfig 2>&1 | tail -1
-      # Save wrangler config + .assetsignore (these only live in the worker branch)
-      cp wrangler.jsonc /tmp/.wrangler_save.jsonc 2>/dev/null || true
-      cp .assetsignore /tmp/.assetsignore_save 2>/dev/null || true
-      # Replace tree with main
-      git rm -rf -q . > /dev/null 2>&1
-      git checkout main -- .
-      # Restore worker-only config files
-      [ -f /tmp/.wrangler_save.jsonc ] && cp /tmp/.wrangler_save.jsonc wrangler.jsonc
-      [ -f /tmp/.assetsignore_save ] && cp /tmp/.assetsignore_save .assetsignore
-      # Ensure .assetsignore exists (excludes .git etc. from the asset bundle)
-      if [ ! -f .assetsignore ]; then
-        cat > .assetsignore <<'EOF'
-.git/
-.gitignore
-.assetsignore
-node_modules/
-sync-wip.sh
-wip/
-README.md
-.tmp-sync/
-EOF
-      fi
-      git add -A
-      if git diff --cached --quiet; then
-        echo "  No changes to autoconfig branch."
-      else
-        git commit -q -m "Sync autoconfig branch with main (auto via sync-wip.sh)" || true
-        git push -q origin cloudflare/workers-autoconfig 2>&1 | tail -1
-      fi
-      echo "  Deploying via wrangler…"
-      npx --yes wrangler@4 deploy 2>&1 | tail -8
-    )
-    rm -rf "$WORKER_TMP"
-  fi
-fi
-
+echo "  Next: git add -A && git commit -m 'weekly WIP sync' && git push"
 echo ""
-echo "✓ Sync complete."
-echo "  Next (mirror commit): git add -A && git commit -m 'weekly WIP sync' && git push"
+echo "  Deploy is automatic — Cloudflare's GitHub integration on the"
+echo "  dt-public Worker auto-builds + deploys on every push to main."
+echo "  derrickteo.com updates within ~30s of push completing."
