@@ -9,6 +9,23 @@
   <script src="../assets/vendor/chart.umd.js"></script>
   <script src="../assets/vendor/html2canvas.min.js"></script>
   <script src="../assets/vendor/jspdf.umd.min.js"></script>
+<script type="application/ld+json" data-injected="schema-jsonld">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "competitor-intel-template",
+  "url": "https://derrickteo.com/competitor-intel/",
+  "description": "A 9-agent competitive analysis pipeline producing typed JSON handoffs for downstream construction toolkits."
+}
+</script>
+<script type="application/ld+json" data-injected="schema-jsonld">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "competitor-intel-template",
+  "url": "https://derrickteo.com/competitor-intel/"
+}
+</script>
   <meta name="robots" content="noindex, nofollow">
 </head>
 <body>
@@ -27,13 +44,19 @@
       <button id="download-btn" style="padding: 12px 24px; background: var(--brand-primary); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;">Generate PDF</button>
     </div>
     <div id="progress" style="display: none; margin: 16px 0;"><progress id="progress-bar" max="100" value="0" style="width: 100%;"></progress> <span id="progress-text"></span></div>
+    <div id="preflight-fail" style="display: none; margin: 16px 0; padding: 16px; border: 2px solid #b91c1c; background: #fef2f2; border-radius: 8px;">
+      <strong style="color: #b91c1c;">Phase 4 pre-flight failed — PDF not generated.</strong>
+      <ul id="preflight-fail-list" style="margin: 8px 0 0 20px; font-family: var(--font-mono, monospace); font-size: 13px;"></ul>
+      <p style="margin-top: 8px; font-size: 13px;">Fix the violations above (re-dispatch the responsible agent if needed), reload, and try Generate again. See <code>methodology/08-report-generator.md §Pre-flight Phase 4</code>.</p>
+    </div>
     <div id="pdf-root" class="pdf-root"></div>
   </main>
 
   <script type="module">
     import { loadAppData, mountSampleBanner } from '../assets/js/app.js';
     import { buildSections, renderPages } from '../assets/js/report/page-templates.js';
-    import { generatePDF } from '../assets/js/report/pdf-generator.js';
+    import { generatePDF, PreflightError } from '../assets/js/report/pdf-generator.js';
+    import { clear } from '../assets/js/dom.js';
 
     const data = await loadAppData();
     mountSampleBanner();
@@ -43,17 +66,44 @@
     renderPages(root, sections, data);
 
     document.getElementById('download-btn').addEventListener('click', async () => {
+      const btn = document.getElementById('download-btn');
       const progress = document.getElementById('progress');
       const bar = document.getElementById('progress-bar');
       const txt = document.getElementById('progress-text');
+      const failBox = document.getElementById('preflight-fail');
+      const failList = document.getElementById('preflight-fail-list');
+
+      failBox.style.display = 'none';
+      clear(failList);
       progress.style.display = 'block';
+      btn.disabled = true;
+      btn.textContent = 'Generating…';
+
       const slug = data.competitors.meta.project_name.replace(/\s+/g, '-').toLowerCase();
-      await generatePDF({
-        root,
-        filename: `${slug}-competitive-intelligence-${data.competitors.meta.research_date}.pdf`,
-        onProgress: (done, total) => { bar.value = (done / total) * 100; txt.textContent = `Rasterising page ${done} of ${total}…`; }
-      });
-      progress.style.display = 'none';
+      try {
+        await generatePDF({
+          root,
+          data,
+          filename: `${slug}-competitive-intelligence-${data.competitors.meta.research_date}.pdf`,
+          onProgress: (done, total) => { bar.value = (done / total) * 100; txt.textContent = `Rasterising page ${done} of ${total}…`; }
+        });
+      } catch (err) {
+        if (err instanceof PreflightError) {
+          for (const v of err.violations) {
+            const li = document.createElement('li');
+            li.textContent = `[Phase ${v.check}] ${v.message}`;
+            failList.appendChild(li);
+          }
+          failBox.style.display = 'block';
+        } else {
+          alert(`Generate failed: ${err.message}`);
+          console.error(err);
+        }
+      } finally {
+        progress.style.display = 'none';
+        btn.disabled = false;
+        btn.textContent = 'Generate PDF';
+      }
     });
   </script>
 </body>

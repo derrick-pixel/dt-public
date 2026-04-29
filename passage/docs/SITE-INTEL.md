@@ -4,7 +4,7 @@ Source: existing public pages of the Passage repo (`derrick-pixel/Passage`). Thi
 
 ## 1. What Passage actually is
 
-Passage is a **direct-to-consumer transparent casket brand** in Singapore — NOT a full funeral services platform. We sell three casket SKUs at all-in transparent prices (S$800 / S$1,000 / S$1,200 incl. casket + island-wide delivery + venue positioning + GST).
+Passage is a **direct-to-consumer transparent casket brand** in Singapore — NOT a full funeral services platform. We sell three casket SKUs at all-in transparent prices (S$499 / S$999 / S$1,299 incl. casket + island-wide delivery + venue positioning + GST). **Pricing update 2026-04-29**: Serene was repositioned from S$800 to S$499 to function as the lead-gen / compassionate-social headliner — accessible to every Singaporean, with margin cross-subsidised by Tranquil and Eternal plus the 30%-to-charity dividend.
 
 **Mission (verbatim)**: "Because grief is burden enough."
 **Vision (verbatim)**: "Dignity is not a luxury. It is a right."
@@ -26,9 +26,9 @@ Verbatim from `index.html`:
 
 | SKU | Price (all-in) | Material | Comparison vs typical funeral package |
 |---|---|---|---|
-| **Serene** | **S$800** | FSC-certified pine, white satin lining, solid wood handles 6-pt | vs S$2,000–$2,500 (save S$1,200–$1,700) |
-| **Tranquil** *(Most Popular · Best Value)* | **S$1,000** | FSC-certified hardwood blend, ivory velvet lining, brushed nickel handles 6-pt, memory foam pillow, floral arrangement included | vs S$2,800–$3,500 (save S$1,800–$2,500) |
-| **Eternal** *(Premium)* | **S$1,200** | Solid FSC-certified mahogany, burgundy silk + hand-stitched foam, solid brass handles 8-pt, hand-engraved brass nameplate, dedicated care coordinator, priority 2-hour delivery available | vs S$3,500–$4,500 (save S$2,300–$3,300) |
+| **Serene** | **S$499** *(lead-gen / compassionate)* | FSC-certified pine, white satin lining, solid wood handles 6-pt | vs S$2,000–$2,500 (save S$1,501–$2,001) |
+| **Tranquil** *(Most Popular · Best Value)* | **S$999** | FSC-certified hardwood blend, ivory velvet lining, brushed nickel handles 6-pt, memory foam pillow, floral arrangement included | vs S$2,800–$3,500 (save S$1,801–$2,501) |
+| **Eternal** *(Premium)* | **S$1,299** | Solid FSC-certified mahogany, burgundy silk + hand-stitched foam, solid brass handles 8-pt, hand-engraved brass nameplate, dedicated care coordinator, priority 2-hour delivery available | vs S$3,500–$4,500 (save S$2,201–$3,201) |
 
 Every casket includes: island-wide delivery (3 hours std), venue positioning, engraved nameplate, GST. Express delivery surcharge: +S$75 (2hr), +S$150 (1hr emergency). Payment options: cash, PayNow, card on delivery.
 
@@ -66,7 +66,7 @@ Every casket includes: island-wide delivery (3 hours std), venue positioning, en
 
 ## 6. ICPs / target buyer segments (inferred from pages + accreditation)
 
-1. **Cost-conscious bereaved families** — primary. Recently-bereaved Singaporeans facing opaque all-in funeral packages, want transparent S$800-1,200 casket and the rest a-la-carte.
+1. **Cost-conscious bereaved families** — primary. Recently-bereaved Singaporeans facing opaque all-in funeral packages, want transparent S$499-1,200 casket and the rest a-la-carte.
 2. **Eco-conscious / values-driven buyers** — care about FSC timber, local assembly, 60% EV by 2026.
 3. **Anti-pressure / consumer-rights advocates** — refuse to be pressured by funeral directors, want to challenge casket markups.
 4. **Pre-arrangement / senior planners** — living seniors planning ahead, want fixed-price certainty.

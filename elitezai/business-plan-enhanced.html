@@ -37,10 +37,15 @@
     }
 
     .sec-num {
-      font-size: 4rem; font-weight: 900; line-height: 1;
-      background: linear-gradient(135deg, rgba(56,189,248,0.2), rgba(129,140,248,0.2));
+      font-size: 6rem; font-weight: 900; line-height: 1;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      user-select: none;
+      user-select: none; letter-spacing: -0.03em; flex-shrink: 0;
+    }
+    /* Chapter numbers on light-bg sections need a darker visible color */
+    .section-stripe .sec-num {
+      background: linear-gradient(135deg, #0284c7, #6d28d9);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
 
     .card-dark { background: #1e293b; border: 1px solid #334155; border-radius: 16px; }
@@ -151,6 +156,38 @@
 
     /* Section anchor offset for fixed nav */
     [id] { scroll-margin-top: 80px; }
+
+    /* ── Print / PDF optimisation ── */
+    @media print {
+      #booth-bar, #main-nav, #ai-tracker, #progress-bar { display: none !important; }
+      /* Consistent backgrounds — let sections keep their own colors for readability */
+      html, body { background: #0f172a !important; }
+      section { background: #0f172a !important; }
+      section.section-stripe { background: #f8fafc !important; }
+      /* Ensure colors print */
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      /* Let sections flow freely across pages */
+      section { page-break-inside: auto; }
+      /* Keep table rows intact — prevents first-column loss on page breaks */
+      tr { page-break-inside: avoid !important; }
+      thead { display: table-header-group; }
+      /* Keep light-section cards together; allow dark chart cards to flow */
+      .card-light { page-break-inside: avoid; }
+      /* Only avoid breaks inside small stat cards, not large chart containers */
+      .card-dark:not(:has(canvas)) { page-break-inside: avoid; }
+      /* Section chapter headers should stay with their first content block */
+      .flex.items-start.gap-4 { page-break-after: avoid; }
+      /* Tighter section padding in print */
+      section { padding-top: 2rem !important; padding-bottom: 2rem !important; }
+      /* Chapter 11 always starts on a fresh page */
+      .print-break-before { page-break-before: always !important; break-before: page !important; }
+      /* Fix gradient text rendering in PDF — replace clip-text with solid color */
+      h1 .gradient-text {
+        background: none !important;
+        -webkit-text-fill-color: #38bdf8 !important;
+        color: #38bdf8 !important;
+      }
+    }
   </style>
   <!-- Favicon set -->
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
@@ -162,6 +199,23 @@
   <link rel="mask-icon" href="safari-pinned-tab.svg" color="#38bdf8" />
   <meta name="theme-color" content="#0a0f1e" media="(prefers-color-scheme: dark)" />
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<script type="application/ld+json" data-injected="schema-jsonld">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "ElitezAI",
+  "url": "https://derrickteo.com/elitezai/",
+  "description": "Agentic AI workflows for Southeast Asian SMEs. 250 paying clients, 20,000 A/B tests, 577 hours saved per month. MOM-compliant."
+}
+</script>
+<script type="application/ld+json" data-injected="schema-jsonld">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "ElitezAI",
+  "url": "https://derrickteo.com/elitezai/"
+}
+</script>
   <meta name="robots" content="noindex, nofollow">
 </head>
 <body class="bg-slate-950 text-slate-100">
@@ -236,29 +290,16 @@
     </div>
   </div>
 </nav>
+<main>
 
 <!-- ═══════════════════════ HERO ═══════════════════════ -->
-<section class="hero-gradient pt-32 pb-20 px-4">
+<section class="hero-gradient pt-24 pb-12 px-4">
   <div class="max-w-5xl mx-auto text-center">
-    <div class="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-      <span class="text-emerald-400 text-sm font-medium">Business Plan Enhanced by AI · Claude 4.6 · April 2026</span>
-    </div>
-    <!-- AI enhancement callout -->
-    <div class="inline-flex flex-wrap justify-center gap-3 mb-6">
-      <span class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold">+ 3-Scenario Financial Model</span>
-      <span class="px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/30 text-violet-300 text-xs font-semibold">+ Price Elasticity Analysis</span>
-      <span class="px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold">+ Headcount Plan</span>
-      <span class="px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-300 text-xs font-semibold">+ A/B Testing Roadmap</span>
-    </div>
-    <h1 class="text-5xl md:text-6xl font-black mb-6 leading-tight">
+    <h1 class="text-5xl md:text-6xl font-black mb-4 leading-tight">
       Automating the <span class="gradient-text">Intelligent Economy</span><br/>for Southeast Asian SMEs
     </h1>
-    <p class="text-xl text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed">
-      The AI-enhanced edition of the strategic business plan — four critical gaps identified in peer review, now addressed with scenario analysis, elasticity modelling, team planning, and testable hypotheses.
-    </p>
     <!-- Headline metrics -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-6">
       <div class="card-dark p-5 text-center glow-blue">
         <div class="text-3xl font-black gradient-text">S$330M</div>
         <div class="text-slate-400 text-xs mt-1">Year 5 Revenue Target</div>
@@ -276,27 +317,143 @@
         <div class="text-slate-400 text-xs mt-1">Break-Even Point</div>
       </div>
     </div>
-    <!-- Download CTA -->
-    <div class="flex flex-wrap justify-center gap-4">
-      <a href="elitezai-business-plan.pdf" download
-         class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition-all shadow-lg shadow-emerald-900/40 hover:shadow-emerald-900/60 hover:-translate-y-0.5">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
-        </svg>
-        Download PDF · 15-Page Business Plan
+    <!-- Submission details -->
+    <div class="max-w-2xl mx-auto border border-slate-700 rounded-2xl px-6 py-5 bg-slate-800/50 text-center">
+      <div class="flex flex-wrap justify-center items-center gap-2 mb-3">
+        <span class="badge badge-amber">Team 13</span>
+        <span class="text-slate-400 text-xs">·</span>
+        <span class="text-slate-300 text-sm font-semibold">Chicago Booth · Business Analytics · April 2026</span>
+      </div>
+      <div class="flex flex-wrap justify-center gap-x-4 gap-y-1 mb-4">
+        <span class="text-white text-sm font-medium">Derrick Teo</span>
+        <span class="text-slate-600 text-sm">·</span>
+        <span class="text-white text-sm font-medium">Shiyuan Tian</span>
+        <span class="text-slate-600 text-sm">·</span>
+        <span class="text-white text-sm font-medium">Jason Weng</span>
+        <span class="text-slate-600 text-sm">·</span>
+        <span class="text-white text-sm font-medium">Jack Meng</span>
+        <span class="text-slate-600 text-sm">·</span>
+        <span class="text-white text-sm font-medium">Yohei Nakadate</span>
+        <span class="text-slate-600 text-sm">·</span>
+        <span class="text-white text-sm font-medium">Harvey Li</span>
+      </div>
+      <p class="text-slate-400 text-xs italic leading-relaxed">
+        Booth Honor Code: We pledge our honor that we have adhered to the Booth Honor Code during this assignment.
+      </p>
+    </div>
+    <!-- Table of Contents -->
+    <div class="max-w-5xl mx-auto mt-8">
+    <div class="text-center mb-6">
+      <div class="badge badge-blue mb-3">Contents</div>
+      <h2 class="text-2xl font-black text-white">Business Plan Overview</h2>
+      <p class="text-slate-400 text-sm mt-1">11 Chapters</p>
+    </div>
+    <div class="grid md:grid-cols-2 gap-3">
+      <!-- Chapter 01 -->
+      <a href="#exec" class="flex items-center gap-4 card-dark p-4 hover:border-sky-500/50 transition-colors group">
+        <span class="text-3xl font-black gradient-text leading-none flex-shrink-0 w-12 text-center">01</span>
+        <div>
+          <div class="badge badge-blue mb-1">Executive Summary</div>
+          <div class="text-white font-semibold text-sm group-hover:text-sky-300 transition-colors">The Venture in One Page</div>
+        </div>
       </a>
-      <a href="#exec"
-         class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm transition-all border border-slate-700">
-        Read Online ↓
+      <!-- Chapter 02 -->
+      <a href="#problem" class="flex items-center gap-4 card-dark p-4 hover:border-rose-500/50 transition-colors group">
+        <span class="text-3xl font-black leading-none flex-shrink-0 w-12 text-center" style="background:linear-gradient(135deg,#fb7185,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">02</span>
+        <div>
+          <div class="badge badge-rose mb-1">Problem</div>
+          <div class="text-white font-semibold text-sm group-hover:text-rose-300 transition-colors">The SME Productivity Paradox</div>
+        </div>
       </a>
+      <!-- Chapter 03 -->
+      <a href="#solution" class="flex items-center gap-4 card-dark p-4 hover:border-emerald-500/50 transition-colors group">
+        <span class="text-3xl font-black leading-none flex-shrink-0 w-12 text-center" style="background:linear-gradient(135deg,#34d399,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">03</span>
+        <div>
+          <div class="badge badge-green mb-1">Solution</div>
+          <div class="text-white font-semibold text-sm group-hover:text-emerald-300 transition-colors">Agentic AI Workflows</div>
+        </div>
+      </a>
+      <!-- Chapter 04 -->
+      <a href="#customers" class="flex items-center gap-4 card-dark p-4 hover:border-violet-500/50 transition-colors group">
+        <span class="text-3xl font-black leading-none flex-shrink-0 w-12 text-center" style="background:linear-gradient(135deg,#a78bfa,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">04</span>
+        <div>
+          <div class="badge badge-purple mb-1">Customers</div>
+          <div class="text-white font-semibold text-sm group-hover:text-violet-300 transition-colors">Target Market & Buyer Personas</div>
+        </div>
+      </a>
+      <!-- Chapter 05 -->
+      <a href="#market" class="flex items-center gap-4 card-dark p-4 hover:border-amber-500/50 transition-colors group">
+        <span class="text-3xl font-black leading-none flex-shrink-0 w-12 text-center" style="background:linear-gradient(135deg,#fbbf24,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">05</span>
+        <div>
+          <div class="badge badge-amber mb-1">Market</div>
+          <div class="text-white font-semibold text-sm group-hover:text-amber-300 transition-colors">Market Sizing & TAM/SAM/SOM</div>
+        </div>
+      </a>
+      <!-- Chapter 05b -->
+      <a href="#research" class="flex items-center gap-4 card-dark p-4 hover:border-sky-500/50 transition-colors group">
+        <span class="text-3xl font-black gradient-text leading-none flex-shrink-0 w-12 text-center">05b</span>
+        <div>
+          <div class="badge badge-blue mb-1">Research</div>
+          <div class="text-white font-semibold text-sm group-hover:text-sky-300 transition-colors">Market Intelligence & Competitive Landscape</div>
+        </div>
+      </a>
+      <!-- Chapter 06 -->
+      <a href="#competitive" class="flex items-center gap-4 card-dark p-4 hover:border-rose-500/50 transition-colors group">
+        <span class="text-3xl font-black leading-none flex-shrink-0 w-12 text-center" style="background:linear-gradient(135deg,#fb7185,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">06</span>
+        <div>
+          <div class="badge badge-purple mb-1">Competitive</div>
+          <div class="text-white font-semibold text-sm group-hover:text-violet-300 transition-colors">Competitive Positioning & Moat</div>
+        </div>
+      </a>
+      <!-- Chapter 07 -->
+      <a href="#bizmodel" class="flex items-center gap-4 card-dark p-4 hover:border-emerald-500/50 transition-colors group">
+        <span class="text-3xl font-black leading-none flex-shrink-0 w-12 text-center" style="background:linear-gradient(135deg,#34d399,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">07</span>
+        <div>
+          <div class="badge badge-green mb-1">Business Model</div>
+          <div class="text-white font-semibold text-sm group-hover:text-emerald-300 transition-colors">Revenue Streams & Unit Economics</div>
+        </div>
+      </a>
+      <!-- Chapter 08 -->
+      <a href="#gtm" class="flex items-center gap-4 card-dark p-4 hover:border-sky-500/50 transition-colors group">
+        <span class="text-3xl font-black gradient-text leading-none flex-shrink-0 w-12 text-center">08</span>
+        <div>
+          <div class="badge badge-blue mb-1">Go-to-Market</div>
+          <div class="text-white font-semibold text-sm group-hover:text-sky-300 transition-colors">GTM Strategy & Sales Motion</div>
+        </div>
+      </a>
+      <!-- Chapter 09 -->
+      <a href="#financials" class="flex items-center gap-4 card-dark p-4 hover:border-amber-500/50 transition-colors group">
+        <span class="text-3xl font-black leading-none flex-shrink-0 w-12 text-center" style="background:linear-gradient(135deg,#fbbf24,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">09</span>
+        <div>
+          <div class="badge badge-amber mb-1">Financials</div>
+          <div class="text-white font-semibold text-sm group-hover:text-amber-300 transition-colors">5-Year Financial Projections</div>
+        </div>
+      </a>
+      <!-- Chapter 10 -->
+      <a href="#risks" class="flex items-center gap-4 card-dark p-4 hover:border-rose-500/50 transition-colors group">
+        <span class="text-3xl font-black leading-none flex-shrink-0 w-12 text-center" style="background:linear-gradient(135deg,#fb7185,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">10</span>
+        <div>
+          <div class="badge badge-rose mb-1">Risk Register</div>
+          <div class="text-white font-semibold text-sm group-hover:text-rose-300 transition-colors">Risk Analysis & Mitigation</div>
+        </div>
+      </a>
+      <!-- Chapter 11 -->
+      <a href="#aifeedback" class="flex items-center gap-4 card-dark p-4 hover:border-violet-500/50 transition-colors group">
+        <span class="text-3xl font-black leading-none flex-shrink-0 w-12 text-center" style="background:linear-gradient(135deg,#818cf8,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">11</span>
+        <div>
+          <div class="badge badge-purple mb-1">AI Feedback</div>
+          <div class="text-white font-semibold text-sm group-hover:text-violet-300 transition-colors">Peer Review & Strategic Report Card</div>
+        </div>
+      </a>
+    </div>
     </div>
   </div>
 </section>
 
 <!-- ═══════════════════════ 01 EXECUTIVE SUMMARY ═══════════════════════ -->
-<section id="exec" class="py-20 px-4 bg-slate-900">
+<section id="exec" class="py-12 px-4 bg-slate-900">
   <div class="max-w-6xl mx-auto">
-    <div class="flex items-start gap-4 mb-10">
+    <div class="flex items-start gap-4 mb-7">
       <span class="sec-num">01</span>
       <div>
         <div class="badge badge-blue mb-2">Executive Summary</div>
@@ -315,7 +472,7 @@
           The venture is positioned for <strong class="text-white">hypergrowth</strong>: 100 clients Year 1, scaling 3x–4x annually to 15,000 clients and S$330M revenue by Year 5. Competitive moat: <strong class="text-violet-400">Contextualized Implementation</strong> — agents pre-trained on Singapore MOM regulations, GST formulas, and local business rules that generic AI tools cannot replicate.
         </p>
       </div>
-      <div class="space-y-4">
+      <div class="space-y-3">
         <div class="card-dark p-5 border-l-4 border-sky-500">
           <div class="text-slate-400 text-xs uppercase font-bold mb-1">The Gap We Fill</div>
           <div class="text-white text-sm">Midsized SMEs trapped in the "automation plateau" — too complex for DIY tools, too small for enterprise ERP</div>
@@ -338,9 +495,9 @@
 </section>
 
 <!-- ═══════════════════════ 02 PROBLEM ═══════════════════════ -->
-<section id="problem" class="py-20 px-4 section-stripe">
+<section id="problem" class="py-12 px-4 section-stripe">
   <div class="max-w-6xl mx-auto">
-    <div class="flex items-start gap-4 mb-10">
+    <div class="flex items-start gap-4 mb-7">
       <span class="sec-num">02</span>
       <div>
         <div class="badge badge-rose mb-2">Problem</div>
@@ -350,7 +507,7 @@
     </div>
 
     <!-- 3 failure modes -->
-    <div class="grid md:grid-cols-3 gap-6 mb-12">
+    <div class="grid md:grid-cols-3 gap-6 mb-7">
       <div class="card-light p-6 card-hover border-t-4 border-red-400">
         <div class="text-2xl mb-3">🤖</div>
         <h3 class="font-bold text-slate-800 mb-2">Generic AI Fails</h3>
@@ -431,9 +588,9 @@
 </section>
 
 <!-- ═══════════════════════ 03 SOLUTION ═══════════════════════ -->
-<section id="solution" class="py-20 px-4 bg-slate-900">
+<section id="solution" class="py-12 px-4 bg-slate-900">
   <div class="max-w-6xl mx-auto">
-    <div class="flex items-start gap-4 mb-10">
+    <div class="flex items-start gap-4 mb-7">
       <span class="sec-num">03</span>
       <div>
         <div class="badge badge-green mb-2">Solution</div>
@@ -443,7 +600,7 @@
     </div>
 
     <!-- Architecture pillars -->
-    <div class="grid md:grid-cols-3 gap-5 mb-14">
+    <div class="grid md:grid-cols-3 gap-5 mb-8">
       <div class="card-dark p-6 border-t-2 border-sky-500">
         <div class="text-sky-400 text-2xl mb-3">💬</div>
         <h3 class="font-bold text-white mb-2">Conversational Nuance</h3>
@@ -565,9 +722,9 @@
 </section>
 
 <!-- ═══════════════════════ 04 CUSTOMERS ═══════════════════════ -->
-<section id="customers" class="py-20 px-4 section-stripe">
+<section id="customers" class="py-12 px-4 section-stripe">
   <div class="max-w-6xl mx-auto">
-    <div class="flex items-start gap-4 mb-10">
+    <div class="flex items-start gap-4 mb-7">
       <span class="sec-num">04</span>
       <div>
         <div class="badge badge-purple mb-2">Target Customers</div>
@@ -577,7 +734,7 @@
     </div>
 
     <!-- Ideal Customer Profile -->
-    <div class="card-light p-6 mb-10 border-l-4 border-violet-500">
+    <div class="card-light p-6 mb-6 border-l-4 border-violet-500">
       <h3 class="font-bold text-slate-800 mb-4">Early Adopter Profile — Our First 10 Clients</h3>
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
         <div class="flex items-start gap-3"><span class="text-violet-500 mt-0.5 font-bold">✓</span><span class="text-slate-700">Already paying <strong>S$500+/month</strong> for SaaS (Xero, HubSpot, Workato) — proven software buyer</span></div>
@@ -591,7 +748,7 @@
 
     <!-- Buyer persona map -->
     <h3 class="text-xl font-bold text-slate-800 mb-6">Buyer Persona Map — Three Stakeholders to Win</h3>
-    <div class="grid md:grid-cols-3 gap-6 mb-12">
+    <div class="grid md:grid-cols-3 gap-6 mb-7">
       <div class="card-light p-6 card-hover persona-card persona-champion">
         <div class="badge badge-blue mb-3">Champion · Initiates</div>
         <h4 class="font-black text-slate-800 mb-1">Operations / HR Manager</h4>
@@ -680,9 +837,9 @@
 </section>
 
 <!-- ═══════════════════════ 05 MARKET ═══════════════════════ -->
-<section id="market" class="py-20 px-4 bg-slate-900">
+<section id="market" class="py-12 px-4 bg-slate-900">
   <div class="max-w-6xl mx-auto">
-    <div class="flex items-start gap-4 mb-10">
+    <div class="flex items-start gap-4 mb-7">
       <span class="sec-num">05</span>
       <div>
         <div class="badge badge-blue mb-2">Market Opportunity</div>
@@ -693,7 +850,7 @@
 
     <!-- Regional stats table -->
     <h3 class="text-lg font-bold text-white mb-4">SEA SME Landscape — Comparative Overview 2024/25</h3>
-    <div class="overflow-x-auto mb-12">
+    <div class="overflow-x-auto mb-7">
       <table class="w-full text-sm dark-table">
         <thead>
           <tr>
@@ -779,7 +936,7 @@
 </section>
 
 <!-- ═══════════════════════ 05b MARKET RESEARCH & COMPETITIVE INTELLIGENCE ═══════════════════════ -->
-<section id="research" class="py-20 px-4 bg-slate-950">
+<section id="research" class="py-12 px-4 bg-slate-950">
   <div class="max-w-6xl mx-auto">
     <div class="flex items-start gap-4 mb-4">
       <span class="sec-num">05b</span>
@@ -791,14 +948,14 @@
     </div>
 
     <!-- AI Research source bar -->
-    <div class="flex items-center gap-3 mb-10 px-4 py-3 rounded-xl bg-emerald-950/40 border border-emerald-800/40">
+    <div class="flex items-center gap-3 mb-6 px-4 py-3 rounded-xl bg-emerald-950/40 border border-emerald-800/40">
       <span class="w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0 animate-pulse"></span>
       <p class="text-emerald-300 text-xs font-medium">Sources include: IMDA Singapore Digital Economy Report FY2024–25 · Gartner (Aug–Nov 2025) · Statista SEA AI Outlook · EnterpriseSG PSG · Tracxn Jan 2026 · Astute Analytica · Microsoft · TechNode Global</p>
     </div>
 
     <!-- ── MARKET SIZE ── -->
     <h3 class="text-lg font-bold text-white mb-5">Market Size & Growth</h3>
-    <div class="grid md:grid-cols-4 gap-4 mb-10">
+    <div class="grid md:grid-cols-4 gap-4 mb-6">
       <div class="card-dark p-5 border-t-2 border-sky-500">
         <div class="text-2xl font-black text-sky-400 mb-1">US$7.0B</div>
         <div class="text-slate-300 text-sm font-semibold mb-1">SEA SME Software Market (2023)</div>
@@ -827,7 +984,7 @@
 
     <!-- ── AI ADOPTION ── -->
     <h3 class="text-lg font-bold text-white mb-5">Singapore SME AI Adoption</h3>
-    <div class="grid md:grid-cols-3 gap-6 mb-10">
+    <div class="grid md:grid-cols-3 gap-6 mb-6">
       <div class="card-dark p-6">
         <div class="flex items-center justify-between mb-4">
           <span class="text-slate-400 text-xs uppercase tracking-wide font-semibold">AI Adoption — SG SMEs</span>
@@ -872,7 +1029,7 @@
 
     <!-- ── ANALYST PREDICTIONS ── -->
     <h3 class="text-lg font-bold text-white mb-5">Analyst Predictions — Agentic AI</h3>
-    <div class="grid md:grid-cols-2 gap-4 mb-10">
+    <div class="grid md:grid-cols-2 gap-4 mb-6">
       <div class="flex gap-4 p-5 rounded-xl bg-slate-900 border border-slate-800">
         <div class="w-10 h-10 rounded-lg bg-sky-900/40 border border-sky-700/40 flex items-center justify-center flex-shrink-0">
           <span class="text-sky-400 font-black text-xs">G</span>
@@ -1035,9 +1192,9 @@
 </section>
 
 <!-- ═══════════════════════ 06 COMPETITIVE ═══════════════════════ -->
-<section id="competitive" class="py-20 px-4 section-stripe">
+<section id="competitive" class="py-12 px-4 section-stripe">
   <div class="max-w-6xl mx-auto">
-    <div class="flex items-start gap-4 mb-10">
+    <div class="flex items-start gap-4 mb-7">
       <span class="sec-num">06</span>
       <div>
         <div class="badge badge-rose mb-2">Competitive Landscape</div>
@@ -1047,7 +1204,7 @@
     </div>
 
     <!-- Competitor table -->
-    <div class="overflow-x-auto mb-10">
+    <div class="overflow-x-auto mb-6">
       <table class="w-full text-sm border-collapse">
         <thead>
           <tr class="bg-slate-800 text-slate-300 text-xs uppercase tracking-wide">
@@ -1112,9 +1269,9 @@
 </section>
 
 <!-- ═══════════════════════ 07 BUSINESS MODEL ═══════════════════════ -->
-<section id="bizmodel" class="py-20 px-4 bg-slate-900">
+<section id="bizmodel" class="py-12 px-4 bg-slate-900">
   <div class="max-w-6xl mx-auto">
-    <div class="flex items-start gap-4 mb-10">
+    <div class="flex items-start gap-4 mb-7">
       <span class="sec-num">07</span>
       <div>
         <div class="badge badge-amber mb-2">Business Model</div>
@@ -1123,11 +1280,11 @@
       </div>
     </div>
 
-    <div class="grid md:grid-cols-2 gap-8 mb-12">
+    <div class="grid md:grid-cols-2 gap-8 mb-7">
       <!-- Pricing tiers -->
       <div>
         <h3 class="text-lg font-bold text-white mb-5">Pricing Architecture</h3>
-        <div class="space-y-4">
+        <div class="space-y-3">
           <div class="card-dark p-6 border-l-4 border-amber-400">
             <div class="flex justify-between items-start mb-2">
               <div>
@@ -1171,7 +1328,7 @@
       <div>
         <h3 class="text-lg font-bold text-white mb-5">Unit Economics &amp; Cost Structure</h3>
         <div class="card-dark p-6">
-          <div class="space-y-4">
+          <div class="space-y-3">
             <div>
               <div class="flex justify-between text-sm mb-1">
                 <span class="text-slate-300">API Token Usage (COGS)</span>
@@ -1327,7 +1484,7 @@
         </div>
 
         <!-- Implications -->
-        <div class="space-y-4">
+        <div class="space-y-3">
           <div class="bg-emerald-950/50 border border-emerald-800/50 rounded-xl p-4">
             <div class="text-emerald-400 font-bold text-sm mb-2">Key Finding: Inelastic in the S$297–S$1,000 Range</div>
             <p class="text-slate-400 text-sm">Elasticity of −0.26 to −0.29 confirms SMEs see this as a necessity purchase, not discretionary spend. A price increase from S$297 to S$500 (+68%) reduces demand by only 17.6% — net revenue <em>increases</em>.</p>
@@ -1351,9 +1508,9 @@
 </section>
 
 <!-- ═══════════════════════ 08 GTM ═══════════════════════ -->
-<section id="gtm" class="py-20 px-4 section-stripe">
+<section id="gtm" class="py-12 px-4 section-stripe">
   <div class="max-w-6xl mx-auto">
-    <div class="flex items-start gap-4 mb-10">
+    <div class="flex items-start gap-4 mb-7">
       <span class="sec-num">08</span>
       <div>
         <div class="badge badge-purple mb-2">Go-to-Market Strategy</div>
@@ -1363,7 +1520,7 @@
     </div>
 
     <!-- 3-phase timeline -->
-    <div class="relative timeline-line pl-16 space-y-8 mb-12">
+    <div class="relative timeline-line pl-16 space-y-5 mb-7">
       <!-- Phase 1 -->
       <div class="relative flex gap-6">
         <div class="absolute -left-16 top-0">
@@ -1476,7 +1633,7 @@
     </div>
 
     <!-- ✦ AI ENHANCEMENT 2: Headcount Plan -->
-    <div id="enh2" class="mt-12 rounded-2xl overflow-hidden">
+    <div id="enh2" class="mt-8 rounded-2xl overflow-hidden">
       <div class="ai-enhancement-banner ai-enhancement-banner-violet">
         <div class="relative z-10 flex flex-wrap items-center justify-between gap-4">
           <div class="flex items-center gap-4">
@@ -1627,9 +1784,9 @@
 </section>
 
 <!-- ═══════════════════════ 09 FINANCIALS ═══════════════════════ -->
-<section id="financials" class="py-20 px-4 bg-slate-900">
+<section id="financials" class="py-12 px-4 bg-slate-900">
   <div class="max-w-6xl mx-auto">
-    <div class="flex items-start gap-4 mb-10">
+    <div class="flex items-start gap-4 mb-7">
       <span class="sec-num">09</span>
       <div>
         <div class="badge badge-green mb-2">Financial Projections</div>
@@ -1639,7 +1796,7 @@
     </div>
 
     <!-- 5-year table -->
-    <div class="overflow-x-auto mb-10">
+    <div class="overflow-x-auto mb-6">
       <table class="w-full text-sm dark-table">
         <thead>
           <tr>
@@ -1697,7 +1854,7 @@
     </div>
 
     <!-- Charts -->
-    <div class="space-y-6 mb-10">
+    <div class="space-y-6 mb-6">
       <!-- Chart 1: Revenue / Cost / Profit / Clients -->
       <div class="card-dark p-6">
         <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
@@ -1735,7 +1892,7 @@
     </div>
 
     <!-- Key assumptions -->
-    <div class="grid md:grid-cols-3 gap-5 mb-10">
+    <div class="grid md:grid-cols-3 gap-5 mb-6">
       <div class="card-dark p-5">
         <div class="text-amber-400 font-bold text-sm uppercase tracking-wide mb-2">Key Assumption: ARPU</div>
         <p class="text-slate-400 text-sm">S$10K setup + S$1K/month MRR = ~S$22K ACV Year 1. As workflow library matures, setup cost drops 40% by Year 5 through component reuse.</p>
@@ -1908,9 +2065,9 @@
 </section>
 
 <!-- ═══════════════════════ 10 RISKS ═══════════════════════ -->
-<section id="risks" class="py-20 px-4 section-stripe">
+<section id="risks" class="py-12 px-4 section-stripe">
   <div class="max-w-6xl mx-auto">
-    <div class="flex items-start gap-4 mb-10">
+    <div class="flex items-start gap-4 mb-7">
       <span class="sec-num">10</span>
       <div>
         <div class="badge badge-rose mb-2">Risks &amp; Open Questions</div>
@@ -1919,7 +2076,7 @@
       </div>
     </div>
 
-    <div class="space-y-4">
+    <div class="space-y-3">
       <!-- Risk 1 -->
       <div class="card-light p-0 overflow-hidden">
         <button onclick="toggleAcc(this)" class="w-full flex items-center justify-between p-5 text-left hover:bg-slate-50 transition-colors">
@@ -2007,7 +2164,7 @@
     </div>
 
     <!-- ✦ AI ENHANCEMENT 4: A/B Testing Ideas -->
-    <div id="enh4" class="mt-10 rounded-2xl overflow-hidden">
+    <div id="enh4" class="mt-7 rounded-2xl overflow-hidden">
       <div class="ai-enhancement-banner" style="background: linear-gradient(135deg, #0c2a4a 0%, #0e3a6e 60%, #1547a0 100%); border-color: rgba(56,189,248,0.3);">
         <div class="relative z-10 flex flex-wrap items-center justify-between gap-4">
           <div class="flex items-center gap-4">
@@ -2120,9 +2277,9 @@
 </section>
 
 <!-- ═══════════════════════ 11 AI FEEDBACK ═══════════════════════ -->
-<section id="aifeedback" class="py-20 px-4 bg-slate-900">
+<section id="aifeedback" class="py-12 px-4 bg-slate-900 print-break-before">
   <div class="max-w-6xl mx-auto">
-    <div class="flex items-start gap-4 mb-10">
+    <div class="flex items-start gap-4 mb-7">
       <span class="sec-num">11</span>
       <div>
         <div class="badge badge-blue mb-2">AI Feedback Report</div>
@@ -2131,11 +2288,11 @@
       </div>
     </div>
 
-    <div class="grid md:grid-cols-2 gap-8 mb-10">
+    <div class="grid md:grid-cols-2 gap-8 mb-6">
       <!-- Contributions -->
       <div>
         <h3 class="text-lg font-bold text-white mb-5">Where AI Added Real Value</h3>
-        <div class="space-y-4">
+        <div class="space-y-3">
           <div class="card-dark p-5">
             <div class="flex gap-3">
               <span class="text-emerald-400 text-xl flex-shrink-0">✓</span>
@@ -2178,7 +2335,7 @@
       <!-- Failures -->
       <div>
         <h3 class="text-lg font-bold text-white mb-5">Where AI Failed or Misled</h3>
-        <div class="space-y-4">
+        <div class="space-y-3">
           <div class="card-dark p-5 border-l-4 border-red-500">
             <div class="flex gap-3">
               <span class="text-red-400 text-xl flex-shrink-0">✗</span>
@@ -2249,6 +2406,7 @@
 </section>
 
 <!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+</main>
 <footer class="bg-slate-950 border-t border-slate-800 py-12 px-4">
   <div class="max-w-6xl mx-auto">
     <div class="grid md:grid-cols-3 gap-8 mb-8">

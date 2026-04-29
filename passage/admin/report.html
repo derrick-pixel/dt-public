@@ -59,6 +59,234 @@
       .pdf-dl, .atlas-nav { display: none !important; }
     }
 
+    /* ── PDF capture mode (toggled during downloadPdf) ──
+       Forces A4 sizing per section so html2canvas captures each .report-page
+       as one A4 page with no leakage. Also applies the html2canvas kerning
+       fix (font-kerning: none + text-rendering: geometricPrecision +
+       letter-spacing: 0.01em) so headings like "Top 3 attack niches" don't
+       collapse to "Top3 attackniches" in the rasterised PDF. The cost is
+       sub-pixel looseness, invisible at A4. */
+    body.pdf-mode #report-doc { max-width: 210mm; }
+    body.pdf-mode .report-page {
+      width: 210mm;
+      /* No min-height — let content drive the section height. min-height: 297mm
+         was producing trailing-blank pages whenever a section's natural height
+         was just slightly over 297mm: the paginator created one full page
+         plus a near-empty trailer. Without min-height, short sections render
+         as a single short PDF page (with normal bottom whitespace) and tall
+         sections paginate cleanly across A4 boundaries. */
+      padding: 22mm 18mm;
+      border-bottom: none;
+      box-sizing: border-box;
+      page-break-after: always;
+    }
+    body.pdf-mode .report-page.cover {
+      /* Cover keeps min-height so the navy mark fills A4 even with sparse copy. */
+      min-height: 297mm;
+      padding: 36mm 18mm 22mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    body.pdf-mode .report-page, body.pdf-mode .report-page * {
+      font-kerning: none;
+      text-rendering: geometricPrecision;
+      letter-spacing: 0.01em;
+    }
+    body.pdf-mode .pdf-dl, body.pdf-mode .atlas-nav { display: none !important; }
+    body.pdf-mode #strategy-canvas { max-width: 100%; }
+
+    /* ──────────────────────────────────────────────────────────
+       Artefact CSS for content folded from companion admin pages.
+       Sourced verbatim from insights.html, competitor-analytics.html,
+       and whitespace.html so that the injected markup renders 1:1
+       with what those pages show on screen.
+       ────────────────────────────────────────────────────────── */
+
+    .artifact { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px 28px; margin-top: 22px; }
+    .art-num { font-size: 0.72rem; color: var(--gold); letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; margin-bottom: 6px; font-family: ui-monospace, monospace; }
+    .art-title { font-family: var(--serif); font-size: 1.35rem; font-weight: 700; color: var(--primary); letter-spacing: -0.01em; margin-bottom: 8px; }
+    .art-desc { font-size: 0.92rem; color: var(--muted); max-width: 820px; line-height: 1.6; margin-bottom: 22px; }
+
+    /* Industry overview / shifts */
+    .insight-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; }
+    .insight-card p { font-size: 0.9rem; color: var(--secondary); line-height: 1.7; margin-bottom: 14px; }
+    .insight-card p:last-child { margin-bottom: 0; }
+    .insight-card strong { color: var(--primary); font-weight: 700; }
+    .insight-card .shift-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 16px; }
+    .insight-card .shift { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+    .insight-card .shift-tag { font-size: 0.66rem; font-weight: 700; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; font-family: ui-monospace, monospace; }
+    .insight-card .shift-name { font-family: var(--serif); font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
+    .insight-card .shift-text { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+
+    /* Persona cards */
+    .persona-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+    .persona { background: linear-gradient(160deg, rgba(114,91,63,0.06), var(--white) 75%); border: 1.5px solid var(--gold); border-radius: var(--radius-lg); padding: 20px 22px; }
+    .persona-rank { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; font-family: ui-monospace, monospace; }
+    .persona-name { font-family: var(--serif); font-size: 1.05rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+    .persona-icp { font-size: 0.84rem; color: var(--muted); margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed var(--border); font-style: italic; line-height: 1.55; }
+    .persona-row { display: grid; grid-template-columns: 78px 1fr; gap: 10px; font-size: 0.82rem; padding: 4px 0; }
+    .persona-row .k { font-size: 0.6rem; font-weight: 700; color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px; font-family: ui-monospace, monospace; }
+    .persona-row .v { color: var(--secondary); line-height: 1.5; }
+
+    /* WTP cards */
+    .wtp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+    .wtp-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; }
+    .wtp-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+    .wtp-name { font-family: var(--serif); font-size: 0.96rem; font-weight: 700; color: var(--primary); line-height: 1.25; }
+    .wtp-band { font-family: var(--serif); font-size: 1.3rem; font-weight: 700; color: var(--gold); margin: 6px 0; line-height: 1; letter-spacing: -0.01em; }
+    .wtp-band-lbl { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 600; }
+    .wtp-driver { font-size: 0.82rem; color: var(--secondary); line-height: 1.55; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
+    .sens-badge, .threat-badge { display: inline-block; padding: 3px 9px; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; border-radius: 100px; font-family: ui-monospace, monospace; flex-shrink: 0; border: 1px solid; }
+    .sens-high, .t-high { background: rgba(139,32,32,0.10); color: var(--red); border-color: var(--red); }
+    .sens-med, .t-med { background: rgba(176,112,32,0.14); color: var(--amber); border-color: var(--amber); }
+    .sens-low, .t-low { background: rgba(58,122,80,0.12); color: var(--green); border-color: var(--green); }
+
+    /* Differentiation list */
+    .diff-list { counter-reset: diff; list-style: none; display: grid; grid-template-columns: 1fr; gap: 12px; padding: 0; }
+    .diff-item { background: var(--surface); border-left: 4px solid var(--gold); border-radius: var(--radius); padding: 16px 20px; position: relative; counter-increment: diff; }
+    .diff-item::before { content: counter(diff, decimal-leading-zero); position: absolute; left: -4px; top: -10px; background: var(--gold); color: var(--white); font-family: ui-monospace, monospace; font-size: 0.66rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; }
+    .diff-title { font-family: var(--serif); font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
+    .diff-text { font-size: 0.84rem; color: var(--secondary); line-height: 1.6; }
+    .diff-text em { color: var(--gold); font-style: normal; font-weight: 600; }
+
+    /* NBA cards */
+    .nba-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+    .nba-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; }
+    .nba-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+    .nba-name { font-family: var(--serif); font-size: 0.96rem; font-weight: 700; color: var(--primary); line-height: 1.3; }
+    .nba-row { display: grid; grid-template-columns: 78px 1fr; gap: 8px; font-size: 0.8rem; padding: 4px 0; line-height: 1.5; }
+    .nba-row .k { font-size: 0.6rem; font-weight: 700; color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px; font-family: ui-monospace, monospace; }
+    .nba-row .v { color: var(--secondary); }
+
+    /* Strategic insights blocks */
+    .insight-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+    .insight-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
+    .insight-block h4 { font-family: var(--serif); font-size: 0.95rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+    .insight-block ul { list-style: none; padding: 0; margin: 0; }
+    .insight-block ul li { font-size: 0.82rem; color: var(--secondary); line-height: 1.6; padding: 5px 0 5px 16px; position: relative; border-bottom: 1px dashed var(--border); }
+    .insight-block ul li:last-child { border-bottom: none; }
+    .insight-block ul li::before { content: "◆"; position: absolute; left: 0; top: 6px; color: var(--gold); font-size: 0.6rem; }
+
+    /* Full competitor deep-dive grid */
+    .comp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
+    .comp-grid .comp-card-deep { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
+    .comp-grid .comp-card-deep .cd-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+    .comp-grid .comp-card-deep .cd-name { font-family: var(--serif); font-size: 0.98rem; font-weight: 700; color: var(--primary); }
+    .comp-grid .comp-card-deep .cd-tier { font-size: 0.62rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px; font-family: ui-monospace, monospace; }
+    .comp-grid .comp-card-deep .cd-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; font-size: 0.74rem; margin-bottom: 10px; }
+    .comp-grid .comp-card-deep .cd-meta-k { color: var(--muted); font-family: ui-monospace, monospace; font-size: 0.62rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    .comp-grid .comp-card-deep .cd-meta-v { color: var(--primary); font-weight: 600; }
+    .comp-grid .comp-card-deep .cd-sw { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 0.78rem; }
+    .comp-grid .comp-card-deep .cd-sw h5 { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 5px; font-family: ui-monospace, monospace; font-weight: 700; }
+    .comp-grid .comp-card-deep .cd-sw ul { list-style: none; padding: 0; }
+    .comp-grid .comp-card-deep .cd-sw ul li { padding-left: 12px; position: relative; margin-bottom: 4px; line-height: 1.5; color: var(--secondary); }
+    .comp-grid .comp-card-deep .cd-sw ul li::before { content: ""; position: absolute; left: 0; top: 7px; width: 5px; height: 5px; border-radius: 50%; }
+    .comp-grid .comp-card-deep .cd-sw .cd-strengths li::before { background: var(--green); }
+    .comp-grid .comp-card-deep .cd-sw .cd-weaknesses li::before { background: var(--red); }
+
+    /* Sourced pricing evidence (anchors, quotes, integrated callouts) */
+    .ev-anchor { background: linear-gradient(135deg, rgba(114,91,63,0.09), rgba(176,112,32,0.05)); border: 1.5px solid var(--gold); border-radius: var(--radius-lg); padding: 20px 22px; margin-top: 14px; }
+    .ev-anchor-tag { font-size: 0.66rem; color: var(--gold); letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; font-family: ui-monospace, monospace; }
+    .ev-anchor h3 { font-family: var(--serif); font-size: 1.05rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; line-height: 1.3; }
+    .ev-anchor p { font-size: 0.84rem; color: var(--secondary); line-height: 1.6; margin-bottom: 10px; }
+    .ev-anchor-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin: 12px 0; }
+    .ev-anchor-stat { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
+    .ev-stat-num { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; color: var(--gold); margin-bottom: 4px; line-height: 1.2; }
+    .ev-stat-cap { font-size: 0.72rem; color: var(--muted); line-height: 1.5; }
+    .ev-anchor-cite { font-size: 0.74rem; color: var(--secondary); margin-top: 4px; word-break: break-all; }
+    .ev-anchor-cite a { color: var(--gold); text-decoration: none; }
+    .ev-section-h { font-family: var(--serif); font-size: 0.98rem; font-weight: 700; color: var(--primary); margin: 18px 0 10px; letter-spacing: -0.01em; }
+    .ev-quotes { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; margin-top: 8px; }
+    .ev-quote { background: var(--white); border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 4px; padding: 10px 12px; }
+    .ev-quote-text { color: var(--primary); font-size: 0.82rem; line-height: 1.55; margin-bottom: 6px; font-style: italic; }
+    .ev-quote-attr { font-size: 0.68rem; color: var(--muted); font-family: ui-monospace, monospace; letter-spacing: 0.04em; }
+    .ev-quote-attr a { color: var(--gold); text-decoration: none; }
+    .ev-integrated { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin: 12px 0; font-size: 0.84rem; color: var(--secondary); line-height: 1.6; }
+    .ev-integrated b { color: var(--gold); display: block; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; font-family: ui-monospace, monospace; }
+    .ev-integrated a { color: var(--gold); }
+    .ev-source-cat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 10px; }
+    .ev-source-cat h4 { font-family: var(--serif); font-size: 0.92rem; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
+    .ev-source-cat ul { list-style: none; padding: 0; }
+    .ev-source-cat ul li { font-size: 0.78rem; padding: 4px 0 4px 14px; position: relative; line-height: 1.55; color: var(--secondary); }
+    .ev-source-cat ul li::before { content: "→"; position: absolute; left: 0; color: var(--gold); }
+    .ev-source-cat ul li a { color: var(--gold); text-decoration: none; word-break: break-all; }
+    .ev-themes { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin: 14px 0; }
+    .ev-themes h4 { font-family: var(--serif); font-size: 0.92rem; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+    .ev-themes ul { list-style: none; padding: 0; }
+    .ev-themes ul li { font-size: 0.82rem; color: var(--secondary); padding: 5px 0 5px 16px; position: relative; line-height: 1.6; border-bottom: 1px dashed var(--border); }
+    .ev-themes ul li:last-child { border-bottom: none; }
+    .ev-themes ul li::before { content: "◆"; position: absolute; left: 0; top: 7px; color: var(--gold); font-size: 0.66rem; }
+
+    /* 8x8 segment × need heatmap */
+    .heatmap-wrap { overflow-x: auto; }
+    .heatmap { width: 100%; border-collapse: collapse; font-size: 0.74rem; min-width: 720px; }
+    .heatmap thead th { background: var(--primary); color: var(--surface); padding: 8px 6px; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; text-align: center; border: 1px solid var(--primary); }
+    .heatmap thead th:first-child { background: var(--surface-1); color: var(--primary); text-align: left; min-width: 160px; }
+    .heatmap tbody th { background: var(--surface-1); color: var(--primary); text-align: left; font-weight: 600; padding: 8px 10px; border: 1px solid var(--border); font-size: 0.78rem; min-width: 180px; }
+    .heatmap tbody th .row-note { display: block; font-size: 0.66rem; color: var(--muted); font-weight: 400; margin-top: 2px; font-style: italic; }
+    .heatmap tbody td { padding: 8px 6px; border: 1px solid var(--border); text-align: center; font-family: ui-monospace, monospace; font-weight: 700; vertical-align: middle; line-height: 1.2; }
+    .heatmap td.cell-green   { background: rgba(58,122,80,0.18);  color: var(--green); }
+    .heatmap td.cell-amber   { background: rgba(176,112,32,0.18); color: var(--amber); }
+    .heatmap td.cell-red     { background: rgba(139,32,32,0.16);  color: var(--red); }
+    .heatmap td .us { display: block; font-size: 0.62rem; color: var(--gold); margin-top: 2px; font-weight: 700; }
+    .heatmap-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 12px; font-size: 0.74rem; }
+    .heatmap-legend .leg { display: flex; align-items: center; gap: 6px; color: var(--secondary); }
+    .heatmap-legend .sw { width: 16px; height: 12px; border: 1px solid var(--border); border-radius: 2px; }
+    .heatmap-legend .sw.cell-green   { background: rgba(58,122,80,0.18); }
+    .heatmap-legend .sw.cell-amber   { background: rgba(176,112,32,0.18); }
+    .heatmap-legend .sw.cell-red     { background: rgba(139,32,32,0.16); }
+
+    /* 64-cell detail listing — every segment × need pair enumerated.
+       The heatmap shows the shape; this table lists every intel cell so a
+       reader scanning the PDF can find any pair without zooming. */
+    .cell-detail-wrap { margin-top: 22px; overflow-x: auto; }
+    .cell-detail { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    .cell-detail thead th { background: var(--primary); color: var(--surface); padding: 9px 10px; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; text-align: left; }
+    .cell-detail thead th.center { text-align: center; }
+    .cell-detail tbody td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; line-height: 1.4; color: var(--secondary); }
+    .cell-detail tbody td.center { text-align: center; font-family: ui-monospace, monospace; font-weight: 700; }
+    .cell-detail tbody tr:nth-child(odd) { background: var(--surface); }
+    .cell-detail .cd-rank { color: var(--gold); font-family: ui-monospace, monospace; font-weight: 700; font-size: 0.72rem; }
+    .cell-detail .cd-pair { color: var(--primary); font-weight: 600; }
+    .cell-detail .cd-pair-need { color: var(--muted); font-size: 0.72rem; }
+    .cell-detail .cd-us { color: var(--gold); font-weight: 700; }
+    .cell-detail .cd-verdict { display: inline-block; padding: 2px 8px; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; border-radius: 100px; font-family: ui-monospace, monospace; border: 1px solid; }
+    .cell-detail .cd-verdict.v-white { background: rgba(58,122,80,0.12); color: var(--green); border-color: var(--green); }
+    .cell-detail .cd-verdict.v-amber { background: rgba(176,112,32,0.14); color: var(--amber); border-color: var(--amber); }
+    .cell-detail .cd-verdict.v-red { background: rgba(139,32,32,0.10); color: var(--red); border-color: var(--red); }
+
+    .source-note { font-size: 0.74rem; color: var(--muted); font-style: italic; margin-top: 14px; line-height: 1.55; padding: 12px 14px; background: var(--surface-1); border-radius: var(--radius); border-left: 3px solid var(--border); }
+    .loading { padding: 20px; text-align: center; color: var(--muted); font-style: italic; font-size: 0.86rem; }
+
+    /* ── Phase 4 pre-flight failure surface ── */
+    .preflight-fail {
+      margin: 18px 24px;
+      padding: 16px 20px;
+      background: rgba(139, 32, 32, 0.06);
+      border: 1.5px solid var(--red);
+      border-radius: var(--radius);
+      font-family: var(--font);
+      color: var(--primary);
+    }
+    .preflight-fail h4 {
+      font-family: var(--serif);
+      color: var(--red);
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+    }
+    .preflight-fail ul {
+      list-style: none;
+      padding: 0;
+      margin: 8px 0;
+      font-family: ui-monospace, monospace;
+      font-size: 0.78rem;
+      color: var(--secondary);
+    }
+    .preflight-fail ul li { padding: 3px 0; }
+    .preflight-fail .hint { font-size: 0.78rem; color: var(--muted); margin-top: 8px; }
+
     .sec-num { font-family: ui-monospace, monospace; font-size: 0.72rem; letter-spacing: 0.16em; color: var(--gold); text-transform: uppercase; font-weight: 700; margin-bottom: 10px; }
     .sec-h2 { font-family: var(--serif); font-size: 2rem; font-weight: 700; letter-spacing: -0.01em; color: var(--primary); line-height: 1.2; margin-bottom: 14px; }
     .sec-lede { font-size: 0.96rem; color: var(--muted); line-height: 1.65; max-width: 820px; margin-bottom: 28px; }
@@ -287,6 +515,23 @@
       .rec-body { font-size: 0.82rem; }
     }
   </style>
+<script type="application/ld+json" data-injected="schema-jsonld">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Passage",
+  "url": "https://derrickteo.com/passage/",
+  "description": "Transparent, dignified caskets delivered across Singapore within 3 hours. No hidden fees. From S$499. 30% to charity."
+}
+</script>
+<script type="application/ld+json" data-injected="schema-jsonld">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Passage",
+  "url": "https://derrickteo.com/passage/"
+}
+</script>
 </head>
 <body>
 
@@ -304,6 +549,7 @@
 </nav>
 
 <button id="pdf-dl-btn" class="pdf-dl" type="button"><span class="ico">⬇</span>Download PDF</button>
+<div id="build-marker" style="position: fixed; top: 132px; right: 24px; z-index: 99; font-family: ui-monospace, monospace; font-size: 0.66rem; color: var(--gold); background: var(--surface); border: 1px solid var(--border); padding: 4px 8px; border-radius: 4px; letter-spacing: 0.04em;">build 2026-04-29 15:30 · per-section paginator · v2</div>
 
 <main id="report-doc">
 
@@ -343,7 +589,7 @@
       </li>
       <li class="exec-bullet">
         <div class="exec-num"></div>
-        <div class="exec-body"><strong>Why Passage wins.</strong> All-in transparent <strong>S$800 / S$1,000 / S$1,200</strong> casket-only SKUs vs hidden S$2–4K parlour markup. <em>3-hour island-wide delivery</em> with 1-hour emergency surge. FSC Chain of Custody, 60% local timber, &lt;5% material waste. Binding <strong>30% of net profit to charity</strong> (FY2024 S$48,200 across Singapore Hospice Council, SASCO, Metta Welfare). <strong>47 free caskets</strong> given FY2024 (31 social-worker referrals + 16 family applications). Tripartite triple-signatory + Progressive Wage Mark.</div>
+        <div class="exec-body"><strong>Why Passage wins.</strong> All-in transparent <strong>S$499 / S$999 / S$1,299</strong> casket-only SKUs vs hidden S$2–4K parlour markup. <em>3-hour island-wide delivery</em> with 1-hour emergency surge. FSC Chain of Custody, 60% local timber, &lt;5% material waste. Binding <strong>30% of net profit to charity</strong> (FY2024 S$48,200 across Singapore Hospice Council, SASCO, Metta Welfare). <strong>47 free caskets</strong> given FY2024 (31 social-worker referrals + 16 family applications). Tripartite triple-signatory + Progressive Wage Mark.</div>
       </li>
       <li class="exec-bullet">
         <div class="exec-num"></div>
@@ -408,7 +654,7 @@
             <th>Casket-only (just the casket, all-in)</th>
             <td><span class="price">S$2,000 – S$4,000</span><span class="price-note">Buried inside package · never itemised</span></td>
             <td><span class="price">Not sold separately</span><span class="price-note">Casket bundled into transparent full package</span></td>
-            <td class="passage-col"><span class="price">S$800 / S$1,000 / S$1,200</span><span class="price-note">Serene · Tranquil · Eternal — all-in incl. 3-hr delivery, GST</span></td>
+            <td class="passage-col"><span class="price">S$499 / S$999 / S$1,299</span><span class="price-note">Serene · Tranquil · Eternal — all-in incl. 3-hr delivery, GST</span></td>
           </tr>
           <tr>
             <th>Wake package (typical bundle)</th>
@@ -420,20 +666,20 @@
             <th>Direct cremation (no wake)</th>
             <td><span class="price">S$2,500 – S$4,500</span><span class="price-note">"No-frills" upsold from full package; casket markup persists</span></td>
             <td><span class="price">S$1,500 – S$3,500</span><span class="price-note">Mandai slot + transport + simple casket, fully published</span></td>
-            <td class="passage-col"><span class="price">S$800 (Serene) + cremation fees</span><span class="price-note">Family books Mandai directly; Passage delivers casket island-wide</span></td>
+            <td class="passage-col"><span class="price">S$499 (Serene) + cremation fees</span><span class="price-note">Family books Mandai directly; Passage delivers casket island-wide</span></td>
           </tr>
           <tr>
             <th>Eco / paper / Finoboard casket</th>
             <td><span class="price">Generally not stocked</span><span class="price-note">Conflicts with parlour margin model</span></td>
             <td><span class="price">S$600 – S$1,800</span><span class="price-note">The Eco Casket (Selangor), select SG specialists</span></td>
-            <td class="passage-col"><span class="price">S$800 (Serene, FSC pine)</span><span class="price-note">FSC-certified solid timber — locally assembled, sustainably sourced</span></td>
+            <td class="passage-col"><span class="price">S$499 (Serene, FSC pine)</span><span class="price-note">FSC-certified solid timber — locally assembled, sustainably sourced</span></td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <div class="footnote">
-      <strong>Footnote on positioning.</strong> Passage's S$800–S$1,200 all-in band sits at the bottom of the <em>published</em> casket spectrum, not necessarily at the bottom of the <em>actual</em> price spectrum. Hidden-in-package floors are unknown — parlours never sell caskets separately, so we cannot rule out cheaper trade-cost caskets bundled into S$8K+ packages. <em>Industry estimates above are derived from Straits Times and CNA cost-of-dying coverage 2023–2025, MOH death-certificate records, and Mandai Crematorium scheduling data.</em>
+      <strong>Footnote on positioning.</strong> Passage's S$499–S$1,299 all-in band sits at the bottom of the <em>published</em> casket spectrum, not necessarily at the bottom of the <em>actual</em> price spectrum. Hidden-in-package floors are unknown — parlours never sell caskets separately, so we cannot rule out cheaper trade-cost caskets bundled into S$8K+ packages. <em>Industry estimates above are derived from Straits Times and CNA cost-of-dying coverage 2023–2025, MOH death-certificate records, and Mandai Crematorium scheduling data.</em>
     </div>
   </section>
 
@@ -612,13 +858,13 @@ const NICHES = [
     rank: '01',
     name: 'Anti-Package Consumer Education — "The S$600 Casket Receipt"',
     icp: 'SG cost-conscious and anti-pressure bereaved families (35-65) who refuse the opaque S$8-15K parlour package. Want the casket itemised, transparent, and broken out of the bundle — and want a WhatsApp-shareable price strip to send to siblings within minutes.',
-    tam: '~24,000 SG deaths annually × ~65% who pass through embalmed/wake workflows × ~35% in the cost-conscious / anti-pressure cohort = ~5,500 households per year willing to procure casket separately when shown a transparent S$800-1,200 SKU.',
+    tam: '~24,000 SG deaths annually × ~65% who pass through embalmed/wake workflows × ~35% in the cost-conscious / anti-pressure cohort = ~5,500 households per year willing to procure casket separately when shown a transparent S$499-1,200 SKU.',
     why_underserved: 'Every SG parlour bundles the casket inside the package and refuses to itemise. "Transparent" players (Direct Funeral Services, 1Last, Serenity) publish total package price but still hide the casket cost line. JB wholesalers sell at ~S$300-700 cost but B2B-only, no 3hr SLA, no helpline. No one reaches the bereaved family with a casket-only DTC narrative.',
-    why_we_win: '(1) Three published SKUs S$800/$1,000/$1,200 — the only casket-line itemised in SG. (2) WhatsApp-shareable price-comparison strip ("S$3,800 in their package vs S$1,000 from Passage = S$2,800 to family"). (3) 3-hour island-wide delivery + 1hr emergency surge means we match parlour speed. (4) FAQ + 24/7 helpline arm the family to push back on directors.',
+    why_we_win: '(1) Three published SKUs S$499/$1,000/$1,200 — the only casket-line itemised in SG. (2) WhatsApp-shareable price-comparison strip ("S$3,800 in their package vs S$999 from Passage = S$2,800 to family"). (3) 3-hour island-wide delivery + 1hr emergency surge means we match parlour speed. (4) FAQ + 24/7 helpline arm the family to push back on directors.',
     gtm: {
-      pricing: 'S$800 Serene / S$1,000 Tranquil / S$1,200 Eternal — all-in incl. 3hr delivery, venue positioning, nameplate, GST. Surge +S$75 (2hr) / +S$150 (1hr).',
+      pricing: 'S$499 Serene / S$999 Tranquil / S$1,299 Eternal — all-in incl. 3hr delivery, venue positioning, nameplate, GST. Surge +S$75 (2hr) / +S$150 (1hr).',
       channel: 'Google Ads on "casket price Singapore" + "funeral package markup". WhatsApp-share consumer-rights strip seeded via SG sub-Reddits, Hardware Zone, parenting Facebook groups. ST/CNA "cost of dying" PR cycle.',
-      pitch: '"The casket alone costs S$600 to make. They quote S$3,800. We charge S$1,000 — and tell you why."',
+      pitch: '"The casket alone costs S$600 to make. They quote S$3,800. We charge S$999 — and tell you why."',
       content: '"How To Spot A Casket Markup In A Funeral Package" — email-gated PDF + 90-second WhatsApp-shareable explainer video.'
     }
   },
@@ -630,7 +876,7 @@ const NICHES = [
     why_underserved: 'Hospital and eldercare social workers currently route to incumbent parlours by habit. Parlours fold a "free casket" into pity-discount packages but charge for the rest. NEA direct cremation gives no dignity. Hospice Council, SASCO, and Metta refer but hold no casket inventory. There is no published, deck-grounded free-casket SLA + eligibility pathway sitting on a social-worker desk.',
     why_we_win: '(1) Audited 30% net-profit-to-charity programme (FY2024 = S$48,200 to 3 named partners) creates a real, not marketing, free-casket budget. (2) FY2024 47-casket track record + 8 welfare-org partners is concrete proof. (3) 1-hour emergency delivery (+S$150, waived for verified eligible) lets a discharge desk close a case in one call. (4) Tripartite + PWM workforce signals a governance posture social workers can defend internally.',
     gtm: {
-      pricing: 'Free casket for verified ComCare / no-NOK / social-worker-referred. Paid SKUs S$800-1,200 for cases above eligibility threshold. Surge fee waived for welfare-org partners.',
+      pricing: 'Free casket for verified ComCare / no-NOK / social-worker-referred. Paid SKUs S$499-1,200 for cases above eligibility threshold. Surge fee waived for welfare-org partners.',
       channel: 'Direct outreach to SGH / NUH / TTSH / KKH bereavement social workers, MOH-funded nursing-home discharge planners, AIC eldercare network, Singapore Hospice Council member teams. SASCO and Metta as charity-partner co-branded referral cards.',
       pitch: '"One number, one form, one dignified casket — within hours. We funded 47 of them last year."',
       content: '"Social-Worker Quick-Reference Card" — printed + PDF eligibility checklist, hotline +65 9847 9776, response-time SLAs.'
@@ -639,12 +885,12 @@ const NICHES = [
   {
     rank: '03',
     name: 'Eco / Values-Driven Pre-Arrangement for the FSC-Aware Senior Planner',
-    icp: 'SG seniors and early-retirees (55-75) who care about FSC sustainability, local SG assembly, and audited charity giving. They want to lock in a fixed S$800-1,200 casket with transparent ESG credentials so their family is not negotiating with a parlour during grief.',
+    icp: 'SG seniors and early-retirees (55-75) who care about FSC sustainability, local SG assembly, and audited charity giving. They want to lock in a fixed S$499-1,200 casket with transparent ESG credentials so their family is not negotiating with a parlour during grief.',
     tam: '~380,000 SG residents aged 55-75 × ~5% who are actively pre-arrangement-curious × ~30% who weight ESG / sustainability in purchase decisions (SingStat + ESG-attitudes survey proxies) = ~5,700 households per year.',
     why_underserved: 'Parlour pre-need contracts require in-person meetings, lock funds in opaque trusts, and provide zero ESG disclosure. The Eco Casket (Selangor) has the only biodegradable narrative but is cross-border with no SG SLA. 1Last / Embrace pre-need flows are full-package, not casket-only, and don\'t publish FSC chain-of-custody or carbon footprint per casket.',
-    why_we_win: '(1) FSC Chain of Custody Certification + 60% local timber + 4.2t CO2e per-casket carbon disclosure (FY2024 deck data) — no SG competitor publishes this depth. (2) Tripartite triple-signatory + PWM + 100% local workforce arms the senior planner with a defensible governance story. (3) Fixed S$800-1,200 published price means a senior locks the entire purchase in 10 minutes online without parlour pressure. (4) 30% net-profit-to-charity overlay aligns with the legacy-giving instinct of this cohort.',
+    why_we_win: '(1) FSC Chain of Custody Certification + 60% local timber + 4.2t CO2e per-casket carbon disclosure (FY2024 deck data) — no SG competitor publishes this depth. (2) Tripartite triple-signatory + PWM + 100% local workforce arms the senior planner with a defensible governance story. (3) Fixed S$499-1,200 published price means a senior locks the entire purchase in 10 minutes online without parlour pressure. (4) 30% net-profit-to-charity overlay aligns with the legacy-giving instinct of this cohort.',
     gtm: {
-      pricing: '"Pre-Arrangement Lock-In" — pay S$199 deposit today, lock 2026 SKU price (S$800/$1,000/$1,200) for 10 years; balance paid by family at need. No escrow drama: published sinking-fund posture in audited accounts.',
+      pricing: '"Pre-Arrangement Lock-In" — pay S$199 deposit today, lock 2026 SKU price (S$499/$1,000/$1,200) for 10 years; balance paid by family at need. No escrow drama: published sinking-fund posture in audited accounts.',
       channel: 'AIC eldercare partner network, SG silver-community Facebook groups, ActiveSG senior programmes, church / temple senior ministries (with charity-partner co-brand), financial-adviser referrals on legacy-giving conversations.',
       pitch: '"Choose your casket while you\'re well. Lock the price. Free your family from the showroom."',
       content: '"FSC, PWM, and 30%-to-Charity: A Plain-English ESG Brief for Singapore Seniors" — 8-page PDF + 30-min walkthrough webinar."'
@@ -1010,6 +1256,338 @@ function renderDesignAudit(audit) {
   });
 }
 
+// ── Renderers for data-driven artefacts folded in from companion pages ──
+
+// Top-5 Threat Radar (mirrored from competitor-analytics.html artifact 01).
+// Plots the 5 highest-threat competitors across 5 dimensions plus Passage's
+// reference quadrant. Reuses Chart.js loaded at top of file.
+function renderTopFiveRadar(competitors) {
+  const canvas = document.getElementById('radar-chart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dims = ['Price visibility', 'Design quality', 'Mobile experience', 'Casket-only focus', 'Threat level'];
+  const visScore = (v) => ({ fully_published: 5, partial: 3, bundled_transparent: 2, hidden_in_package: 1, quote_on_call: 1, wholesale_only: 1, self_sourced: 0, not_applicable: 0 })[v] ?? 0;
+  const threatScore = (t) => ({ high: 5, medium: 3, low: 1 })[t] ?? 0;
+  const top5 = competitors
+    .filter(c => c.threat_level_to_passage === 'high')
+    .slice(0, 5)
+    .map(c => ({
+      name: c.name,
+      data: [
+        visScore(c.casket_price_visibility),
+        Number(c.designScore || 0) / 2,
+        Number(c.mobileScore || 0) / 2,
+        c.casket_only_offering ? 5 : 1,
+        threatScore(c.threat_level_to_passage)
+      ]
+    }));
+  const palette = ['#8b2020', '#b07020', '#2a5080', '#5a3878', '#3a7a50'];
+  const datasets = [{
+    label: 'Passage', data: [5, 5, 5, 5, 5],
+    backgroundColor: 'rgba(114,91,63,0.18)', borderColor: '#725b3f', borderWidth: 3,
+    pointRadius: 4, pointBackgroundColor: '#725b3f', tension: 0.15
+  }].concat(top5.map((c, i) => ({
+    label: c.name, data: c.data,
+    backgroundColor: 'transparent', borderColor: palette[i % palette.length], borderWidth: 1.5,
+    pointRadius: 2.5, pointBackgroundColor: palette[i % palette.length], tension: 0.1
+  })));
+  new Chart(ctx, {
+    type: 'radar',
+    data: { labels: dims, datasets },
+    options: {
+      animation: false,
+      scales: { r: {
+        suggestedMin: 0, suggestedMax: 5,
+        ticks: { stepSize: 1, backdropColor: 'rgba(0,0,0,0)', color: '#7b7b74', font: { size: 10 } },
+        grid: { color: 'rgba(50,51,45,0.08)' },
+        angleLines: { color: 'rgba(50,51,45,0.1)' },
+        pointLabels: { color: '#32332d', font: { family: 'Georgia, serif', size: 11, weight: 600 } }
+      } },
+      plugins: { legend: { position: 'bottom', labels: { color: '#32332d', font: { size: 10 }, boxWidth: 14 } } },
+      responsive: true, maintainAspectRatio: false
+    }
+  });
+}
+
+// Strategic Insights — 4 hardcoded bullet lists (mirrored from
+// competitor-analytics.html artifact 02). Source-of-truth content lives
+// in this file so the report PDF is self-contained at capture time.
+function renderStrategicInsights() {
+  const lists = {
+    'weaknesses-list': [
+      'Casket pricing is hidden inside opaque S$8–15K bundle quotes; no parlour publishes a casket-only line item.',
+      'Pressure tactics at point of bereavement — directors threaten withholding services if family declines in-house casket.',
+      'No FSC chain-of-custody disclosure across SG parlour ecosystem; tropical hardwood imported with zero carbon accounting.',
+      'No published charity-allocation mechanisms; goodwill claims are marketing, not binding.',
+      'Mobile experience uniformly below par — most parlour sites are quote-on-call and PDF-brochure-ware.'
+    ],
+    'advantages-list': [
+      'All-in published S$499 / S$999 / S$1,299 — only casket-only itemisation in Singapore.',
+      '3-hour island-wide delivery with surge SLAs (+S$75 / 2hr, +S$150 / 1hr).',
+      'FSC Chain of Custody, 60% local timber, 4.2 t CO₂e per casket disclosed lifecycle.',
+      'Binding 30% net profit to charity (FY2024 S$48,200 across 3 named partners).',
+      '47 free caskets given FY2024 (31 social-worker referrals + 16 family applications).',
+      'Tripartite Standards triple-signatory + Progressive Wage Mark workforce stack.'
+    ],
+    'borrowed-list': [
+      '1Last — grief-sensitive copy and editorial restraint on package landing pages.',
+      'Direct Funeral Services — published all-in package pricing format and SEO authority on cost queries.',
+      'The Eco Casket (Selangor) — sustainability narrative depth, FSC-led product copy.',
+      'International DTC (Titan, Costco) — single-product-card simplicity at the casket-only entry point.'
+    ],
+    'improved-list': [
+      'Charity meter surfaced above the fold — incumbents bury charity pages 3 clicks deep.',
+      'Live free-casket counter on hero — no SG competitor publishes programme delivery metrics.',
+      'WhatsApp-shareable price-comparison strip — turns the buyer into the procurement officer for the family.',
+      'Persona-specific landing pages (5 ICPs) — incumbents homogenise the funnel.'
+    ]
+  };
+  Object.keys(lists).forEach(id => {
+    const ul = document.getElementById(id);
+    if (!ul) return;
+    clearNode(ul);
+    lists[id].forEach(t => ul.appendChild(makeEl('li', null, t)));
+  });
+}
+
+// Full Competitor Deep-dive (mirrored from competitor-analytics.html artifact 03).
+// All 29 competitors as cards, not just high-threat. Renders into #comp-grid.
+function renderFullDeepDive(competitors) {
+  const grid = document.getElementById('comp-grid');
+  if (!grid) return;
+  clearNode(grid);
+  const inline = document.getElementById('comp-count-inline');
+  if (inline) inline.textContent = String(competitors.length);
+  const tbl = document.getElementById('comp-count-tbl');
+  if (tbl) tbl.textContent = competitors.length + ' competitors';
+
+  const sorted = competitors.slice().sort((a, b) => {
+    const ord = { high: 0, medium: 1, low: 2 };
+    return (ord[a.threat_level_to_passage] ?? 3) - (ord[b.threat_level_to_passage] ?? 3);
+  });
+  sorted.forEach(c => {
+    const card = makeEl('div', 'comp-card-deep');
+    const head = makeEl('div', 'cd-head');
+    const left = makeEl('div');
+    left.appendChild(makeEl('div', 'cd-name', c.name));
+    if (c.tier) left.appendChild(makeEl('div', 'cd-tier', c.tier.replace(/_/g, ' ')));
+    head.appendChild(left);
+    const threat = makeEl('span', 'threat-badge t-' + (c.threat_level_to_passage || 'low'), c.threat_level_to_passage || '—');
+    head.appendChild(threat);
+    card.appendChild(head);
+
+    const meta = makeEl('div', 'cd-meta');
+    const metaRows = [
+      ['HQ', c.hq],
+      ['Category', (c.category || '').replace(/_/g, ' ')],
+      ['Visibility', (c.casket_price_visibility || '—').replace(/_/g, ' ')],
+      ['Markup', c.estimated_casket_markup_sgd || '—']
+    ];
+    metaRows.forEach(([k, v]) => {
+      meta.appendChild(makeEl('div', 'cd-meta-k', k));
+      meta.appendChild(makeEl('div', 'cd-meta-v', v || '—'));
+    });
+    card.appendChild(meta);
+
+    const sw = makeEl('div', 'cd-sw');
+    [['cd-strengths', 'Strengths', c.strengths || []], ['cd-weaknesses', 'Weaknesses', c.weaknesses || []]].forEach(([cls, lbl, items]) => {
+      const col = makeEl('div', cls);
+      col.appendChild(makeEl('h5', null, lbl));
+      const ul = makeEl('ul');
+      items.slice(0, 3).forEach(it => ul.appendChild(makeEl('li', null, it)));
+      col.appendChild(ul);
+      sw.appendChild(col);
+    });
+    card.appendChild(sw);
+    grid.appendChild(card);
+  });
+}
+
+// 8×8 Segment × Need Heatmap (mirrored from whitespace.html artifact 02).
+// Reuses SEGMENTS, NEEDS, scoreCompetitor and ourScore declared above.
+// Also renders a 64-row Cell Detail Listing immediately after the heatmap
+// so every segment × need pair is enumerated in plain table form for the
+// reader scanning the PDF (heatmap shape + cell-by-cell intel).
+function renderHeatmap(competitors) {
+  const table = document.getElementById('heatmap');
+  if (!table) return;
+  const thead = table.querySelector('thead');
+  const tbody = table.querySelector('tbody');
+  clearNode(thead);
+  clearNode(tbody);
+
+  const headerRow = makeEl('tr');
+  headerRow.appendChild(makeEl('th', null, 'Segment ↓ / Need →'));
+  NEEDS.forEach(n => {
+    const th = makeEl('th', null, n.short);
+    th.title = n.label;
+    headerRow.appendChild(th);
+  });
+  thead.appendChild(headerRow);
+
+  // Build the 64 cells once, capture into an array for the listing.
+  const cells = [];
+  SEGMENTS.forEach(s => {
+    const tr = makeEl('tr');
+    const rowH = makeEl('th');
+    rowH.appendChild(document.createTextNode(s.label));
+    rowH.appendChild(makeEl('span', 'row-note', s.note));
+    tr.appendChild(rowH);
+    NEEDS.forEach(n => {
+      const count = competitors.reduce((acc, c) => acc + (scoreCompetitor(c, s.id, n.id) >= 3 ? 1 : 0), 0);
+      const us = ourScore(s.id, n.id);
+      const cls = count <= 1 ? 'cell-green' : count <= 3 ? 'cell-amber' : 'cell-red';
+      const td = makeEl('td', cls, String(count));
+      const usSpan = makeEl('span', 'us', 'us:' + us);
+      td.appendChild(usSpan);
+      tr.appendChild(td);
+      cells.push({ seg: s, need: n, count, us, band: cls });
+    });
+    tbody.appendChild(tr);
+  });
+
+  // Emit the 64-row Cell Detail Listing right after the heatmap artefact.
+  // Sorted by count ASC (whitespace first), then us-score DESC.
+  const heatmapArt = table.closest('section.artifact');
+  if (!heatmapArt) return;
+
+  // Remove any prior detail block (rerun safety).
+  const stale = heatmapArt.querySelector('.cell-detail-wrap');
+  if (stale) stale.remove();
+
+  const wrap = makeEl('div', 'cell-detail-wrap');
+  const heading = makeEl('h3', 'ev-section-h', '64-cell intel listing — every segment × need pair, ranked by competitor count');
+  wrap.appendChild(heading);
+
+  const desc = makeEl('p', 'art-desc');
+  desc.style.marginBottom = '12px';
+  desc.textContent = 'Every cell of the 8×8 heatmap, enumerated. ' +
+    'Rank 01 is the most uncontested pair (lowest competitor count, highest Passage fit). ' +
+    'Whitespace = 0–1 credible competitors. Contested = 2–3. Crowded = 4+. ' +
+    'Use this listing to scan beyond the top-5 pairs into every adjacent segment-need quadrant.';
+  wrap.appendChild(desc);
+
+  const tbl = makeEl('table', 'cell-detail');
+  const head = makeEl('thead');
+  const hr = makeEl('tr');
+  ['#', 'Segment', 'Need', 'Competitors ≥3', 'Passage', 'Verdict'].forEach((h, i) => {
+    const th = makeEl('th', i >= 3 && i <= 4 ? 'center' : null, h);
+    hr.appendChild(th);
+  });
+  head.appendChild(hr);
+  tbl.appendChild(head);
+
+  const body = makeEl('tbody');
+  cells
+    .slice()
+    .sort((a, b) => (a.count - b.count) || (b.us - a.us) || a.seg.label.localeCompare(b.seg.label))
+    .forEach((c, i) => {
+      const tr = makeEl('tr');
+      tr.appendChild(makeEl('td', 'cd-rank', String(i + 1).padStart(2, '0')));
+
+      const segCell = makeEl('td');
+      segCell.appendChild(makeEl('span', 'cd-pair', c.seg.label));
+      const segNote = makeEl('span', 'cd-pair-need');
+      segNote.textContent = ' · ' + c.seg.note;
+      segCell.appendChild(segNote);
+      tr.appendChild(segCell);
+
+      const needCell = makeEl('td');
+      needCell.appendChild(makeEl('span', 'cd-pair', c.need.label));
+      tr.appendChild(needCell);
+
+      tr.appendChild(makeEl('td', 'center', String(c.count)));
+      tr.appendChild(makeEl('td', 'center cd-us', c.us + '/5'));
+
+      const verdictCell = makeEl('td');
+      const verdictCls = c.count <= 1 ? 'v-white' : c.count <= 3 ? 'v-amber' : 'v-red';
+      const verdictTxt = c.count <= 1 ? 'White space' : c.count <= 3 ? 'Contested' : 'Crowded';
+      verdictCell.appendChild(makeEl('span', 'cd-verdict ' + verdictCls, verdictTxt));
+      tr.appendChild(verdictCell);
+
+      body.appendChild(tr);
+    });
+  tbl.appendChild(body);
+  wrap.appendChild(tbl);
+
+  heatmapArt.appendChild(wrap);
+}
+
+// ── Companion-page artefact folder ──
+//
+// Fetches insights.html, competitor-analytics.html, and whitespace.html,
+// extracts specific <section class="artifact"> blocks by their art-title,
+// and injects them into the right report section. This keeps report.html
+// lean and ensures the bound report is always in sync with the live admin
+// pages — single source of truth for content authored once.
+async function foldCompanionArtefacts() {
+  const fetchPage = async (url) => {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(url + ' HTTP ' + res.status);
+      return new DOMParser().parseFromString(await res.text(), 'text/html');
+    } catch (e) {
+      console.warn('foldCompanionArtefacts:', e.message);
+      return null;
+    }
+  };
+
+  const findArtifactByTitle = (doc, partial) => {
+    if (!doc) return null;
+    const arts = Array.from(doc.querySelectorAll('section.artifact'));
+    return arts.find(a => {
+      const t = a.querySelector('.art-title');
+      return t && t.textContent.toLowerCase().includes(partial.toLowerCase());
+    }) || null;
+  };
+
+  const cloneInto = (artifact, mountSelector) => {
+    if (!artifact) return false;
+    const mount = document.querySelector(mountSelector);
+    if (!mount) return false;
+    mount.appendChild(artifact.cloneNode(true));
+    return true;
+  };
+
+  // Fold in parallel.
+  const [insightsDoc, compDoc, wsDoc] = await Promise.all([
+    fetchPage('insights.html'),
+    fetchPage('competitor-analytics.html'),
+    fetchPage('whitespace.html')
+  ]);
+
+  // Section 4 (Market) — Industry Overview from insights.html
+  cloneInto(findArtifactByTitle(insightsDoc, 'industry overview'), '#sec-market');
+
+  // Section 5 (Competitive) — Top-5 Radar + Strategic Insights + Full Deep-dive
+  // + Sourced Pricing Evidence from competitor-analytics.html
+  cloneInto(findArtifactByTitle(compDoc, 'top-5 threat radar'), '#sec-comp');
+  cloneInto(findArtifactByTitle(compDoc, 'strategic insights'), '#sec-comp');
+  cloneInto(findArtifactByTitle(compDoc, 'competitor deep-dive'), '#sec-comp');
+  cloneInto(findArtifactByTitle(compDoc, 'sourced pricing evidence'), '#sec-comp');
+
+  // Section 6 (Pricing) — Buyer Personas + WTP + NBA Substitutes from insights.html
+  cloneInto(findArtifactByTitle(insightsDoc, 'buyer personas'), '#sec-pricing');
+  cloneInto(findArtifactByTitle(insightsDoc, 'willingness-to-pay'), '#sec-pricing');
+  cloneInto(findArtifactByTitle(insightsDoc, 'next-best alternatives'), '#sec-pricing');
+
+  // Section 7 (Whitespace) — 8×8 Heatmap from whitespace.html
+  cloneInto(findArtifactByTitle(wsDoc, 'segment × need heatmap'), '#sec-whitespace');
+
+  // Section 9 (Recs) — Competitive Gaps from insights.html
+  cloneInto(findArtifactByTitle(insightsDoc, 'competitive gaps'), '#sec-recs');
+
+  // Run renderers for the data-driven artefacts that just got their markup folded in.
+  // These reuse the JSON already loaded by loadAll().
+  if (window.__reportData) {
+    const d = window.__reportData;
+    renderTopFiveRadar(d.competitors.competitors || []);
+    renderStrategicInsights();
+    renderFullDeepDive(d.competitors.competitors || []);
+    renderHeatmap(d.wsCompetitors.competitors || []);
+  }
+}
+
 // ── Data loading ──
 async function loadAll() {
   try {
@@ -1026,6 +1604,9 @@ async function loadAll() {
     const wsCompetitors = await wsCompRes.json();
     const designAudit = await daRes.json();
 
+    // Cache so foldCompanionArtefacts() can reach the data without a re-fetch.
+    window.__reportData = { competitors, wsCompetitors, designAudit };
+
     const stamp = competitors.research_date || wsCompetitors.research_date || designAudit.research_date || '2026-04-27';
     document.getElementById('cover-date').textContent = stamp;
     document.getElementById('meth-date').textContent = stamp;
@@ -1037,6 +1618,9 @@ async function loadAll() {
     renderTopPairs(wsCompetitors.competitors || []);
     renderNiches();
     renderDesignAudit(designAudit);
+
+    // Fold companion-page artefacts after the core report has rendered.
+    await foldCompanionArtefacts();
   } catch (e) {
     const main = document.getElementById('report-doc');
     const err = makeEl('div', 'err-msg', 'Data load failed: ' + e.message + ' — confirm /data/*.json files exist.');
@@ -1045,7 +1629,197 @@ async function loadAll() {
   }
 }
 
-// ── PDF download ──
+// ── Phase 4 pre-flight validator (Passage flavour) ──
+// Adapted from competitor-intel-template's preflight-dom.js. Catches the
+// structural failures that produced the original 16-page PDF with 6 blank
+// pages: missing sections, sections out of order, empty sections.
+const PASSAGE_CANONICAL_SECTIONS = [
+  'sec-cover', 'sec-toc', 'sec-exec', 'sec-market', 'sec-comp',
+  'sec-pricing', 'sec-whitespace', 'sec-design', 'sec-recs', 'sec-method'
+];
+
+function validatePassageDOM() {
+  const violations = [];
+  const v = (check, msg) => violations.push({ check, msg });
+
+  // 4a — section count + canonical order
+  const sections = Array.from(document.querySelectorAll('main#report-doc > section.report-page'));
+  if (sections.length !== 10) {
+    v('4a', 'Expected 10 sections, found ' + sections.length);
+  }
+  const seen = sections.map(s => s.id);
+  for (let i = 0; i < PASSAGE_CANONICAL_SECTIONS.length; i++) {
+    if (seen[i] !== PASSAGE_CANONICAL_SECTIONS[i]) {
+      v('4a', 'Section ' + (i + 1) + ': expected #' + PASSAGE_CANONICAL_SECTIONS[i] + ', got #' + (seen[i] || '(missing)'));
+    }
+  }
+
+  // 4b — cover carries the PASSAGE brand mark and the casket-only tagline
+  const cover = document.getElementById('sec-cover');
+  if (cover) {
+    const mark = cover.querySelector('.cover-mark');
+    if (!mark || !mark.textContent.includes('PASSAGE')) {
+      v('4b', 'Cover is missing the PASSAGE brand mark');
+    }
+    const tag = cover.querySelector('.cover-tag');
+    if (!tag || !tag.textContent.trim()) {
+      v('4b', 'Cover is missing the .cover-tag tagline');
+    }
+  } else {
+    v('4b', 'Cover section #sec-cover not found');
+  }
+
+  // 4c — no empty sections (text length check, exempt cover which is visual)
+  sections.forEach((s, i) => {
+    if (s.id === 'sec-cover') return;
+    const text = (s.textContent || '').replace(/\s+/g, ' ').trim();
+    if (text.length < 80) {
+      v('4c', 'Section ' + (i + 1) + ' (#' + s.id + ') has only ' + text.length + ' chars of content (likely empty / data load failed)');
+    }
+  });
+
+  // 4d — TOC has 9 entries (one per non-cover section, by Passage's design)
+  const tocItems = document.querySelectorAll('#toc-list .toc-item');
+  if (tocItems.length !== 9) {
+    v('4d', 'TOC has ' + tocItems.length + ' entries; expected 9 (one per non-cover section)');
+  }
+
+  // 4e — companion-page artefacts arrived. Each fold-target must be present.
+  // If any fold failed (network, CSP, missing companion file), the bound PDF
+  // would ship missing content — surface that here rather than silently.
+  const requiredFolds = [
+    { sel: '#sec-market .art-title',    contains: 'Industry Overview' },
+    { sel: '#sec-comp .art-title',      contains: 'Top-5 Threat Radar' },
+    { sel: '#sec-comp .art-title',      contains: 'Strategic Insights' },
+    { sel: '#sec-comp .art-title',      contains: 'Competitor Deep-dive' },
+    { sel: '#sec-comp .art-title',      contains: 'Sourced Pricing Evidence' },
+    { sel: '#sec-pricing .art-title',   contains: 'Buyer Personas' },
+    { sel: '#sec-pricing .art-title',   contains: 'Willingness-to-Pay' },
+    { sel: '#sec-pricing .art-title',   contains: 'Next-Best Alternatives' },
+    { sel: '#sec-whitespace .art-title',contains: 'Segment × Need Heatmap' },
+    { sel: '#sec-recs .art-title',      contains: 'Competitive Gaps' }
+  ];
+  requiredFolds.forEach(f => {
+    const titles = Array.from(document.querySelectorAll(f.sel));
+    const hit = titles.some(t => t.textContent.includes(f.contains));
+    if (!hit) v('4e', 'Companion artefact missing: "' + f.contains + '" not folded into ' + f.sel.split(' ')[0]);
+  });
+
+  // 4f — data-driven folded artefacts have actually rendered.
+  // Catches the "fold succeeded but renderer didn't run" gap.
+  const compGrid = document.getElementById('comp-grid');
+  if (compGrid && compGrid.querySelector('.loading')) {
+    v('4f', 'Full Competitor Deep-dive still shows "Loading…" — renderer did not run after fold');
+  }
+  const heatmapBody = document.querySelector('#heatmap tbody');
+  if (heatmapBody && heatmapBody.children.length === 0) {
+    v('4f', '8×8 Heatmap body is empty — renderHeatmap did not run after fold');
+  }
+
+  return { ok: violations.length === 0, violations };
+}
+
+function showPreflightFailure(violations) {
+  const main = document.getElementById('report-doc');
+  let box = document.getElementById('preflight-fail');
+  if (box) box.remove();
+  box = makeEl('div', 'preflight-fail');
+  box.id = 'preflight-fail';
+  const h = makeEl('h4', null, 'Phase 4 pre-flight failed — PDF not generated.');
+  box.appendChild(h);
+  const ul = makeEl('ul');
+  violations.forEach(vi => ul.appendChild(makeEl('li', null, '[Phase ' + vi.check + '] ' + vi.msg)));
+  box.appendChild(ul);
+  const hint = makeEl('p', 'hint', 'Fix the violations (often: data file failed to load, or a section was renamed). Reload, then try Download PDF again.');
+  box.appendChild(hint);
+  main.parentNode.insertBefore(box, main);
+  box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ── Content-height measurement ──
+//
+// Returns the effective height of a section based on the bottom of its
+// lowest non-empty descendant — not offsetHeight. The difference is that
+// trailing padding-bottom / empty trailing whitespace get excluded, so
+// the paginator no longer creates blank trailer pages for sections whose
+// natural content fits in <= one A4 but whose padded box exceeds 297mm.
+function effectiveSectionHmm(sec) {
+  const PX_PER_MM = 96 / 25.4;
+  const secRect = sec.getBoundingClientRect();
+  let maxBottom = secRect.top;
+  sec.querySelectorAll('*').forEach(el => {
+    const hasText = (el.textContent || '').trim().length > 0;
+    const tag = el.tagName;
+    const isVisual = tag === 'IMG' || tag === 'CANVAS' || tag === 'SVG' || tag === 'TABLE';
+    if (!hasText && !isVisual) return;
+    const r = el.getBoundingClientRect();
+    if (r.bottom > maxBottom) maxBottom = r.bottom;
+  });
+  const contentHmm = (maxBottom - secRect.top) / PX_PER_MM + 8; // 8mm visual breathing
+  return Math.min(contentHmm, sec.offsetHeight / PX_PER_MM);
+}
+
+// Compute the starting PDF page for each section, using the same effective
+// height the paginator will use at rasterise time. Returns { sectionId → page }.
+function computePageNumbers(sections) {
+  const PAGE_H_MM = 297;
+  let curPage = 1;
+  const start = {};
+  for (const sec of sections) {
+    start[sec.id] = curPage;
+    const eff = effectiveSectionHmm(sec);
+    const pages = eff <= PAGE_H_MM + 0.5 ? 1 : Math.ceil(eff / PAGE_H_MM);
+    curPage += pages;
+  }
+  return start;
+}
+
+// Replace the §02-style chapter numbers in the TOC with real PDF page
+// numbers. Walks each .toc-item, finds the heading it links to, traces
+// back to the parent section, and looks up the start page.
+function updateTOCWithPageNumbers(sectionStart) {
+  document.querySelectorAll('#toc-list .toc-item').forEach(item => {
+    const link = item.querySelector('.toc-link');
+    if (!link) return;
+    const href = link.getAttribute('href');
+    if (!href || !href.startsWith('#')) return;
+    const target = document.getElementById(href.slice(1));
+    if (!target) return;
+    const parent = target.closest('section.report-page');
+    if (!parent) return;
+    const page = sectionStart[parent.id];
+    if (!page) return;
+    const pageEl = item.querySelector('.toc-page');
+    if (pageEl) pageEl.textContent = 'p ' + String(page).padStart(2, '0');
+  });
+}
+
+// Pixel-sample a slice canvas to decide whether it's mostly background
+// colour. Belt-and-braces against trailing-blank slices that the
+// effective-height crop didn't catch.
+function sliceIsEmpty(sliceCanvas, bgHex) {
+  const ctx = sliceCanvas.getContext('2d');
+  let data;
+  try { data = ctx.getImageData(0, 0, sliceCanvas.width, sliceCanvas.height).data; }
+  catch (e) { return false; }
+  const r0 = parseInt(bgHex.slice(1, 3), 16);
+  const g0 = parseInt(bgHex.slice(3, 5), 16);
+  const b0 = parseInt(bgHex.slice(5, 7), 16);
+  let nonBg = 0, sampled = 0;
+  for (let i = 0; i < data.length; i += 400) { // every 100th pixel
+    sampled++;
+    if (Math.abs(data[i] - r0) > 8 || Math.abs(data[i + 1] - g0) > 8 || Math.abs(data[i + 2] - b0) > 8) nonBg++;
+  }
+  return sampled > 0 && (nonBg / sampled) < 0.001;
+}
+
+// ── PDF download (per-section capture, paginated) ──
+//
+// Each .report-page is captured independently in PDF mode (forced 210mm
+// width, kerning disabled), cropped to its effective content height, then
+// placed onto its own A4 page(s). Sections taller than 297mm are paginated
+// vertically; empty trailing slices are dropped via pixel sampling so we
+// never emit blank pages.
 async function downloadPdf() {
   const btn = document.getElementById('pdf-dl-btn');
   if (!btn) return;
@@ -1053,47 +1827,113 @@ async function downloadPdf() {
     alert('PDF libraries failed to load. Check network / CSP and refresh.');
     return;
   }
-  const origText = btn.textContent;
+
+  // Phase 4 pre-flight (DOM-level) — halt before opening html2canvas.
+  const preflight = validatePassageDOM();
+  if (!preflight.ok) {
+    showPreflightFailure(preflight.violations);
+    return;
+  }
+  const stale = document.getElementById('preflight-fail');
+  if (stale) stale.remove();
+
   btn.disabled = true;
   btn.textContent = 'Rendering…';
-  try {
-    const target = document.getElementById('report-doc');
-    const canvas = await window.html2canvas(target, {
-      scale: 1.0,
-      backgroundColor: '#fcf9f5',
-      useCORS: true,
-      logging: false,
-      windowWidth: target.scrollWidth,
-      windowHeight: target.scrollHeight
-    });
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
-    const pageW = pdf.internal.pageSize.getWidth();
-    const pageH = pdf.internal.pageSize.getHeight();
-    const imgW = pageW;
-    const imgH = canvas.height * (imgW / canvas.width);
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.62);
+  document.body.classList.add('pdf-mode');
 
-    if (imgH <= pageH) {
-      pdf.addImage(dataUrl, 'JPEG', 0, 0, imgW, imgH, undefined, 'FAST');
-    } else {
-      let remaining = imgH;
-      let position = 0;
-      while (remaining > 0) {
-        pdf.addImage(dataUrl, 'JPEG', 0, position, imgW, imgH, undefined, 'FAST');
-        remaining -= pageH;
-        if (remaining > 0) {
-          position -= pageH;
-          pdf.addPage();
-          pdf.setFillColor(252, 249, 245);
-          pdf.rect(0, 0, pageW, pageH, 'F');
+  // Let layout settle in pdf-mode before capturing.
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  await (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve());
+
+  const PX_PER_MM = 96 / 25.4;
+  const PAGE_W_MM = 210;
+  const PAGE_H_MM = 297;
+  const SCALE = 2;
+
+  try {
+    const sections = Array.from(document.querySelectorAll('main#report-doc > section.report-page'));
+
+    // Compute real page numbers and patch the TOC before rasterising, so the
+    // TOC page itself shows accurate numbers when it's captured.
+    const pageStart = computePageNumbers(sections);
+    updateTOCWithPageNumbers(pageStart);
+    await new Promise(r => requestAnimationFrame(r)); // let TOC repaint
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
+
+    let pageEmitted = false;
+
+    for (let i = 0; i < sections.length; i++) {
+      const sec = sections[i];
+      const bg = sec.classList.contains('bleed-card') ? '#ffffff' : '#fcf9f5';
+
+      const fullCanvas = await window.html2canvas(sec, {
+        scale: SCALE,
+        backgroundColor: bg,
+        useCORS: true,
+        logging: false,
+        width: sec.offsetWidth,
+        height: sec.offsetHeight
+      });
+
+      // Crop to effective content height — drops the padding-bottom whitespace
+      // that was producing blank trailer pages.
+      const effHmm = effectiveSectionHmm(sec);
+      const effHpx = Math.ceil(effHmm * PX_PER_MM * SCALE);
+      let canvas;
+      if (effHpx >= fullCanvas.height) {
+        canvas = fullCanvas;
+      } else {
+        canvas = document.createElement('canvas');
+        canvas.width = fullCanvas.width;
+        canvas.height = effHpx;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(fullCanvas, 0, 0);
+      }
+
+      const sectionHmm = (canvas.height / SCALE) / PX_PER_MM;
+
+      if (sectionHmm <= PAGE_H_MM + 0.5) {
+        if (pageEmitted) pdf.addPage();
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.62);
+        pdf.addImage(dataUrl, 'JPEG', 0, 0, PAGE_W_MM, sectionHmm, undefined, 'FAST');
+        pageEmitted = true;
+      } else {
+        const sliceHpx = Math.floor(PAGE_H_MM * PX_PER_MM * SCALE);
+        let yPx = 0;
+        while (yPx < canvas.height) {
+          const thisSliceHpx = Math.min(sliceHpx, canvas.height - yPx);
+          const slice = document.createElement('canvas');
+          slice.width = canvas.width;
+          slice.height = thisSliceHpx;
+          const sctx = slice.getContext('2d');
+          sctx.fillStyle = bg;
+          sctx.fillRect(0, 0, slice.width, slice.height);
+          sctx.drawImage(canvas, 0, -yPx);
+
+          if (!sliceIsEmpty(slice, bg)) {
+            if (pageEmitted) pdf.addPage();
+            const dataUrl = slice.toDataURL('image/jpeg', 0.62);
+            const sliceHmm = (thisSliceHpx / SCALE) / PX_PER_MM;
+            pdf.addImage(dataUrl, 'JPEG', 0, 0, PAGE_W_MM, sliceHmm, undefined, 'FAST');
+            pageEmitted = true;
+          }
+          yPx += thisSliceHpx;
         }
       }
+
+      btn.textContent = 'Rendering… ' + (i + 1) + ' / ' + sections.length;
     }
+
     pdf.save('passage-casket-market-intelligence-q2-2026.pdf');
   } catch (err) {
     alert('PDF render failed: ' + (err && err.message ? err.message : err));
+    console.error(err);
   } finally {
+    document.body.classList.remove('pdf-mode');
     btn.disabled = false;
     btn.textContent = '⬇ Download PDF';
   }
