@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Competitor Analytics — The Commons Admin</title>
+  <meta name="description" content="P2P event platform competitor analytics: radar, insights, deep-dive cards. Admin-only." />
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous"></script>
+  <style>
+    .admin-nav-bar {
+      display: flex; gap: 8px; background: var(--navy); padding: 10px 24px;
+      margin-top: var(--nav-height); position: sticky; top: var(--nav-height); z-index: 100;
+      flex-wrap: wrap;
+    }
+    .admin-nav-bar a {
+      color: rgba(255,255,255,0.6); padding: 10px 20px; border-radius: var(--radius-sm);
+      font-size: 0.85rem; font-weight: 600;
+    }
+    .admin-nav-bar a:hover { background: rgba(255,255,255,0.08); color: white; }
+    .admin-nav-bar a.active { background: rgba(255,107,107,0.2); color: var(--coral); }
+
+    .atlas-body { padding: 40px 0 80px; background: var(--sand); min-height: calc(100vh - var(--nav-height)); }
+    .atlas-wrap { max-width: 1340px; margin: 0 auto; padding: 0 24px; }
+    .atlas-top {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px; margin-bottom: 28px;
+    }
+    .atlas-tag {
+      display: inline-block; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--coral); margin-bottom: 8px;
+      padding: 4px 12px; border: 2px solid var(--coral); border-radius: 999px; background: white;
+    }
+    .atlas-title { font-size: clamp(1.7rem, 3.5vw, 2.4rem); font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; color: var(--navy); }
+    .atlas-meta { font-size: 0.76rem; color: var(--slate); font-family: ui-monospace, monospace; text-align: right; }
+
+    .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 28px; }
+    .kpi { background: white; border: 2px solid rgba(26,26,46,0.08); border-radius: var(--radius-md); padding: 18px 20px; box-shadow: var(--shadow-sm); }
+    .kpi-val { font-size: 2rem; font-weight: 900; color: var(--coral); letter-spacing: -0.03em; line-height: 1; }
+    .kpi-val.green { color: #00C853; }
+    .kpi-val.amber { color: var(--mango); }
+    .kpi-val.red { color: var(--pink); }
+    .kpi-val.ocean { color: var(--deep-ocean); }
+    .kpi-lbl { font-size: 0.72rem; color: var(--slate); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-top: 8px; }
+
+    .artifact { background: white; border: 2px solid rgba(26,26,46,0.08); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 28px 30px; margin-bottom: 22px; }
+    .art-num {
+      display: inline-block; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--coral); background: rgba(255,107,107,0.1);
+      padding: 4px 12px; border-radius: 999px; border: 1.5px solid rgba(255,107,107,0.3);
+      margin-bottom: 10px;
+    }
+    .art-title { font-size: 1.4rem; font-weight: 800; color: var(--navy); letter-spacing: -0.01em; margin-bottom: 8px; }
+    .art-desc { color: var(--slate); font-size: 0.92rem; max-width: 820px; line-height: 1.55; margin-bottom: 22px; }
+
+    /* Radar */
+    .chart-wrap { background: var(--sand); border-radius: var(--radius-md); padding: 18px; }
+    #radar-chart { width: 100% !important; max-width: 720px; height: 460px !important; margin: 0 auto; display: block; }
+
+    /* Filter bar */
+    .comp-controls { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+    .comp-search, .comp-filter {
+      padding: 10px 14px; border: 2px solid var(--sand-dark); background: white; color: var(--navy);
+      font-family: inherit; font-size: 0.88rem; border-radius: var(--radius-sm); outline: none;
+      transition: border-color 0.2s;
+    }
+    .comp-search:focus, .comp-filter:focus { border-color: var(--coral); }
+    .comp-search { flex: 1; min-width: 220px; }
+    .comp-count { font-size: 0.78rem; color: var(--slate); font-family: ui-monospace, monospace; }
+
+    /* Cards */
+    .comp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; }
+    .comp-card {
+      background: white; border: 2px solid rgba(26,26,46,0.08); border-radius: var(--radius-md);
+      padding: 22px 22px; display: flex; flex-direction: column; gap: 12px;
+      box-shadow: var(--shadow-sm); transition: var(--transition);
+    }
+    .comp-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .comp-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .comp-name { font-size: 1.05rem; font-weight: 800; color: var(--navy); letter-spacing: -0.01em; }
+    .comp-url { display: block; font-size: 0.74rem; color: var(--deep-ocean); text-decoration: none; margin-top: 2px; word-break: break-all; }
+    .comp-url:hover { text-decoration: underline; }
+    .comp-target { font-size: 0.82rem; color: var(--slate); line-height: 1.5; }
+
+    .badge-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .badge {
+      display: inline-block; padding: 3px 10px; font-size: 0.62rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase; font-family: ui-monospace, monospace;
+      border-radius: 100px; border: 1.5px solid;
+    }
+    .b-tier-premium    { background: rgba(224,64,251,0.10); color: var(--fuchsia); border-color: var(--fuchsia); }
+    .b-tier-mid        { background: rgba(0,210,255,0.12);  color: var(--deep-ocean); border-color: var(--deep-ocean); }
+    .b-tier-budget     { background: rgba(0,230,118,0.14);  color: #00C853; border-color: #00C853; }
+    .b-tier-dtc-direct { background: rgba(255,142,83,0.14); color: var(--mango); border-color: var(--mango); }
+    .b-cat             { background: rgba(255,107,107,0.10); color: var(--coral); border-color: rgba(255,107,107,0.4); }
+    .b-vis-fully_published   { background: rgba(0,230,118,0.14); color: #00C853; border-color: #00C853; }
+    .b-vis-partial           { background: rgba(255,142,83,0.14); color: var(--mango); border-color: var(--mango); }
+    .b-vis-hidden_in_package { background: rgba(255,64,129,0.14); color: var(--pink); border-color: var(--pink); }
+    .b-threat-high   { background: rgba(255,64,129,0.14); color: var(--pink); border-color: var(--pink); }
+    .b-threat-medium { background: rgba(255,142,83,0.14); color: var(--mango); border-color: var(--mango); }
+    .b-threat-low    { background: rgba(0,230,118,0.14); color: #00C853; border-color: #00C853; }
+
+    .price-strip {
+      font-size: 0.84rem; color: var(--slate);
+      padding: 9px 12px; background: var(--sand); border-radius: var(--radius-sm);
+      border: 1px solid var(--sand-dark);
+    }
+    .price-strip b { color: var(--navy); }
+
+    .feature-flags { display: flex; gap: 8px; flex-wrap: wrap; font-size: 0.72rem; }
+    .ff {
+      padding: 3px 9px; border-radius: 100px; font-weight: 700; letter-spacing: 0.04em;
+      font-family: ui-monospace, monospace; border: 1px solid;
+    }
+    .ff.on  { background: rgba(0,230,118,0.14); color: #00C853; border-color: #00C853; }
+    .ff.off { background: var(--sand); color: var(--slate); border-color: var(--sand-dark); }
+
+    .score-row { display: grid; grid-template-columns: 90px 1fr 32px; gap: 10px; align-items: center; font-size: 0.78rem; }
+    .score-lbl { color: var(--slate); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.66rem; font-weight: 700; }
+    .score-bar { height: 8px; background: var(--sand-dark); border-radius: 4px; overflow: hidden; position: relative; }
+    .score-bar-fill { height: 100%; background: var(--sunset-gradient); border-radius: 4px; transition: width 0.4s ease; }
+    .score-num { font-family: ui-monospace, monospace; font-weight: 700; color: var(--navy); text-align: right; }
+
+    .lists-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 540px) { .lists-wrap { grid-template-columns: 1fr; } }
+    .list-block h4 {
+      font-size: 0.66rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--coral); margin-bottom: 6px; font-family: ui-monospace, monospace;
+    }
+    .list-block ul { list-style: none; padding: 0; margin: 0; }
+    .list-block li {
+      font-size: 0.8rem; color: var(--slate); padding: 4px 0 4px 14px;
+      position: relative; line-height: 1.5;
+    }
+    .list-block li::before {
+      content: '*'; color: var(--coral); position: absolute; left: 0; top: 4px; font-weight: 700;
+    }
+    .list-block.weak   li::before { color: var(--pink); content: '!'; }
+    .list-block.strong li::before { color: #00C853; content: '+'; }
+
+    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 760px) { .insight-grid { grid-template-columns: 1fr; } }
+    .insight-block {
+      background: var(--sand); border: 1.5px solid var(--sand-dark); border-radius: var(--radius-sm);
+      padding: 18px 20px;
+    }
+    .insight-block h4 { font-size: 1rem; font-weight: 800; color: var(--navy); margin-bottom: 10px; }
+    .insight-block ul { list-style: none; padding: 0; margin: 0; }
+    .insight-block li {
+      font-size: 0.86rem; color: var(--slate); padding: 5px 0 5px 18px;
+      position: relative; line-height: 1.55;
+    }
+    .insight-block li::before {
+      content: '◆'; color: var(--coral); position: absolute; left: 0; top: 6px; font-size: 0.72rem;
+    }
+
+    .loading { color: var(--slate); font-size: 0.86rem; padding: 32px; text-align: center; font-family: ui-monospace, monospace; grid-column: 1 / -1; }
+
+    @media (max-width: 768px) {
+      body { font-size: 13px; }
+      .atlas-title { font-size: 1.45rem !important; line-height: 1.2 !important; }
+      .art-title { font-size: 1.1rem !important; }
+      .atlas-meta { text-align: left !important; margin-top: 6px !important; font-size: 0.7rem !important; }
+      .atlas-wrap { padding-left: 14px !important; padding-right: 14px !important; }
+      .atlas-top { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
+
+      .kpi-strip { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; margin-bottom: 20px !important; }
+      .kpi { padding: 14px 16px !important; }
+      .kpi-val { font-size: 1.45rem !important; }
+      .kpi-lbl { font-size: 0.6rem !important; letter-spacing: 0.06em !important; }
+
+      .artifact { padding: 18px 16px !important; margin-bottom: 14px !important; border-radius: 12px !important; }
+      .art-desc { font-size: 0.82rem !important; margin-bottom: 14px !important; }
+
+      #radar-chart { height: 320px !important; max-height: 360px !important; width: 100% !important; }
+      .chart-wrap { padding: 14px !important; }
+
+      .comp-controls { gap: 8px !important; flex-wrap: wrap !important; }
+      .comp-search { width: 100% !important; min-width: 100% !important; }
+      .comp-filter { flex: 1 1 calc(50% - 4px) !important; min-width: calc(50% - 4px) !important; }
+      .comp-count { font-size: 0.7rem !important; width: 100% !important; }
+
+      .comp-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+      .comp-card { padding: 16px 16px !important; border-radius: 12px !important; }
+      .comp-name { font-size: 1rem !important; }
+      .badge { font-size: 0.56rem !important; padding: 2px 7px !important; letter-spacing: 0.02em !important; }
+
+      .admin-nav-bar { flex-wrap: wrap !important; padding: 10px 14px !important; gap: 8px !important; }
+      .admin-nav-bar a { font-size: 0.72rem !important; padding: 6px 10px !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <div class="logo-icon">TC</div>
+      The Commons
+    </a>
+    <ul class="nav-links">
+      <li><a href="../events.html">Discover</a></li>
+      <li><a href="../create.html">Create Event</a></li>
+      <li><a href="../marketplace.html">Marketplace</a></li>
+      <li><a href="../dashboard.html">Dashboard</a></li>
+      <li><a href="index.html">Admin</a></li>
+    </ul>
+    <div class="nav-actions">
+      <span class="badge badge-coral">Research</span>
+    </div>
+    <button class="mobile-toggle" onclick="toggleMobileMenu()">&#9776;</button>
+  </div>
+</nav>
+
+<!-- Admin Sub-Nav -->
+<div class="admin-nav-bar">
+  <a href="index.html">Platform Admin</a>
+  <a href="competitor-analytics.html" class="active">Competitor Analytics</a>
+  <a href="insights.html">Market &amp; Pricing</a>
+  <a href="whitespace.html">White Space Atlas</a>
+  <a href="design-audit.html">Design Audit</a>
+  <a href="report.html">Report</a>
+</div>
+
+<main class="atlas-body">
+  <div class="atlas-wrap">
+
+    <div class="atlas-top">
+      <div>
+        <div class="atlas-tag">◆ Competitor Analytics · v1</div>
+        <h1 class="atlas-title">Every platform organisers fall back to.<br/><span style="color: var(--slate); font-weight: 600;">Where The Commons stands on escrow, marketplace, and SG-first UX.</span></h1>
+      </div>
+      <div class="atlas-meta">
+        <div>Refreshed <span id="refresh-date">—</span></div>
+        <div><span id="comp-count-hdr">—</span> competitors mapped</div>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-strip">
+      <div class="kpi"><div class="kpi-val" id="kpi-total">—</div><div class="kpi-lbl">Competitors mapped</div></div>
+      <div class="kpi"><div class="kpi-val ocean" id="kpi-design">—</div><div class="kpi-lbl">Avg design score (10)</div></div>
+      <div class="kpi"><div class="kpi-val green" id="kpi-escrow">—</div><div class="kpi-lbl">% offering true escrow</div></div>
+      <div class="kpi"><div class="kpi-val red" id="kpi-threats">—</div><div class="kpi-lbl">High threat to The Commons</div></div>
+    </div>
+
+    <!-- Radar -->
+    <section class="artifact">
+      <div class="art-num">Artifact 01</div>
+      <h2 class="art-title">Top-5 Threat Radar</h2>
+      <p class="art-desc">Five most-direct competitors plotted across six dimensions: escrow safety, marketplace liquidity, P2P friction (lower is better, charted as friendliness), SG coverage, mobile polish, and fees transparency. The Commons holds the daiquiri-beach quadrant nobody else does — escrow + integrated SG vendor marketplace + P2P-first.</p>
+      <div class="chart-wrap">
+        <canvas id="radar-chart" width="720" height="460"></canvas>
+      </div>
+    </section>
+
+    <!-- Insights -->
+    <section class="artifact">
+      <div class="art-num">Artifact 02</div>
+      <h2 class="art-title">Strategic Insights</h2>
+      <p class="art-desc">What the landscape tells us — common weaknesses across the field, The Commons' deck-grounded advantages, and the design lessons we borrow vs improve on.</p>
+      <div class="insight-grid">
+        <div class="insight-block">
+          <h4>Common competitor weaknesses</h4>
+          <ul id="weaknesses-list"></ul>
+        </div>
+        <div class="insight-block">
+          <h4>The Commons advantages</h4>
+          <ul id="advantages-list"></ul>
+        </div>
+        <div class="insight-block">
+          <h4>Design — borrowed from</h4>
+          <ul id="borrowed-list"></ul>
+        </div>
+        <div class="insight-block">
+          <h4>Design — improved on</h4>
+          <ul id="improved-list"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cards -->
+    <section class="artifact">
+      <div class="art-num">Artifact 03</div>
+      <h2 class="art-title">Competitor Deep-dive</h2>
+      <p class="art-desc">All <span id="comp-count-inline">—</span> competitors with tier, escrow / marketplace flags, design + mobile scores, strengths and weaknesses. Filter by category, threat level, or fee visibility.</p>
+      <div class="comp-controls">
+        <input type="search" id="comp-search" class="comp-search" placeholder="Search name, target, strengths..." />
+        <select id="comp-cat" class="comp-filter"><option value="">All categories</option></select>
+        <select id="comp-threat" class="comp-filter">
+          <option value="">All threats</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+        <select id="comp-vis" class="comp-filter">
+          <option value="">All fee visibility</option>
+          <option value="fully_published">Fully published</option>
+          <option value="partial">Partial</option>
+          <option value="hidden_in_package">Hidden / opaque</option>
+        </select>
+        <span class="comp-count" id="comp-count-tbl">—</span>
+      </div>
+      <div class="comp-grid" id="comp-grid">
+        <div class="loading">Loading competitor data…</div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+function toggleMobileMenu() {
+  var m = document.getElementById('mobileMenu');
+  if (m) m.classList.toggle('show');
+}
+</script>
+
+<script>
+// ── Analytics renderer ──
+var STATE = { competitors: [], categories: {}, insights: {}, landscape: {}, filtered: [] };
+
+function el(tag, opts) {
+  var e = document.createElement(tag);
+  if (!opts) return e;
+  if (opts.cls) e.className = opts.cls;
+  if (opts.text != null) e.textContent = String(opts.text);
+  if (opts.attrs) for (var k in opts.attrs) e.setAttribute(k, opts.attrs[k]);
+  if (opts.children) for (var i = 0; i < opts.children.length; i++) if (opts.children[i]) e.appendChild(opts.children[i]);
+  return e;
+}
+
+function initAnalytics() {
+  fetch('../data/competitors.json')
+    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function (data) {
+      STATE.competitors = Array.isArray(data.competitors) ? data.competitors : [];
+      STATE.categories = data.categories || {};
+      STATE.insights = data.insights || {};
+      STATE.landscape = data.landscape || {};
+      STATE.filtered = STATE.competitors.slice();
+      document.getElementById('refresh-date').textContent = data.research_date || '—';
+      renderKPIs();
+      renderCategoryFilter();
+      renderInsights();
+      renderRadar();
+      attachFilterHandlers();
+      renderCards();
+    })
+    .catch(function (err) {
+      console.error(err);
+      var grid = document.getElementById('comp-grid');
+      grid.textContent = '';
+      grid.appendChild(el('div', { cls: 'loading', text: 'Failed to load competitor data: ' + err.message }));
+    });
+}
+
+function renderKPIs() {
+  var total = STATE.competitors.length;
+  var ds = STATE.competitors.map(function (c) { return Number(c.designScore || 0); });
+  var avg = ds.length ? (ds.reduce(function (a, b) { return a + b; }, 0) / ds.length) : 0;
+  var escrow = STATE.competitors.filter(function (c) { return c.escrow_offering === true; }).length;
+  var threats = STATE.competitors.filter(function (c) { return c.threat_level_to_the_commons === 'high'; }).length;
+
+  document.getElementById('kpi-total').textContent = String(total);
+  document.getElementById('kpi-design').textContent = avg.toFixed(1);
+  document.getElementById('kpi-escrow').textContent = total ? Math.round((escrow / total) * 100) + '%' : '—';
+  document.getElementById('kpi-threats').textContent = String(threats);
+  document.getElementById('comp-count-hdr').textContent = String(total);
+  document.getElementById('comp-count-inline').textContent = String(total);
+}
+
+function renderCategoryFilter() {
+  var sel = document.getElementById('comp-cat');
+  while (sel.options.length > 1) sel.remove(1);
+  var cats = STATE.categories || {};
+  Object.keys(cats).forEach(function (k) {
+    sel.appendChild(el('option', { attrs: { value: k }, text: k.replace(/_/g, ' ') }));
+  });
+}
+
+function renderInsights() {
+  var ins = STATE.insights || {};
+  var fill = function (id, list) {
+    var ul = document.getElementById(id);
+    if (!ul) return;
+    ul.textContent = '';
+    (Array.isArray(list) ? list : []).forEach(function (item) { ul.appendChild(el('li', { text: item })); });
+  };
+  fill('weaknesses-list', ins.commonWeaknesses);
+  fill('advantages-list', ins.theCommonsAdvantages);
+  fill('borrowed-list', ins.designRationale && ins.designRationale.borrowed);
+  fill('improved-list', ins.designRationale && ins.designRationale.improved);
+}
+
+function renderRadar() {
+  var ctx = document.getElementById('radar-chart');
+  if (!ctx || typeof Chart === 'undefined') return;
+
+  // Pick top-5 threats; design+mobile sort
+  var high = STATE.competitors.filter(function (c) { return c.threat_level_to_the_commons === 'high'; });
+  high.sort(function (a, b) { return (b.designScore + b.mobileScore) - (a.designScore + a.mobileScore); });
+  var picks = high.slice(0, 4);
+
+  // Add Klook for curated benchmark
+  var klook = STATE.competitors.find(function (c) { return c.name === 'Klook'; });
+  if (klook && picks.indexOf(klook) === -1) picks.push(klook);
+  var top5 = picks.slice(0, 5);
+
+  var dims = ['Escrow safety', 'Marketplace liquidity', 'Low P2P friction', 'SG coverage', 'Mobile polish', 'Fees transparency'];
+
+  function visScore(v) {
+    return ({ fully_published: 5, partial: 3, hidden_in_package: 1 })[v] || 0;
+  }
+  function escrowScore(c) { return c.escrow_offering ? 5 : 1; }
+  function marketScore(c) { return c.marketplace_offering ? 5 : 1; }
+  function frictionScore(c) {
+    // higher = lower friction. P2P-friendly platforms (Peatix, Luma, Eventbrite) score higher than enterprise (SISTIC) or DIY rails (PayNow alone)
+    var cat = c.category || '';
+    if (cat === 'sea_ticketing' || cat === 'global_ticketing' || cat === 'community_newsletter') return 4;
+    if (cat === 'experience_marketplace' || cat === 'space_rental' || cat === 'freelance_marketplace') return 3;
+    if (cat === 'payment_escrow' || cat === 'diy_alt') return 2;
+    return 2;
+  }
+  function sgScore(c) {
+    var hq = (c.hq || '').toLowerCase();
+    if (hq.indexOf('singapore') !== -1) return 5;
+    if (/sg|hong kong|tokyo/.test(hq)) return 3;
+    if (/distributed/.test(hq)) return 2;
+    return 1;
+  }
+  function mobileScore(c) { return Math.max(1, Math.round((Number(c.mobileScore || 0) / 10) * 5)); }
+
+  // The Commons's own row (target shape we are building toward)
+  var theCommonsRow = {
+    label: 'The Commons (us)',
+    data: [5, 5, 5, 5, 4, 5],
+    backgroundColor: 'rgba(255,107,107,0.18)',
+    borderColor: '#FF6B6B',
+    borderWidth: 2.5,
+    pointBackgroundColor: '#FF6B6B'
+  };
+
+  var palette = ['#FF4081', '#FF8E53', '#00D2FF', '#E040FB', '#00C853'];
+
+  var datasets = [theCommonsRow];
+  top5.forEach(function (c, i) {
+    datasets.push({
+      label: c.name,
+      data: [
+        escrowScore(c),
+        marketScore(c),
+        frictionScore(c),
+        sgScore(c),
+        mobileScore(c),
+        visScore(c.platform_fee_visibility)
+      ],
+      backgroundColor: 'rgba(0,0,0,0.05)',
+      borderColor: palette[i % palette.length],
+      borderWidth: 1.5,
+      pointBackgroundColor: palette[i % palette.length]
+    });
+  });
+
+  new Chart(ctx, {
+    type: 'radar',
+    data: { labels: dims, datasets: datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { size: 11 }, color: '#1A1A2E' } },
+        tooltip: { backgroundColor: '#1A1A2E', padding: 10 }
+      },
+      scales: {
+        r: {
+          min: 0,
+          max: 5,
+          ticks: { stepSize: 1, color: '#4A5568', backdropColor: 'transparent', font: { size: 10 } },
+          pointLabels: { font: { size: 11, weight: 600 }, color: '#1A1A2E' },
+          grid: { color: 'rgba(26,26,46,0.1)' },
+          angleLines: { color: 'rgba(26,26,46,0.1)' }
+        }
+      }
+    }
+  });
+}
+
+function attachFilterHandlers() {
+  ['comp-search', 'comp-cat', 'comp-threat', 'comp-vis'].forEach(function (id) {
+    var elx = document.getElementById(id);
+    if (elx) elx.addEventListener('input', applyFilters);
+  });
+}
+
+function applyFilters() {
+  var q = (document.getElementById('comp-search').value || '').toLowerCase().trim();
+  var cat = document.getElementById('comp-cat').value;
+  var thr = document.getElementById('comp-threat').value;
+  var vis = document.getElementById('comp-vis').value;
+
+  STATE.filtered = STATE.competitors.filter(function (c) {
+    if (cat && c.category !== cat) return false;
+    if (thr && c.threat_level_to_the_commons !== thr) return false;
+    if (vis && c.platform_fee_visibility !== vis) return false;
+    if (q) {
+      var blob = [
+        c.name, c.target_market, (c.strengths || []).join(' '),
+        (c.weaknesses || []).join(' '), (c.notableFeatures || []).join(' ')
+      ].join(' ').toLowerCase();
+      if (blob.indexOf(q) === -1) return false;
+    }
+    return true;
+  });
+  renderCards();
+}
+
+function renderCards() {
+  var grid = document.getElementById('comp-grid');
+  grid.textContent = '';
+  document.getElementById('comp-count-tbl').textContent =
+    STATE.filtered.length + ' / ' + STATE.competitors.length + ' shown';
+
+  if (!STATE.filtered.length) {
+    grid.appendChild(el('div', { cls: 'loading', text: 'No competitors match the current filters.' }));
+    return;
+  }
+  STATE.filtered.forEach(function (c) { grid.appendChild(buildCard(c)); });
+}
+
+function buildCard(c) {
+  var card = el('div', { cls: 'comp-card' });
+
+  var head = el('div', { cls: 'comp-card-head' });
+  var nameWrap = el('div');
+  nameWrap.appendChild(el('div', { cls: 'comp-name', text: c.name || '—' }));
+  if (c.url) {
+    nameWrap.appendChild(el('a', {
+      cls: 'comp-url', text: c.url,
+      attrs: { href: c.url, target: '_blank', rel: 'noopener noreferrer' }
+    }));
+  }
+  head.appendChild(nameWrap);
+  var threat = c.threat_level_to_the_commons || 'low';
+  head.appendChild(el('span', { cls: 'badge b-threat-' + threat, text: threat + ' threat' }));
+  card.appendChild(head);
+
+  if (c.target_market) card.appendChild(el('div', { cls: 'comp-target', text: c.target_market }));
+
+  var badges = el('div', { cls: 'badge-row' });
+  if (c.tier) badges.appendChild(el('span', { cls: 'badge b-tier-' + c.tier, text: c.tier }));
+  if (c.category) badges.appendChild(el('span', { cls: 'badge b-cat', text: c.category.replace(/_/g, ' ') }));
+  if (c.platform_fee_visibility) {
+    badges.appendChild(el('span', {
+      cls: 'badge b-vis-' + c.platform_fee_visibility,
+      text: c.platform_fee_visibility.replace(/_/g, ' ')
+    }));
+  }
+  card.appendChild(badges);
+
+  // Feature flags
+  var flags = el('div', { cls: 'feature-flags' });
+  flags.appendChild(el('span', { cls: 'ff ' + (c.escrow_offering ? 'on' : 'off'), text: (c.escrow_offering ? '✓' : '×') + ' Escrow' }));
+  flags.appendChild(el('span', { cls: 'ff ' + (c.marketplace_offering ? 'on' : 'off'), text: (c.marketplace_offering ? '✓' : '×') + ' Marketplace' }));
+  card.appendChild(flags);
+
+  if (c.estimated_platform_fee_sgd) {
+    var strip = el('div', { cls: 'price-strip' });
+    strip.appendChild(el('b', { text: 'Fee: ' }));
+    strip.appendChild(document.createTextNode(c.estimated_platform_fee_sgd));
+    card.appendChild(strip);
+  }
+
+  var scores = el('div');
+  scores.appendChild(scoreRow('Design', c.designScore));
+  scores.appendChild(scoreRow('Mobile', c.mobileScore));
+  card.appendChild(scores);
+
+  var lists = el('div', { cls: 'lists-wrap' });
+  if (Array.isArray(c.strengths) && c.strengths.length) lists.appendChild(listBlock('Strengths', c.strengths, 'strong'));
+  if (Array.isArray(c.weaknesses) && c.weaknesses.length) lists.appendChild(listBlock('Weaknesses', c.weaknesses, 'weak'));
+  card.appendChild(lists);
+
+  return card;
+}
+
+function scoreRow(label, val) {
+  var v = Math.max(0, Math.min(10, Number(val || 0)));
+  var row = el('div', { cls: 'score-row' });
+  row.appendChild(el('div', { cls: 'score-lbl', text: label }));
+  var bar = el('div', { cls: 'score-bar' });
+  var fill = el('div', { cls: 'score-bar-fill' });
+  fill.style.width = (v * 10) + '%';
+  bar.appendChild(fill);
+  row.appendChild(bar);
+  row.appendChild(el('div', { cls: 'score-num', text: v + '/10' }));
+  return row;
+}
+
+function listBlock(title, items, kind) {
+  var block = el('div', { cls: 'list-block ' + (kind || '') });
+  block.appendChild(el('h4', { text: title }));
+  var ul = el('ul');
+  items.forEach(function (it) { ul.appendChild(el('li', { text: it })); });
+  block.appendChild(ul);
+  return block;
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAnalytics);
+} else {
+  initAnalytics();
+}
+</script>
+
+</body>
+</html>

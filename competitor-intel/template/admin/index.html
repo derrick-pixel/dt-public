@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Competitor Landscape — NoteFlow SAMPLE</title>
+  <meta name="description" content="Sample competitor landscape dashboard bundled with the competitor-intel-template fork. Top-5 threats, full competitor database, search and filters. Replace /data before shipping.">
+  <meta name="robots" content="noindex, follow">
   <link rel="stylesheet" href="../assets/css/site.css">
 <script type="application/ld+json" data-injected="schema-jsonld">
 {
@@ -22,9 +24,9 @@
   "url": "https://derrickteo.com/competitor-intel/"
 }
 </script>
-  <meta name="robots" content="noindex, nofollow">
 </head>
 <body>
+  <header>
   <nav class="admin-nav">
     <a href="index.html" class="active">Competitors</a>
     <a href="insights.html">Market &amp; Pricing</a>
@@ -33,18 +35,22 @@
     <a href="report.html">Report</a>
     <a href="../index.html" style="margin-left: auto;">← Back to site</a>
   </nav>
+  </header>
 
   <main class="container-wide">
     <h1>Competitor Landscape</h1>
     <p id="count-line" style="opacity: 0.7;"></p>
+    <p style="max-width:720px;line-height:1.6;opacity:0.85;">This admin view renders the competitor landscape from <code>/data/competitors.json</code>. It surfaces the top-5 threats with rationale, plus the full competitor database scored on threat level, beatability, monthly pricing in SGD, headquartered region, and website design rating. Search by name, value proposition, HQ city, or feature set; filter by category (global incumbent, SG local, regional challenger, DIY alternative, adjacent), HQ region, and minimum threat level. The data layer is produced by the 9-agent competitor-intel pipeline; the rest of the dashboard (insights, whitespace atlas, design audit, board report) is reachable from the top navigation.</p>
 
     <section style="margin: 32px 0;">
       <h2>Top 5 threats</h2>
+      <p style="opacity:0.8;font-size:14px;">The five competitors most likely to win deals you should be winning, with the specific reasons drawn from the top_five rationale field.</p>
       <div id="top5-list"></div>
     </section>
 
     <section>
       <h2>Full competitor database</h2>
+      <p style="opacity:0.8;font-size:14px;">Every competitor profiled in the run, scored across the dimensions your buyer evaluates. Click a name to open the source URL in a new tab.</p>
       <input type="search" class="search-bar" id="search-input" placeholder="Search by name, value prop, HQ, feature...">
       <div id="filters" style="display: flex; gap: 16px; margin-bottom: 16px;">
         <select name="filter-category">
@@ -76,6 +82,10 @@
       </table>
     </section>
   </main>
+
+  <footer style="padding:24px;border-top:1px solid #e5e5e5;font-size:12px;color:#666;">
+    <p>Sample data view · <a href="../index.html">Public landing</a> · <a href="https://github.com/derrick-pixel/competitor-intel-template">competitor-intel-template</a></p>
+  </footer>
 
   <script type="module">
     import { loadAppData, mountSampleBanner } from '../assets/js/app.js';

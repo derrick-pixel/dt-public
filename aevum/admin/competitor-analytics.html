@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>AEVUM · Competitor Analytics</title>
+  <meta name="description" content="Internal competitor analytics: radar, KPI strip, scored cards, sourced evidence. AEVUM premium concierge MRI clinic, Johor Bahru." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous"></script>
+
+  <style>
+    :root {
+      --bg: #F4F6F8;
+      --surface: #FFFFFF;
+      --surface-2: #ECF0F4;
+      --surface-3: #E2E8EE;
+      --line: rgba(11,41,72,0.10);
+      --line-2: rgba(11,41,72,0.18);
+      --text: #1A2530;
+      --muted: #5C6B82;
+      --muted-2: #8B95A3;
+      --teal: #0D7488;
+      --amber: #B8761F;
+      --plum: #8B4FBF;
+      --rose: #B33A3A;
+      --green: #0E8A4A;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: 14px; line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      background-image:
+        radial-gradient(ellipse 1000px 700px at 8% -10%, rgba(13,116,136,0.05), transparent 60%),
+        radial-gradient(ellipse 800px 500px at 95% 100%, rgba(184,118,31,0.04), transparent 60%);
+      background-attachment: fixed;
+    }
+    a { color: inherit; text-decoration: none; transition: color 0.18s; }
+    a.link { color: var(--teal); border-bottom: 1px dotted var(--teal); }
+    .mono { font-family: 'JetBrains Mono', monospace; font-feature-settings: 'tnum'; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 0 32px; }
+    @media (max-width: 768px) { .container { padding: 0 20px; } }
+
+    /* Topbar */
+    .topbar { position: sticky; top: 0; z-index: 100; background: rgba(244,246,248,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: 1400px; margin: 0 auto; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 0.95rem; }
+    .brand-mark { width: 28px; height: 28px; border-radius: 7px; background: var(--teal); display: inline-flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 0.78rem; }
+    .topbar-tabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 100px; padding: 4px; flex-wrap: wrap; }
+    .topbar-tabs a { padding: 7px 14px; border-radius: 100px; font-size: 0.8rem; color: var(--muted); }
+    .topbar-tabs a:hover { color: var(--text); }
+    .topbar-tabs a.active { background: var(--teal); color: #fff; font-weight: 600; }
+    .topbar-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted-2); }
+
+    /* Page heading */
+    .ph { padding: 50px 0 30px; }
+    .ph-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal); margin-bottom: 14px; display: inline-flex; align-items: center; gap: 10px; }
+    .ph-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 8px var(--teal); }
+    .ph h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; letter-spacing: -0.025em; margin-bottom: 14px; }
+    .ph p { color: var(--muted); max-width: 780px; }
+
+    /* KPI strip */
+    .kpis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin: 34px 0; }
+    @media (max-width: 1024px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+    .kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+    .kpi .l { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-2); margin-bottom: 12px; }
+    .kpi .v { font-family: 'JetBrains Mono', monospace; font-size: 1.7rem; font-weight: 500; letter-spacing: -0.04em; }
+    .kpi .v.teal { color: var(--teal); }
+    .kpi .v.amber { color: var(--amber); }
+    .kpi .v.green { color: var(--green); }
+    .kpi .v.rose { color: var(--rose); }
+    .kpi .s { font-size: 0.78rem; color: var(--muted); margin-top: 6px; }
+
+    /* Section / artifact */
+    section.artifact { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 28px 30px; margin-bottom: 22px; }
+    .art-num { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; color: var(--teal); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600; margin-bottom: 8px; }
+    .art-title { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.018em; margin-bottom: 8px; }
+    .art-desc { color: var(--muted); font-size: 0.92rem; line-height: 1.6; max-width: 880px; margin-bottom: 22px; }
+
+    /* Radar */
+    .chart-wrap { background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+    #radar-chart { width: 100% !important; max-width: 720px; height: 460px !important; margin: 0 auto; display: block; }
+
+    /* Filters */
+    .comp-controls { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+    .comp-search, .comp-filter { padding: 9px 14px; border: 1px solid var(--line-2); background: var(--surface); color: var(--text); font-family: 'Inter', sans-serif; font-size: 0.86rem; border-radius: 8px; outline: none; }
+    .comp-search:focus, .comp-filter:focus { border-color: var(--teal); }
+    .comp-search { flex: 1; min-width: 220px; }
+    .comp-count { font-size: 0.78rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+    /* Competitor cards */
+    .comp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; }
+    .comp-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 12px; }
+    .comp-card.is-self { border: 1.5px solid var(--teal); background: linear-gradient(160deg, rgba(13,116,136,0.05), var(--surface) 80%); }
+    .comp-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .comp-name { font-size: 1.08rem; font-weight: 700; letter-spacing: -0.01em; }
+    .comp-url { display: block; font-size: 0.72rem; color: var(--teal); margin-top: 4px; word-break: break-all; font-family: 'JetBrains Mono', monospace; }
+    .comp-url:hover { text-decoration: underline; }
+    .comp-target { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+
+    .badge-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .badge { display: inline-block; padding: 3px 9px; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; border-radius: 100px; border: 1px solid var(--line); }
+    .b-tier-premium { background: rgba(139,79,191,0.10); color: var(--plum); border-color: rgba(139,79,191,0.4); }
+    .b-tier-mid { background: rgba(13,116,136,0.10); color: var(--teal); border-color: rgba(13,116,136,0.4); }
+    .b-tier-budget { background: rgba(14,138,74,0.10); color: var(--green); border-color: rgba(14,138,74,0.4); }
+    .b-cat { background: rgba(184,118,31,0.08); color: var(--amber); border-color: rgba(184,118,31,0.3); }
+    .b-vis-fully_published { background: rgba(14,138,74,0.10); color: var(--green); border-color: rgba(14,138,74,0.4); }
+    .b-vis-partial { background: rgba(184,118,31,0.10); color: var(--amber); border-color: rgba(184,118,31,0.4); }
+    .b-vis-hidden_in_package, .b-vis-quote_on_call { background: rgba(179,58,58,0.10); color: var(--rose); border-color: rgba(179,58,58,0.4); }
+    .b-threat-high { background: rgba(179,58,58,0.10); color: var(--rose); border-color: rgba(179,58,58,0.4); }
+    .b-threat-medium { background: rgba(184,118,31,0.10); color: var(--amber); border-color: rgba(184,118,31,0.4); }
+    .b-threat-low { background: rgba(14,138,74,0.10); color: var(--green); border-color: rgba(14,138,74,0.4); }
+    .b-threat-self { background: rgba(13,116,136,0.10); color: var(--teal); border-color: rgba(13,116,136,0.5); }
+
+    .price-strip { font-size: 0.86rem; color: var(--text); padding: 10px 12px; background: var(--surface-2); border-radius: 8px; border: 1px solid var(--line); font-family: 'JetBrains Mono', monospace; }
+    .price-strip b { color: var(--teal); margin-right: 6px; font-family: 'Inter', sans-serif; font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; }
+
+    .score-row { display: grid; grid-template-columns: 110px 1fr 50px; gap: 10px; align-items: center; font-size: 0.78rem; }
+    .score-lbl { color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.64rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .score-bar { height: 8px; background: var(--surface-2); border-radius: 4px; overflow: hidden; position: relative; }
+    .score-bar-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--amber)); border-radius: 4px; transition: width 0.4s ease; }
+    .score-num { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text); text-align: right; }
+
+    .lists-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 540px) { .lists-wrap { grid-template-columns: 1fr; } }
+    .list-block h4 { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 6px; font-family: 'JetBrains Mono', monospace; }
+    .list-block ul { list-style: none; padding: 0; margin: 0; }
+    .list-block li { font-size: 0.78rem; color: var(--muted); padding: 4px 0 4px 14px; position: relative; line-height: 1.55; }
+    .list-block li::before { content: '•'; color: var(--teal); position: absolute; left: 0; top: 4px; font-weight: 700; }
+    .list-block.weak li::before { color: var(--rose); }
+    .list-block.strong li::before { color: var(--green); }
+
+    /* Insight grid */
+    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 760px) { .insight-grid { grid-template-columns: 1fr; } }
+    .insight-block { background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
+    .insight-block h4 { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+    .insight-block ul { list-style: none; padding: 0; margin: 0; }
+    .insight-block li { font-size: 0.86rem; color: var(--muted); padding: 5px 0 5px 16px; position: relative; line-height: 1.6; }
+    .insight-block li::before { content: '◆'; color: var(--teal); position: absolute; left: 0; top: 5px; font-size: 0.7rem; }
+
+    /* Cross-border arbitrage strip */
+    .arb-anchor { background: linear-gradient(135deg, rgba(13,116,136,0.07), rgba(184,118,31,0.04)); border: 1.5px solid var(--teal); border-radius: 14px; padding: 22px 24px; margin-bottom: 22px; }
+    .arb-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; color: var(--teal); letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
+    .arb-anchor h3 { font-size: 1.15rem; font-weight: 700; color: var(--text); margin-bottom: 10px; line-height: 1.35; }
+    .arb-anchor p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
+    .arb-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin: 14px 0 0; }
+    .arb-stat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+    .arb-stat-num { font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; font-weight: 600; color: var(--teal); line-height: 1.1; letter-spacing: -0.02em; }
+    .arb-stat-cap { font-size: 0.72rem; color: var(--muted); margin-top: 4px; line-height: 1.45; }
+
+    .loading { color: var(--muted); font-size: 0.86rem; padding: 32px; text-align: center; font-family: 'JetBrains Mono', monospace; grid-column: 1 / -1; }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      body { font-size: 13px; }
+      .ph h1 { font-size: 1.55rem !important; line-height: 1.22 !important; }
+      .art-title { font-size: 1.1rem !important; }
+      .kpis { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+      .kpi { padding: 14px 16px !important; }
+      .kpi .v { font-size: 1.3rem !important; }
+      section.artifact { padding: 18px 16px !important; }
+      #radar-chart { height: 320px !important; max-height: 360px !important; }
+      .comp-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+      .topbar-inner { padding: 10px 14px !important; gap: 8px !important; }
+      .topbar-tabs { flex-wrap: wrap !important; gap: 6px !important; }
+      .topbar-tabs a { font-size: 0.72rem !important; padding: 5px 10px !important; }
+    }
+    @media (max-width: 420px) {
+      .kpis { grid-template-columns: 1fr !important; }
+    }
+  </style>
+
+  <link rel="icon" type="image/x-icon" href="../favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+</head>
+<body>
+<main>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="../index.html" class="brand">
+      <span class="brand-mark">A</span>
+      <span>AEVUM <span style="color: var(--muted); font-weight: 400; font-size: 0.84rem;">/ internal panel</span></span>
+    </a>
+    <div class="topbar-tabs">
+      <a href="../index.html">Site</a>
+      <a href="index.html">Research</a>
+      <a href="insights.html">Pricing</a>
+      <a href="whitespace.html">White Space</a>
+      <a href="competitor-analytics.html" class="active">Competitors</a>
+      <a href="design-audit.html">Design Audit</a>
+      <a href="report.html">Report</a>
+      <a href="../compliance.html">Compliance</a>
+    </div>
+    <span class="topbar-meta">ANALYTICS v1 · 2026-04-29 · n=<span id="comp-count-hdr">—</span></span>
+  </div>
+</header>
+
+<div class="container">
+
+  <section class="ph">
+    <span class="ph-tag">Panel 04 / Competitor Analytics</span>
+    <h1>The MRI category, scored.<br/><span style="color: var(--muted); font-weight: 400;">Six dimensions, sourced data, AEVUM's wedge made visible.</span></h1>
+    <p>Sixteen direct and adjacent competitors plotted on six dimensions chosen for the AEVUM wedge: scan turnaround, radiologist quality, concierge experience, JB-proximity for SG patients, transparent pricing, and follow-up care. Cross-border SG↔JB arbitrage is the spine — the RTS Link 5-min crossing and our published RM tier pricing collapse a category that universally hides price.</p>
+  </section>
+
+  <!-- KPI strip -->
+  <div class="kpis">
+    <div class="kpi"><div class="l">Competitors mapped</div><div class="v teal" id="kpi-total">—</div><div class="s">SG hospital + standalone + JB private + KL/Penang + global DTC</div></div>
+    <div class="kpi"><div class="l">Avg whole-body MRI · S$</div><div class="v" id="kpi-avg-price">—</div><div class="s">Across published / partial pricing</div></div>
+    <div class="kpi"><div class="l">SG hospital ceiling</div><div class="v rose" id="kpi-ceiling">—</div><div class="s">Mt Elizabeth flagship · published</div></div>
+    <div class="kpi"><div class="l">AEVUM Comprehensive · S$</div><div class="v teal" id="kpi-aevum">2,636</div><div class="s">RM8,699 @ 3.3 MYR/SGD · published</div></div>
+    <div class="kpi"><div class="l">Cross-border saving</div><div class="v green" id="kpi-arb">—</div><div class="s">vs Mt Elizabeth ceiling</div></div>
+  </div>
+
+  <!-- Cross-border arbitrage anchor -->
+  <div class="arb-anchor">
+    <div class="arb-tag">◆ Cross-border arbitrage · SG ↔ JB</div>
+    <h3>The RTS Link 5-minute crossing turns SG hospital pricing into a structural arbitrage opportunity.</h3>
+    <p>End-2026 the RTS Link opens at 5-minute crossing time, S$5–7 fare, 140k pax/day capacity. AEVUM's premium concierge whole-body MRI is the only branded clinical product that owns this geography. Every dollar on the AEVUM tier ladder is benchmarked against the SG hospital ceiling — published, defensible, and structural.</p>
+    <div class="arb-stats">
+      <div class="arb-stat"><div class="arb-stat-num">5 min</div><div class="arb-stat-cap">RTS Link crossing time, end-2026</div></div>
+      <div class="arb-stat"><div class="arb-stat-num">S$5–7</div><div class="arb-stat-cap">Single-trip fare</div></div>
+      <div class="arb-stat"><div class="arb-stat-num">~78%</div><div class="arb-stat-cap">Saving: AEVUM Comprehensive vs Mt Elizabeth</div></div>
+      <div class="arb-stat"><div class="arb-stat-num">0</div><div class="arb-stat-cap">JB premium MRI brand competitors today</div></div>
+    </div>
+  </div>
+
+  <!-- Radar -->
+  <section class="artifact">
+    <div class="art-num">Artifact 01</div>
+    <h2 class="art-title">Six-Dimension Radar — top threats vs AEVUM</h2>
+    <p class="art-desc">Five highest-threat competitors plotted across the six AEVUM-wedge dimensions: scan turnaround, radiologist quality, concierge experience, JB-proximity, transparent pricing, and follow-up care. AEVUM occupies a quadrant nobody else does — premium concierge, JB-adjacent, fully published pricing.</p>
+    <div class="chart-wrap">
+      <canvas id="radar-chart" width="720" height="460"></canvas>
+    </div>
+  </section>
+
+  <!-- Insights -->
+  <section class="artifact">
+    <div class="art-num">Artifact 02</div>
+    <h2 class="art-title">Strategic Insights</h2>
+    <p class="art-desc">What the landscape tells us — common weaknesses across the field, AEVUM's deck-grounded advantages, and the design lessons we borrow versus improve on.</p>
+    <div class="insight-grid">
+      <div class="insight-block">
+        <h4>Common competitor weaknesses</h4>
+        <ul id="weaknesses-list"></ul>
+      </div>
+      <div class="insight-block">
+        <h4>AEVUM advantages (deck-grounded)</h4>
+        <ul id="advantages-list"></ul>
+      </div>
+      <div class="insight-block">
+        <h4>Design — borrowed from</h4>
+        <ul id="borrowed-list"></ul>
+      </div>
+      <div class="insight-block">
+        <h4>Design — improved on</h4>
+        <ul id="improved-list"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Competitor cards -->
+  <section class="artifact">
+    <div class="art-num">Artifact 03</div>
+    <h2 class="art-title">Competitor Deep-dive</h2>
+    <p class="art-desc">All <span id="comp-count-inline">—</span> competitors with tier, pricing visibility, six-dimension scores, strengths and weaknesses. AEVUM self-row is highlighted.</p>
+    <div class="comp-controls">
+      <input type="search" id="comp-search" class="comp-search" placeholder="Search name, target, strengths..." />
+      <select id="comp-cat" class="comp-filter"><option value="">All categories</option></select>
+      <select id="comp-threat" class="comp-filter">
+        <option value="">All threats</option>
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+        <option value="self">Self (AEVUM)</option>
+      </select>
+      <select id="comp-vis" class="comp-filter">
+        <option value="">All price visibility</option>
+        <option value="fully_published">Fully published</option>
+        <option value="partial">Partial</option>
+        <option value="hidden_in_package">Hidden in package</option>
+        <option value="quote_on_call">Quote on call</option>
+      </select>
+      <span class="comp-count" id="comp-count-tbl">—</span>
+    </div>
+    <div class="comp-grid" id="comp-grid">
+      <div class="loading">Loading competitor data…</div>
+    </div>
+  </section>
+
+</div>
+</main>
+
+<script>
+const STATE = { competitors: [], categories: {}, insights: {}, landscape: {}, filtered: [] };
+
+function el(tag, opts) {
+  const e = document.createElement(tag);
+  if (!opts) return e;
+  if (opts.cls) e.className = opts.cls;
+  if (opts.text != null) e.textContent = String(opts.text);
+  if (opts.attrs) for (const [k,v] of Object.entries(opts.attrs)) e.setAttribute(k, v);
+  if (opts.children) for (const c of opts.children) if (c) e.appendChild(c);
+  return e;
+}
+function setText(id, value) { const x = document.getElementById(id); if (x) x.textContent = value; }
+
+function initAnalytics() {
+  fetch('../data/competitors.json')
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(data => {
+      STATE.competitors = Array.isArray(data.competitors) ? data.competitors : [];
+      STATE.categories = data.categories || {};
+      STATE.insights = data.insights || {};
+      STATE.landscape = data.landscape || {};
+      STATE.filtered = STATE.competitors.slice();
+      renderKPIs();
+      renderCategoryFilter();
+      renderInsights();
+      renderRadar();
+      attachFilterHandlers();
+      renderCards();
+    })
+    .catch(err => {
+      console.error(err);
+      const grid = document.getElementById('comp-grid');
+      grid.textContent = '';
+      grid.appendChild(el('div', { cls: 'loading', text: 'Failed to load competitor data: ' + err.message }));
+    });
+}
+
+function renderKPIs() {
+  const total = STATE.competitors.length;
+  const priced = STATE.competitors.filter(c => c.wholebody_mri_price_sgd && c.category !== 'self');
+  const avg = priced.length ? Math.round(priced.reduce((a,c)=>a+c.wholebody_mri_price_sgd,0) / priced.length) : 0;
+  const ceiling = STATE.competitors.find(c => c.name && c.name.indexOf('Mount Elizabeth') === 0);
+  const aevum = STATE.competitors.find(c => c.category === 'self');
+  const aevumPrice = aevum ? aevum.wholebody_mri_price_sgd : 2636;
+  const ceilingPrice = ceiling ? ceiling.wholebody_mri_price_sgd : 12388;
+  const arbPct = ceilingPrice ? Math.round((1 - aevumPrice / ceilingPrice) * 100) : 0;
+
+  setText('kpi-total', String(total));
+  setText('kpi-avg-price', 'S$' + avg.toLocaleString());
+  setText('kpi-ceiling', 'S$' + ceilingPrice.toLocaleString());
+  setText('kpi-aevum', 'S$' + aevumPrice.toLocaleString());
+  setText('kpi-arb', '−' + arbPct + '%');
+  setText('comp-count-hdr', String(total));
+  setText('comp-count-inline', String(total));
+}
+
+function renderCategoryFilter() {
+  const sel = document.getElementById('comp-cat');
+  while (sel.options.length > 1) sel.remove(1);
+  Object.keys(STATE.categories || {}).forEach(k => {
+    sel.appendChild(el('option', { attrs: { value: k }, text: k.replace(/_/g, ' ') }));
+  });
+}
+
+function renderInsights() {
+  const ins = STATE.insights || {};
+  const fill = (id, list) => {
+    const ul = document.getElementById(id); if (!ul) return;
+    ul.textContent = '';
+    (Array.isArray(list) ? list : []).forEach(item => ul.appendChild(el('li', { text: item })));
+  };
+  fill('weaknesses-list', ins.commonWeaknesses);
+  fill('advantages-list', ins.aevumAdvantages);
+  fill('borrowed-list', ins.designRationale && ins.designRationale.borrowed);
+  fill('improved-list', ins.designRationale && ins.designRationale.improved);
+}
+
+function renderRadar() {
+  const ctx = document.getElementById('radar-chart');
+  if (!ctx || typeof Chart === 'undefined') return;
+
+  const high = STATE.competitors.filter(c => c.threat_level_to_aevum === 'high');
+  high.sort((a,b) => (b.designScore + b.mobileScore) - (a.designScore + a.mobileScore));
+  const picks = high.slice(0, 4);
+
+  // Add Neko as global benchmark
+  const neko = STATE.competitors.find(c => c.name === 'Neko Health');
+  if (neko && !picks.includes(neko)) picks.push(neko);
+  const top5 = picks.slice(0, 5);
+
+  const aevum = STATE.competitors.find(c => c.category === 'self');
+
+  const dims = ['Scan turnaround', 'Radiologist quality', 'Concierge experience', 'JB proximity for SG', 'Transparent pricing', 'Follow-up care'];
+
+  function turnaroundScore(days) {
+    // Lower is better; map to 1–10 scale where 1 day = 10
+    if (days == null) return 0;
+    if (days <= 1) return 10;
+    if (days <= 2) return 9;
+    if (days <= 3) return 8;
+    if (days <= 5) return 6;
+    if (days <= 7) return 4;
+    return 2;
+  }
+  function row(c) {
+    return [
+      turnaroundScore(c.scan_turnaround_days),
+      Number(c.radiologist_quality_score || 0),
+      Number(c.concierge_experience_score || 0),
+      Number(c.jb_proximity_for_sg_score || 0),
+      Number(c.transparent_pricing_score || 0),
+      Number(c.follow_up_care_score || 0)
+    ];
+  }
+
+  const palette = ['#B33A3A', '#B8761F', '#0D7488', '#8B4FBF', '#0E8A4A'];
+
+  const datasets = [];
+  if (aevum) {
+    datasets.push({
+      label: 'AEVUM (us)',
+      data: row(aevum),
+      backgroundColor: 'rgba(13,116,136,0.18)',
+      borderColor: '#0D7488',
+      borderWidth: 2.5,
+      pointBackgroundColor: '#0D7488'
+    });
+  }
+  top5.forEach((c, i) => {
+    datasets.push({
+      label: c.name,
+      data: row(c),
+      backgroundColor: 'rgba(0,0,0,0.04)',
+      borderColor: palette[i % palette.length],
+      borderWidth: 1.5,
+      pointBackgroundColor: palette[i % palette.length]
+    });
+  });
+
+  // eslint-disable-next-line no-undef
+  new Chart(ctx, {
+    type: 'radar',
+    data: { labels: dims, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { size: 11 }, color: '#1A2530' } },
+        tooltip: { backgroundColor: '#1A2530', padding: 10 }
+      },
+      scales: {
+        r: {
+          min: 0,
+          max: 10,
+          ticks: { stepSize: 2, color: '#8B95A3', backdropColor: 'transparent', font: { size: 10 } },
+          pointLabels: { font: { size: 11 }, color: '#1A2530' },
+          grid: { color: 'rgba(11,41,72,0.10)' },
+          angleLines: { color: 'rgba(11,41,72,0.10)' }
+        }
+      }
+    }
+  });
+}
+
+function attachFilterHandlers() {
+  ['comp-search','comp-cat','comp-threat','comp-vis'].forEach(id => {
+    const x = document.getElementById(id); if (x) x.addEventListener('input', applyFilters);
+  });
+}
+
+function applyFilters() {
+  const q = (document.getElementById('comp-search').value || '').toLowerCase().trim();
+  const cat = document.getElementById('comp-cat').value;
+  const thr = document.getElementById('comp-threat').value;
+  const vis = document.getElementById('comp-vis').value;
+  STATE.filtered = STATE.competitors.filter(c => {
+    if (cat && c.category !== cat) return false;
+    if (thr && c.threat_level_to_aevum !== thr) return false;
+    if (vis && c.pricing_visibility !== vis) return false;
+    if (q) {
+      const blob = [c.name, c.target_market, (c.strengths||[]).join(' '), (c.weaknesses||[]).join(' '), (c.notableFeatures||[]).join(' ')].join(' ').toLowerCase();
+      if (!blob.includes(q)) return false;
+    }
+    return true;
+  });
+  renderCards();
+}
+
+function renderCards() {
+  const grid = document.getElementById('comp-grid');
+  grid.textContent = '';
+  document.getElementById('comp-count-tbl').textContent = STATE.filtered.length + ' / ' + STATE.competitors.length + ' shown';
+  if (!STATE.filtered.length) {
+    grid.appendChild(el('div', { cls: 'loading', text: 'No competitors match the current filters.' }));
+    return;
+  }
+  STATE.filtered.forEach(c => grid.appendChild(buildCard(c)));
+}
+
+function buildCard(c) {
+  const isSelf = c.category === 'self';
+  const card = el('div', { cls: 'comp-card' + (isSelf ? ' is-self' : '') });
+
+  const head = el('div', { cls: 'comp-card-head' });
+  const nameWrap = el('div');
+  nameWrap.appendChild(el('div', { cls: 'comp-name', text: c.name || '—' }));
+  if (c.url) {
+    const a = el('a', { cls: 'comp-url', text: c.url, attrs: { href: c.url, target: '_blank', rel: 'noopener noreferrer' } });
+    nameWrap.appendChild(a);
+  }
+  head.appendChild(nameWrap);
+  const threat = c.threat_level_to_aevum || 'low';
+  head.appendChild(el('span', { cls: 'badge b-threat-' + threat, text: (threat === 'self' ? 'self' : threat + ' threat') }));
+  card.appendChild(head);
+
+  if (c.target_market) card.appendChild(el('div', { cls: 'comp-target', text: c.target_market }));
+
+  const badges = el('div', { cls: 'badge-row' });
+  if (c.tier) badges.appendChild(el('span', { cls: 'badge b-tier-' + c.tier, text: c.tier }));
+  if (c.category) badges.appendChild(el('span', { cls: 'badge b-cat', text: c.category.replace(/_/g, ' ') }));
+  if (c.pricing_visibility) {
+    badges.appendChild(el('span', { cls: 'badge b-vis-' + c.pricing_visibility, text: c.pricing_visibility.replace(/_/g, ' ') }));
+  }
+  card.appendChild(badges);
+
+  if (c.wholebody_mri_price_sgd) {
+    const strip = el('div', { cls: 'price-strip' });
+    strip.appendChild(el('b', { text: 'Whole-body MRI:' }));
+    strip.appendChild(document.createTextNode('S$' + c.wholebody_mri_price_sgd.toLocaleString() + (c.scan_turnaround_days != null ? ' · ' + c.scan_turnaround_days + 'd turnaround' : '')));
+    card.appendChild(strip);
+  }
+
+  // Score bars — show all 6 wedge dimensions
+  const scores = el('div', { attrs: { style: 'display:flex;flex-direction:column;gap:5px;' } });
+  scores.appendChild(scoreRow('Radiologist', c.radiologist_quality_score));
+  scores.appendChild(scoreRow('Concierge', c.concierge_experience_score));
+  scores.appendChild(scoreRow('JB-proximity', c.jb_proximity_for_sg_score));
+  scores.appendChild(scoreRow('Pricing', c.transparent_pricing_score));
+  scores.appendChild(scoreRow('Follow-up', c.follow_up_care_score));
+  card.appendChild(scores);
+
+  const lists = el('div', { cls: 'lists-wrap' });
+  if (Array.isArray(c.strengths) && c.strengths.length) lists.appendChild(listBlock('Strengths', c.strengths, 'strong'));
+  if (Array.isArray(c.weaknesses) && c.weaknesses.length) lists.appendChild(listBlock('Weaknesses', c.weaknesses, 'weak'));
+  card.appendChild(lists);
+
+  return card;
+}
+
+function scoreRow(label, val) {
+  const v = Math.max(0, Math.min(10, Number(val || 0)));
+  const row = el('div', { cls: 'score-row' });
+  row.appendChild(el('div', { cls: 'score-lbl', text: label }));
+  const bar = el('div', { cls: 'score-bar' });
+  const fill = el('div', { cls: 'score-bar-fill' });
+  fill.style.width = (v * 10) + '%';
+  bar.appendChild(fill);
+  row.appendChild(bar);
+  row.appendChild(el('div', { cls: 'score-num', text: v + '/10' }));
+  return row;
+}
+
+function listBlock(title, items, kind) {
+  const block = el('div', { cls: 'list-block ' + (kind || '') });
+  block.appendChild(el('h4', { text: title }));
+  const ul = el('ul');
+  items.forEach(it => ul.appendChild(el('li', { text: it })));
+  block.appendChild(ul);
+  return block;
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAnalytics);
+} else {
+  initAnalytics();
+}
+</script>
+</body>
+</html>

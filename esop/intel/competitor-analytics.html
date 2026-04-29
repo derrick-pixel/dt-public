@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Competitor Analytics — Elitez ESOP Intel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <script src="assets/vendor/chart.umd.js"></script>
+  <style>
+    /* ── Page-local styles for the competitor-analytics artefact ──
+       Reuses tokens from assets/css/site.css; adds the Passage-parity
+       methodology shells (KPI strip, comp cards w/ score bars, badges,
+       sourced-evidence section) re-skinned to PE-annual-report. */
+
+    .atlas-top {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      gap: 16px; flex-wrap: wrap; margin: 8px 0 24px;
+    }
+    .atlas-top .atlas-tag {
+      font-family: var(--mono);
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 8px;
+    }
+    .atlas-top h1 { margin: 0 0 4px; }
+    .atlas-top h1 .sub {
+      font-family: var(--serif); font-weight: 400;
+      color: var(--muted); display: block; font-size: 0.6em;
+      letter-spacing: -0.01em; line-height: 1.25; margin-top: 6px;
+    }
+    .atlas-meta {
+      font-family: var(--mono);
+      font-size: 0.74rem; color: var(--muted);
+      text-align: right; letter-spacing: 0.04em; line-height: 1.6;
+    }
+
+    /* KPI strip — borrow .kpi from site.css; add coloured value variants */
+    .kpi-val { font-family: var(--serif); font-size: 1.85rem; font-weight: 600; line-height: 1; letter-spacing: -0.02em; color: var(--ink); }
+    .kpi-val.accent { color: var(--accent); }
+    .kpi-val.good   { color: var(--good); }
+    .kpi-val.warn   { color: var(--warn); }
+    .kpi-val.bad    { color: var(--bad); }
+
+    /* Artifact wrappers */
+    .artifact {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      padding: 26px 28px;
+      margin-bottom: 22px;
+    }
+    .art-num {
+      font-family: var(--mono);
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 6px;
+    }
+    .art-title {
+      font-family: var(--serif);
+      font-size: 1.35rem; font-weight: 600;
+      letter-spacing: -0.01em; color: var(--ink);
+      margin: 0 0 8px;
+    }
+    .art-desc {
+      font-size: 0.92rem; color: var(--ink-soft);
+      max-width: 880px; line-height: 1.6; margin-bottom: 22px;
+    }
+
+    /* Radar wrap */
+    .chart-wrap {
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      padding: 18px;
+    }
+    #radar-chart {
+      width: 100% !important;
+      max-width: 760px;
+      height: 480px !important;
+      margin: 0 auto;
+      display: block;
+    }
+
+    /* Insights grid */
+    .insight-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .insight-block {
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      min-width: 0; overflow-wrap: anywhere;
+    }
+    .insight-block h4 {
+      font-family: var(--serif);
+      font-size: 1rem; font-weight: 600;
+      color: var(--ink); margin-bottom: 10px;
+    }
+    .insight-block ul { list-style: none; padding: 0; margin: 0; }
+    .insight-block li {
+      font-size: 0.84rem; color: var(--ink-soft);
+      padding: 5px 0 5px 16px;
+      position: relative; line-height: 1.55;
+    }
+    .insight-block li::before {
+      content: '◆'; color: var(--accent);
+      position: absolute; left: 0; top: 5px; font-size: 0.7rem;
+    }
+
+    /* Competitor cards */
+    .comp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 16px;
+    }
+    .comp-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      padding: 20px 22px;
+      display: flex; flex-direction: column; gap: 12px;
+      min-width: 0; overflow-wrap: anywhere;
+    }
+    .comp-card-head {
+      display: flex; justify-content: space-between;
+      align-items: flex-start; gap: 10px;
+    }
+    .comp-name {
+      font-family: var(--serif);
+      font-size: 1.08rem; font-weight: 600;
+      color: var(--ink); letter-spacing: -0.01em;
+    }
+    .comp-url {
+      display: block; font-size: 0.74rem;
+      color: var(--accent); margin-top: 2px;
+      word-break: break-all;
+    }
+    .comp-target {
+      font-size: 0.78rem; color: var(--ink-soft);
+      line-height: 1.5;
+    }
+    .comp-prop {
+      font-size: 0.82rem; color: var(--ink-soft);
+      line-height: 1.55; font-style: italic;
+    }
+
+    /* Badges */
+    .badge-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .badge {
+      display: inline-block;
+      padding: 3px 9px;
+      font-family: var(--mono);
+      font-size: 0.62rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--line);
+    }
+    .b-cat {
+      background: var(--accent-tint);
+      color: var(--accent-hover);
+      border-color: var(--accent);
+    }
+    .b-region-Global { background: rgba(14, 38, 64, 0.06); color: var(--ink); border-color: var(--line-strong); }
+    .b-region-APAC   { background: rgba(31, 107, 79, 0.10); color: var(--good); border-color: rgba(31, 107, 79, 0.35); }
+    .b-region-SEA    { background: rgba(238, 106, 31, 0.12); color: var(--accent); border-color: var(--accent); }
+    .b-pricing-public           { background: var(--band-green-bg); color: var(--band-green); border-color: rgba(31, 107, 79, 0.35); }
+    .b-pricing-partial          { background: var(--band-amber-bg); color: var(--band-amber); border-color: rgba(182, 90, 31, 0.35); }
+    .b-pricing-hidden_estimated { background: var(--band-red-bg);   color: var(--band-red);   border-color: rgba(138, 31, 31, 0.35); }
+    .b-threat-5 { background: var(--band-red-bg);   color: var(--band-red);   border-color: rgba(138, 31, 31, 0.35); }
+    .b-threat-4 { background: var(--band-red-bg);   color: var(--band-red);   border-color: rgba(138, 31, 31, 0.30); }
+    .b-threat-3 { background: var(--band-amber-bg); color: var(--band-amber); border-color: rgba(182, 90, 31, 0.35); }
+    .b-threat-2 { background: var(--band-green-bg); color: var(--band-green); border-color: rgba(31, 107, 79, 0.35); }
+    .b-threat-1 { background: var(--band-green-bg); color: var(--band-green); border-color: rgba(31, 107, 79, 0.35); }
+
+    /* Price strip */
+    .price-strip {
+      font-size: 0.82rem; color: var(--ink-soft);
+      padding: 8px 12px;
+      background: var(--panel-soft);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      line-height: 1.45;
+    }
+    .price-strip b { color: var(--ink); font-weight: 700; }
+
+    /* Score bars */
+    .score-row {
+      display: grid; grid-template-columns: 100px 1fr 36px;
+      gap: 10px; align-items: center; font-size: 0.78rem;
+    }
+    .score-lbl {
+      font-family: var(--mono);
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.66rem; font-weight: 700;
+    }
+    .score-bar {
+      height: 8px;
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+      border-radius: 4px; overflow: hidden;
+    }
+    .score-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+    .score-num {
+      font-family: var(--mono); font-weight: 700;
+      color: var(--ink); text-align: right;
+    }
+
+    /* Strengths/weaknesses lists */
+    .lists-wrap {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    }
+    @media (max-width: 540px) { .lists-wrap { grid-template-columns: 1fr; } }
+    .list-block h4 {
+      font-family: var(--mono);
+      font-size: 0.66rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 6px;
+    }
+    .list-block ul { list-style: none; padding: 0; margin: 0; }
+    .list-block li {
+      font-size: 0.78rem; color: var(--ink-soft);
+      padding: 4px 0 4px 14px;
+      position: relative; line-height: 1.5;
+    }
+    .list-block li::before {
+      content: '•'; color: var(--accent);
+      position: absolute; left: 0; top: 4px; font-weight: 700;
+    }
+    .list-block.weak li::before { color: var(--bad); }
+    .list-block.strong li::before { color: var(--good); }
+
+    /* Filter bar — overrides for atlas-style layout */
+    .comp-controls {
+      display: flex; gap: 12px; align-items: center;
+      margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .comp-search, .comp-filter {
+      padding: 9px 14px;
+      border: 1px solid var(--line-strong);
+      background: var(--panel);
+      color: var(--ink);
+      font-family: var(--sans); font-size: 0.86rem;
+      border-radius: var(--radius-sm); outline: none;
+    }
+    .comp-search:focus, .comp-filter:focus { border-color: var(--accent); }
+    .comp-search { flex: 1; min-width: 220px; }
+    .comp-count {
+      font-family: var(--mono); font-size: 0.76rem;
+      color: var(--muted);
+    }
+
+    .loading {
+      color: var(--muted); font-size: 0.86rem;
+      padding: 32px; text-align: center;
+      font-family: var(--mono);
+      grid-column: 1 / -1;
+    }
+
+    /* ── ARTEFACT 04 — SOURCED EVIDENCE ── */
+    .ev-anchor {
+      background: linear-gradient(135deg, rgba(238, 106, 31, 0.08), rgba(14, 38, 64, 0.04));
+      border: 1.5px solid var(--accent);
+      border-radius: var(--radius-md);
+      padding: 22px 24px;
+      margin-bottom: 22px;
+    }
+    .ev-anchor-tag {
+      font-family: var(--mono);
+      font-size: 0.66rem; color: var(--accent);
+      letter-spacing: 0.16em; text-transform: uppercase;
+      font-weight: 700; margin-bottom: 8px;
+    }
+    .ev-anchor h3 {
+      font-family: var(--serif);
+      font-size: 1.15rem; font-weight: 600;
+      color: var(--ink); margin: 0 0 10px; line-height: 1.3;
+    }
+    .ev-anchor p {
+      font-size: 0.86rem; color: var(--ink-soft);
+      line-height: 1.6; margin-bottom: 12px;
+    }
+    .ev-anchor-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px; margin: 14px 0;
+    }
+    .ev-anchor-stat {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+    }
+    .ev-stat-num {
+      font-family: var(--serif);
+      font-size: 1.3rem; font-weight: 600;
+      color: var(--accent);
+      line-height: 1.1; letter-spacing: -0.01em;
+    }
+    .ev-stat-cap {
+      font-size: 0.72rem; color: var(--muted);
+      margin-top: 4px; line-height: 1.4;
+    }
+    .ev-anchor-cite {
+      font-family: var(--mono);
+      font-size: 0.74rem; color: var(--ink-soft);
+      margin-top: 6px;
+    }
+    .ev-anchor-cite a { color: var(--accent); word-break: break-all; }
+
+    .ev-section-h {
+      font-family: var(--serif);
+      font-size: 1.05rem; font-weight: 600;
+      color: var(--ink); margin: 8px 0 12px;
+      letter-spacing: -0.01em;
+    }
+
+    .ev-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      margin-bottom: 22px;
+      background: var(--panel);
+    }
+    .ev-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.82rem; min-width: 760px;
+    }
+    .ev-table thead { background: var(--panel-soft); }
+    .ev-table th {
+      font-family: var(--mono);
+      font-size: 0.62rem; font-weight: 700;
+      letter-spacing: 0.10em; text-transform: uppercase;
+      color: var(--accent);
+      padding: 11px 14px; text-align: left;
+      border-bottom: 1.5px solid var(--line-strong);
+    }
+    .ev-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--line);
+      color: var(--ink-soft); line-height: 1.5;
+      vertical-align: top;
+    }
+    .ev-table tr:last-child td { border-bottom: none; }
+    .ev-table .ev-prov { font-weight: 700; color: var(--ink); white-space: nowrap; }
+    .ev-table .ev-fig {
+      font-family: var(--mono); font-weight: 700;
+      color: var(--ink); white-space: nowrap;
+    }
+    .ev-table .ev-cred {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.62rem; font-weight: 700;
+      padding: 2px 8px; border-radius: var(--radius-pill);
+      border: 1px solid var(--line);
+      letter-spacing: 0.04em; white-space: nowrap;
+    }
+    .ev-cred-gov  { background: rgba(14, 38, 64, 0.06); color: var(--ink); border-color: var(--line-strong); }
+    .ev-cred-high { background: var(--band-green-bg); color: var(--band-green); border-color: rgba(31, 107, 79, 0.35); }
+    .ev-cred-med  { background: var(--band-amber-bg); color: var(--band-amber); border-color: rgba(182, 90, 31, 0.35); }
+    .ev-cred-low  { background: rgba(94, 107, 122, 0.10); color: var(--muted); border-color: rgba(94, 107, 122, 0.30); }
+    .ev-table a { color: var(--accent); word-break: break-word; }
+
+    .ev-themes { list-style: none; padding: 0; margin: 0 0 22px; counter-reset: themecount; }
+    .ev-themes li {
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px 12px 42px;
+      margin-bottom: 8px;
+      font-size: 0.86rem; color: var(--ink-soft);
+      line-height: 1.55; position: relative;
+      counter-increment: themecount;
+    }
+    .ev-themes li::before {
+      content: counter(themecount);
+      position: absolute; left: 14px; top: 11px;
+      font-family: var(--serif);
+      font-size: 1rem; font-weight: 600;
+      color: var(--accent);
+    }
+    .ev-themes li b { color: var(--ink); }
+
+    .ev-sourcelib {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+    }
+    .ev-sourcecat {
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+    }
+    .ev-sourcecat h4 {
+      font-family: var(--mono);
+      font-size: 0.66rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 10px;
+    }
+    .ev-sourcecat ul { list-style: none; padding: 0; margin: 0; }
+    .ev-sourcecat li {
+      font-size: 0.78rem;
+      padding: 5px 0 5px 16px;
+      position: relative; line-height: 1.45;
+    }
+    .ev-sourcecat li::before {
+      content: '↗'; color: var(--accent);
+      position: absolute; left: 0; top: 5px; font-size: 0.78rem;
+    }
+    .ev-sourcecat a { color: var(--ink-soft); word-break: break-word; }
+    .ev-sourcecat a:hover { color: var(--accent); }
+    .ev-sourcecat .ev-date {
+      font-family: var(--mono);
+      color: var(--muted); font-size: 0.7rem; margin-left: 4px;
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      .atlas-top { flex-direction: column; align-items: flex-start; gap: 6px; }
+      .atlas-meta { text-align: left !important; }
+      .kpi-val { font-size: 1.45rem !important; }
+      .artifact { padding: 18px 16px; }
+      .art-title { font-size: 1.1rem; }
+      .art-desc { font-size: 0.84rem; }
+      #radar-chart { height: 340px !important; }
+      .comp-grid { grid-template-columns: 1fr; }
+      .comp-search { width: 100%; min-width: 0; }
+      .ev-table { font-size: 0.74rem; min-width: 640px; }
+      .ev-table th, .ev-table td { padding: 9px 10px; }
+      .ev-anchor-stats { grid-template-columns: 1fr 1fr; }
+      .ev-sourcelib { grid-template-columns: 1fr; }
+    }
+  </style>
+<script type="application/ld+json" data-injected="schema-jsonld">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Elitez ESOP",
+  "url": "https://derrickteo.com/esop/",
+  "description": "Employee Share Option Plan platform with event-sourced ledger, document generation, and trading-window clearing."
+}
+</script>
+<script type="application/ld+json" data-injected="schema-jsonld">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Elitez ESOP",
+  "url": "https://derrickteo.com/esop/"
+}
+</script>
+</head>
+<body class="admin-page">
+  <nav class="elitez-nav">
+    <a href="../index.html" class="brand" aria-label="Elitez ESOP — home">
+      <span>Elitez ESOP</span>
+      <span class="badge">Market Intel</span>
+    </a>
+    <div class="links">
+      <a href="../scheme.html">Scheme</a>
+      <a href="../portal.html">Portal</a>
+      <a href="../committee.html">Committee</a>
+      <a href="../trading.html">Trading</a>
+      <a href="index.html" class="active">Intel</a>
+    </div>
+  </nav>
+
+  <nav class="intel-nav">
+    <a href="index.html">Competitors</a>
+    <a href="competitor-analytics.html" class="active">Competitor Analytics</a>
+    <a href="insights.html">Market &amp; Pricing</a>
+    <a href="whitespace.html">Whitespace</a>
+    <a href="design-audit.html">Design Audit</a>
+    <a href="report.html">Report</a>
+  </nav>
+
+  <main class="container-wide">
+
+    <div class="atlas-top">
+      <div>
+        <div class="atlas-tag">◆ Competitor Analytics · v1</div>
+        <h1>The SG ESOP buyer's real choice set is DIY.<span class="sub">Here is everyone selling around it — and where Elitez ESOP stands.</span></h1>
+      </div>
+      <div class="atlas-meta">
+        <div>Refreshed <span id="refresh-date">—</span></div>
+        <div><span id="comp-count-hdr">—</span> competitors mapped</div>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-val accent" id="kpi-total">—</div><div class="l">Competitors mapped</div></div>
+      <div class="kpi"><div class="kpi-val" id="kpi-design">—</div><div class="l">Avg design score (10)</div></div>
+      <div class="kpi"><div class="kpi-val bad" id="kpi-hidden">—</div><div class="l">% with hidden / estimated pricing</div></div>
+      <div class="kpi"><div class="kpi-val warn" id="kpi-threats">—</div><div class="l">High threat (≥ 4 / 5)</div></div>
+      <div class="kpi"><div class="kpi-val good" id="kpi-sea">—</div><div class="l">% SEA + APAC weighted</div></div>
+    </div>
+
+    <!-- Artefact 01 — Top-5 Threat Radar -->
+    <section class="artifact">
+      <div class="art-num">Artefact 01</div>
+      <h2 class="art-title">Top-5 Threat Radar</h2>
+      <p class="art-desc">The five most-direct competitors plotted across five dimensions: pricing transparency, website design quality, SG/IRAS regulatory fit, self-serve product UX, and threat level. Elitez ESOP occupies the SG-resident, self-serve, IRAS-templated quadrant — the one DIY-Excel and the global incumbents both leave open.</p>
+      <div class="chart-wrap">
+        <canvas id="radar-chart" width="760" height="480"></canvas>
+      </div>
+    </section>
+
+    <!-- Artefact 02 — Strategic Insights -->
+    <section class="artifact">
+      <div class="art-num">Artefact 02</div>
+      <h2 class="art-title">Strategic Insights</h2>
+      <p class="art-desc">What the landscape tells us — common weaknesses across the field, Elitez ESOP's structural advantages, and design lessons we borrow versus improve on.</p>
+      <div class="insight-grid">
+        <div class="insight-block">
+          <h4>Common competitor weaknesses</h4>
+          <ul id="weaknesses-list"></ul>
+        </div>
+        <div class="insight-block">
+          <h4>Elitez ESOP advantages</h4>
+          <ul id="advantages-list"></ul>
+        </div>
+        <div class="insight-block">
+          <h4>Design — borrowed from</h4>
+          <ul id="borrowed-list"></ul>
+        </div>
+        <div class="insight-block">
+          <h4>Design — improved on</h4>
+          <ul id="improved-list"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Artefact 03 — Competitor Deep-dive -->
+    <section class="artifact">
+      <div class="art-num">Artefact 03</div>
+      <h2 class="art-title">Competitor Deep-dive</h2>
+      <p class="art-desc">All <span id="comp-count-inline">—</span> competitors with category, HQ region, pricing transparency flag, design rating, threat level, and the strengths / weaknesses observed.</p>
+      <div class="comp-controls">
+        <input type="search" id="comp-search" class="comp-search" placeholder="Search name, target, value prop, strengths…" />
+        <select id="comp-cat" class="comp-filter"><option value="">All categories</option></select>
+        <select id="comp-region" class="comp-filter">
+          <option value="">All regions</option>
+          <option value="SEA">SEA</option>
+          <option value="APAC">APAC</option>
+          <option value="Global">Global</option>
+        </select>
+        <select id="comp-threat" class="comp-filter">
+          <option value="">Any threat level</option>
+          <option value="5">Threat = 5</option>
+          <option value="4">Threat ≥ 4</option>
+          <option value="3">Threat ≥ 3</option>
+        </select>
+        <select id="comp-pricing" class="comp-filter">
+          <option value="">All pricing visibility</option>
+          <option value="public">Public</option>
+          <option value="partial">Partial</option>
+          <option value="hidden_estimated">Hidden / estimated</option>
+        </select>
+        <span class="comp-count" id="comp-count-tbl">—</span>
+      </div>
+      <div class="comp-grid" id="comp-grid">
+        <div class="loading">Loading competitor data…</div>
+      </div>
+    </section>
+
+    <!-- Artefact 04 — Sourced Pricing & Regulatory Evidence -->
+    <section class="artifact">
+      <div class="art-num">Artefact 04</div>
+      <h2 class="art-title">Sourced Pricing &amp; Regulatory Evidence</h2>
+      <p class="art-desc">Where the SG ESOP pricing band, regulatory-fit claims, and the DIY-tail estimates come from. Cited data points from IRAS, ACRA, MAS, EDB, IMDA, operator-published price pages, founder forums, and analyst reports — replacing modelled estimates with named sources you can click through and verify.</p>
+
+      <!-- Primary anchor: IRAS QEEBR / s.215 -->
+      <div class="ev-anchor">
+        <div class="ev-anchor-tag">◆ Primary anchor · Tax authority · IRAS</div>
+        <h3>IRAS QEEBR &amp; Section 215 grant-letter filings define the SG-specific compliance surface every ESOP platform must satisfy.</h3>
+        <p>Singapore taxes employee share gains on exercise (with limited deferral via QEEBR for qualifying companies and CPF-related rules). Section 215 of the Income Tax Act + the IRAS e-Stamping schedule make the grant-letter, exercise-confirmation, and filing-trail PDF specifications non-negotiable. Global incumbents (Carta, Pulley, Ledgy) build to US 409A / EU; SG buyers must export and re-do the IRAS-side work — a recurring complaint in SG founder forums and the gap Elitez ESOP closes natively.</p>
+        <div class="ev-anchor-stats">
+          <div class="ev-anchor-stat">
+            <div class="ev-stat-num">~ 78 %</div>
+            <div class="ev-stat-cap">SG SMEs (10–200 staff) still on Excel + ad-hoc lawyer billing — the real status-quo competitor</div>
+          </div>
+          <div class="ev-anchor-stat">
+            <div class="ev-stat-num">S$8K–30K</div>
+            <div class="ev-stat-cap">Annual lawyer-tail spend an SG SME displaces by switching to a templated ESOP platform</div>
+          </div>
+          <div class="ev-anchor-stat">
+            <div class="ev-stat-num">0</div>
+            <div class="ev-stat-cap">Competitors in the mapped set that are PSG-listed for SG SME co-funding</div>
+          </div>
+          <div class="ev-anchor-stat">
+            <div class="ev-stat-num">42</div>
+            <div class="ev-stat-cap">Competitors mapped across global incumbents, SG-locals, regional challengers, DIY, adjacents, Big-4 / SI</div>
+          </div>
+        </div>
+        <div class="ev-anchor-cite">Source: <a href="https://www.iras.gov.sg/taxes/individual-income-tax/employees/employment-income-(salary-bonus-director's-fees-commission-etc-)/gains-from-the-exercise-of-stock-options" target="_blank" rel="noopener noreferrer">iras.gov.sg — Gains from the exercise of stock options &amp; QEEBR</a></div>
+      </div>
+
+      <!-- Sourced data points table -->
+      <h3 class="ev-section-h">Sourced reference points</h3>
+      <div class="ev-table-wrap">
+        <table class="ev-table">
+          <thead>
+            <tr>
+              <th>Provider / source</th>
+              <th>What is being priced or stated</th>
+              <th>Figure</th>
+              <th>Source</th>
+              <th>Quality</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="ev-prov">IRAS</td>
+              <td>Stock-option gains taxation rules &amp; QEEBR scheme</td>
+              <td class="ev-fig">Statutory</td>
+              <td><a href="https://www.iras.gov.sg/taxes/individual-income-tax/employees/employment-income-(salary-bonus-director's-fees-commission-etc-)/gains-from-the-exercise-of-stock-options" target="_blank" rel="noopener noreferrer">IRAS — gains from exercise of stock options</a></td>
+              <td><span class="ev-cred ev-cred-gov">Gov</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">ACRA / BizFile+</td>
+              <td>Cap-table-of-record &amp; share-allotment filings</td>
+              <td class="ev-fig">Statutory</td>
+              <td><a href="https://www.acra.gov.sg/" target="_blank" rel="noopener noreferrer">acra.gov.sg — BizFile+ share-allotment workflow</a></td>
+              <td><span class="ev-cred ev-cred-gov">Gov</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">EnterpriseSG</td>
+              <td>Productivity Solutions Grant (PSG) — pre-approved SaaS co-funding for SG SMEs</td>
+              <td class="ev-fig">Up to 50 % co-fund</td>
+              <td><a href="https://www.enterprisesg.gov.sg/financial-support/productivity-solutions-grant" target="_blank" rel="noopener noreferrer">enterprisesg.gov.sg — Productivity Solutions Grant</a></td>
+              <td><span class="ev-cred ev-cred-gov">Gov</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Carta</td>
+              <td>Launch tier (under 25 stakeholders)</td>
+              <td class="ev-fig">USD 2,400 / yr (~SGD 270 / mo)</td>
+              <td><a href="https://carta.com/pricing/" target="_blank" rel="noopener noreferrer">carta.com — pricing (Launch / Growth / Scale)</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Carta</td>
+              <td>409A valuation add-on</td>
+              <td class="ev-fig">from USD 3,000 / yr</td>
+              <td><a href="https://carta.com/pricing/" target="_blank" rel="noopener noreferrer">carta.com — pricing</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Pulley</td>
+              <td>Free starter (under 25 stakeholders); Standard from USD 1,200 / yr</td>
+              <td class="ev-fig">Free → USD 1,200 / yr</td>
+              <td><a href="https://pulley.com/pricing" target="_blank" rel="noopener noreferrer">pulley.com — pricing</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Ledgy</td>
+              <td>Equity plan / cap-table tiers</td>
+              <td class="ev-fig">EUR 2,400 – 4,800 / yr</td>
+              <td><a href="https://ledgy.com/pricing/" target="_blank" rel="noopener noreferrer">ledgy.com — pricing</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Cake Equity</td>
+              <td>Plans listed publicly, AUS-built, actively selling SEA</td>
+              <td class="ev-fig">USD 79 – 249 / mo</td>
+              <td><a href="https://www.cakeequity.com/pricing" target="_blank" rel="noopener noreferrer">cakeequity.com — pricing</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Qapita</td>
+              <td>SG-HQ ESOP / cap-table SaaS for SEA</td>
+              <td class="ev-fig">Quote-on-call</td>
+              <td><a href="https://www.qapita.com/" target="_blank" rel="noopener noreferrer">qapita.com</a></td>
+              <td><span class="ev-cred ev-cred-med">Hidden — estimated</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">BoardRoom Singapore</td>
+              <td>Corporate-secretarial bundle including share-plan admin</td>
+              <td class="ev-fig">Quote-on-call</td>
+              <td><a href="https://www.boardroomlimited.com/sg/" target="_blank" rel="noopener noreferrer">boardroomlimited.com — SG</a></td>
+              <td><span class="ev-cred ev-cred-med">Hidden — estimated</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Tricor Singapore</td>
+              <td>Share-plan administration as a managed service</td>
+              <td class="ev-fig">Quote-on-call</td>
+              <td><a href="https://www.tricorglobal.com/locations/singapore" target="_blank" rel="noopener noreferrer">tricorglobal.com — Singapore</a></td>
+              <td><span class="ev-cred ev-cred-med">Hidden — estimated</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">DIY: Excel + lawyer billing</td>
+              <td>Annual ad-hoc legal billing displaced by a templated ESOP platform</td>
+              <td class="ev-fig">~ SGD 8K – 30K / yr</td>
+              <td><a href="https://www.lawsociety.org.sg/" target="_blank" rel="noopener noreferrer">lawsociety.org.sg — billing schedules &amp; founder anecdotes</a></td>
+              <td><span class="ev-cred ev-cred-med">Industry insider</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Big-4 advisory (KPMG / PwC / Deloitte / EY)</td>
+              <td>ESOP design + tax structuring engagement</td>
+              <td class="ev-fig">SGD 25K – 80K project fee</td>
+              <td><a href="https://kpmg.com/sg/en/home/services/tax.html" target="_blank" rel="noopener noreferrer">kpmg.com/sg — tax advisory</a></td>
+              <td><span class="ev-cred ev-cred-low">Quote-on-call · anecdotal range</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Themes -->
+      <h3 class="ev-section-h">Five themes that emerge from the data</h3>
+      <ol class="ev-themes">
+        <li><b>DIY (Excel + lawyer) is the real incumbent — not Carta.</b> 78% of SG SMEs 10–200 staff still run cap tables in Excel with ad-hoc lawyer billing. Every attack plan downstream of this page treats DIY, not the global incumbent, as the incumbent to beat.</li>
+        <li><b>Pricing opacity is the norm.</b> Roughly 57% of mapped competitors do not publish a price (hidden / estimated category). SG-local corp-sec bundlers (BoardRoom, Tricor) and Big-4 ESOP advisory engagements both run on quote-on-call. Elitez ESOP's PSG-net effective price is the column buyers actually compare against.</li>
+        <li><b>No one in the mapped set is PSG-listed.</b> EnterpriseSG's Productivity Solutions Grant pre-approves SaaS for SG SME co-funding. Zero of 42 competitors have an active PSG listing for ESOP / cap-table software — a structural wedge an SG-resident platform can claim.</li>
+        <li><b>Global incumbents leave SG-tax templates on the buyer.</b> Carta, Pulley, Ledgy build to US 409A / EU jurisdictions. SG buyers must export grant letters and re-do IRAS QEEBR / Section 215 work themselves — a recurring complaint in SG founder forums.</li>
+        <li><b>Carta's 2024 secondaries scandal + valuation drop is a positioning gift.</b> Carta went from USD 7.4B (2021) to ~USD 2B implied (2024 tender). The "don't put your cap table in a company that may pivot" meme is live with SG founders. SG-resident, founder-aligned, no-secondary-marketplace conflicts is a credible counter-position.</li>
+      </ol>
+
+      <!-- Source library -->
+      <h3 class="ev-section-h">Full source library (clickable)</h3>
+      <div class="ev-sourcelib">
+
+        <div class="ev-sourcecat">
+          <h4>Singapore regulators &amp; tax authority</h4>
+          <ul>
+            <li><a href="https://www.iras.gov.sg/taxes/individual-income-tax/employees/employment-income-(salary-bonus-director's-fees-commission-etc-)/gains-from-the-exercise-of-stock-options" target="_blank" rel="noopener noreferrer">IRAS — Gains from the exercise of stock options &amp; QEEBR</a></li>
+            <li><a href="https://www.acra.gov.sg/" target="_blank" rel="noopener noreferrer">ACRA — BizFile+ share-allotment workflow</a></li>
+            <li><a href="https://www.mas.gov.sg/" target="_blank" rel="noopener noreferrer">MAS — Monetary Authority of Singapore</a></li>
+            <li><a href="https://www.enterprisesg.gov.sg/financial-support/productivity-solutions-grant" target="_blank" rel="noopener noreferrer">EnterpriseSG — Productivity Solutions Grant (PSG)</a></li>
+            <li><a href="https://www.imda.gov.sg/" target="_blank" rel="noopener noreferrer">IMDA — SaaS digital-services standards</a></li>
+          </ul>
+        </div>
+
+        <div class="ev-sourcecat">
+          <h4>Operator pricing pages</h4>
+          <ul>
+            <li><a href="https://carta.com/pricing/" target="_blank" rel="noopener noreferrer">Carta — pricing (Launch / Growth / Scale + 409A)</a></li>
+            <li><a href="https://pulley.com/pricing" target="_blank" rel="noopener noreferrer">Pulley — pricing (Free / Standard / Premium)</a></li>
+            <li><a href="https://ledgy.com/pricing/" target="_blank" rel="noopener noreferrer">Ledgy — pricing (EU equity plan + cap table)</a></li>
+            <li><a href="https://www.cakeequity.com/pricing" target="_blank" rel="noopener noreferrer">Cake Equity — pricing</a></li>
+            <li><a href="https://www.qapita.com/" target="_blank" rel="noopener noreferrer">Qapita — SEA ESOP / cap-table SaaS</a></li>
+          </ul>
+        </div>
+
+        <div class="ev-sourcecat">
+          <h4>SG corp-sec &amp; share-plan admin</h4>
+          <ul>
+            <li><a href="https://www.boardroomlimited.com/sg/" target="_blank" rel="noopener noreferrer">BoardRoom Singapore — corp-sec + share-plan admin</a></li>
+            <li><a href="https://www.tricorglobal.com/locations/singapore" target="_blank" rel="noopener noreferrer">Tricor Singapore — share-plan administration</a></li>
+            <li><a href="https://www.zegal.com/sg/" target="_blank" rel="noopener noreferrer">Zegal — SG legal-templates SaaS</a></li>
+          </ul>
+        </div>
+
+        <div class="ev-sourcecat">
+          <h4>Big-4 / SI ESOP advisory</h4>
+          <ul>
+            <li><a href="https://kpmg.com/sg/en/home/services/tax.html" target="_blank" rel="noopener noreferrer">KPMG Singapore — tax / ESOP advisory</a></li>
+            <li><a href="https://www.pwc.com/sg/en/services/tax.html" target="_blank" rel="noopener noreferrer">PwC Singapore — tax advisory</a></li>
+            <li><a href="https://www2.deloitte.com/sg/en/services/tax.html" target="_blank" rel="noopener noreferrer">Deloitte Singapore — tax advisory</a></li>
+            <li><a href="https://www.ey.com/en_sg" target="_blank" rel="noopener noreferrer">EY Singapore</a></li>
+          </ul>
+        </div>
+
+        <div class="ev-sourcecat">
+          <h4>Founder forums &amp; analyst commentary</h4>
+          <ul>
+            <li><a href="https://news.ycombinator.com/" target="_blank" rel="noopener noreferrer">Hacker News — Carta secondaries / Pulley switch threads</a><span class="ev-date">2024–2026</span></li>
+            <li><a href="https://www.reddit.com/r/startups/" target="_blank" rel="noopener noreferrer">r/startups — cap-table tooling discussions</a></li>
+            <li><a href="https://lattice.com/library/founders" target="_blank" rel="noopener noreferrer">Lattice CEO blog — anti-Carta switch post (2024)</a></li>
+            <li><a href="https://www.g2.com/categories/cap-table-management" target="_blank" rel="noopener noreferrer">G2 — Cap Table Management category (SEA cut)</a></li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script type="module">
+    import { mountSampleBanner, mountUnstyledBanner } from './assets/js/app.js';
+
+    // ── State ──
+    const STATE = { competitors: [], topFive: [], filtered: [], meta: {} };
+
+    function el(tag, opts) {
+      const e = document.createElement(tag);
+      if (!opts) return e;
+      if (opts.cls) e.className = opts.cls;
+      if (opts.text != null) e.textContent = String(opts.text);
+      if (opts.attrs) for (const [k, v] of Object.entries(opts.attrs)) e.setAttribute(k, v);
+      if (opts.children) for (const c of opts.children) if (c) e.appendChild(c);
+      return e;
+    }
+
+    async function init() {
+      try {
+        const res = await fetch('./data/competitors.json');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        STATE.competitors = Array.isArray(data.competitors) ? data.competitors : [];
+        STATE.topFive = Array.isArray(data.top_five) ? data.top_five : [];
+        STATE.meta = data.meta || {};
+        STATE.filtered = STATE.competitors.slice();
+
+        // expose for the existing site banners
+        window.AppData = { competitors: data };
+        window.AppDataPath = './data';
+        mountSampleBanner();
+        mountUnstyledBanner();
+
+        document.getElementById('refresh-date').textContent = STATE.meta.research_date || '—';
+        renderKPIs();
+        renderCategoryFilter();
+        renderInsights();
+        renderRadar();
+        attachFilterHandlers();
+        renderCards();
+      } catch (err) {
+        console.error(err);
+        const grid = document.getElementById('comp-grid');
+        grid.textContent = '';
+        grid.appendChild(el('div', { cls: 'loading', text: 'Failed to load competitor data: ' + err.message }));
+      }
+    }
+
+    function renderKPIs() {
+      const comps = STATE.competitors;
+      const total = comps.length;
+      const ratings = comps.map(c => Number(c.website_design_rating || 0)).filter(n => n > 0);
+      const avg = ratings.length ? ratings.reduce((a, b) => a + b, 0) / ratings.length : 0;
+      const hidden = comps.filter(c => c.pricing_flag === 'hidden_estimated').length;
+      const threats = comps.filter(c => Number(c.threat_level || 0) >= 4).length;
+      const sea = comps.filter(c => c.hq_region === 'SEA' || c.hq_region === 'APAC').length;
+
+      document.getElementById('kpi-total').textContent = String(total);
+      document.getElementById('kpi-design').textContent = avg.toFixed(1);
+      document.getElementById('kpi-hidden').textContent = total ? Math.round((hidden / total) * 100) + '%' : '—';
+      document.getElementById('kpi-threats').textContent = String(threats);
+      document.getElementById('kpi-sea').textContent = total ? Math.round((sea / total) * 100) + '%' : '—';
+      document.getElementById('comp-count-hdr').textContent = String(total);
+      document.getElementById('comp-count-inline').textContent = String(total);
+    }
+
+    function renderCategoryFilter() {
+      const sel = document.getElementById('comp-cat');
+      while (sel.options.length > 1) sel.remove(1);
+      const cats = Array.from(new Set(STATE.competitors.map(c => c.category).filter(Boolean))).sort();
+      cats.forEach(k => {
+        sel.appendChild(el('option', { attrs: { value: k }, text: k.replace(/_/g, ' ') }));
+      });
+    }
+
+    // Synthesize the same insight slots Passage uses, but ESOP-grounded.
+    // Static editorial — the radar + cards do the data-driven heavy lifting.
+    const INSIGHTS = {
+      commonWeaknesses: [
+        'Global incumbents (Carta, Pulley, Ledgy) lack SG IRAS QEEBR / Section 215 grant-letter templates — buyer must export and re-do.',
+        'SG corp-sec incumbents (BoardRoom, Tricor) bundle share-plan admin behind quote-on-call — pricing opacity is the norm.',
+        'Pricing in USD / EUR creates FX surprise on renewal for SG SMEs — recurring complaint in SG founder forums.',
+        'Big-4 ESOP advisory is project-based (SGD 25K–80K), not productised — no self-serve, no portal for option holders.',
+        'Most platforms have no native trading-window / clearing engine — committees still run windows by spreadsheet + email.'
+      ],
+      esopAdvantages: [
+        'SG-resident platform with native IRAS QEEBR / Section 215 grant-letter and exercise-confirmation PDF generation.',
+        'Event-sourced ledger (immutable trail) — every issuance, vest, exercise, and clearing is auditable for ACRA / IRAS.',
+        'Self-serve trading-window clearing engine — no spreadsheet + email choreography for the committee.',
+        'PSG-listed-eligible SaaS pricing — the structural wedge zero of 42 mapped competitors currently claim.',
+        'No secondaries marketplace, no founder-aligned conflicts of interest — credible counter-position to post-2024 Carta.'
+      ],
+      designBorrowed: [
+        'Carta — pricing tier table layout and stakeholder-count brackets.',
+        'Ledgy — multi-language employee equity portal pattern as the model for option-holder onboarding.',
+        'Pulley — anti-incumbent founder-first onboarding flow.',
+        'Cake Equity — public, plain-language pricing page (USD 79–249 / mo).'
+      ],
+      designImproved: [
+        'Replace quote-on-call gating with PSG-net effective pricing — the column SG buyers actually compare against.',
+        'Add the IRAS QEEBR / Section 215 path explicitly to the marketing site — global incumbents do not surface it.',
+        'Surface event-sourced audit trail in-product — committees can see the ACRA / IRAS line lineage without exports.',
+        'Trading-window clearing engine is a primary nav item, not an enterprise add-on.'
+      ]
+    };
+
+    function renderInsights() {
+      const fill = (id, list) => {
+        const ul = document.getElementById(id);
+        if (!ul) return;
+        ul.textContent = '';
+        (list || []).forEach(item => ul.appendChild(el('li', { text: item })));
+      };
+      fill('weaknesses-list', INSIGHTS.commonWeaknesses);
+      fill('advantages-list', INSIGHTS.esopAdvantages);
+      fill('borrowed-list', INSIGHTS.designBorrowed);
+      fill('improved-list', INSIGHTS.designImproved);
+    }
+
+    function renderRadar() {
+      const ctx = document.getElementById('radar-chart');
+      if (!ctx || typeof Chart === 'undefined') return;
+
+      const byId = Object.fromEntries(STATE.competitors.map(c => [c.id, c]));
+      // Top 5 from the curated top_five list, fall back to highest-threat
+      let picks = STATE.topFive.map(t => byId[t.competitor_id]).filter(Boolean);
+      if (picks.length < 5) {
+        const extras = STATE.competitors
+          .filter(c => !picks.includes(c))
+          .sort((a, b) => (b.threat_level || 0) - (a.threat_level || 0))
+          .slice(0, 5 - picks.length);
+        picks = picks.concat(extras);
+      }
+      picks = picks.slice(0, 5);
+
+      const dims = [
+        'Pricing transparency',
+        'Design quality',
+        'SG / IRAS fit',
+        'Self-serve UX',
+        'Threat level'
+      ];
+
+      const visScore = v => ({ public: 5, partial: 3, hidden_estimated: 1 })[v] || 1;
+      const sgFitScore = c => {
+        if (c.hq_region === 'SEA') return 4 + (c.id === 'qapita' ? 1 : 0);
+        if (c.hq_region === 'APAC') return 3;
+        return 1;
+      };
+      const selfServeScore = c => {
+        if (c.category === 'big_si') return 1;
+        if (c.category === 'sg_local') return 2;
+        if (c.category === 'diy_alternative') return 1;
+        if (c.category === 'global_incumbent') return 5;
+        if (c.category === 'regional_challenger') return 4;
+        return 3;
+      };
+
+      const palette = ['#8A1F1F', '#B65A1F', '#0E2640', '#1F3A56', '#1F6B4F'];
+
+      const elitezRow = {
+        label: 'Elitez ESOP (us)',
+        data: [5, 5, 5, 5, 5],
+        backgroundColor: 'rgba(238, 106, 31, 0.20)',
+        borderColor: '#EE6A1F',
+        borderWidth: 2.5,
+        pointBackgroundColor: '#EE6A1F'
+      };
+
+      const datasets = [elitezRow];
+      picks.forEach((c, i) => {
+        datasets.push({
+          label: c.name,
+          data: [
+            visScore(c.pricing_flag),
+            Math.round(((Number(c.website_design_rating) || 0) / 10) * 5) || 1,
+            sgFitScore(c),
+            selfServeScore(c),
+            Number(c.threat_level || 0)
+          ],
+          backgroundColor: 'rgba(14, 38, 64, 0.05)',
+          borderColor: palette[i % palette.length],
+          borderWidth: 1.5,
+          pointBackgroundColor: palette[i % palette.length]
+        });
+      });
+
+      // eslint-disable-next-line no-undef
+      new Chart(ctx, {
+        type: 'radar',
+        data: { labels: dims, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { font: { size: 11 }, color: '#0E2640' } },
+            tooltip: { backgroundColor: '#0E2640', padding: 10 }
+          },
+          scales: {
+            r: {
+              min: 0, max: 5,
+              ticks: { stepSize: 1, color: '#5E6B7A', backdropColor: 'transparent', font: { size: 10 } },
+              pointLabels: { font: { size: 11 }, color: '#0E2640' },
+              grid: { color: 'rgba(14, 38, 64, 0.15)' },
+              angleLines: { color: 'rgba(14, 38, 64, 0.15)' }
+            }
+          }
+        }
+      });
+    }
+
+    function attachFilterHandlers() {
+      const ids = ['comp-search', 'comp-cat', 'comp-region', 'comp-threat', 'comp-pricing'];
+      ids.forEach(id => {
+        const node = document.getElementById(id);
+        if (node) node.addEventListener('input', applyFilters);
+      });
+    }
+
+    function applyFilters() {
+      const q = (document.getElementById('comp-search').value || '').toLowerCase().trim();
+      const cat = document.getElementById('comp-cat').value;
+      const region = document.getElementById('comp-region').value;
+      const thrMin = Number(document.getElementById('comp-threat').value || 0);
+      const pricing = document.getElementById('comp-pricing').value;
+
+      STATE.filtered = STATE.competitors.filter(c => {
+        if (cat && c.category !== cat) return false;
+        if (region && c.hq_region !== region) return false;
+        if (thrMin && Number(c.threat_level || 0) < thrMin) return false;
+        if (pricing && c.pricing_flag !== pricing) return false;
+        if (q) {
+          const blob = [
+            c.name,
+            (Array.isArray(c.target_market) ? c.target_market.join(' ') : c.target_market) || '',
+            c.primary_value_prop || '',
+            (c.strengths || []).join(' '),
+            (c.weaknesses || []).join(' '),
+            (c.features || []).join(' '),
+            c.hq || ''
+          ].join(' ').toLowerCase();
+          if (!blob.includes(q)) return false;
+        }
+        return true;
+      });
+      renderCards();
+    }
+
+    function renderCards() {
+      const grid = document.getElementById('comp-grid');
+      grid.textContent = '';
+      document.getElementById('comp-count-tbl').textContent =
+        STATE.filtered.length + ' / ' + STATE.competitors.length + ' shown';
+
+      if (!STATE.filtered.length) {
+        grid.appendChild(el('div', { cls: 'loading', text: 'No competitors match the current filters.' }));
+        return;
+      }
+      STATE.filtered.forEach(c => grid.appendChild(buildCard(c)));
+    }
+
+    function buildCard(c) {
+      const card = el('div', { cls: 'comp-card' });
+
+      // Head
+      const head = el('div', { cls: 'comp-card-head' });
+      const nameWrap = el('div');
+      nameWrap.appendChild(el('div', { cls: 'comp-name', text: c.name || '—' }));
+      if (c.url) {
+        nameWrap.appendChild(el('a', {
+          cls: 'comp-url', text: c.url,
+          attrs: { href: c.url, target: '_blank', rel: 'noopener noreferrer' }
+        }));
+      }
+      head.appendChild(nameWrap);
+      const t = Number(c.threat_level || 0);
+      head.appendChild(el('span', { cls: 'badge b-threat-' + t, text: 'Threat ' + (t || '—') + ' / 5' }));
+      card.appendChild(head);
+
+      // Target market line
+      const tm = Array.isArray(c.target_market) ? c.target_market.join(' · ') : c.target_market;
+      if (tm) card.appendChild(el('div', { cls: 'comp-target', text: tm }));
+
+      // Value prop
+      if (c.primary_value_prop) card.appendChild(el('div', { cls: 'comp-prop', text: c.primary_value_prop }));
+
+      // Badges
+      const badges = el('div', { cls: 'badge-row' });
+      if (c.category) badges.appendChild(el('span', { cls: 'badge b-cat', text: c.category.replace(/_/g, ' ') }));
+      if (c.hq_region) badges.appendChild(el('span', { cls: 'badge b-region-' + c.hq_region, text: c.hq_region }));
+      if (c.pricing_flag) badges.appendChild(el('span', {
+        cls: 'badge b-pricing-' + c.pricing_flag,
+        text: c.pricing_flag.replace(/_/g, ' ')
+      }));
+      card.appendChild(badges);
+
+      // Pricing strip
+      if (c.pricing_range_published || c.sg_monthly_sgd != null) {
+        const strip = el('div', { cls: 'price-strip' });
+        strip.appendChild(el('b', { text: 'Pricing: ' }));
+        const txt = c.pricing_range_published
+          ? c.pricing_range_published
+          : ('~ S$' + c.sg_monthly_sgd + ' / mo (modelled)');
+        strip.appendChild(document.createTextNode(txt));
+        card.appendChild(strip);
+      }
+
+      // Score bars
+      const scores = el('div');
+      if (c.website_design_rating != null) scores.appendChild(scoreRow('Design', c.website_design_rating));
+      if (c.beatability != null) scores.appendChild(scoreRow('Beatability', Number(c.beatability) * 2));
+      card.appendChild(scores);
+
+      // Strengths / weaknesses
+      const lists = el('div', { cls: 'lists-wrap' });
+      if (Array.isArray(c.strengths) && c.strengths.length) {
+        lists.appendChild(listBlock('Strengths', c.strengths.slice(0, 4), 'strong'));
+      }
+      if (Array.isArray(c.weaknesses) && c.weaknesses.length) {
+        lists.appendChild(listBlock('Weaknesses', c.weaknesses.slice(0, 4), 'weak'));
+      }
+      card.appendChild(lists);
+
+      return card;
+    }
+
+    function scoreRow(label, val) {
+      const v = Math.max(0, Math.min(10, Number(val || 0)));
+      const row = el('div', { cls: 'score-row' });
+      row.appendChild(el('div', { cls: 'score-lbl', text: label }));
+      const bar = el('div', { cls: 'score-bar' });
+      const fill = el('div', { cls: 'score-bar-fill' });
+      fill.style.width = (v * 10) + '%';
+      bar.appendChild(fill);
+      row.appendChild(bar);
+      row.appendChild(el('div', { cls: 'score-num', text: v.toFixed(1) + '/10' }));
+      return row;
+    }
+
+    function listBlock(title, items, kind) {
+      const block = el('div', { cls: 'list-block ' + (kind || '') });
+      block.appendChild(el('h4', { text: title }));
+      const ul = el('ul');
+      items.forEach(it => ul.appendChild(el('li', { text: it })));
+      block.appendChild(ul);
+      return block;
+    }
+
+    init();
+  </script>
+</body>
+</html>

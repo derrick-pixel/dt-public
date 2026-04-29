@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="sticker">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Elitez Pulse — SG Marketing Retainer Intelligence Report</title>
+  <link rel="icon" href="../assets/favicon/favicon.ico">
+  <link id="theme-css" rel="stylesheet" href="../assets/theme.css">
+  <link rel="stylesheet" href="../assets/base.css">
+  <link rel="stylesheet" href="../assets/components.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--cream); color: var(--ink); min-height: 100vh; font-family: var(--font-body); }
+
+    .atlas-nav { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; background: var(--white); border-bottom: 2px solid var(--ink); position: sticky; top: 0; z-index: 50; flex-wrap: wrap; gap: 12px; }
+    .atlas-nav .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; color: var(--ink); }
+    .atlas-nav .brand img { height: 28px; }
+    .atlas-nav .brand .pulse { color: var(--coral); font-weight: 900; }
+    .atlas-nav-links { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .atlas-nav-links a { font-size: 12px; color: var(--ink-soft); padding: 6px 12px; border-radius: 999px; text-decoration: none; font-weight: 700; letter-spacing: 0.04em; border: 1.5px solid transparent; }
+    .atlas-nav-links a:hover { background: var(--cream); border-color: var(--ink); }
+    .atlas-nav-links a.active { background: var(--coral); color: var(--white); border-color: var(--coral); }
+
+    .pdf-dl { position: fixed; top: 76px; right: 24px; z-index: 100; background: var(--coral); color: var(--white); border: 2px solid var(--ink); padding: 12px 22px; border-radius: var(--radius-md); font-size: 0.92rem; font-weight: 800; cursor: pointer; box-shadow: var(--shadow-sticker); transition: transform 0.1s; }
+    .pdf-dl:hover { background: var(--ink); }
+    .pdf-dl:active { transform: scale(0.97); }
+    .pdf-dl:disabled { background: var(--ink-soft); cursor: wait; }
+
+    #report-doc { max-width: 1100px; margin: 0 auto; }
+    .report-page { padding: 56px 56px; border-bottom: 1.5px solid var(--ink); }
+    .report-page.bleed-cream { background: var(--cream); }
+    .report-page.bleed-white { background: var(--white); }
+
+    body.pdf-mode #report-doc { max-width: 210mm; }
+    body.pdf-mode .report-page { width: 210mm; padding: 22mm 18mm; border-bottom: none; box-sizing: border-box; page-break-after: always; }
+    body.pdf-mode .report-page.cover { min-height: 297mm; padding: 36mm 18mm 22mm; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
+    body.pdf-mode .report-page, body.pdf-mode .report-page * { font-kerning: none; text-rendering: geometricPrecision; letter-spacing: 0.01em; }
+    body.pdf-mode .pdf-dl, body.pdf-mode .atlas-nav { display: none !important; }
+
+    /* Cover */
+    .cover { min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 80px 56px 64px; background: var(--cream); }
+    .cover-mark { font-size: 2.4rem; font-weight: 900; letter-spacing: 0.06em; color: var(--ink); margin-bottom: 6px; }
+    .cover-mark .star { color: var(--coral); }
+    .cover-sub { font-size: 0.86rem; color: var(--coral); letter-spacing: 0.18em; text-transform: uppercase; font-weight: 800; margin-bottom: 60px; font-family: var(--font-mono); }
+    .cover-title { font-size: clamp(2.2rem, 4.6vw, 3.4rem); font-weight: 900; line-height: 1.08; letter-spacing: -0.02em; color: var(--ink); max-width: 900px; margin-bottom: 28px; }
+    .cover-tag { font-size: 1.05rem; font-style: italic; color: var(--coral); margin-bottom: 60px; max-width: 720px; font-weight: 600; }
+    .cover-stamp { font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-soft); letter-spacing: 0.06em; margin-bottom: 32px; }
+    .cover-acc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 40px; }
+    .cover-acc-chip { font-size: 0.7rem; font-family: var(--font-mono); padding: 5px 11px; background: var(--white); border: 2px solid var(--ink); color: var(--ink); border-radius: 999px; letter-spacing: 0.04em; font-weight: 700; }
+
+    /* Section header */
+    .sec-num { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.16em; color: var(--coral); text-transform: uppercase; font-weight: 800; margin-bottom: 10px; }
+    .sec-h2 { font-size: 2rem; font-weight: 900; letter-spacing: -0.02em; color: var(--ink); line-height: 1.15; margin-bottom: 14px; }
+    .sec-lede { font-size: 0.96rem; color: var(--ink-soft); line-height: 1.65; max-width: 820px; margin-bottom: 28px; }
+
+    /* TOC */
+    .toc-list { list-style: none; padding: 0; counter-reset: tocidx; }
+    .toc-item { counter-increment: tocidx; padding: 14px 0; border-bottom: 1.5px dashed var(--ink); display: grid; grid-template-columns: 50px 1fr 70px; gap: 16px; align-items: baseline; }
+    .toc-item:last-child { border-bottom: none; }
+    .toc-num { font-family: var(--font-mono); color: var(--coral); font-weight: 800; font-size: 0.84rem; letter-spacing: 0.06em; }
+    .toc-num::before { content: counter(tocidx, decimal-leading-zero); }
+    .toc-link { font-size: 1.08rem; color: var(--ink); text-decoration: none; font-weight: 700; }
+    .toc-link:hover { color: var(--coral); }
+    .toc-page { font-family: var(--font-mono); color: var(--ink-soft); font-size: 0.8rem; text-align: right; }
+
+    /* Exec summary */
+    .exec-list { list-style: none; padding: 0; counter-reset: execidx; }
+    .exec-bullet { counter-increment: execidx; display: grid; grid-template-columns: 56px 1fr; gap: 18px; padding: 18px 0; border-bottom: 1.5px dashed var(--ink); }
+    .exec-bullet:last-child { border-bottom: none; }
+    .exec-num { font-size: 1.6rem; color: var(--coral); font-weight: 900; line-height: 1; }
+    .exec-num::before { content: counter(execidx, decimal-leading-zero); }
+    .exec-body { font-size: 0.94rem; color: var(--ink-soft); line-height: 1.7; }
+    .exec-body strong { color: var(--ink); font-weight: 800; }
+    .exec-body em { color: var(--coral); font-style: normal; font-weight: 700; }
+
+    /* KPI strip */
+    .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .kpi { background: var(--white); border: 2px solid var(--ink); border-radius: var(--radius-md); padding: 16px 18px; box-shadow: var(--shadow-sticker); }
+    .kpi-val { font-size: 1.6rem; font-weight: 900; color: var(--coral); letter-spacing: -0.02em; line-height: 1.05; }
+    .kpi-val.violet { color: var(--violet); }
+    .kpi-val.mustard { color: #B58800; }
+    .kpi-val.ink { color: var(--ink); }
+    .kpi-lbl { font-size: 0.7rem; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 800; margin-top: 8px; }
+    .kpi-sub { font-size: 0.7rem; color: var(--ink-soft); line-height: 1.45; margin-top: 4px; }
+
+    /* Competitor cards (top-5) */
+    .comp-list { display: flex; flex-direction: column; gap: 14px; }
+    .comp-card { background: var(--white); border: 2px solid var(--ink); border-radius: var(--radius-md); padding: 18px 20px; box-shadow: var(--shadow-sticker); }
+    .comp-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+    .comp-name { font-size: 1.1rem; font-weight: 900; color: var(--ink); }
+    .comp-url { font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-soft); display: block; margin-top: 2px; word-break: break-all; }
+    .badge { display: inline-block; padding: 3px 9px; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; font-family: var(--font-mono); border-radius: 999px; border: 1.5px solid; }
+    .b-threat-high { background: rgba(185,28,28,0.10); color: #8b1c1c; border-color: #b91c1c; }
+    .b-threat-medium { background: rgba(200,111,21,0.14); color: #8a4a14; border-color: #c86f15; }
+    .b-threat-low { background: rgba(58,122,80,0.12); color: #2c6940; border-color: #3a7a50; }
+    .comp-bars { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 12px 0; }
+    .bar-row { display: grid; grid-template-columns: 96px 1fr 38px; gap: 8px; align-items: center; font-size: 0.78rem; }
+    .bar-row .lbl { color: var(--ink-soft); font-weight: 700; }
+    .bar { height: 8px; background: var(--cream); border: 1px solid var(--ink); border-radius: 4px; overflow: hidden; }
+    .bar .fill { height: 100%; background: var(--coral); }
+    .bar-row .val { font-family: var(--font-mono); color: var(--ink); font-weight: 800; text-align: right; }
+    .comp-sw { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; padding-top: 14px; border-top: 1.5px dashed var(--ink); }
+    @media (max-width: 600px) { .comp-sw { grid-template-columns: 1fr; } }
+    .comp-sw .col h5 { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--coral); margin-bottom: 6px; font-family: var(--font-mono); font-weight: 800; }
+    .comp-sw .col p { font-size: 0.84rem; line-height: 1.55; color: var(--ink-soft); }
+
+    /* Pricing table */
+    .pricing-wrap { overflow-x: auto; border: 2px solid var(--ink); border-radius: var(--radius-md); background: var(--white); }
+    .pricing { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 720px; }
+    .pricing thead th { background: var(--ink); color: var(--cream); padding: 12px 14px; text-align: left; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 800; }
+    .pricing thead th.us-col { background: var(--coral); }
+    .pricing tbody th { background: var(--cream); color: var(--ink); text-align: left; font-weight: 800; padding: 12px 14px; font-size: 0.86rem; }
+    .pricing tbody td { padding: 12px 14px; border-bottom: 1px solid rgba(26,26,26,0.12); vertical-align: top; line-height: 1.5; font-family: var(--font-mono); color: var(--ink-soft); }
+    .pricing tbody td.us-col { background: rgba(255,91,57,0.06); color: var(--ink); font-weight: 700; }
+
+    /* Strategy canvas */
+    .canvas-wrap { display: grid; grid-template-columns: 1.7fr 1fr; gap: 24px; align-items: start; margin-bottom: 26px; }
+    @media (max-width: 900px) { .canvas-wrap { grid-template-columns: 1fr; } }
+    #strategy-canvas { width: 100%; max-width: 720px; height: 420px; }
+    .canvas-legend { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; }
+    .canvas-legend .leg { display: flex; align-items: center; gap: 8px; }
+    .canvas-legend .sw { width: 28px; height: 4px; flex-shrink: 0; border-radius: 2px; }
+    .canvas-legend .us { font-weight: 800; color: var(--coral); }
+
+    /* Niches */
+    .attack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+    .niche { background: linear-gradient(160deg, rgba(58,122,80,0.10), var(--white) 80%); border: 2px solid #3a7a50; border-radius: var(--radius-md); padding: 18px 20px; box-shadow: var(--shadow-sticker); }
+    .niche-rank { font-size: 0.66rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #2c6940; margin-bottom: 6px; font-family: var(--font-mono); }
+    .niche-name { font-size: 1.05rem; font-weight: 900; color: var(--ink); letter-spacing: -0.01em; margin-bottom: 10px; line-height: 1.3; }
+    .niche-icp { font-size: 0.84rem; color: var(--ink-soft); margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1.5px dashed var(--ink); font-style: italic; line-height: 1.55; }
+    .niche-row { display: grid; grid-template-columns: 80px 1fr; gap: 10px; font-size: 0.8rem; padding: 5px 0; }
+    .niche-row .k { font-size: 0.62rem; font-weight: 800; color: var(--coral); letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px; font-family: var(--font-mono); }
+    .niche-row .v { color: var(--ink-soft); line-height: 1.5; }
+
+    /* Design audit cards */
+    .da-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 14px; }
+    .da-card { background: var(--white); border: 2px solid var(--ink); border-radius: var(--radius-md); padding: 16px 18px; }
+    .da-card.self { border: 2.5px solid var(--coral); background: linear-gradient(160deg, rgba(255,91,57,0.08), var(--white) 80%); box-shadow: var(--shadow-sticker); }
+    .da-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+    .da-name { font-weight: 900; color: var(--ink); font-size: 1rem; line-height: 1.25; }
+    .da-name .self-tag { font-size: 0.6rem; color: var(--white); background: var(--coral); font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; margin-left: 8px; padding: 2px 8px; border-radius: 999px; font-family: var(--font-mono); }
+    .da-overall { font-size: 1.4rem; font-weight: 900; color: var(--coral); }
+    .da-overall .max { font-size: 0.7rem; color: var(--ink-soft); font-family: var(--font-mono); font-weight: 400; }
+    .da-bars { margin: 12px 0; }
+    .da-bar-row { display: grid; grid-template-columns: 1fr 60px 28px; gap: 8px; align-items: center; font-size: 0.76rem; padding: 4px 0; }
+    .da-bar-row .lbl { color: var(--ink-soft); }
+    .da-bar { height: 6px; background: var(--cream); border: 1px solid var(--ink); border-radius: 3px; overflow: hidden; }
+    .da-bar .fill { height: 100%; background: var(--coral); }
+    .da-bar-row .val { text-align: right; font-family: var(--font-mono); font-weight: 800; color: var(--ink); }
+    .da-verdict { font-size: 0.84rem; color: var(--ink-soft); line-height: 1.55; padding-top: 12px; border-top: 1.5px dashed var(--ink); font-style: italic; }
+
+    .syn-card { background: var(--white); border: 2.5px solid var(--coral); border-radius: var(--radius-md); padding: 22px 24px; margin-top: 18px; box-shadow: var(--shadow-sticker); }
+    .syn-card h3 { font-size: 1.1rem; color: var(--ink); margin-bottom: 12px; font-weight: 900; }
+    .syn-block { margin-bottom: 16px; }
+    .syn-block:last-child { margin-bottom: 0; }
+    .syn-block .lbl { font-size: 0.66rem; color: var(--coral); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 800; margin-bottom: 8px; font-family: var(--font-mono); }
+    .syn-block ul { list-style: none; padding: 0; }
+    .syn-block ul li { padding: 8px 0 8px 22px; position: relative; font-size: 0.86rem; color: var(--ink-soft); line-height: 1.6; border-bottom: 1px dashed var(--ink); }
+    .syn-block ul li:last-child { border-bottom: none; }
+    .syn-block ul li::before { content: "→"; position: absolute; left: 0; color: var(--coral); font-weight: 800; }
+
+    /* Recommendations */
+    .rec-list { list-style: none; padding: 0; counter-reset: recidx; }
+    .rec-item { counter-increment: recidx; display: grid; grid-template-columns: 64px 1fr; gap: 18px; padding: 20px 0; border-bottom: 1.5px dashed var(--ink); }
+    .rec-item:last-child { border-bottom: none; }
+    .rec-num { font-size: 1.8rem; color: var(--coral); font-weight: 900; line-height: 1; }
+    .rec-num::before { content: "0" counter(recidx); }
+    .rec-title { font-size: 1.08rem; font-weight: 900; color: var(--ink); margin-bottom: 6px; line-height: 1.3; }
+    .rec-body { font-size: 0.9rem; color: var(--ink-soft); line-height: 1.65; }
+    .rec-body strong { color: var(--ink); font-weight: 800; }
+    .rec-body em { color: var(--coral); font-style: normal; font-weight: 700; }
+
+    /* Methodology */
+    .meth-block { margin-bottom: 22px; }
+    .meth-block .lbl { font-size: 0.7rem; color: var(--coral); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 800; margin-bottom: 8px; font-family: var(--font-mono); }
+    .meth-block p { font-size: 0.9rem; color: var(--ink-soft); line-height: 1.7; }
+    .meth-block ul { list-style: none; padding: 0; }
+    .meth-block ul li { padding: 8px 0 8px 20px; position: relative; font-size: 0.86rem; color: var(--ink-soft); line-height: 1.6; }
+    .meth-block ul li::before { content: "◆"; position: absolute; left: 0; color: var(--coral); font-size: 0.7rem; top: 11px; }
+    .meth-block code { font-family: var(--font-mono); background: var(--cream); padding: 1px 6px; border-radius: 4px; color: var(--ink); border: 1px solid var(--ink); font-size: 0.8em; }
+
+    .err-msg { padding: 16px 20px; color: #8b1c1c; font-family: var(--font-mono); font-size: 0.86rem; background: rgba(185,28,28,0.06); border: 2px solid #b91c1c; border-radius: var(--radius-md); margin: 14px 0; }
+
+    @media (max-width: 768px) {
+      body { font-size: 13px; }
+      .atlas-nav { padding: 10px 14px; flex-wrap: wrap; gap: 8px; }
+      .atlas-nav-links { flex-wrap: wrap; gap: 6px; }
+      .atlas-nav-links a { font-size: 0.72rem; padding: 5px 10px; }
+      .pdf-dl { top: auto; bottom: 14px; right: 14px; padding: 10px 16px; font-size: 0.84rem; }
+      .report-page { padding: 36px 18px; }
+      .cover { padding: 50px 18px 36px; }
+      .cover-mark { font-size: 1.6rem; }
+      .cover-title { font-size: 1.7rem !important; }
+      .cover-tag { font-size: 0.95rem; }
+      .sec-h2 { font-size: 1.4rem !important; }
+      .sec-lede { font-size: 0.86rem; }
+      .kpi-strip { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .kpi { padding: 12px 14px; }
+      .kpi-val { font-size: 1.2rem; }
+      .kpi-lbl { font-size: 0.6rem; }
+      .toc-item { grid-template-columns: 36px 1fr 56px; }
+      .toc-link { font-size: 0.94rem; }
+      .exec-bullet { grid-template-columns: 36px 1fr; gap: 10px; }
+      .exec-num { font-size: 1.3rem; }
+      .exec-body { font-size: 0.84rem; }
+      .comp-bars { grid-template-columns: 1fr; }
+      .pricing { min-width: 560px; font-size: 0.74rem; }
+      .pricing thead th, .pricing tbody th, .pricing tbody td { padding: 8px 10px; }
+      #strategy-canvas { height: 280px; }
+      .canvas-wrap { grid-template-columns: 1fr; }
+      .attack-grid { grid-template-columns: 1fr; }
+      .niche { padding: 16px 16px; }
+      .niche-row { grid-template-columns: 64px 1fr; font-size: 0.74rem; }
+      .da-grid { grid-template-columns: 1fr; }
+      .da-card { padding: 14px 16px; }
+      .rec-item { grid-template-columns: 44px 1fr; gap: 12px; padding: 14px 0; }
+      .rec-num { font-size: 1.4rem; }
+      .rec-title { font-size: 0.96rem; }
+      .rec-body { font-size: 0.82rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="atlas-nav">
+  <a href="../index.html" class="brand">
+    <img src="../assets/logo-elitez.png" alt="Elitez">
+    <span>PULSE <span class="pulse">★</span></span>
+  </a>
+  <div class="atlas-nav-links">
+    <a href="index.html">Admin</a>
+    <a href="whitespace.html">White Space</a>
+    <a href="competitor-analytics.html">Competitors</a>
+    <a href="insights.html">Insights</a>
+    <a href="design-audit.html">Design Audit</a>
+    <a href="report.html" class="active">Report</a>
+    <a href="proposal.html">Proposal</a>
+    <a href="template-preview.html">Templates</a>
+    <a href="../index.html">Site</a>
+  </div>
+</nav>
+
+<button id="pdf-dl-btn" class="pdf-dl" type="button">⬇ Download PDF</button>
+
+<main id="report-doc">
+
+  <section class="report-page cover" id="sec-cover">
+    <div class="cover-mark">PULSE <span class="star">★</span></div>
+    <div class="cover-sub">SG Marketing Retainer Intelligence · By Elitez</div>
+    <h1 class="cover-title">SG Marketing Retainer Market Intelligence Report — Q2 2026</h1>
+    <p class="cover-tag">Bundled lead-generation systems. Ops-stack arbitrage, never geographic arbitrage.</p>
+    <div class="cover-stamp">Report quarter · Q2 2026 &nbsp;·&nbsp; Refreshed <span id="cover-date">2026-04-29</span></div>
+    <div class="cover-acc">
+      <span class="cover-acc-chip">Elitez Group · 15 yrs</span>
+      <span class="cover-acc-chip">350+ Staff Backbone</span>
+      <span class="cover-acc-chip">90+ Active Client Operations</span>
+      <span class="cover-acc-chip">AI-Augmented Delivery</span>
+      <span class="cover-acc-chip">30-Day Notice</span>
+      <span class="cover-acc-chip">Monthly ROI Report</span>
+    </div>
+  </section>
+
+  <section class="report-page bleed-white" id="sec-toc">
+    <div class="sec-num">Section 02</div>
+    <h2 class="sec-h2" id="contents">Table of Contents</h2>
+    <p class="sec-lede">Eight sections, in order. The market frame, the competitive set, the pricing reality, the white space, the design gap, and the recommendations that flow from them.</p>
+    <ul class="toc-list" id="toc-list"></ul>
+  </section>
+
+  <section class="report-page bleed-cream" id="sec-exec">
+    <div class="sec-num">Section 03</div>
+    <h2 class="sec-h2" id="executive-summary">Executive Summary</h2>
+    <p class="sec-lede">Five anchor findings. Each is backed by the data appendix that follows in Sections 4–9.</p>
+    <ol class="exec-list">
+      <li class="exec-bullet">
+        <div class="exec-num"></div>
+        <div class="exec-body"><strong>The SG marketing retainer mid-market is structurally underserved.</strong> Premium PR agencies (Mutant, Naga DDB Tribal) reject sub-S$5K retainers. Mid-tier digital agencies (2Stallions, Verz, iFoundries, Construct Digital) lock prospects into 6-month commitments and gate pricing behind enquiry forms. Freelancer marketplaces (Fiverr, Upwork, Freelance.sg) cannot ship a full lead-gen system. <em>Nobody packages a retainer-native, 30-day-notice offer with monthly CPL reporting at the S$799–S$2,999 SME tier.</em></div>
+      </li>
+      <li class="exec-bullet">
+        <div class="exec-num"></div>
+        <div class="exec-body"><strong>Why Pulse wins — ops-stack arbitrage, not geographic arbitrage.</strong> Published Entry / Core / Premium pricing (<em>S$799 / S$1,499 / S$2,999</em>). 30-day notice vs industry-standard 6-month lock. Monthly one-page CPL / ROAS report. AI layer collapses delivery hours; Elitez Group's <strong>15yr lineage + 350-staff backbone + 90+ ongoing client operations</strong> absorb the rent and senior-AM tax that micro-agencies load onto retainers. Margin = SG price − AI-reduced hours − group-shared overhead.</div>
+      </li>
+      <li class="exec-bullet">
+        <div class="exec-num"></div>
+        <div class="exec-body"><strong>Top three white-space niches.</strong> (1) <em>Bootstrapped B2B SME — "Proof, not Performance Theatre"</em> targeting ~3,200 SG bootstrapped 10–40-employee firms. (2) <em>Pro-Services SME — "Trust Agency, Not Vanity Agency"</em> targeting ~5,800 SG law / accounting / engineering firms. (3) <em>Gen-2 Family Business — "The Modernisation Retainer"</em> targeting ~2,400 SG family SMEs in leadership transition.</div>
+      </li>
+      <li class="exec-bullet">
+        <div class="exec-num"></div>
+        <div class="exec-body"><strong>Design audit reality.</strong> Industry average <strong>6.7</strong> across twelve SG / SEA / global subjects on a 5-dimension rubric; Pulse scores <strong>6.8</strong>, mid-pack — ahead of MediaOne (5.2), GoDigital (5.0) and Verz (6.2); behind Naga DDB Tribal (8.4), Mutant (7.8) and Fiverr Pro (7.8). Gap to leader is 1.6 — almost entirely on credibility artefacts (named case studies, audited retention) and visual brand depth. Brand distinctiveness already beats SG SME peers.</div>
+      </li>
+      <li class="exec-bullet">
+        <div class="exec-num"></div>
+        <div class="exec-body"><strong>Five recommended actions.</strong> Surface the Elitez 15yr / 350-staff / 90+ operations trust strip on every public page. Ship a downloadable Q1 ROI Report PDF with anonymised CPL data. Build vertical-led landing pages for the four ICPs (B2B / pro-services / family-business / regulated). Add a sticky '2-min ROI Diagnostic' CTA on every template. Publish three named case studies with CPL + retention markers.</div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="report-page bleed-white" id="sec-market">
+    <div class="sec-num">Section 04</div>
+    <h2 class="sec-h2" id="market-landscape">Market &amp; Plan KPIs</h2>
+    <p class="sec-lede">The Elitez Revenue Engine plan numbers — what Pulse has to deliver, the cost floor it has to clear, and the SME sweet spot we anchor every retainer pitch to.</p>
+    <div class="kpi-strip" id="market-kpis"></div>
+  </section>
+
+  <section class="report-page bleed-cream" id="sec-comp">
+    <div class="sec-num">Section 05</div>
+    <h2 class="sec-h2" id="competitive-landscape">Competitive Landscape</h2>
+    <p class="sec-lede">High-threat rivals from <code>competitors.json</code>, filtered to <code>threat === 'high'</code>. Tier, retainer mid, reliability, our advantage, our gap, and the verbatim battlecard line we use against each.</p>
+    <div class="comp-list" id="comp-list"></div>
+  </section>
+
+  <section class="report-page bleed-white" id="sec-pricing">
+    <div class="sec-num">Section 06</div>
+    <h2 class="sec-h2" id="pricing-tiers">Pricing Tiers — Freelancer · Pulse · SMB · Premium</h2>
+    <p class="sec-lede">Triangulated SGD bands across the four tiers buyers actually compare. Pulse occupies the structurally lean middle once AI delivery hours and Elitez-Group-shared overhead are priced in.</p>
+    <div class="pricing-wrap">
+      <table class="pricing">
+        <thead>
+          <tr>
+            <th style="min-width: 200px;">Service</th>
+            <th>Freelancer</th>
+            <th class="us-col">Pulse (us)</th>
+            <th>SMB</th>
+            <th>Premium</th>
+          </tr>
+        </thead>
+        <tbody id="pricing-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="report-page bleed-cream" id="sec-whitespace">
+    <div class="sec-num">Section 07</div>
+    <h2 class="sec-h2" id="whitespace-attack">White Space &amp; Attack Plans</h2>
+    <p class="sec-lede">Strategy canvas across 8 dimensions buyers actually weigh. Pulse's shape breaks away from the pack on price accessibility, retainer flexibility, founder access, and SG cultural fit — dimensions premium PR shops and freelancer marketplaces cannot structurally follow.</p>
+    <div class="canvas-wrap">
+      <canvas id="strategy-canvas" width="720" height="420"></canvas>
+      <div class="canvas-legend" id="canvas-legend"></div>
+    </div>
+    <h3 style="font-size: 1.1rem; color: var(--ink); margin: 24px 0 14px; font-weight: 900;">Top 3 attack niches</h3>
+    <div class="attack-grid" id="attack-grid"></div>
+  </section>
+
+  <section class="report-page bleed-white" id="sec-design">
+    <div class="sec-num">Section 08</div>
+    <h2 class="sec-h2" id="design-audit">Website Design Audit</h2>
+    <p class="sec-lede">Twelve SG / SEA / global retainer-category sites, scored on the same 5-dimension rubric — typography &amp; hierarchy, layout &amp; IA, visual brand distinctiveness, content credibility, mobile polish — including Pulse. Honestly.</p>
+    <div class="kpi-strip" id="da-kpis"></div>
+    <div class="da-grid" id="da-grid"></div>
+    <div class="syn-card" id="da-syn"></div>
+  </section>
+
+  <section class="report-page bleed-cream" id="sec-recs">
+    <div class="sec-num">Section 09</div>
+    <h2 class="sec-h2" id="recommendations">Recommendations</h2>
+    <p class="sec-lede">Five action items. Each one connects a real Pulse advantage to the place a buyer is most likely to decide.</p>
+    <ol class="rec-list">
+      <li class="rec-item">
+        <div class="rec-num"></div>
+        <div>
+          <div class="rec-title">Surface the Elitez group trust strip on every page</div>
+          <div class="rec-body">Move <em>"Elitez Group · 15 years · 350+ staff · 90+ ongoing client operations"</em> into a persistent strip at the top of every public page. Today this lives only in /about; the buyer is not reading it where they decide.</div>
+        </div>
+      </li>
+      <li class="rec-item">
+        <div class="rec-num"></div>
+        <div>
+          <div class="rec-title">Ship a downloadable Q1 ROI Report PDF</div>
+          <div class="rec-body">Anonymised CPL / ROAS / retention figures from a representative Core-tier client. Quote the binding 30-day-notice clause inside. Convert the AI-augmented delivery, group-shared overhead, and ops-stack arbitrage story into a single defensible artefact a procurement officer can email around.</div>
+        </div>
+      </li>
+      <li class="rec-item">
+        <div class="rec-num"></div>
+        <div>
+          <div class="rec-title">Vertical-led landing pages for four ICPs</div>
+          <div class="rec-body">Four distinct entry points: <strong>B2B Services</strong>, <strong>Pro-Services SME</strong> (law / accounting / engineering), <strong>Gen-2 Family Business</strong>, <strong>Regulated</strong> (education / healthcare / training). Each with its own hero copy, its own CTA, and its own proof stack — the bootstrapped B2B page leads with the S$999 entry tier and 90-day outcome promise; the pro-services page leads with MAS / Law Society compliance awareness.</div>
+        </div>
+      </li>
+      <li class="rec-item">
+        <div class="rec-num"></div>
+        <div>
+          <div class="rec-title">Sticky 2-min ROI Diagnostic CTA on every template</div>
+          <div class="rec-body">Replace the static contact button with a sticky <em>"Run my 2-min ROI Diagnostic"</em> CTA. The diagnostic captures industry, headcount, current spend, deal size, urgency — and outputs a tier recommendation plus break-even maths live. Quote the <strong>SGD 42 cost-per-lead benchmark, 47 leads/month median, 6–9 week payback</strong> as the anchor.</div>
+        </div>
+      </li>
+      <li class="rec-item">
+        <div class="rec-num"></div>
+        <div>
+          <div class="rec-title">Publish three named case studies with CPL + retention markers</div>
+          <div class="rec-body">Pulse already has the math; what's missing is the receipt. Three named-client case studies with monthly CPL data, total leads, retention through month 12, and an honest mention of the 30-day-notice trigger if any. Closes the credibility gap that puts Pulse behind Mutant on the design audit.</div>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="report-page bleed-white" id="sec-method">
+    <div class="sec-num">Section 10</div>
+    <h2 class="sec-h2" id="methodology">Methodology &amp; Sources</h2>
+    <p class="sec-lede">Where every number in this report came from, and the dates each dataset was last refreshed.</p>
+    <div class="meth-block">
+      <div class="lbl">Research date</div>
+      <p>Insights, competitors, packages, templates and whitespace data refreshed <strong id="meth-date">2026-04-29</strong>. Report compiled <strong>2026-04-29</strong> for Q2 2026 distribution.</p>
+    </div>
+    <div class="meth-block">
+      <div class="lbl">Pulse positioning</div>
+      <p>Mission, vision, package ladder (Entry S$799 / Core S$1,499 / Premium S$2,999), Elitez Group 15-year lineage, 350-staff backbone, 90+ ongoing client operations, monthly CPL / ROAS report cadence, and the 30-day notice clause are taken from <code>data/company.json</code>, <code>data/packages.json</code> and <code>data/insights.json</code>.</p>
+    </div>
+    <div class="meth-block">
+      <div class="lbl">Competitor intelligence (<code>data/competitors.json</code>)</div>
+      <p>Triangulated from public service pages (Mutant, Construct Digital, Verz, 2Stallions, iFoundries, MediaOne, Click Academy, GoDigital, Naga DDB Tribal, Locomote, Fiverr Pro, Freelance Singapore), LinkedIn Jobs salary bands, and proposals seen in RFPs. Reliability score rates ops maturity 0–10. Threat rates how often a prospect shortlists them alongside Pulse.</p>
+    </div>
+    <div class="meth-block">
+      <div class="lbl">White-space framework (<code>data/whitespace-framework.json</code>, <code>data/whitespace-competitors.json</code>)</div>
+      <p>The 8-segment × 8-need matrix and 8-dimension strategy canvas are derived from the SG SME ICP list cross-referenced against the eight customer-valued retainer dimensions. The scoring rubric is reproducible — see the <code>scoreCompetitor</code> function in <a href="whitespace.html">White Space Atlas</a>.</p>
+    </div>
+    <div class="meth-block">
+      <div class="lbl">Design audit (<code>data/design-audit.json</code>)</div>
+      <p>Live site review of twelve SG / SEA / global retainer-category URLs against a 5-dimension rubric scored 1–10. Subjects: Mutant, Construct Digital, 2Stallions, Verz, iFoundries, MediaOne, Click Academy, GoDigital, Naga DDB Tribal, Locomote, Fiverr Pro, plus Pulse (self) — assessed honestly. Industry average 6.7, Pulse 6.8.</p>
+    </div>
+    <div class="meth-block">
+      <div class="lbl">Companion artefacts</div>
+      <ul>
+        <li><a href="whitespace.html">White Space Atlas</a> — interactive 8×8 heatmap and attack niche cards</li>
+        <li><a href="competitor-analytics.html">Competitor Analytics</a> — full per-competitor card view with strengths, weaknesses, and battlecards</li>
+        <li><a href="insights.html">Market &amp; Pricing Insights</a> — KPIs, mental models, pricing tiers, objection killshots, talk tracks</li>
+        <li><a href="design-audit.html">Design Audit</a> — full subject cards, dimension-level notes, and to-reach-10 prescriptions</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<script>
+const PULSE_BRAND = '#FF5B39';
+
+function clearNode(el) { while (el.firstChild) el.removeChild(el.firstChild); }
+function makeEl(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = String(text); return e; }
+
+// ── Strategy canvas data: mirror of whitespace.html ──
+const CANVAS_DIMS = [
+  'Price accessibility', 'SG cultural fit', 'Service breadth', 'Retainer flexibility',
+  'Creative velocity', 'Reporting cadence', 'Founder access', 'Industry depth'
+];
+const CANVAS_LINES = [
+  { name: 'Pulse',                  us: true, color: PULSE_BRAND, scores: [5, 5, 5, 5, 4, 5, 5, 3] },
+  { name: 'Mutant',                           color: '#8e1a1a', scores: [1, 4, 4, 2, 3, 3, 2, 4] },
+  { name: 'Construct Digital',                color: '#a32e2e', scores: [2, 4, 4, 2, 3, 3, 2, 3] },
+  { name: '2Stallions',                       color: '#c44a4a', scores: [3, 4, 4, 3, 3, 3, 3, 3] },
+  { name: 'Verz Design',                      color: '#d16b6b', scores: [3, 4, 3, 2, 3, 2, 2, 2] },
+  { name: 'MediaOne',                         color: '#2c5a8a', scores: [3, 5, 3, 3, 3, 4, 2, 4] },
+  { name: 'Click Academy',                    color: '#4a7a1a', scores: [4, 4, 2, 3, 2, 3, 3, 2] },
+  { name: 'GoDigital',                        color: '#6a4a8a', scores: [4, 4, 2, 4, 2, 2, 4, 2] },
+  { name: 'Freelancer (Fiverr)',              color: '#2a2a2a', scores: [5, 1, 1, 5, 2, 1, 1, 1] }
+];
+
+const NICHES = [
+  {
+    rank: '01',
+    name: 'Bootstrapped B2B SME — "Proof, not Performance Theatre"',
+    icp: 'Bootstrapped 10–40 employee B2B services / professional firm that has never bought an agency before. Owner is sceptical, wants CPL evidence by month 3, and refuses a 6-month retainer.',
+    tam: '~3,200 SG bootstrapped B2B SMEs in the 10–40 band (BizFile + IHRP + SBF sector data).',
+    why_we_win: '(1) Entry tier S$999/mo with monthly CPL/ROAS reporting — matched by nobody at this price. (2) 30-day notice vs industry-standard 6-month lock. (3) Elitez 15yr Group track record + 350-staff backbone = trust anchor for first-time agency buyers.',
+    pricing: 'Entry S$999/mo + first-90-day outcome promise (qualified lead pipeline by day 90 or next month free).',
+    pitch: '"One thousand a month. One report a month. Out in thirty days if the leads don\'t come. No other agency will write that down."'
+  },
+  {
+    rank: '02',
+    name: 'Pro-Services SME — "Trust Agency, Not Vanity Agency"',
+    icp: 'Law firms, accounting firms, architecture / engineering consultancies (15–60 employees). Growth depends on referral + thought leadership, not paid ads. Needs content + SEO + reputation work at founder-access pacing.',
+    tam: '~5,800 SG pro-services firms in the 15–60 band (ACRA + IES + ACCA SG + Law Society rolls).',
+    why_we_win: '(1) Retainer-native content engine purpose-built for trust-led verticals. (2) In-house awareness of MAS, Law Society, ACCA marketing rules. (3) Founder-access model means our strategist talks partner-to-partner.',
+    pricing: 'Core S$2.5K/mo + "partner-ready" thought leadership add-on (1 byline article/mo) at S$600/mo.',
+    pitch: '"Your firm is sold on reputation. We are the only retainer that writes for partners and thinks about MAS / Law Society rules before we post."'
+  },
+  {
+    rank: '03',
+    name: 'Gen-2 Family Business — "The Modernisation Retainer"',
+    icp: '20-year+ SG family SME where Gen-2 (aged 28–40) is taking leadership and has a 12–24 month mandate to "modernise the brand". Still has dad / mum on the board.',
+    tam: '~2,400 identifiable SG family businesses with Gen-2 in leadership transition (BizFile founders + SME 500 + Family Business Network).',
+    why_we_win: '(1) Elitez Group 15yr SG founder-led lineage = credibility with Gen-1 board. (2) Bilingual team handles Chinese / Malay social content native-speaker quality. (3) Phased retainer matches Gen-1 comfort curve.',
+    pricing: '"Modernisation Retainer" 12-month commit at Core (S$2.5K) — includes a quarterly Gen-1 board-readable report in hard copy.',
+    pitch: '"You took over the business. We run the modernisation — at a pace your father will sign off on."'
+  }
+];
+
+function renderTOC() {
+  const list = document.getElementById('toc-list');
+  clearNode(list);
+  const headings = document.querySelectorAll('main#report-doc h2.sec-h2[id]');
+  headings.forEach((h, i) => {
+    const li = makeEl('li', 'toc-item');
+    li.appendChild(makeEl('div', 'toc-num'));
+    const linkWrap = makeEl('div');
+    const a = document.createElement('a');
+    a.className = 'toc-link';
+    a.textContent = h.textContent;
+    a.href = '#' + h.id;
+    linkWrap.appendChild(a);
+    li.appendChild(linkWrap);
+    li.appendChild(makeEl('div', 'toc-page', '§' + String(i + 2).padStart(2, '0')));
+    list.appendChild(li);
+  });
+}
+
+function renderMarketKPIs(insights) {
+  const host = document.getElementById('market-kpis');
+  clearNode(host);
+  const kpis = (insights.kpis || []).slice(0, 6);
+  const colors = ['', 'violet', 'mustard', 'ink', 'violet', ''];
+  kpis.forEach((k, i) => {
+    const card = makeEl('div', 'kpi');
+    card.appendChild(makeEl('div', 'kpi-val ' + colors[i % colors.length], k.value));
+    card.appendChild(makeEl('div', 'kpi-lbl', k.label));
+    if (k.note) card.appendChild(makeEl('div', 'kpi-sub', k.note));
+    host.appendChild(card);
+  });
+}
+
+function renderCompetitors(competitors) {
+  const list = document.getElementById('comp-list');
+  clearNode(list);
+  const top = competitors.filter(c => c.threat === 'high').slice(0, 6);
+  if (!top.length) {
+    list.appendChild(makeEl('div', 'err-msg', 'No high-threat competitors found in competitors.json.'));
+    return;
+  }
+  top.forEach(c => {
+    const card = makeEl('div', 'comp-card');
+    const head = makeEl('div', 'comp-head');
+    const left = makeEl('div');
+    left.appendChild(makeEl('div', 'comp-name', c.name));
+    if (c.site) {
+      const u = document.createElement('a');
+      u.className = 'comp-url';
+      u.textContent = c.site;
+      u.href = c.site;
+      u.target = '_blank';
+      u.rel = 'noopener noreferrer';
+      left.appendChild(u);
+    }
+    head.appendChild(left);
+    const badges = makeEl('div');
+    badges.style.display = 'flex';
+    badges.style.gap = '6px';
+    badges.style.flexWrap = 'wrap';
+    badges.appendChild(makeEl('span', 'badge b-threat-' + (c.threat || 'low'), 'Threat: ' + (c.threat || '—')));
+    if (c.tier) badges.appendChild(makeEl('span', 'badge', c.tier));
+    if (c.grade) badges.appendChild(makeEl('span', 'badge', 'Grade ' + c.grade));
+    head.appendChild(badges);
+    card.appendChild(head);
+
+    if (c.typicalPrice) {
+      const mk = makeEl('div', null, 'Retainer: ' + c.typicalPrice);
+      mk.style.fontSize = '0.84rem';
+      mk.style.color = 'var(--coral)';
+      mk.style.fontFamily = 'var(--font-mono)';
+      mk.style.marginBottom = '8px';
+      mk.style.fontWeight = '700';
+      card.appendChild(mk);
+    }
+
+    const bars = makeEl('div', 'comp-bars');
+    if (c.reliability != null) {
+      const row = makeEl('div', 'bar-row');
+      row.appendChild(makeEl('span', 'lbl', 'Reliability'));
+      const bar = makeEl('div', 'bar');
+      const fill = makeEl('div', 'fill');
+      const pct = Math.max(0, Math.min(10, Number(c.reliability))) * 10;
+      fill.style.width = pct + '%';
+      bar.appendChild(fill);
+      row.appendChild(bar);
+      row.appendChild(makeEl('span', 'val', c.reliability + '/10'));
+      bars.appendChild(row);
+    }
+    if (c.priceMid != null) {
+      const row = makeEl('div', 'bar-row');
+      row.appendChild(makeEl('span', 'lbl', 'Retainer mid'));
+      const bar = makeEl('div', 'bar');
+      const fill = makeEl('div', 'fill');
+      // normalise: 15000 = 100%
+      const pct = Math.max(0, Math.min(100, (Number(c.priceMid) / 15000) * 100));
+      fill.style.width = pct + '%';
+      bar.appendChild(fill);
+      row.appendChild(bar);
+      row.appendChild(makeEl('span', 'val', 'S$' + Number(c.priceMid).toLocaleString()));
+      bars.appendChild(row);
+    }
+    card.appendChild(bars);
+
+    const sw = makeEl('div', 'comp-sw');
+    if (c.ourAdvantage) {
+      const col = makeEl('div', 'col');
+      col.appendChild(makeEl('h5', null, 'Our advantage'));
+      col.appendChild(makeEl('p', null, c.ourAdvantage));
+      sw.appendChild(col);
+    }
+    if (c.ourGap) {
+      const col = makeEl('div', 'col');
+      col.appendChild(makeEl('h5', null, 'Our gap'));
+      col.appendChild(makeEl('p', null, c.ourGap));
+      sw.appendChild(col);
+    }
+    card.appendChild(sw);
+
+    if (c.battlecard) {
+      const bc = makeEl('div');
+      bc.style.marginTop = '12px';
+      bc.style.padding = '10px 14px';
+      bc.style.background = 'var(--cream)';
+      bc.style.borderLeft = '3px solid var(--coral)';
+      bc.style.borderRadius = 'var(--radius-sm)';
+      bc.style.fontSize = '0.84rem';
+      bc.style.color = 'var(--ink)';
+      bc.style.lineHeight = '1.55';
+      const lbl = makeEl('b', null, 'BATTLECARD ');
+      lbl.style.color = 'var(--coral)';
+      lbl.style.fontFamily = 'var(--font-mono)';
+      lbl.style.fontSize = '0.66rem';
+      lbl.style.letterSpacing = '0.1em';
+      lbl.style.fontWeight = '800';
+      bc.appendChild(lbl);
+      bc.appendChild(document.createTextNode(c.battlecard));
+      card.appendChild(bc);
+    }
+
+    list.appendChild(card);
+  });
+}
+
+function renderPricing(priceMatrix) {
+  const body = document.getElementById('pricing-body');
+  clearNode(body);
+  function fmtBand(arr) {
+    if (!Array.isArray(arr) || arr.length !== 2) return '—';
+    return 'S$' + arr[0].toLocaleString() + '–' + arr[1].toLocaleString();
+  }
+  function appendSection(label, rows) {
+    if (!rows || !rows.length) return;
+    const hr = document.createElement('tr');
+    const td = document.createElement('td');
+    td.colSpan = 5;
+    td.textContent = label;
+    td.style.background = 'var(--cream)';
+    td.style.fontWeight = '800';
+    td.style.textTransform = 'uppercase';
+    td.style.letterSpacing = '0.06em';
+    td.style.fontSize = '0.7rem';
+    td.style.fontFamily = 'var(--font-mono)';
+    td.style.padding = '10px 12px';
+    td.style.color = 'var(--ink)';
+    hr.appendChild(td);
+    body.appendChild(hr);
+    rows.forEach(r => {
+      const tr = document.createElement('tr');
+      const th = makeEl('th', null, r.service);
+      tr.appendChild(th);
+      ['freelancer','us','smb','premium'].forEach(k => {
+        const td = makeEl('td', k === 'us' ? 'us-col' : null, fmtBand(r[k]));
+        tr.appendChild(td);
+      });
+      body.appendChild(tr);
+    });
+  }
+  appendSection('Assets', priceMatrix.assets);
+  appendSection('Campaigns', priceMatrix.campaigns);
+}
+
+function renderStrategyCanvas() {
+  const ctx = document.getElementById('strategy-canvas').getContext('2d');
+  const datasets = CANVAS_LINES.map(l => ({
+    label: l.name, data: l.scores,
+    backgroundColor: l.us ? 'rgba(255,91,57,0.18)' : 'transparent',
+    borderColor: l.color, borderWidth: l.us ? 3 : 1.5,
+    pointRadius: l.us ? 4 : 2.5, pointBackgroundColor: l.color, tension: 0.15
+  }));
+  new Chart(ctx, {
+    type: 'radar',
+    data: { labels: CANVAS_DIMS, datasets },
+    options: {
+      animation: false,
+      scales: { r: {
+        suggestedMin: 0, suggestedMax: 5,
+        ticks: { stepSize: 1, backdropColor: 'rgba(0,0,0,0)', color: '#888', font: { size: 10 } },
+        grid: { color: 'rgba(26,26,26,0.08)' },
+        angleLines: { color: 'rgba(26,26,26,0.1)' },
+        pointLabels: { color: '#1A1A1A', font: { size: 11, weight: 700 } }
+      }},
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: x => x.dataset.label + ': ' + x.raw } } },
+      responsive: true, maintainAspectRatio: false
+    }
+  });
+  const leg = document.getElementById('canvas-legend');
+  clearNode(leg);
+  CANVAS_LINES.forEach(l => {
+    const row = makeEl('div', 'leg');
+    const sw = makeEl('span', 'sw');
+    sw.style.background = l.color;
+    if (l.us) sw.style.boxShadow = '0 0 10px ' + l.color;
+    const n = makeEl('span', null, l.name);
+    if (l.us) n.classList.add('us');
+    row.appendChild(sw);
+    row.appendChild(n);
+    leg.appendChild(row);
+  });
+}
+
+function renderNiches() {
+  const host = document.getElementById('attack-grid');
+  clearNode(host);
+  NICHES.forEach(n => {
+    const c = makeEl('div', 'niche');
+    c.appendChild(makeEl('div', 'niche-rank', 'Niche ' + n.rank));
+    c.appendChild(makeEl('div', 'niche-name', n.name));
+    c.appendChild(makeEl('div', 'niche-icp', n.icp));
+    [['TAM', n.tam], ['Our win', n.why_we_win], ['Pricing', n.pricing], ['Pitch', n.pitch]].forEach(pair => {
+      const row = makeEl('div', 'niche-row');
+      row.appendChild(makeEl('div', 'k', pair[0]));
+      row.appendChild(makeEl('div', 'v', pair[1]));
+      c.appendChild(row);
+    });
+    host.appendChild(c);
+  });
+}
+
+function renderDesignAudit(audit) {
+  const subjects = audit.subjects || [];
+  const synth = audit.synthesis || {};
+  const pulse = subjects.find(s => s.is_self) || {};
+  const sortedNonSelf = subjects.filter(s => !s.is_self).sort((a, b) => b.overall_score - a.overall_score);
+  const leader = sortedNonSelf[0] || {};
+  const ranked = subjects.slice().sort((a, b) => b.overall_score - a.overall_score);
+  const pulseRank = ranked.findIndex(s => s.is_self) + 1;
+  const gap = leader.overall_score && pulse.overall_score ? Math.max(0, leader.overall_score - pulse.overall_score).toFixed(1) : '—';
+
+  const kpis = document.getElementById('da-kpis');
+  clearNode(kpis);
+  const kArr = [
+    { v: (synth.industry_average != null ? synth.industry_average.toFixed(1) : '—'), l: 'Industry average', cls: 'violet' },
+    { v: (pulse.overall_score != null ? pulse.overall_score.toFixed(1) : '—'), l: 'Pulse score', cls: '' },
+    { v: pulseRank ? String(pulseRank) + ' of ' + subjects.length : '—', l: 'Pulse rank', cls: 'mustard' },
+    { v: gap, l: 'Gap to leader', cls: 'ink' }
+  ];
+  kArr.forEach(k => {
+    const card = makeEl('div', 'kpi');
+    card.appendChild(makeEl('div', 'kpi-val ' + k.cls, k.v));
+    card.appendChild(makeEl('div', 'kpi-lbl', k.l));
+    kpis.appendChild(card);
+  });
+
+  const grid = document.getElementById('da-grid');
+  clearNode(grid);
+  const ordered = subjects.slice().sort((a, b) => {
+    if (a.is_self) return -1;
+    if (b.is_self) return 1;
+    return b.overall_score - a.overall_score;
+  });
+  ordered.forEach(s => {
+    const card = makeEl('div', 'da-card' + (s.is_self ? ' self' : ''));
+    const head = makeEl('div', 'da-head');
+    const nameWrap = makeEl('div');
+    const nm = makeEl('span', 'da-name', s.name);
+    if (s.is_self) nm.appendChild(makeEl('span', 'self-tag', 'Self'));
+    nameWrap.appendChild(nm);
+    head.appendChild(nameWrap);
+    const ov = makeEl('div', 'da-overall', s.overall_score != null ? s.overall_score.toFixed(1) : '—');
+    ov.appendChild(makeEl('span', 'max', '/10'));
+    head.appendChild(ov);
+    card.appendChild(head);
+
+    const bars = makeEl('div', 'da-bars');
+    (audit.rubric || []).forEach(r => {
+      const dim = (s.scores || {})[r.id];
+      if (!dim) return;
+      const row = makeEl('div', 'da-bar-row');
+      row.appendChild(makeEl('span', 'lbl', r.label));
+      const bar = makeEl('div', 'da-bar');
+      const fill = makeEl('div', 'fill');
+      fill.style.width = (Math.max(0, Math.min(10, dim.score)) * 10) + '%';
+      bar.appendChild(fill);
+      row.appendChild(bar);
+      row.appendChild(makeEl('span', 'val', String(dim.score)));
+      bars.appendChild(row);
+    });
+    card.appendChild(bars);
+    if (s.verdict) card.appendChild(makeEl('div', 'da-verdict', s.verdict));
+    grid.appendChild(card);
+  });
+
+  const syn = document.getElementById('da-syn');
+  clearNode(syn);
+  syn.appendChild(makeEl('h3', null, 'Synthesis — easy wins and 10× aspirations'));
+  if (synth.passage_position) {
+    const pos = makeEl('p', null, synth.passage_position);
+    pos.style.fontSize = '0.88rem';
+    pos.style.color = 'var(--ink-soft)';
+    pos.style.lineHeight = '1.65';
+    pos.style.marginBottom = '14px';
+    syn.appendChild(pos);
+  }
+  [
+    { lbl: 'Easy wins for Pulse', items: synth.easy_wins_for_passage || [] },
+    { lbl: '10× aspirations', items: synth.ten_x_aspirations || [] }
+  ].forEach(b => {
+    if (!b.items.length) return;
+    const block = makeEl('div', 'syn-block');
+    block.appendChild(makeEl('div', 'lbl', b.lbl));
+    const ul = makeEl('ul');
+    b.items.forEach(it => ul.appendChild(makeEl('li', null, it)));
+    block.appendChild(ul);
+    syn.appendChild(block);
+  });
+}
+
+async function loadAll() {
+  try {
+    const [insightsRes, compsRes, daRes] = await Promise.all([
+      fetch('../data/insights.json'),
+      fetch('../data/competitors.json'),
+      fetch('../data/design-audit.json')
+    ]);
+    if (!insightsRes.ok) throw new Error('insights.json HTTP ' + insightsRes.status);
+    if (!compsRes.ok) throw new Error('competitors.json HTTP ' + compsRes.status);
+    if (!daRes.ok) throw new Error('design-audit.json HTTP ' + daRes.status);
+
+    const insights = await insightsRes.json();
+    const comps = await compsRes.json();
+    const da = await daRes.json();
+
+    const stamp = (comps.marketSummary && comps.marketSummary.lastReviewed) || da.research_date || '2026-04-29';
+    document.getElementById('cover-date').textContent = stamp;
+    document.getElementById('meth-date').textContent = stamp;
+
+    renderTOC();
+    renderMarketKPIs(insights);
+    renderCompetitors(comps.competitors || []);
+    renderPricing(comps.priceMatrix || {});
+    renderStrategyCanvas();
+    renderNiches();
+    renderDesignAudit(da);
+  } catch (e) {
+    const main = document.getElementById('report-doc');
+    const err = makeEl('div', 'err-msg', 'Data load failed: ' + e.message + ' — confirm /data/*.json files exist.');
+    err.style.margin = '24px';
+    main.insertBefore(err, main.firstChild);
+  }
+}
+
+// ── Section content-height measurement ──
+function effectiveSectionHmm(sec) {
+  const PX_PER_MM = 96 / 25.4;
+  const secRect = sec.getBoundingClientRect();
+  let maxBottom = secRect.top;
+  sec.querySelectorAll('*').forEach(el => {
+    const hasText = (el.textContent || '').trim().length > 0;
+    const tag = el.tagName;
+    const isVisual = tag === 'IMG' || tag === 'CANVAS' || tag === 'SVG' || tag === 'TABLE';
+    if (!hasText && !isVisual) return;
+    const r = el.getBoundingClientRect();
+    if (r.bottom > maxBottom) maxBottom = r.bottom;
+  });
+  const contentHmm = (maxBottom - secRect.top) / PX_PER_MM + 8;
+  return Math.min(contentHmm, sec.offsetHeight / PX_PER_MM);
+}
+
+function sliceIsEmpty(sliceCanvas, bgHex) {
+  const ctx = sliceCanvas.getContext('2d');
+  let data;
+  try { data = ctx.getImageData(0, 0, sliceCanvas.width, sliceCanvas.height).data; }
+  catch (e) { return false; }
+  const r0 = parseInt(bgHex.slice(1, 3), 16);
+  const g0 = parseInt(bgHex.slice(3, 5), 16);
+  const b0 = parseInt(bgHex.slice(5, 7), 16);
+  let nonBg = 0, sampled = 0;
+  for (let i = 0; i < data.length; i += 400) {
+    sampled++;
+    if (Math.abs(data[i] - r0) > 8 || Math.abs(data[i + 1] - g0) > 8 || Math.abs(data[i + 2] - b0) > 8) nonBg++;
+  }
+  return sampled > 0 && (nonBg / sampled) < 0.001;
+}
+
+async function downloadPdf() {
+  const btn = document.getElementById('pdf-dl-btn');
+  if (!btn) return;
+  if (typeof window.html2canvas !== 'function' || typeof window.jspdf === 'undefined') {
+    alert('PDF libraries failed to load. Check network and refresh.');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Rendering…';
+  document.body.classList.add('pdf-mode');
+
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  await (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve());
+
+  const PX_PER_MM = 96 / 25.4;
+  const PAGE_W_MM = 210;
+  const PAGE_H_MM = 297;
+  const SCALE = 2;
+
+  try {
+    const sections = Array.from(document.querySelectorAll('main#report-doc > section.report-page'));
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
+    let pageEmitted = false;
+
+    for (let i = 0; i < sections.length; i++) {
+      const sec = sections[i];
+      const bg = sec.classList.contains('bleed-cream') ? '#FEF3E7' : '#ffffff';
+
+      const fullCanvas = await window.html2canvas(sec, {
+        scale: SCALE, backgroundColor: bg, useCORS: true, logging: false,
+        width: sec.offsetWidth, height: sec.offsetHeight
+      });
+
+      const effHmm = effectiveSectionHmm(sec);
+      const effHpx = Math.ceil(effHmm * PX_PER_MM * SCALE);
+      let canvas;
+      if (effHpx >= fullCanvas.height) {
+        canvas = fullCanvas;
+      } else {
+        canvas = document.createElement('canvas');
+        canvas.width = fullCanvas.width;
+        canvas.height = effHpx;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(fullCanvas, 0, 0);
+      }
+
+      const sectionHmm = (canvas.height / SCALE) / PX_PER_MM;
+
+      if (sectionHmm <= PAGE_H_MM + 0.5) {
+        if (pageEmitted) pdf.addPage();
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.62);
+        pdf.addImage(dataUrl, 'JPEG', 0, 0, PAGE_W_MM, sectionHmm, undefined, 'FAST');
+        pageEmitted = true;
+      } else {
+        const sliceHpx = Math.floor(PAGE_H_MM * PX_PER_MM * SCALE);
+        let yPx = 0;
+        while (yPx < canvas.height) {
+          const thisSliceHpx = Math.min(sliceHpx, canvas.height - yPx);
+          const slice = document.createElement('canvas');
+          slice.width = canvas.width;
+          slice.height = thisSliceHpx;
+          const sctx = slice.getContext('2d');
+          sctx.fillStyle = bg;
+          sctx.fillRect(0, 0, slice.width, slice.height);
+          sctx.drawImage(canvas, 0, -yPx);
+          if (!sliceIsEmpty(slice, bg)) {
+            if (pageEmitted) pdf.addPage();
+            const dataUrl = slice.toDataURL('image/jpeg', 0.62);
+            const sliceHmm = (thisSliceHpx / SCALE) / PX_PER_MM;
+            pdf.addImage(dataUrl, 'JPEG', 0, 0, PAGE_W_MM, sliceHmm, undefined, 'FAST');
+            pageEmitted = true;
+          }
+          yPx += thisSliceHpx;
+        }
+      }
+      btn.textContent = 'Rendering… ' + (i + 1) + ' / ' + sections.length;
+    }
+
+    pdf.save('elitez-pulse-sg-marketing-retainer-intelligence-q2-2026.pdf');
+  } catch (err) {
+    alert('PDF render failed: ' + (err && err.message ? err.message : err));
+    console.error(err);
+  } finally {
+    document.body.classList.remove('pdf-mode');
+    btn.disabled = false;
+    btn.textContent = '⬇ Download PDF';
+  }
+}
+
+document.getElementById('pdf-dl-btn').addEventListener('click', downloadPdf);
+loadAll();
+</script>
+
+</body>
+</html>

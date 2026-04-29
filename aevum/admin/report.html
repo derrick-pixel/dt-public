@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>AEVUM · MRI Market Intelligence Report</title>
+  <meta name="description" content="Internal market intelligence report: SG/MY whole-body MRI category mapped, AEVUM cross-border arbitrage thesis, recommendations. PDF-downloadable." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root {
+      --bg: #F4F6F8;
+      --surface: #FFFFFF;
+      --surface-2: #ECF0F4;
+      --line: rgba(11,41,72,0.10);
+      --line-2: rgba(11,41,72,0.18);
+      --text: #1A2530;
+      --muted: #5C6B82;
+      --muted-2: #8B95A3;
+      --teal: #0D7488;
+      --amber: #B8761F;
+      --plum: #8B4FBF;
+      --rose: #B33A3A;
+      --green: #0E8A4A;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: 14px; line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 0 32px; }
+    @media (max-width: 768px) { .container { padding: 0 16px; } }
+
+    /* Topbar */
+    .topbar { position: sticky; top: 0; z-index: 100; background: rgba(244,246,248,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: 1400px; margin: 0 auto; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 0.95rem; }
+    .brand-mark { width: 28px; height: 28px; border-radius: 7px; background: var(--teal); display: inline-flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 0.78rem; }
+    .topbar-tabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 100px; padding: 4px; flex-wrap: wrap; }
+    .topbar-tabs a { padding: 7px 14px; border-radius: 100px; font-size: 0.8rem; color: var(--muted); }
+    .topbar-tabs a:hover { color: var(--text); }
+    .topbar-tabs a.active { background: var(--teal); color: #fff; font-weight: 600; }
+    .topbar-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted-2); }
+
+    /* Toolbar */
+    .toolbar { padding: 18px 0; display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+    .toolbar-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted-2); letter-spacing: 0.1em; text-transform: uppercase; }
+    .pdf-btn { background: var(--teal); color: #fff; border: none; padding: 10px 22px; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.86rem; font-weight: 600; cursor: pointer; letter-spacing: 0.04em; transition: background 0.18s; }
+    .pdf-btn:hover { background: #0a5e6e; }
+    .pdf-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* Report doc — A4-shaped sections */
+    main#report-doc { padding: 0 0 60px; }
+    .report-page {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 60px 64px;
+      margin-bottom: 22px;
+      max-width: 980px;
+      margin-left: auto;
+      margin-right: auto;
+      min-height: 0;
+    }
+    .report-page.bleed-surface { background: var(--surface-2); }
+    .report-page.bleed-card { background: var(--surface); }
+    @media (max-width: 768px) {
+      .report-page { padding: 28px 22px; border-radius: 10px; }
+    }
+
+    /* Print/PDF mode */
+    body.pdf-mode { background: #fff; }
+    body.pdf-mode main#report-doc { padding: 0; }
+    body.pdf-mode .topbar, body.pdf-mode .toolbar { display: none !important; }
+    body.pdf-mode .report-page {
+      width: 210mm;
+      min-height: 297mm;
+      max-width: 210mm;
+      margin: 0 0 0 0;
+      padding: 22mm 22mm 22mm 22mm;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      page-break-after: always;
+      break-after: page;
+    }
+
+    /* Cover */
+    .cover { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; min-height: 540px; gap: 16px; background: linear-gradient(160deg, rgba(13,116,136,0.07), rgba(184,118,31,0.04)) !important; }
+    .cover-mark { font-size: 1.3rem; font-weight: 800; letter-spacing: 0.18em; color: var(--text); }
+    .cover-mark span { color: var(--teal); }
+    .cover-sub { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal); }
+    .cover-title { font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 700; letter-spacing: -0.025em; line-height: 1.1; max-width: 760px; margin-top: 12px; }
+    .cover-tag { font-style: italic; color: var(--muted); font-size: 1.05rem; max-width: 620px; }
+    .cover-stamp { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--muted-2); margin-top: 16px; }
+    .cover-acc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+    .cover-acc-chip { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; padding: 5px 12px; border: 1px solid var(--teal); color: var(--teal); border-radius: 100px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; }
+
+    /* Section heading */
+    .sec-num { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--teal); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600; margin-bottom: 8px; }
+    .sec-h2 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 14px; }
+    .sec-lede { color: var(--muted); font-size: 0.95rem; line-height: 1.65; max-width: 800px; margin-bottom: 22px; }
+
+    /* TOC */
+    .toc-list { list-style: none; padding: 0; margin: 0; }
+    .toc-list li { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px dashed var(--line); font-size: 0.95rem; }
+    .toc-list li b { color: var(--text); font-weight: 600; }
+    .toc-list li span.dot { color: var(--muted-2); }
+    .toc-list li span.pg { font-family: 'JetBrains Mono', monospace; color: var(--teal); font-weight: 600; }
+
+    /* Exec summary */
+    .exec-list { list-style: none; padding: 0; counter-reset: ec; }
+    .exec-bullet { display: grid; grid-template-columns: 36px 1fr; gap: 16px; padding: 12px 0; border-top: 1px solid var(--line); align-items: start; counter-increment: ec; }
+    .exec-bullet:first-child { border-top: none; }
+    .exec-num { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--teal); font-size: 1.1rem; }
+    .exec-num::before { content: counter(ec, decimal-leading-zero); }
+    .exec-body { font-size: 0.92rem; color: var(--muted); line-height: 1.7; }
+    .exec-body strong { color: var(--text); }
+    .exec-body em { font-style: normal; color: var(--teal); }
+
+    /* KPI strip */
+    .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 18px 0 22px; }
+    .kpi { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+    .kpi-val { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 600; color: var(--teal); letter-spacing: -0.02em; line-height: 1; }
+    .kpi-lbl { font-size: 0.66rem; color: var(--muted-2); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-top: 6px; font-family: 'JetBrains Mono', monospace; }
+
+    .l-list { list-style: none; padding: 0; margin: 0; }
+    .l-list li { font-size: 0.9rem; color: var(--muted); padding: 7px 0 7px 18px; position: relative; line-height: 1.65; border-bottom: 1px dashed var(--line); }
+    .l-list li:last-child { border-bottom: none; }
+    .l-list li::before { content: '◆'; position: absolute; left: 0; top: 7px; color: var(--teal); font-size: 0.7rem; }
+
+    /* Pricing table */
+    .pricing-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; margin-bottom: 18px; }
+    .pricing { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 720px; }
+    .pricing thead { background: var(--surface-2); }
+    .pricing th { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); padding: 12px 14px; text-align: left; border-bottom: 1.5px solid var(--line); }
+    .pricing td { padding: 12px 14px; border-bottom: 1px solid var(--line); color: var(--muted); line-height: 1.55; vertical-align: top; }
+    .pricing th.aevum-col, .pricing td.aevum-col { background: rgba(13,116,136,0.05); }
+    .pricing td .price { display: block; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--text); }
+    .pricing td.aevum-col .price { color: var(--teal); }
+    .pricing td .price-note { display: block; font-size: 0.74rem; color: var(--muted-2); margin-top: 4px; line-height: 1.45; }
+    .pricing th:first-child, .pricing td:first-child { font-weight: 600; color: var(--text); }
+    .footnote { font-size: 0.78rem; color: var(--muted-2); line-height: 1.6; padding: 12px 14px; background: var(--surface-2); border-radius: 8px; }
+    .footnote strong { color: var(--text); }
+
+    /* Comp list */
+    .comp-list { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 760px) { .comp-list { grid-template-columns: 1fr; } }
+    .comp-mini { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+    .comp-mini h4 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .comp-mini .meta { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted-2); margin-bottom: 8px; letter-spacing: 0.04em; }
+    .comp-mini .price { font-family: 'JetBrains Mono', monospace; font-size: 0.86rem; color: var(--teal); font-weight: 700; margin-bottom: 8px; }
+    .comp-mini ul { list-style: none; padding: 0; margin: 0; }
+    .comp-mini ul li { font-size: 0.78rem; padding: 3px 0 3px 12px; position: relative; line-height: 1.5; color: var(--muted); }
+    .comp-mini ul.s li::before { content: '+'; position: absolute; left: 0; top: 3px; color: var(--green); font-weight: 700; }
+    .comp-mini ul.w li::before { content: '−'; position: absolute; left: 0; top: 3px; color: var(--rose); font-weight: 700; }
+
+    /* Design audit grid mini */
+    .da-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 760px) { .da-grid { grid-template-columns: 1fr; } }
+    .da-mini { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+    .da-mini.is-self { border: 1.5px solid var(--teal); background: rgba(13,116,136,0.05); }
+    .da-mini h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 2px; }
+    .da-mini .o { font-family: 'JetBrains Mono', monospace; font-size: 0.86rem; font-weight: 700; color: var(--teal); }
+    .da-mini .v { font-size: 0.78rem; color: var(--muted); margin-top: 4px; line-height: 1.5; font-style: italic; }
+
+    .syn-card { padding: 18px 20px; background: var(--surface-2); border-radius: 10px; border-left: 3px solid var(--teal); margin-top: 18px; }
+    .syn-card h3 { font-size: 1rem; margin-bottom: 8px; }
+    .syn-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; margin-bottom: 8px; }
+    .syn-card p strong { color: var(--text); }
+
+    /* Recommendations */
+    .rec-list { list-style: none; padding: 0; counter-reset: rc; }
+    .rec-item { display: grid; grid-template-columns: 36px 1fr; gap: 16px; padding: 14px 0; border-top: 1px solid var(--line); counter-increment: rc; }
+    .rec-item:first-child { border-top: none; }
+    .rec-num { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--teal); font-size: 1.1rem; }
+    .rec-num::before { content: counter(rc, decimal-leading-zero); }
+    .rec-title { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .rec-body { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+    .rec-body strong { color: var(--text); }
+    .rec-body em { color: var(--teal); font-style: normal; }
+
+    /* Methodology */
+    .meth-block { padding: 14px 16px; background: var(--surface-2); border-left: 3px solid var(--teal); border-radius: 8px; margin-bottom: 12px; }
+    .meth-block .lbl { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; color: var(--teal); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+    .meth-block p { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+    .meth-block code { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: var(--text); background: var(--surface); padding: 1px 6px; border-radius: 4px; border: 1px solid var(--line); }
+
+    .loading { color: var(--muted-2); font-size: 0.86rem; padding: 22px; text-align: center; font-family: 'JetBrains Mono', monospace; }
+
+    @media (max-width: 768px) {
+      .topbar-tabs { flex-wrap: wrap !important; gap: 6px !important; }
+      .topbar-tabs a { font-size: 0.72rem !important; padding: 5px 10px !important; }
+      .sec-h2 { font-size: 1.2rem !important; }
+      .cover-title { font-size: 1.6rem !important; }
+    }
+  </style>
+
+  <link rel="icon" type="image/x-icon" href="../favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="../index.html" class="brand">
+      <span class="brand-mark">A</span>
+      <span>AEVUM <span style="color: var(--muted); font-weight: 400; font-size: 0.84rem;">/ internal panel</span></span>
+    </a>
+    <div class="topbar-tabs">
+      <a href="../index.html">Site</a>
+      <a href="index.html">Research</a>
+      <a href="insights.html">Pricing</a>
+      <a href="whitespace.html">White Space</a>
+      <a href="competitor-analytics.html">Competitors</a>
+      <a href="design-audit.html">Design Audit</a>
+      <a href="report.html" class="active">Report</a>
+      <a href="../compliance.html">Compliance</a>
+    </div>
+    <span class="topbar-meta">REPORT v1 · 2026-04-29</span>
+  </div>
+</header>
+
+<div class="container">
+  <div class="toolbar">
+    <span class="toolbar-meta">MRI Market Intelligence — SG / MY · Q2 2026</span>
+    <button id="pdf-dl-btn" class="pdf-btn">⬇ Download PDF</button>
+  </div>
+</div>
+
+<main id="report-doc">
+  <div class="container">
+
+    <!-- 1 COVER -->
+    <section class="report-page cover bleed-surface" id="sec-cover">
+      <div class="cover-mark">AEVUM<span>.</span></div>
+      <div class="cover-sub">MRI Market Intelligence · Singapore × Malaysia</div>
+      <h1 class="cover-title">Whole-Body MRI Market Intelligence — SG/JB Cross-Border</h1>
+      <p class="cover-tag">Five minutes from Singapore. Hospital-grade radiology at concierge price.</p>
+      <div class="cover-stamp">Report quarter · Q2 2026 &nbsp;·&nbsp; Refreshed <span id="cover-date">2026-04-29</span></div>
+      <div class="cover-acc">
+        <span class="cover-acc-chip">MSQH Accreditation In Pursuit</span>
+        <span class="cover-acc-chip">Named Consultant Radiologists</span>
+        <span class="cover-acc-chip">Same-day Results</span>
+        <span class="cover-acc-chip">Published RM Tier Pricing</span>
+        <span class="cover-acc-chip">RTS Link 5-min Crossing</span>
+      </div>
+    </section>
+
+    <!-- 2 TOC -->
+    <section class="report-page bleed-card" id="sec-toc">
+      <div class="sec-num">Section 02</div>
+      <h2 class="sec-h2">Table of Contents</h2>
+      <p class="sec-lede">Eight sections, in order. The market and regulatory frame, the competitive set, the published-versus-hidden pricing reality, the white space the RTS Link opens, the design gap, and the recommendations that follow.</p>
+      <ul class="toc-list">
+        <li><b>01 · Cover</b><span class="dot"> · · · · · · · · · · </span><span class="pg">1</span></li>
+        <li><b>02 · Table of Contents</b><span class="dot"> · · · · </span><span class="pg">2</span></li>
+        <li><b>03 · Executive Summary</b><span class="dot"> · · · · </span><span class="pg">3</span></li>
+        <li><b>04 · Market &amp; Regulatory Landscape</b><span class="dot"> · </span><span class="pg">4</span></li>
+        <li><b>05 · Competitive Landscape</b><span class="dot"> · · · </span><span class="pg">5</span></li>
+        <li><b>06 · Pricing Tiers — 2026 Reality</b><span class="dot"> · </span><span class="pg">6</span></li>
+        <li><b>07 · Website Design Audit</b><span class="dot"> · · · · </span><span class="pg">7</span></li>
+        <li><b>08 · Recommendations &amp; Methodology</b><span class="dot"> · </span><span class="pg">8</span></li>
+      </ul>
+    </section>
+
+    <!-- 3 EXEC -->
+    <section class="report-page bleed-surface" id="sec-exec">
+      <div class="sec-num">Section 03</div>
+      <h2 class="sec-h2">Executive Summary</h2>
+      <p class="sec-lede">Five anchor findings. Each is backed by the data appendix that follows in Sections 4–8.</p>
+      <ol class="exec-list">
+        <li class="exec-bullet">
+          <div class="exec-num"></div>
+          <div class="exec-body"><strong>The SG MRI screening market is structurally over-priced.</strong> Mount Elizabeth flagship at <strong>S$12,388</strong>, Raffles Platinum at <strong>S$11,408</strong>, ASEAN Med-Wellness Tourism market <strong>$76.5B in 2025 → $218.4B by 2034 (CAGR 12.4%)</strong>. <em>94% of SG HNW say health is top priority; only 44% are confident in long-term health.</em> The willingness exists; the price has been gating it.</div>
+        </li>
+        <li class="exec-bullet">
+          <div class="exec-num"></div>
+          <div class="exec-body"><strong>Why AEVUM wins.</strong> Fully published RM tier pricing: <strong>Core RM1,999 / Comprehensive RM8,699 / Legacy Ultimate RM17,499 / Legacy Platinum RM24,499</strong> (~<strong>S$606 / S$2,636 / S$5,303 / S$7,424</strong>). <em>Same-day results turnaround</em> matching Neko Health SLA at sub-Mt-Elizabeth price. Named consultant radiologists, MSQH accreditation in pursuit. Elitez Group operational backing — 37-year wastewater treatment co., 4 cities, 350 staff.</div>
+        </li>
+        <li class="exec-bullet">
+          <div class="exec-num"></div>
+          <div class="exec-body"><strong>Cross-border SG↔JB arbitrage is structural.</strong> RTS Link end-2026: <strong>5-min crossing, S$5–7 fare, 140k pax/day capacity</strong>. AEVUM Comprehensive at S$2,636 is <em>~78% saving vs Mt Elizabeth ceiling S$12,388</em> and <em>~77% saving vs Raffles Platinum S$11,408</em>. Zero JB premium MRI brand competitors today — category open in Johor and KL.</div>
+        </li>
+        <li class="exec-bullet">
+          <div class="exec-num"></div>
+          <div class="exec-body"><strong>Design audit reality.</strong> Industry average <strong>7.2</strong> across nine subjects on a 5-dimension rubric; AEVUM scores <strong>7.8</strong>, ranking 3rd behind global benchmarks <em>Neko Health (9.2)</em> and <em>Prenuvo (8.2)</em>, but ahead of every SG/MY rival including Mount Elizabeth (6.8) and Raffles (6.8). Gap to Neko is 1.4 points — almost entirely on bespoke artefacts and audited credibility, not aesthetic.</div>
+        </li>
+        <li class="exec-bullet">
+          <div class="exec-num"></div>
+          <div class="exec-body"><strong>Five recommended actions.</strong> Surface the cross-border arbitrage above the fold. Ship an audited Q2 2026 Imaging Standards PDF with MSQH-in-pursuit progress. Build SG-day-trip concierge landing page with RTS Link directions. Live MSQH accreditation tracker. SG GP / specialist follow-up partnership flow.</div>
+        </li>
+      </ol>
+    </section>
+
+    <!-- 4 MARKET -->
+    <section class="report-page bleed-card" id="sec-market">
+      <div class="sec-num">Section 04</div>
+      <h2 class="sec-h2">Market &amp; Regulatory Landscape</h2>
+      <p class="sec-lede">The SG/MY MRI screening market sized, framed, and gated by the regulatory pipeline that runs from Bank Negara cross-border-payment licensing to the MSQH hospital accreditation Malaysia uses to signal hospital-grade clinical quality.</p>
+
+      <div class="kpi-strip">
+        <div class="kpi"><div class="kpi-val">$76.5B</div><div class="kpi-lbl">ASEAN Med + Wellness Tourism · 2025</div></div>
+        <div class="kpi"><div class="kpi-val">12.4%</div><div class="kpi-lbl">CAGR to $218.4B by 2034</div></div>
+        <div class="kpi"><div class="kpi-val">94%</div><div class="kpi-lbl">SG HNW: health is top priority</div></div>
+        <div class="kpi"><div class="kpi-val">44%</div><div class="kpi-lbl">SG HNW confident in long-term health</div></div>
+        <div class="kpi"><div class="kpi-val">5 min</div><div class="kpi-lbl">RTS Link crossing · end-2026</div></div>
+        <div class="kpi"><div class="kpi-val">0</div><div class="kpi-lbl">JB premium MRI brand competitors</div></div>
+      </div>
+
+      <h3 style="font-size: 1.05rem; margin: 18px 0 10px; font-weight: 700;">Key trends shaping the buyer side</h3>
+      <ul class="l-list">
+        <li>SG HNW screening fatigue with hospital-tier pricing — Reddit and HardwareZone threads cite Mt Elizabeth and Raffles by name as "too expensive for what you get".</li>
+        <li>Global DTC whole-body MRI category (Prenuvo, Ezra, Neko Health) educating SEA buyers via influencer content; demand created without local supply.</li>
+        <li>Indonesian medical-tourism flow into Penang/Melaka/JB has proven the cross-border concierge model — AEVUM extends it to SG.</li>
+        <li>RTS Link end-2026 collapses the crossing-time barrier from 60–90min Causeway queue to 5-min train — the JB geography becomes day-trip viable for SG day-walkers.</li>
+        <li>Insurer wellness schemes (AIA Vitality, Prudential, Great Eastern) increasingly bundle screening — AEVUM Core tier at S$606 is positioned to fit these allowances.</li>
+      </ul>
+
+      <h3 style="font-size: 1.05rem; margin: 18px 0 10px; font-weight: 700;">Regulatory notes</h3>
+      <ul class="l-list">
+        <li><strong>MSQH (Malaysian Society for Quality in Health)</strong> is the hospital-accreditation body Malaysian medical tourism leans on; AEVUM is in pursuit, not yet awarded.</li>
+        <li><strong>Cross-border payment</strong> via SG-issued credit cards / DBS / OCBC corporate billing is straightforward; no Bank Negara FX restriction at this volume.</li>
+        <li><strong>Follow-up specialist referral</strong> from JB to SG GP/specialist is patient-managed; AEVUM does not hold SG medical licence and does not need one.</li>
+        <li><strong>HSA / MOH</strong> jurisdiction does not extend to JB-licensed clinics; AEVUM operates fully under MOH Malaysia (Kementerian Kesihatan Malaysia).</li>
+      </ul>
+    </section>
+
+    <!-- 5 COMPETITIVE -->
+    <section class="report-page bleed-surface" id="sec-comp">
+      <div class="sec-num">Section 05</div>
+      <h2 class="sec-h2">Competitive Landscape</h2>
+      <p class="sec-lede">High-threat rivals — drawn from <code>competitors.json</code>, filtered to <code>threat_level_to_aevum === 'high'</code>. Pricing, scan turnaround, named-consultant credibility, and the structural strengths and weaknesses each one brings.</p>
+      <div class="comp-list" id="comp-list"><div class="loading">Loading competitor data…</div></div>
+    </section>
+
+    <!-- 6 PRICING -->
+    <section class="report-page bleed-card" id="sec-pricing">
+      <div class="sec-num">Section 06</div>
+      <h2 class="sec-h2">Pricing Tiers — 2026 SG/MY Reality</h2>
+      <p class="sec-lede">What buyers are actually quoted. SG hospital pricing is published; SG standalone imaging is partial; AEVUM publishes all four tiers in MYR. Cross-border arbitrage made visible.</p>
+
+      <div class="pricing-wrap">
+        <table class="pricing">
+          <thead>
+            <tr>
+              <th style="min-width: 180px;">Tier / Path</th>
+              <th>SG Hospital ceiling</th>
+              <th>SG Standalone Imaging</th>
+              <th class="aevum-col">AEVUM (JB)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Core whole-body MRI screening</td>
+              <td><span class="price">S$11,408 – S$12,388</span><span class="price-note">Mt Elizabeth · Raffles Platinum · published</span></td>
+              <td><span class="price">S$3,200 – S$5,500</span><span class="price-note">AsiaMedic · Lifescan · Elite Medical · Iconic</span></td>
+              <td class="aevum-col"><span class="price">S$606</span><span class="price-note">RM1,999 · published · whole-body MRI core</span></td>
+            </tr>
+            <tr>
+              <td>Comprehensive screening + bloods + imaging</td>
+              <td><span class="price">S$11,408 – S$12,388</span><span class="price-note">Bundled: endoscopy + cardiac + MRI</span></td>
+              <td><span class="price">~S$5,500</span><span class="price-note">Elite Medical longevity-tier · partial</span></td>
+              <td class="aevum-col"><span class="price">S$2,636</span><span class="price-note">RM8,699 · published · concierge multi-modality</span></td>
+            </tr>
+            <tr>
+              <td>Legacy Ultimate (multi-modality + named consultants)</td>
+              <td><span class="price">~S$15,000+</span><span class="price-note">Add specialist consults to flagship package</span></td>
+              <td><span class="price">Not offered</span><span class="price-note">Standalone imaging does not bundle specialist consults</span></td>
+              <td class="aevum-col"><span class="price">S$5,303</span><span class="price-note">RM17,499 · published · Legacy Ultimate tier</span></td>
+            </tr>
+            <tr>
+              <td>Legacy Platinum (concierge + ongoing)</td>
+              <td><span class="price">Quote-on-call</span><span class="price-note">Hospital VIP suite tier · not publicly priced</span></td>
+              <td><span class="price">Not offered</span><span class="price-note">Standalone imaging does not offer ongoing</span></td>
+              <td class="aevum-col"><span class="price">S$7,424</span><span class="price-note">RM24,499 · published · Legacy Platinum tier</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="footnote">
+        <strong>Footnote on positioning.</strong> AEVUM's RM-tier band sits below every SG hospital and every SG standalone imaging clinic. Cross-border arbitrage of <em>~78% vs Mt Elizabeth ceiling</em> and <em>~77% vs Raffles Platinum</em> is structural — driven by JB cost-of-care arbitrage, not by clinical compromise. Same Siemens magnets, named consultant radiologists, MSQH-in-pursuit accreditation. <em>FX rate: 3.3 MYR/SGD per Apr 2026.</em>
+      </div>
+    </section>
+
+    <!-- 7 DESIGN -->
+    <section class="report-page bleed-surface" id="sec-design">
+      <div class="sec-num">Section 07</div>
+      <h2 class="sec-h2">Website Design Audit</h2>
+      <p class="sec-lede">Nine subjects scored 1–10 on a 5-dimension rubric — typography &amp; hierarchy, layout &amp; IA, visual brand distinctiveness, content credibility, mobile polish — including AEVUM. Honestly.</p>
+
+      <div class="kpi-strip" id="da-kpis"></div>
+      <div class="da-grid" id="da-grid"><div class="loading">Loading design audit…</div></div>
+
+      <div class="syn-card" id="da-syn"></div>
+    </section>
+
+    <!-- 8 RECS + METHOD -->
+    <section class="report-page bleed-card" id="sec-recs">
+      <div class="sec-num">Section 08</div>
+      <h2 class="sec-h2">Recommendations &amp; Methodology</h2>
+      <p class="sec-lede">Five deck-grounded action items, then methodology and source notes.</p>
+
+      <ol class="rec-list">
+        <li class="rec-item">
+          <div class="rec-num"></div>
+          <div>
+            <div class="rec-title">Surface the cross-border SG↔JB arbitrage above the fold</div>
+            <div class="rec-body">Move the <em>Mt Elizabeth S$12,388 vs AEVUM Comprehensive S$2,636 (~78% saving)</em> comparison and the <strong>RTS Link 5-min · S$5–7 fare</strong> stamp into the hero zone of <code>index.html</code>. Today this lives only in the admin panels; the buyer is not reading it where they decide.</div>
+          </div>
+        </li>
+        <li class="rec-item">
+          <div class="rec-num"></div>
+          <div>
+            <div class="rec-title">Ship an audited Q2 2026 Imaging Standards PDF</div>
+            <div class="rec-body">Add a <em>"Download Q2 2026 Imaging Standards (PDF)"</em> CTA in the home hero and on every tier page. Quote MSQH-in-pursuit progress, named-consultant CVs, Siemens magnet specs, FSC-class concierge SLA commitments. Convert these into a single defensible artefact a journalist or insurer procurement officer can email around.</div>
+          </div>
+        </li>
+        <li class="rec-item">
+          <div class="rec-num"></div>
+          <div>
+            <div class="rec-title">SG-day-trip concierge landing page</div>
+            <div class="rec-body">Single-screen intake form, RTS Link directions (Bukit Chagar → AEVUM in 12 min), S$5–7 fare benchmark, named-consultant biography card, return-window planning. Optional add-on: SG-billed invoicing in SGD via DBS / OCBC corporate.</div>
+          </div>
+        </li>
+        <li class="rec-item">
+          <div class="rec-num"></div>
+          <div>
+            <div class="rec-title">Live MSQH accreditation tracker on the home page</div>
+            <div class="rec-body">A visible counter that reads <em>"MSQH accreditation: 7 of 11 modules cleared — pursuing full award by Q4 2026"</em> updated as each audit milestone clears. Pulls from the same data source the audited Imaging Standards PDF uses, so the tracker and the report cannot drift out of sync.</div>
+          </div>
+        </li>
+        <li class="rec-item">
+          <div class="rec-num"></div>
+          <div>
+            <div class="rec-title">SG GP / specialist follow-up partnership flow</div>
+            <div class="rec-body">Direct outreach to SG primary-care groups (Healthway, Parkway Shenton, Raffles GP) and specialist referral coordinators. <em>One scan in JB, one click to SG follow-up.</em> AEVUM passes findings to SG GP within 24h; SG GP triages to specialist if required. Eligibility checklist printed and PDF, response-time SLA, on-call coordinator paging.</div>
+          </div>
+        </li>
+      </ol>
+
+      <h3 style="font-size: 1.05rem; margin: 24px 0 12px; font-weight: 700;">Methodology &amp; Sources</h3>
+
+      <div class="meth-block">
+        <div class="lbl">Research date</div>
+        <p>All data files refreshed <strong>2026-04-29</strong>. Report compiled <strong>2026-04-29</strong> for Q2 2026 distribution.</p>
+      </div>
+      <div class="meth-block">
+        <div class="lbl">AEVUM positioning</div>
+        <p>Mission, vision, tier pricing (Core / Comprehensive / Legacy Ultimate / Legacy Platinum), MSQH accreditation pursuit, named consultant radiologist intent, and Elitez Group backing are taken from the public pages of <code>derrickteo.com/aevum/</code> (<code>index.html</code>, <code>style-clinical.html</code>, <code>style-obsidian.html</code>, <code>compliance.html</code>).</p>
+      </div>
+      <div class="meth-block">
+        <div class="lbl">Competitor intelligence (<code>competitors.json</code> · <code>whitespace-competitors.json</code>)</div>
+        <p>Triangulated from public competitor websites (Mt Elizabeth, Raffles, AsiaMedic, Lifescan, Elite Medical, Iconic, Mahkota, KPJ Bandar Dato' Onn, Gleneagles JB, Sunway Medical Velocity, Pantai Penang, plus DTC reference players Prenuvo / Ezra / Neko Health), SG/MY medical-tourism aggregators, Reddit/HardwareZone HNW screening threads, insurer wellness schemes (AIA Vitality, Prudential, Great Eastern), and the project's <code>research_report.md</code> (Apr 2026). MYR converted at <strong>3.3 MYR/SGD</strong>.</p>
+      </div>
+      <div class="meth-block">
+        <div class="lbl">White-space framework (<code>whitespace-framework.json</code>)</div>
+        <p>The competitor universe in <code>data/whitespace-competitors.json</code> is cross-referenced against the framework's customer-valued dimensions in <code>data/whitespace-framework.json</code>. See the <a href="whitespace.html">White Space Atlas</a> for the live scoring.</p>
+      </div>
+      <div class="meth-block">
+        <div class="lbl">Design audit (<code>design-audit.json</code>)</div>
+        <p>Nine subjects scored 1–10 on a 5-dimension rubric. AEVUM is graded on the same rubric, honestly. See <a href="design-audit.html">Design Audit</a> for the live scoring and "to reach 10" notes per dimension.</p>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+async function loadAll() {
+  let comps = null, audit = null;
+  try {
+    const r = await fetch('../data/competitors.json', { cache: 'no-store' });
+    comps = await r.json();
+  } catch (err) { console.error('Failed to load competitors.json', err); }
+  try {
+    const r = await fetch('../data/design-audit.json', { cache: 'no-store' });
+    audit = await r.json();
+  } catch (err) { console.error('Failed to load design-audit.json', err); }
+  if (comps) renderCompList(comps);
+  if (audit) renderDesignAudit(audit);
+}
+
+function el(tag, opts) {
+  opts = opts || {};
+  const node = document.createElement(tag);
+  if (opts.cls) node.className = opts.cls;
+  if (opts.text != null) node.textContent = String(opts.text);
+  return node;
+}
+
+function renderCompList(data) {
+  const wrap = document.getElementById('comp-list');
+  if (!wrap) return;
+  wrap.textContent = '';
+  const high = (data.competitors || []).filter(c => c.threat_level_to_aevum === 'high').slice(0, 6);
+  if (!high.length) { wrap.appendChild(el('div', { cls: 'loading', text: 'No high-threat competitors loaded.' })); return; }
+  high.forEach(c => {
+    const card = el('div', { cls: 'comp-mini' });
+    card.appendChild(el('h4', { text: c.name }));
+    const turnaround = (c.scan_turnaround_days != null ? c.scan_turnaround_days + 'd turnaround' : '');
+    card.appendChild(el('div', { cls: 'meta', text: (c.tier || '') + ' · ' + (c.category || '').replace(/_/g,' ') + (turnaround ? ' · ' + turnaround : '') }));
+    if (c.wholebody_mri_price_sgd) {
+      card.appendChild(el('div', { cls: 'price', text: 'S$' + c.wholebody_mri_price_sgd.toLocaleString() + ' · ' + (c.pricing_visibility || '').replace(/_/g,' ') }));
+    }
+    if (Array.isArray(c.strengths) && c.strengths.length) {
+      const ul = el('ul', { cls: 's' });
+      c.strengths.slice(0, 2).forEach(s => ul.appendChild(el('li', { text: s })));
+      card.appendChild(ul);
+    }
+    if (Array.isArray(c.weaknesses) && c.weaknesses.length) {
+      const ul = el('ul', { cls: 'w' });
+      c.weaknesses.slice(0, 2).forEach(w => ul.appendChild(el('li', { text: w })));
+      card.appendChild(ul);
+    }
+    wrap.appendChild(card);
+  });
+}
+
+function renderDesignAudit(data) {
+  const subjects = (data.subjects || []).slice();
+  const sortedByScore = subjects.slice().sort((a,b) => (b.overall_score||0) - (a.overall_score||0));
+  const allScores = subjects.map(s => s.overall_score || 0);
+  const avg = allScores.length ? (allScores.reduce((a,b)=>a+b,0) / allScores.length) : 0;
+  const self = subjects.find(s => s.is_self);
+  const selfScore = self ? (self.overall_score || 0) : 0;
+  const leader = sortedByScore[0];
+  const selfRank = self ? (sortedByScore.findIndex(s => s.is_self) + 1) : 0;
+
+  const kpis = document.getElementById('da-kpis');
+  kpis.textContent = '';
+  const k = (val, lbl) => {
+    const w = el('div', { cls: 'kpi' });
+    w.appendChild(el('div', { cls: 'kpi-val', text: val }));
+    w.appendChild(el('div', { cls: 'kpi-lbl', text: lbl }));
+    return w;
+  };
+  kpis.appendChild(k(avg.toFixed(1), 'Industry average'));
+  kpis.appendChild(k(selfScore.toFixed(1), 'AEVUM score'));
+  kpis.appendChild(k(selfRank + ' of ' + subjects.length, 'AEVUM rank'));
+  kpis.appendChild(k(leader ? (leader.overall_score || 0).toFixed(1) : '—', 'Category leader'));
+
+  const grid = document.getElementById('da-grid');
+  grid.textContent = '';
+  subjects.forEach(s => {
+    const m = el('div', { cls: 'da-mini' + (s.is_self ? ' is-self' : '') });
+    m.appendChild(el('h4', { text: s.name }));
+    m.appendChild(el('div', { cls: 'o', text: 'Overall ' + (s.overall_score != null ? s.overall_score.toFixed(1) : '—') + ' / 10' }));
+    if (s.verdict) m.appendChild(el('div', { cls: 'v', text: s.verdict }));
+    grid.appendChild(m);
+  });
+
+  const syn = data.synthesis || {};
+  const synEl = document.getElementById('da-syn');
+  synEl.textContent = '';
+  synEl.appendChild(el('h3', { text: 'Synthesis' }));
+  synEl.appendChild(el('p', { text: syn.aevum_position || ('Industry avg ' + avg.toFixed(1) + '. AEVUM ' + selfScore.toFixed(1) + ', rank ' + selfRank + '/' + subjects.length + '.') }));
+  if (Array.isArray(syn.easy_wins_for_aevum) && syn.easy_wins_for_aevum.length) {
+    const wins = el('p');
+    const lbl = el('strong', { text: 'Easy wins: ' });
+    wins.appendChild(lbl);
+    wins.appendChild(document.createTextNode(syn.easy_wins_for_aevum.join(' · ')));
+    synEl.appendChild(wins);
+  }
+}
+
+async function downloadPdf() {
+  const btn = document.getElementById('pdf-dl-btn');
+  if (!btn) return;
+  if (typeof window.html2canvas !== 'function' || typeof window.jspdf === 'undefined') {
+    alert('PDF libraries failed to load. Refresh and try again.');
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Rendering…';
+  document.body.classList.add('pdf-mode');
+
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  await (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve());
+
+  const PX_PER_MM = 96 / 25.4;
+  const PAGE_W_MM = 210;
+  const PAGE_H_MM = 297;
+  const SCALE = 2;
+
+  try {
+    const sections = Array.from(document.querySelectorAll('main#report-doc section.report-page'));
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
+    let pageEmitted = false;
+
+    for (let i = 0; i < sections.length; i++) {
+      const sec = sections[i];
+      const bg = sec.classList.contains('cover') ? '#E8EEF1' : (sec.classList.contains('bleed-surface') ? '#ECF0F4' : '#FFFFFF');
+      const fullCanvas = await window.html2canvas(sec, {
+        scale: SCALE,
+        backgroundColor: bg,
+        useCORS: true,
+        logging: false,
+        width: sec.offsetWidth,
+        height: sec.offsetHeight
+      });
+
+      const sectionHmm = (fullCanvas.height / SCALE) / PX_PER_MM;
+      if (sectionHmm <= PAGE_H_MM + 0.5) {
+        if (pageEmitted) pdf.addPage();
+        const dataUrl = fullCanvas.toDataURL('image/jpeg', 0.65);
+        pdf.addImage(dataUrl, 'JPEG', 0, 0, PAGE_W_MM, sectionHmm, undefined, 'FAST');
+        pageEmitted = true;
+      } else {
+        const sliceHpx = Math.floor(PAGE_H_MM * PX_PER_MM * SCALE);
+        let yPx = 0;
+        while (yPx < fullCanvas.height) {
+          const thisSliceHpx = Math.min(sliceHpx, fullCanvas.height - yPx);
+          const slice = document.createElement('canvas');
+          slice.width = fullCanvas.width;
+          slice.height = thisSliceHpx;
+          const sctx = slice.getContext('2d');
+          sctx.fillStyle = bg;
+          sctx.fillRect(0, 0, slice.width, slice.height);
+          sctx.drawImage(fullCanvas, 0, -yPx);
+          if (pageEmitted) pdf.addPage();
+          const dataUrl = slice.toDataURL('image/jpeg', 0.65);
+          const sliceHmm = (thisSliceHpx / SCALE) / PX_PER_MM;
+          pdf.addImage(dataUrl, 'JPEG', 0, 0, PAGE_W_MM, sliceHmm, undefined, 'FAST');
+          pageEmitted = true;
+          yPx += thisSliceHpx;
+        }
+      }
+      btn.textContent = 'Rendering… ' + (i + 1) + ' / ' + sections.length;
+    }
+
+    pdf.save('aevum-mri-market-intelligence-q2-2026.pdf');
+  } catch (err) {
+    alert('PDF render failed: ' + (err && err.message ? err.message : err));
+    console.error(err);
+  } finally {
+    document.body.classList.remove('pdf-mode');
+    btn.disabled = false;
+    btn.textContent = '⬇ Download PDF';
+  }
+}
+
+document.getElementById('pdf-dl-btn').addEventListener('click', downloadPdf);
+loadAll();
+</script>
+
+</body>
+</html>

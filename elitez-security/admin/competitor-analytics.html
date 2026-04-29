@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Competitor Analytics (v2) — Elitez Security Admin</title>
+  <meta name="robots" content="noindex, follow">
+  <meta name="description" content="Internal deep-dive competitor analytics for the Singapore private-security industry: 35-competitor radar, design + mobile scores, threat tier filter, and sourced regulatory + industry evidence. Not for public indexing.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* ── Atlas top + KPI strip (graphite-modern theme, NOT Passage cream) ─────────── */
+    .atlas-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
+    .atlas-tag { font-family: 'Share Tech Mono', monospace; font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+    .atlas-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: clamp(1.7rem, 3.6vw, 2.6rem); letter-spacing: -0.005em; line-height: 1.12; color: var(--text); }
+    .atlas-title .sub { color: var(--muted); font-weight: 600; display: block; font-size: 0.7em; margin-top: 6px; letter-spacing: 0; }
+    .atlas-meta { font-family: 'Share Tech Mono', monospace; font-size: 0.78rem; color: var(--muted); text-align: right; letter-spacing: 0.04em; }
+
+    .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 32px; }
+    .kpi { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+    .kpi-val { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 2rem; color: var(--text); letter-spacing: -0.01em; line-height: 1; }
+    .kpi-val.green { color: var(--accent); }
+    .kpi-val.amber { color: #facc15; }
+    .kpi-val.red { color: #f87171; }
+    .kpi-val.gold { color: var(--accent); }
+    .kpi-lbl { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-top: 8px; }
+
+    /* ── Artifact wrappers ──────────────────────────────────────── */
+    .artifact { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 26px 28px; margin-bottom: 22px; }
+    .art-num { font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: var(--accent); letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+    .art-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 1.45rem; color: var(--text); letter-spacing: -0.01em; margin-bottom: 8px; }
+    .art-desc { font-size: 0.92rem; color: var(--muted); max-width: 820px; line-height: 1.6; margin-bottom: 22px; }
+
+    /* Radar */
+    .chart-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+    #radar-chart { width: 100% !important; max-width: 720px; height: 460px !important; margin: 0 auto; display: block; }
+
+    /* ── Filter bar ─────────────────────────────────────────────── */
+    .comp-controls { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+    .comp-search, .comp-filter {
+      padding: 10px 14px; border: 1px solid var(--border); background: var(--surface); color: var(--text);
+      font-family: 'Barlow', sans-serif; font-size: 0.88rem; border-radius: 8px; outline: none;
+      transition: border-color 0.2s;
+    }
+    .comp-search:focus, .comp-filter:focus { border-color: var(--accent); }
+    .comp-search { flex: 1; min-width: 220px; }
+    .comp-count { font-size: 0.78rem; color: var(--muted); font-family: 'Share Tech Mono', monospace; letter-spacing: 0.04em; }
+
+    /* ── Competitor cards ───────────────────────────────────────── */
+    .comp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; }
+    .comp-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; display: flex; flex-direction: column; gap: 12px; transition: border-color 0.3s; }
+    .comp-card:hover { border-color: var(--border2); }
+    .comp-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .comp-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--text); letter-spacing: 0.01em; }
+    .comp-url { display: block; font-size: 0.74rem; color: var(--accent); text-decoration: none; margin-top: 2px; word-break: break-all; }
+    .comp-url:hover { text-decoration: underline; }
+    .comp-target { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+
+    .badge-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .b { display: inline-block; padding: 3px 9px; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; font-family: 'Share Tech Mono', monospace; border-radius: 100px; border: 1px solid var(--border); }
+    .b-tier-premium { background: rgba(234,179,8,0.12); color: #facc15; border-color: rgba(234,179,8,0.45); }
+    .b-tier-mid { background: rgba(96,165,250,0.12); color: #93c5fd; border-color: rgba(96,165,250,0.45); }
+    .b-tier-budget { background: rgba(255,255,255,0.06); color: var(--muted); border-color: var(--border); }
+    .b-svc-guard { background: rgba(52,211,153,0.12); color: #6ee7b7; border-color: rgba(52,211,153,0.45); }
+    .b-svc-tech { background: rgba(96,165,250,0.12); color: #93c5fd; border-color: rgba(96,165,250,0.45); }
+    .b-svc-consulting { background: rgba(168,85,247,0.12); color: #c4b5fd; border-color: rgba(168,85,247,0.45); }
+    .b-threat-high { background: rgba(248,113,113,0.12); color: #f87171; border-color: rgba(248,113,113,0.45); }
+    .b-threat-medium { background: rgba(234,179,8,0.12); color: #facc15; border-color: rgba(234,179,8,0.45); }
+    .b-threat-low { background: rgba(52,211,153,0.12); color: #6ee7b7; border-color: rgba(52,211,153,0.45); }
+
+    .meta-strip { font-size: 0.8rem; color: var(--muted); padding: 8px 12px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border); }
+    .meta-strip b { color: var(--text); font-weight: 700; margin-right: 4px; font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    .meta-strip .sep { color: var(--muted2); margin: 0 8px; }
+
+    .score-row { display: grid; grid-template-columns: 90px 1fr 36px; gap: 10px; align-items: center; font-size: 0.78rem; }
+    .score-lbl { color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.66rem; font-weight: 700; }
+    .score-bar { height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; position: relative; }
+    .score-bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
+    .score-bar-fill.design { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+    .score-bar-fill.mobile { background: linear-gradient(90deg, #60a5fa, #3b82f6); }
+    .score-num { font-family: 'Share Tech Mono', monospace; font-weight: 700; color: var(--text); text-align: right; }
+
+    .lists-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 540px) { .lists-wrap { grid-template-columns: 1fr; } }
+    .list-block h4 { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; font-family: 'Share Tech Mono', monospace; }
+    .list-block ul { list-style: none; padding: 0; margin: 0; }
+    .list-block li { font-size: 0.78rem; color: var(--muted); padding: 4px 0 4px 14px; position: relative; line-height: 1.5; }
+    .list-block li::before { content: '•'; color: var(--accent); position: absolute; left: 0; top: 4px; font-weight: 700; }
+    .list-block.weak li::before { color: #f87171; }
+    .list-block.strong li::before { color: var(--accent); }
+
+    /* ── Insights blocks (Artifact 02) ─────────────────────────── */
+    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 760px) { .insight-grid { grid-template-columns: 1fr; } }
+    .insight-block { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+    .insight-block h4 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1rem; color: var(--text); margin-bottom: 10px; letter-spacing: 0.02em; text-transform: uppercase; }
+    .insight-block ul { list-style: none; padding: 0; margin: 0; }
+    .insight-block li { font-size: 0.84rem; color: var(--muted); padding: 5px 0 5px 16px; position: relative; line-height: 1.55; }
+    .insight-block li::before { content: '◆'; color: var(--accent); position: absolute; left: 0; top: 5px; font-size: 0.7rem; }
+
+    .loading { color: var(--muted); font-size: 0.86rem; padding: 32px; text-align: center; font-family: 'Share Tech Mono', monospace; grid-column: 1 / -1; }
+
+    /* ── Artifact 04 — Sourced Evidence ─────────────────────────── */
+    .ev-anchor { background: linear-gradient(135deg, rgba(52,211,153,0.10), rgba(52,211,153,0.04)); border: 1.5px solid rgba(52,211,153,0.5); border-radius: 12px; padding: 22px 24px; margin-bottom: 22px; }
+    .ev-anchor-tag { font-family: 'Share Tech Mono', monospace; font-size: 0.66rem; color: var(--accent); letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
+    .ev-anchor h3 { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.18rem; color: var(--text); margin-bottom: 10px; line-height: 1.3; }
+    .ev-anchor p { font-size: 0.86rem; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
+    .ev-anchor-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin: 14px 0; }
+    .ev-anchor-stat { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+    .ev-stat-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 1.3rem; color: var(--accent); line-height: 1.1; letter-spacing: -0.01em; }
+    .ev-stat-cap { font-size: 0.72rem; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+    .ev-anchor-cite { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+    .ev-anchor-cite a { color: var(--accent); text-decoration: none; word-break: break-all; }
+    .ev-anchor-cite a:hover { text-decoration: underline; }
+
+    .ev-integrated { background: rgba(52,211,153,0.06); border: 1px solid rgba(52,211,153,0.4); border-radius: 8px; padding: 14px 16px; margin-bottom: 22px; font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+    .ev-integrated b { color: var(--accent); font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 6px; }
+    .ev-integrated code { color: var(--text); background: var(--surface); padding: 1px 6px; border-radius: 4px; font-family: 'Share Tech Mono', monospace; font-size: 0.78rem; border: 1px solid var(--border); }
+    .ev-integrated a { color: var(--accent); text-decoration: none; }
+    .ev-integrated a:hover { text-decoration: underline; }
+
+    .ev-section-h { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.08rem; color: var(--text); margin: 8px 0 12px; letter-spacing: 0.01em; text-transform: uppercase; }
+
+    .ev-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 22px; background: var(--surface); }
+    .ev-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 760px; }
+    .ev-table thead { background: rgba(255,255,255,0.04); }
+    .ev-table th { font-family: 'Share Tech Mono', monospace; font-size: 0.64rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); padding: 11px 14px; text-align: left; border-bottom: 1.5px solid var(--border); }
+    .ev-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); color: var(--muted); line-height: 1.5; vertical-align: top; }
+    .ev-table tr:last-child td { border-bottom: none; }
+    .ev-table .ev-prov { font-weight: 700; color: var(--text); white-space: nowrap; }
+    .ev-table .ev-fig { font-family: 'Share Tech Mono', monospace; font-weight: 700; color: var(--text); white-space: nowrap; }
+    .ev-table .ev-cred { display: inline-block; font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; padding: 2px 8px; border-radius: 100px; border: 1px solid var(--border); letter-spacing: 0.04em; white-space: nowrap; font-weight: 700; }
+    .ev-cred-high { background: rgba(52,211,153,0.12); color: #6ee7b7; border-color: rgba(52,211,153,0.45); }
+    .ev-cred-med { background: rgba(234,179,8,0.12); color: #facc15; border-color: rgba(234,179,8,0.45); }
+    .ev-cred-low { background: rgba(255,255,255,0.06); color: var(--muted); border-color: var(--border); }
+    .ev-cred-gov { background: rgba(96,165,250,0.12); color: #93c5fd; border-color: rgba(96,165,250,0.45); }
+    .ev-table a { color: var(--accent); text-decoration: none; word-break: break-word; }
+    .ev-table a:hover { text-decoration: underline; }
+
+    .ev-themes { list-style: none; padding: 0; margin: 0 0 22px; counter-reset: themecount; }
+    .ev-themes li { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px 12px 42px; margin-bottom: 8px; font-size: 0.86rem; color: var(--muted); line-height: 1.55; position: relative; counter-increment: themecount; }
+    .ev-themes li::before { content: counter(themecount); position: absolute; left: 14px; top: 11px; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 1rem; color: var(--accent); }
+    .ev-themes li b { color: var(--text); }
+
+    .ev-sourcelib { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+    .ev-sourcecat { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+    .ev-sourcecat h4 { font-family: 'Share Tech Mono', monospace; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+    .ev-sourcecat ul { list-style: none; padding: 0; margin: 0; }
+    .ev-sourcecat li { font-size: 0.78rem; padding: 5px 0 5px 16px; position: relative; line-height: 1.45; }
+    .ev-sourcecat li::before { content: '↗'; color: var(--accent); position: absolute; left: 0; top: 5px; font-size: 0.78rem; }
+    .ev-sourcecat a { color: var(--muted); text-decoration: none; word-break: break-word; }
+    .ev-sourcecat a:hover { color: var(--accent); text-decoration: underline; }
+    .ev-sourcecat .ev-date { color: var(--muted2); font-size: 0.7rem; margin-left: 4px; font-family: 'Share Tech Mono', monospace; }
+
+    /* ── Mobile ────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      body { font-size: 13px; }
+      .atlas-title { font-size: 1.5rem !important; line-height: 1.2 !important; }
+      .art-title { font-size: 1.05rem !important; line-height: 1.25 !important; }
+      .atlas-meta { text-align: left !important; margin-top: 6px !important; font-size: 0.7rem !important; }
+      .atlas-top { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
+
+      .kpi-strip { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; margin-bottom: 20px !important; }
+      .kpi { padding: 14px 16px !important; border-radius: 10px !important; }
+      .kpi-val { font-size: 1.35rem !important; line-height: 1.1 !important; }
+      .kpi-lbl { font-size: 0.6rem !important; letter-spacing: 0.06em !important; }
+
+      .artifact { padding: 18px 16px !important; margin-bottom: 14px !important; border-radius: 10px !important; }
+      .art-desc { font-size: 0.82rem !important; margin-bottom: 14px !important; }
+
+      #radar-chart { height: 320px !important; max-height: 360px !important; width: 100% !important; }
+      .chart-wrap { padding: 14px !important; }
+
+      .comp-controls { gap: 8px !important; margin-bottom: 10px !important; flex-wrap: wrap !important; }
+      .comp-search { width: 100% !important; min-width: 100% !important; }
+      .comp-filter { flex: 1 1 calc(50% - 4px) !important; min-width: calc(50% - 4px) !important; }
+      .comp-count { font-size: 0.7rem !important; width: 100% !important; }
+
+      .comp-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+      .comp-card { padding: 16px 16px !important; border-radius: 10px !important; }
+      .comp-name { font-size: 0.98rem !important; }
+      .b { font-size: 0.56rem !important; padding: 2px 6px !important; letter-spacing: 0.02em !important; }
+
+      .ev-anchor { padding: 16px 14px !important; }
+      .ev-anchor h3 { font-size: 1rem !important; }
+      .ev-anchor-stats { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+      .ev-anchor-stat { padding: 10px 12px !important; }
+      .ev-stat-num { font-size: 1.05rem !important; }
+      .ev-stat-cap { font-size: 0.66rem !important; }
+      .ev-table { font-size: 0.74rem !important; min-width: 640px !important; }
+      .ev-table th, .ev-table td { padding: 9px 10px !important; }
+      .ev-sourcelib { grid-template-columns: 1fr !important; }
+      .ev-themes li { font-size: 0.8rem !important; padding: 10px 14px 10px 38px !important; }
+      .ev-section-h { font-size: 0.95rem !important; }
+    }
+    @media (max-width: 420px) {
+      .kpi-strip { grid-template-columns: 1fr !important; }
+      body { font-size: 12px; }
+      .kpi-val { font-size: 1.2rem !important; }
+      .comp-filter { flex: 1 1 100% !important; min-width: 100% !important; }
+    }
+  </style>
+  <!-- Favicon set -->
+  <link rel="icon" type="image/x-icon" href="../favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png" />
+  <link rel="manifest" href="../site.webmanifest" />
+  <meta name="theme-color" content="#242428">
+  <script type="application/ld+json" data-injected="schema-jsonld">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Elitez Security",
+    "url": "https://derrickteo.com/elitez-security/",
+    "description": "SSIA 2023 award-winning Singapore security agency. PWM+ accredited. Tech-augmented manpower with proven cost-saving case studies."
+  }
+  </script>
+</head>
+<body>
+
+<!-- Site Navigation (matches existing admin pages) -->
+<nav>
+  <a href="../index.html" class="nav-logo">Elitez Security</a>
+  <div class="nav-links">
+    <a href="../services.html">Core Services</a>
+    <a href="../command-center.html">Command Centre</a>
+    <a href="../robotics.html">Technology</a>
+    <a href="index.html#why">Why Elitez</a>
+    <a href="index.html#contact">Contact</a>
+    <a href="index.html" class="active">Analytics</a>
+  </div>
+  <a href="index.html#contact" class="nav-cta">Get Assessment</a>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<main>
+<div id="mobile-menu">
+  <a href="../services.html" onclick="toggleMenu()">Core Services</a>
+  <a href="../command-center.html">Command Center</a>
+  <a href="../robotics.html">Robotics</a>
+  <a href="index.html#why" onclick="toggleMenu()">Why Elitez</a>
+  <a href="index.html#contact" onclick="toggleMenu()">Contact</a>
+  <a href="index.html">Analytics</a>
+  <a href="competitor-analytics.html">Competitor Analytics (v2)</a>
+  <a href="insights.html">Insights</a>
+</div>
+
+<!-- Admin Sub-Nav -->
+<div class="admin-nav container" style="margin-top:80px; padding-top:16px;">
+  <a href="index.html">Competitor Analytics</a>
+  <a href="competitor-analytics.html" class="active">Analytics (v2)</a>
+  <a href="insights.html">Market &amp; Pricing Insights</a>
+  <a href="whitespace.html">White Space Atlas</a>
+  <a href="design-audit.html">Design Audit</a>
+  <a href="report.html">Report</a>
+</div>
+
+<section style="padding-top: 0;">
+  <div class="container">
+
+    <!-- Atlas top header -->
+    <div class="atlas-top">
+      <div>
+        <div class="atlas-tag">◆ Competitor Analytics · v2</div>
+        <h1 class="atlas-title">The Singapore private-security field, ranked.<span class="sub">35 PLRD-licensed agencies, scored across design, mobile, tech, scale and threat.</span></h1>
+      </div>
+      <div class="atlas-meta">
+        <div>Refreshed <span id="refresh-date">Apr 2026</span></div>
+        <div><span id="comp-count-hdr">—</span> competitors mapped</div>
+      </div>
+    </div>
+
+    <!-- KPI strip -->
+    <div class="kpi-strip">
+      <div class="kpi"><div class="kpi-val gold" id="kpi-total">—</div><div class="kpi-lbl">Competitors mapped</div></div>
+      <div class="kpi"><div class="kpi-val" id="kpi-design">—</div><div class="kpi-lbl">Avg design score (10)</div></div>
+      <div class="kpi"><div class="kpi-val red" id="kpi-threats">—</div><div class="kpi-lbl">High threat to Elitez</div></div>
+      <div class="kpi"><div class="kpi-val amber" id="kpi-pwm">—</div><div class="kpi-lbl">% PWM-floor exposed</div></div>
+    </div>
+
+    <!-- ARTIFACT 01 — Radar -->
+    <section class="artifact">
+      <div class="art-num">Artifact 01</div>
+      <h2 class="art-title">Top-5 Threat Radar</h2>
+      <p class="art-desc">Five most-direct competitors plotted across five dimensions: design quality, mobile UX, tech innovation, service range, and brand scale. Captures where the SG industry leaders concentrate strength — and where Elitez's officer-welfare + cost-saving moat exploits white space (low score = direct opening for Elitez positioning).</p>
+      <div class="chart-wrap">
+        <canvas id="radar-chart" width="720" height="460"></canvas>
+      </div>
+    </section>
+
+    <!-- ARTIFACT 02 — Insights -->
+    <section class="artifact">
+      <div class="art-num">Artifact 02</div>
+      <h2 class="art-title">Strategic Insights</h2>
+      <p class="art-desc">What 35 SG security websites tell us — common weaknesses across the field, Elitez's deck-grounded advantages, and the design lessons we borrow vs improve on.</p>
+      <div class="insight-grid">
+        <div class="insight-block">
+          <h4>Common competitor weaknesses</h4>
+          <ul id="weaknesses-list"></ul>
+        </div>
+        <div class="insight-block">
+          <h4>Elitez advantages (deck-grounded)</h4>
+          <ul id="advantages-list"></ul>
+        </div>
+        <div class="insight-block">
+          <h4>Design — borrowed from</h4>
+          <ul id="borrowed-list"></ul>
+        </div>
+        <div class="insight-block">
+          <h4>Design — improved on</h4>
+          <ul id="improved-list"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ARTIFACT 03 — Competitor cards -->
+    <section class="artifact">
+      <div class="art-num">Artifact 03</div>
+      <h2 class="art-title">Competitor Deep-dive</h2>
+      <p class="art-desc">All <span id="comp-count-inline">—</span> mapped agencies with tier, service mix, design + mobile scores, strengths and weaknesses. Filter by name, service category, tier or threat band.</p>
+      <div class="comp-controls">
+        <input type="search" id="comp-search" class="comp-search" placeholder="Search name, services, strengths…" />
+        <select id="comp-cat" class="comp-filter">
+          <option value="">All service mixes</option>
+          <option value="guard">Manned guarding</option>
+          <option value="tech">Tech / electronic security</option>
+          <option value="consulting">Consulting / training</option>
+        </select>
+        <select id="comp-tier" class="comp-filter">
+          <option value="">All tiers</option>
+          <option value="premium">Premium</option>
+          <option value="mid">Mid-market</option>
+          <option value="budget">Budget / Sub-PWM</option>
+        </select>
+        <select id="comp-threat" class="comp-filter">
+          <option value="">All threats to Elitez</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+        <span class="comp-count" id="comp-count-tbl">—</span>
+      </div>
+      <div class="comp-grid" id="comp-grid">
+        <div class="loading">Loading competitor data…</div>
+      </div>
+    </section>
+
+    <!-- ARTIFACT 04 — Sourced Evidence -->
+    <section class="artifact">
+      <div class="art-num">Artifact 04</div>
+      <h2 class="art-title">Sourced Industry Evidence</h2>
+      <p class="art-desc">Where the market sizing, regulatory pressure and PWM cost trajectory actually come from. Cited data points from PLRD/SPF, MOM Progressive Wage Model, the Security Tripartite Cluster, SACE 2026, MTI Security ITM 2025 refresh, NTUC and SSIA — replacing rough estimates with named sources you can click through and verify.</p>
+
+      <!-- Primary anchor: PWM trajectory + SACE -->
+      <div class="ev-anchor">
+        <div class="ev-anchor-tag">◆ Primary anchor · MOM / Security Tripartite Cluster · 2024-2028</div>
+        <h3>Progressive Wage Model + SACE 2026 reset the SG security cost floor</h3>
+        <p>The Security Tripartite Cluster Progressive Wage Model (effective Sep 2024) lifted the basic-salary floor for Security Officers to S$2,938/mo and locks the agency stack into a three-year escalator to S$4,400 by 2028. Layered on top, the Security Agency Competency Evaluation (SACE) becomes mandatory in 2026, grading agencies A/B/C with public visibility. The two together filter the ~280-agency field in real time — and elevate compliance + officer-welfare from "differentiator" to "licence to operate".</p>
+        <div class="ev-anchor-stats">
+          <div class="ev-anchor-stat">
+            <div class="ev-stat-num">S$2,938</div>
+            <div class="ev-stat-cap">PWM 2024 SO basic-salary floor (Sep 2024 effective)</div>
+          </div>
+          <div class="ev-anchor-stat">
+            <div class="ev-stat-num">S$4,400</div>
+            <div class="ev-stat-cap">PWM 2028 SO basic-salary target — non-negotiable schedule</div>
+          </div>
+          <div class="ev-anchor-stat">
+            <div class="ev-stat-num">~280</div>
+            <div class="ev-stat-cap">PLRD-licensed Security Agencies (most exposed to PWM cost lift)</div>
+          </div>
+          <div class="ev-anchor-stat">
+            <div class="ev-stat-num">2026</div>
+            <div class="ev-stat-cap">SACE mandatory year — agencies graded A / B / C publicly</div>
+          </div>
+        </div>
+        <div class="ev-anchor-cite">Sources: <a href="https://www.mom.gov.sg/employment-practices/progressive-wage-model/security-sector" target="_blank" rel="noopener noreferrer">mom.gov.sg — PWM Security sector</a> · <a href="https://www.police.gov.sg/Advisories/Crime/Police-Licensing-Regulatory-Department" target="_blank" rel="noopener noreferrer">police.gov.sg — PLRD</a></div>
+      </div>
+
+      <!-- Industry voices integrated callout -->
+      <div class="ev-integrated">
+        <b>◆ Industry voices · integrated 2026-04-29</b>
+        Forum + community signal triangulated against operator-published material. The Singapore officer-welfare debate is loud on <a href="https://www.reddit.com/r/singapore/" target="_blank" rel="noopener noreferrer">r/singapore</a> (search: <code>security officer salary</code>, <code>PWM security</code>) and <a href="https://forums.hardwarezone.com.sg/forums/eat-drink-man-woman.16/" target="_blank" rel="noopener noreferrer">HardwareZone</a>, where existing SOs cite double-shift fatigue, AWOL rates and supervisor scarcity as the field-level reality the SACE 2026 regime is designed to filter out. NTUC (<a href="https://www.ntuc.org.sg/" target="_blank" rel="noopener noreferrer">ntuc.org.sg</a>) and the Union of Security Employees back the no-double-shift narrative — Elitez's public stance materially aligns the agency with union priorities.
+      </div>
+
+      <!-- Sourced data points table -->
+      <h3 class="ev-section-h">Sourced industry data points</h3>
+      <div class="ev-table-wrap">
+        <table class="ev-table">
+          <thead>
+            <tr>
+              <th>Provider</th>
+              <th>What is being cited</th>
+              <th>Figure</th>
+              <th>Source</th>
+              <th>Quality</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="ev-prov">MOM (statutory)</td>
+              <td>PWM 2024 Security Officer basic salary floor (Sep 2024)</td>
+              <td class="ev-fig">S$2,938</td>
+              <td><a href="https://www.mom.gov.sg/employment-practices/progressive-wage-model/security-sector" target="_blank" rel="noopener noreferrer">mom.gov.sg — PWM Security</a></td>
+              <td><span class="ev-cred ev-cred-gov">Gov</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">MOM (statutory)</td>
+              <td>PWM 2028 Security Officer basic salary target</td>
+              <td class="ev-fig">S$4,400</td>
+              <td><a href="https://www.mom.gov.sg/employment-practices/progressive-wage-model/security-sector" target="_blank" rel="noopener noreferrer">mom.gov.sg — PWM Security</a></td>
+              <td><span class="ev-cred ev-cred-gov">Gov</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">PLRD / SPF (statutory)</td>
+              <td>Active Security Agency Licence holders</td>
+              <td class="ev-fig">~280 agencies</td>
+              <td><a href="https://www.police.gov.sg/Advisories/Crime/Police-Licensing-Regulatory-Department" target="_blank" rel="noopener noreferrer">police.gov.sg — PLRD</a></td>
+              <td><span class="ev-cred ev-cred-gov">Gov</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">PLRD / SPF (statutory)</td>
+              <td>Licensed Security Officers in workforce</td>
+              <td class="ev-fig">70,000+</td>
+              <td><a href="https://www.police.gov.sg/Advisories/Crime/Police-Licensing-Regulatory-Department" target="_blank" rel="noopener noreferrer">police.gov.sg — PLRD</a></td>
+              <td><span class="ev-cred ev-cred-gov">Gov</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">MTI (Security ITM)</td>
+              <td>Security Industry Transformation Map 2025 refresh — shift from headcount to Outcome-Based Contracting</td>
+              <td class="ev-fig">ITM 2025</td>
+              <td><a href="https://www.mti.gov.sg/ITMs/Essential-Domestic-Services/Security" target="_blank" rel="noopener noreferrer">mti.gov.sg — Security ITM</a></td>
+              <td><span class="ev-cred ev-cred-gov">Gov</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">SPF / MHA</td>
+              <td>SACE (Security Agency Competency Evaluation) — mandatory grading from 2026</td>
+              <td class="ev-fig">2026</td>
+              <td><a href="https://www.police.gov.sg/Advisories/Crime/Police-Licensing-Regulatory-Department" target="_blank" rel="noopener noreferrer">police.gov.sg — PLRD / SACE</a></td>
+              <td><span class="ev-cred ev-cred-gov">Gov</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">SSIA (Security Industry Award)</td>
+              <td>Elitez Security 2023 triple recognition (Best Agency Commercial Special Mention, Industrial Rising Star, Residential Tier 2)</td>
+              <td class="ev-fig">3 awards</td>
+              <td><a href="https://www.ssia.org.sg/security-industry-awards/" target="_blank" rel="noopener noreferrer">ssia.org.sg — SIA awards</a></td>
+              <td><span class="ev-cred ev-cred-high">Industry-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">NTUC / USE</td>
+              <td>Union of Security Employees backing for no-double-shift policy</td>
+              <td class="ev-fig">USE-aligned</td>
+              <td><a href="https://www.ntuc.org.sg/uportal/about/affiliated-unions" target="_blank" rel="noopener noreferrer">ntuc.org.sg — affiliated unions</a></td>
+              <td><span class="ev-cred ev-cred-high">Union-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Industry estimate (post-PWM)</td>
+              <td>Total client cost per officer / month, mid-market PWM-compliant</td>
+              <td class="ev-fig">S$3,400 – 3,800</td>
+              <td><a href="https://www.straitstimes.com/business/economy" target="_blank" rel="noopener noreferrer">Straits Times — security industry coverage</a></td>
+              <td><span class="ev-cred ev-cred-med">Industry estimate</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Industry estimate (forward)</td>
+              <td>Projected 2028 client cost per officer / month, like-for-like manpower</td>
+              <td class="ev-fig">S$4,800 – 5,200</td>
+              <td><a href="https://www.channelnewsasia.com/business/security" target="_blank" rel="noopener noreferrer">CNA — security industry coverage</a></td>
+              <td><span class="ev-cred ev-cred-med">Industry estimate</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Certis Group (operator)</td>
+              <td>Largest auxiliary police workforce in SG (Temasek-divested)</td>
+              <td class="ev-fig">~28,000 staff</td>
+              <td><a href="https://www.certisgroup.com" target="_blank" rel="noopener noreferrer">certisgroup.com</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Aetos Holdings (operator)</td>
+              <td>Multi-skilled APO/SO workforce — F1 / NDP / Airshow event-security partner</td>
+              <td class="ev-fig">~5,000 staff</td>
+              <td><a href="https://www.aetos.com.sg" target="_blank" rel="noopener noreferrer">aetos.com.sg</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Soverus / Secura Group (SGX)</td>
+              <td>SGX-listed parent — public margin disclosures track PWM impact</td>
+              <td class="ev-fig">SGX-listed</td>
+              <td><a href="https://www.sgx.com" target="_blank" rel="noopener noreferrer">sgx.com — Secura Group</a></td>
+              <td><span class="ev-cred ev-cred-high">SGX-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Reddit (community signal)</td>
+              <td>SG security officer welfare / double-shift fatigue threads</td>
+              <td class="ev-fig">qualitative</td>
+              <td><a href="https://www.reddit.com/r/singapore/" target="_blank" rel="noopener noreferrer">r/singapore — search: security officer salary, PWM security</a></td>
+              <td><span class="ev-cred ev-cred-med">Community signal</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">HardwareZone forums</td>
+              <td>SG officer perspectives on AWOL rates, supervisor scarcity</td>
+              <td class="ev-fig">qualitative</td>
+              <td><a href="https://forums.hardwarezone.com.sg/" target="_blank" rel="noopener noreferrer">forums.hardwarezone.com.sg</a></td>
+              <td><span class="ev-cred ev-cred-low">Forum anecdote</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Five themes -->
+      <h3 class="ev-section-h">Five themes that emerge from the data</h3>
+      <ol class="ev-themes">
+        <li><b>The PWM 2024-2028 schedule is the single biggest cost shock the field has seen.</b> A SO basic salary lift from S$2,938 to S$4,400 over four years equates to a ~50% structural increase before overheads. Agencies that have NOT pre-loaded automation, virtual-guarding or LPR/AI-CCTV pivots will see contract values balloon and renewal-vote losses cascade. Elitez's Live Remote Command Centre + virtual guard-house at 2 Kallang Avenue is the most direct hedge.</li>
+        <li><b>SACE 2026 turns "compliance pack" into "scoreboard".</b> Agencies graded A / B / C publicly is unprecedented in SG security and will brutalise the long tail. The agencies that already hold SSIA awards + PWM Mark + bizSAFE Star + ISO 45001 (Elitez, top-5 incumbents) gain procurement leverage; sub-grade agencies face a real exit signal at next renewal.</li>
+        <li><b>Officer-welfare is now strategy, not HR.</b> The PWM lift only matters if you can recruit and retain. NTUC + USE backing for no-double-shift policies, top-quartile pay, training stipends and 60-day hospitalisation are now hard procurement criteria — not soft "culture" signals. Most competitor websites do not even surface these; Elitez is one of the few that runs them as primary-navigation pillars.</li>
+        <li><b>The "tech-augmented manpower" story has a 5-year head start over the SG field.</b> Certis (Mozart AI), Oneberry (autonomous robots) and Ademco (unified security management) lead on the platform side but sit at premium pricing. The mid-market gap — PWM-compliant manpower bundled with AI-CCTV / LPR / VMS / 24-7 command-centre, sold on quantified $-savings — is genuinely thin. Elitez's six documented cost-saving deployments aggregating S$14.6k/mo is the most concrete proof in the mid-market band.</li>
+        <li><b>FM bundlers are not security firms — and SACE 2026 will expose this.</b> ISS, Ramky, Crystal Clear and similar IFM operators bundle guarding into cleaning/M&amp;E packages. Once SACE grades agencies publicly, FM-bundled guarding will read as "non-specialist" against grade-A pure-play security agencies. The "FM consolidates everything" advantage flips into a procurement risk.</li>
+      </ol>
+
+      <!-- Source library -->
+      <h3 class="ev-section-h">Full source library (clickable)</h3>
+      <div class="ev-sourcelib">
+
+        <div class="ev-sourcecat">
+          <h4>Regulator &amp; government</h4>
+          <ul>
+            <li><a href="https://www.mom.gov.sg/employment-practices/progressive-wage-model/security-sector" target="_blank" rel="noopener noreferrer">MOM — Progressive Wage Model (Security sector)</a><span class="ev-date">2024</span></li>
+            <li><a href="https://www.police.gov.sg/Advisories/Crime/Police-Licensing-Regulatory-Department" target="_blank" rel="noopener noreferrer">SPF — Police Licensing &amp; Regulatory Department (PLRD)</a></li>
+            <li><a href="https://www.mti.gov.sg/ITMs/Essential-Domestic-Services/Security" target="_blank" rel="noopener noreferrer">MTI — Security Industry Transformation Map (ITM)</a><span class="ev-date">2025</span></li>
+            <li><a href="https://sso.agc.gov.sg/Act/PSIA2007" target="_blank" rel="noopener noreferrer">AGC — Private Security Industry Act 2007</a></li>
+            <li><a href="https://www.cccs.gov.sg" target="_blank" rel="noopener noreferrer">CCCS — Competition and Consumer Commission of Singapore</a></li>
+          </ul>
+        </div>
+
+        <div class="ev-sourcecat">
+          <h4>Industry bodies &amp; awards</h4>
+          <ul>
+            <li><a href="https://www.ssia.org.sg/" target="_blank" rel="noopener noreferrer">SSIA — Security Association Singapore</a></li>
+            <li><a href="https://www.ssia.org.sg/security-industry-awards/" target="_blank" rel="noopener noreferrer">SSIA — Security Industry Awards (Elitez 2023 triple recognition)</a><span class="ev-date">2023</span></li>
+            <li><a href="https://www.bca.gov.sg" target="_blank" rel="noopener noreferrer">BCA — Building &amp; Construction Authority (electronic security tie-ins)</a></li>
+            <li><a href="https://www.ntuc.org.sg/uportal/about/affiliated-unions" target="_blank" rel="noopener noreferrer">NTUC — Union of Security Employees (USE)</a></li>
+          </ul>
+        </div>
+
+        <div class="ev-sourcecat">
+          <h4>Mainstream &amp; longform journalism</h4>
+          <ul>
+            <li><a href="https://www.straitstimes.com/business/economy" target="_blank" rel="noopener noreferrer">Straits Times — Singapore security industry coverage</a></li>
+            <li><a href="https://www.channelnewsasia.com/business/security" target="_blank" rel="noopener noreferrer">CNA — Security industry coverage</a></li>
+            <li><a href="https://www.businesstimes.com.sg" target="_blank" rel="noopener noreferrer">Business Times — Secura Group / SGX-listed coverage</a></li>
+            <li><a href="https://www.todayonline.com" target="_blank" rel="noopener noreferrer">TODAY — security officer welfare reporting</a></li>
+            <li><a href="https://www.ricemedia.co" target="_blank" rel="noopener noreferrer">RICE Media — security officer profiles</a></li>
+          </ul>
+        </div>
+
+        <div class="ev-sourcecat">
+          <h4>Community signal (Reddit / forums)</h4>
+          <ul>
+            <li><a href="https://www.reddit.com/r/singapore/" target="_blank" rel="noopener noreferrer">r/singapore — search: security officer salary · PWM security</a></li>
+            <li><a href="https://www.reddit.com/r/asksingapore/" target="_blank" rel="noopener noreferrer">r/asksingapore — security industry questions</a></li>
+            <li><a href="https://forums.hardwarezone.com.sg/" target="_blank" rel="noopener noreferrer">HardwareZone — security officer threads</a></li>
+            <li><a href="https://www.reddit.com/r/SingaporeJobs/" target="_blank" rel="noopener noreferrer">r/SingaporeJobs — security industry hiring</a></li>
+          </ul>
+        </div>
+
+        <div class="ev-sourcecat">
+          <h4>Operator pages (top of leaderboard)</h4>
+          <ul>
+            <li><a href="https://www.certisgroup.com" target="_blank" rel="noopener noreferrer">Certis Group — Mozart AI / auxiliary police</a></li>
+            <li><a href="https://www.aetos.com.sg" target="_blank" rel="noopener noreferrer">Aetos Holdings — F1 / NDP / event security</a></li>
+            <li><a href="https://www.soverus.com.sg" target="_blank" rel="noopener noreferrer">Soverus / Secura Group — SGX-listed</a></li>
+            <li><a href="https://metropolis.sg" target="_blank" rel="noopener noreferrer">Metropolis Security — MCST + MOE specialist</a></li>
+            <li><a href="https://www.concordesecurity.com.sg" target="_blank" rel="noopener noreferrer">Concorde Security — industrial / logistics</a></li>
+            <li><a href="https://oneberry.com" target="_blank" rel="noopener noreferrer">Oneberry Technologies — autonomous robots</a></li>
+            <li><a href="https://sg.ademcosecurity.com" target="_blank" rel="noopener noreferrer">Ademco — unified security management</a></li>
+          </ul>
+        </div>
+
+        <div class="ev-sourcecat">
+          <h4>Procurement &amp; tender platforms</h4>
+          <ul>
+            <li><a href="https://www.gebiz.gov.sg" target="_blank" rel="noopener noreferrer">GeBIZ — Singapore government procurement</a></li>
+            <li><a href="https://www.businessgrants.gov.sg/productivity-solutions-grant" target="_blank" rel="noopener noreferrer">PSG — Productivity Solutions Grant (security tech co-funding)</a></li>
+            <li><a href="https://www.enterprisesg.gov.sg" target="_blank" rel="noopener noreferrer">EnterpriseSG — security industry grants</a></li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+</section>
+
+<!-- Footer -->
+</main>
+<footer>
+  <div class="container">
+    <p>&copy; 2026 Elitez Security Pte Ltd (UEN 2017168644Z). A member organisation of Elitez Group. SSIA 2023 awarded · PWM+ accredited · bizSAFE Star · NS Mark Gold · ISO 45001:2018. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous"></script>
+<script src="../js/main.js"></script>
+
+<script>
+// ── Analytics renderer (data shape per ../data/competitors.json) ──
+const STATE = { competitors: [], insights: {}, landscape: {}, filtered: [] };
+
+function el(tag, opts) {
+  const e = document.createElement(tag);
+  if (!opts) return e;
+  if (opts.cls) e.className = opts.cls;
+  if (opts.text != null) e.textContent = String(opts.text);
+  if (opts.attrs) for (const [k, v] of Object.entries(opts.attrs)) e.setAttribute(k, v);
+  if (opts.children) for (const c of opts.children) if (c) e.appendChild(c);
+  return e;
+}
+
+// Heuristic: derive a threat-to-Elitez band from tier + serviceTypes + scale.
+// 'high'   = direct mid-market collision (PWM-compliant, MCST/commercial overlap)
+// 'medium' = adjacent (premium APO, FM bundlers, niche specialists)
+// 'low'    = sub-PWM budget agencies likely to fail SACE 2026, or pure-tech non-manpower
+function threatToElitez(c) {
+  const tier = c.tier;
+  const types = (c.serviceTypes || []).join(',');
+  const emp = parseInt(String(c.employees || '').replace(/[^0-9]/g, ''), 10) || 500;
+  if (tier === 'mid' && /guard/.test(types) && emp >= 800) return 'high';
+  if (tier === 'mid' && /guard/.test(types)) return 'medium';
+  if (tier === 'premium' && /guard/.test(types)) return 'medium';
+  if (tier === 'premium' && !/guard/.test(types)) return 'low';
+  if (tier === 'budget') return 'low';
+  return 'medium';
+}
+
+// PWM-floor exposure: budget tier OR mid-tier with no tech investment
+function pwmExposed(c) {
+  const types = (c.serviceTypes || []).join(',');
+  if (c.tier === 'budget') return true;
+  if (c.tier === 'mid' && !/tech/.test(types)) return true;
+  return false;
+}
+
+function init() {
+  fetch('../data/competitors.json')
+    .then(r => {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(data => {
+      STATE.competitors = Array.isArray(data.competitors) ? data.competitors : [];
+      STATE.insights = data.insights || {};
+      STATE.landscape = data.landscape || {};
+      // Decorate each competitor with derived fields
+      STATE.competitors.forEach(c => {
+        c._threat = threatToElitez(c);
+        c._pwmExposed = pwmExposed(c);
+      });
+      STATE.filtered = STATE.competitors.slice();
+      renderKPIs();
+      renderInsights();
+      renderRadar();
+      attachFilterHandlers();
+      renderCards();
+    })
+    .catch(err => {
+      console.error(err);
+      const grid = document.getElementById('comp-grid');
+      grid.textContent = '';
+      grid.appendChild(el('div', { cls: 'loading', text: 'Failed to load competitor data: ' + err.message }));
+    });
+}
+
+function renderKPIs() {
+  const total = STATE.competitors.length;
+  const ds = STATE.competitors.map(c => Number(c.designScore || 0));
+  const avg = ds.length ? (ds.reduce((a, b) => a + b, 0) / ds.length) : 0;
+  const threats = STATE.competitors.filter(c => c._threat === 'high').length;
+  const pwm = STATE.competitors.filter(c => c._pwmExposed).length;
+
+  document.getElementById('kpi-total').textContent = String(total);
+  document.getElementById('kpi-design').textContent = avg.toFixed(1);
+  document.getElementById('kpi-threats').textContent = String(threats);
+  document.getElementById('kpi-pwm').textContent = total ? Math.round((pwm / total) * 100) + '%' : '—';
+  document.getElementById('comp-count-hdr').textContent = String(total);
+  document.getElementById('comp-count-inline').textContent = String(total);
+}
+
+function renderInsights() {
+  const ins = STATE.insights || {};
+  const fill = (id, list) => {
+    const ul = document.getElementById(id);
+    if (!ul) return;
+    ul.textContent = '';
+    (Array.isArray(list) ? list : []).forEach(item => {
+      ul.appendChild(el('li', { text: item }));
+    });
+  };
+  fill('weaknesses-list', ins.commonWeaknesses);
+  fill('advantages-list', ins.elitezAdvantages);
+  fill('borrowed-list', ins.designRationale && ins.designRationale.borrowed);
+  fill('improved-list', ins.designRationale && ins.designRationale.improved);
+}
+
+function renderRadar() {
+  const ctx = document.getElementById('radar-chart');
+  if (!ctx || typeof Chart === 'undefined') return;
+
+  // Pick top-5 highest-design premium agencies (matches existing index.html convention)
+  const top5 = STATE.competitors
+    .filter(c => c.tier === 'premium')
+    .sort((a, b) => (b.designScore + b.mobileScore) - (a.designScore + a.mobileScore))
+    .slice(0, 5);
+
+  const dims = ['Design Quality', 'Mobile UX', 'Tech Innovation', 'Service Range', 'Brand Scale'];
+
+  function techScore(c) {
+    if ((c.serviceTypes || []).includes('tech')) {
+      return Math.min(
+        (c.services || []).filter(s => /tech|cctv|iot|robot|ai|analytics|cyber|smart|surveillance|command|video|systems|access control|intrusion|sensor|fire|intercom/i.test(s)).length * 2,
+        10
+      );
+    }
+    return 2;
+  }
+  function serviceRange(c) { return Math.min((c.services || []).length, 10); }
+  function brandScore(c) {
+    const emp = parseInt(String(c.employees || '').replace(/[^0-9]/g, ''), 10) || 500;
+    if (emp >= 10000) return 10;
+    if (emp >= 5000) return 9;
+    if (emp >= 2000) return 7;
+    if (emp >= 500) return 5;
+    return 3;
+  }
+
+  // Brand palette tuned to graphite-modern dark theme
+  const palette = [
+    'rgba(52,211,153,0.85)',
+    'rgba(96,165,250,0.85)',
+    'rgba(234,179,8,0.85)',
+    'rgba(248,113,113,0.85)',
+    'rgba(168,85,247,0.85)'
+  ];
+
+  const datasets = top5.map((c, i) => ({
+    label: c.name,
+    data: [c.designScore, c.mobileScore, techScore(c), serviceRange(c), brandScore(c)],
+    backgroundColor: palette[i].replace('0.85', '0.12'),
+    borderColor: palette[i],
+    borderWidth: 2,
+    pointBackgroundColor: palette[i],
+    pointRadius: 3
+  }));
+
+  // eslint-disable-next-line no-undef
+  new Chart(ctx, {
+    type: 'radar',
+    data: { labels: dims, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { color: 'rgba(255,255,255,0.72)', font: { size: 11 }, boxWidth: 12, padding: 12 } },
+        tooltip: { backgroundColor: '#2e2e34', padding: 10, borderColor: 'rgba(255,255,255,0.12)', borderWidth: 1 }
+      },
+      scales: {
+        r: {
+          min: 0,
+          max: 10,
+          ticks: { stepSize: 2, color: 'rgba(255,255,255,0.4)', backdropColor: 'transparent', font: { size: 10 } },
+          pointLabels: { color: 'rgba(255,255,255,0.72)', font: { size: 11 } },
+          grid: { color: 'rgba(255,255,255,0.08)' },
+          angleLines: { color: 'rgba(255,255,255,0.08)' }
+        }
+      }
+    }
+  });
+}
+
+function attachFilterHandlers() {
+  const ids = ['comp-search', 'comp-cat', 'comp-tier', 'comp-threat'];
+  ids.forEach(id => {
+    const node = document.getElementById(id);
+    if (node) node.addEventListener('input', applyFilters);
+  });
+}
+
+function applyFilters() {
+  const q = (document.getElementById('comp-search').value || '').toLowerCase().trim();
+  const cat = document.getElementById('comp-cat').value;
+  const tier = document.getElementById('comp-tier').value;
+  const threat = document.getElementById('comp-threat').value;
+
+  STATE.filtered = STATE.competitors.filter(c => {
+    if (cat && !(c.serviceTypes || []).includes(cat)) return false;
+    if (tier && c.tier !== tier) return false;
+    if (threat && c._threat !== threat) return false;
+    if (q) {
+      const blob = [
+        c.name,
+        (c.services || []).join(' '),
+        (c.strengths || []).join(' '),
+        (c.weaknesses || []).join(' '),
+        (c.notableFeatures || []).join(' ')
+      ].join(' ').toLowerCase();
+      if (!blob.includes(q)) return false;
+    }
+    return true;
+  });
+  renderCards();
+}
+
+function renderCards() {
+  const grid = document.getElementById('comp-grid');
+  grid.textContent = '';
+  document.getElementById('comp-count-tbl').textContent =
+    STATE.filtered.length + ' / ' + STATE.competitors.length + ' shown';
+
+  if (!STATE.filtered.length) {
+    grid.appendChild(el('div', { cls: 'loading', text: 'No competitors match the current filters.' }));
+    return;
+  }
+
+  STATE.filtered.forEach(c => grid.appendChild(buildCard(c)));
+}
+
+function buildCard(c) {
+  const card = el('div', { cls: 'comp-card' });
+
+  // Head: name + threat badge
+  const head = el('div', { cls: 'comp-card-head' });
+  const nameWrap = el('div');
+  nameWrap.appendChild(el('div', { cls: 'comp-name', text: c.name || '—' }));
+  if (c.url) {
+    nameWrap.appendChild(el('a', {
+      cls: 'comp-url',
+      text: c.url,
+      attrs: { href: c.url, target: '_blank', rel: 'noopener noreferrer' }
+    }));
+  }
+  head.appendChild(nameWrap);
+  head.appendChild(el('span', { cls: 'b b-threat-' + c._threat, text: c._threat + ' threat' }));
+  card.appendChild(head);
+
+  // Tier + service-type badges
+  const badges = el('div', { cls: 'badge-row' });
+  if (c.tier) badges.appendChild(el('span', { cls: 'b b-tier-' + c.tier, text: c.tier }));
+  (c.serviceTypes || []).forEach(t => {
+    badges.appendChild(el('span', { cls: 'b b-svc-' + t, text: t }));
+  });
+  card.appendChild(badges);
+
+  // Meta strip: founded + employees (built via DOM nodes, no innerHTML)
+  if (c.founded || c.employees) {
+    const meta = el('div', { cls: 'meta-strip' });
+    let added = false;
+    if (c.founded) {
+      meta.appendChild(el('b', { text: 'Founded' }));
+      meta.appendChild(document.createTextNode(' ' + c.founded));
+      added = true;
+    }
+    if (c.employees) {
+      if (added) meta.appendChild(el('span', { cls: 'sep', text: '·' }));
+      meta.appendChild(el('b', { text: 'HC' }));
+      meta.appendChild(document.createTextNode(' ' + c.employees));
+    }
+    card.appendChild(meta);
+  }
+
+  // Score bars
+  const scores = el('div');
+  scores.appendChild(scoreRow('Design', c.designScore, 'design'));
+  scores.appendChild(scoreRow('Mobile', c.mobileScore, 'mobile'));
+  card.appendChild(scores);
+
+  // Strengths + weaknesses
+  const lists = el('div', { cls: 'lists-wrap' });
+  if (Array.isArray(c.strengths) && c.strengths.length) {
+    lists.appendChild(listBlock('Strengths', c.strengths, 'strong'));
+  }
+  if (Array.isArray(c.weaknesses) && c.weaknesses.length) {
+    lists.appendChild(listBlock('Weaknesses', c.weaknesses, 'weak'));
+  }
+  card.appendChild(lists);
+
+  return card;
+}
+
+function scoreRow(label, val, kind) {
+  const v = Math.max(0, Math.min(10, Number(val || 0)));
+  const row = el('div', { cls: 'score-row' });
+  row.appendChild(el('div', { cls: 'score-lbl', text: label }));
+  const bar = el('div', { cls: 'score-bar' });
+  const fill = el('div', { cls: 'score-bar-fill ' + (kind || '') });
+  fill.style.width = (v * 10) + '%';
+  bar.appendChild(fill);
+  row.appendChild(bar);
+  row.appendChild(el('div', { cls: 'score-num', text: v + '/10' }));
+  return row;
+}
+
+function listBlock(title, items, kind) {
+  const block = el('div', { cls: 'list-block ' + (kind || '') });
+  block.appendChild(el('h4', { text: title }));
+  const ul = el('ul');
+  items.forEach(it => ul.appendChild(el('li', { text: it })));
+  block.appendChild(ul);
+  return block;
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+</script>
+
+</body>
+</html>

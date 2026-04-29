@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Elitez EOR — SG Micro-Business Payroll Intelligence Report</title>
+  <meta name="description" content="Q2 2026 deck-grounded competitor intel report for SG EOR / payroll micro-business market." />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #FAFAFA; --surface: #FFFFFF; --surface-1: #F4F4F4; --surface-2: #E9E9E9; --card: #FFFFFF;
+      --border: #E5E5E5; --border2: #D1D1D1;
+      --text: #191919; --primary: #191919; --secondary: #4A4A4A; --muted: #6B6B6B;
+      --accent: #1E3A5F; --accent2: #F57A20;
+      --gold: #1E3A5F; --amber: #F57A20;
+      --green: #2E7D5C; --red: #B92D2D;
+      --radius: 8px; --radius-lg: 14px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+    a { color: var(--accent); }
+
+    /* Top nav */
+    nav.atlas-nav { display: flex; justify-content: space-between; align-items: center; padding: 0 24px; height: 64px; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.92); backdrop-filter: blur(16px); position: sticky; top: 0; z-index: 200; flex-wrap: wrap; gap: 8px; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; }
+    .nav-logo img { height: 20px; width: auto; display: block; }
+    .nav-logo .logo-admin { color: var(--accent2); font-weight: 700; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; display: inline-flex; align-items: center; }
+    .nav-logo .logo-admin::before { content: "\B7"; color: var(--muted); margin-right: 10px; font-weight: 700; font-size: 1.4em; line-height: 1; }
+    .admin-nav { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+    .admin-nav a { font-size: 0.72rem; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; text-decoration: none; }
+    .admin-nav a:hover, .admin-nav a.active { color: var(--accent); }
+    .admin-nav a.active { font-weight: 700; }
+
+    /* PDF download button */
+    .pdf-dl { position: fixed; top: 76px; right: 24px; z-index: 100; background: var(--accent2); color: #fff; border: none; padding: 12px 22px; border-radius: var(--radius); font-family: 'Inter', sans-serif; font-size: 0.86rem; font-weight: 700; letter-spacing: 0.04em; cursor: pointer; box-shadow: 0 6px 18px rgba(30,58,95,0.18); transition: background 0.2s, transform 0.1s; text-transform: uppercase; }
+    .pdf-dl:hover { background: var(--accent); }
+    .pdf-dl:active { transform: scale(0.97); }
+    .pdf-dl:disabled { background: var(--muted); cursor: wait; }
+    .pdf-dl .ico { display: inline-block; margin-right: 8px; }
+
+    /* Report doc */
+    #report-doc { max-width: 1100px; margin: 0 auto; }
+    .report-page { padding: 64px 56px; border-bottom: 1px solid var(--border); }
+    .report-page.bleed-surface { background: var(--bg); }
+    .report-page.bleed-card { background: var(--surface); }
+    @media print {
+      .report-page { page-break-before: always; }
+      .pdf-dl, nav.atlas-nav { display: none !important; }
+    }
+
+    /* PDF capture mode */
+    body.pdf-mode #report-doc { max-width: 210mm; }
+    body.pdf-mode .report-page { width: 210mm; padding: 22mm 18mm; border-bottom: none; box-sizing: border-box; page-break-after: always; }
+    body.pdf-mode .report-page.cover { min-height: 297mm; padding: 36mm 18mm 22mm; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
+    body.pdf-mode .report-page, body.pdf-mode .report-page * { font-kerning: none; text-rendering: geometricPrecision; letter-spacing: 0.005em; }
+    body.pdf-mode .pdf-dl, body.pdf-mode nav.atlas-nav { display: none !important; }
+
+    /* Section helpers */
+    .sec-num { font-family: ui-monospace, monospace; font-size: 0.72rem; letter-spacing: 0.16em; color: var(--accent2); text-transform: uppercase; font-weight: 700; margin-bottom: 10px; }
+    .sec-h2 { font-size: 2rem; font-weight: 900; letter-spacing: -0.02em; color: var(--text); line-height: 1.2; margin-bottom: 14px; }
+    .sec-lede { font-size: 0.96rem; color: var(--muted); line-height: 1.65; max-width: 820px; margin-bottom: 28px; }
+
+    /* Cover */
+    .cover { min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 80px 56px 64px; background: var(--bg); }
+    .cover-mark { font-size: 2rem; font-weight: 900; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 6px; }
+    .cover-mark span { color: var(--accent2); }
+    .cover-sub { font-size: 0.86rem; color: var(--accent2); letter-spacing: 0.18em; text-transform: uppercase; font-weight: 700; margin-bottom: 60px; }
+    .cover-title { font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 900; line-height: 1.1; letter-spacing: -0.02em; color: var(--text); max-width: 880px; margin-bottom: 28px; }
+    .cover-tag { font-size: 1.1rem; font-style: italic; color: var(--accent2); margin-bottom: 60px; max-width: 700px; }
+    .cover-stamp { font-family: ui-monospace, monospace; font-size: 0.78rem; color: var(--muted); letter-spacing: 0.06em; margin-bottom: 32px; }
+    .cover-acc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 40px; }
+    .cover-acc-chip { font-size: 0.7rem; font-family: ui-monospace, monospace; padding: 5px 11px; background: var(--surface-1); border: 1px solid var(--border); color: var(--secondary); border-radius: 100px; letter-spacing: 0.04em; }
+
+    /* TOC */
+    .toc-list { list-style: none; padding: 0; counter-reset: tocidx; }
+    .toc-item { counter-increment: tocidx; padding: 14px 0; border-bottom: 1px dashed var(--border); display: grid; grid-template-columns: 50px 1fr 60px; gap: 16px; align-items: baseline; }
+    .toc-item:last-child { border-bottom: none; }
+    .toc-num { font-family: ui-monospace, monospace; color: var(--accent2); font-weight: 700; font-size: 0.84rem; letter-spacing: 0.06em; }
+    .toc-num::before { content: counter(tocidx, decimal-leading-zero); }
+    .toc-link { font-size: 1.02rem; color: var(--text); text-decoration: none; font-weight: 700; }
+    .toc-link:hover { color: var(--accent2); }
+    .toc-page { font-family: ui-monospace, monospace; color: var(--muted); font-size: 0.8rem; text-align: right; }
+
+    /* Exec summary */
+    .exec-list { list-style: none; padding: 0; counter-reset: execidx; }
+    .exec-bullet { counter-increment: execidx; display: grid; grid-template-columns: 56px 1fr; gap: 18px; padding: 18px 0; border-bottom: 1px dashed var(--border); }
+    .exec-bullet:last-child { border-bottom: none; }
+    .exec-num { font-size: 1.6rem; color: var(--accent2); font-weight: 900; line-height: 1; }
+    .exec-num::before { content: counter(execidx, decimal-leading-zero); }
+    .exec-body { font-size: 0.94rem; color: var(--secondary); line-height: 1.7; }
+    .exec-body strong { color: var(--text); }
+    .exec-body em { color: var(--accent2); font-style: normal; font-weight: 700; }
+
+    /* KPIs */
+    .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 28px; }
+    .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; }
+    .kpi.on-card { background: var(--surface-1); }
+    .kpi-val { font-size: 1.6rem; font-weight: 900; color: var(--text); letter-spacing: -0.02em; line-height: 1.1; }
+    .kpi-val.green { color: var(--green); }
+    .kpi-val.amber { color: var(--accent2); }
+    .kpi-val.red { color: var(--red); }
+    .kpi-val.gold { color: var(--accent); }
+    .kpi-lbl { font-size: 0.66rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-top: 8px; }
+
+    /* Landscape blocks */
+    .l-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 22px; }
+    .l-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
+    .l-card.on-card { background: var(--surface-1); }
+    .l-card .lbl { font-size: 0.66rem; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 6px; font-family: ui-monospace, monospace; }
+    .l-card .val { font-weight: 800; font-size: 1.04rem; color: var(--text); line-height: 1.3; }
+    .l-list { list-style: none; padding: 0; }
+    .l-list li { padding: 10px 0; border-bottom: 1px dashed var(--border); font-size: 0.88rem; color: var(--secondary); line-height: 1.55; padding-left: 20px; position: relative; }
+    .l-list li:last-child { border-bottom: none; }
+    .l-list li::before { content: "◆"; position: absolute; left: 0; color: var(--accent2); font-size: 0.7rem; top: 12px; }
+
+    /* Competitor cards */
+    .comp-list { display: flex; flex-direction: column; gap: 14px; }
+    .comp-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px 22px; }
+    .comp-card.on-card { background: var(--surface-1); }
+    .comp-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+    .comp-name { font-size: 1.1rem; font-weight: 800; color: var(--text); line-height: 1.3; }
+    .comp-url { font-family: ui-monospace, monospace; font-size: 0.74rem; color: var(--muted); display: block; margin-top: 2px; word-break: break-all; }
+    .comp-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+    .badge { display: inline-block; padding: 3px 9px; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; font-family: ui-monospace, monospace; border-radius: 100px; border: 1px solid; white-space: nowrap; }
+    .b-vis-published { background: rgba(46,125,92,0.12); color: var(--green); border-color: var(--green); }
+    .b-vis-published_global { background: rgba(46,125,92,0.12); color: var(--green); border-color: var(--green); }
+    .b-vis-mixed { background: rgba(245,122,32,0.14); color: var(--accent2); border-color: var(--accent2); }
+    .b-vis-ESTIMATED { background: rgba(185,45,45,0.10); color: var(--red); border-color: var(--red); }
+    .b-threat-high { background: rgba(185,45,45,0.10); color: var(--red); border-color: var(--red); }
+    .b-threat-medium { background: rgba(245,122,32,0.14); color: var(--accent2); border-color: var(--accent2); }
+    .b-threat-low { background: rgba(46,125,92,0.12); color: var(--green); border-color: var(--green); }
+    .comp-bars { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 12px 0; }
+    .bar-row { display: grid; grid-template-columns: 90px 1fr 32px; gap: 8px; align-items: center; font-size: 0.78rem; }
+    .bar-row .lbl { color: var(--muted); }
+    .bar { height: 8px; background: var(--surface-1); border-radius: 4px; overflow: hidden; }
+    .bar .fill { height: 100%; background: var(--accent2); border-radius: 4px; }
+    .bar-row .val { font-family: ui-monospace, monospace; color: var(--text); font-weight: 700; text-align: right; }
+    .comp-sw { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; padding-top: 14px; border-top: 1px dashed var(--border); }
+    @media (max-width: 600px) { .comp-sw { grid-template-columns: 1fr; } }
+    .comp-sw .col h5 { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent2); margin-bottom: 6px; font-family: ui-monospace, monospace; font-weight: 700; }
+    .comp-sw ul { list-style: none; padding: 0; font-size: 0.82rem; line-height: 1.55; color: var(--secondary); }
+    .comp-sw ul li { padding-left: 14px; position: relative; margin-bottom: 5px; }
+    .comp-sw ul li::before { content: ""; position: absolute; left: 0; top: 8px; width: 6px; height: 6px; border-radius: 50%; }
+    .comp-sw .col.strengths li::before { background: var(--green); }
+    .comp-sw .col.weaknesses li::before { background: var(--red); }
+
+    /* Pricing table */
+    .pricing-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+    .pricing { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 720px; }
+    .pricing thead th { background: var(--accent); color: var(--surface); padding: 12px 14px; text-align: left; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+    .pricing thead th.elitez-col { background: var(--accent2); color: #fff; }
+    .pricing tbody th { background: var(--surface-1); color: var(--text); text-align: left; font-weight: 700; padding: 12px 14px; font-size: 0.86rem; }
+    .pricing tbody td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.5; }
+    .pricing tbody tr:last-child td, .pricing tbody tr:last-child th { border-bottom: none; }
+    .pricing .price { font-family: ui-monospace, monospace; font-weight: 700; color: var(--text); display: block; margin-bottom: 2px; }
+    .pricing .price-note { font-size: 0.74rem; color: var(--muted); display: block; }
+    .pricing td.elitez-col { background: rgba(245,122,32,0.06); }
+    .footnote { font-size: 0.78rem; color: var(--muted); line-height: 1.6; margin-top: 14px; padding: 12px 14px; background: var(--surface-1); border: 1px dashed var(--border); border-radius: var(--radius); }
+    .footnote strong { color: var(--text); }
+    .footnote em { color: var(--accent2); font-style: normal; font-weight: 700; }
+
+    /* Whitespace canvas */
+    .canvas-wrap { display: grid; grid-template-columns: 1.7fr 1fr; gap: 24px; align-items: start; margin-bottom: 26px; }
+    @media (max-width: 900px) { .canvas-wrap { grid-template-columns: 1fr; } }
+    #strategy-canvas { width: 100%; max-width: 720px; height: 420px; }
+    .canvas-legend { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; }
+    .canvas-legend .leg { display: flex; align-items: center; gap: 8px; }
+    .canvas-legend .sw { width: 28px; height: 4px; flex-shrink: 0; border-radius: 2px; }
+    .canvas-legend .us { font-weight: 700; color: var(--accent2); }
+
+    /* Attack niches */
+    .attack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+    .niche { background: linear-gradient(160deg, rgba(46,125,92,0.06), var(--surface) 80%); border: 1.5px solid var(--green); border-radius: var(--radius-lg); padding: 22px 24px; }
+    .niche.on-card { background: linear-gradient(160deg, rgba(46,125,92,0.08), var(--surface-1) 80%); }
+    .niche-rank { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--green); margin-bottom: 6px; font-family: ui-monospace, monospace; }
+    .niche-name { font-size: 1.04rem; font-weight: 800; color: var(--text); letter-spacing: -0.01em; margin-bottom: 10px; line-height: 1.3; }
+    .niche-icp { font-size: 0.84rem; color: var(--muted); margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px dashed var(--border); font-style: italic; line-height: 1.55; }
+    .niche-row { display: grid; grid-template-columns: 78px 1fr; gap: 10px; font-size: 0.82rem; padding: 5px 0; }
+    .niche-row .k { font-size: 0.6rem; font-weight: 700; color: var(--accent2); letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px; font-family: ui-monospace, monospace; }
+    .niche-row .v { color: var(--secondary); line-height: 1.5; }
+
+    /* Design audit cards */
+    .da-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 14px; }
+    .da-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; }
+    .da-card.self { border: 2px solid var(--accent2); background: linear-gradient(160deg, rgba(245,122,32,0.06), var(--surface) 80%); }
+    .da-card.on-card { background: var(--surface-1); }
+    .da-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+    .da-name { font-weight: 800; color: var(--text); font-size: 1.04rem; line-height: 1.25; }
+    .da-name .self-tag { font-size: 0.6rem; color: #fff; background: var(--accent2); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-left: 8px; padding: 2px 8px; border-radius: 100px; font-family: ui-monospace, monospace; }
+    .da-overall { font-size: 1.4rem; font-weight: 900; color: var(--accent2); }
+    .da-overall .max { font-size: 0.7rem; color: var(--muted); font-family: ui-monospace, monospace; font-weight: 400; }
+    .da-bars { margin: 12px 0; }
+    .da-bar-row { display: grid; grid-template-columns: 1fr 70px 30px; gap: 8px; align-items: center; font-size: 0.78rem; padding: 4px 0; }
+    .da-bar-row .lbl { color: var(--muted); }
+    .da-bar { height: 6px; background: var(--surface-1); border-radius: 3px; overflow: hidden; }
+    .da-bar .fill { height: 100%; background: var(--accent2); border-radius: 3px; }
+    .da-bar-row .val { text-align: right; font-family: ui-monospace, monospace; font-weight: 700; color: var(--text); }
+    .da-verdict { font-size: 0.84rem; color: var(--secondary); line-height: 1.55; padding-top: 12px; border-top: 1px dashed var(--border); font-style: italic; }
+
+    .syn-card { background: var(--surface); border: 1.5px solid var(--accent2); border-radius: var(--radius-lg); padding: 22px 24px; margin-top: 18px; }
+    .syn-card.on-card { background: var(--surface-1); }
+    .syn-card h3 { font-size: 1.1rem; color: var(--text); font-weight: 800; margin-bottom: 12px; }
+    .syn-block { margin-bottom: 16px; }
+    .syn-block:last-child { margin-bottom: 0; }
+    .syn-block .lbl { font-size: 0.66rem; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 8px; font-family: ui-monospace, monospace; }
+    .syn-block ul { list-style: none; padding: 0; }
+    .syn-block ul li { padding: 8px 0 8px 22px; position: relative; font-size: 0.86rem; color: var(--secondary); line-height: 1.6; border-bottom: 1px dashed var(--border); }
+    .syn-block ul li:last-child { border-bottom: none; }
+    .syn-block ul li::before { content: "→"; position: absolute; left: 0; color: var(--accent2); font-weight: 700; }
+
+    /* Recommendations */
+    .rec-list { list-style: none; padding: 0; counter-reset: recidx; }
+    .rec-item { counter-increment: recidx; display: grid; grid-template-columns: 64px 1fr; gap: 18px; padding: 20px 0; border-bottom: 1px dashed var(--border); }
+    .rec-item:last-child { border-bottom: none; }
+    .rec-num { font-size: 1.8rem; color: var(--accent2); font-weight: 900; line-height: 1; }
+    .rec-num::before { content: "0" counter(recidx); }
+    .rec-title { font-size: 1.04rem; font-weight: 800; color: var(--text); margin-bottom: 6px; line-height: 1.3; }
+    .rec-body { font-size: 0.9rem; color: var(--muted); line-height: 1.65; }
+    .rec-body strong { color: var(--text); }
+    .rec-body em { color: var(--accent2); font-style: normal; font-weight: 700; }
+
+    /* Methodology */
+    .meth-block { margin-bottom: 22px; }
+    .meth-block .lbl { font-size: 0.7rem; color: var(--accent2); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 8px; font-family: ui-monospace, monospace; }
+    .meth-block p { font-size: 0.9rem; color: var(--secondary); line-height: 1.7; }
+    .meth-block ul { list-style: none; padding: 0; }
+    .meth-block ul li { padding: 8px 0 8px 20px; position: relative; font-size: 0.86rem; color: var(--secondary); line-height: 1.6; }
+    .meth-block ul li::before { content: "◆"; position: absolute; left: 0; color: var(--accent2); font-size: 0.7rem; top: 11px; }
+    .meth-block code { font-family: ui-monospace, monospace; background: var(--surface-1); padding: 1px 6px; border-radius: 4px; font-size: 0.8rem; }
+
+    .err-msg { padding: 16px 20px; color: var(--red); font-family: ui-monospace, monospace; font-size: 0.86rem; background: rgba(185,45,45,0.06); border: 1px solid var(--red); border-radius: var(--radius); margin: 14px 0; }
+    .loading { padding: 20px; text-align: center; color: var(--muted); font-style: italic; font-size: 0.86rem; }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      body { font-size: 13px; }
+      nav.atlas-nav { padding: 10px 14px; height: auto; }
+      .admin-nav { gap: 10px; }
+      .admin-nav a { font-size: 0.72rem; padding: 5px 10px; }
+      .pdf-dl { top: auto; bottom: 14px; right: 14px; padding: 10px 16px; font-size: 0.78rem; }
+      .report-page { padding: 36px 18px; }
+      .cover { padding: 50px 18px 36px; }
+      .cover-mark { font-size: 1.6rem; }
+      .cover-title { font-size: 1.7rem !important; }
+      .cover-tag { font-size: 0.95rem; }
+      .sec-h2 { font-size: 1.4rem !important; }
+      .sec-lede { font-size: 0.86rem; }
+      .kpi-strip { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .kpi { padding: 12px 14px; }
+      .kpi-val { font-size: 1.2rem; }
+      .kpi-lbl { font-size: 0.6rem; }
+      .l-grid { grid-template-columns: 1fr; }
+      .toc-item { grid-template-columns: 36px 1fr 44px; }
+      .toc-link { font-size: 0.94rem; }
+      .exec-bullet { grid-template-columns: 36px 1fr; gap: 10px; }
+      .exec-num { font-size: 1.3rem; }
+      .exec-body { font-size: 0.84rem; }
+      .comp-bars { grid-template-columns: 1fr; }
+      .pricing { min-width: 560px; font-size: 0.74rem; }
+      .pricing thead th, .pricing tbody th, .pricing tbody td { padding: 8px 10px; }
+      #strategy-canvas { height: 280px; }
+      .canvas-wrap { grid-template-columns: 1fr; }
+      .attack-grid { grid-template-columns: 1fr; }
+      .niche { padding: 16px 16px; }
+      .niche-row { grid-template-columns: 60px 1fr; font-size: 0.74rem; }
+      .da-grid { grid-template-columns: 1fr; }
+      .da-card { padding: 14px 16px; }
+      .rec-item { grid-template-columns: 44px 1fr; gap: 12px; padding: 14px 0; }
+      .rec-num { font-size: 1.4rem; }
+      .rec-title { font-size: 0.96rem; }
+      .rec-body { font-size: 0.82rem; }
+    }
+  </style>
+
+  <link rel="icon" type="image/x-icon" href="../favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png" />
+  <meta name="theme-color" content="#1E3A5F" />
+</head>
+<body>
+
+<nav class="atlas-nav">
+  <a href="../index.html" class="nav-logo" aria-label="Elitez EOR home">
+    <img src="../assets/elitez-wordmark.png" alt="Elitez" />
+    <span class="logo-admin">Admin</span>
+  </a>
+  <div class="admin-nav">
+    <a href="index.html">Competitor Overview</a>
+    <a href="competitor-analytics.html">Competitor Analytics</a>
+    <a href="insights.html">Market Insights</a>
+    <a href="whitespace.html">White Space Atlas</a>
+    <a href="design-audit.html">Design Audit</a>
+    <a href="report.html" class="active">Report</a>
+    <a href="../index.html">Back to Site</a>
+  </div>
+</nav>
+
+<button id="pdf-dl-btn" class="pdf-dl" type="button"><span class="ico">⬇</span>Download PDF</button>
+
+<main id="report-doc">
+
+  <!-- COVER -->
+  <section class="report-page cover bleed-surface" id="sec-cover">
+    <div class="cover-mark">ELITEZ<span>.</span> EOR</div>
+    <div class="cover-sub">SG Micro-Business Payroll Intelligence · Q2 2026</div>
+    <h1 class="cover-title">SG Micro-Business EOR &amp; Payroll Intelligence Report</h1>
+    <p class="cover-tag">Because S$59 + airline miles is the math nobody else does.</p>
+    <div class="cover-stamp">Report quarter · Q2 2026 &nbsp;·&nbsp; Refreshed <span id="cover-date">2026-04-29</span></div>
+    <div class="cover-acc">
+      <span class="cover-acc-chip">IRAS AIS-Listed (parent)</span>
+      <span class="cover-acc-chip">CardUp Partner — 1.75-2× SG miles</span>
+      <span class="cover-acc-chip">Elitez Group · 37yr SG operator</span>
+      <span class="cover-acc-chip">CPF / SDL / WICA / IR8A native</span>
+      <span class="cover-acc-chip">Flat $59 — no per-payslip fees</span>
+    </div>
+  </section>
+
+  <!-- TOC -->
+  <section class="report-page bleed-card" id="sec-toc">
+    <div class="sec-num">Section 02</div>
+    <h2 class="sec-h2" id="contents">Table of Contents</h2>
+    <p class="sec-lede">Ten sections, in order. The market and regulatory frame, the competitive set, the pricing reality, the white space, the design gap, and the deck-grounded recommendations that flow from them.</p>
+    <ul class="toc-list" id="toc-list"></ul>
+  </section>
+
+  <!-- EXEC SUMMARY -->
+  <section class="report-page bleed-surface" id="sec-exec">
+    <div class="sec-num">Section 03</div>
+    <h2 class="sec-h2" id="executive-summary">Executive Summary</h2>
+    <p class="sec-lede">Five anchor findings. Each is grounded in the data files in <code>/data/</code> and re-derived in Sections 4–10.</p>
+    <ol class="exec-list">
+      <li class="exec-bullet">
+        <div class="exec-num"></div>
+        <div class="exec-body"><strong>The SG payroll market is structurally bifurcated.</strong> Global EOR (Deel, Remote, Multiplier, Papaya, G-P) charges <strong>US$400-1,000+/employee/month</strong> — designed for cross-border / mid-market hiring, ~13× too expensive for an SG-local 1-3 employee micro-business. SG payroll software (Talenox, HReasily, Justlogin, Payboy) charges <em>S$5-15/emp/mo</em> but is DIY — the owner still does the work and carries the EOR liability.</div>
+      </li>
+      <li class="exec-bullet">
+        <div class="exec-num"></div>
+        <div class="exec-body"><strong>Why Elitez wins.</strong> Flat <strong>S$59/employee/month</strong> with full EOR liability transfer. <em>CardUp credit-card-funded payroll → 1.75-2× SG miles</em> per S$ paid — convert your existing payroll spend into a yearly family trip. SG-only depth: <em>CPF, SDL, WICA, IR8A, foreign worker levies</em> all native, not bolted on. Self-serve onboarding designed for 1-3 employee businesses — sign up and run first payroll in 60 minutes.</div>
+      </li>
+      <li class="exec-bullet">
+        <div class="exec-num"></div>
+        <div class="exec-body"><strong>Top three white-space niches.</strong> (1) <em>Hawker / F&amp;B micro-tier</em> — 12,000+ SG hawker stalls + boutique cafes typically using sole-proprietor payroll, manual or outdated. (2) <em>TCM / allied healthcare clinic</em> — 2-5 employee clinics with CPF + WICA needs and zero EOR coverage. (3) <em>Boutique retail e-commerce</em> — 2-5 part-timer shops where founder-spend on inventory + payroll could fund family trips via miles.</div>
+      </li>
+      <li class="exec-bullet">
+        <div class="exec-num"></div>
+        <div class="exec-body"><strong>Design audit reality.</strong> Industry average <strong>7.2</strong> across seven players on a 5-dimension rubric; Elitez scores <strong>7.4</strong>, third behind <em>Deel (8.6)</em> and <em>Multiplier (8.0)</em>. Gap to leader is 1.2 points — almost entirely on visual brand distinctiveness depth and audited enterprise proof. The fix is to <em>surface what already exists</em>: CardUp-miles calculator on hero, named SG SME case studies, audited customer count.</div>
+      </li>
+      <li class="exec-bullet">
+        <div class="exec-num"></div>
+        <div class="exec-body"><strong>Five recommended actions.</strong> Surface CardUp-miles savings calculator above the fold. Ship 3 named SG micro-business case studies (hawker, cafe, TCM clinic). Publish audited "Why $59 works" technical brief. Build hawker / F&amp;B vertical landing page. Live miles-credited counter on hero pulling from public ledger.</div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- MARKET & REGULATORY -->
+  <section class="report-page bleed-card" id="sec-market">
+    <div class="sec-num">Section 04</div>
+    <h2 class="sec-h2" id="market-regulatory">Market &amp; Regulatory Landscape</h2>
+    <p class="sec-lede">The Singapore EOR / payroll market sized, framed, and gated by the regulatory pipeline that runs from CPF / SDL / WICA / IR8A to IRAS AIS reporting.</p>
+
+    <div class="kpi-strip" id="market-kpis"></div>
+    <div class="l-grid" id="market-anchors"></div>
+
+    <h3 style="font-size: 1.04rem; color: var(--text); font-weight: 800; margin: 22px 0 10px;">Key trends shaping the buyer side</h3>
+    <ul class="l-list" id="market-trends"></ul>
+
+    <h3 style="font-size: 1.04rem; color: var(--text); font-weight: 800; margin: 22px 0 10px;">Regulatory notes (2026)</h3>
+    <ul class="l-list" id="market-regs"></ul>
+
+    <h3 style="font-size: 1.04rem; color: var(--text); font-weight: 800; margin: 22px 0 10px;">SG micro-business cultural context</h3>
+    <p id="market-sea" style="font-size: 0.9rem; color: var(--secondary); line-height: 1.7;"></p>
+  </section>
+
+  <!-- COMPETITIVE LANDSCAPE -->
+  <section class="report-page bleed-surface" id="sec-comp">
+    <div class="sec-num">Section 05</div>
+    <h2 class="sec-h2" id="competitive-landscape">Competitive Landscape</h2>
+    <p class="sec-lede">High-threat rivals — drawn from <code>competitors.json</code>, ranked by SG-coverage depth + price-band proximity to the micro-tier. Pricing transparency, design and feature scores, and the structural strengths and weaknesses each one brings.</p>
+    <div class="comp-list" id="comp-list"></div>
+  </section>
+
+  <!-- PRICING TIERS -->
+  <section class="report-page bleed-card" id="sec-pricing">
+    <div class="sec-num">Section 06</div>
+    <h2 class="sec-h2" id="pricing-tiers">Pricing Tiers — 2026 SG Reality</h2>
+    <p class="sec-lede">What SG micro-businesses are actually quoted, by tier, by path. Global EOR pricing is published in USD; SG payroll software is published in SGD; the gap between them is where Elitez sits.</p>
+
+    <div class="pricing-wrap">
+      <table class="pricing">
+        <thead>
+          <tr>
+            <th style="min-width: 180px;">Path / Service</th>
+            <th>Global EOR</th>
+            <th>SG Payroll Software (DIY)</th>
+            <th>SG Payroll Outsourcing</th>
+            <th class="elitez-col">Elitez EOR</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Per-employee monthly fee</th>
+            <td><span class="price">US$400 - $1,000+</span><span class="price-note">Deel, Remote, Multiplier, Papaya, G-P · ~S$540 - $1,350 in SGD</span></td>
+            <td><span class="price">S$5 - $15/emp/mo</span><span class="price-note">Talenox, HReasily, Justlogin, Payboy · DIY, no liability transfer</span></td>
+            <td><span class="price">S$5-20/payslip + S$50-100/mo base</span><span class="price-note">Accounting firms, payroll bureaus · variable, hands-off but no benefits</span></td>
+            <td class="elitez-col"><span class="price">S$59/emp/mo flat</span><span class="price-note">Full EOR liability transfer + CardUp miles + SG-native compliance</span></td>
+          </tr>
+          <tr>
+            <th>EOR liability transfer</th>
+            <td><span class="price">Yes (full)</span><span class="price-note">100%-owned entities (Remote) or partner-network (Deel)</span></td>
+            <td><span class="price">No</span><span class="price-note">DIY — owner remains employer-of-record</span></td>
+            <td><span class="price">Partial</span><span class="price-note">Outsourced execution, owner still legal employer</span></td>
+            <td class="elitez-col"><span class="price">Yes (full)</span><span class="price-note">SG entity-of-record · MOM-compliant contracts · Tripartite-aligned</span></td>
+          </tr>
+          <tr>
+            <th>CardUp miles on payroll</th>
+            <td><span class="price">No</span><span class="price-note">USD billing, FX spread, no SG-card rewards integration</span></td>
+            <td><span class="price">No</span><span class="price-note">DIY — pay CPF + salaries from your own bank</span></td>
+            <td><span class="price">No</span><span class="price-note">Bureau invoices direct from your account</span></td>
+            <td class="elitez-col"><span class="price">1.75 - 2× SG miles per S$</span><span class="price-note">Pay payroll on credit card → CardUp clears CPF + salaries → miles to your card</span></td>
+          </tr>
+          <tr>
+            <th>Onboarding speed</th>
+            <td><span class="price">24-72 hrs</span><span class="price-note">Polished SaaS flows but designed for 5+ employees</span></td>
+            <td><span class="price">~1 day</span><span class="price-note">Self-serve sign-up, but DIY config of CPF / SDL / IR8A</span></td>
+            <td><span class="price">3-7 days</span><span class="price-note">Manual onboarding via accountant — quote-to-contract loop</span></td>
+            <td class="elitez-col"><span class="price">60 mins</span><span class="price-note">Self-serve micro-business flow — first payslip in under 1 hour</span></td>
+          </tr>
+          <tr>
+            <th>SG compliance built-in</th>
+            <td><span class="price">Yes (compliance content); pricing not micro-tier</span></td>
+            <td><span class="price">Yes (deep) — but DIY config burden</span></td>
+            <td><span class="price">Yes — fully delegated to bureau</span></td>
+            <td class="elitez-col"><span class="price">Yes — fully managed</span><span class="price-note">CPF, SDL, WICA, IR8A, FWL all native and auto-filed</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footnote">
+      <strong>Footnote on positioning.</strong> Elitez's <em>S$59/emp/mo</em> sits between SG payroll software (DIY $5-15) and global EOR ($540-1,350). The differentiation is not pure price — it's <em>full EOR liability transfer + airline miles + 60-min onboarding for 1-3 employee businesses</em>. PSG-grant-eligible IMDA-listed payroll vendors can hit S$2.50-5/emp/mo effective price, but the customer keeps the EOR liability and gets no miles. <em>Industry estimates above are derived from each operator's published pricing page (April 2026), CPF / IRAS / MOM statutory rates, and aggregate SG payroll outsourcing comparison content.</em>
+    </div>
+  </section>
+
+  <!-- WHITESPACE -->
+  <section class="report-page bleed-surface" id="sec-whitespace">
+    <div class="sec-num">Section 07</div>
+    <h2 class="sec-h2" id="whitespace-attack">White Space &amp; Attack Plans</h2>
+    <p class="sec-lede">Strategy canvas across 8 customer-valued dimensions. Elitez's shape must break away on flat-fee transparency, CardUp miles, SG-native depth, and 60-min onboarding — dimensions global EOR and SG payroll software cannot structurally follow.</p>
+
+    <div class="canvas-wrap">
+      <canvas id="strategy-canvas" width="720" height="420"></canvas>
+      <div class="canvas-legend" id="canvas-legend"></div>
+    </div>
+
+    <h3 style="font-size: 1.04rem; color: var(--text); font-weight: 800; margin: 24px 0 14px;">Top 3 attack niches</h3>
+    <div class="attack-grid" id="attack-grid"></div>
+  </section>
+
+  <!-- DESIGN AUDIT -->
+  <section class="report-page bleed-card" id="sec-design">
+    <div class="sec-num">Section 08</div>
+    <h2 class="sec-h2" id="design-audit">Website Design Audit</h2>
+    <p class="sec-lede">Seven SG / global EOR + payroll category sites scored on the same 5-dimension rubric — typography &amp; hierarchy, layout &amp; IA, visual brand distinctiveness, content credibility, mobile polish — including Elitez. Honestly.</p>
+
+    <div class="kpi-strip" id="da-kpis"></div>
+    <div class="da-grid" id="da-grid"></div>
+
+    <div class="syn-card" id="da-syn"></div>
+  </section>
+
+  <!-- RECOMMENDATIONS -->
+  <section class="report-page bleed-surface" id="sec-recs">
+    <div class="sec-num">Section 09</div>
+    <h2 class="sec-h2" id="recommendations">Recommendations</h2>
+    <p class="sec-lede">Five deck-grounded action items. Each one connects an Elitez proof point already in the public site or admin data files to the place a buyer is most likely to decide.</p>
+
+    <ol class="rec-list">
+      <li class="rec-item">
+        <div class="rec-num"></div>
+        <div>
+          <div class="rec-title">Surface the CardUp-miles savings calculator on the homepage hero</div>
+          <div class="rec-body">Move the <em>"S$X payroll → Y miles → return-flight value"</em> calculator into the hero zone of <code>index.html</code> and into a persistent strip at the top of every pricing page. Today this lives 1-2 clicks deep; the buyer is not seeing it where they decide. Default the calculator to a 2-employee S$3,000 hawker payroll so the headline number ("≈ 6,000 miles/yr — 1 SG-KL family flight") lands in the first 5 seconds.</div>
+        </div>
+      </li>
+      <li class="rec-item">
+        <div class="rec-num"></div>
+        <div>
+          <div class="rec-title">Ship 3 named SG SME case studies (hawker / cafe / TCM clinic)</div>
+          <div class="rec-body">Add a <em>"Real SG Micro-Businesses Using Elitez"</em> section with three named operators: a hawker stall (sole-prop with 1 helper), a boutique cafe (founder + 2 baristas), a TCM clinic (founder + 1 receptionist). Each card with verifiable metrics — hours saved per month, miles earned, CPF / WICA filings handled. This closes the audited-proof gap that puts Elitez behind Deel / Multiplier on the design audit.</div>
+        </div>
+      </li>
+      <li class="rec-item">
+        <div class="rec-num"></div>
+        <div>
+          <div class="rec-title">Persona-led landing pages for the top hawker / cafe / TCM / retail verticals</div>
+          <div class="rec-body">Four distinct entry points: <strong>Hawker / F&amp;B micro</strong>, <strong>Boutique cafe</strong>, <strong>TCM / allied healthcare clinic</strong>, <strong>Boutique retail / e-comm</strong>. Each with its own hero copy, its own CTA, its own proof stack — the hawker page leads with sole-prop CPF + casual labour handling; the cafe page leads with part-timer + tipping handling; the TCM page leads with WICA + practitioner licensing. Incumbents homogenise the funnel; Elitez differentiates by vertical.</div>
+        </div>
+      </li>
+      <li class="rec-item">
+        <div class="rec-num"></div>
+        <div>
+          <div class="rec-title">Live miles-credited counter widget on the hero</div>
+          <div class="rec-body">A counter that reads <em>"X million SG miles credited to micro-businesses YTD — and counting"</em> on the homepage hero, updating live as customer payroll runs. Pulls from the same data source the audited charity ledger uses, so the counter and the public report cannot drift out of sync. This is the single most defensible visual artefact Elitez can ship — no SG payroll competitor has a comparable signal.</div>
+        </div>
+      </li>
+      <li class="rec-item">
+        <div class="rec-num"></div>
+        <div>
+          <div class="rec-title">Audited "Why $59 works for 1-3 employee businesses" technical brief</div>
+          <div class="rec-body">PDF download with cost-stack breakdown: salary + 17% CPF + 0.25% SDL + WICA premium + Elitez S$59 fee + miles offset = a defensible margin model that explains why the price cannot be undercut by SG payroll software DIY. Co-author with a named SG SME accountant for credibility. Distribute to PSG-eligibility consultants, AIC SME outreach, hawker-association partners.</div>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- METHODOLOGY -->
+  <section class="report-page bleed-card" id="sec-method">
+    <div class="sec-num">Section 10</div>
+    <h2 class="sec-h2" id="methodology">Methodology &amp; Sources</h2>
+    <p class="sec-lede">Where every number in this report came from, and the dates each dataset was last refreshed.</p>
+
+    <div class="meth-block">
+      <div class="lbl">Research date</div>
+      <p>All three data files refreshed <strong id="meth-date">2026-04-29</strong>. Report compiled <strong>2026-04-29</strong> for Q2 2026 distribution.</p>
+    </div>
+
+    <div class="meth-block">
+      <div class="lbl">Elitez positioning</div>
+      <p>Pricing (S$59 micro-tier), CardUp-miles mechanism, parent-group context (Elitez Group, 37yr SG operator, 350 staff, 4 cities) and SG-native compliance stack (CPF / SDL / WICA / IR8A / FWL) are taken <em>verbatim</em> from <code>../index.html</code>, <code>../pricing.html</code>, <code>../persona.html</code> and <code>../how.html</code>.</p>
+    </div>
+
+    <div class="meth-block">
+      <div class="lbl">Competitor intelligence (<code>competitors.json</code> · <code>whitespace-competitors.json</code>)</div>
+      <p>Triangulated from public competitor pricing pages (Deel, Remote, Multiplier, Papaya, G-P, Oyster, Talenox, HReasily, Justlogin, Payboy, Swingvy, Carbonate, PayrollServe and 22 others), CPF Board / IRAS / MOM statutory rates, and recent third-party comparison articles (G2, Capterra, SMB Compass — April 2026). Where pricing is hidden behind a sales gate, the figure is flagged ESTIMATED and sourced from the most recent publicly cited number.</p>
+    </div>
+
+    <div class="meth-block">
+      <div class="lbl">White-space framework (<code>whitespace-framework.json</code>)</div>
+      <p>The 15-segment × 15-need matrix and the 8-dimension strategy canvas are derived from the SG micro-business ICP list cross-referenced against the customer-valued dimensions Elitez claims as differentiators (flat-fee transparency, CardUp miles, SG-native depth, 60-min onboarding, full EOR liability transfer, vertical fit, support depth, and SG-card rewards integration).</p>
+    </div>
+
+    <div class="meth-block">
+      <div class="lbl">Design audit (<code>design-audit.json</code>)</div>
+      <p>Live site review of seven SG / global EOR + payroll category URLs against a 5-dimension rubric scored 1–10. Subjects: Talenox, HReasily, Justlogin, Payboy, Deel, Multiplier, plus Elitez EOR (self) — assessed honestly. Industry average 7.2, Elitez 7.4. Each subject's URL, screenshot capture set, and dimension notes are stored in the JSON and mirrored on <a href="design-audit.html">Design Audit</a>.</p>
+    </div>
+
+    <div class="meth-block">
+      <div class="lbl">Companion artefacts</div>
+      <ul>
+        <li><a href="index.html">Competitor Overview</a> — the original 35-competitor admin landing page</li>
+        <li><a href="competitor-analytics.html">Competitor Analytics</a> — top-5 threat radar, strategic insights, full deep-dive cards, sourced pricing evidence</li>
+        <li><a href="whitespace.html">White Space Atlas</a> — interactive segment × need heatmap and attack niche cards</li>
+        <li><a href="insights.html">Market &amp; Pricing Insights</a> — pricing strategies, persona profiles, willingness-to-pay analysis</li>
+        <li><a href="design-audit.html">Design Audit</a> — full subject cards, dimension-level notes, and to-reach-10 prescriptions</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// ── DOM helpers ──
+function clearNode(el) { while (el.firstChild) el.removeChild(el.firstChild); }
+function makeEl(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text != null) e.textContent = String(text);
+  return e;
+}
+
+// ── Constants for whitespace canvas ──
+const CANVAS_DIMS = [
+  'Pricing transparency',
+  'Flat-fee predictability',
+  'Onboarding speed (mins)',
+  'SG-native compliance depth',
+  'CardUp miles / rewards',
+  'Full EOR liability transfer',
+  'Vertical fit (hawker/F&B)',
+  'Self-serve micro-tier UX'
+];
+const CANVAS_LINES = [
+  { name: 'Elitez EOR (us)',                    us: true,  color: '#F57A20', scores: [5, 5, 5, 5, 5, 5, 5, 5] },
+  { name: 'Deel',                                          color: '#1E3A5F', scores: [4, 3, 4, 3, 0, 5, 1, 4] },
+  { name: 'Remote',                                        color: '#2A5080', scores: [4, 3, 3, 3, 0, 5, 1, 3] },
+  { name: 'Multiplier',                                    color: '#5A3878', scores: [4, 4, 4, 4, 0, 5, 1, 3] },
+  { name: 'Talenox',                                       color: '#2E7D5C', scores: [5, 4, 4, 5, 0, 1, 2, 4] },
+  { name: 'HReasily',                                      color: '#7A6B30', scores: [4, 3, 3, 4, 0, 1, 2, 3] },
+  { name: 'Justlogin',                                     color: '#B92D2D', scores: [4, 3, 3, 5, 0, 1, 2, 3] },
+  { name: 'Payboy (PSG)',                                  color: '#3F6E37', scores: [5, 4, 3, 5, 0, 1, 3, 3] },
+  { name: 'SG payroll bureaus (typical)',                  color: '#6B6B6B', scores: [2, 2, 1, 5, 0, 2, 4, 1] }
+];
+
+const NICHES = [
+  {
+    rank: '01',
+    name: 'Hawker / F&B Micro-Tier — "Pay Your Helper, Earn Your Family Flight"',
+    icp: 'SG hawker stall owners and small cafe / restaurant operators (sole proprietorship + partnerships, 1-5 employees including casuals). Currently doing payroll manually or with outdated software; CPF filing is a deadline panic; no idea about CardUp miles.',
+    tam: '~12,000 hawker stalls × ~3,400 small F&B operators × ~30% in 1-5 employee tier = ~4,600 addressable micro-business owners per year willing to outsource payroll for a flat S$59 + miles offer.',
+    why_underserved: 'Global EOR is 13× too expensive. SG payroll software is DIY — the hawker still has to file CPF / SDL / IR8A. SG payroll bureaus charge per-payslip fees that scale unpredictably. None integrate airline miles. None speak the operator\'s language ("pay your kitchen helper, earn back to KL").',
+    why_we_win: '(1) Flat S$59/emp/mo is below the per-payslip floor of any SG bureau for 1-3 employees. (2) CardUp-miles narrative converts a cost into a benefit — payroll becomes a yearly family trip. (3) Sole-prop + partnership compliance native; hawker-specific casual-labour handling. (4) 60-min self-serve onboarding fits an operator who closes between lunch and dinner service.',
+    gtm: {
+      pricing: 'S$59/emp/mo flat, all-in. CardUp partnership clears all CPF + salary payments at 1.75-2× miles. No hidden fees; no per-payslip charges.',
+      channel: 'Hawker association partnerships (Federation of Merchants Associations Singapore), AIC SME programmes, SG SME federation, Facebook hawker / cafe owner groups, ChannelNewsAsia / Mothership "young hawker" PR cycle.',
+      pitch: '"Two helpers in your stall. S$3,000 monthly payroll. ≈ 6,000 SG miles a year — that\'s a return flight to KL. We file your CPF for S$59/employee/month."',
+      content: '"Hawker Payroll Math 101" — 90-second WhatsApp-shareable video + email-gated PDF cost-stack breakdown.'
+    }
+  },
+  {
+    rank: '02',
+    name: 'TCM / Allied Healthcare Clinic Pathway',
+    icp: 'TCM physicians, physiotherapy clinics, GP practices and allied-health solo / partner operations (2-5 employees). Compliance-sensitive — WICA mandatory for clinical staff; CPF + IR8A non-negotiable; founder time is too expensive to spend on payroll filing.',
+    tam: '~3,200 TCM clinics + ~1,800 physio / allied-health practices in SG × ~70% in 2-5 employee tier = ~3,500 addressable clinic operators willing to outsource for compliance peace-of-mind and miles offset.',
+    why_underserved: 'Global EOR is over-engineered. SG payroll software requires the founder-physician to learn HRIS config — a wrong fit for a 50-hr-week clinical practitioner. Bureau pricing is opaque per-payslip. Nobody combines clinical-staff WICA handling + flat fee + miles in one product.',
+    why_we_win: '(1) WICA insurance handling native — the highest-stakes regulatory item in clinical practice. (2) Flat S$59/emp/mo with no surprises means a clinic finance lead can sign off in one meeting. (3) IRAS AIS-listed (parent group) means IR8A filings are auto-included. (4) CardUp miles offset means the practice owner can fund a CME / conference flight from existing payroll spend.',
+    gtm: {
+      pricing: 'S$59/emp/mo flat. WICA insurance brokered at preferred rates. CardUp 1.75-2× miles on payroll. PSG-grant-eligibility statement available for compatible IMDA-listed configurations.',
+      channel: 'TCM Practitioner Board (TCMPB) communications, SG TCM federation, SG Medical Association, Allied Health Professions Council, clinic-management consultants, AIC eldercare network referrals.',
+      pitch: '"Your CPF, SDL, WICA, IR8A — handled. Your payroll spend earns SG miles. S$59/employee/month, flat. No per-payslip surprises."',
+      content: '"WICA &amp; CPF Compliance Quick-Reference Card for SG Clinics" — printed + PDF, with named clinic-accountant contributor.'
+    }
+  },
+  {
+    rank: '03',
+    name: 'Boutique Retail / E-commerce — "Your Part-Timers Earn You Miles"',
+    icp: 'Boutique shop owners and 2-5 employee e-commerce operations with part-timers and casual / project staff. Currently using ad-hoc payroll, founder-managed CPF, no awareness of EOR liability transfer.',
+    tam: '~6,800 boutique retail operators + ~2,400 micro e-commerce sellers × ~50% in 2-5 employee tier = ~4,600 addressable operators per year willing to consolidate payroll + benefits + EOR liability transfer in a flat S$59 product.',
+    why_underserved: 'Mid-market HR SaaS (Talenox, Justlogin, Payboy) is over-featured for a 2-employee retail shop and the owner still does the work. Global EOR is irrelevant. Bureau pricing makes part-timer onboarding/offboarding expensive. Nobody has a "your part-timer\'s salary on a credit card → miles" story.',
+    why_we_win: '(1) Casual / part-timer onboarding flow native — 60 min to first payslip including PR/SP/citizen flag and CPF rate. (2) CardUp miles on every part-timer payroll dollar — boutique owner can fund pop-up retail trips or buying-trip flights. (3) Group health benefits priced for 2-5 employees without enterprise minimums. (4) EOR liability transfer means the boutique owner is no longer the legal employer-of-record for casual labour edge cases.',
+    gtm: {
+      pricing: 'S$59/emp/mo flat for full-timers. S$29/emp/mo for verified part-timers (sub-30hr/wk). CardUp 1.75-2× miles. Group health priced from 2 employees, no enterprise minimum.',
+      channel: 'Boutique retail Facebook / Telegram groups, e-commerce SG seller communities, Shopify / Etsy SG creator networks, IMDA SME outreach, SME Centre @ SBF.',
+      pitch: '"Your two part-timers. S$1,400 monthly payroll. ≈ 2,800 SG miles a year on your credit card. We handle their CPF + WICA. S$59 each, flat."',
+      content: '"Boutique Owner Payroll Decision Matrix" — interactive PDF / web tool comparing DIY vs Talenox vs Elitez over 2 years.'
+    }
+  }
+];
+
+// ── Renderers ──
+function renderTOC() {
+  const list = document.getElementById('toc-list');
+  clearNode(list);
+  const headings = document.querySelectorAll('main#report-doc h2.sec-h2[id]');
+  headings.forEach((h, i) => {
+    const li = makeEl('li', 'toc-item');
+    li.appendChild(makeEl('div', 'toc-num'));
+    const linkWrap = makeEl('div');
+    const a = makeEl('a', 'toc-link', h.textContent);
+    a.href = '#' + h.id;
+    linkWrap.appendChild(a);
+    li.appendChild(linkWrap);
+    li.appendChild(makeEl('div', 'toc-page', '§' + String(i + 2).padStart(2, '0')));
+    list.appendChild(li);
+  });
+}
+
+function renderMarket(meta, landscape) {
+  // KPIs from market_landscape
+  const apac = (landscape && landscape.apac_market) || {};
+  const sgRange = (landscape && landscape.singapore_eor_pricing_range) || {};
+  const cpf = (landscape && landscape.regulatory_environment && landscape.regulatory_environment.cpf) || {};
+  const market = (landscape && landscape.global_eor_market) || {};
+
+  const kpis = document.getElementById('market-kpis');
+  clearNode(kpis);
+  const kArr = [
+    { v: market.size_2025_usd_billions ? 'US$' + market.size_2025_usd_billions + 'B' : '—', l: 'Global EOR market 2025', cls: 'gold' },
+    { v: apac.global_share_percent ? apac.global_share_percent + '%' : '—', l: 'APAC global share', cls: 'amber' },
+    { v: apac.cagr_percent ? apac.cagr_percent + '%' : '—', l: 'APAC CAGR', cls: 'green' },
+    { v: sgRange.low_usd_per_employee_month ? 'US$' + sgRange.low_usd_per_employee_month + '-' + sgRange.high_usd_per_employee_month : '—', l: 'SG EOR price band', cls: 'red' },
+    { v: 'S$59', l: 'Elitez micro-tier', cls: 'gold' }
+  ];
+  kArr.forEach(k => {
+    const card = makeEl('div', 'kpi on-card');
+    card.appendChild(makeEl('div', 'kpi-val ' + k.cls, k.v));
+    card.appendChild(makeEl('div', 'kpi-lbl', k.l));
+    kpis.appendChild(card);
+  });
+
+  const anchors = document.getElementById('market-anchors');
+  clearNode(anchors);
+  const aArr = [
+    { lbl: 'Global EOR market (2035)', val: market.projected_2035_usd_billions ? 'US$' + market.projected_2035_usd_billions + 'B' : '—' },
+    { lbl: 'CAGR', val: market.cagr_percent ? market.cagr_percent + '% (' + (market.alternative_cagr_percent || '—') + '% alt.)' : '—' },
+    { lbl: 'Key APAC markets', val: (apac.key_hiring_markets || []).join(', ') || '—' }
+  ];
+  aArr.forEach(a => {
+    const card = makeEl('div', 'l-card on-card');
+    card.appendChild(makeEl('div', 'lbl', a.lbl));
+    card.appendChild(makeEl('div', 'val', a.val));
+    anchors.appendChild(card);
+  });
+
+  const trends = document.getElementById('market-trends');
+  clearNode(trends);
+  const trendList = [
+    'Global EOR market US$5.6B (2025) → US$10.46B (2035) at 6.8% CAGR; APAC at 17.1% CAGR is leading.',
+    'SG payroll OW ceiling rises from S$7,400 to S$8,000 in 2026 — re-baselines all per-employee pricing.',
+    'Platform Workers Act 2025 extends CPF / WICA to gig / platform workers — broadens micro-business compliance scope.',
+    '6 weeks government-paid shared parental leave (Apr 2025), rising to 10 weeks (Apr 2026) — adds payroll complexity for micro-employers.',
+    '45% of SG SMEs face cash flow constraints — flat-fee predictability is a structural advantage over per-payslip pricing.'
+  ];
+  trendList.forEach(t => trends.appendChild(makeEl('li', null, t)));
+
+  const regs = document.getElementById('market-regs');
+  clearNode(regs);
+  const regList = [
+    'CPF — employer rate 17% (under 55), OW ceiling S$8,000/mo (2026), total under-55 rate 37%.',
+    'CPF — ages 55-60 total rate 34%; ages 60-65 total rate 25% (both up from 2025).',
+    'SDL — 0.25% of total wages, capped at S$11.25/mo per employee, paid by employer.',
+    'WICA — mandatory work-injury compensation insurance; max death compensation S$269,000 (2025).',
+    'IR8A — annual employment income reporting via IRAS AIS (Auto-Inclusion Scheme); deadline 1 March each year.',
+    'Penalty for late CPF payment: 1.5% monthly interest, fines up to S$3,742 or imprisonment.',
+    'PSG — Up to 50% Productivity Solutions Grant for adopting pre-approved HR/payroll software (IMDA-listed vendors).'
+  ];
+  regList.forEach(r => regs.appendChild(makeEl('li', null, r)));
+
+  const seaText = 'SG micro-businesses (1-5 employees, including hawker stalls, boutique cafes, TCM clinics, allied healthcare, retail / e-commerce) form the structural underserved tier of the SG payroll market. ' +
+    '~12,000 hawker stalls + ~3,400 small F&B operators + ~3,200 TCM clinics + ~1,800 physio / allied-health practices + ~6,800 boutique retail + ~2,400 micro e-commerce — collectively a TAM north of 20,000 micro-employers. ' +
+    'Most do payroll manually or on outdated software; sole proprietors and partnerships prefer simplicity over corporate structure; 45% face cash-flow constraints; founders are time-poor. ' +
+    'Outsourcing HR + payroll saves a typical SG SME 25-40% vs an in-house HR exec — but this is rarely surfaced for micro-tier owners. ' +
+    'The hawker-culture cohort is a cultural anchor central to SG identity; visible support for this segment carries goodwill multipliers no amount of paid acquisition can buy.';
+  document.getElementById('market-sea').textContent = seaText;
+}
+
+function renderCompetitors(competitors) {
+  const list = document.getElementById('comp-list');
+  clearNode(list);
+  // Heuristic high-threat: SG payroll software with pricing transparency + APAC EOR.
+  const ranked = competitors.map(c => {
+    const ds = Number(c.website_design_rating || 0);
+    const cat = c.category || '';
+    let threat = 0;
+    if (cat === 'payroll_software') threat = 4;
+    else if (cat === 'regional_sea_eor') threat = 4;
+    else if (cat === 'payroll_outsourcing') threat = 3;
+    else if (cat === 'global_eor') threat = 2;
+    else threat = 1;
+    return { c, threat, ds };
+  });
+  ranked.sort((a, b) => (b.threat - a.threat) || (b.ds - a.ds));
+  const top = ranked.slice(0, 6).map(r => r.c);
+
+  if (!top.length) {
+    list.appendChild(makeEl('div', 'err-msg', 'No competitors found in competitors.json.'));
+    return;
+  }
+
+  top.forEach(c => {
+    const card = makeEl('div', 'comp-card on-card');
+    const head = makeEl('div', 'comp-head');
+    const left = makeEl('div');
+    left.appendChild(makeEl('div', 'comp-name', c.name));
+    if (c.url) {
+      const u = makeEl('a', 'comp-url', c.url.replace(/^https?:\/\//, ''));
+      u.href = c.url; u.target = '_blank'; u.rel = 'noopener noreferrer';
+      left.appendChild(u);
+    }
+    head.appendChild(left);
+    const badges = makeEl('div', 'comp-badges');
+    const cat = c.category || '';
+    const threatLabel = (cat === 'payroll_software' || cat === 'regional_sea_eor') ? 'high' : (cat === 'payroll_outsourcing' ? 'medium' : 'low');
+    const p = c.pricing || {};
+    const hasNum = Object.values(p).some(v => typeof v === 'number');
+    badges.appendChild(makeEl('span', 'badge ' + (hasNum ? 'b-vis-published' : 'b-vis-ESTIMATED'), hasNum ? 'published' : 'estimated'));
+    badges.appendChild(makeEl('span', 'badge b-threat-' + threatLabel, 'Threat: ' + threatLabel));
+    head.appendChild(badges);
+    card.appendChild(head);
+
+    // Price strip
+    const priceStr = (() => {
+      if (typeof p.eor_usd_per_employee_month === 'number') return 'US$' + p.eor_usd_per_employee_month + '/emp/mo (EOR)';
+      if (typeof p.eor_usd_per_employee_month === 'string') return p.eor_usd_per_employee_month + ' EOR';
+      if (p.note) return p.note.slice(0, 110);
+      return '—';
+    })();
+    const mk = makeEl('div', null, priceStr);
+    mk.style.fontSize = '0.84rem';
+    mk.style.color = 'var(--accent2)';
+    mk.style.fontFamily = 'ui-monospace, monospace';
+    mk.style.marginBottom = '8px';
+    card.appendChild(mk);
+
+    // Bars
+    const bars = makeEl('div', 'comp-bars');
+    if (c.website_design_rating) {
+      const row = makeEl('div', 'bar-row');
+      row.appendChild(makeEl('span', 'lbl', 'Design'));
+      const bar = makeEl('div', 'bar');
+      const fill = makeEl('div', 'fill');
+      fill.style.width = (Math.max(0, Math.min(10, Number(c.website_design_rating))) * 10) + '%';
+      bar.appendChild(fill);
+      row.appendChild(bar);
+      row.appendChild(makeEl('span', 'val', c.website_design_rating + '/10'));
+      bars.appendChild(row);
+    }
+    card.appendChild(bars);
+
+    // SW
+    const sw = makeEl('div', 'comp-sw');
+    [['strengths', 'Strengths', c.strengths || []], ['weaknesses', 'Weaknesses', c.weaknesses || []]].forEach(([cls, lbl, items]) => {
+      const col = makeEl('div', 'col ' + cls);
+      col.appendChild(makeEl('h5', null, lbl));
+      const ul = makeEl('ul');
+      items.slice(0, 4).forEach(item => ul.appendChild(makeEl('li', null, item)));
+      col.appendChild(ul);
+      sw.appendChild(col);
+    });
+    card.appendChild(sw);
+    list.appendChild(card);
+  });
+}
+
+function renderStrategyCanvas() {
+  const ctx = document.getElementById('strategy-canvas').getContext('2d');
+  const datasets = CANVAS_LINES.map(l => ({
+    label: l.name, data: l.scores,
+    backgroundColor: l.us ? 'rgba(245,122,32,0.18)' : 'transparent',
+    borderColor: l.color, borderWidth: l.us ? 3 : 1.5,
+    pointRadius: l.us ? 4 : 2.5, pointBackgroundColor: l.color, tension: 0.15
+  }));
+  new Chart(ctx, {
+    type: 'radar',
+    data: { labels: CANVAS_DIMS, datasets },
+    options: {
+      animation: false,
+      scales: { r: {
+        suggestedMin: 0, suggestedMax: 5,
+        ticks: { stepSize: 1, backdropColor: 'rgba(0,0,0,0)', color: '#6B6B6B', font: { size: 10 } },
+        grid: { color: 'rgba(30,58,95,0.08)' },
+        angleLines: { color: 'rgba(30,58,95,0.1)' },
+        pointLabels: { color: '#191919', font: { family: 'Inter, sans-serif', size: 11, weight: 600 } }
+      } },
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: x => x.dataset.label + ': ' + x.raw } } },
+      responsive: true, maintainAspectRatio: false
+    }
+  });
+  const leg = document.getElementById('canvas-legend');
+  clearNode(leg);
+  CANVAS_LINES.forEach(l => {
+    const row = makeEl('div', 'leg');
+    const sw = makeEl('span', 'sw');
+    sw.style.background = l.color;
+    if (l.us) sw.style.boxShadow = '0 0 10px ' + l.color;
+    const n = makeEl('span', null, l.name);
+    if (l.us) n.classList.add('us');
+    row.appendChild(sw);
+    row.appendChild(n);
+    leg.appendChild(row);
+  });
+}
+
+function renderNiches() {
+  const host = document.getElementById('attack-grid');
+  clearNode(host);
+  NICHES.forEach(n => {
+    const c = makeEl('div', 'niche on-card');
+    c.appendChild(makeEl('div', 'niche-rank', 'Niche ' + n.rank));
+    c.appendChild(makeEl('div', 'niche-name', n.name));
+    c.appendChild(makeEl('div', 'niche-icp', n.icp));
+    [['TAM', n.tam], ['Why gap', n.why_underserved], ['Our win', n.why_we_win],
+     ['Pricing', n.gtm.pricing], ['Channel', n.gtm.channel], ['Pitch', n.gtm.pitch], ['Content', n.gtm.content]]
+    .forEach(pair => {
+      const row = makeEl('div', 'niche-row');
+      row.appendChild(makeEl('div', 'k', pair[0]));
+      row.appendChild(makeEl('div', 'v', pair[1]));
+      c.appendChild(row);
+    });
+    host.appendChild(c);
+  });
+}
+
+function renderDesignAudit(audit) {
+  const subjects = audit.subjects || [];
+  const synth = audit.synthesis || {};
+  const self = subjects.find(s => s.is_self) || {};
+  const ranked = subjects.slice().sort((a, b) => b.overall_score - a.overall_score);
+  const leader = ranked.find(s => !s.is_self) || ranked[0] || {};
+  const selfRank = ranked.findIndex(s => s.is_self) + 1;
+  const gap = (leader.overall_score && self.overall_score) ? Math.max(0, leader.overall_score - self.overall_score).toFixed(1) : '—';
+
+  const kpis = document.getElementById('da-kpis');
+  clearNode(kpis);
+  const kArr = [
+    { v: (synth.industry_average != null ? synth.industry_average.toFixed(1) : '—'), l: 'Industry Average', cls: 'gold' },
+    { v: (self.overall_score != null ? self.overall_score.toFixed(1) : '—'), l: 'Elitez Score', cls: 'amber' },
+    { v: selfRank ? String(selfRank) + ' of ' + subjects.length : '—', l: 'Elitez Rank', cls: '' },
+    { v: gap, l: 'Gap to Leader', cls: 'red' }
+  ];
+  kArr.forEach(k => {
+    const card = makeEl('div', 'kpi');
+    card.appendChild(makeEl('div', 'kpi-val ' + k.cls, k.v));
+    card.appendChild(makeEl('div', 'kpi-lbl', k.l));
+    kpis.appendChild(card);
+  });
+
+  const grid = document.getElementById('da-grid');
+  clearNode(grid);
+  const orderedSubjects = subjects.slice().sort((a, b) => {
+    if (a.is_self) return -1;
+    if (b.is_self) return 1;
+    return b.overall_score - a.overall_score;
+  });
+  orderedSubjects.forEach(s => {
+    const card = makeEl('div', 'da-card' + (s.is_self ? ' self' : ''));
+    const head = makeEl('div', 'da-head');
+    const nameWrap = makeEl('div');
+    const nm = makeEl('span', 'da-name', s.name);
+    if (s.is_self) nm.appendChild(makeEl('span', 'self-tag', 'Self'));
+    nameWrap.appendChild(nm);
+    head.appendChild(nameWrap);
+    const ov = makeEl('div', 'da-overall', s.overall_score != null ? s.overall_score.toFixed(1) : '—');
+    ov.appendChild(makeEl('span', 'max', '/10'));
+    head.appendChild(ov);
+    card.appendChild(head);
+
+    const bars = makeEl('div', 'da-bars');
+    (audit.rubric || []).forEach(r => {
+      const dim = (s.scores || {})[r.id];
+      if (!dim) return;
+      const row = makeEl('div', 'da-bar-row');
+      row.appendChild(makeEl('span', 'lbl', r.label));
+      const bar = makeEl('div', 'da-bar');
+      const fill = makeEl('div', 'fill');
+      fill.style.width = (Math.max(0, Math.min(10, dim.score)) * 10) + '%';
+      bar.appendChild(fill);
+      row.appendChild(bar);
+      row.appendChild(makeEl('span', 'val', String(dim.score)));
+      bars.appendChild(row);
+    });
+    card.appendChild(bars);
+    if (s.verdict) card.appendChild(makeEl('div', 'da-verdict', s.verdict));
+    grid.appendChild(card);
+  });
+
+  const syn = document.getElementById('da-syn');
+  clearNode(syn);
+  syn.appendChild(makeEl('h3', null, 'Synthesis — easy wins and 10× aspirations'));
+  if (synth.elitez_eor_position || synth.passage_position) {
+    const pos = makeEl('p', null, synth.elitez_eor_position || synth.passage_position);
+    pos.style.fontSize = '0.88rem';
+    pos.style.color = 'var(--secondary)';
+    pos.style.lineHeight = '1.65';
+    pos.style.marginBottom = '14px';
+    syn.appendChild(pos);
+  }
+  const blocks = [
+    { lbl: 'Easy wins for Elitez', items: synth.easy_wins_for_elitez || synth.easy_wins_for_passage || [] },
+    { lbl: '10× aspirations', items: synth.ten_x_aspirations || [] }
+  ];
+  blocks.forEach(b => {
+    if (!b.items.length) return;
+    const block = makeEl('div', 'syn-block');
+    block.appendChild(makeEl('div', 'lbl', b.lbl));
+    const ul = makeEl('ul');
+    b.items.forEach(it => ul.appendChild(makeEl('li', null, it)));
+    block.appendChild(ul);
+    syn.appendChild(block);
+  });
+}
+
+// ── Data loading ──
+async function loadAll() {
+  try {
+    const [compRes, daRes] = await Promise.all([
+      fetch('../data/competitors.json'),
+      fetch('../data/design-audit.json')
+    ]);
+    if (!compRes.ok) throw new Error('competitors.json HTTP ' + compRes.status);
+    if (!daRes.ok) throw new Error('design-audit.json HTTP ' + daRes.status);
+
+    const competitors = await compRes.json();
+    const designAudit = await daRes.json();
+
+    const stamp = (competitors.metadata && competitors.metadata.last_updated) || designAudit.research_date || '2026-04-29';
+    document.getElementById('cover-date').textContent = stamp;
+    document.getElementById('meth-date').textContent = stamp;
+
+    renderTOC();
+    renderMarket(competitors.metadata || {}, competitors.market_landscape || {});
+    renderCompetitors(competitors.competitors || []);
+    renderStrategyCanvas();
+    renderNiches();
+    renderDesignAudit(designAudit);
+  } catch (e) {
+    const main = document.getElementById('report-doc');
+    const err = makeEl('div', 'err-msg', 'Data load failed: ' + e.message + ' — confirm /data/*.json files exist.');
+    err.style.margin = '24px';
+    main.insertBefore(err, main.firstChild);
+  }
+}
+
+// ── PDF download (per-section) ──
+function effectiveSectionHmm(sec) {
+  const PX_PER_MM = 96 / 25.4;
+  const secRect = sec.getBoundingClientRect();
+  let maxBottom = secRect.top;
+  sec.querySelectorAll('*').forEach(el => {
+    const hasText = (el.textContent || '').trim().length > 0;
+    const tag = el.tagName;
+    const isVisual = tag === 'IMG' || tag === 'CANVAS' || tag === 'SVG' || tag === 'TABLE';
+    if (!hasText && !isVisual) return;
+    const r = el.getBoundingClientRect();
+    if (r.bottom > maxBottom) maxBottom = r.bottom;
+  });
+  const contentHmm = (maxBottom - secRect.top) / PX_PER_MM + 8;
+  return Math.min(contentHmm, sec.offsetHeight / PX_PER_MM);
+}
+
+function sliceIsEmpty(sliceCanvas, bgHex) {
+  const ctx = sliceCanvas.getContext('2d');
+  let data;
+  try { data = ctx.getImageData(0, 0, sliceCanvas.width, sliceCanvas.height).data; }
+  catch (e) { return false; }
+  const r0 = parseInt(bgHex.slice(1, 3), 16);
+  const g0 = parseInt(bgHex.slice(3, 5), 16);
+  const b0 = parseInt(bgHex.slice(5, 7), 16);
+  let nonBg = 0, sampled = 0;
+  for (let i = 0; i < data.length; i += 400) {
+    sampled++;
+    if (Math.abs(data[i] - r0) > 8 || Math.abs(data[i + 1] - g0) > 8 || Math.abs(data[i + 2] - b0) > 8) nonBg++;
+  }
+  return sampled > 0 && (nonBg / sampled) < 0.001;
+}
+
+async function downloadPdf() {
+  const btn = document.getElementById('pdf-dl-btn');
+  if (!btn) return;
+  if (typeof window.html2canvas !== 'function' || typeof window.jspdf === 'undefined') {
+    alert('PDF libraries failed to load. Check network / CSP and refresh.');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Rendering…';
+  document.body.classList.add('pdf-mode');
+
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  await (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve());
+
+  const PX_PER_MM = 96 / 25.4;
+  const PAGE_W_MM = 210;
+  const PAGE_H_MM = 297;
+  const SCALE = 2;
+
+  try {
+    const sections = Array.from(document.querySelectorAll('main#report-doc > section.report-page'));
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
+    let pageEmitted = false;
+
+    for (let i = 0; i < sections.length; i++) {
+      const sec = sections[i];
+      const bg = sec.classList.contains('bleed-card') ? '#ffffff' : '#fafafa';
+
+      const fullCanvas = await window.html2canvas(sec, {
+        scale: SCALE, backgroundColor: bg, useCORS: true, logging: false,
+        width: sec.offsetWidth, height: sec.offsetHeight
+      });
+
+      const effHmm = effectiveSectionHmm(sec);
+      const effHpx = Math.ceil(effHmm * PX_PER_MM * SCALE);
+      let canvas;
+      if (effHpx >= fullCanvas.height) {
+        canvas = fullCanvas;
+      } else {
+        canvas = document.createElement('canvas');
+        canvas.width = fullCanvas.width;
+        canvas.height = effHpx;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(fullCanvas, 0, 0);
+      }
+
+      const sectionHmm = (canvas.height / SCALE) / PX_PER_MM;
+      if (sectionHmm <= PAGE_H_MM + 0.5) {
+        if (pageEmitted) pdf.addPage();
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.62);
+        pdf.addImage(dataUrl, 'JPEG', 0, 0, PAGE_W_MM, sectionHmm, undefined, 'FAST');
+        pageEmitted = true;
+      } else {
+        const sliceHpx = Math.floor(PAGE_H_MM * PX_PER_MM * SCALE);
+        let yPx = 0;
+        while (yPx < canvas.height) {
+          const thisSliceHpx = Math.min(sliceHpx, canvas.height - yPx);
+          const slice = document.createElement('canvas');
+          slice.width = canvas.width;
+          slice.height = thisSliceHpx;
+          const sctx = slice.getContext('2d');
+          sctx.fillStyle = bg;
+          sctx.fillRect(0, 0, slice.width, slice.height);
+          sctx.drawImage(canvas, 0, -yPx);
+          if (!sliceIsEmpty(slice, bg)) {
+            if (pageEmitted) pdf.addPage();
+            const dataUrl = slice.toDataURL('image/jpeg', 0.62);
+            const sliceHmm = (thisSliceHpx / SCALE) / PX_PER_MM;
+            pdf.addImage(dataUrl, 'JPEG', 0, 0, PAGE_W_MM, sliceHmm, undefined, 'FAST');
+            pageEmitted = true;
+          }
+          yPx += thisSliceHpx;
+        }
+      }
+
+      btn.textContent = 'Rendering… ' + (i + 1) + ' / ' + sections.length;
+    }
+
+    pdf.save('elitez-eor-sg-micro-business-payroll-intel-q2-2026.pdf');
+  } catch (err) {
+    alert('PDF render failed: ' + (err && err.message ? err.message : err));
+    console.error(err);
+  } finally {
+    document.body.classList.remove('pdf-mode');
+    btn.disabled = false;
+    btn.textContent = '⬇ Download PDF';
+  }
+}
+
+document.getElementById('pdf-dl-btn').addEventListener('click', downloadPdf);
+loadAll();
+</script>
+
+</body>
+</html>

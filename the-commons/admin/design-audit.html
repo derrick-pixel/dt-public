@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Design Audit — The Commons Admin</title>
+  <meta name="description" content="5-dimension design rubric scorecard across event-platform peers. Admin-only." />
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    .admin-nav-bar {
+      display: flex; gap: 8px; background: var(--navy); padding: 10px 24px;
+      margin-top: var(--nav-height); position: sticky; top: var(--nav-height); z-index: 100;
+      flex-wrap: wrap;
+    }
+    .admin-nav-bar a {
+      color: rgba(255,255,255,0.6); padding: 10px 20px; border-radius: var(--radius-sm);
+      font-size: 0.85rem; font-weight: 600;
+    }
+    .admin-nav-bar a:hover { background: rgba(255,255,255,0.08); color: white; }
+    .admin-nav-bar a.active { background: rgba(255,107,107,0.2); color: var(--coral); }
+
+    .atlas-body { padding: 40px 0 80px; background: var(--sand); min-height: calc(100vh - var(--nav-height)); }
+    .atlas-wrap { max-width: 1340px; margin: 0 auto; padding: 0 24px; }
+    .atlas-top { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 28px; }
+    .atlas-tag {
+      display: inline-block; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--coral); margin-bottom: 8px;
+      padding: 4px 12px; border: 2px solid var(--coral); border-radius: 999px; background: white;
+    }
+    .atlas-title { font-size: clamp(1.7rem, 3.5vw, 2.4rem); font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; color: var(--navy); }
+    .atlas-meta { font-size: 0.76rem; color: var(--slate); font-family: ui-monospace, monospace; text-align: right; }
+
+    .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 28px; }
+    .kpi { background: white; border: 2px solid rgba(26,26,46,0.08); border-radius: var(--radius-md); padding: 18px 20px; box-shadow: var(--shadow-sm); }
+    .kpi-val { font-size: 2rem; font-weight: 900; color: var(--coral); letter-spacing: -0.03em; line-height: 1; }
+    .kpi-val.green { color: #00C853; }
+    .kpi-val.amber { color: var(--mango); }
+    .kpi-val.red { color: var(--pink); }
+    .kpi-val.ocean { color: var(--deep-ocean); }
+    .kpi-lbl { font-size: 0.72rem; color: var(--slate); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-top: 8px; }
+
+    .artifact { background: white; border: 2px solid rgba(26,26,46,0.08); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 28px 30px; margin-bottom: 22px; }
+    .art-num {
+      display: inline-block; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--coral); background: rgba(255,107,107,0.1);
+      padding: 4px 12px; border-radius: 999px; border: 1.5px solid rgba(255,107,107,0.3);
+      margin-bottom: 10px;
+    }
+    .art-title { font-size: 1.4rem; font-weight: 800; color: var(--navy); letter-spacing: -0.01em; margin-bottom: 8px; }
+    .art-desc { color: var(--slate); font-size: 0.92rem; max-width: 820px; line-height: 1.55; margin-bottom: 22px; }
+
+    /* Subject cards */
+    .subj-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 16px; }
+    .subj { background: var(--sand); border: 2px solid var(--sand-dark); border-radius: var(--radius-md); padding: 22px 24px; position: relative; }
+    .subj.is-self {
+      border: 2px solid var(--coral);
+      background: linear-gradient(160deg, rgba(255,107,107,0.08), white 80%);
+    }
+    .subj-rank {
+      position: absolute; top: 16px; right: 18px;
+      font-family: ui-monospace, monospace; font-size: 0.66rem; font-weight: 700;
+      letter-spacing: 0.1em; color: var(--coral); text-transform: uppercase;
+    }
+    .subj-name { font-size: 1.18rem; font-weight: 800; color: var(--navy); letter-spacing: -0.01em; margin-bottom: 4px; padding-right: 80px; }
+    .subj-self-tag {
+      display: inline-block; margin-left: 8px; padding: 2px 9px;
+      font-size: 0.6rem; font-family: ui-monospace, monospace; font-weight: 800;
+      letter-spacing: 0.08em; color: white; background: var(--coral);
+      border-radius: 100px; text-transform: uppercase; vertical-align: middle;
+    }
+    .subj-url { font-size: 0.74rem; color: var(--slate); font-family: ui-monospace, monospace; word-break: break-all; margin-bottom: 14px; }
+    .subj-url a { color: var(--deep-ocean); text-decoration: none; }
+    .subj-url a:hover { text-decoration: underline; }
+
+    .subj-overall {
+      display: flex; align-items: baseline; gap: 12px; padding: 12px 14px;
+      background: white; border: 1.5px solid var(--sand-dark); border-radius: var(--radius-sm); margin-bottom: 14px;
+    }
+    .subj-overall .v { font-size: 1.9rem; font-weight: 900; color: var(--navy); letter-spacing: -0.02em; line-height: 1; }
+    .subj-overall .v.coral { color: var(--coral); }
+    .subj-overall .v.green { color: #00C853; }
+    .subj-overall .l { font-size: 0.66rem; font-weight: 800; letter-spacing: 0.1em; color: var(--slate); text-transform: uppercase; font-family: ui-monospace, monospace; }
+    .subj-overall .verdict { flex: 1; font-size: 0.84rem; color: var(--slate); line-height: 1.5; font-style: italic; }
+
+    .dim-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+    .dim { padding: 12px 14px; background: white; border: 1.5px solid var(--sand-dark); border-radius: var(--radius-sm); }
+    .dim-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+    .dim-label { font-size: 0.8rem; font-weight: 800; color: var(--navy); }
+    .dim-score {
+      font-family: ui-monospace, monospace; font-size: 0.78rem; font-weight: 700;
+      padding: 3px 10px; border-radius: 100px; border: 1.5px solid;
+    }
+    .dim-score.s-low  { background: rgba(255,64,129,0.12); color: var(--pink); border-color: var(--pink); }
+    .dim-score.s-mid  { background: rgba(255,142,83,0.14); color: var(--mango); border-color: var(--mango); }
+    .dim-score.s-high { background: rgba(0,230,118,0.14); color: #00C853; border-color: #00C853; }
+    .dim-note { font-size: 0.8rem; color: var(--slate); line-height: 1.55; margin-bottom: 4px; }
+    .dim-ten { font-size: 0.74rem; color: var(--slate); line-height: 1.5; }
+    .dim-ten b {
+      font-family: ui-monospace, monospace; color: var(--coral);
+      font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
+      font-weight: 800; margin-right: 6px;
+    }
+
+    .shots {
+      font-size: 0.72rem; color: var(--slate);
+      border-top: 1px dashed var(--sand-dark); padding-top: 10px;
+    }
+    .shots b {
+      font-family: ui-monospace, monospace; color: var(--coral);
+      font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase;
+      font-weight: 800; display: block; margin-bottom: 4px;
+    }
+    .shots ul { list-style: none; padding: 0; margin: 0; }
+    .shots li { font-family: ui-monospace, monospace; font-size: 0.7rem; color: var(--slate); word-break: break-all; padding: 1px 0; }
+
+    /* Synthesis */
+    .syn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 760px) { .syn-grid { grid-template-columns: 1fr; } }
+    .syn-card { padding: 20px 22px; border-radius: var(--radius-sm); border: 1.5px solid var(--sand-dark); background: var(--sand); }
+    .syn-card.easy { border-left: 4px solid #00C853; }
+    .syn-card.tenx { border-left: 4px solid var(--coral); }
+    .syn-card h3 { font-size: 1.05rem; color: var(--navy); margin-bottom: 4px; font-weight: 800; }
+    .syn-card .syn-sub {
+      font-size: 0.7rem; color: var(--slate); text-transform: uppercase;
+      letter-spacing: 0.08em; font-weight: 700; margin-bottom: 12px; font-family: ui-monospace, monospace;
+    }
+    .syn-list { list-style: none; padding: 0; margin: 0; }
+    .syn-list li {
+      font-size: 0.86rem; color: var(--slate); line-height: 1.6;
+      padding: 10px 0; border-top: 1px dashed var(--sand-dark);
+    }
+    .syn-list li:first-child { border-top: none; }
+    .syn-position {
+      padding: 14px 18px; background: rgba(255,107,107,0.08); border-left: 4px solid var(--coral);
+      border-radius: var(--radius-sm); font-size: 0.92rem; color: var(--navy);
+      line-height: 1.6; margin-bottom: 18px;
+    }
+    .syn-position b {
+      font-family: ui-monospace, monospace; color: var(--coral);
+      font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase;
+      font-weight: 800; display: block; margin-bottom: 4px;
+    }
+
+    .loading { color: var(--slate); font-size: 0.86rem; padding: 24px; text-align: center; font-family: ui-monospace, monospace; }
+
+    @media (max-width: 768px) {
+      body { font-size: 13px; }
+      .atlas-title { font-size: 1.45rem !important; line-height: 1.2 !important; }
+      .art-title { font-size: 1.1rem !important; }
+      .atlas-meta { text-align: left !important; margin-top: 6px !important; font-size: 0.7rem !important; }
+      .atlas-wrap { padding-left: 14px !important; padding-right: 14px !important; }
+      .atlas-top { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
+      .kpi-strip { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+      .kpi { padding: 12px 14px !important; }
+      .kpi-val { font-size: 1.4rem !important; }
+      .artifact { padding: 18px 16px !important; border-radius: 12px !important; }
+      .subj-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+      .subj { padding: 16px 14px !important; border-radius: 10px !important; }
+      .subj-name { font-size: 1.02rem !important; padding-right: 60px !important; }
+      .subj-rank { font-size: 0.6rem !important; top: 12px !important; right: 12px !important; }
+      .subj-overall .v { font-size: 1.4rem !important; }
+      .subj-overall .verdict { font-size: 0.78rem !important; }
+      .dim { padding: 10px 12px !important; }
+      .admin-nav-bar { flex-wrap: wrap !important; padding: 10px 14px !important; gap: 8px !important; }
+      .admin-nav-bar a { font-size: 0.72rem !important; padding: 6px 10px !important; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <div class="logo-icon">TC</div>
+      The Commons
+    </a>
+    <ul class="nav-links">
+      <li><a href="../events.html">Discover</a></li>
+      <li><a href="../create.html">Create Event</a></li>
+      <li><a href="../marketplace.html">Marketplace</a></li>
+      <li><a href="../dashboard.html">Dashboard</a></li>
+      <li><a href="index.html">Admin</a></li>
+    </ul>
+    <div class="nav-actions">
+      <span class="badge badge-coral">Research</span>
+    </div>
+    <button class="mobile-toggle" onclick="toggleMobileMenu()">&#9776;</button>
+  </div>
+</nav>
+
+<div class="admin-nav-bar">
+  <a href="index.html">Platform Admin</a>
+  <a href="competitor-analytics.html">Competitor Analytics</a>
+  <a href="insights.html">Market &amp; Pricing</a>
+  <a href="whitespace.html">White Space Atlas</a>
+  <a href="design-audit.html" class="active">Design Audit</a>
+  <a href="report.html">Report</a>
+</div>
+
+<main class="atlas-body">
+  <div class="atlas-wrap">
+
+    <div class="atlas-top">
+      <div>
+        <div class="atlas-tag">◆ Design Audit · v1</div>
+        <h1 class="atlas-title">How the category looks.<br/><span style="color: var(--slate); font-weight: 600;">And where The Commons actually stands on it.</span></h1>
+      </div>
+      <div class="atlas-meta">
+        <div>Refreshed <span id="refresh-date">2026-04-29</span></div>
+        <div><span id="subj-count-hdr">—</span> subjects · 5 dimensions · 1–10</div>
+      </div>
+    </div>
+
+    <div class="kpi-strip">
+      <div class="kpi"><div class="kpi-val ocean" id="kpi-avg">—</div><div class="kpi-lbl">Industry average</div></div>
+      <div class="kpi"><div class="kpi-val" id="kpi-self">—</div><div class="kpi-lbl">The Commons score</div></div>
+      <div class="kpi"><div class="kpi-val amber" id="kpi-rank">—</div><div class="kpi-lbl">Rank</div></div>
+      <div class="kpi"><div class="kpi-val red" id="kpi-gap">—</div><div class="kpi-lbl">Gap to leader</div></div>
+    </div>
+
+    <section class="artifact">
+      <div class="art-num">Artifact 01</div>
+      <h2 class="art-title">Subject Scorecards</h2>
+      <p class="art-desc">Six event-platform subjects scored 1–10 across five dimensions: typography &amp; hierarchy, layout &amp; IA, visual brand distinctiveness, content credibility &amp; proof, mobile performance &amp; polish. The Commons graded on the same rubric, honestly.</p>
+      <div class="subj-grid" id="subj-grid">
+        <div class="loading">Loading audit data…</div>
+      </div>
+    </section>
+
+    <section class="artifact">
+      <div class="art-num">Artifact 02</div>
+      <h2 class="art-title">Synthesis · Easy Wins &amp; 10× Aspirations</h2>
+      <p class="art-desc">Where The Commons sits versus the category, what to ship next quarter, and what would put us a full league ahead.</p>
+      <div id="synthesis-block">
+        <div class="loading">Loading synthesis…</div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+function toggleMobileMenu() {
+  var m = document.getElementById('mobileMenu');
+  if (m) m.classList.toggle('show');
+}
+</script>
+
+<script>
+function scoreBucket(n) {
+  if (n >= 8) return 's-high';
+  if (n >= 6) return 's-mid';
+  return 's-low';
+}
+function setText(id, value) {
+  var el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+function clearChildren(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+function el(tag, opts) {
+  opts = opts || {};
+  var node = document.createElement(tag);
+  if (opts.cls) node.className = opts.cls;
+  if (opts.text != null) node.textContent = String(opts.text);
+  if (opts.attrs) Object.keys(opts.attrs).forEach(function (k) { node.setAttribute(k, opts.attrs[k]); });
+  return node;
+}
+
+async function initAudit() {
+  var data;
+  try {
+    var res = await fetch('../data/design-audit.json', { cache: 'no-store' });
+    data = await res.json();
+  } catch (err) {
+    var grid = document.getElementById('subj-grid');
+    clearChildren(grid);
+    grid.appendChild(el('div', { cls: 'loading', text: 'Failed to load design-audit.json' }));
+    return;
+  }
+
+  setText('refresh-date', data.research_date || '2026-04-29');
+
+  var rubric = data.rubric || [];
+  var subjects = (data.subjects || []).slice();
+  setText('subj-count-hdr', subjects.length);
+
+  var sortedByScore = subjects.slice().sort(function (a, b) { return (b.overall_score || 0) - (a.overall_score || 0); });
+  var allScores = subjects.map(function (s) { return s.overall_score || 0; });
+  var avg = allScores.length ? (allScores.reduce(function (a, b) { return a + b; }, 0) / allScores.length) : 0;
+  var self = subjects.find(function (s) { return s.is_self; });
+  var selfScore = self ? (self.overall_score || 0) : 0;
+  var leaderScore = sortedByScore.length ? sortedByScore[0].overall_score || 0 : 0;
+  var selfRank = self ? (sortedByScore.findIndex(function (s) { return s.is_self; }) + 1) : 0;
+  var gap = +(leaderScore - selfScore).toFixed(1);
+
+  setText('kpi-avg', avg.toFixed(1));
+  setText('kpi-self', selfScore.toFixed(1));
+  setText('kpi-rank', selfRank ? (selfRank + ' of ' + subjects.length) : '—');
+  setText('kpi-gap', gap === 0 ? 'Tied (0.0)' : ('-' + Math.abs(gap).toFixed(1)));
+
+  var grid = document.getElementById('subj-grid');
+  clearChildren(grid);
+
+  subjects.forEach(function (s) {
+    var card = el('div', { cls: 'subj' + (s.is_self ? ' is-self' : '') });
+
+    var rankIdx = sortedByScore.findIndex(function (x) { return x.name === s.name; });
+    var rankLabel = rankIdx >= 0 ? ('Rank ' + (rankIdx + 1) + ' / ' + subjects.length) : '';
+    if (rankLabel) card.appendChild(el('div', { cls: 'subj-rank', text: rankLabel }));
+
+    var nameRow = el('div', { cls: 'subj-name', text: s.name });
+    if (s.is_self) nameRow.appendChild(el('span', { cls: 'subj-self-tag', text: 'Self' }));
+    card.appendChild(nameRow);
+
+    var urlRow = el('div', { cls: 'subj-url' });
+    var link = el('a', { text: s.url, attrs: { href: s.url, target: '_blank', rel: 'noopener noreferrer' } });
+    urlRow.appendChild(link);
+    card.appendChild(urlRow);
+
+    var overall = el('div', { cls: 'subj-overall' });
+    var oCls = 'v' + (s.is_self ? ' coral' : (s.overall_score >= 7 ? ' green' : ''));
+    overall.appendChild(el('div', { cls: oCls, text: (s.overall_score != null ? s.overall_score.toFixed(1) : '—') }));
+    overall.appendChild(el('div', { cls: 'l', text: 'Overall' }));
+    overall.appendChild(el('div', { cls: 'verdict', text: s.verdict || '' }));
+    card.appendChild(overall);
+
+    var dimList = el('div', { cls: 'dim-list' });
+    rubric.forEach(function (r) {
+      var dimData = (s.scores && s.scores[r.id]) || {};
+      var dim = el('div', { cls: 'dim' });
+      var head = el('div', { cls: 'dim-head' });
+      head.appendChild(el('div', { cls: 'dim-label', text: r.label }));
+      var score = dimData.score != null ? dimData.score : 0;
+      head.appendChild(el('div', { cls: 'dim-score ' + scoreBucket(score), text: score + ' / 10' }));
+      dim.appendChild(head);
+      if (dimData.note) dim.appendChild(el('div', { cls: 'dim-note', text: dimData.note }));
+      if (dimData.to_reach_10) {
+        var ten = el('div', { cls: 'dim-ten' });
+        ten.appendChild(el('b', { text: 'To reach 10' }));
+        ten.appendChild(document.createTextNode(dimData.to_reach_10));
+        dim.appendChild(ten);
+      }
+      dimList.appendChild(dim);
+    });
+    card.appendChild(dimList);
+
+    var shotsList = (s.screenshots_to_capture || []);
+    if (shotsList.length) {
+      var shots = el('div', { cls: 'shots' });
+      shots.appendChild(el('b', { text: 'Screenshots to capture' }));
+      var ul = el('ul');
+      shotsList.forEach(function (u) { ul.appendChild(el('li', { text: u })); });
+      shots.appendChild(ul);
+      card.appendChild(shots);
+    }
+
+    grid.appendChild(card);
+  });
+
+  renderSynthesis(data.synthesis || {}, avg, selfRank, subjects.length);
+}
+
+function renderSynthesis(syn, avg, rank, total) {
+  var block = document.getElementById('synthesis-block');
+  clearChildren(block);
+
+  var indAvg = (syn.industry_average != null ? syn.industry_average : avg);
+
+  var pos = el('div', { cls: 'syn-position' });
+  pos.appendChild(el('b', { text: 'The Commons position' }));
+  pos.appendChild(document.createTextNode(syn.passage_position || ('Industry average ' + indAvg.toFixed(1) + ' · The Commons ranks ' + rank + ' of ' + total + '.')));
+  block.appendChild(pos);
+
+  var grid = el('div', { cls: 'syn-grid' });
+
+  var easyCard = el('div', { cls: 'syn-card easy' });
+  easyCard.appendChild(el('h3', { text: 'Easy wins for The Commons' }));
+  easyCard.appendChild(el('div', { cls: 'syn-sub', text: 'Ship next quarter' }));
+  var easyUl = el('ul', { cls: 'syn-list' });
+  (syn.easy_wins_for_passage || []).forEach(function (w) { easyUl.appendChild(el('li', { text: w })); });
+  easyCard.appendChild(easyUl);
+  grid.appendChild(easyCard);
+
+  var tenxCard = el('div', { cls: 'syn-card tenx' });
+  tenxCard.appendChild(el('h3', { text: '10× aspirations' }));
+  tenxCard.appendChild(el('div', { cls: 'syn-sub', text: 'Category-leading bets' }));
+  var tenxUl = el('ul', { cls: 'syn-list' });
+  (syn.ten_x_aspirations || []).forEach(function (w) { tenxUl.appendChild(el('li', { text: w })); });
+  tenxCard.appendChild(tenxUl);
+  grid.appendChild(tenxCard);
+
+  block.appendChild(grid);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAudit);
+} else {
+  initAudit();
+}
+</script>
+
+</body>
+</html>

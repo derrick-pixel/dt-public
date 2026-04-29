@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>AEVUM · Design Audit</title>
+  <meta name="description" content="Internal design audit: 5-dimension rubric scoring AEVUM against SG/MY MRI competitors plus global DTC benchmarks (Neko, Prenuvo)." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #F4F6F8;
+      --surface: #FFFFFF;
+      --surface-2: #ECF0F4;
+      --surface-3: #E2E8EE;
+      --line: rgba(11,41,72,0.10);
+      --line-2: rgba(11,41,72,0.18);
+      --text: #1A2530;
+      --muted: #5C6B82;
+      --muted-2: #8B95A3;
+      --teal: #0D7488;
+      --amber: #B8761F;
+      --plum: #8B4FBF;
+      --rose: #B33A3A;
+      --green: #0E8A4A;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: 14px; line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      background-image:
+        radial-gradient(ellipse 1000px 700px at 8% -10%, rgba(13,116,136,0.05), transparent 60%),
+        radial-gradient(ellipse 800px 500px at 95% 100%, rgba(184,118,31,0.04), transparent 60%);
+      background-attachment: fixed;
+    }
+    a { color: inherit; text-decoration: none; transition: color 0.18s; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 0 32px; }
+    @media (max-width: 768px) { .container { padding: 0 20px; } }
+
+    .topbar { position: sticky; top: 0; z-index: 100; background: rgba(244,246,248,0.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--line); }
+    .topbar-inner { max-width: 1400px; margin: 0 auto; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 0.95rem; }
+    .brand-mark { width: 28px; height: 28px; border-radius: 7px; background: var(--teal); display: inline-flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 0.78rem; }
+    .topbar-tabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 100px; padding: 4px; flex-wrap: wrap; }
+    .topbar-tabs a { padding: 7px 14px; border-radius: 100px; font-size: 0.8rem; color: var(--muted); }
+    .topbar-tabs a:hover { color: var(--text); }
+    .topbar-tabs a.active { background: var(--teal); color: #fff; font-weight: 600; }
+    .topbar-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted-2); }
+
+    .ph { padding: 50px 0 30px; }
+    .ph-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal); margin-bottom: 14px; display: inline-flex; align-items: center; gap: 10px; }
+    .ph-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 8px var(--teal); }
+    .ph h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; letter-spacing: -0.025em; margin-bottom: 14px; }
+    .ph p { color: var(--muted); max-width: 780px; }
+
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 34px 0; }
+    @media (max-width: 1024px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+    .kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }
+    .kpi .l { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-2); margin-bottom: 12px; }
+    .kpi .v { font-family: 'JetBrains Mono', monospace; font-size: 1.7rem; font-weight: 500; letter-spacing: -0.04em; }
+    .kpi .v.teal { color: var(--teal); }
+    .kpi .v.green { color: var(--green); }
+    .kpi .v.amber { color: var(--amber); }
+    .kpi .v.rose { color: var(--rose); }
+
+    section.artifact { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 28px 30px; margin-bottom: 22px; }
+    .art-num { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; color: var(--teal); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600; margin-bottom: 8px; }
+    .art-title { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.018em; margin-bottom: 8px; }
+    .art-desc { color: var(--muted); font-size: 0.92rem; line-height: 1.6; max-width: 880px; margin-bottom: 22px; }
+
+    .subj-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 16px; }
+    .subj { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px; position: relative; }
+    .subj.is-self { border: 1.5px solid var(--teal); background: linear-gradient(160deg, rgba(13,116,136,0.05), var(--surface) 80%); }
+    .subj-rank { position: absolute; top: 16px; right: 18px; font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.1em; color: var(--teal); text-transform: uppercase; }
+    .subj-name { font-size: 1.18rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 4px; padding-right: 70px; }
+    .subj-self-tag { display: inline-block; margin-left: 8px; padding: 2px 8px; font-size: 0.6rem; font-family: 'JetBrains Mono', monospace; font-weight: 700; letter-spacing: 0.08em; color: #fff; background: var(--teal); border-radius: 100px; text-transform: uppercase; vertical-align: middle; }
+    .subj-url { font-size: 0.74rem; color: var(--muted-2); font-family: 'JetBrains Mono', monospace; word-break: break-all; margin-bottom: 14px; }
+    .subj-url a { color: var(--teal); }
+    .subj-url a:hover { text-decoration: underline; }
+
+    .subj-overall { display: flex; align-items: baseline; gap: 12px; padding: 12px 14px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+    .subj-overall .v { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 600; color: var(--text); letter-spacing: -0.02em; line-height: 1; }
+    .subj-overall .v.teal { color: var(--teal); }
+    .subj-overall .v.green { color: var(--green); }
+    .subj-overall .l { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.1em; color: var(--muted-2); text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
+    .subj-overall .verdict { flex: 1; min-width: 220px; font-size: 0.84rem; color: var(--muted); line-height: 1.55; font-style: italic; }
+
+    .dim-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+    .dim { padding: 10px 12px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; }
+    .dim-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+    .dim-label { font-size: 0.78rem; font-weight: 700; color: var(--text); letter-spacing: 0.02em; }
+    .dim-score { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 700; padding: 2px 8px; border-radius: 100px; }
+    .dim-score.s-low { background: rgba(179,58,58,0.10); color: var(--rose); border: 1px solid rgba(179,58,58,0.4); }
+    .dim-score.s-mid { background: rgba(184,118,31,0.10); color: var(--amber); border: 1px solid rgba(184,118,31,0.4); }
+    .dim-score.s-high { background: rgba(14,138,74,0.10); color: var(--green); border: 1px solid rgba(14,138,74,0.4); }
+    .dim-note { font-size: 0.78rem; color: var(--muted); line-height: 1.55; margin-bottom: 4px; }
+    .dim-ten { font-size: 0.74rem; color: var(--muted-2); line-height: 1.5; }
+    .dim-ten b { font-family: 'JetBrains Mono', monospace; color: var(--teal); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; margin-right: 6px; }
+
+    .shots { font-size: 0.72rem; color: var(--muted-2); border-top: 1px dashed var(--line); padding-top: 10px; }
+    .shots b { font-family: 'JetBrains Mono', monospace; color: var(--teal); font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 4px; }
+    .shots ul { list-style: none; padding: 0; margin: 0; }
+    .shots li { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted); word-break: break-all; padding: 1px 0; }
+
+    /* Synthesis */
+    .syn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 760px) { .syn-grid { grid-template-columns: 1fr; } }
+    .syn-card { padding: 18px 20px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface-2); }
+    .syn-card.easy { border-left: 3px solid var(--green); }
+    .syn-card.tenx { border-left: 3px solid var(--teal); }
+    .syn-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .syn-card .syn-sub { font-size: 0.7rem; color: var(--muted-2); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 12px; font-family: 'JetBrains Mono', monospace; }
+    .syn-list { list-style: none; padding: 0; margin: 0; }
+    .syn-list li { font-size: 0.86rem; color: var(--muted); line-height: 1.6; padding: 8px 0; border-top: 1px dashed var(--line); }
+    .syn-list li:first-child { border-top: none; }
+    .syn-position { padding: 14px 16px; background: var(--surface-2); border-left: 3px solid var(--teal); border-radius: 8px; font-size: 0.92rem; color: var(--text); line-height: 1.6; margin-bottom: 18px; }
+    .syn-position b { font-family: 'JetBrains Mono', monospace; color: var(--teal); font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 4px; }
+
+    .loading { color: var(--muted-2); font-size: 0.86rem; padding: 24px; text-align: center; font-family: 'JetBrains Mono', monospace; }
+
+    @media (max-width: 768px) {
+      body { font-size: 13px; }
+      .ph h1 { font-size: 1.55rem !important; line-height: 1.22 !important; }
+      .art-title { font-size: 1.1rem !important; }
+      section.artifact { padding: 18px 16px !important; }
+      .kpis { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+      .kpi { padding: 14px 16px !important; }
+      .kpi .v { font-size: 1.3rem !important; }
+      .subj-grid { grid-template-columns: 1fr !important; }
+      .topbar-tabs { flex-wrap: wrap !important; gap: 6px !important; }
+      .topbar-tabs a { font-size: 0.72rem !important; padding: 5px 10px !important; }
+    }
+    @media (max-width: 420px) { .kpis { grid-template-columns: 1fr !important; } }
+  </style>
+
+  <link rel="icon" type="image/x-icon" href="../favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+</head>
+<body>
+<main>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="../index.html" class="brand">
+      <span class="brand-mark">A</span>
+      <span>AEVUM <span style="color: var(--muted); font-weight: 400; font-size: 0.84rem;">/ internal panel</span></span>
+    </a>
+    <div class="topbar-tabs">
+      <a href="../index.html">Site</a>
+      <a href="index.html">Research</a>
+      <a href="insights.html">Pricing</a>
+      <a href="whitespace.html">White Space</a>
+      <a href="competitor-analytics.html">Competitors</a>
+      <a href="design-audit.html" class="active">Design Audit</a>
+      <a href="report.html">Report</a>
+      <a href="../compliance.html">Compliance</a>
+    </div>
+    <span class="topbar-meta">DESIGN AUDIT v1 · 2026-04-29</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <section class="ph">
+    <span class="ph-tag">Panel 05 / Design Audit</span>
+    <h1>How the category looks.<br/><span style="color: var(--muted); font-weight: 400;">And where AEVUM actually stands on it.</span></h1>
+    <p>Nine subjects scored 1–10 across five dimensions: typography &amp; hierarchy, layout &amp; IA, visual brand distinctiveness, content credibility &amp; proof, and mobile performance &amp; polish. Subjects span SG hospitals (Mt Elizabeth, Raffles), SG standalone imaging (AsiaMedic, Elite Medical, Iconic), JB hospital (Gleneagles JB), global DTC benchmarks (Neko Health, Prenuvo), and AEVUM itself — graded honestly on the same rubric.</p>
+  </section>
+
+  <div class="kpis">
+    <div class="kpi"><div class="l">Industry average</div><div class="v" id="kpi-avg">—</div></div>
+    <div class="kpi"><div class="l">AEVUM score</div><div class="v teal" id="kpi-self">—</div></div>
+    <div class="kpi"><div class="l">Rank</div><div class="v" id="kpi-rank">—</div></div>
+    <div class="kpi"><div class="l">Gap to leader</div><div class="v amber" id="kpi-gap">—</div></div>
+  </div>
+
+  <section class="artifact">
+    <div class="art-num">Artifact 01</div>
+    <h2 class="art-title">Subject Scorecards</h2>
+    <p class="art-desc">Each subject scored across five dimensions, with explicit "to reach 10" notes and screenshots-to-capture for visual reference. AEVUM is graded on the same rubric, honestly.</p>
+    <div class="subj-grid" id="subj-grid">
+      <div class="loading">Loading audit data…</div>
+    </div>
+  </section>
+
+  <section class="artifact">
+    <div class="art-num">Artifact 02</div>
+    <h2 class="art-title">Synthesis · Easy Wins &amp; 10x Aspirations</h2>
+    <p class="art-desc">Where AEVUM sits versus the category, what to ship next quarter, and what would put us a full league ahead of every SG/MY rival and within reach of Neko Health.</p>
+    <div id="synthesis-block">
+      <div class="loading">Loading synthesis…</div>
+    </div>
+  </section>
+
+</div>
+</main>
+
+<script>
+function scoreBucket(n) { if (n >= 8) return 's-high'; if (n >= 6) return 's-mid'; return 's-low'; }
+function setText(id, value) { const el = document.getElementById(id); if (el) el.textContent = value; }
+function clearChildren(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+function el(tag, opts) {
+  opts = opts || {};
+  const node = document.createElement(tag);
+  if (opts.cls) node.className = opts.cls;
+  if (opts.text != null) node.textContent = String(opts.text);
+  if (opts.attrs) Object.keys(opts.attrs).forEach(k => node.setAttribute(k, opts.attrs[k]));
+  return node;
+}
+
+async function initAudit() {
+  let data;
+  try {
+    const res = await fetch('../data/design-audit.json', { cache: 'no-store' });
+    data = await res.json();
+  } catch (err) {
+    const grid = document.getElementById('subj-grid');
+    clearChildren(grid);
+    grid.appendChild(el('div', { cls: 'loading', text: 'Failed to load design-audit.json' }));
+    return;
+  }
+
+  const rubric = data.rubric || [];
+  const subjects = (data.subjects || []).slice();
+
+  const sortedByScore = subjects.slice().sort((a,b) => (b.overall_score||0) - (a.overall_score||0));
+  const allScores = subjects.map(s => s.overall_score || 0);
+  const avg = allScores.length ? (allScores.reduce((a,b)=>a+b,0) / allScores.length) : 0;
+  const self = subjects.find(s => s.is_self);
+  const selfScore = self ? (self.overall_score || 0) : 0;
+  const leaderScore = sortedByScore.length ? sortedByScore[0].overall_score || 0 : 0;
+  const selfRank = self ? (sortedByScore.findIndex(s => s.is_self) + 1) : 0;
+  const gap = +(leaderScore - selfScore).toFixed(1);
+
+  setText('kpi-avg', avg.toFixed(1));
+  setText('kpi-self', selfScore.toFixed(1));
+  setText('kpi-rank', selfRank ? (selfRank + ' of ' + subjects.length) : '—');
+  setText('kpi-gap', gap === 0 ? 'Tied' : ('-' + Math.abs(gap).toFixed(1)));
+
+  const grid = document.getElementById('subj-grid');
+  clearChildren(grid);
+
+  subjects.forEach(s => {
+    const card = el('div', { cls: 'subj' + (s.is_self ? ' is-self' : '') });
+    const rankIdx = sortedByScore.findIndex(x => x.name === s.name);
+    if (rankIdx >= 0) card.appendChild(el('div', { cls: 'subj-rank', text: 'Rank ' + (rankIdx + 1) + ' / ' + subjects.length }));
+
+    const nameRow = el('div', { cls: 'subj-name', text: s.name });
+    if (s.is_self) {
+      const selfTag = el('span', { cls: 'subj-self-tag', text: 'Self' });
+      nameRow.appendChild(selfTag);
+    }
+    card.appendChild(nameRow);
+
+    const urlRow = el('div', { cls: 'subj-url' });
+    const link = el('a', { text: s.url, attrs: { href: s.url, target: '_blank', rel: 'noopener noreferrer' } });
+    urlRow.appendChild(link);
+    card.appendChild(urlRow);
+
+    const overall = el('div', { cls: 'subj-overall' });
+    const overallVal = el('div', { cls: 'v' + (s.is_self ? ' teal' : (s.overall_score >= 8 ? ' green' : '')), text: (s.overall_score != null ? s.overall_score.toFixed(1) : '—') });
+    overall.appendChild(overallVal);
+    overall.appendChild(el('div', { cls: 'l', text: 'Overall' }));
+    overall.appendChild(el('div', { cls: 'verdict', text: s.verdict || '' }));
+    card.appendChild(overall);
+
+    const dimList = el('div', { cls: 'dim-list' });
+    rubric.forEach(r => {
+      const dimData = (s.scores && s.scores[r.id]) || {};
+      const dim = el('div', { cls: 'dim' });
+      const head = el('div', { cls: 'dim-head' });
+      head.appendChild(el('div', { cls: 'dim-label', text: r.label }));
+      const score = dimData.score != null ? dimData.score : 0;
+      head.appendChild(el('div', { cls: 'dim-score ' + scoreBucket(score), text: score + ' / 10' }));
+      dim.appendChild(head);
+      if (dimData.note) dim.appendChild(el('div', { cls: 'dim-note', text: dimData.note }));
+      if (dimData.to_reach_10) {
+        const ten = el('div', { cls: 'dim-ten' });
+        ten.appendChild(el('b', { text: 'To reach 10' }));
+        ten.appendChild(document.createTextNode(dimData.to_reach_10));
+        dim.appendChild(ten);
+      }
+      dimList.appendChild(dim);
+    });
+    card.appendChild(dimList);
+
+    const shotsList = (s.screenshots_to_capture || []);
+    if (shotsList.length) {
+      const shots = el('div', { cls: 'shots' });
+      shots.appendChild(el('b', { text: 'Screenshots to capture' }));
+      const ul = el('ul');
+      shotsList.forEach(u => ul.appendChild(el('li', { text: u })));
+      shots.appendChild(ul);
+      card.appendChild(shots);
+    }
+    grid.appendChild(card);
+  });
+
+  renderSynthesis(data.synthesis || {}, avg, selfRank, subjects.length);
+}
+
+function renderSynthesis(syn, avg, rank, total) {
+  const block = document.getElementById('synthesis-block');
+  clearChildren(block);
+  const indAvg = (syn.industry_average != null ? syn.industry_average : avg);
+
+  const pos = el('div', { cls: 'syn-position' });
+  pos.appendChild(el('b', { text: 'AEVUM position' }));
+  pos.appendChild(document.createTextNode(syn.aevum_position || ('Industry average ' + indAvg.toFixed(1) + ' · AEVUM ranks ' + rank + ' of ' + total + '.')));
+  block.appendChild(pos);
+
+  const grid = el('div', { cls: 'syn-grid' });
+  const easyCard = el('div', { cls: 'syn-card easy' });
+  easyCard.appendChild(el('h3', { text: 'Easy wins for AEVUM' }));
+  easyCard.appendChild(el('div', { cls: 'syn-sub', text: 'Ship next quarter' }));
+  const easyUl = el('ul', { cls: 'syn-list' });
+  (syn.easy_wins_for_aevum || []).forEach(w => easyUl.appendChild(el('li', { text: w })));
+  easyCard.appendChild(easyUl);
+  grid.appendChild(easyCard);
+
+  const tenxCard = el('div', { cls: 'syn-card tenx' });
+  tenxCard.appendChild(el('h3', { text: '10x aspirations' }));
+  tenxCard.appendChild(el('div', { cls: 'syn-sub', text: 'Category-leading bets' }));
+  const tenxUl = el('ul', { cls: 'syn-list' });
+  (syn.ten_x_aspirations || []).forEach(w => tenxUl.appendChild(el('li', { text: w })));
+  tenxCard.appendChild(tenxUl);
+  grid.appendChild(tenxCard);
+
+  block.appendChild(grid);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAudit);
+} else {
+  initAudit();
+}
+</script>
+</body>
+</html>

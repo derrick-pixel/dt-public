@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>XinceAI — Competitor Analytics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #140f0c;
+      --surface:  #1e1714;
+      --card:     #28201b;
+      --card-hi:  #332a24;
+      --border:   rgba(255,136,68,0.08);
+      --border2:  rgba(255,136,68,0.18);
+      --border3:  rgba(255,136,68,0.35);
+      --text:     #f5ede6;
+      --muted:    #7a6a5a;
+      --muted2:   #a89888;
+
+      --cyan:     #00e5ff;
+      --amber:    #ff8844;
+      --neon:     #00ff88;
+      --violet:   #c084fc;
+      --rose:     #ff4466;
+
+      --gradient: linear-gradient(135deg, var(--amber), var(--cyan));
+      --glow-c:   rgba(0,229,255,0.12);
+      --glow-a:   rgba(255,136,68,0.15);
+
+      --font-head: 'Rajdhani', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'Share Tech Mono', monospace;
+      --nav-h: 60px;
+      --radius: 4px;
+    }
+
+    [data-theme="light"] {
+      --bg:       #f5f0eb;
+      --surface:  #ebe5de;
+      --card:     #ffffff;
+      --card-hi:  #f8f4f0;
+      --border:   rgba(140,90,40,0.10);
+      --border2:  rgba(140,90,40,0.18);
+      --border3:  rgba(140,90,40,0.30);
+      --text:     #1a1410;
+      --muted:    #8a7a6a;
+      --muted2:   #6a5a4a;
+      --amber:    #d06010;
+      --cyan:     #0088aa;
+      --neon:     #0a8a4a;
+      --violet:   #7040b0;
+      --rose:     #c82040;
+      --glow-c:   rgba(0,136,170,0.08);
+      --glow-a:   rgba(208,96,16,0.10);
+    }
+    [data-theme="light"] body::before {
+      background-image:
+        linear-gradient(rgba(140,90,40,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(140,90,40,0.04) 1px, transparent 1px);
+    }
+    [data-theme="light"] .admin-nav { background: rgba(245,240,235,0.88); }
+
+    .theme-toggle { display: flex; align-items: center; background: var(--surface); border: 1px solid var(--border2); border-radius: 100px; overflow: hidden; }
+    .theme-toggle button { font-family: var(--font-mono); font-size: 0.68rem; padding: 5px 12px; background: none; border: none; color: var(--muted); cursor: pointer; transition: all 0.2s; letter-spacing: 0.04em; }
+    .theme-toggle button.active { background: var(--amber); color: var(--bg); font-weight: 700; }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); font-size: 16px; line-height: 1.65; overflow-x: hidden; min-height: 100vh; }
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,136,68,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,136,68,0.015) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── NAV ── */
+    .admin-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: var(--nav-h); display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(16px, 3vw, 32px); background: rgba(20,15,12,0.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+    .admin-nav::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--amber), transparent); opacity: 0.3; }
+    .admin-nav-left { display: flex; align-items: center; gap: 16px; }
+    .nav-brand { display: flex; align-items: center; gap: 10px; }
+    .nav-mark { width: 34px; height: 34px; border: 1.5px solid var(--amber); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-weight: 700; font-size: 0.9rem; color: var(--amber); clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); box-shadow: 0 0 12px var(--glow-a); }
+    .nav-wordmark { font-family: var(--font-head); font-weight: 700; font-size: 1.15rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    .nav-wordmark em { font-style: normal; color: var(--amber); }
+    .admin-badge { font-family: var(--font-mono); font-size: 0.68rem; padding: 4px 12px; border-radius: 100px; background: rgba(255,136,68,0.10); border: 1px solid rgba(255,136,68,0.2); color: var(--amber); letter-spacing: 0.06em; text-transform: uppercase; }
+    .admin-links { display: flex; gap: 4px; flex-wrap: wrap; }
+    .admin-links a { font-family: var(--font-mono); font-size: 0.74rem; color: var(--muted2); padding: 6px 10px; border-radius: 4px; transition: all 0.15s; letter-spacing: 0.04em; }
+    .admin-links a:hover { color: var(--amber); background: rgba(255,136,68,0.06); }
+    .admin-links a.active { color: var(--amber); background: rgba(255,136,68,0.10); }
+
+    /* ── PAGE ── */
+    .page { padding: calc(var(--nav-h) + 32px) clamp(16px, 4vw, 48px) 80px; max-width: 1340px; margin: 0 auto; }
+    .atlas-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
+    .atlas-tag { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--amber); margin-bottom: 8px; }
+    .atlas-title { font-family: var(--font-head); font-size: clamp(1.7rem, 3.5vw, 2.4rem); font-weight: 700; letter-spacing: 0.02em; line-height: 1.1; color: var(--text); text-transform: uppercase; }
+    .atlas-title .grad { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .atlas-meta { font-size: 0.78rem; color: var(--muted); text-align: right; font-family: var(--font-mono); letter-spacing: 0.04em; }
+
+    /* ── KPI strip ── */
+    .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 32px; }
+    .kpi { position: relative; background: var(--card); border: 1px solid var(--border); padding: 18px 20px; }
+    .kpi::before, .kpi::after { content: ''; position: absolute; width: 10px; height: 10px; border-color: var(--border2); }
+    .kpi::before { top: -1px; left: -1px; border-top: 1.5px solid; border-left: 1.5px solid; }
+    .kpi::after { bottom: -1px; right: -1px; border-bottom: 1.5px solid; border-right: 1.5px solid; }
+    .kpi-val { font-family: var(--font-head); font-size: 1.9rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1; color: var(--text); }
+    .kpi-val.amber { color: var(--amber); }
+    .kpi-val.cyan  { color: var(--cyan); }
+    .kpi-val.neon  { color: var(--neon); }
+    .kpi-val.rose  { color: var(--rose); }
+    .kpi-lbl { font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 8px; }
+
+    /* ── Artifact card ── */
+    .artifact { position: relative; background: var(--card); border: 1px solid var(--border); padding: 26px 28px; margin-bottom: 22px; }
+    .artifact::before, .artifact::after { content: ''; position: absolute; width: 14px; height: 14px; border-color: var(--border2); }
+    .artifact::before { top: -1px; left: -1px; border-top: 1.5px solid; border-left: 1.5px solid; }
+    .artifact::after { bottom: -1px; right: -1px; border-bottom: 1.5px solid; border-right: 1.5px solid; }
+    .art-num { font-family: var(--font-mono); font-size: 0.72rem; color: var(--amber); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 6px; }
+    .art-title { font-family: var(--font-head); font-size: 1.4rem; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; margin-bottom: 8px; color: var(--text); }
+    .art-desc { font-size: 0.92rem; color: var(--muted2); max-width: 820px; line-height: 1.6; margin-bottom: 22px; }
+
+    /* ── Radar wrap ── */
+    .chart-wrap { background: var(--surface); border: 1px solid var(--border); padding: 18px; }
+    #radar-chart { width: 100% !important; max-width: 720px; height: 460px !important; margin: 0 auto; display: block; }
+
+    /* ── Insight blocks ── */
+    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 760px) { .insight-grid { grid-template-columns: 1fr; } }
+    .insight-block { background: var(--surface); border: 1px solid var(--border); padding: 16px 18px; }
+    .insight-block h4 { font-family: var(--font-head); font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 10px; letter-spacing: 0.02em; text-transform: uppercase; }
+    .insight-block ul { list-style: none; padding: 0; margin: 0; }
+    .insight-block li { font-size: 0.84rem; color: var(--muted2); padding: 5px 0 5px 16px; position: relative; line-height: 1.55; }
+    .insight-block li::before { content: '◆'; color: var(--amber); position: absolute; left: 0; top: 5px; font-size: 0.7rem; }
+
+    /* ── Filter + cards ── */
+    .comp-controls { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+    .comp-search, .comp-filter { padding: 9px 14px; border: 1.5px solid var(--border2); background: var(--surface); color: var(--text); font-family: var(--font-body); font-size: 0.86rem; border-radius: var(--radius); outline: none; }
+    .comp-search { flex: 1; min-width: 220px; }
+    .comp-search:focus, .comp-filter:focus { border-color: var(--amber); }
+    .comp-count { font-family: var(--font-mono); font-size: 0.74rem; color: var(--muted); }
+
+    .comp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; }
+    .comp-card { position: relative; background: var(--card); border: 1px solid var(--border); padding: 20px 22px; display: flex; flex-direction: column; gap: 12px; }
+    .comp-card::before, .comp-card::after { content: ''; position: absolute; width: 10px; height: 10px; border-color: var(--border2); }
+    .comp-card::before { top: -1px; left: -1px; border-top: 1.5px solid; border-left: 1.5px solid; }
+    .comp-card::after { bottom: -1px; right: -1px; border-bottom: 1.5px solid; border-right: 1.5px solid; }
+    .comp-card.is-self { border-color: var(--amber); box-shadow: 0 0 24px var(--glow-a); }
+    .comp-card.is-self::before, .comp-card.is-self::after { border-color: var(--amber); }
+    .comp-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .comp-name { font-family: var(--font-head); font-size: 1.1rem; font-weight: 700; color: var(--text); letter-spacing: 0.02em; text-transform: uppercase; }
+    .comp-self-tag { display: inline-block; margin-left: 6px; padding: 2px 8px; font-family: var(--font-mono); font-size: 0.6rem; color: var(--bg); background: var(--amber); letter-spacing: 0.08em; text-transform: uppercase; vertical-align: middle; }
+    .comp-url { display: block; font-family: var(--font-mono); font-size: 0.72rem; color: var(--amber); text-decoration: none; margin-top: 2px; word-break: break-all; }
+    .comp-url:hover { text-decoration: underline; }
+    .comp-target { font-size: 0.82rem; color: var(--muted2); line-height: 1.5; }
+
+    .badge-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .badge { display: inline-block; padding: 3px 9px; font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; border-radius: 100px; border: 1px solid var(--border2); color: var(--muted2); }
+    .b-tier-platform { background: rgba(0,229,255,0.10); color: var(--cyan); border-color: rgba(0,229,255,0.3); }
+    .b-tier-agency { background: rgba(192,132,252,0.10); color: var(--violet); border-color: rgba(192,132,252,0.3); }
+    .b-tier-boutique { background: rgba(0,255,136,0.10); color: var(--neon); border-color: rgba(0,255,136,0.3); }
+    .b-cat { background: rgba(255,136,68,0.06); color: var(--amber); border-color: rgba(255,136,68,0.3); }
+    .b-vis-fully_published { background: rgba(0,255,136,0.10); color: var(--neon); border-color: rgba(0,255,136,0.3); }
+    .b-vis-partial { background: rgba(255,136,68,0.10); color: var(--amber); border-color: rgba(255,136,68,0.3); }
+    .b-vis-quote_on_call { background: rgba(255,68,102,0.10); color: var(--rose); border-color: rgba(255,68,102,0.3); }
+    .b-vis-self_sourced { background: rgba(122,106,90,0.18); color: var(--muted2); border-color: var(--muted); }
+    .b-threat-high { background: rgba(255,68,102,0.10); color: var(--rose); border-color: rgba(255,68,102,0.3); }
+    .b-threat-medium { background: rgba(255,136,68,0.10); color: var(--amber); border-color: rgba(255,136,68,0.3); }
+    .b-threat-low { background: rgba(0,255,136,0.10); color: var(--neon); border-color: rgba(0,255,136,0.3); }
+
+    .price-strip { font-size: 0.82rem; color: var(--muted2); padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); font-family: var(--font-mono); }
+    .price-strip b { color: var(--text); font-family: var(--font-body); font-weight: 600; }
+
+    .sg-flags { display: flex; gap: 8px; flex-wrap: wrap; font-family: var(--font-mono); font-size: 0.66rem; color: var(--muted2); }
+    .sg-flag { padding: 2px 6px; border: 1px solid var(--border2); border-radius: 3px; }
+    .sg-flag.on { color: var(--neon); border-color: rgba(0,255,136,0.4); }
+    .sg-flag.off { color: var(--muted); }
+
+    .score-row { display: grid; grid-template-columns: 90px 1fr 36px; gap: 10px; align-items: center; font-size: 0.78rem; }
+    .score-lbl { font-family: var(--font-mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.66rem; font-weight: 700; }
+    .score-bar { height: 8px; background: var(--surface); overflow: hidden; position: relative; border: 1px solid var(--border); }
+    .score-bar-fill { height: 100%; background: linear-gradient(90deg, var(--amber), var(--cyan)); transition: width 0.4s ease; }
+    .score-num { font-family: var(--font-mono); font-weight: 700; color: var(--text); text-align: right; }
+
+    .lists-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 540px) { .lists-wrap { grid-template-columns: 1fr; } }
+    .list-block h4 { font-family: var(--font-mono); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber); margin-bottom: 6px; }
+    .list-block ul { list-style: none; padding: 0; margin: 0; }
+    .list-block li { font-size: 0.78rem; color: var(--muted2); padding: 4px 0 4px 14px; position: relative; line-height: 1.5; }
+    .list-block li::before { content: '•'; position: absolute; left: 0; top: 4px; font-weight: 700; }
+    .list-block.weak li::before { color: var(--rose); }
+    .list-block.strong li::before { color: var(--neon); }
+
+    .loading { color: var(--muted); font-family: var(--font-mono); font-size: 0.86rem; padding: 32px; text-align: center; grid-column: 1 / -1; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      body { font-size: 13px; }
+      .admin-links a { font-size: 0.66rem; padding: 4px 8px; }
+      .atlas-meta { text-align: left; margin-top: 6px; font-size: 0.7rem; }
+      .atlas-top { flex-direction: column; align-items: flex-start; gap: 6px; }
+      .kpi-strip { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; margin-bottom: 20px; }
+      .kpi { padding: 14px 16px; }
+      .kpi-val { font-size: 1.35rem; }
+      .kpi-lbl { font-size: 0.6rem; letter-spacing: 0.06em; }
+      .artifact { padding: 18px 16px; margin-bottom: 14px; }
+      .art-desc { font-size: 0.82rem; margin-bottom: 14px; }
+      #radar-chart { height: 320px !important; max-height: 360px !important; }
+      .chart-wrap { padding: 14px; }
+      .comp-controls { gap: 8px; flex-wrap: wrap; }
+      .comp-search { width: 100% !important; min-width: 100% !important; }
+      .comp-filter { flex: 1 1 calc(50% - 4px); min-width: calc(50% - 4px); }
+      .comp-grid { grid-template-columns: 1fr !important; gap: 12px; }
+      .comp-card { padding: 16px 16px; }
+      .badge { font-size: 0.56rem; padding: 2px 6px; letter-spacing: 0.02em; }
+    }
+    @media (max-width: 420px) {
+      .kpi-strip { grid-template-columns: 1fr !important; }
+      body { font-size: 12px; }
+      .kpi-val { font-size: 1.2rem; }
+      .comp-filter { flex: 1 1 100%; min-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="admin-nav">
+  <div class="admin-nav-left">
+    <div class="theme-toggle" id="theme-toggle">
+      <button onclick="setTheme('dark')" class="active" id="btn-dark">DARK</button>
+      <button onclick="setTheme('light')" id="btn-light">LIGHT</button>
+    </div>
+    <a href="../index.html" class="nav-brand">
+      <div class="nav-mark">X</div>
+      <div class="nav-wordmark">XINCE<em>AI</em></div>
+    </a>
+    <span class="admin-badge">Admin</span>
+  </div>
+  <div class="admin-links">
+    <a href="../index.html">Public Site</a>
+    <a href="index.html">Analytics</a>
+    <a href="insights.html">Insights</a>
+    <a href="whitespace.html">White Space</a>
+    <a href="competitor-analytics.html" class="active">Competitors</a>
+    <a href="design-audit.html">Design Audit</a>
+    <a href="report.html">Report</a>
+  </div>
+</nav>
+
+<main class="page">
+
+  <div class="atlas-top">
+    <div>
+      <div class="atlas-tag">// Competitor Analytics · v1</div>
+      <h1 class="atlas-title">SG AI workflow vendors,<br/><span class="grad">mapped on the axes that matter.</span></h1>
+    </div>
+    <div class="atlas-meta">
+      <div>Refreshed <span id="refresh-date">—</span></div>
+      <div><span id="comp-count-hdr">—</span> competitors mapped</div>
+    </div>
+  </div>
+
+  <div class="kpi-strip">
+    <div class="kpi"><div class="kpi-val amber" id="kpi-total">—</div><div class="kpi-lbl">Competitors mapped</div></div>
+    <div class="kpi"><div class="kpi-val cyan" id="kpi-design">—</div><div class="kpi-lbl">Avg design score (10)</div></div>
+    <div class="kpi"><div class="kpi-val neon" id="kpi-jr">—</div><div class="kpi-lbl">% JR+ grant eligible</div></div>
+    <div class="kpi"><div class="kpi-val rose" id="kpi-threats">—</div><div class="kpi-lbl">High threat to XinceAI</div></div>
+  </div>
+
+  <!-- Artifact 01 — Radar -->
+  <section class="artifact">
+    <div class="art-num">Artifact 01</div>
+    <h2 class="art-title">Top-5 Threat Radar</h2>
+    <p class="art-desc">Five most-direct rivals plotted on six XinceAI-specific axes: SG presence, automation depth, pricing transparency, JR+ grant eligibility, ROI clarity, and vendor-lock-in risk (inverted). XinceAI occupies the only quadrant that combines high SG presence, high JR+ eligibility, transparent pricing, and pre-built workflow depth.</p>
+    <div class="chart-wrap">
+      <canvas id="radar-chart" width="720" height="460"></canvas>
+    </div>
+  </section>
+
+  <!-- Artifact 02 — Insights -->
+  <section class="artifact">
+    <div class="art-num">Artifact 02</div>
+    <h2 class="art-title">Strategic Insights</h2>
+    <p class="art-desc">What the landscape tells us — common weaknesses across the field, XinceAI's deck-grounded advantages, and the design lessons we borrow vs improve on.</p>
+    <div class="insight-grid">
+      <div class="insight-block">
+        <h4>Common competitor weaknesses</h4>
+        <ul id="weaknesses-list"></ul>
+      </div>
+      <div class="insight-block">
+        <h4>XinceAI advantages (deck-grounded)</h4>
+        <ul id="advantages-list"></ul>
+      </div>
+      <div class="insight-block">
+        <h4>Design — borrowed from</h4>
+        <ul id="borrowed-list"></ul>
+      </div>
+      <div class="insight-block">
+        <h4>Design — improved on</h4>
+        <ul id="improved-list"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Artifact 03 — Deep dive cards -->
+  <section class="artifact">
+    <div class="art-num">Artifact 03</div>
+    <h2 class="art-title">Competitor Deep-dive</h2>
+    <p class="art-desc">All <span id="comp-count-inline">—</span> competitors with tier, category, pricing visibility, JR+ / SG localisation flags, design + mobile scores, strengths and weaknesses.</p>
+    <div class="comp-controls">
+      <input type="search" id="comp-search" class="comp-search" placeholder="Search name, target, strengths..." />
+      <select id="comp-cat" class="comp-filter"><option value="">All categories</option></select>
+      <select id="comp-threat" class="comp-filter">
+        <option value="">All threats</option>
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+      </select>
+      <select id="comp-vis" class="comp-filter">
+        <option value="">All price visibility</option>
+        <option value="fully_published">Fully published</option>
+        <option value="partial">Partial</option>
+        <option value="quote_on_call">Quote on call</option>
+        <option value="self_sourced">Self sourced</option>
+      </select>
+      <span class="comp-count" id="comp-count-tbl">—</span>
+    </div>
+    <div class="comp-grid" id="comp-grid">
+      <div class="loading">Loading competitor data…</div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  function setTheme(mode) {
+    document.documentElement.setAttribute('data-theme', mode);
+    document.getElementById('btn-dark').classList.toggle('active', mode === 'dark');
+    document.getElementById('btn-light').classList.toggle('active', mode === 'light');
+    localStorage.setItem('xince-theme', mode);
+  }
+  (function() { const saved = localStorage.getItem('xince-theme'); if (saved) setTheme(saved); })();
+</script>
+
+<script>
+const STATE = { competitors: [], categories: {}, insights: {}, landscape: {}, filtered: [] };
+
+function el(tag, opts) {
+  const e = document.createElement(tag);
+  if (!opts) return e;
+  if (opts.cls) e.className = opts.cls;
+  if (opts.text != null) e.textContent = String(opts.text);
+  if (opts.attrs) for (const [k,v] of Object.entries(opts.attrs)) e.setAttribute(k, v);
+  return e;
+}
+
+function init() {
+  fetch('../data/competitors.json', { cache: 'no-store' })
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(data => {
+      STATE.competitors = Array.isArray(data.competitors) ? data.competitors : [];
+      STATE.categories = data.categories || {};
+      STATE.insights = data.insights || {};
+      STATE.landscape = data.landscape || {};
+      STATE.filtered = STATE.competitors.slice();
+      document.getElementById('refresh-date').textContent = data.research_date || '—';
+      renderKPIs();
+      renderCategoryFilter();
+      renderInsights();
+      renderRadar();
+      attachFilterHandlers();
+      renderCards();
+    })
+    .catch(err => {
+      console.error(err);
+      const grid = document.getElementById('comp-grid');
+      grid.textContent = '';
+      grid.appendChild(el('div', { cls: 'loading', text: 'Failed to load competitor data: ' + err.message }));
+    });
+}
+
+function renderKPIs() {
+  const total = STATE.competitors.length;
+  const ds = STATE.competitors.map(c => Number(c.designScore || 0));
+  const avg = ds.length ? (ds.reduce((a,b) => a+b, 0) / ds.length) : 0;
+  const jr = STATE.competitors.filter(c => c.jr_plus_eligible).length;
+  const threats = STATE.competitors.filter(c => c.threat_level_to_xinceai === 'high').length;
+
+  document.getElementById('kpi-total').textContent = String(total);
+  document.getElementById('kpi-design').textContent = avg.toFixed(1);
+  document.getElementById('kpi-jr').textContent = total ? Math.round((jr / total) * 100) + '%' : '—';
+  document.getElementById('kpi-threats').textContent = String(threats);
+  document.getElementById('comp-count-hdr').textContent = String(total);
+  document.getElementById('comp-count-inline').textContent = String(total);
+}
+
+function renderCategoryFilter() {
+  const sel = document.getElementById('comp-cat');
+  while (sel.options.length > 1) sel.remove(1);
+  Object.keys(STATE.categories || {}).forEach(k => {
+    const opt = el('option', { attrs: { value: k }, text: k.replace(/_/g, ' ') });
+    sel.appendChild(opt);
+  });
+}
+
+function renderInsights() {
+  const ins = STATE.insights || {};
+  const fill = (id, list) => {
+    const ul = document.getElementById(id);
+    if (!ul) return;
+    ul.textContent = '';
+    (Array.isArray(list) ? list : []).forEach(item => ul.appendChild(el('li', { text: item })));
+  };
+  fill('weaknesses-list', ins.commonWeaknesses);
+  fill('advantages-list', ins.xinceaiAdvantages);
+  fill('borrowed-list', ins.designRationale && ins.designRationale.borrowed);
+  fill('improved-list', ins.designRationale && ins.designRationale.improved);
+}
+
+function visScore(v) {
+  return ({ fully_published: 5, partial: 3, quote_on_call: 1, self_sourced: 2 })[v] || 0;
+}
+function threatScore(t) { return ({ high: 5, medium: 3, low: 1 })[t] || 0; }
+function jrScore(b) { return b ? 5 : 0; }
+function lockScore(c) {
+  // Inverted vendor-lock-in risk (5 = low risk, 1 = high risk)
+  if (c.is_self || c.name === 'XinceAI (self)') return 5;
+  if (c.category === 'inhouse_build' || c.category === 'diy_alt') return 5;
+  if (c.category === 'global_workflow') return 2;  // task-based billing trap
+  if (c.category === 'big_si') return 1;            // multi-year retainers
+  if (c.category === 'whatsapp_ai') return 3;
+  if (c.category === 'psg_vendor') return 4;
+  if (c.category === 'sg_local_ai') return 4;
+  return 3;
+}
+
+function renderRadar() {
+  const ctx = document.getElementById('radar-chart');
+  if (!ctx || typeof Chart === 'undefined') return;
+
+  // Pick top-5 most direct threats (high), sorted by design+mobile.
+  // Add Zapier as published-pricing global benchmark.
+  const high = STATE.competitors.filter(c => c.threat_level_to_xinceai === 'high');
+  high.sort((a,b) => (b.designScore + b.mobileScore) - (a.designScore + a.mobileScore));
+  const picks = high.slice(0, 4);
+  const zap = STATE.competitors.find(c => c.name === 'Zapier');
+  if (zap && !picks.includes(zap)) picks.push(zap);
+  const top5 = picks.slice(0, 5);
+
+  const dims = ['SG presence', 'Automation depth', 'Pricing transparency', 'JR+ grant eligibility', 'ROI clarity', 'Lock-in risk (inv.)'];
+
+  const xinceai = STATE.competitors.find(c => c.is_self || c.name === 'XinceAI (self)') || null;
+  const datasets = [];
+
+  if (xinceai) {
+    datasets.push({
+      label: 'XinceAI (us)',
+      data: [
+        Math.min(5, Number(xinceai.sg_localisation || 0)),
+        5,
+        visScore(xinceai.pricing_visibility),
+        jrScore(xinceai.jr_plus_eligible),
+        5,
+        lockScore(xinceai)
+      ],
+      backgroundColor: 'rgba(255,136,68,0.18)',
+      borderColor: '#ff8844',
+      borderWidth: 2.5,
+      pointBackgroundColor: '#ff8844'
+    });
+  }
+
+  const palette = ['#ff4466', '#c084fc', '#00e5ff', '#00ff88', '#a89888'];
+  top5.forEach((c, i) => {
+    datasets.push({
+      label: c.name,
+      data: [
+        Math.min(5, Number(c.sg_localisation || 0)),
+        Math.round((Number(c.designScore || 0) / 10) * 5),  // proxy for automation depth via design+features
+        visScore(c.pricing_visibility),
+        jrScore(c.jr_plus_eligible),
+        Math.round((Number(c.designScore || 0) / 10) * 5),  // proxy for ROI clarity
+        lockScore(c)
+      ],
+      backgroundColor: 'rgba(0,0,0,0)',
+      borderColor: palette[i % palette.length],
+      borderWidth: 1.5,
+      pointBackgroundColor: palette[i % palette.length]
+    });
+  });
+
+  new Chart(ctx, {
+    type: 'radar',
+    data: { labels: dims, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { size: 11, family: 'Inter' }, color: '#a89888' } },
+        tooltip: { backgroundColor: '#28201b', padding: 10 }
+      },
+      scales: {
+        r: {
+          min: 0, max: 5,
+          ticks: { stepSize: 1, color: '#7a6a5a', backdropColor: 'transparent', font: { size: 10 } },
+          pointLabels: { font: { size: 11, family: 'Inter' }, color: '#a89888' },
+          grid: { color: 'rgba(255,136,68,0.18)' },
+          angleLines: { color: 'rgba(255,136,68,0.18)' }
+        }
+      }
+    }
+  });
+}
+
+function attachFilterHandlers() {
+  ['comp-search', 'comp-cat', 'comp-threat', 'comp-vis'].forEach(id => {
+    const e = document.getElementById(id);
+    if (e) e.addEventListener('input', applyFilters);
+  });
+}
+
+function applyFilters() {
+  const q = (document.getElementById('comp-search').value || '').toLowerCase().trim();
+  const cat = document.getElementById('comp-cat').value;
+  const thr = document.getElementById('comp-threat').value;
+  const vis = document.getElementById('comp-vis').value;
+
+  STATE.filtered = STATE.competitors.filter(c => {
+    if (cat && c.category !== cat) return false;
+    if (thr && c.threat_level_to_xinceai !== thr) return false;
+    if (vis && c.pricing_visibility !== vis) return false;
+    if (q) {
+      const blob = [
+        c.name, c.target_market, (c.strengths || []).join(' '),
+        (c.weaknesses || []).join(' '), (c.notableFeatures || []).join(' ')
+      ].join(' ').toLowerCase();
+      if (!blob.includes(q)) return false;
+    }
+    return true;
+  });
+  renderCards();
+}
+
+function renderCards() {
+  const grid = document.getElementById('comp-grid');
+  grid.textContent = '';
+  document.getElementById('comp-count-tbl').textContent =
+    STATE.filtered.length + ' / ' + STATE.competitors.length + ' shown';
+  if (!STATE.filtered.length) {
+    grid.appendChild(el('div', { cls: 'loading', text: 'No competitors match the current filters.' }));
+    return;
+  }
+  STATE.filtered.forEach(c => grid.appendChild(buildCard(c)));
+}
+
+function buildCard(c) {
+  const isSelf = c.is_self || c.name === 'XinceAI (self)';
+  const card = el('div', { cls: 'comp-card' + (isSelf ? ' is-self' : '') });
+
+  const head = el('div', { cls: 'comp-card-head' });
+  const nameWrap = el('div');
+  const nameRow = el('div', { cls: 'comp-name', text: c.name || '—' });
+  if (isSelf) {
+    const tag = el('span', { cls: 'comp-self-tag', text: 'Self' });
+    nameRow.appendChild(tag);
+  }
+  nameWrap.appendChild(nameRow);
+  if (c.url) {
+    nameWrap.appendChild(el('a', { cls: 'comp-url', text: c.url, attrs: { href: c.url, target: '_blank', rel: 'noopener noreferrer' } }));
+  }
+  head.appendChild(nameWrap);
+  const threat = c.threat_level_to_xinceai || 'low';
+  head.appendChild(el('span', { cls: 'badge b-threat-' + threat, text: threat + ' threat' }));
+  card.appendChild(head);
+
+  if (c.target_market) card.appendChild(el('div', { cls: 'comp-target', text: c.target_market }));
+
+  const badges = el('div', { cls: 'badge-row' });
+  if (c.tier) badges.appendChild(el('span', { cls: 'badge b-tier-' + c.tier, text: c.tier }));
+  if (c.category) badges.appendChild(el('span', { cls: 'badge b-cat', text: c.category.replace(/_/g, ' ') }));
+  if (c.pricing_visibility) badges.appendChild(el('span', { cls: 'badge b-vis-' + c.pricing_visibility, text: c.pricing_visibility.replace(/_/g, ' ') }));
+  card.appendChild(badges);
+
+  // SG flags row
+  const flags = el('div', { cls: 'sg-flags' });
+  flags.appendChild(el('span', { cls: 'sg-flag ' + (c.jr_plus_eligible ? 'on' : 'off'), text: (c.jr_plus_eligible ? '✓' : '✗') + ' JR+' }));
+  flags.appendChild(el('span', { cls: 'sg-flag ' + (c.psg_eligible ? 'on' : 'off'), text: (c.psg_eligible ? '✓' : '✗') + ' PSG' }));
+  flags.appendChild(el('span', { cls: 'sg-flag ' + (Number(c.sg_localisation || 0) >= 4 ? 'on' : 'off'), text: 'SG-loc ' + (c.sg_localisation || 0) + '/5' }));
+  if (c.deployment_speed_days != null) flags.appendChild(el('span', { cls: 'sg-flag', text: 'Live ' + c.deployment_speed_days + 'd' }));
+  card.appendChild(flags);
+
+  if (c.sg_monthly_sgd) {
+    const strip = el('div', { cls: 'price-strip' });
+    strip.appendChild(el('b', { text: 'SG price: ' }));
+    strip.appendChild(document.createTextNode(c.sg_monthly_sgd));
+    card.appendChild(strip);
+  }
+
+  const scores = el('div');
+  scores.appendChild(scoreRow('Design', c.designScore));
+  scores.appendChild(scoreRow('Mobile', c.mobileScore));
+  card.appendChild(scores);
+
+  const lists = el('div', { cls: 'lists-wrap' });
+  if (Array.isArray(c.strengths) && c.strengths.length) lists.appendChild(listBlock('Strengths', c.strengths, 'strong'));
+  if (Array.isArray(c.weaknesses) && c.weaknesses.length) lists.appendChild(listBlock('Weaknesses', c.weaknesses, 'weak'));
+  card.appendChild(lists);
+
+  return card;
+}
+
+function scoreRow(label, val) {
+  const v = Math.max(0, Math.min(10, Number(val || 0)));
+  const row = el('div', { cls: 'score-row' });
+  row.appendChild(el('div', { cls: 'score-lbl', text: label }));
+  const bar = el('div', { cls: 'score-bar' });
+  const fill = el('div', { cls: 'score-bar-fill' });
+  fill.style.width = (v * 10) + '%';
+  bar.appendChild(fill);
+  row.appendChild(bar);
+  row.appendChild(el('div', { cls: 'score-num', text: v + '/10' }));
+  return row;
+}
+
+function listBlock(title, items, kind) {
+  const block = el('div', { cls: 'list-block ' + (kind || '') });
+  block.appendChild(el('h4', { text: title }));
+  const ul = el('ul');
+  items.forEach(it => ul.appendChild(el('li', { text: it })));
+  block.appendChild(ul);
+  return block;
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+</script>
+
+</body>
+</html>

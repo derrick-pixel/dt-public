@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="sticker">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Elitez Pulse — Market & Pricing Insights</title>
+  <link rel="icon" href="../assets/favicon/favicon.ico">
+  <link id="theme-css" rel="stylesheet" href="../assets/theme.css">
+  <link rel="stylesheet" href="../assets/base.css">
+  <link rel="stylesheet" href="../assets/components.css">
+  <link rel="stylesheet" href="../assets/admin.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { background: var(--cream); color: var(--ink); min-height: 100vh; font-family: var(--font-body); }
+
+    .atlas-body { max-width: 1380px; margin: 0 auto; padding: 28px 32px 64px; }
+
+    .atlas-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 20px; background: var(--white); border: 2px solid var(--ink);
+      border-radius: var(--radius-md); box-shadow: var(--shadow-sticker);
+      margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
+    }
+    .atlas-nav .brand {
+      display: flex; align-items: center; gap: 10px; text-decoration: none;
+      font-weight: 800; color: var(--ink); letter-spacing: 0.04em;
+    }
+    .atlas-nav .brand img { height: 28px; }
+    .atlas-nav .brand .pulse { color: var(--coral); font-weight: 900; }
+    .atlas-nav-links { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .atlas-nav-links a {
+      font-size: 12px; color: var(--ink-soft); padding: 6px 12px; border-radius: 999px;
+      text-decoration: none; font-weight: 700; letter-spacing: 0.04em; transition: background 0.15s;
+      border: 1.5px solid transparent;
+    }
+    .atlas-nav-links a:hover { background: var(--cream); border-color: var(--ink); }
+    .atlas-nav-links a.active { background: var(--coral); color: var(--white); border-color: var(--coral); }
+
+    .atlas-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+    .atlas-tag {
+      display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--coral); margin-bottom: 6px;
+      padding: 3px 10px; border: 2px solid var(--coral); border-radius: 999px; background: var(--white);
+    }
+    .atlas-title { font-size: clamp(1.6rem, 3.2vw, 2.4rem); font-weight: 900; letter-spacing: -0.02em; color: var(--ink); line-height: 1.1; }
+    .atlas-title .sub { display: block; font-size: 0.55em; font-weight: 600; color: var(--ink-soft); margin-top: 6px; line-height: 1.35; }
+    .atlas-meta { font-size: 12px; color: var(--ink-soft); font-family: var(--font-mono); text-align: right; }
+
+    .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 26px; }
+    .kpi { background: var(--white); border: 2px solid var(--ink); border-radius: var(--radius-md); padding: 16px 18px; box-shadow: var(--shadow-sticker); }
+    .kpi-val { font-size: 1.7rem; font-weight: 900; color: var(--coral); letter-spacing: -0.03em; line-height: 1; }
+    .kpi-val.violet { color: var(--violet); }
+    .kpi-val.mustard { color: #B58800; }
+    .kpi-val.ink { color: var(--ink); }
+    .kpi-lbl { font-size: 11px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 800; margin-top: 6px; }
+    .kpi-sub { font-size: 11px; color: var(--ink-soft); margin-top: 6px; line-height: 1.5; font-weight: 500; }
+
+    .artifact { background: var(--white); border: 2px solid var(--ink); border-radius: var(--radius-md); box-shadow: var(--shadow-sticker); padding: 24px 28px; margin-bottom: 22px; }
+    .art-num { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--coral); background: var(--cream); padding: 3px 10px; border-radius: 999px; border: 1.5px solid var(--coral); margin-bottom: 8px; }
+    .art-title { font-size: 1.35rem; font-weight: 900; color: var(--ink); letter-spacing: -0.01em; margin-bottom: 6px; }
+    .art-desc { font-size: 0.92rem; color: var(--ink-soft); max-width: 820px; margin-bottom: 20px; line-height: 1.6; }
+
+    .mm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+    .mm-card { background: var(--cream); border: 2px solid var(--ink); border-radius: var(--radius-md); padding: 18px 20px; }
+    .mm-tag { font-size: 10px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--violet); margin-bottom: 6px; font-family: var(--font-mono); }
+    .mm-title { font-size: 1.05rem; font-weight: 900; color: var(--ink); margin-bottom: 8px; line-height: 1.25; }
+    .mm-body { font-size: 0.86rem; color: var(--ink-soft); line-height: 1.6; margin-bottom: 10px; }
+    .mm-rule { font-size: 0.82rem; color: var(--ink); padding-top: 10px; border-top: 1.5px dashed var(--ink); font-weight: 600; }
+    .mm-rule b { display: block; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--coral); font-weight: 800; margin-bottom: 4px; font-family: var(--font-mono); }
+
+    .bench-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+    .bench { background: var(--cream); border: 2px solid var(--ink); border-radius: var(--radius-md); padding: 14px 16px; text-align: center; }
+    .bench-val { font-size: 1.4rem; font-weight: 900; color: var(--coral); letter-spacing: -0.02em; }
+    .bench-lbl { font-size: 11px; color: var(--ink-soft); margin-top: 4px; font-weight: 700; }
+
+    .pmtx { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    .pmtx thead th { background: var(--ink); color: var(--cream); font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.66rem; padding: 10px 12px; text-align: left; }
+    .pmtx thead th.col-us { background: var(--coral); }
+    .pmtx tbody td { padding: 10px 12px; border-bottom: 1px solid rgba(26,26,26,0.12); vertical-align: middle; color: var(--ink-soft); font-family: var(--font-mono); }
+    .pmtx tbody th { padding: 10px 12px; border-bottom: 1px solid rgba(26,26,26,0.12); background: var(--cream); color: var(--ink); font-weight: 700; text-align: left; font-size: 0.86rem; font-family: var(--font-body); }
+    .pmtx tbody tr:hover td { background: var(--cream); }
+    .pmtx td.col-us { background: rgba(255,91,57,0.08); color: var(--ink); font-weight: 700; }
+    .pmtx-section-header { background: var(--cream); }
+    .pmtx-section-header td { font-weight: 800; color: var(--ink); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.7rem; font-family: var(--font-mono); padding: 10px 12px; }
+
+    .obj-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    .obj-card { background: var(--cream); border: 2px solid var(--ink); border-radius: var(--radius-md); padding: 18px 20px; position: relative; }
+    .obj-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+    .obj-trigger { font-size: 0.95rem; font-weight: 800; color: var(--ink); flex: 1; min-width: 200px; line-height: 1.35; font-style: italic; }
+    .cat-badge { display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; background: var(--violet); color: var(--white); flex-shrink: 0; font-family: var(--font-mono); }
+    .obj-body { font-size: 0.86rem; color: var(--ink-soft); line-height: 1.65; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1.5px dashed var(--ink); }
+    .obj-killshot { font-size: 0.85rem; color: var(--ink); line-height: 1.55; }
+    .obj-killshot b { display: block; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--coral); font-weight: 800; margin-bottom: 4px; font-family: var(--font-mono); }
+
+    .tt-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+    .tt-card { background: linear-gradient(135deg, rgba(255,91,57,0.08), var(--white) 75%); border: 2px solid var(--coral); border-radius: var(--radius-md); padding: 16px 18px; }
+    .tt-sit { font-size: 10px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--coral); margin-bottom: 6px; font-family: var(--font-mono); }
+    .tt-say { font-size: 0.92rem; color: var(--ink); line-height: 1.55; font-style: italic; }
+
+    .source-note { font-size: 0.76rem; color: var(--ink-soft); font-style: italic; margin-top: 16px; line-height: 1.55; padding: 12px 14px; background: var(--cream); border-radius: var(--radius-sm); border-left: 3px solid var(--coral); }
+
+    @media (max-width: 768px) {
+      body { font-size: 13px; }
+      .atlas-body { padding: 18px 14px 50px; }
+      .atlas-title { font-size: 1.45rem !important; line-height: 1.2 !important; }
+      .atlas-top { flex-direction: column; align-items: flex-start; gap: 6px; }
+      .atlas-meta { text-align: left; font-size: 0.7rem; }
+      .kpi-strip { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .kpi { padding: 12px 14px; }
+      .kpi-val { font-size: 1.35rem; }
+      .artifact { padding: 18px 16px; margin-bottom: 14px; border-radius: 10px; }
+      .art-title { font-size: 1.05rem; }
+      .art-desc { font-size: 0.82rem; margin-bottom: 14px; }
+      .mm-grid, .tt-grid, .bench-grid { grid-template-columns: 1fr; }
+      .pmtx { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; font-size: 0.72rem; white-space: nowrap; }
+      .pmtx thead, .pmtx tbody, .pmtx tr { display: table; width: 100%; min-width: 640px; table-layout: auto; }
+      .pmtx thead th, .pmtx tbody th, .pmtx tbody td { padding: 8px; white-space: normal; font-size: 0.74rem; }
+      .atlas-nav { flex-wrap: wrap; padding: 10px 14px; gap: 8px; }
+      .atlas-nav-links { flex-wrap: wrap; gap: 6px; }
+      .atlas-nav-links a { font-size: 0.72rem; padding: 5px 10px; }
+    }
+    @media (max-width: 420px) {
+      .kpi-strip { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <div class="atlas-body">
+
+    <nav class="atlas-nav">
+      <a href="../index.html" class="brand">
+        <img src="../assets/logo-elitez.png" alt="Elitez">
+        <span>PULSE <span class="pulse">★</span></span>
+      </a>
+      <div class="atlas-nav-links">
+        <a href="index.html">Admin</a>
+        <a href="whitespace.html">White Space</a>
+        <a href="competitor-analytics.html">Competitors</a>
+        <a href="insights.html" class="active">Insights</a>
+        <a href="design-audit.html">Design Audit</a>
+        <a href="report.html">Report</a>
+        <a href="proposal.html">Proposal</a>
+        <a href="template-preview.html">Templates</a>
+        <a href="../index.html">Site</a>
+      </div>
+    </nav>
+
+    <div class="atlas-top">
+      <div>
+        <div class="atlas-tag">◆ Market & Pricing Insights · v1</div>
+        <h1 class="atlas-title">Bundled retainer reality, the way an SG SME actually buys it.<span class="sub">SGD bands, ROI break-even maths, mental models, objection killshots, and the talk tracks that close.</span></h1>
+      </div>
+      <div class="atlas-meta">
+        <div>Refreshed <span id="refresh-date">2026-04-29</span></div>
+        <div><span id="kpi-count">—</span> KPIs · <span id="mm-count">—</span> mental models · <span id="obj-count">—</span> objections</div>
+      </div>
+    </div>
+
+    <section class="artifact">
+      <div class="art-num">Section 01</div>
+      <h2 class="art-title">Plan KPIs — what the Pulse business has to deliver</h2>
+      <p class="art-desc">Six anchor numbers from the Elitez Revenue Engine plan. Each one is the cost floor or revenue ceiling against which every retainer pitch is judged. Margin = SG price minus AI-collapsed delivery hours minus group-shared overhead — ops-stack arbitrage, never geographic arbitrage.</p>
+      <div class="kpi-strip" id="kpi-strip"></div>
+    </section>
+
+    <section class="artifact">
+      <div class="art-num">Section 02</div>
+      <h2 class="art-title">Mental Models — the buyer's brain on a retainer call</h2>
+      <p class="art-desc">Five anchor models that sit behind every Pulse pitch. Each one names the trap, the move, and the rule. Print them. Memorise them. Use them.</p>
+      <div class="mm-grid" id="mm-grid"></div>
+    </section>
+
+    <section class="artifact">
+      <div class="art-num">Section 03</div>
+      <h2 class="art-title">Benchmark Statistics — Core-tier ground truth</h2>
+      <p class="art-desc">What a Core-tier retainer actually delivers. Use these as the anchor numbers when sketching ROI maths live on a discovery call.</p>
+      <div class="bench-grid" id="bench-grid"></div>
+    </section>
+
+    <section class="artifact">
+      <div class="art-num">Section 04</div>
+      <h2 class="art-title">Pricing Tiers — Freelancer · Pulse · SMB · Premium</h2>
+      <p class="art-desc">Triangulated SGD bands across the four tiers buyers actually compare. Pulse occupies the structurally lean middle: above freelancer reliability risk, below SMB / Premium agency rent and senior-AM tax.</p>
+      <table class="pmtx">
+        <thead>
+          <tr>
+            <th>&nbsp;</th>
+            <th>Freelancer</th>
+            <th class="col-us">Pulse <span style="font-weight: 400; opacity: 0.85;">(us)</span></th>
+            <th>SMB Agency</th>
+            <th>Premium Agency</th>
+          </tr>
+        </thead>
+        <tbody id="pmtx-body"></tbody>
+      </table>
+      <p class="source-note">Bands triangulated from public service pages, LinkedIn Jobs salary data and proposals seen in RFPs. Pulse band is bolded — that is the structurally lean position once AI delivery and group-shared overhead are priced in. Ops-stack arbitrage, not geographic arbitrage.</p>
+    </section>
+
+    <section class="artifact">
+      <div class="art-num">Section 05</div>
+      <h2 class="art-title">Objection Killshots — eight things a buyer says, and what closes them</h2>
+      <p class="art-desc">Verbatim trigger lines with the response and the killshot reframe. The killshot is the one line that ends the objection — not just defuses it. Use the killshot only when the response did not land.</p>
+      <div class="obj-grid" id="obj-grid"></div>
+    </section>
+
+    <section class="artifact">
+      <div class="art-num">Section 06</div>
+      <h2 class="art-title">Talk Tracks — four scripted moments</h2>
+      <p class="art-desc">The four moments every Pulse pitch turns on: opening, price, comp, close. Read these out loud. They sound right because they are designed to.</p>
+      <div class="tt-grid" id="tt-grid"></div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+function clearNode(el) { while (el.firstChild) el.removeChild(el.firstChild); }
+function makeEl(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = String(text); return e; }
+
+async function init() {
+  let data;
+  try {
+    const res = await fetch('../data/insights.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    data = await res.json();
+  } catch (e) {
+    const errBox = makeEl('div', 'artifact');
+    errBox.style.borderColor = '#b91c1c';
+    errBox.style.color = '#b91c1c';
+    errBox.textContent = 'Failed to load insights.json: ' + e.message;
+    document.querySelector('.atlas-body').appendChild(errBox);
+    return;
+  }
+
+  const kpiHost = document.getElementById('kpi-strip');
+  const kpis = data.kpis || [];
+  const colorMap = ['', 'violet', 'mustard', 'ink', 'violet', ''];
+  kpis.forEach((k, i) => {
+    const card = makeEl('div', 'kpi');
+    card.appendChild(makeEl('div', 'kpi-val ' + (colorMap[i % colorMap.length]), k.value));
+    card.appendChild(makeEl('div', 'kpi-lbl', k.label));
+    if (k.note) card.appendChild(makeEl('div', 'kpi-sub', k.note));
+    kpiHost.appendChild(card);
+  });
+  document.getElementById('kpi-count').textContent = kpis.length;
+
+  const mmHost = document.getElementById('mm-grid');
+  const mm = data.mentalModels || [];
+  mm.forEach(m => {
+    const c = makeEl('div', 'mm-card');
+    c.appendChild(makeEl('div', 'mm-tag', m.tag || ''));
+    c.appendChild(makeEl('div', 'mm-title', m.title || ''));
+    c.appendChild(makeEl('div', 'mm-body', m.body || ''));
+    if (m.rule) {
+      const rule = makeEl('div', 'mm-rule');
+      rule.appendChild(makeEl('b', null, 'The rule'));
+      rule.appendChild(document.createTextNode(m.rule));
+      c.appendChild(rule);
+    }
+    mmHost.appendChild(c);
+  });
+  document.getElementById('mm-count').textContent = mm.length;
+
+  const bench = data.benchmarkStats || [];
+  const bHost = document.getElementById('bench-grid');
+  bench.forEach(b => {
+    const c = makeEl('div', 'bench');
+    c.appendChild(makeEl('div', 'bench-val', b.value));
+    c.appendChild(makeEl('div', 'bench-lbl', b.label));
+    bHost.appendChild(c);
+  });
+
+  // Pricing matrix from competitors.json's priceMatrix
+  try {
+    const pmRes = await fetch('../data/competitors.json', { cache: 'no-store' });
+    const pm = (await pmRes.json()).priceMatrix || {};
+    const body = document.getElementById('pmtx-body');
+    function fmtBand(arr) {
+      if (!Array.isArray(arr) || arr.length !== 2) return '—';
+      return 'S$' + arr[0].toLocaleString() + '–' + arr[1].toLocaleString();
+    }
+    function appendSection(label, rows) {
+      const hr = makeEl('tr', 'pmtx-section-header');
+      const td = document.createElement('td');
+      td.colSpan = 5;
+      td.textContent = label;
+      hr.appendChild(td);
+      body.appendChild(hr);
+      (rows || []).forEach(r => {
+        const tr = document.createElement('tr');
+        const th = makeEl('th', null, r.service);
+        tr.appendChild(th);
+        ['freelancer','us','smb','premium'].forEach(k => {
+          const td = makeEl('td', k === 'us' ? 'col-us' : null, fmtBand(r[k]));
+          tr.appendChild(td);
+        });
+        body.appendChild(tr);
+      });
+    }
+    appendSection('Assets', pm.assets);
+    appendSection('Campaigns', pm.campaigns);
+  } catch (e) {
+    const body = document.getElementById('pmtx-body');
+    const tr = document.createElement('tr');
+    const td = document.createElement('td');
+    td.colSpan = 5;
+    td.style.textAlign = 'center';
+    td.style.color = 'var(--ink-soft)';
+    td.style.padding = '18px';
+    td.textContent = 'priceMatrix not available — check competitors.json';
+    tr.appendChild(td);
+    body.appendChild(tr);
+  }
+
+  const objHost = document.getElementById('obj-grid');
+  const objs = data.objections || [];
+  objs.forEach(o => {
+    const c = makeEl('div', 'obj-card');
+    const head = makeEl('div', 'obj-head');
+    head.appendChild(makeEl('div', 'obj-trigger', '"' + (o.trigger || '') + '"'));
+    if (o.category) head.appendChild(makeEl('span', 'cat-badge', o.category));
+    c.appendChild(head);
+    c.appendChild(makeEl('div', 'obj-body', o.response || ''));
+    if (o.killshot) {
+      const k = makeEl('div', 'obj-killshot');
+      k.appendChild(makeEl('b', null, 'Killshot'));
+      k.appendChild(document.createTextNode(o.killshot));
+      c.appendChild(k);
+    }
+    objHost.appendChild(c);
+  });
+  document.getElementById('obj-count').textContent = objs.length;
+
+  const ttHost = document.getElementById('tt-grid');
+  const tts = data.talkTracks || [];
+  tts.forEach(t => {
+    const c = makeEl('div', 'tt-card');
+    c.appendChild(makeEl('div', 'tt-sit', t.situation || ''));
+    c.appendChild(makeEl('div', 'tt-say', '“' + (t.say || '') + '”'));
+    ttHost.appendChild(c);
+  });
+}
+
+init();
+</script>
+
+</body>
+</html>

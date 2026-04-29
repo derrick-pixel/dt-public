@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="sticker">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Elitez Pulse — Competitor Analytics</title>
+  <link rel="icon" href="../assets/favicon/favicon.ico">
+  <link id="theme-css" rel="stylesheet" href="../assets/theme.css">
+  <link rel="stylesheet" href="../assets/base.css">
+  <link rel="stylesheet" href="../assets/components.css">
+  <link rel="stylesheet" href="../assets/admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { background: var(--cream); color: var(--ink); min-height: 100vh; font-family: var(--font-body); }
+    .atlas-body { max-width: 1380px; margin: 0 auto; padding: 28px 32px 64px; }
+
+    .atlas-nav { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; background: var(--white); border: 2px solid var(--ink); border-radius: var(--radius-md); box-shadow: var(--shadow-sticker); margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+    .atlas-nav .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; color: var(--ink); letter-spacing: 0.04em; }
+    .atlas-nav .brand img { height: 28px; }
+    .atlas-nav .brand .pulse { color: var(--coral); font-weight: 900; }
+    .atlas-nav-links { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .atlas-nav-links a { font-size: 12px; color: var(--ink-soft); padding: 6px 12px; border-radius: 999px; text-decoration: none; font-weight: 700; letter-spacing: 0.04em; transition: background 0.15s; border: 1.5px solid transparent; }
+    .atlas-nav-links a:hover { background: var(--cream); border-color: var(--ink); }
+    .atlas-nav-links a.active { background: var(--coral); color: var(--white); border-color: var(--coral); }
+
+    .atlas-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+    .atlas-tag { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--coral); margin-bottom: 6px; padding: 3px 10px; border: 2px solid var(--coral); border-radius: 999px; background: var(--white); }
+    .atlas-title { font-size: clamp(1.6rem, 3.2vw, 2.4rem); font-weight: 900; letter-spacing: -0.02em; color: var(--ink); line-height: 1.1; }
+    .atlas-title .sub { display: block; font-size: 0.55em; font-weight: 600; color: var(--ink-soft); margin-top: 6px; line-height: 1.35; }
+    .atlas-meta { font-size: 12px; color: var(--ink-soft); font-family: var(--font-mono); text-align: right; }
+
+    .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 26px; }
+    .kpi { background: var(--white); border: 2px solid var(--ink); border-radius: var(--radius-md); padding: 16px 18px; box-shadow: var(--shadow-sticker); }
+    .kpi-val { font-size: 1.7rem; font-weight: 900; color: var(--coral); letter-spacing: -0.03em; line-height: 1; }
+    .kpi-val.violet { color: var(--violet); }
+    .kpi-val.mustard { color: #B58800; }
+    .kpi-val.ink { color: var(--ink); }
+    .kpi-lbl { font-size: 11px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 800; margin-top: 6px; }
+
+    .artifact { background: var(--white); border: 2px solid var(--ink); border-radius: var(--radius-md); box-shadow: var(--shadow-sticker); padding: 24px 28px; margin-bottom: 22px; }
+    .art-num { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--coral); background: var(--cream); padding: 3px 10px; border-radius: 999px; border: 1.5px solid var(--coral); margin-bottom: 8px; }
+    .art-title { font-size: 1.35rem; font-weight: 900; color: var(--ink); letter-spacing: -0.01em; margin-bottom: 6px; }
+    .art-desc { font-size: 0.92rem; color: var(--ink-soft); max-width: 820px; margin-bottom: 20px; line-height: 1.6; }
+
+    /* Radar */
+    .chart-wrap { background: var(--cream); border: 2px solid var(--ink); border-radius: var(--radius-md); padding: 18px; }
+    #radar-chart { width: 100% !important; max-width: 720px; height: 460px !important; margin: 0 auto; display: block; }
+
+    /* Filter bar */
+    .comp-controls { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+    .comp-search, .comp-filter { padding: 9px 14px; border: 1.5px solid var(--ink); background: var(--cream); color: var(--ink); font-family: inherit; font-size: 0.88rem; border-radius: var(--radius-sm); outline: none; }
+    .comp-search:focus, .comp-filter:focus { border-color: var(--coral); }
+    .comp-search { flex: 1; min-width: 220px; }
+    .comp-count { font-size: 0.78rem; color: var(--ink-soft); font-family: var(--font-mono); }
+
+    /* Competitor cards */
+    .comp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; }
+    .comp-card { background: var(--white); border: 2px solid var(--ink); border-radius: var(--radius-md); padding: 20px 22px; display: flex; flex-direction: column; gap: 12px; box-shadow: var(--shadow-sticker); }
+    .comp-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .comp-name { font-size: 1.05rem; font-weight: 900; color: var(--ink); letter-spacing: -0.01em; }
+    .comp-url { display: block; font-size: 0.74rem; color: var(--coral); text-decoration: none; margin-top: 2px; word-break: break-all; }
+    .comp-url:hover { text-decoration: underline; }
+    .comp-target { font-size: 0.78rem; color: var(--ink-soft); line-height: 1.5; }
+
+    .badge-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .badge { display: inline-block; padding: 3px 9px; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; font-family: var(--font-mono); border-radius: 999px; border: 1.5px solid var(--ink); }
+    .b-tier-premium { background: rgba(167,139,250,0.12); color: #6d4ae0; border-color: #6d4ae0; }
+    .b-tier-smb { background: rgba(42,80,128,0.10); color: #2a5080; border-color: #2a5080; }
+    .b-tier-mid { background: rgba(42,128,80,0.10); color: #1f6f3f; border-color: #1f6f3f; }
+    .b-tier-micro { background: rgba(255,215,0,0.18); color: #8a6d00; border-color: #b58800; }
+    .b-tier-freelancer { background: rgba(123,123,116,0.16); color: #555; border-color: #777; }
+    .b-grade-A { background: rgba(58,122,80,0.14); color: #2c6940; border-color: #3a7a50; }
+    .b-grade-B { background: rgba(176,112,32,0.14); color: #8a5414; border-color: #b07020; }
+    .b-grade-C { background: rgba(200,111,21,0.14); color: #8a4a14; border-color: #c86f15; }
+    .b-grade-D { background: rgba(185,28,28,0.10); color: #8b1c1c; border-color: #b91c1c; }
+    .b-threat-high { background: rgba(185,28,28,0.10); color: #8b1c1c; border-color: #b91c1c; }
+    .b-threat-medium { background: rgba(200,111,21,0.14); color: #8a4a14; border-color: #c86f15; }
+    .b-threat-low { background: rgba(58,122,80,0.12); color: #2c6940; border-color: #3a7a50; }
+
+    .price-strip { font-size: 0.82rem; color: var(--ink); padding: 8px 12px; background: var(--cream); border-radius: var(--radius-sm); border: 1.5px solid var(--ink); font-family: var(--font-mono); }
+    .price-strip b { font-weight: 800; color: var(--coral); }
+
+    .score-row { display: grid; grid-template-columns: 100px 1fr 36px; gap: 10px; align-items: center; font-size: 0.78rem; }
+    .score-lbl { color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.66rem; font-weight: 800; }
+    .score-bar { height: 8px; background: var(--cream); border: 1px solid var(--ink); border-radius: 4px; overflow: hidden; }
+    .score-bar-fill { height: 100%; background: linear-gradient(90deg, var(--coral), var(--mustard)); border-radius: 0; transition: width 0.4s ease; }
+    .score-num { font-family: var(--font-mono); font-weight: 800; color: var(--ink); text-align: right; }
+
+    .lists-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 540px) { .lists-wrap { grid-template-columns: 1fr; } }
+    .list-block h4 { font-size: 0.66rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--coral); margin-bottom: 6px; font-family: var(--font-mono); }
+    .list-block p { font-size: 0.82rem; color: var(--ink-soft); line-height: 1.55; padding: 4px 0; }
+    .list-block.weak h4 { color: #b91c1c; }
+    .list-block.strong h4 { color: #3a7a50; }
+
+    .battlecard-block { background: var(--cream); border-left: 3px solid var(--coral); padding: 12px 14px; border-radius: var(--radius-sm); }
+    .battlecard-block h4 { font-size: 0.66rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--coral); margin-bottom: 6px; font-family: var(--font-mono); }
+    .battlecard-block p { font-size: 0.82rem; color: var(--ink); line-height: 1.55; }
+
+    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 760px) { .insight-grid { grid-template-columns: 1fr; } }
+    .insight-block { background: var(--cream); border: 2px solid var(--ink); border-radius: var(--radius-sm); padding: 16px 18px; }
+    .insight-block h4 { font-size: 1rem; font-weight: 900; color: var(--ink); margin-bottom: 10px; }
+    .insight-block ul { list-style: none; padding: 0; margin: 0; }
+    .insight-block li { font-size: 0.84rem; color: var(--ink-soft); padding: 5px 0 5px 18px; position: relative; line-height: 1.55; }
+    .insight-block li::before { content: '◆'; color: var(--coral); position: absolute; left: 0; top: 5px; font-size: 0.72rem; }
+
+    .loading { color: var(--ink-soft); font-size: 0.86rem; padding: 32px; text-align: center; font-family: var(--font-mono); grid-column: 1 / -1; }
+
+    @media (max-width: 768px) {
+      body { font-size: 13px; }
+      .atlas-body { padding: 18px 14px 50px; }
+      .atlas-title { font-size: 1.45rem !important; line-height: 1.2 !important; }
+      .atlas-top { flex-direction: column; align-items: flex-start; gap: 6px; }
+      .atlas-meta { text-align: left; font-size: 0.7rem; }
+      .kpi-strip { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .kpi { padding: 12px 14px; }
+      .kpi-val { font-size: 1.3rem; }
+      .artifact { padding: 18px 16px; margin-bottom: 14px; border-radius: 10px; }
+      .art-title { font-size: 1.05rem; }
+      .art-desc { font-size: 0.82rem; margin-bottom: 14px; }
+      #radar-chart { height: 320px !important; max-height: 360px !important; }
+      .chart-wrap { padding: 14px; }
+      .comp-controls { gap: 8px; flex-wrap: wrap; }
+      .comp-search { width: 100%; min-width: 100%; }
+      .comp-filter { flex: 1 1 calc(50% - 4px); min-width: calc(50% - 4px); }
+      .comp-count { font-size: 0.7rem; width: 100%; }
+      .comp-grid { grid-template-columns: 1fr; gap: 12px; }
+      .comp-card { padding: 16px; border-radius: 10px; }
+      .comp-name { font-size: 0.98rem; }
+      .badge { font-size: 0.56rem; padding: 2px 6px; letter-spacing: 0.02em; }
+      .atlas-nav { flex-wrap: wrap; padding: 10px 14px; gap: 8px; }
+      .atlas-nav-links { flex-wrap: wrap; gap: 6px; }
+      .atlas-nav-links a { font-size: 0.72rem; padding: 5px 10px; }
+    }
+    @media (max-width: 420px) {
+      .kpi-strip { grid-template-columns: 1fr; }
+      .comp-filter { flex: 1 1 100%; min-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <div class="atlas-body">
+
+    <nav class="atlas-nav">
+      <a href="../index.html" class="brand">
+        <img src="../assets/logo-elitez.png" alt="Elitez">
+        <span>PULSE <span class="pulse">★</span></span>
+      </a>
+      <div class="atlas-nav-links">
+        <a href="index.html">Admin</a>
+        <a href="whitespace.html">White Space</a>
+        <a href="competitor-analytics.html" class="active">Competitors</a>
+        <a href="insights.html">Insights</a>
+        <a href="design-audit.html">Design Audit</a>
+        <a href="report.html">Report</a>
+        <a href="proposal.html">Proposal</a>
+        <a href="template-preview.html">Templates</a>
+        <a href="../index.html">Site</a>
+      </div>
+    </nav>
+
+    <div class="atlas-top">
+      <div>
+        <div class="atlas-tag">◆ Competitor Analytics · v1</div>
+        <h1 class="atlas-title">The retainer market is loud, opaque, and ungrouped.<span class="sub">Twelve SG / SEA / global players, plotted six ways: monthly burn, deliverable velocity, channel coverage, ops-stack depth, transparent scope, SG-market fit.</span></h1>
+      </div>
+      <div class="atlas-meta">
+        <div>Refreshed <span id="refresh-date">2026-04-22</span></div>
+        <div><span id="comp-count-hdr">—</span> competitors mapped</div>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-strip">
+      <div class="kpi"><div class="kpi-val" id="kpi-total">—</div><div class="kpi-lbl">Competitors mapped</div></div>
+      <div class="kpi"><div class="kpi-val violet" id="kpi-rel">—</div><div class="kpi-lbl">Avg reliability (10)</div></div>
+      <div class="kpi"><div class="kpi-val mustard" id="kpi-pricemid">—</div><div class="kpi-lbl">Median retainer mid</div></div>
+      <div class="kpi"><div class="kpi-val ink" id="kpi-threats">—</div><div class="kpi-lbl">High threats to Pulse</div></div>
+    </div>
+
+    <!-- Radar -->
+    <section class="artifact">
+      <div class="art-num">Artifact 01</div>
+      <h2 class="art-title">Top-5 Threat Radar — six retainer dimensions</h2>
+      <p class="art-desc">The five highest-threat rivals plotted across six dimensions buyers actually weigh: <b>monthly burn</b>, <b>deliverable velocity</b>, <b>channel coverage</b>, <b>ops-stack depth</b>, <b>transparent scope</b>, and <b>SG-market fit</b>. Pulse's shape is the structurally lean middle — wider than freelancers on coverage, leaner than premium agencies on burn, ahead of mid-tier on ops-stack depth.</p>
+      <div class="chart-wrap">
+        <canvas id="radar-chart" width="720" height="460"></canvas>
+      </div>
+    </section>
+
+    <!-- Strategic insights -->
+    <section class="artifact">
+      <div class="art-num">Artifact 02</div>
+      <h2 class="art-title">Strategic Insights</h2>
+      <p class="art-desc">What the SG retainer landscape tells us. Common weaknesses across the field, Pulse advantages grounded in the Elitez 350-staff backbone, and the design lessons we borrow vs improve on.</p>
+      <div class="insight-grid">
+        <div class="insight-block">
+          <h4>Common competitor weaknesses</h4>
+          <ul id="weaknesses-list"></ul>
+        </div>
+        <div class="insight-block">
+          <h4>Pulse advantages (ops-stack arbitrage)</h4>
+          <ul id="advantages-list"></ul>
+        </div>
+        <div class="insight-block">
+          <h4>Borrowed from</h4>
+          <ul id="borrowed-list"></ul>
+        </div>
+        <div class="insight-block">
+          <h4>Improved on</h4>
+          <ul id="improved-list"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Competitor cards -->
+    <section class="artifact">
+      <div class="art-num">Artifact 03</div>
+      <h2 class="art-title">Competitor Deep-dive</h2>
+      <p class="art-desc">All <span id="comp-count-inline">—</span> competitors with tier, retainer band, reliability score, threat level, our advantage, our gap, and the verbatim battlecard line we use against them.</p>
+      <div class="comp-controls">
+        <input type="search" id="comp-search" class="comp-search" placeholder="Search name, positioning, advantage…" />
+        <select id="comp-tier" class="comp-filter"><option value="">All tiers</option></select>
+        <select id="comp-threat" class="comp-filter">
+          <option value="">All threats</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+        <select id="comp-grade" class="comp-filter">
+          <option value="">All grades</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="D">D</option>
+        </select>
+        <span class="comp-count" id="comp-count-tbl">—</span>
+      </div>
+      <div class="comp-grid" id="comp-grid">
+        <div class="loading">Loading competitor data…</div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script>
+const STATE = { competitors: [], filtered: [] };
+
+function el(tag, opts) {
+  const e = document.createElement(tag);
+  if (!opts) return e;
+  if (opts.cls) e.className = opts.cls;
+  if (opts.text != null) e.textContent = String(opts.text);
+  if (opts.attrs) for (const [k,v] of Object.entries(opts.attrs)) e.setAttribute(k, v);
+  if (opts.children) for (const c of opts.children) if (c) e.appendChild(c);
+  return e;
+}
+
+function init() {
+  fetch('../data/competitors.json')
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(data => {
+      STATE.competitors = Array.isArray(data.competitors) ? data.competitors : [];
+      STATE.filtered = STATE.competitors.slice();
+      const date = (data.marketSummary && data.marketSummary.lastReviewed) || '2026-04-22';
+      document.getElementById('refresh-date').textContent = date;
+      renderKPIs();
+      renderTierFilter();
+      renderInsights();
+      renderRadar();
+      attachFilterHandlers();
+      renderCards();
+    })
+    .catch(err => {
+      console.error(err);
+      const grid = document.getElementById('comp-grid');
+      grid.textContent = '';
+      grid.appendChild(el('div', { cls: 'loading', text: 'Failed to load competitor data: ' + err.message }));
+    });
+}
+
+function renderKPIs() {
+  const total = STATE.competitors.length;
+  const reliabilities = STATE.competitors.map(c => Number(c.reliability || 0)).filter(n => n > 0);
+  const avgRel = reliabilities.length ? (reliabilities.reduce((a,b) => a+b, 0) / reliabilities.length) : 0;
+  const priceMids = STATE.competitors.map(c => Number(c.priceMid || 0)).filter(n => n > 0).sort((a,b)=>a-b);
+  const median = priceMids.length ? priceMids[Math.floor(priceMids.length/2)] : 0;
+  const threats = STATE.competitors.filter(c => c.threat === 'high').length;
+
+  document.getElementById('kpi-total').textContent = String(total);
+  document.getElementById('kpi-rel').textContent = avgRel.toFixed(1);
+  document.getElementById('kpi-pricemid').textContent = median ? ('S$' + median.toLocaleString()) : '—';
+  document.getElementById('kpi-threats').textContent = String(threats);
+  document.getElementById('comp-count-hdr').textContent = String(total);
+  document.getElementById('comp-count-inline').textContent = String(total);
+}
+
+function renderTierFilter() {
+  const sel = document.getElementById('comp-tier');
+  while (sel.options.length > 1) sel.remove(1);
+  const tiers = Array.from(new Set(STATE.competitors.map(c => c.tier).filter(Boolean))).sort();
+  tiers.forEach(t => {
+    const opt = el('option', { attrs: { value: t }, text: t });
+    sel.appendChild(opt);
+  });
+}
+
+function renderInsights() {
+  const lists = {
+    'weaknesses-list': [
+      'Pricing is gated behind enquire-for-quote; SMEs cannot self-qualify before a sales call.',
+      '6-month minimum lock-ins are industry default; 30-day notice is rare.',
+      'Reporting cadence is quarterly executive deck, not monthly CPL / ROAS one-pager.',
+      'Founder access traded away as agencies scale; partner-to-partner conversations scarce.',
+      'Freelancer marketplaces win on per-deliverable price but cannot ship a full lead-gen system.',
+      'Premium PR agencies (Mutant, Naga) reject sub-S$5K retainers — entire mid-market band underserved.'
+    ],
+    'advantages-list': [
+      'Published Entry / Core / Premium pricing (S$799 / S$1,499 / S$2,999) — only retainer-published in SG mid-market.',
+      'Ops-stack arbitrage: AI-collapsed delivery hours + 350-staff Elitez backbone absorb overhead micro-agencies load onto retainers.',
+      '30-day notice vs industry-standard 6-month minimum.',
+      'Monthly CPL / ROAS one-page ROI report — not a quarterly slide deck.',
+      'Founder-led discovery — partner-to-partner, not junior-AM-to-partner.',
+      'Bundled lead-gen system (social + ads + SEO + creative + reporting) sold as one outcome, not itemised.'
+    ],
+    'borrowed-list': [
+      'Mutant — editorial restraint on insight content and named-partner credibility signals.',
+      '2Stallions — clear service-shelf IA and SEA cross-border footprint pattern.',
+      'Click Academy — performance-cert badge surfacing (Google Premier, Meta Business Partner).',
+      'Construct Digital — case-study depth with named clients and quoted ROI.'
+    ],
+    'improved-list': [
+      'Published retainer pricing on the homepage, not gated behind enquiry forms.',
+      '30-day notice published as a binding clause, not a "we are flexible" line in copy.',
+      'Monthly one-page CPL / ROAS report as a standard deliverable, not an upsell.',
+      'Industry-vertical landing pages (B2B / pro-services / family-business / regulated) so the buyer self-identifies.'
+    ]
+  };
+  Object.keys(lists).forEach(id => {
+    const ul = document.getElementById(id);
+    if (!ul) return;
+    while (ul.firstChild) ul.removeChild(ul.firstChild);
+    lists[id].forEach(t => ul.appendChild(el('li', { text: t })));
+  });
+}
+
+// ── Radar (6 dimensions tailored to retainer business) ──
+function tierBurnScore(t) {
+  return ({ freelancer: 5, micro: 4, mid: 3, smb: 2, premium: 1 })[t] || 3;
+}
+function reliabilityScore(r) {
+  // 0-10 -> 0-5
+  return Math.max(0, Math.min(5, Math.round(Number(r || 0) / 2)));
+}
+function deliverableVelocityScore(c) {
+  // Higher reliability + stronger advantage signals = higher velocity score
+  const baseline = reliabilityScore(c.reliability);
+  const adv = (c.ourAdvantage || '').toLowerCase();
+  const bonus = /turnaround|monthly|fast|ai|same.?day/.test(adv) ? 1 : 0;
+  return Math.max(0, Math.min(5, baseline - 1 + bonus));
+}
+function channelCoverageScore(c) {
+  const pos = (c.positioning || '').toLowerCase();
+  const adv = (c.ourAdvantage || '').toLowerCase();
+  const blob = pos + ' ' + adv;
+  let s = 1;
+  ['seo','social','ads','content','ppc','design','video','pr','web','strategy'].forEach(k => {
+    if (blob.includes(k)) s++;
+  });
+  return Math.max(1, Math.min(5, Math.round(s/2)));
+}
+function opsStackScore(c) {
+  // Larger / more reliable agencies have more stack; freelancers least
+  const tier = c.tier || '';
+  if (tier === 'freelancer') return 1;
+  if (tier === 'micro') return 2;
+  if (tier === 'mid') return 3;
+  if (tier === 'smb') return 4;
+  if (tier === 'premium') return 5;
+  return 3;
+}
+function transparentScopeScore(c) {
+  // Public price / clear positioning = transparent
+  const tp = (c.typicalPrice || '').toLowerCase();
+  if (/from|sgd|s\$/.test(tp)) return 4;
+  if (c.tier === 'freelancer') return 3;
+  if (c.tier === 'premium') return 1;
+  return 2;
+}
+function sgFitScore(c) {
+  if (c.country === 'SG') return 5;
+  if (c.country === 'SG+MY') return 4;
+  if (c.country === 'MY') return 2;
+  if (c.country === 'Global') return 1;
+  return 3;
+}
+
+function renderRadar() {
+  const ctx = document.getElementById('radar-chart');
+  if (!ctx || typeof Chart === 'undefined') return;
+
+  const dims = ['Monthly burn', 'Deliverable velocity', 'Channel coverage', 'Ops-stack depth', 'Transparent scope', 'SG-market fit'];
+
+  // Top-5 highest threat, sorted by reliability desc
+  const high = STATE.competitors.filter(c => c.threat === 'high');
+  high.sort((a,b) => Number(b.reliability||0) - Number(a.reliability||0));
+  const top5 = high.slice(0, 5);
+
+  const palette = ['#b91c1c', '#c86f15', '#2a5080', '#5a3878', '#3a7a50'];
+
+  // Pulse row — structural ideal: lean burn (4), high velocity (5), broad coverage (5),
+  // strong ops-stack (4 — Elitez backbone), transparent (5), SG-native (5)
+  const pulseRow = {
+    label: 'Pulse (us)',
+    data: [4, 5, 5, 4, 5, 5],
+    backgroundColor: 'rgba(255,91,57,0.18)',
+    borderColor: '#FF5B39',
+    borderWidth: 3,
+    pointRadius: 4,
+    pointBackgroundColor: '#FF5B39',
+    tension: 0.15
+  };
+
+  const datasets = [pulseRow];
+  top5.forEach((c, i) => {
+    datasets.push({
+      label: c.name,
+      data: [
+        tierBurnScore(c.tier),
+        deliverableVelocityScore(c),
+        channelCoverageScore(c),
+        opsStackScore(c),
+        transparentScopeScore(c),
+        sgFitScore(c)
+      ],
+      backgroundColor: 'rgba(0,0,0,0.04)',
+      borderColor: palette[i % palette.length],
+      borderWidth: 1.5,
+      pointRadius: 2.5,
+      pointBackgroundColor: palette[i % palette.length],
+      tension: 0.1
+    });
+  });
+
+  // eslint-disable-next-line no-undef
+  new Chart(ctx, {
+    type: 'radar',
+    data: { labels: dims, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { size: 11 }, color: '#1A1A1A' } },
+        tooltip: { backgroundColor: '#1A1A1A', padding: 10 }
+      },
+      scales: {
+        r: {
+          min: 0, max: 5,
+          ticks: { stepSize: 1, color: '#888', backdropColor: 'transparent', font: { size: 10 } },
+          pointLabels: { font: { size: 11, weight: 700 }, color: '#1A1A1A' },
+          grid: { color: 'rgba(26,26,26,0.08)' },
+          angleLines: { color: 'rgba(26,26,26,0.1)' }
+        }
+      }
+    }
+  });
+}
+
+function attachFilterHandlers() {
+  ['comp-search','comp-tier','comp-threat','comp-grade'].forEach(id => {
+    document.getElementById(id).addEventListener('input', applyFilters);
+  });
+}
+
+function applyFilters() {
+  const q = (document.getElementById('comp-search').value || '').toLowerCase().trim();
+  const tier = document.getElementById('comp-tier').value;
+  const thr = document.getElementById('comp-threat').value;
+  const grade = document.getElementById('comp-grade').value;
+
+  STATE.filtered = STATE.competitors.filter(c => {
+    if (tier && c.tier !== tier) return false;
+    if (thr && c.threat !== thr) return false;
+    if (grade && c.grade !== grade) return false;
+    if (q) {
+      const blob = [c.name, c.positioning, c.ourAdvantage, c.ourGap, c.battlecard,
+                    (c.objections||[]).join(' ')].join(' ').toLowerCase();
+      if (!blob.includes(q)) return false;
+    }
+    return true;
+  });
+  renderCards();
+}
+
+function renderCards() {
+  const grid = document.getElementById('comp-grid');
+  grid.textContent = '';
+  document.getElementById('comp-count-tbl').textContent =
+    STATE.filtered.length + ' / ' + STATE.competitors.length + ' shown';
+
+  if (!STATE.filtered.length) {
+    grid.appendChild(el('div', { cls: 'loading', text: 'No competitors match the current filters.' }));
+    return;
+  }
+  STATE.filtered.forEach(c => grid.appendChild(buildCard(c)));
+}
+
+function buildCard(c) {
+  const card = el('div', { cls: 'comp-card' });
+
+  // Head
+  const head = el('div', { cls: 'comp-card-head' });
+  const nameWrap = el('div');
+  nameWrap.appendChild(el('div', { cls: 'comp-name', text: c.name || '—' }));
+  if (c.site) {
+    const a = el('a', { cls: 'comp-url', text: c.site, attrs: { href: c.site, target: '_blank', rel: 'noopener noreferrer' } });
+    nameWrap.appendChild(a);
+  }
+  head.appendChild(nameWrap);
+  head.appendChild(el('span', { cls: 'badge b-threat-' + (c.threat || 'low'), text: (c.threat || 'low') + ' threat' }));
+  card.appendChild(head);
+
+  if (c.positioning) {
+    card.appendChild(el('div', { cls: 'comp-target', text: c.positioning }));
+  }
+
+  // Badges
+  const badges = el('div', { cls: 'badge-row' });
+  if (c.tier) badges.appendChild(el('span', { cls: 'badge b-tier-' + c.tier, text: c.tier }));
+  if (c.country) badges.appendChild(el('span', { cls: 'badge', text: c.country }));
+  if (c.grade) badges.appendChild(el('span', { cls: 'badge b-grade-' + c.grade, text: 'Grade ' + c.grade }));
+  card.appendChild(badges);
+
+  // Price strip
+  if (c.typicalPrice) {
+    const strip = el('div', { cls: 'price-strip' });
+    strip.appendChild(el('b', { text: 'Retainer: ' }));
+    strip.appendChild(document.createTextNode(c.typicalPrice));
+    if (c.priceMid) {
+      const mid = document.createElement('span');
+      mid.style.float = 'right';
+      mid.style.opacity = '0.75';
+      mid.textContent = 'mid S$' + Number(c.priceMid).toLocaleString();
+      strip.appendChild(mid);
+    }
+    card.appendChild(strip);
+  }
+
+  // Reliability bar
+  if (c.reliability != null) {
+    const row = el('div', { cls: 'score-row' });
+    row.appendChild(el('div', { cls: 'score-lbl', text: 'Reliability' }));
+    const bar = el('div', { cls: 'score-bar' });
+    const fill = el('div', { cls: 'score-bar-fill' });
+    fill.style.width = (Math.max(0, Math.min(10, Number(c.reliability))) * 10) + '%';
+    bar.appendChild(fill);
+    row.appendChild(bar);
+    row.appendChild(el('div', { cls: 'score-num', text: Number(c.reliability) + '/10' }));
+    card.appendChild(row);
+  }
+
+  // Advantage / gap
+  const lists = el('div', { cls: 'lists-wrap' });
+  if (c.ourAdvantage) {
+    const blk = el('div', { cls: 'list-block strong' });
+    blk.appendChild(el('h4', { text: 'Our advantage' }));
+    blk.appendChild(el('p', { text: c.ourAdvantage }));
+    lists.appendChild(blk);
+  }
+  if (c.ourGap) {
+    const blk = el('div', { cls: 'list-block weak' });
+    blk.appendChild(el('h4', { text: 'Our gap' }));
+    blk.appendChild(el('p', { text: c.ourGap }));
+    lists.appendChild(blk);
+  }
+  card.appendChild(lists);
+
+  // Battlecard
+  if (c.battlecard) {
+    const bc = el('div', { cls: 'battlecard-block' });
+    bc.appendChild(el('h4', { text: 'Battlecard' }));
+    bc.appendChild(el('p', { text: c.battlecard }));
+    card.appendChild(bc);
+  }
+
+  return card;
+}
+
+init();
+</script>
+</body>
+</html>

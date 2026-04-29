@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Market Intelligence Report — The Commons</title>
+  <meta name="description" content="P2P event platform market intelligence: cover, exec summary, market, competitors, pricing, whitespace, design audit, recommendations. Admin-only." />
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
+  <style>
+    .admin-nav-bar {
+      display: flex; gap: 8px; background: var(--navy); padding: 10px 24px;
+      margin-top: var(--nav-height); position: sticky; top: var(--nav-height); z-index: 100;
+      flex-wrap: wrap;
+    }
+    .admin-nav-bar a { color: rgba(255,255,255,0.6); padding: 10px 20px; border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 600; }
+    .admin-nav-bar a:hover { background: rgba(255,255,255,0.08); color: white; }
+    .admin-nav-bar a.active { background: rgba(255,107,107,0.2); color: var(--coral); }
+
+    .pdf-dl {
+      position: fixed; top: 132px; right: 24px; z-index: 100;
+      background: var(--coral); color: white; border: none;
+      padding: 12px 22px; border-radius: var(--radius-sm);
+      font-size: 0.92rem; font-weight: 800; letter-spacing: 0.04em;
+      cursor: pointer; box-shadow: var(--shadow-md); transition: var(--transition);
+    }
+    .pdf-dl:hover { background: var(--mango); transform: translateY(-2px); }
+    .pdf-dl:disabled { background: var(--slate); cursor: wait; }
+
+    #report-doc { max-width: 1100px; margin: 0 auto; padding-bottom: 80px; background: var(--sand); }
+    .report-page { padding: 56px 48px; border-bottom: 1px solid var(--sand-dark); }
+    .report-page.bleed-card { background: white; }
+    .report-page.bleed-surface { background: var(--sand); }
+    @media print {
+      .report-page { page-break-before: always; }
+      .pdf-dl, .admin-nav-bar, .navbar { display: none !important; }
+    }
+    body.pdf-mode #report-doc { max-width: 210mm; }
+    body.pdf-mode .report-page { width: 210mm; padding: 22mm 18mm; border-bottom: none; box-sizing: border-box; page-break-after: always; }
+    body.pdf-mode .report-page.cover { min-height: 297mm; padding: 36mm 18mm 22mm; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
+    body.pdf-mode .report-page, body.pdf-mode .report-page * { font-kerning: none; text-rendering: geometricPrecision; letter-spacing: 0.01em; }
+    body.pdf-mode .pdf-dl, body.pdf-mode .admin-nav-bar, body.pdf-mode .navbar { display: none !important; }
+
+    .sec-num {
+      font-family: ui-monospace, monospace; font-size: 0.72rem; letter-spacing: 0.16em;
+      color: var(--coral); text-transform: uppercase; font-weight: 800; margin-bottom: 10px;
+    }
+    .sec-h2 { font-size: 2rem; font-weight: 900; letter-spacing: -0.02em; color: var(--navy); line-height: 1.15; margin-bottom: 14px; }
+    .sec-lede { font-size: 0.96rem; color: var(--slate); line-height: 1.65; max-width: 820px; margin-bottom: 28px; }
+
+    /* Cover */
+    .cover { min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 80px 48px 64px; background: linear-gradient(160deg, rgba(255,107,107,0.06), rgba(0,210,255,0.04) 60%, var(--sand) 100%); }
+    .cover-mark { font-size: 2.4rem; font-weight: 900; letter-spacing: -0.02em; color: var(--navy); margin-bottom: 6px; }
+    .cover-mark span { background: var(--sunset-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .cover-sub { font-size: 0.86rem; color: var(--coral); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 60px; font-weight: 800; }
+    .cover-title { font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 900; line-height: 1.1; letter-spacing: -0.025em; color: var(--navy); max-width: 880px; margin-bottom: 24px; }
+    .cover-tag { font-size: 1.1rem; font-style: italic; color: var(--deep-ocean); margin-bottom: 60px; max-width: 700px; }
+    .cover-stamp { font-family: ui-monospace, monospace; font-size: 0.78rem; color: var(--slate); letter-spacing: 0.06em; margin-bottom: 32px; }
+    .cover-acc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 40px; }
+    .cover-acc-chip {
+      font-size: 0.7rem; font-family: ui-monospace, monospace;
+      padding: 5px 12px; background: white; border: 1.5px solid var(--sand-dark);
+      color: var(--slate); border-radius: 100px; letter-spacing: 0.04em;
+    }
+
+    /* TOC */
+    .toc-list { list-style: none; padding: 0; counter-reset: tocidx; }
+    .toc-item {
+      counter-increment: tocidx; padding: 14px 0;
+      border-bottom: 1px dashed var(--sand-dark);
+      display: grid; grid-template-columns: 50px 1fr 60px; gap: 16px; align-items: baseline;
+    }
+    .toc-item:last-child { border-bottom: none; }
+    .toc-num {
+      font-family: ui-monospace, monospace; color: var(--coral);
+      font-weight: 800; font-size: 0.84rem; letter-spacing: 0.06em;
+    }
+    .toc-num::before { content: counter(tocidx, decimal-leading-zero); }
+    .toc-link { font-size: 1.08rem; color: var(--navy); text-decoration: none; font-weight: 700; }
+    .toc-link:hover { color: var(--coral); }
+    .toc-page { font-family: ui-monospace, monospace; color: var(--slate); font-size: 0.8rem; text-align: right; }
+
+    /* Exec */
+    .exec-list { list-style: none; padding: 0; counter-reset: execidx; }
+    .exec-bullet {
+      counter-increment: execidx; display: grid; grid-template-columns: 56px 1fr;
+      gap: 18px; padding: 18px 0; border-bottom: 1px dashed var(--sand-dark);
+    }
+    .exec-bullet:last-child { border-bottom: none; }
+    .exec-num { font-size: 1.6rem; color: var(--coral); font-weight: 900; line-height: 1; }
+    .exec-num::before { content: counter(execidx, decimal-leading-zero); }
+    .exec-body { font-size: 0.94rem; color: var(--slate); line-height: 1.7; }
+    .exec-body strong { color: var(--navy); }
+    .exec-body em { color: var(--coral); font-style: normal; font-weight: 700; }
+
+    /* KPI strip */
+    .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 28px; }
+    .kpi { background: white; border: 2px solid var(--sand-dark); border-radius: var(--radius-md); padding: 18px 20px; }
+    .kpi.on-card { background: var(--sand); }
+    .kpi-val { font-size: 1.7rem; font-weight: 900; color: var(--navy); letter-spacing: -0.02em; line-height: 1.1; }
+    .kpi-val.green { color: #00C853; }
+    .kpi-val.amber { color: var(--mango); }
+    .kpi-val.red { color: var(--pink); }
+    .kpi-val.coral { color: var(--coral); }
+    .kpi-val.ocean { color: var(--deep-ocean); }
+    .kpi-lbl { font-size: 0.7rem; color: var(--slate); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-top: 8px; }
+
+    /* Landscape blocks */
+    .l-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 22px; }
+    .l-card { background: white; border: 2px solid var(--sand-dark); border-radius: var(--radius-sm); padding: 16px 18px; }
+    .l-card.on-card { background: var(--sand); }
+    .l-card .lbl {
+      font-size: 0.66rem; color: var(--coral); text-transform: uppercase;
+      letter-spacing: 0.1em; font-weight: 800; margin-bottom: 6px; font-family: ui-monospace, monospace;
+    }
+    .l-card .val { font-weight: 700; font-size: 1.05rem; color: var(--navy); line-height: 1.4; }
+    .l-list { list-style: none; padding: 0; }
+    .l-list li {
+      padding: 10px 0; border-bottom: 1px dashed var(--sand-dark);
+      font-size: 0.88rem; color: var(--slate); line-height: 1.55; padding-left: 20px; position: relative;
+    }
+    .l-list li:last-child { border-bottom: none; }
+    .l-list li::before { content: "◆"; position: absolute; left: 0; color: var(--coral); font-size: 0.7rem; top: 12px; }
+
+    /* Competitor (top-5) */
+    .comp-list { display: flex; flex-direction: column; gap: 14px; }
+    .comp-card-r {
+      background: white; border: 2px solid var(--sand-dark); border-radius: var(--radius-md);
+      padding: 20px 22px;
+    }
+    .comp-card-r.on-card { background: var(--sand); }
+    .comp-head-r { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+    .comp-name-r { font-size: 1.15rem; font-weight: 800; color: var(--navy); line-height: 1.3; }
+    .comp-url-r { font-family: ui-monospace, monospace; font-size: 0.74rem; color: var(--slate); display: block; margin-top: 2px; word-break: break-all; }
+    .comp-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+    .badge {
+      display: inline-block; padding: 3px 10px; font-size: 0.62rem; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase; font-family: ui-monospace, monospace;
+      border-radius: 100px; border: 1.5px solid; white-space: nowrap;
+    }
+    .b-vis-fully_published   { background: rgba(0,230,118,0.14); color: #00C853; border-color: #00C853; }
+    .b-vis-partial           { background: rgba(255,142,83,0.14); color: var(--mango); border-color: var(--mango); }
+    .b-vis-hidden_in_package { background: rgba(255,64,129,0.14); color: var(--pink); border-color: var(--pink); }
+    .b-threat-high { background: rgba(255,64,129,0.14); color: var(--pink); border-color: var(--pink); }
+    .b-threat-medium { background: rgba(255,142,83,0.14); color: var(--mango); border-color: var(--mango); }
+    .b-threat-low { background: rgba(0,230,118,0.14); color: #00C853; border-color: #00C853; }
+    .comp-bars { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 12px 0; }
+    .bar-row { display: grid; grid-template-columns: 90px 1fr 32px; gap: 8px; align-items: center; font-size: 0.78rem; }
+    .bar-row .lbl { color: var(--slate); }
+    .bar { height: 8px; background: var(--sand); border-radius: 4px; overflow: hidden; }
+    .bar .fill { height: 100%; background: var(--sunset-gradient); border-radius: 4px; }
+    .bar-row .val { font-family: ui-monospace, monospace; color: var(--navy); font-weight: 700; text-align: right; }
+    .comp-sw { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; padding-top: 14px; border-top: 1px dashed var(--sand-dark); }
+    @media (max-width: 600px) { .comp-sw { grid-template-columns: 1fr; } }
+    .comp-sw .col h5 {
+      font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--coral);
+      margin-bottom: 6px; font-family: ui-monospace, monospace; font-weight: 800;
+    }
+    .comp-sw ul { list-style: none; padding: 0; font-size: 0.82rem; line-height: 1.55; color: var(--slate); }
+    .comp-sw ul li { padding-left: 14px; position: relative; margin-bottom: 5px; }
+    .comp-sw ul li::before { content: ""; position: absolute; left: 0; top: 8px; width: 6px; height: 6px; border-radius: 50%; }
+    .comp-sw .col.strengths li::before { background: #00C853; }
+    .comp-sw .col.weaknesses li::before { background: var(--pink); }
+
+    /* Pricing table */
+    .pricing-wrap { overflow-x: auto; border: 2px solid var(--sand-dark); border-radius: var(--radius-md); background: white; }
+    .pricing { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 720px; }
+    .pricing thead th {
+      background: var(--navy); color: white; padding: 12px 14px; text-align: left;
+      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;
+    }
+    .pricing thead th.us-col { background: var(--sunset-gradient); color: white; }
+    .pricing tbody th { background: var(--sand); color: var(--navy); text-align: left; font-weight: 700; padding: 12px 14px; font-size: 0.86rem; }
+    .pricing tbody td { padding: 12px 14px; border-bottom: 1px solid var(--sand-dark); vertical-align: top; line-height: 1.5; color: var(--slate); }
+    .pricing tbody tr:last-child td, .pricing tbody tr:last-child th { border-bottom: none; }
+    .pricing .price { font-family: ui-monospace, monospace; font-weight: 700; color: var(--navy); display: block; margin-bottom: 2px; }
+    .pricing .price-note { font-size: 0.74rem; color: var(--slate); display: block; }
+    .pricing td.us-col { background: rgba(255,107,107,0.06); }
+    .footnote {
+      font-size: 0.78rem; color: var(--slate); line-height: 1.6; margin-top: 14px;
+      padding: 12px 14px; background: var(--sand); border: 1px dashed var(--sand-dark); border-radius: var(--radius-sm);
+    }
+    .footnote strong { color: var(--navy); }
+    .footnote em { color: var(--coral); font-style: normal; font-weight: 700; }
+
+    /* Whitespace canvas (radar) */
+    .canvas-wrap { display: grid; grid-template-columns: 1.7fr 1fr; gap: 24px; align-items: start; margin-bottom: 26px; }
+    @media (max-width: 900px) { .canvas-wrap { grid-template-columns: 1fr; } }
+    #strategy-canvas { width: 100%; max-width: 720px; height: 420px; }
+    .canvas-legend { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; }
+    .canvas-legend .leg { display: flex; align-items: center; gap: 8px; }
+    .canvas-legend .sw { width: 28px; height: 4px; flex-shrink: 0; border-radius: 2px; }
+    .canvas-legend .us { font-weight: 800; color: var(--coral); }
+
+    /* Design audit cards */
+    .da-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 14px; }
+    .da-card { background: white; border: 2px solid var(--sand-dark); border-radius: var(--radius-md); padding: 18px 20px; }
+    .da-card.self { border: 2px solid var(--coral); background: linear-gradient(160deg, rgba(255,107,107,0.06), white 80%); }
+    .da-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+    .da-name { font-weight: 800; color: var(--navy); font-size: 1.05rem; line-height: 1.25; }
+    .da-name .self-tag {
+      font-size: 0.6rem; color: white; font-weight: 800; letter-spacing: 0.1em;
+      text-transform: uppercase; margin-left: 8px; padding: 2px 8px;
+      background: var(--coral); border-radius: 100px; font-family: ui-monospace, monospace;
+    }
+    .da-overall { font-size: 1.4rem; font-weight: 900; color: var(--coral); }
+    .da-overall .max { font-size: 0.7rem; color: var(--slate); font-family: ui-monospace, monospace; font-weight: 400; }
+    .da-bars { margin: 12px 0; }
+    .da-bar-row { display: grid; grid-template-columns: 1fr 70px 30px; gap: 8px; align-items: center; font-size: 0.78rem; padding: 4px 0; }
+    .da-bar-row .lbl { color: var(--slate); }
+    .da-bar { height: 6px; background: var(--sand); border-radius: 3px; overflow: hidden; }
+    .da-bar .fill { height: 100%; background: var(--sunset-gradient); border-radius: 3px; }
+    .da-bar-row .val { text-align: right; font-family: ui-monospace, monospace; font-weight: 700; color: var(--navy); }
+    .da-verdict { font-size: 0.84rem; color: var(--slate); line-height: 1.55; padding-top: 12px; border-top: 1px dashed var(--sand-dark); font-style: italic; }
+
+    .syn-card { background: white; border: 2px solid var(--coral); border-radius: var(--radius-md); padding: 22px 24px; margin-top: 18px; }
+    .syn-card h3 { font-size: 1.1rem; color: var(--navy); margin-bottom: 12px; font-weight: 800; }
+    .syn-block { margin-bottom: 16px; }
+    .syn-block:last-child { margin-bottom: 0; }
+    .syn-block .lbl {
+      font-size: 0.66rem; color: var(--coral); text-transform: uppercase;
+      letter-spacing: 0.1em; font-weight: 800; margin-bottom: 8px; font-family: ui-monospace, monospace;
+    }
+    .syn-block ul { list-style: none; padding: 0; }
+    .syn-block ul li {
+      padding: 8px 0 8px 22px; position: relative; font-size: 0.86rem;
+      color: var(--slate); line-height: 1.6; border-bottom: 1px dashed var(--sand-dark);
+    }
+    .syn-block ul li:last-child { border-bottom: none; }
+    .syn-block ul li::before { content: "→"; position: absolute; left: 0; color: var(--coral); font-weight: 800; }
+
+    /* Recommendations */
+    .rec-list { list-style: none; padding: 0; counter-reset: recidx; }
+    .rec-item {
+      counter-increment: recidx; display: grid; grid-template-columns: 64px 1fr;
+      gap: 18px; padding: 20px 0; border-bottom: 1px dashed var(--sand-dark);
+    }
+    .rec-item:last-child { border-bottom: none; }
+    .rec-num { font-size: 1.8rem; color: var(--coral); font-weight: 900; line-height: 1; }
+    .rec-num::before { content: "0" counter(recidx); }
+    .rec-title { font-size: 1.08rem; font-weight: 800; color: var(--navy); margin-bottom: 6px; line-height: 1.3; }
+    .rec-body { font-size: 0.9rem; color: var(--slate); line-height: 1.65; }
+    .rec-body strong { color: var(--navy); }
+    .rec-body em { color: var(--coral); font-style: normal; font-weight: 700; }
+
+    /* Methodology */
+    .meth-block { margin-bottom: 22px; }
+    .meth-block .lbl {
+      font-size: 0.7rem; color: var(--coral); text-transform: uppercase;
+      letter-spacing: 0.1em; font-weight: 800; margin-bottom: 8px; font-family: ui-monospace, monospace;
+    }
+    .meth-block p { font-size: 0.9rem; color: var(--slate); line-height: 1.7; }
+    .meth-block ul { list-style: none; padding: 0; }
+    .meth-block ul li { padding: 8px 0 8px 20px; position: relative; font-size: 0.86rem; color: var(--slate); line-height: 1.6; }
+    .meth-block ul li::before { content: "◆"; position: absolute; left: 0; color: var(--coral); font-size: 0.7rem; top: 11px; }
+
+    .err-msg {
+      padding: 24px; color: var(--pink); font-family: ui-monospace, monospace;
+      font-size: 0.86rem; background: rgba(255,64,129,0.06); border: 1.5px solid var(--pink);
+      border-radius: var(--radius-sm); margin: 14px 0;
+    }
+
+    @media (max-width: 768px) {
+      body { font-size: 13px; }
+      .pdf-dl { top: auto; bottom: 14px; right: 14px; padding: 10px 16px; font-size: 0.84rem; }
+      .report-page { padding: 36px 18px; }
+      .cover { padding: 50px 18px 36px; }
+      .cover-mark { font-size: 1.8rem; }
+      .cover-title { font-size: 1.7rem !important; }
+      .cover-tag { font-size: 0.95rem; }
+      .sec-h2 { font-size: 1.4rem !important; }
+      .sec-lede { font-size: 0.86rem; }
+      .kpi-strip { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .kpi { padding: 12px 14px; }
+      .kpi-val { font-size: 1.2rem; }
+      .kpi-lbl { font-size: 0.6rem; }
+      .l-grid { grid-template-columns: 1fr; }
+      .toc-item { grid-template-columns: 36px 1fr 44px; }
+      .toc-link { font-size: 0.94rem; }
+      .exec-bullet { grid-template-columns: 36px 1fr; gap: 10px; }
+      .exec-num { font-size: 1.3rem; }
+      .exec-body { font-size: 0.84rem; }
+      .comp-bars { grid-template-columns: 1fr; }
+      .pricing { min-width: 560px; font-size: 0.74rem; }
+      .pricing thead th, .pricing tbody th, .pricing tbody td { padding: 8px 10px; }
+      #strategy-canvas { height: 280px; }
+      .canvas-wrap { grid-template-columns: 1fr; }
+      .da-grid { grid-template-columns: 1fr; }
+      .da-card { padding: 14px 16px; }
+      .rec-item { grid-template-columns: 44px 1fr; gap: 12px; padding: 14px 0; }
+      .rec-num { font-size: 1.4rem; }
+      .rec-title { font-size: 0.96rem; }
+      .rec-body { font-size: 0.82rem; }
+      .admin-nav-bar { flex-wrap: wrap !important; padding: 10px 14px !important; gap: 8px !important; }
+      .admin-nav-bar a { font-size: 0.72rem !important; padding: 6px 10px !important; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <div class="logo-icon">TC</div>
+      The Commons
+    </a>
+    <ul class="nav-links">
+      <li><a href="../events.html">Discover</a></li>
+      <li><a href="../create.html">Create Event</a></li>
+      <li><a href="../marketplace.html">Marketplace</a></li>
+      <li><a href="../dashboard.html">Dashboard</a></li>
+      <li><a href="index.html">Admin</a></li>
+    </ul>
+    <div class="nav-actions">
+      <span class="badge badge-coral">Research</span>
+    </div>
+    <button class="mobile-toggle" onclick="toggleMobileMenu()">&#9776;</button>
+  </div>
+</nav>
+
+<div class="admin-nav-bar">
+  <a href="index.html">Platform Admin</a>
+  <a href="competitor-analytics.html">Competitor Analytics</a>
+  <a href="insights.html">Market &amp; Pricing</a>
+  <a href="whitespace.html">White Space Atlas</a>
+  <a href="design-audit.html">Design Audit</a>
+  <a href="report.html" class="active">Report</a>
+</div>
+
+<button id="pdf-dl-btn" class="pdf-dl" type="button">Download PDF</button>
+
+<main id="report-doc">
+
+  <!-- 1 — COVER -->
+  <section class="report-page cover" id="sec-cover">
+    <div class="cover-mark">THE COMMONS<span>.</span></div>
+    <div class="cover-sub">P2P Event Intelligence · Singapore</div>
+    <h1 class="cover-title">P2P Event Platform Market Intelligence — Singapore</h1>
+    <p class="cover-tag">Stop chasing friends for money.</p>
+    <div class="cover-stamp">Report quarter · Q2 2026 &nbsp;·&nbsp; Refreshed <span id="cover-date">2026-04-29</span></div>
+    <div class="cover-acc">
+      <span class="cover-acc-chip">Escrow on every event</span>
+      <span class="cover-acc-chip">Curated SG vendor marketplace</span>
+      <span class="cover-acc-chip">PayNow + GST native</span>
+      <span class="cover-acc-chip">Daiquiri-beach UX</span>
+      <span class="cover-acc-chip">Backed by Elitez Group</span>
+    </div>
+  </section>
+
+  <!-- 2 — TOC -->
+  <section class="report-page bleed-card" id="sec-toc">
+    <div class="sec-num">Section 02</div>
+    <h2 class="sec-h2" id="contents">Table of Contents</h2>
+    <p class="sec-lede">Eight sections, in order. The market frame, the competitive set, the pricing reality, the white space, the design gap, and the deck-grounded recommendations that flow from them.</p>
+    <ul class="toc-list" id="toc-list"></ul>
+  </section>
+
+  <!-- 3 — EXEC -->
+  <section class="report-page bleed-surface" id="sec-exec">
+    <div class="sec-num">Section 03</div>
+    <h2 class="sec-h2" id="executive-summary">Executive Summary</h2>
+    <p class="sec-lede">Five anchor findings. Each is backed by the data appendix that follows in Sections 4–8.</p>
+    <ol class="exec-list">
+      <li class="exec-bullet">
+        <div class="exec-num"></div>
+        <div class="exec-body"><strong>Singapore's P2P event sector is escrow-blind.</strong> ~<strong>180,000 ticketed P2P + community events per year</strong>, yet <em>&lt;5% use any form of escrow</em>. Eventbrite pays out T+4-7 after event; Peatix at T+30; Luma instantly. Attendees bear all cancellation risk. PayNow + WhatsApp DIY still runs the silent majority.</div>
+      </li>
+      <li class="exec-bullet">
+        <div class="exec-num"></div>
+        <div class="exec-body"><strong>Why The Commons wins.</strong> Built-in <strong>event-day escrow</strong> (funds held until delivery), an integrated <strong>SG vendor marketplace</strong> (photographers, caterers, MCs, decorators), <em>flat 5% organiser fee + 10% provider booking fee</em> beats Eventbrite ~10.7% all-in, PayNow + GST native from day one, daiquiri-beach branded UX backed by Elitez Group's SG operator stack.</div>
+      </li>
+      <li class="exec-bullet">
+        <div class="exec-num"></div>
+        <div class="exec-body"><strong>Top three white-space angles.</strong> (1) <em>Escrow-protected community events</em> — the cohort that has stopped trusting Eventbrite cancellations. (2) <em>Integrated vendor sourcing</em> — replace the Carousell + Bark + Fiverr fragmentation. (3) <em>SG-localised P2P</em> — PayNow native, GST-ready, multi-language, beats US-built incumbents on local fit.</div>
+      </li>
+      <li class="exec-bullet">
+        <div class="exec-num"></div>
+        <div class="exec-body"><strong>Design audit reality.</strong> Industry average <strong>7.4</strong> across six event-platform peers; The Commons scores <strong>7.4</strong>, tied with Eventbrite on visual brand and typography. Klook (8.8) and Luma (8.4) lead on credibility-proof depth and mobile polish. Gap to leader is 1.4 points — closable with audited escrow artefacts and a PWA install path.</div>
+      </li>
+      <li class="exec-bullet">
+        <div class="exec-num"></div>
+        <div class="exec-body"><strong>Five recommended actions.</strong> Surface the escrow narrative on every event-detail page. Ship audited escrow flow doc + MAS PSA compliance posture. Compress hero imagery and ship PWA install path. Vendor onboarding standards page + event-success-rate counter. Calendar-native invite flow with PayNow + RSVP + escrow embedded in the email.</div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- 4 — MARKET -->
+  <section class="report-page bleed-card" id="sec-market">
+    <div class="sec-num">Section 04</div>
+    <h2 class="sec-h2" id="market-regulatory">Market &amp; Regulatory Landscape</h2>
+    <p class="sec-lede">The Singapore P2P event market sized, framed, and gated by the regulatory pipeline that runs from MAS Payment Services Act compliance through GST registration to PDPA attendee data handling.</p>
+    <div class="kpi-strip" id="market-kpis"></div>
+    <div class="l-grid" id="market-anchors"></div>
+    <h3 style="font-size: 1.1rem; color: var(--navy); margin: 22px 0 10px; font-weight: 800;">Key trends shaping the buyer side</h3>
+    <ul class="l-list" id="market-trends"></ul>
+    <h3 style="font-size: 1.1rem; color: var(--navy); margin: 22px 0 10px; font-weight: 800;">Regulatory notes</h3>
+    <ul class="l-list" id="market-regs"></ul>
+    <h3 style="font-size: 1.1rem; color: var(--navy); margin: 22px 0 10px; font-weight: 800;">SEA context</h3>
+    <p id="market-sea" style="font-size: 0.9rem; color: var(--slate); line-height: 1.7;"></p>
+  </section>
+
+  <!-- 5 — COMP -->
+  <section class="report-page bleed-surface" id="sec-comp">
+    <div class="sec-num">Section 05</div>
+    <h2 class="sec-h2" id="competitive-landscape">Competitive Landscape</h2>
+    <p class="sec-lede">High-threat rivals — drawn from <code>competitors.json</code>, filtered to <code>threat_level_to_the_commons === 'high'</code>. Fee visibility, design and mobile scores, and the structural strengths and weaknesses each one brings.</p>
+    <div class="comp-list" id="comp-list"></div>
+  </section>
+
+  <!-- 6 — PRICING -->
+  <section class="report-page bleed-card" id="sec-pricing">
+    <div class="sec-num">Section 06</div>
+    <h2 class="sec-h2" id="pricing-tiers">Pricing Tiers — 2026 SG Reality</h2>
+    <p class="sec-lede">What organisers actually pay, by platform, by use case. Hidden-commission floors are estimated — most experience marketplaces don't disclose operator-side commercials.</p>
+    <div class="pricing-wrap">
+      <table class="pricing">
+        <thead>
+          <tr>
+            <th style="min-width: 180px;">Use case</th>
+            <th>Eventbrite-grade</th>
+            <th>Mid-tier (Peatix / Luma)</th>
+            <th class="us-col">The Commons</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Paid ticket (S$50 face)</th>
+            <td><span class="price">~10.7% all-in</span><span class="price-note">3.7% + S$1.59 service + 3.5% processing</span></td>
+            <td><span class="price">~5–8% all-in</span><span class="price-note">Peatix 4.9% + S$0.99 · Luma ~5% + processing</span></td>
+            <td class="us-col"><span class="price">5% organiser + processing</span><span class="price-note">Held in escrow until event-day delivery</span></td>
+          </tr>
+          <tr>
+            <th>Free community event</th>
+            <td><span class="price">Free for free events</span><span class="price-note">Discovery only; no marketplace</span></td>
+            <td><span class="price">Free</span><span class="price-note">Peatix free; Luma free; Meetup S$24/mo organiser sub</span></td>
+            <td class="us-col"><span class="price">Free</span><span class="price-note">Community discovery + RSVP + free vendor list</span></td>
+          </tr>
+          <tr>
+            <th>Vendor booking (S$300 photographer)</th>
+            <td><span class="price">Not offered</span><span class="price-note">Organiser sources via Carousell / Bark / Fiverr separately</span></td>
+            <td><span class="price">Not offered</span><span class="price-note">Same fragmentation</span></td>
+            <td class="us-col"><span class="price">10% provider booking fee</span><span class="price-note">Escrow on vendor payout; release on event-day delivery</span></td>
+          </tr>
+          <tr>
+            <th>Pay-out timing</th>
+            <td><span class="price">T+4 to T+7</span><span class="price-note">After event; no buyer recourse on cancel</span></td>
+            <td><span class="price">T+0 to T+30</span><span class="price-note">Luma instant · Peatix T+30 · neither escrowed</span></td>
+            <td class="us-col"><span class="price">T+0 after event-day delivery</span><span class="price-note">Funds released on attendance confirmation</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="footnote">
+      <strong>Footnote on positioning.</strong> The Commons' 5% organiser + 10% provider fee structure beats Eventbrite all-in on every paid-ticket band. The structural differentiator is not price — it is <em>escrow + integrated vendor marketplace</em>. Competitors with escrow (Peerspace, Stripe Connect) lack discovery and event tooling; competitors with discovery (Eventbrite, Peatix, Luma) lack escrow and vendor marketplace. Nobody offers the combined stack.
+    </div>
+  </section>
+
+  <!-- 7 — WHITESPACE -->
+  <section class="report-page bleed-surface" id="sec-whitespace">
+    <div class="sec-num">Section 07</div>
+    <h2 class="sec-h2" id="whitespace-attack">White Space &amp; Attack Plans</h2>
+    <p class="sec-lede">Strategy canvas across 8 organiser-valued dimensions. The Commons must break away on escrow, marketplace integration, SG localisation, and fee transparency — dimensions ticketing platforms and freelance marketplaces cannot structurally follow.</p>
+    <div class="canvas-wrap">
+      <canvas id="strategy-canvas" width="720" height="420"></canvas>
+      <div class="canvas-legend" id="canvas-legend"></div>
+    </div>
+  </section>
+
+  <!-- 8 — DESIGN AUDIT -->
+  <section class="report-page bleed-card" id="sec-design">
+    <div class="sec-num">Section 08</div>
+    <h2 class="sec-h2" id="design-audit">Website Design Audit</h2>
+    <p class="sec-lede">Six event-platform sites, scored on the same 5-dimension rubric — typography &amp; hierarchy, layout &amp; IA, visual brand distinctiveness, content credibility, mobile polish — including The Commons. Honestly.</p>
+    <div class="kpi-strip" id="da-kpis"></div>
+    <div class="da-grid" id="da-grid"></div>
+    <div class="syn-card" id="da-syn"></div>
+  </section>
+
+  <!-- 9 — RECS -->
+  <section class="report-page bleed-surface" id="sec-recs">
+    <div class="sec-num">Section 09</div>
+    <h2 class="sec-h2" id="recommendations">Recommendations</h2>
+    <p class="sec-lede">Five deck-grounded action items. Each connects a real Commons proof point already on the public site to the place an organiser is most likely to decide.</p>
+    <ol class="rec-list">
+      <li class="rec-item">
+        <div class="rec-num"></div>
+        <div>
+          <div class="rec-title">Surface the escrow narrative on every event-detail page</div>
+          <div class="rec-body">Move the <em>"funds held until event-day delivery"</em> badge from the marketplace pillar onto every event-detail card and checkout screen. Today this lives only on landing-page copy; the attendee is not reading it where they decide.</div>
+        </div>
+      </li>
+      <li class="rec-item">
+        <div class="rec-num"></div>
+        <div>
+          <div class="rec-title">Ship an audited escrow flow doc + MAS PSA compliance posture</div>
+          <div class="rec-body">Add a one-pager describing the <strong>Stripe Connect Custom + ringfenced sub-account</strong> escrow flow, with Elitez Group's MAS Payment Services Act posture quoted. Convert the trust narrative into a defensible artefact a procurement officer or community-organiser sceptic can email around.</div>
+        </div>
+      </li>
+      <li class="rec-item">
+        <div class="rec-num"></div>
+        <div>
+          <div class="rec-title">Persona-led landing pages for the four organiser ICPs</div>
+          <div class="rec-body">Four distinct entry points: <strong>Birthday host</strong>, <strong>Hobby-group recurring organiser</strong>, <strong>Community / culture event creator</strong>, <strong>Corporate offsite planner</strong>. Each with its own hero copy, its own CTA, and its own proof stack — birthday host leads with PayNow + escrow safety; hobby-group leads with recurring-event tooling vs Meetup; corporate leads with GST/IRAS readiness.</div>
+        </div>
+      </li>
+      <li class="rec-item">
+        <div class="rec-num"></div>
+        <div>
+          <div class="rec-title">Live event-success-rate counter on the hero</div>
+          <div class="rec-body">A counter that reads <em>"98% of events delivered as promised — 1,200 events to date, S$X held safely in escrow right now"</em> on the homepage hero, updating live as escrow releases. Pulls from the same data source the audited escrow ledger uses, so the counter and the report cannot drift out of sync.</div>
+        </div>
+      </li>
+      <li class="rec-item">
+        <div class="rec-num"></div>
+        <div>
+          <div class="rec-title">Calendar-native invite flow with PayNow + RSVP + escrow in the email</div>
+          <div class="rec-body">Beat Luma in SG by integrating <strong>PayNow QR + RSVP confirmation + escrow lock</strong> directly into the event invite email and calendar attachment. <em>The attendee pays from the invite. The funds are escrowed in the same click.</em> No second visit required. Vendor approvals piggyback on the same calendar workflow.</div>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- 10 — METHODOLOGY -->
+  <section class="report-page bleed-card" id="sec-method">
+    <div class="sec-num">Section 10</div>
+    <h2 class="sec-h2" id="methodology">Methodology &amp; Sources</h2>
+    <p class="sec-lede">Where every number in this report came from, and the dates each dataset was last refreshed.</p>
+    <div class="meth-block">
+      <div class="lbl">Research date</div>
+      <p>Three data files refreshed <strong id="meth-date">2026-04-29</strong>. Report compiled <strong>2026-04-29</strong> for Q2 2026 distribution.</p>
+    </div>
+    <div class="meth-block">
+      <div class="lbl">The Commons positioning</div>
+      <p>Mission, vision, product line, and fee structure are taken from the public pages of <code>derrickteo.com/the-commons/</code> (<code>index.html</code>, <code>events.html</code>, <code>marketplace.html</code>, <code>create.html</code>, <code>dashboard.html</code>). Backed by Elitez Group; daiquiri-beach themed; pending templates + localStorage persistence is a known roadmap item.</p>
+    </div>
+    <div class="meth-block">
+      <div class="lbl">Competitor intelligence (<code>competitors.json</code>)</div>
+      <p>Triangulated from public competitor pricing pages (Eventbrite, Peatix, Klook, Luma, Humanitix, SISTIC, EventNook, FunEmpire, Funzing, Airbnb Experiences, Venuerific, Peerspace, Trustap, Stripe Connect, Escrow.com, PayNow, Splitwise, Fiverr, Bark, Carousell Services, Meetup) plus DIY (Google Form + PayNow + WhatsApp) as the silent-majority baseline. SG-specific localisation scoring covers PayNow, SGD, GST/IRAS, SG support, multi-language UI.</p>
+    </div>
+    <div class="meth-block">
+      <div class="lbl">Design audit (<code>design-audit.json</code>)</div>
+      <p>Live site review of six event-platform peers against a 5-dimension rubric scored 1–10. Subjects: Eventbrite, Peatix, Klook, Luma, Venuerific, plus The Commons (self) — assessed honestly. Industry average 7.4, The Commons 7.4. Each subject's URL, screenshot capture set, and dimension notes stored in JSON and mirrored on <a href="design-audit.html">Design Audit</a>.</p>
+    </div>
+    <div class="meth-block">
+      <div class="lbl">Companion artefacts</div>
+      <ul>
+        <li><a href="competitor-analytics.html">Competitor Analytics</a> — full per-competitor card view with strengths and weaknesses</li>
+        <li><a href="whitespace.html">White Space Atlas</a> — interactive heatmap and attack niche cards</li>
+        <li><a href="insights.html">Market &amp; Pricing Insights</a> — pricing recommendations, personas, willingness-to-pay</li>
+        <li><a href="design-audit.html">Design Audit</a> — full subject cards with dimension-level notes</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function toggleMobileMenu() {
+  var m = document.getElementById('mobileMenu');
+  if (m) m.classList.toggle('show');
+}
+</script>
+
+<script>
+// Strategy canvas dims (8) — the organiser-valued dimensions The Commons must own.
+var CANVAS_DIMS = [
+  'Escrow safety',
+  'Vendor marketplace',
+  'SG localisation (PayNow / GST)',
+  'Fee transparency',
+  'Discovery surface',
+  'P2P friendliness',
+  'Mobile polish',
+  'Daiquiri-beach voice'
+];
+var CANVAS_LINES = [
+  { name: 'The Commons',                      us: true, color: '#FF6B6B', scores: [5, 5, 5, 5, 4, 5, 4, 5] },
+  { name: 'Eventbrite',                                 color: '#FF4081', scores: [1, 1, 2, 4, 5, 4, 4, 1] },
+  { name: 'Peatix',                                     color: '#00D2FF', scores: [1, 1, 2, 4, 4, 5, 4, 1] },
+  { name: 'Klook',                                      color: '#FF8E53', scores: [1, 4, 5, 1, 5, 1, 5, 1] },
+  { name: 'Luma',                                       color: '#E040FB', scores: [1, 1, 1, 4, 4, 5, 5, 2] },
+  { name: 'PayNow / DIY',                               color: '#00C853', scores: [0, 0, 5, 5, 0, 4, 4, 0] },
+  { name: 'Carousell / Bark (vendor)',                  color: '#0891B2', scores: [2, 3, 3, 2, 2, 3, 3, 1] },
+  { name: 'Stripe Connect (rail-only)',                 color: '#4A5568', scores: [5, 0, 1, 4, 0, 0, 4, 0] }
+];
+
+function clearNode(el) { while (el.firstChild) el.removeChild(el.firstChild); }
+function makeEl(tag, cls, text) {
+  var e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text != null) e.textContent = String(text);
+  return e;
+}
+
+function renderTOC() {
+  var list = document.getElementById('toc-list');
+  clearNode(list);
+  var headings = document.querySelectorAll('main#report-doc h2.sec-h2[id]');
+  headings.forEach(function (h, i) {
+    var li = makeEl('li', 'toc-item');
+    li.appendChild(makeEl('div', 'toc-num'));
+    var linkWrap = makeEl('div');
+    var a = makeEl('a', 'toc-link', h.textContent);
+    a.href = '#' + h.id;
+    linkWrap.appendChild(a);
+    li.appendChild(linkWrap);
+    li.appendChild(makeEl('div', 'toc-page', '§' + String(i + 2).padStart(2, '0')));
+    list.appendChild(li);
+  });
+}
+
+function renderMarket(landscape) {
+  var kpis = document.getElementById('market-kpis');
+  clearNode(kpis);
+  var kArr = [
+    { v: landscape.annualSGEvents || '—', l: 'Annual SG events', cls: 'coral' },
+    { v: landscape.escrowAdoption || '—', l: 'Escrow adoption', cls: 'red' },
+    { v: landscape.vendorMarketplaceMaturity ? 'Fragmented' : '—', l: 'Vendor marketplace', cls: 'amber' },
+    { v: 'S$1.2B', l: 'SG events sector', cls: 'ocean' },
+    { v: '~S$280M', l: 'P2P / community share', cls: 'green' }
+  ];
+  kArr.forEach(function (k) {
+    var card = makeEl('div', 'kpi on-card');
+    card.appendChild(makeEl('div', 'kpi-val ' + k.cls, k.v));
+    card.appendChild(makeEl('div', 'kpi-lbl', k.l));
+    kpis.appendChild(card);
+  });
+
+  var anchors = document.getElementById('market-anchors');
+  clearNode(anchors);
+  var aArr = [
+    { lbl: 'Market size', val: landscape.marketSize },
+    { lbl: 'Growth rate', val: landscape.growthRate },
+    { lbl: 'Positioning', val: landscape.theCommonsPositioning }
+  ];
+  aArr.forEach(function (a) {
+    if (!a.val) return;
+    var card = makeEl('div', 'l-card on-card');
+    card.appendChild(makeEl('div', 'lbl', a.lbl));
+    card.appendChild(makeEl('div', 'val', a.val));
+    anchors.appendChild(card);
+  });
+
+  var trends = document.getElementById('market-trends');
+  clearNode(trends);
+  (landscape.keyTrends || []).forEach(function (t) { trends.appendChild(makeEl('li', null, t)); });
+
+  var regs = document.getElementById('market-regs');
+  clearNode(regs);
+  (landscape.regulatoryNotes || []).forEach(function (r) { regs.appendChild(makeEl('li', null, r)); });
+
+  var sea = document.getElementById('market-sea');
+  sea.textContent = landscape.seaContext || '';
+}
+
+function renderCompetitors(competitors) {
+  var list = document.getElementById('comp-list');
+  clearNode(list);
+  var top = competitors.filter(function (c) { return c.threat_level_to_the_commons === 'high'; });
+  if (!top.length) {
+    list.appendChild(makeEl('div', 'err-msg', 'No high-threat competitors found in competitors.json.'));
+    return;
+  }
+  top.forEach(function (c) {
+    var card = makeEl('div', 'comp-card-r on-card');
+    var head = makeEl('div', 'comp-head-r');
+    var left = makeEl('div');
+    left.appendChild(makeEl('div', 'comp-name-r', c.name));
+    if (c.url) {
+      var u = makeEl('a', 'comp-url-r', c.url);
+      u.href = c.url; u.target = '_blank'; u.rel = 'noopener';
+      left.appendChild(u);
+    }
+    head.appendChild(left);
+    var badges = makeEl('div', 'comp-badges');
+    var visClass = 'b-vis-' + (c.platform_fee_visibility || 'partial');
+    var visLabel = (c.platform_fee_visibility || '—').replace(/_/g, ' ');
+    badges.appendChild(makeEl('span', 'badge ' + visClass, visLabel));
+    badges.appendChild(makeEl('span', 'badge b-threat-' + (c.threat_level_to_the_commons || 'low'), 'Threat: ' + (c.threat_level_to_the_commons || '—')));
+    head.appendChild(badges);
+    card.appendChild(head);
+
+    if (c.estimated_platform_fee_sgd) {
+      var mk = makeEl('div', null, c.estimated_platform_fee_sgd);
+      mk.style.fontSize = '0.84rem';
+      mk.style.color = 'var(--coral)';
+      mk.style.fontFamily = 'ui-monospace, monospace';
+      mk.style.marginBottom = '8px';
+      card.appendChild(mk);
+    }
+
+    var bars = makeEl('div', 'comp-bars');
+    [['Design', c.designScore], ['Mobile', c.mobileScore]].forEach(function (pair) {
+      if (pair[1] == null) return;
+      var row = makeEl('div', 'bar-row');
+      row.appendChild(makeEl('span', 'lbl', pair[0]));
+      var bar = makeEl('div', 'bar');
+      var fill = makeEl('div', 'fill');
+      fill.style.width = (Math.max(0, Math.min(10, Number(pair[1]))) * 10) + '%';
+      bar.appendChild(fill);
+      row.appendChild(bar);
+      row.appendChild(makeEl('span', 'val', pair[1] + '/10'));
+      bars.appendChild(row);
+    });
+    card.appendChild(bars);
+
+    var sw = makeEl('div', 'comp-sw');
+    [['strengths', c.strengths || []], ['weaknesses', c.weaknesses || []]].forEach(function (pair) {
+      var col = makeEl('div', 'col ' + pair[0]);
+      col.appendChild(makeEl('h5', null, pair[0].charAt(0).toUpperCase() + pair[0].slice(1)));
+      var ul = makeEl('ul');
+      pair[1].slice(0, 4).forEach(function (item) { ul.appendChild(makeEl('li', null, item)); });
+      col.appendChild(ul);
+      sw.appendChild(col);
+    });
+    card.appendChild(sw);
+    list.appendChild(card);
+  });
+}
+
+function renderStrategyCanvas() {
+  var ctx = document.getElementById('strategy-canvas').getContext('2d');
+  var datasets = CANVAS_LINES.map(function (l) {
+    return {
+      label: l.name, data: l.scores,
+      backgroundColor: l.us ? 'rgba(255,107,107,0.18)' : 'transparent',
+      borderColor: l.color, borderWidth: l.us ? 3 : 1.5,
+      pointRadius: l.us ? 4 : 2.5, pointBackgroundColor: l.color, tension: 0.15
+    };
+  });
+  new Chart(ctx, {
+    type: 'radar',
+    data: { labels: CANVAS_DIMS, datasets: datasets },
+    options: {
+      animation: false,
+      scales: { r: {
+        suggestedMin: 0, suggestedMax: 5,
+        ticks: { stepSize: 1, backdropColor: 'rgba(0,0,0,0)', color: '#4A5568', font: { size: 10 } },
+        grid: { color: 'rgba(26,26,46,0.08)' },
+        angleLines: { color: 'rgba(26,26,46,0.1)' },
+        pointLabels: { color: '#1A1A2E', font: { size: 11, weight: 600 } }
+      } },
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: function (x) { return x.dataset.label + ': ' + x.raw; } } } },
+      responsive: true, maintainAspectRatio: false
+    }
+  });
+  var leg = document.getElementById('canvas-legend');
+  clearNode(leg);
+  CANVAS_LINES.forEach(function (l) {
+    var row = makeEl('div', 'leg');
+    var sw = makeEl('span', 'sw');
+    sw.style.background = l.color;
+    if (l.us) sw.style.boxShadow = '0 0 10px ' + l.color;
+    var n = makeEl('span', null, l.name);
+    if (l.us) n.classList.add('us');
+    row.appendChild(sw);
+    row.appendChild(n);
+    leg.appendChild(row);
+  });
+}
+
+function renderDesignAudit(audit) {
+  var subjects = audit.subjects || [];
+  var synth = audit.synthesis || {};
+  var passage = subjects.find(function (s) { return s.is_self; }) || {};
+  var sortedNonSelf = subjects.filter(function (s) { return !s.is_self; }).sort(function (a, b) { return b.overall_score - a.overall_score; });
+  var leader = sortedNonSelf[0] || {};
+  var ranked = subjects.slice().sort(function (a, b) { return b.overall_score - a.overall_score; });
+  var passageRank = ranked.findIndex(function (s) { return s.is_self; }) + 1;
+  var gap = leader.overall_score && passage.overall_score ? Math.max(0, leader.overall_score - passage.overall_score).toFixed(1) : '—';
+
+  var kpis = document.getElementById('da-kpis');
+  clearNode(kpis);
+  [
+    { v: (synth.industry_average != null ? synth.industry_average.toFixed(1) : '—'), l: 'Industry Average', cls: 'ocean' },
+    { v: (passage.overall_score != null ? passage.overall_score.toFixed(1) : '—'), l: 'The Commons Score', cls: 'coral' },
+    { v: passageRank ? String(passageRank) + ' of ' + subjects.length : '—', l: 'The Commons Rank', cls: 'amber' },
+    { v: gap, l: 'Gap to Leader', cls: 'red' }
+  ].forEach(function (k) {
+    var card = makeEl('div', 'kpi');
+    card.appendChild(makeEl('div', 'kpi-val ' + k.cls, k.v));
+    card.appendChild(makeEl('div', 'kpi-lbl', k.l));
+    kpis.appendChild(card);
+  });
+
+  var grid = document.getElementById('da-grid');
+  clearNode(grid);
+  var orderedSubjects = subjects.slice().sort(function (a, b) {
+    if (a.is_self) return -1;
+    if (b.is_self) return 1;
+    return b.overall_score - a.overall_score;
+  });
+  orderedSubjects.forEach(function (s) {
+    var card = makeEl('div', 'da-card' + (s.is_self ? ' self' : ''));
+    var head = makeEl('div', 'da-head');
+    var nameWrap = makeEl('div');
+    var nm = makeEl('span', 'da-name', s.name);
+    if (s.is_self) nm.appendChild(makeEl('span', 'self-tag', 'Self'));
+    nameWrap.appendChild(nm);
+    head.appendChild(nameWrap);
+    var ov = makeEl('div', 'da-overall', s.overall_score != null ? s.overall_score.toFixed(1) : '—');
+    ov.appendChild(makeEl('span', 'max', '/10'));
+    head.appendChild(ov);
+    card.appendChild(head);
+
+    var bars = makeEl('div', 'da-bars');
+    (audit.rubric || []).forEach(function (r) {
+      var dim = (s.scores || {})[r.id];
+      if (!dim) return;
+      var row = makeEl('div', 'da-bar-row');
+      row.appendChild(makeEl('span', 'lbl', r.label));
+      var bar = makeEl('div', 'da-bar');
+      var fill = makeEl('div', 'fill');
+      fill.style.width = (Math.max(0, Math.min(10, dim.score)) * 10) + '%';
+      bar.appendChild(fill);
+      row.appendChild(bar);
+      row.appendChild(makeEl('span', 'val', String(dim.score)));
+      bars.appendChild(row);
+    });
+    card.appendChild(bars);
+    if (s.verdict) card.appendChild(makeEl('div', 'da-verdict', s.verdict));
+    grid.appendChild(card);
+  });
+
+  var syn = document.getElementById('da-syn');
+  clearNode(syn);
+  syn.appendChild(makeEl('h3', null, 'Synthesis — easy wins and 10× aspirations'));
+  if (synth.passage_position) {
+    var pos = makeEl('p', null, synth.passage_position);
+    pos.style.fontSize = '0.88rem';
+    pos.style.color = 'var(--slate)';
+    pos.style.lineHeight = '1.65';
+    pos.style.marginBottom = '14px';
+    syn.appendChild(pos);
+  }
+  [
+    { lbl: 'Easy wins for The Commons', items: synth.easy_wins_for_passage || [] },
+    { lbl: '10× aspirations', items: synth.ten_x_aspirations || [] }
+  ].forEach(function (b) {
+    if (!b.items.length) return;
+    var block = makeEl('div', 'syn-block');
+    block.appendChild(makeEl('div', 'lbl', b.lbl));
+    var ul = makeEl('ul');
+    b.items.forEach(function (it) { ul.appendChild(makeEl('li', null, it)); });
+    block.appendChild(ul);
+    syn.appendChild(block);
+  });
+}
+
+async function loadAll() {
+  try {
+    var res1 = await fetch('../data/competitors.json');
+    var res2 = await fetch('../data/design-audit.json');
+    if (!res1.ok) throw new Error('competitors.json HTTP ' + res1.status);
+    if (!res2.ok) throw new Error('design-audit.json HTTP ' + res2.status);
+    var competitors = await res1.json();
+    var designAudit = await res2.json();
+
+    var stamp = competitors.research_date || designAudit.research_date || '2026-04-29';
+    document.getElementById('cover-date').textContent = stamp;
+    document.getElementById('meth-date').textContent = stamp;
+
+    renderTOC();
+    renderMarket(competitors.landscape || {});
+    renderCompetitors(competitors.competitors || []);
+    renderStrategyCanvas();
+    renderDesignAudit(designAudit);
+  } catch (e) {
+    var main = document.getElementById('report-doc');
+    var err = makeEl('div', 'err-msg', 'Data load failed: ' + e.message + ' — confirm /data/*.json files exist.');
+    err.style.margin = '24px';
+    main.insertBefore(err, main.firstChild);
+  }
+}
+
+function effectiveSectionHmm(sec) {
+  var PX_PER_MM = 96 / 25.4;
+  var secRect = sec.getBoundingClientRect();
+  var maxBottom = secRect.top;
+  sec.querySelectorAll('*').forEach(function (el) {
+    var hasText = (el.textContent || '').trim().length > 0;
+    var tag = el.tagName;
+    var isVisual = tag === 'IMG' || tag === 'CANVAS' || tag === 'SVG' || tag === 'TABLE';
+    if (!hasText && !isVisual) return;
+    var r = el.getBoundingClientRect();
+    if (r.bottom > maxBottom) maxBottom = r.bottom;
+  });
+  var contentHmm = (maxBottom - secRect.top) / PX_PER_MM + 8;
+  return Math.min(contentHmm, sec.offsetHeight / PX_PER_MM);
+}
+
+function sliceIsEmpty(sliceCanvas, bgHex) {
+  var ctx = sliceCanvas.getContext('2d');
+  var data;
+  try { data = ctx.getImageData(0, 0, sliceCanvas.width, sliceCanvas.height).data; }
+  catch (e) { return false; }
+  var r0 = parseInt(bgHex.slice(1, 3), 16);
+  var g0 = parseInt(bgHex.slice(3, 5), 16);
+  var b0 = parseInt(bgHex.slice(5, 7), 16);
+  var nonBg = 0, sampled = 0;
+  for (var i = 0; i < data.length; i += 400) {
+    sampled++;
+    if (Math.abs(data[i] - r0) > 8 || Math.abs(data[i + 1] - g0) > 8 || Math.abs(data[i + 2] - b0) > 8) nonBg++;
+  }
+  return sampled > 0 && (nonBg / sampled) < 0.001;
+}
+
+async function downloadPdf() {
+  var btn = document.getElementById('pdf-dl-btn');
+  if (!btn) return;
+  if (typeof window.html2canvas !== 'function' || typeof window.jspdf === 'undefined') {
+    alert('PDF libraries failed to load. Check network and refresh.');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Rendering…';
+  document.body.classList.add('pdf-mode');
+
+  await new Promise(function (r) { requestAnimationFrame(function () { requestAnimationFrame(r); }); });
+  await (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve());
+
+  var PX_PER_MM = 96 / 25.4;
+  var PAGE_W_MM = 210;
+  var PAGE_H_MM = 297;
+  var SCALE = 2;
+
+  try {
+    var sections = Array.from(document.querySelectorAll('main#report-doc > section.report-page'));
+    var jsPDF = window.jspdf.jsPDF;
+    var pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
+    var pageEmitted = false;
+
+    for (var i = 0; i < sections.length; i++) {
+      var sec = sections[i];
+      var bg = sec.classList.contains('bleed-card') ? '#ffffff' : '#FFF8F0';
+
+      var fullCanvas = await window.html2canvas(sec, {
+        scale: SCALE, backgroundColor: bg, useCORS: true, logging: false,
+        width: sec.offsetWidth, height: sec.offsetHeight
+      });
+
+      var effHmm = effectiveSectionHmm(sec);
+      var effHpx = Math.ceil(effHmm * PX_PER_MM * SCALE);
+      var canvas;
+      if (effHpx >= fullCanvas.height) {
+        canvas = fullCanvas;
+      } else {
+        canvas = document.createElement('canvas');
+        canvas.width = fullCanvas.width;
+        canvas.height = effHpx;
+        var ctx = canvas.getContext('2d');
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(fullCanvas, 0, 0);
+      }
+      var sectionHmm = (canvas.height / SCALE) / PX_PER_MM;
+
+      if (sectionHmm <= PAGE_H_MM + 0.5) {
+        if (pageEmitted) pdf.addPage();
+        var dataUrl = canvas.toDataURL('image/jpeg', 0.62);
+        pdf.addImage(dataUrl, 'JPEG', 0, 0, PAGE_W_MM, sectionHmm, undefined, 'FAST');
+        pageEmitted = true;
+      } else {
+        var sliceHpx = Math.floor(PAGE_H_MM * PX_PER_MM * SCALE);
+        var yPx = 0;
+        while (yPx < canvas.height) {
+          var thisSliceHpx = Math.min(sliceHpx, canvas.height - yPx);
+          var slice = document.createElement('canvas');
+          slice.width = canvas.width;
+          slice.height = thisSliceHpx;
+          var sctx = slice.getContext('2d');
+          sctx.fillStyle = bg;
+          sctx.fillRect(0, 0, slice.width, slice.height);
+          sctx.drawImage(canvas, 0, -yPx);
+          if (!sliceIsEmpty(slice, bg)) {
+            if (pageEmitted) pdf.addPage();
+            var sUrl = slice.toDataURL('image/jpeg', 0.62);
+            var sliceHmm = (thisSliceHpx / SCALE) / PX_PER_MM;
+            pdf.addImage(sUrl, 'JPEG', 0, 0, PAGE_W_MM, sliceHmm, undefined, 'FAST');
+            pageEmitted = true;
+          }
+          yPx += thisSliceHpx;
+        }
+      }
+      btn.textContent = 'Rendering… ' + (i + 1) + ' / ' + sections.length;
+    }
+
+    pdf.save('the-commons-p2p-event-market-intelligence-q2-2026.pdf');
+  } catch (err) {
+    alert('PDF render failed: ' + (err && err.message ? err.message : err));
+    console.error(err);
+  } finally {
+    document.body.classList.remove('pdf-mode');
+    btn.disabled = false;
+    btn.textContent = 'Download PDF';
+  }
+}
+
+document.getElementById('pdf-dl-btn').addEventListener('click', downloadPdf);
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', loadAll);
+} else {
+  loadAll();
+}
+</script>
+
+</body>
+</html>
