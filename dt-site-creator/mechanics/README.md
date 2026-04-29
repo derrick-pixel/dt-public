@@ -44,6 +44,7 @@ Cross-archetype reusable building blocks. Each mechanic folder has a 5-file cont
 | # | ID | Summary | Owned by |
 |---|---|---|---|
 | 20 | [schema-jsonld](./schema-jsonld/) | Schema.org JSON-LD: Organization, WebSite, BreadcrumbList, FAQPage, Product, LocalBusiness, Article, Person | Agent 6 |
+| 21 | [semantic-html-audit](./semantic-html-audit/) | Browser banner + Node CLI: heading hierarchy, landmarks, alt text, internal links, content thinness | Agent 7 |
 
 See `../METHODS.md` for the full v2 changelog.
 

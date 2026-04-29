@@ -33,10 +33,11 @@
       </div>
       <div class="hero-stats" id="size-stats"></div>
       <div id="deriv-flow"></div>
-      <div class="callout">
-        <div class="callout-label">Implication for us</div>
-        <p id="size-implication"></p>
-      </div>
+      <div id="size-implications"></div>
+      <details id="size-appendix" class="size-appendix" hidden>
+        <summary>Methodology &amp; full derivation</summary>
+        <p id="size-appendix-body"></p>
+      </details>
     </section>
 
     <!-- ============ SECTION: POLICY LANDSCAPE ============ -->
@@ -154,7 +155,42 @@
       stat('SAM', ms.sam_sgd, 'Share we can realistically reach with current channels and operating model.', 'sam'),
       stat('SOM', ms.som_sgd, 'Year-3 obtainable share — what the deck commits to.', 'som')
     );
-    document.getElementById('size-implication').textContent = ms.implication_for_us;
+    /* ---------- Implications (structured cards, with legacy fallback) ---------- */
+    const implWrap = document.getElementById('size-implications');
+    if (Array.isArray(ms.implications) && ms.implications.length) {
+      mount(implWrap,
+        h('div', { class: 'callout-label' }, 'What this means'),
+        h('div', { class: 'size-implications-grid' },
+          ...ms.implications.map(item =>
+            h('div', { class: 'size-implication-card' },
+              h('div', { class: 'size-implication-headline' }, item.headline || ''),
+              h('div', { class: 'size-implication-body' }, item.body || ''),
+              Array.isArray(item.agent_targets) && item.agent_targets.length
+                ? h('div', { class: 'size-implication-targets' },
+                    ...item.agent_targets.map(t => h('span', { class: 'size-target-chip' }, t.replace('_', ' '))),
+                  )
+                : null,
+            ),
+          ),
+        ),
+      );
+    } else if (ms.implication_for_us) {
+      // Legacy fallback for un-migrated projects.
+      mount(implWrap,
+        h('div', { class: 'callout' },
+          h('div', { class: 'callout-label' }, 'Implication for us'),
+          h('p', {}, ms.implication_for_us),
+        ),
+      );
+    }
+
+    /* ---------- Methodology appendix (collapsed) ---------- */
+    const appendixText = ms.methodology_appendix || ms.reasoning || '';
+    const appendixEl = document.getElementById('size-appendix');
+    if (appendixText) {
+      document.getElementById('size-appendix-body').textContent = appendixText;
+      appendixEl.hidden = false;
+    }
 
     /* ---------- Derivation flow (TAM → SAM → SOM) ---------- */
     const inputChip = i => h('span', { class: 'deriv-input' },

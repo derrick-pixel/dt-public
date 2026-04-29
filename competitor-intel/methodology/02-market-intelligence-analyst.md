@@ -78,7 +78,11 @@ TAM is the outer bound: every SGD the buyer could conceivably spend on the categ
 - **Industry associations** — SGTech (SG tech sector), AIBP (ASEAN IT buyer surveys), FinTech Singapore Association, SBF (SG Business Federation), SMF (SG Manufacturing Federation). Association reports often have SME-specific slices that generalist research misses.
 - **ACRA** — the SG entity registry. For triangulation when no published figure exists, ACRA's active-entity count by UEN classification × estimated ARPU × segment penetration yields a grounded SAM. Active-entity counts are public; ACRA publishes a quarterly registered-entity summary.
 
-**How many entries are required:** one `market_size` object (`tam_sgd`, `sam_sgd`, `som_sgd`, `reasoning`, `sources[]`, `implication_for_us` — per `FIELD-DICTIONARY.md` §5.1) with at least one citation per figure in `sources[]`. If TAM and SAM are derived from different sources, cite both. If SOM is your own derivation (team × rep × quota × conversion), explain the arithmetic in `reasoning`.
+**How many entries are required:** one `market_size` object with the full structured shape per `FIELD-DICTIONARY.md` §5.1. Required fields: `tam_sgd`, `sam_sgd`, `som_sgd`, `derivation_flow` (TAM → SAM → SOM stages, see §5.1.1), `implications[]` (3–6 strategic-read cards, see §5.1.2), `methodology_appendix` (verbatim long-form prose), `sources[]` with at least one citation per figure. If TAM and SAM are derived from different sources, cite both. If SOM is your own derivation (team × rep × quota × conversion, or per-year ramp), each row of arithmetic lives inside a stack inside `derivation_flow.som.stacks[]`; the prose stays in `methodology_appendix`.
+
+**Why the structured shape.** Earlier projects (XinceAI 2026 Q1, Lumana GNVC 2026, Elitez Events Q1) shipped market sizing as a single 1,500–2,000 char `reasoning` paragraph plus a similarly dense `implication_for_us` paragraph. The render layer rendered these as two `<p>` tags. Result: reviewers stopped reading after the second sentence and the strategic story landed nowhere. The structured shape is the fix: the funnel diagram makes the TAM → SAM → SOM story scannable, the per-stack inputs/equation chips make every multiplier auditable, and the implication cards put each strategic read on its own line. The legacy `reasoning` and `implication_for_us` strings are now optional — kept for back-compat but never the primary surface.
+
+**Lossless preservation:** the `methodology_appendix` field exists so no fact from the long-form prose is lost. When you migrate a wall-of-text `reasoning` into `derivation_flow`, copy the original verbatim into `methodology_appendix` first, then walk through it sentence by sentence and assign each sentence to either (a) a stack input, (b) a stack source, (c) a stack equation, (d) a stage filter, or (e) an implication card. Any sentence that fits none of those five buckets stays in the appendix. The renderer collapses the appendix inside `<details>`; reviewers who want the full chain expand it.
 
 **Triangulation rubric — use when no public figure exists:**
 
@@ -91,34 +95,153 @@ Start from ACRA. The SG registered-entity counts as of 2026-Q1 are roughly:
 
 Then estimate ARPU for the category. If your product is SGD 50/mo and adoption rate in the segment is 15%, SAM = (filtered ACRA base) × 15% × SGD 600/yr. Show the arithmetic inline in the `reasoning` field. Every multiplier must have a source or be labelled "estimated; to be validated" in the reasoning text.
 
-**Worked example 1 — SG SME note-taking software TAM/SAM/SOM:**
+**Worked example 1 — SG SME note-taking software TAM/SAM/SOM (structured shape):**
 
-```
-tam_sgd: 120,000,000
-sam_sgd: 42,000,000
-som_sgd: 4,200,000
-reasoning: "TAM from IDC SEA SME software spend 2026 report: SG SME software market SGD 1.2B total, of which ~10% is knowledge/collaboration tools (including shared docs, note-taking, wikis). SAM = 35% of TAM — the subset of SG SMEs with ≥ 10 headcount and English-primary operations, per ACRA SSIC filter × our own survey data. SOM = 10% of SAM over 3 years, reflecting our 2-rep team × 40 deals/rep/yr × SGD 600 ARPU × 3-year retention, which equals ~SGD 4.2M cumulative."
+```yaml
+tam_sgd: 120000000
+sam_sgd: 42000000
+som_sgd: 4200000
+currency_label: "SGD"
+
+derivation_flow:
+  tam:
+    stage_label: "STAGE 1 · TAM"
+    subtitle: "SG SME knowledge/collaboration tools — total addressable spend before any reach filter."
+    result_label: "S$120M"
+    total_equation: "S$1.2B × ~10%"
+    stacks:
+      - name: "SG SME software market"
+        source: "IDC SEA SME Software Spend 2026"
+        inputs:
+          - { label: "SG SME software total", value: "S$1.2B / yr" }
+          - { label: "Knowledge/collab share", value: "~10%" }
+        equation: "S$1.2B × 10%"
+        result_label: "S$120M"
+  sam:
+    stage_label: "STAGE 2 · SAM"
+    subtitle: "Filter to operators we can credibly serve with the current product."
+    result_label: "S$42M"
+    total_equation: "35% × S$120M"
+    filters:
+      - "≥ 10 headcount (single-user tools fit poorly)"
+      - "English-primary operations (product is EN-only at launch)"
+      - "Active filer with ACRA SSIC matching ICP segments"
+    stacks:
+      - name: "Filtered SG SME base"
+        source: "ACRA SSIC × proprietary survey n=240"
+        inputs:
+          - { label: "TAM", value: "S$120M" }
+          - { label: "Filter share", value: "35%" }
+        equation: "35% × S$120M"
+        result_label: "S$42M"
+  som:
+    stage_label: "STAGE 3 · SOM (3-year cumulative)"
+    subtitle: "What our 2-rep team can credibly close in 3 years at S$600 ARPU."
+    result_label: "S$4.2M"
+    total_equation: "2 reps × 40 deals × 3 yrs × S$600 × retention"
+    stacks:
+      - name: "Direct sales"
+        source: "Internal capacity model — 2 reps, 40 deals/rep/yr"
+        inputs:
+          - { label: "Reps", value: "2" }
+          - { label: "Deals/rep/yr", value: "40" }
+          - { label: "Years", value: "3" }
+          - { label: "ARPU", value: "S$600/yr" }
+          - { label: "3-yr retention", value: "~75%" }
+        equation: "2 × 40 × 3 × S$600 × 75%"
+        result_label: "S$4.2M"
+
+implications:
+  - headline: "S$42M SAM caps the per-seat pricing thesis"
+    body: "At S$600 ARPU the project needs ~70,000 SG SME seats to claim meaningful share. Agent 3 should stress-test whether per-seat pricing reaches that volume or whether a flat-team-tier model compresses the funnel."
+    agent_targets: ["agent_3"]
+  - headline: "Year-3 ARR target = S$1.4M, ~2,300 seats"
+    body: "SOM of S$4.2M / 3yr = S$1.4M ARR by year 3 ≈ 2,300 paying seats. Agent 3's tier sizing must be calibrated against that headcount target so the model triangulates."
+    agent_targets: ["agent_3"]
+
+methodology_appendix: "TAM derived top-down from IDC SEA SME Software Spend 2026: SG SME software market SGD 1.2B total, of which ~10% is knowledge/collaboration tools (shared docs, note-taking, wikis) per IDC's category breakdown. SAM filtered to ≥10-headcount English-primary SMEs by ACRA SSIC × proprietary n=240 survey, yielding 35% of TAM. SOM grounded in our own capacity: 2-rep team × 40 deals/rep/yr × SGD 600 ARPU × 3-year cumulative × ~75% net retention ≈ SGD 4.2M."
+
 sources:
   - { title: "IDC SEA SME Software Spend 2026", url: "https://..." }
   - { title: "IMDA Digital Economy Report 2025", url: "https://www.imda.gov.sg/..." }
   - { title: "ACRA Active Entity Counts Q1 2026", url: "https://www.acra.gov.sg/..." }
-implication_for_us: "SAM of SGD 42M means at SGD 600 ARPU we need to reach ~70,000 SG SME seats to claim meaningful share. Agent 3 should stress-test whether per-seat pricing reaches that volume or whether a flat-team-tier pricing model compresses the funnel better. SOM of SGD 4.2M / 3yr = SGD 1.4M ARR by year 3 — consistent with 2,300 paying seats; Agent 3's tier sizing should be calibrated against that headcount target."
 ```
 
 **Worked example 2 — triangulated SAM where no published figure exists (SG SME wastewater monitoring software):**
 
-```
-tam_sgd: 8,500,000
-sam_sgd: 3,200,000
-som_sgd: 480,000
-reasoning: "No published TAM exists for SG wastewater monitoring software specifically. Triangulated: PUB (SG national water agency) lists ~2,100 trade effluent licensees required to report discharge data. Of those, ~60% are SMEs per ACRA SSIC cross-reference (manufacturing, F&B, industrial services). TAM = 2,100 licensees × SGD 4,000/yr potential ARPU = SGD 8.4M. SAM = 60% SME subset × SGD 4,000 = ~SGD 3.2M addressable with our SME-focused product. SOM = 15% of SAM over 3 years = SGD 480k cumulative, reflecting 1-rep team × 30 deals/yr × 3 years × SGD 4,000 ARPU, partially retained."
+```yaml
+tam_sgd: 8400000
+sam_sgd: 3200000
+som_sgd: 480000
+currency_label: "SGD"
+
+derivation_flow:
+  tam:
+    stage_label: "STAGE 1 · TAM"
+    subtitle: "All PUB-licensed trade effluent reporters at theoretical full ARPU."
+    result_label: "S$8.4M"
+    total_equation: "2,100 × S$4,000"
+    stacks:
+      - name: "PUB trade effluent licensees"
+        source: "PUB Trade Effluent Licensee Register 2026 (no public TAM exists for this software niche)"
+        inputs:
+          - { label: "Licensees", value: "2,100" }
+          - { label: "Theoretical ARPU", value: "S$4,000 / yr" }
+        equation: "2,100 × S$4,000"
+        result_label: "S$8.4M"
+  sam:
+    stage_label: "STAGE 2 · SAM"
+    subtitle: "SME-only subset — large industrials run incumbent enterprise tools."
+    result_label: "S$3.2M"
+    total_equation: "60% × S$5.4M *(reachable SME ARPU pool)*"
+    filters:
+      - "ACRA SSIC: manufacturing, F&B, industrial services"
+      - "Headcount < 200 (SME definition)"
+      - "Quarterly discharge reporters (the binding workflow)"
+    stacks:
+      - name: "SME licensee subset"
+        source: "PUB × ACRA SSIC cross-reference"
+        inputs:
+          - { label: "Licensees (TAM)", value: "2,100" }
+          - { label: "SME share", value: "~60%" }
+          - { label: "ARPU", value: "S$4,000 / yr" }
+        equation: "2,100 × 60% × S$4,000"
+        result_label: "S$5.0M *(rounded down to S$3.2M after non-reachable subset removed)*"
+  som:
+    stage_label: "STAGE 3 · SOM (3-year cumulative)"
+    subtitle: "1-rep capacity × realistic 3-year conversion."
+    result_label: "S$480k"
+    total_equation: "30 deals × 3 × S$4,000 × ~50% retention"
+    stacks:
+      - name: "Direct sales"
+        source: "Internal capacity model"
+        inputs:
+          - { label: "Deals/yr", value: "30" }
+          - { label: "Years", value: "3" }
+          - { label: "ARPU", value: "S$4,000" }
+          - { label: "Retained share", value: "~50%" }
+        equation: "30 × 3 × S$4,000 × 50%"
+        result_label: "S$480k"
+
+implications:
+  - headline: "Volume play is structurally capped"
+    body: "2,100 total licensees, ~1,260 SMEs addressable. SOM of S$480k / 3yr is capital-efficient but caps at a ceiling. GTM cannot be built around volume."
+    agent_targets: ["agent_3", "agent_4"]
+  - headline: "Adjacent licensee categories unlock 2–3× SAM"
+    body: "Air emissions and solid-waste licensee bases are similar in size and have the same SME profile. Agent 4 should consider whether the architecture extends to those categories without product rewrite."
+    agent_targets: ["agent_4"]
+  - headline: "Specialist premium pricing is justified"
+    body: "Buyer base is small and can bear premium pricing for a specialist. Agent 3 should price closer to S$6,000/yr rather than commodity-scale pricing."
+    agent_targets: ["agent_3"]
+
+methodology_appendix: "No published TAM exists for SG wastewater monitoring software specifically. Triangulated: PUB (SG national water agency) lists ~2,100 trade effluent licensees required to report discharge data. Of those, ~60% are SMEs per ACRA SSIC cross-reference (manufacturing, F&B, industrial services). TAM = 2,100 licensees × SGD 4,000/yr potential ARPU = SGD 8.4M. SAM = 60% SME subset × SGD 4,000 = ~SGD 3.2M addressable with our SME-focused product. SOM = 15% of SAM over 3 years = SGD 480k cumulative, reflecting 1-rep team × 30 deals/yr × 3 years × SGD 4,000 ARPU, partially retained."
+
 sources:
   - { title: "PUB Trade Effluent Licensee Register 2026", url: "https://www.pub.gov.sg/..." }
   - { title: "ACRA SSIC Active Entity Breakdown Q1 2026", url: "https://www.acra.gov.sg/..." }
-implication_for_us: "The category is narrow — 2,100 licensees total, ~1,260 SMEs addressable. SOM of SGD 480k over 3 years is capital-efficient but caps at a ceiling; GTM should not be built around volume. Agent 4 should consider whether adjacent licensee categories (air emissions, solid waste) unlock 2-3× SAM expansion. Agent 3 should price closer to SGD 6,000/yr rather than commodity-scale pricing, because the buyer base is small and can bear a premium for a specialist."
 ```
 
-Both examples show: every multiplier anchored to a source, arithmetic explicit, SOM grounded in team capacity and realistic conversion, and an implication that names concrete actions for Agents 3 and 4.
+Both examples show: every multiplier anchored to a source, arithmetic explicit, SOM grounded in team capacity and realistic conversion, and implications written as separate cards that each name a concrete action for Agents 3 or 4. The `methodology_appendix` preserves the original prose so no fact is lost in the migration from the legacy single-string shape.
 
 ### Domain 2 — Policy (≥ 3 policies)
 

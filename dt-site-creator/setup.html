@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Set up Claude Code — DT Site Creator</title>
-  <meta name="description" content="Step-by-step guide to installing Claude Code on Mac and Windows. 15 minutes, newbie-friendly." />
+  <title>Set up your AI coding CLI — Claude Code, Codex, Kimi — DT Site Creator</title>
+  <meta name="description" content="Step-by-step setup for the three best AI coding CLIs: Claude Code (Anthropic), Codex CLI (OpenAI), and Kimi CLI (Moonshot AI). Mac + Windows. ~15 minutes per tool, newbie-friendly." />
 
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://derrick-pixel.github.io/dt-site-creator/setup.html" />
-  <meta property="og:title" content="Set up Claude Code — DT Site Creator" />
-  <meta property="og:description" content="Mac + Windows setup guide for Claude Code. Start vibe-coding in 15 minutes." />
+  <meta property="og:title" content="Set up Claude Code, Codex CLI, or Kimi CLI — DT Site Creator" />
+  <meta property="og:description" content="Mac + Windows setup for the three top AI coding CLIs. Pick one, install in 15 minutes, start vibe-coding." />
   <meta property="og:image" content="https://derrick-pixel.github.io/dt-site-creator/og-image.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
 
@@ -27,9 +27,83 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="dashboard/css/style.css?v=3" />
+  <link rel="stylesheet" href="dashboard/css/style.css?v=4" />
+
+  <style>
+    /* ───── Tool picker ───── */
+    .tool-picker {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 28px 0 8px;
+      padding: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+    .tool-picker__btn {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      padding: 12px 14px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      color: var(--muted2);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .tool-picker__btn:hover {
+      background: var(--bg);
+      color: var(--text);
+    }
+    .tool-picker__btn[aria-pressed="true"] {
+      background: var(--bg);
+      border-color: var(--accent);
+      color: var(--text);
+      box-shadow: 0 0 0 1px var(--accent) inset;
+    }
+    .tool-picker__name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .tool-picker__org {
+      font-size: 0.72rem;
+      font-weight: 500;
+      opacity: 0.7;
+    }
+    .tool-picker__btn[aria-pressed="true"] .tool-picker__org {
+      color: var(--accent-2);
+      opacity: 1;
+    }
+    @media (max-width: 640px) {
+      .tool-picker { grid-template-columns: 1fr; gap: 4px; padding: 6px; }
+      .tool-picker__btn { flex-direction: row; align-items: center; gap: 8px; padding: 10px 12px; }
+      .tool-picker__org::before { content: "· "; }
+    }
+
+    /* ───── Tool-specific show/hide ───── */
+    /* Hide all tool-tagged content by default; reveal only the active tool */
+    [data-tool] { display: none !important; }
+    [data-tool-active="claude"] [data-tool="claude"],
+    [data-tool-active="codex"]  [data-tool="codex"],
+    [data-tool-active="kimi"]   [data-tool="kimi"] {
+      display: revert !important;
+    }
+    /* "show when current tool is NOT Claude" */
+    [data-tool="not-claude"] { display: none !important; }
+    [data-tool-active="codex"] [data-tool="not-claude"],
+    [data-tool-active="kimi"]  [data-tool="not-claude"] {
+      display: revert !important;
+    }
+  </style>
+  <meta name="robots" content="noindex, nofollow">
 </head>
-<body class="setup-body">
+<body class="setup-body" data-tool-active="claude">
   <nav id="site-nav">
     <a href="index.html" class="nav-logo">DT<span>.</span>site</a>
     <ul class="nav-links">
@@ -61,31 +135,62 @@
     <!-- Hero -->
     <section class="setup-hero">
       <div class="container">
-        <div class="setup-hero__badge">Setup guide · ~15 minutes</div>
-        <h1>Set up <em>Claude Code</em></h1>
-        <p class="hero-sub">The fastest way to start vibe-coding: a command-line tool that turns your terminal into an AI pair programmer. This guide gets you from zero to your first prompt in 15 minutes — works on Mac and Windows, no prior coding experience needed.</p>
+        <div class="setup-hero__badge">Setup guide · ~15 minutes per tool</div>
+        <h1>Set up your <em>AI coding CLI</em></h1>
+        <p class="hero-sub">Three tools, one workflow: a command in your terminal that turns your laptop into an AI pair-programmer. Pick the one you want to learn — <strong>Claude Code</strong>, <strong>Codex CLI</strong>, or <strong>Kimi CLI</strong> — and we'll get you from zero to your first prompt in 15 minutes. Mac + Windows, no prior coding experience needed.</p>
+
+        <!-- Tool picker (drives the rest of the page) -->
+        <div class="tool-picker" role="tablist" aria-label="Choose your CLI">
+          <button class="tool-picker__btn" data-pick="claude" role="tab" aria-pressed="true">
+            <span class="tool-picker__name">Claude Code</span>
+            <span class="tool-picker__org">by Anthropic</span>
+          </button>
+          <button class="tool-picker__btn" data-pick="codex" role="tab" aria-pressed="false">
+            <span class="tool-picker__name">Codex CLI</span>
+            <span class="tool-picker__org">by OpenAI</span>
+          </button>
+          <button class="tool-picker__btn" data-pick="kimi" role="tab" aria-pressed="false">
+            <span class="tool-picker__name">Kimi CLI</span>
+            <span class="tool-picker__org">by Moonshot AI</span>
+          </button>
+        </div>
+
         <div class="setup-hero__toc">
-          <a href="#what">What is Claude Code?</a>
+          <a href="#what">What is this?</a>
           <a href="#prerequisites">Prerequisites</a>
           <a href="#mac">Mac setup</a>
           <a href="#windows">Windows setup</a>
           <a href="#first-prompt">First prompt</a>
-          <a href="#plugins">Power-up plugins</a>
+          <a href="#plugins">Plugins</a>
           <a href="#troubleshooting">Troubleshooting</a>
         </div>
       </div>
     </section>
 
-    <!-- What is Claude Code -->
+    <!-- What is a coding CLI -->
     <section id="what" class="setup-section">
       <div class="container setup-narrow">
-        <h2>What is Claude Code?</h2>
-        <p>Claude Code is a command-line tool from Anthropic. Instead of copy-pasting code between <a href="https://claude.ai">claude.ai</a> and your editor, you run <code>claude</code> in your terminal inside a project folder. Claude can then read your files, run commands, write code, and commit to git — all by talking to it in plain English.</p>
-        <p>Think of it as: <strong>claude.ai in chat window</strong> → good for questions. <strong>Claude Code in terminal</strong> → good for actually building software.</p>
+        <h2>What is a coding CLI?</h2>
+        <p>A coding CLI is a command-line tool that runs an AI agent inside your terminal, in the folder of a project you're working on. Instead of copy-pasting code between a chat window and your editor, the agent <strong>reads your files, writes code, runs commands, and commits to git</strong> — all by you talking to it in plain English.</p>
+        <p>Think of it as: <strong>chat in a browser</strong> → good for questions. <strong>Coding CLI in a terminal</strong> → good for actually building software.</p>
+
+        <!-- Tool-specific blurbs -->
+        <div data-tool="claude">
+          <h3>About Claude Code</h3>
+          <p>Built by <a href="https://www.anthropic.com" target="_blank" rel="noopener">Anthropic</a>, powered by the Claude model family (Sonnet & Opus). It is the most mature of the three: largest plugin ecosystem, deepest MCP (Model Context Protocol) integration, and the model is widely considered the strongest at long, multi-step coding work. Bills against your <a href="https://claude.ai" target="_blank" rel="noopener">claude.ai</a> Pro/Max subscription.</p>
+        </div>
+        <div data-tool="codex">
+          <h3>About Codex CLI</h3>
+          <p>Built by <a href="https://openai.com" target="_blank" rel="noopener">OpenAI</a>, powered by the GPT-5 / Codex model line. Tightly integrated with ChatGPT — sign in with your <strong>Plus / Pro / Business / Edu / Enterprise</strong> account and your existing plan covers usage; no separate API billing. Smaller plugin ecosystem than Claude Code, but ships with a clean TUI and a permissive sandbox model.</p>
+        </div>
+        <div data-tool="kimi">
+          <h3>About Kimi CLI</h3>
+          <p>Built by <a href="https://www.moonshot.ai" target="_blank" rel="noopener">Moonshot AI</a> (China), powered by Kimi K2 (and newer K2.5) models. Distinguishing trait: very long context windows and aggressive pricing. Authenticates via OAuth against the Kimi Code platform. Younger ecosystem than Claude or Codex, but quickly gaining traction with developers who want a strong open-weights-friendly alternative.</p>
+        </div>
 
         <div class="callout callout--info">
           <h4>💡 Why the terminal?</h4>
-          <p>Because Claude Code can touch your actual files, run your tests, commit to git, and iterate. A browser chat can only show text. Terminal-based Claude is the closest thing to working with a real junior developer who happens to be very fast.</p>
+          <p>Because a coding CLI can touch your actual files, run your tests, commit to git, and iterate. A browser chat can only show text. Terminal-based CLIs are the closest thing to working with a real junior developer who happens to be very fast.</p>
         </div>
       </div>
     </section>
@@ -104,282 +209,628 @@
           <div class="prereq-card">
             <span class="prereq-card__icon">🌐</span>
             <h4>Internet connection</h4>
-            <p>For installing tools and talking to Claude's servers.</p>
+            <p>For installing tools and talking to the model's servers.</p>
           </div>
-          <div class="prereq-card">
+
+          <!-- Account card swaps per tool -->
+          <div class="prereq-card" data-tool="claude">
             <span class="prereq-card__icon">🔐</span>
             <h4>A claude.ai account</h4>
             <p>Free tier works for the first few prompts. A <strong>Pro subscription ($20/mo)</strong> is recommended — it unlocks Claude Code access without needing a separate API key.</p>
           </div>
+          <div class="prereq-card" data-tool="codex">
+            <span class="prereq-card__icon">🔐</span>
+            <h4>A ChatGPT account</h4>
+            <p>Free tier works briefly. A <strong>Plus subscription ($20/mo)</strong> or higher is recommended — Codex CLI usage is included in your existing ChatGPT plan, so no separate OpenAI API key is required.</p>
+          </div>
+          <div class="prereq-card" data-tool="kimi">
+            <span class="prereq-card__icon">🔐</span>
+            <h4>A Kimi (Moonshot) account</h4>
+            <p>Sign in via OAuth at <a href="https://platform.moonshot.ai" target="_blank" rel="noopener">platform.moonshot.ai</a> the first time you run the CLI. Pricing is usage-based and notably cheaper than US providers.</p>
+          </div>
+
           <div class="prereq-card">
             <span class="prereq-card__icon">⌨️</span>
             <h4>Comfort pasting commands</h4>
-            <p>You'll copy-paste ~8 commands into a terminal. That's it. No writing code required for setup.</p>
+            <p>You'll copy-paste ~5–8 commands into a terminal. That's it. No writing code required for setup.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- MAC SETUP -->
+    <!-- ─────────────────────────────────────────────────── -->
+    <!-- MAC SETUP                                            -->
+    <!-- ─────────────────────────────────────────────────── -->
     <section id="mac" class="setup-section setup-section--accent">
       <div class="container setup-narrow">
         <div class="setup-section__header">
           <span class="setup-section__badge">🍎 macOS</span>
           <h2>Mac setup</h2>
-          <p class="lead">5 steps, ~10 minutes. Copy-paste each command exactly.</p>
+          <p class="lead" data-tool="claude">5 steps, ~10 minutes. Copy-paste each command exactly.</p>
+          <p class="lead" data-tool="codex">5 steps, ~10 minutes. Copy-paste each command exactly.</p>
+          <p class="lead" data-tool="kimi">4 steps, ~8 minutes. The install script handles Python and `uv` for you.</p>
         </div>
 
-        <!-- Step 1 -->
-        <div class="setup-step">
-          <div class="setup-step__num">1</div>
-          <div class="setup-step__body">
-            <h3>Open Terminal</h3>
-            <p>Press <kbd>Cmd</kbd> + <kbd>Space</kbd> to open Spotlight, type <strong>Terminal</strong>, press Enter.</p>
-            <p>A black (or white) window with a blinking cursor appears. That's your terminal. You'll type / paste commands here.</p>
-          </div>
-        </div>
-
-        <!-- Step 2 -->
-        <div class="setup-step">
-          <div class="setup-step__num">2</div>
-          <div class="setup-step__body">
-            <h3>Install Homebrew</h3>
-            <p>Homebrew is a package manager — it installs command-line tools for you. It's the de-facto standard on Mac. Paste this into Terminal and press Enter:</p>
-            <div class="terminal-window">
-              <div class="terminal-window__bar">
-                <span class="terminal-window__dot terminal-window__dot--red"></span>
-                <span class="terminal-window__dot terminal-window__dot--yellow"></span>
-                <span class="terminal-window__dot terminal-window__dot--green"></span>
-                <span class="terminal-window__title">Terminal — install Homebrew</span>
-              </div>
-              <pre class="terminal-window__body">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</pre>
+        <!-- ── CLAUDE CODE — MAC ── -->
+        <div data-tool="claude">
+          <div class="setup-step">
+            <div class="setup-step__num">1</div>
+            <div class="setup-step__body">
+              <h3>Open Terminal</h3>
+              <p>Press <kbd>Cmd</kbd> + <kbd>Space</kbd> to open Spotlight, type <strong>Terminal</strong>, press Enter.</p>
+              <p>A black (or white) window with a blinking cursor appears. That's your terminal. You'll type / paste commands here.</p>
             </div>
-            <p>It will ask for your Mac password — type it (you won't see the letters, that's normal) and press Enter. Then it'll install for 5-10 minutes.</p>
-            <div class="callout callout--warn">
-              <h4>⚠ When it finishes</h4>
-              <p>At the very end Homebrew prints 2-3 lines starting with <code>==></code> telling you to run some extra commands to "add Homebrew to your PATH". <strong>Copy those exact lines from YOUR terminal output and run them.</strong> They look something like:</p>
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-step__num">2</div>
+            <div class="setup-step__body">
+              <h3>Install Homebrew</h3>
+              <p>Homebrew is a package manager — it installs command-line tools for you. It's the de-facto standard on Mac. Paste this into Terminal and press Enter:</p>
               <div class="terminal-window">
-                <pre class="terminal-window__body">(echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> ~/.zprofile
-eval "$(/opt/homebrew/bin/brew shellenv)"</pre>
+                <div class="terminal-window__bar">
+                  <span class="terminal-window__dot terminal-window__dot--red"></span>
+                  <span class="terminal-window__dot terminal-window__dot--yellow"></span>
+                  <span class="terminal-window__dot terminal-window__dot--green"></span>
+                  <span class="terminal-window__title">Terminal — install Homebrew</span>
+                </div>
+                <pre class="terminal-window__body">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</pre>
               </div>
-              <p>This is the #1 thing that trips up beginners — if you skip these lines, the <code>brew</code> command won't be found later.</p>
+              <p>It will ask for your Mac password — type it (you won't see the letters, that's normal) and press Enter. Then it'll install for 5–10 minutes.</p>
+              <div class="callout callout--warn">
+                <h4>⚠ When it finishes</h4>
+                <p>At the very end Homebrew prints 2–3 lines starting with <code>==></code> telling you to run some extra commands to "add Homebrew to your PATH". <strong>Copy those exact lines from YOUR terminal output and run them.</strong> They look something like:</p>
+                <div class="terminal-window">
+                  <pre class="terminal-window__body">(echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"</pre>
+                </div>
+                <p>This is the #1 thing that trips up beginners — if you skip these lines, the <code>brew</code> command won't be found later.</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Step 3 -->
-        <div class="setup-step">
-          <div class="setup-step__num">3</div>
-          <div class="setup-step__body">
-            <h3>Install Node.js</h3>
-            <p>Claude Code runs on Node.js (a runtime for JavaScript). Install it via Homebrew:</p>
-            <div class="terminal-window">
-              <div class="terminal-window__bar">
-                <span class="terminal-window__dot terminal-window__dot--red"></span>
-                <span class="terminal-window__dot terminal-window__dot--yellow"></span>
-                <span class="terminal-window__dot terminal-window__dot--green"></span>
-                <span class="terminal-window__title">Terminal — install Node</span>
+          <div class="setup-step">
+            <div class="setup-step__num">3</div>
+            <div class="setup-step__body">
+              <h3>Install Node.js</h3>
+              <p>Claude Code runs on Node.js (a runtime for JavaScript). Install it via Homebrew:</p>
+              <div class="terminal-window">
+                <div class="terminal-window__bar">
+                  <span class="terminal-window__dot terminal-window__dot--red"></span>
+                  <span class="terminal-window__dot terminal-window__dot--yellow"></span>
+                  <span class="terminal-window__dot terminal-window__dot--green"></span>
+                  <span class="terminal-window__title">Terminal — install Node</span>
+                </div>
+                <pre class="terminal-window__body">brew install node</pre>
               </div>
-              <pre class="terminal-window__body">brew install node</pre>
-            </div>
-            <p>Takes 2-3 minutes. When done, verify it installed correctly:</p>
-            <div class="terminal-window">
-              <pre class="terminal-window__body">node --version
+              <p>Takes 2–3 minutes. When done, verify it installed correctly:</p>
+              <div class="terminal-window">
+                <pre class="terminal-window__body">node --version
 # Expected output: v22.x.x (or newer)
 
 npm --version
 # Expected output: 10.x.x (or newer)</pre>
-            </div>
-            <p>If you see version numbers (starting with <code>v</code>), you're good. If you see <em>"command not found"</em>, go back to Step 2 and make sure you ran the <code>eval</code> lines.</p>
-          </div>
-        </div>
-
-        <!-- Step 4 -->
-        <div class="setup-step">
-          <div class="setup-step__num">4</div>
-          <div class="setup-step__body">
-            <h3>Install Claude Code</h3>
-            <p>Now the main event. npm (which comes with Node) installs Claude Code globally on your system:</p>
-            <div class="terminal-window">
-              <div class="terminal-window__bar">
-                <span class="terminal-window__dot terminal-window__dot--red"></span>
-                <span class="terminal-window__dot terminal-window__dot--yellow"></span>
-                <span class="terminal-window__dot terminal-window__dot--green"></span>
-                <span class="terminal-window__title">Terminal — install Claude Code</span>
               </div>
-              <pre class="terminal-window__body">npm install -g @anthropic-ai/claude-code</pre>
+              <p>If you see version numbers (starting with <code>v</code>), you're good. If you see <em>"command not found"</em>, go back to Step 2 and make sure you ran the <code>eval</code> lines.</p>
             </div>
-            <p>Takes about 30 seconds. Verify:</p>
-            <div class="terminal-window">
-              <pre class="terminal-window__body">claude --version
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-step__num">4</div>
+            <div class="setup-step__body">
+              <h3>Install Claude Code</h3>
+              <p>Now the main event. npm (which comes with Node) installs Claude Code globally on your system:</p>
+              <div class="terminal-window">
+                <div class="terminal-window__bar">
+                  <span class="terminal-window__dot terminal-window__dot--red"></span>
+                  <span class="terminal-window__dot terminal-window__dot--yellow"></span>
+                  <span class="terminal-window__dot terminal-window__dot--green"></span>
+                  <span class="terminal-window__title">Terminal — install Claude Code</span>
+                </div>
+                <pre class="terminal-window__body">npm install -g @anthropic-ai/claude-code</pre>
+              </div>
+              <p>Takes about 30 seconds. Verify:</p>
+              <div class="terminal-window">
+                <pre class="terminal-window__body">claude --version
 # Expected: 1.x.x (or newer)</pre>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Step 5 -->
-        <div class="setup-step">
-          <div class="setup-step__num">5</div>
-          <div class="setup-step__body">
-            <h3>First run + sign in</h3>
-            <p>Make a folder for your first project, go into it, then run <code>claude</code>:</p>
-            <div class="terminal-window">
-              <div class="terminal-window__bar">
-                <span class="terminal-window__dot terminal-window__dot--red"></span>
-                <span class="terminal-window__dot terminal-window__dot--yellow"></span>
-                <span class="terminal-window__dot terminal-window__dot--green"></span>
-                <span class="terminal-window__title">Terminal — first run</span>
-              </div>
-              <pre class="terminal-window__body">mkdir ~/my-first-claude-project
+          <div class="setup-step">
+            <div class="setup-step__num">5</div>
+            <div class="setup-step__body">
+              <h3>First run + sign in</h3>
+              <p>Make a folder for your first project, go into it, then run <code>claude</code>:</p>
+              <div class="terminal-window">
+                <div class="terminal-window__bar">
+                  <span class="terminal-window__dot terminal-window__dot--red"></span>
+                  <span class="terminal-window__dot terminal-window__dot--yellow"></span>
+                  <span class="terminal-window__dot terminal-window__dot--green"></span>
+                  <span class="terminal-window__title">Terminal — first run</span>
+                </div>
+                <pre class="terminal-window__body">mkdir ~/my-first-claude-project
 cd ~/my-first-claude-project
 claude</pre>
+              </div>
+              <p>The first time you run <code>claude</code>, it opens your browser for sign-in. Click the link in the terminal output — it'll take you to <strong>claude.ai</strong> — sign in with your account, click "Authorize", then close the browser tab.</p>
+              <p>Back in terminal: you now see a cursor waiting for your first prompt. You're in. 🎉</p>
             </div>
-            <p>The first time you run <code>claude</code>, it opens your browser for sign-in. Click the link in the terminal output — it'll take you to <strong>claude.ai</strong> — sign in with your account, click "Authorize", then close the browser tab.</p>
-            <p>Back in terminal: you now see a cursor waiting for your first prompt. You're in. 🎉</p>
+          </div>
+
+          <div class="callout callout--success">
+            <h4>✅ Mac setup complete</h4>
+            <p>Skip ahead to <a href="#first-prompt">Your first prompt</a>.</p>
           </div>
         </div>
 
-        <div class="callout callout--success">
-          <h4>✅ Mac setup complete</h4>
-          <p>Skip ahead to <a href="#first-prompt">Your first prompt</a>.</p>
+        <!-- ── CODEX CLI — MAC ── -->
+        <div data-tool="codex">
+          <div class="setup-step">
+            <div class="setup-step__num">1</div>
+            <div class="setup-step__body">
+              <h3>Open Terminal</h3>
+              <p>Press <kbd>Cmd</kbd> + <kbd>Space</kbd> to open Spotlight, type <strong>Terminal</strong>, press Enter.</p>
+            </div>
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-step__num">2</div>
+            <div class="setup-step__body">
+              <h3>Install Homebrew</h3>
+              <p>Homebrew is the de-facto package manager on Mac. Paste this and press Enter:</p>
+              <div class="terminal-window">
+                <div class="terminal-window__bar">
+                  <span class="terminal-window__dot terminal-window__dot--red"></span>
+                  <span class="terminal-window__dot terminal-window__dot--yellow"></span>
+                  <span class="terminal-window__dot terminal-window__dot--green"></span>
+                  <span class="terminal-window__title">Terminal — install Homebrew</span>
+                </div>
+                <pre class="terminal-window__body">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</pre>
+              </div>
+              <div class="callout callout--warn">
+                <h4>⚠ Run the post-install <code>eval</code> lines</h4>
+                <p>When Homebrew finishes, it prints 2–3 lines starting with <code>==></code> telling you to add Homebrew to your PATH. Copy them from YOUR terminal and run them — typically:</p>
+                <div class="terminal-window">
+                  <pre class="terminal-window__body">(echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"</pre>
+                </div>
+                <p>Skip this and the <code>brew</code> command won't be found in the next steps.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-step__num">3</div>
+            <div class="setup-step__body">
+              <h3>Install Node.js (18+)</h3>
+              <p>Codex CLI needs Node 18 or newer. Install via Homebrew:</p>
+              <div class="terminal-window">
+                <pre class="terminal-window__body">brew install node</pre>
+              </div>
+              <p>Verify:</p>
+              <div class="terminal-window">
+                <pre class="terminal-window__body">node --version
+# Expected: v18.x.x or newer (v22.x.x is current LTS)
+
+npm --version</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-step__num">4</div>
+            <div class="setup-step__body">
+              <h3>Install Codex CLI</h3>
+              <p>Two paths — pick whichever you prefer:</p>
+              <h4>Path A — via npm (works everywhere)</h4>
+              <div class="terminal-window">
+                <div class="terminal-window__bar">
+                  <span class="terminal-window__dot terminal-window__dot--red"></span>
+                  <span class="terminal-window__dot terminal-window__dot--yellow"></span>
+                  <span class="terminal-window__dot terminal-window__dot--green"></span>
+                  <span class="terminal-window__title">Terminal — install Codex via npm</span>
+                </div>
+                <pre class="terminal-window__body">npm install -g @openai/codex</pre>
+              </div>
+              <h4>Path B — via Homebrew cask (Mac-only, no Node needed)</h4>
+              <div class="terminal-window">
+                <pre class="terminal-window__body">brew install --cask codex</pre>
+              </div>
+              <p>Verify either way:</p>
+              <div class="terminal-window">
+                <pre class="terminal-window__body">codex --version</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-step__num">5</div>
+            <div class="setup-step__body">
+              <h3>First run + sign in with ChatGPT</h3>
+              <p>Make a project folder and launch:</p>
+              <div class="terminal-window">
+                <div class="terminal-window__bar">
+                  <span class="terminal-window__dot terminal-window__dot--red"></span>
+                  <span class="terminal-window__dot terminal-window__dot--yellow"></span>
+                  <span class="terminal-window__dot terminal-window__dot--green"></span>
+                  <span class="terminal-window__title">Terminal — first run</span>
+                </div>
+                <pre class="terminal-window__body">mkdir ~/my-first-codex-project
+cd ~/my-first-codex-project
+codex</pre>
+              </div>
+              <p>On first launch you'll see a sign-in prompt. Choose <strong>Sign in with ChatGPT</strong> — Codex opens your browser, you authenticate at <strong>chatgpt.com</strong>, click Authorize, and your Plus / Pro / Business / Edu / Enterprise plan covers Codex usage.</p>
+              <p>(You can also use an OpenAI API key if you prefer — pick that option instead and paste your key.)</p>
+              <p>Once signed in, you're at the Codex TUI prompt. 🎉</p>
+            </div>
+          </div>
+
+          <div class="callout callout--success">
+            <h4>✅ Mac setup complete</h4>
+            <p>Skip ahead to <a href="#first-prompt">Your first prompt</a>.</p>
+          </div>
         </div>
+
+        <!-- ── KIMI CLI — MAC ── -->
+        <div data-tool="kimi">
+          <div class="setup-step">
+            <div class="setup-step__num">1</div>
+            <div class="setup-step__body">
+              <h3>Open Terminal</h3>
+              <p>Press <kbd>Cmd</kbd> + <kbd>Space</kbd> to open Spotlight, type <strong>Terminal</strong>, press Enter.</p>
+              <p>Kimi CLI is a Python tool, but you don't need to install Python yourself — the install script does it for you using <a href="https://github.com/astral-sh/uv" target="_blank" rel="noopener">uv</a>.</p>
+            </div>
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-step__num">2</div>
+            <div class="setup-step__body">
+              <h3>Install Kimi CLI (one command)</h3>
+              <p>Paste this into Terminal and press Enter — it installs <code>uv</code>, the right Python (3.13), and Kimi CLI in one go:</p>
+              <div class="terminal-window">
+                <div class="terminal-window__bar">
+                  <span class="terminal-window__dot terminal-window__dot--red"></span>
+                  <span class="terminal-window__dot terminal-window__dot--yellow"></span>
+                  <span class="terminal-window__dot terminal-window__dot--green"></span>
+                  <span class="terminal-window__title">Terminal — install Kimi CLI</span>
+                </div>
+                <pre class="terminal-window__body">curl -LsSf https://code.kimi.com/install.sh | bash</pre>
+              </div>
+              <p>Takes 1–2 minutes. When done, <strong>close and reopen Terminal</strong> so the <code>kimi</code> command lands on your PATH, then verify:</p>
+              <div class="terminal-window">
+                <pre class="terminal-window__body">kimi --version</pre>
+              </div>
+              <div class="callout callout--info">
+                <h4>💡 Already have <code>uv</code>?</h4>
+                <p>If you already use the <code>uv</code> Python package manager, you can install Kimi CLI directly with: <code>uv tool install kimi-cli</code>. Upgrade later with <code>uv tool upgrade kimi-cli --no-cache</code>.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-step__num">3</div>
+            <div class="setup-step__body">
+              <h3>Create a project folder + launch Kimi</h3>
+              <div class="terminal-window">
+                <pre class="terminal-window__body">mkdir ~/my-first-kimi-project
+cd ~/my-first-kimi-project
+kimi</pre>
+              </div>
+              <p>You'll land at the Kimi prompt. The next step authenticates it.</p>
+            </div>
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-step__num">4</div>
+            <div class="setup-step__body">
+              <h3>Sign in via <code>/login</code></h3>
+              <p>Inside Kimi, type the slash command and press Enter:</p>
+              <div class="terminal-window">
+                <pre class="terminal-window__body">/login</pre>
+              </div>
+              <p>Kimi will ask you to <strong>select a platform</strong>:</p>
+              <ul>
+                <li><strong>Kimi Code</strong> (recommended) — opens your browser for OAuth at platform.moonshot.ai. Click Authorize, come back to the terminal.</li>
+                <li><strong>Other platforms</strong> — paste an API key manually if you have one.</li>
+              </ul>
+              <p>After authorizing, Kimi reloads with your credentials saved. You're ready to prompt. 🎉</p>
+              <div class="callout callout--info">
+                <h4>💡 Tip: run <code>/init</code> first</h4>
+                <p>In a brand-new project folder, type <code>/init</code> as your first command. Kimi will scan the folder and write a project-aware system prompt, so subsequent requests are grounded in your actual code.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout callout--success">
+            <h4>✅ Mac setup complete</h4>
+            <p>Skip ahead to <a href="#first-prompt">Your first prompt</a>.</p>
+          </div>
+        </div>
+
       </div>
     </section>
 
-    <!-- WINDOWS SETUP -->
+    <!-- ─────────────────────────────────────────────────── -->
+    <!-- WINDOWS SETUP                                        -->
+    <!-- ─────────────────────────────────────────────────── -->
     <section id="windows" class="setup-section setup-section--accent-alt">
       <div class="container setup-narrow">
         <div class="setup-section__header">
           <span class="setup-section__badge">🪟 Windows 10/11</span>
           <h2>Windows setup</h2>
-          <p class="lead">5 steps, ~10 minutes. Use PowerShell or Windows Terminal (not old cmd.exe).</p>
+          <p class="lead" data-tool="claude">5 steps, ~10 minutes. Use PowerShell or Windows Terminal (not old cmd.exe).</p>
+          <p class="lead" data-tool="codex">5 steps, ~10 minutes. Use PowerShell or Windows Terminal (not old cmd.exe).</p>
+          <p class="lead" data-tool="kimi">3 steps, ~6 minutes. Use PowerShell or Windows Terminal.</p>
         </div>
 
-        <!-- Step 1 -->
-        <div class="setup-step">
-          <div class="setup-step__num">1</div>
-          <div class="setup-step__body">
-            <h3>Install Windows Terminal (if you don't have it)</h3>
-            <p>Windows Terminal is Microsoft's modern terminal app — way nicer than cmd.exe. On Windows 11 it's usually pre-installed. On Windows 10, install it from the Microsoft Store:</p>
-            <ol>
-              <li>Open <strong>Microsoft Store</strong></li>
-              <li>Search for <strong>Windows Terminal</strong></li>
-              <li>Click Install</li>
-            </ol>
-            <p>Open it after install. You'll see a dark window with a PowerShell prompt (<code>PS C:\Users\you&gt;</code>).</p>
-          </div>
-        </div>
-
-        <!-- Step 2 -->
-        <div class="setup-step">
-          <div class="setup-step__num">2</div>
-          <div class="setup-step__body">
-            <h3>Install Node.js</h3>
-            <p>Two easy paths — pick one:</p>
-
-            <h4>Path A — Installer (simpler for first-timers)</h4>
-            <ol>
-              <li>Go to <a href="https://nodejs.org/" target="_blank" rel="noopener">nodejs.org</a></li>
-              <li>Download the <strong>LTS</strong> version (big green button)</li>
-              <li>Run the installer, click Next through all defaults</li>
-              <li><strong>Close and reopen</strong> Windows Terminal after install</li>
-            </ol>
-
-            <h4>Path B — Via winget (if you like the command line)</h4>
-            <div class="terminal-window">
-              <div class="terminal-window__bar">
-                <span class="terminal-window__dot terminal-window__dot--red"></span>
-                <span class="terminal-window__dot terminal-window__dot--yellow"></span>
-                <span class="terminal-window__dot terminal-window__dot--green"></span>
-                <span class="terminal-window__title">PowerShell</span>
-              </div>
-              <pre class="terminal-window__body">winget install OpenJS.NodeJS.LTS</pre>
+        <!-- ── CLAUDE CODE — WINDOWS ── -->
+        <div data-tool="claude">
+          <div class="setup-step">
+            <div class="setup-step__num">1</div>
+            <div class="setup-step__body">
+              <h3>Install Windows Terminal (if you don't have it)</h3>
+              <p>Windows Terminal is Microsoft's modern terminal app — way nicer than cmd.exe. On Windows 11 it's usually pre-installed. On Windows 10, install it from the Microsoft Store:</p>
+              <ol>
+                <li>Open <strong>Microsoft Store</strong></li>
+                <li>Search for <strong>Windows Terminal</strong></li>
+                <li>Click Install</li>
+              </ol>
+              <p>Open it after install. You'll see a dark window with a PowerShell prompt (<code>PS C:\Users\you&gt;</code>).</p>
             </div>
-            <p>Verify install in Windows Terminal:</p>
-            <div class="terminal-window">
-              <pre class="terminal-window__body">node --version
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-step__num">2</div>
+            <div class="setup-step__body">
+              <h3>Install Node.js</h3>
+              <p>Two easy paths — pick one:</p>
+
+              <h4>Path A — Installer (simpler for first-timers)</h4>
+              <ol>
+                <li>Go to <a href="https://nodejs.org/" target="_blank" rel="noopener">nodejs.org</a></li>
+                <li>Download the <strong>LTS</strong> version (big green button)</li>
+                <li>Run the installer, click Next through all defaults</li>
+                <li><strong>Close and reopen</strong> Windows Terminal after install</li>
+              </ol>
+
+              <h4>Path B — Via winget (if you like the command line)</h4>
+              <div class="terminal-window">
+                <div class="terminal-window__bar">
+                  <span class="terminal-window__dot terminal-window__dot--red"></span>
+                  <span class="terminal-window__dot terminal-window__dot--yellow"></span>
+                  <span class="terminal-window__dot terminal-window__dot--green"></span>
+                  <span class="terminal-window__title">PowerShell</span>
+                </div>
+                <pre class="terminal-window__body">winget install OpenJS.NodeJS.LTS</pre>
+              </div>
+              <p>Verify install in Windows Terminal:</p>
+              <div class="terminal-window">
+                <pre class="terminal-window__body">node --version
 # Expected: v22.x.x
 
 npm --version
 # Expected: 10.x.x</pre>
-            </div>
-            <div class="callout callout--warn">
-              <h4>⚠ If commands aren't found</h4>
-              <p>You probably didn't close + reopen Windows Terminal. The installer adds Node to your PATH but existing terminal windows don't pick it up automatically. Close, reopen, try again.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 3 -->
-        <div class="setup-step">
-          <div class="setup-step__num">3</div>
-          <div class="setup-step__body">
-            <h3>Install Claude Code</h3>
-            <p>In Windows Terminal:</p>
-            <div class="terminal-window">
-              <div class="terminal-window__bar">
-                <span class="terminal-window__dot terminal-window__dot--red"></span>
-                <span class="terminal-window__dot terminal-window__dot--yellow"></span>
-                <span class="terminal-window__dot terminal-window__dot--green"></span>
-                <span class="terminal-window__title">PowerShell</span>
               </div>
-              <pre class="terminal-window__body">npm install -g @anthropic-ai/claude-code</pre>
+              <div class="callout callout--warn">
+                <h4>⚠ If commands aren't found</h4>
+                <p>You probably didn't close + reopen Windows Terminal. The installer adds Node to your PATH but existing terminal windows don't pick it up automatically. Close, reopen, try again.</p>
+              </div>
             </div>
-            <p>Takes about 30 seconds. Verify:</p>
-            <div class="terminal-window">
-              <pre class="terminal-window__body">claude --version
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-step__num">3</div>
+            <div class="setup-step__body">
+              <h3>Install Claude Code</h3>
+              <p>In Windows Terminal:</p>
+              <div class="terminal-window">
+                <div class="terminal-window__bar">
+                  <span class="terminal-window__dot terminal-window__dot--red"></span>
+                  <span class="terminal-window__dot terminal-window__dot--yellow"></span>
+                  <span class="terminal-window__dot terminal-window__dot--green"></span>
+                  <span class="terminal-window__title">PowerShell</span>
+                </div>
+                <pre class="terminal-window__body">npm install -g @anthropic-ai/claude-code</pre>
+              </div>
+              <p>Takes about 30 seconds. Verify:</p>
+              <div class="terminal-window">
+                <pre class="terminal-window__body">claude --version
 # Expected: 1.x.x</pre>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Step 4 -->
-        <div class="setup-step">
-          <div class="setup-step__num">4</div>
-          <div class="setup-step__body">
-            <h3>Create a project folder</h3>
-            <p>In Windows Terminal, create a folder anywhere you like and navigate into it:</p>
-            <div class="terminal-window">
-              <pre class="terminal-window__body">mkdir $env:USERPROFILE\my-first-claude-project
+          <div class="setup-step">
+            <div class="setup-step__num">4</div>
+            <div class="setup-step__body">
+              <h3>Create a project folder</h3>
+              <p>In Windows Terminal, create a folder anywhere you like and navigate into it:</p>
+              <div class="terminal-window">
+                <pre class="terminal-window__body">mkdir $env:USERPROFILE\my-first-claude-project
 cd $env:USERPROFILE\my-first-claude-project</pre>
+              </div>
             </div>
-            <p>This creates <code>C:\Users\&lt;you&gt;\my-first-claude-project</code> and moves into it.</p>
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-step__num">5</div>
+            <div class="setup-step__body">
+              <h3>First run + sign in</h3>
+              <div class="terminal-window">
+                <pre class="terminal-window__body">claude</pre>
+              </div>
+              <p>The first time you run it, it opens your browser. Sign in at <strong>claude.ai</strong>, click Authorize, come back to the terminal. You're ready to prompt. 🎉</p>
+            </div>
+          </div>
+
+          <div class="callout callout--success">
+            <h4>✅ Windows setup complete</h4>
+            <p>Continue to <a href="#first-prompt">Your first prompt</a>.</p>
           </div>
         </div>
 
-        <!-- Step 5 -->
-        <div class="setup-step">
-          <div class="setup-step__num">5</div>
-          <div class="setup-step__body">
-            <h3>First run + sign in</h3>
-            <div class="terminal-window">
-              <pre class="terminal-window__body">claude</pre>
+        <!-- ── CODEX CLI — WINDOWS ── -->
+        <div data-tool="codex">
+          <div class="setup-step">
+            <div class="setup-step__num">1</div>
+            <div class="setup-step__body">
+              <h3>Install Windows Terminal</h3>
+              <p>Microsoft's modern terminal app. Pre-installed on Windows 11; on Windows 10, install it from the Microsoft Store (search "Windows Terminal").</p>
+              <p>Codex CLI runs natively in PowerShell. If you'd rather use Linux-native tooling, Codex also runs in WSL2 — but PowerShell is the simpler path.</p>
             </div>
-            <p>The first time you run it, it opens your browser. Sign in at <strong>claude.ai</strong>, click Authorize, come back to the terminal. You're ready to prompt. 🎉</p>
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-step__num">2</div>
+            <div class="setup-step__body">
+              <h3>Install Node.js (18+)</h3>
+              <h4>Path A — Installer</h4>
+              <ol>
+                <li>Go to <a href="https://nodejs.org/" target="_blank" rel="noopener">nodejs.org</a></li>
+                <li>Download the <strong>LTS</strong> version (Node 22)</li>
+                <li>Run the installer with default options</li>
+                <li><strong>Close and reopen</strong> Windows Terminal</li>
+              </ol>
+              <h4>Path B — winget</h4>
+              <div class="terminal-window">
+                <pre class="terminal-window__body">winget install OpenJS.NodeJS.LTS</pre>
+              </div>
+              <p>Verify:</p>
+              <div class="terminal-window">
+                <pre class="terminal-window__body">node --version
+npm --version</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-step__num">3</div>
+            <div class="setup-step__body">
+              <h3>Install Codex CLI</h3>
+              <div class="terminal-window">
+                <div class="terminal-window__bar">
+                  <span class="terminal-window__dot terminal-window__dot--red"></span>
+                  <span class="terminal-window__dot terminal-window__dot--yellow"></span>
+                  <span class="terminal-window__dot terminal-window__dot--green"></span>
+                  <span class="terminal-window__title">PowerShell</span>
+                </div>
+                <pre class="terminal-window__body">npm install -g @openai/codex</pre>
+              </div>
+              <p>Verify:</p>
+              <div class="terminal-window">
+                <pre class="terminal-window__body">codex --version</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-step__num">4</div>
+            <div class="setup-step__body">
+              <h3>Create a project folder</h3>
+              <div class="terminal-window">
+                <pre class="terminal-window__body">mkdir $env:USERPROFILE\my-first-codex-project
+cd $env:USERPROFILE\my-first-codex-project</pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-step__num">5</div>
+            <div class="setup-step__body">
+              <h3>First run + sign in with ChatGPT</h3>
+              <div class="terminal-window">
+                <pre class="terminal-window__body">codex</pre>
+              </div>
+              <p>Choose <strong>Sign in with ChatGPT</strong>. Your browser opens, you authenticate, click Authorize, and your existing ChatGPT plan (Plus / Pro / Business / Edu / Enterprise) covers Codex CLI usage. You can also paste an OpenAI API key as an alternative.</p>
+            </div>
+          </div>
+
+          <div class="callout callout--success">
+            <h4>✅ Windows setup complete</h4>
+            <p>Continue to <a href="#first-prompt">Your first prompt</a>.</p>
           </div>
         </div>
 
-        <div class="callout callout--success">
-          <h4>✅ Windows setup complete</h4>
-          <p>Continue to <a href="#first-prompt">Your first prompt</a>.</p>
+        <!-- ── KIMI CLI — WINDOWS ── -->
+        <div data-tool="kimi">
+          <div class="setup-step">
+            <div class="setup-step__num">1</div>
+            <div class="setup-step__body">
+              <h3>Open PowerShell (Windows Terminal)</h3>
+              <p>On Windows 11, Windows Terminal is pre-installed. On Windows 10, install it from the Microsoft Store. Open it — you'll see the PowerShell prompt.</p>
+              <p>Kimi CLI is Python-based, but you don't need to install Python yourself — the install script handles <code>uv</code> and Python 3.13 for you.</p>
+            </div>
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-step__num">2</div>
+            <div class="setup-step__body">
+              <h3>Install Kimi CLI (one command)</h3>
+              <p>Paste into PowerShell and press Enter:</p>
+              <div class="terminal-window">
+                <div class="terminal-window__bar">
+                  <span class="terminal-window__dot terminal-window__dot--red"></span>
+                  <span class="terminal-window__dot terminal-window__dot--yellow"></span>
+                  <span class="terminal-window__dot terminal-window__dot--green"></span>
+                  <span class="terminal-window__title">PowerShell — install Kimi CLI</span>
+                </div>
+                <pre class="terminal-window__body">Invoke-RestMethod https://code.kimi.com/install.ps1 | Invoke-Expression</pre>
+              </div>
+              <p>Takes 1–2 minutes. When done, <strong>close and reopen Windows Terminal</strong>, then verify:</p>
+              <div class="terminal-window">
+                <pre class="terminal-window__body">kimi --version</pre>
+              </div>
+              <div class="callout callout--warn">
+                <h4>⚠ "Execution policy" error?</h4>
+                <p>If PowerShell refuses to run the script, allow scoped execution for this session: <code>Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass</code> — then re-run the install command. This change is temporary and ends when you close the window.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="setup-step">
+            <div class="setup-step__num">3</div>
+            <div class="setup-step__body">
+              <h3>Create a project, launch, and sign in</h3>
+              <div class="terminal-window">
+                <pre class="terminal-window__body">mkdir $env:USERPROFILE\my-first-kimi-project
+cd $env:USERPROFILE\my-first-kimi-project
+kimi</pre>
+              </div>
+              <p>Inside Kimi, type <code>/login</code>, choose <strong>Kimi Code</strong> (the recommended OAuth path), authorize in your browser, and come back. You're signed in. 🎉</p>
+              <p>Optional but useful: type <code>/init</code> first so Kimi scans your project folder before you start prompting.</p>
+            </div>
+          </div>
+
+          <div class="callout callout--success">
+            <h4>✅ Windows setup complete</h4>
+            <p>Continue to <a href="#first-prompt">Your first prompt</a>.</p>
+          </div>
         </div>
+
       </div>
     </section>
 
-    <!-- FIRST PROMPT -->
+    <!-- ─────────────────────────────────────────────────── -->
+    <!-- FIRST PROMPT                                         -->
+    <!-- ─────────────────────────────────────────────────── -->
     <section id="first-prompt" class="setup-section">
       <div class="container setup-narrow">
         <h2>Your first prompt with dt-site-creator</h2>
-        <p>You're in the Claude Code prompt. Let's use the dt-site-creator archetypes library to build your first site.</p>
+        <p data-tool="claude">You're at the <code>claude</code> prompt. Let's use the dt-site-creator archetypes library to build your first site.</p>
+        <p data-tool="codex">You're at the <code>codex</code> TUI. Let's use the dt-site-creator archetypes library to build your first site.</p>
+        <p data-tool="kimi">You're at the <code>kimi</code> prompt. Let's use the dt-site-creator archetypes library to build your first site.</p>
 
         <h3>Option A — Use the archetypes library directly</h3>
-        <p>Tell Claude what you're building and point it at an archetype:</p>
+        <p>Tell the agent what you're building and point it at an archetype:</p>
         <div class="terminal-window">
           <div class="terminal-window__bar">
             <span class="terminal-window__dot terminal-window__dot--red"></span>
             <span class="terminal-window__dot terminal-window__dot--yellow"></span>
             <span class="terminal-window__dot terminal-window__dot--green"></span>
-            <span class="terminal-window__title">Claude Code prompt</span>
+            <span class="terminal-window__title" data-tool="claude">Claude Code prompt</span>
+            <span class="terminal-window__title" data-tool="codex">Codex CLI prompt</span>
+            <span class="terminal-window__title" data-tool="kimi">Kimi CLI prompt</span>
           </div>
           <pre class="terminal-window__body">I want to build a [marketing site / payment app / internal tool / quiz / game].
 
@@ -387,29 +838,33 @@ Use the dt-site-creator methodology (derrickteo.com) — pick the matching
 archetype from the 5 available, and follow its 5-file contract
 (CLAUDE.md, prompt.md, examples.md, mechanic-fit.md, pitfalls.md).</pre>
         </div>
-        <p>Claude will fetch the library, scope your project, and start building.</p>
+        <p>The agent will fetch the library, scope your project, and start building.</p>
 
         <h3>Option B — Copy a prompt from the <a href="index.html">archetypes page</a></h3>
         <ol>
           <li>Open the <a href="index.html">archetypes page</a> on this site</li>
           <li>Click <strong>Show prompt ▾</strong> on the archetype that fits your project</li>
           <li>Click <strong>📋 Copy prompt</strong></li>
-          <li>Paste into Claude Code, replace <code>&#123;&#123;project_description&#125;&#125;</code> with your actual project</li>
+          <li>Paste into your CLI, replace <code>&#123;&#123;project_description&#125;&#125;</code> with your actual project</li>
           <li>Press Enter</li>
         </ol>
 
         <div class="callout callout--info">
           <h4>💡 Tip: start small</h4>
-          <p>Your first prompt doesn't have to be ambitious. Try something concrete like: <em>"Build me a single-page marketing site for a coffee shop called Orbit. Dark theme, warm amber accents."</em> Watch how Claude reads files, writes code, and asks questions along the way. That's the vibe-coding loop.</p>
+          <p>Your first prompt doesn't have to be ambitious. Try something concrete like: <em>"Build me a single-page marketing site for a coffee shop called Orbit. Dark theme, warm amber accents."</em> Watch how the agent reads files, writes code, and asks questions along the way. That's the vibe-coding loop.</p>
         </div>
       </div>
     </section>
 
-    <!-- PLUGINS -->
-    <section id="plugins" class="setup-section setup-section--plugins">
+    <!-- ─────────────────────────────────────────────────── -->
+    <!-- PLUGINS — wrapper holds the #plugins anchor so it     -->
+    <!-- works on every tab; inner sections swap per tool.     -->
+    <!-- ─────────────────────────────────────────────────── -->
+    <div id="plugins">
+    <section class="setup-section setup-section--plugins" data-tool="claude">
       <div class="container setup-narrow">
         <span class="setup-section__badge">🔌 Power-ups</span>
-        <h2>Recommended plugins</h2>
+        <h2>Recommended plugins (Claude Code)</h2>
         <p class="lead">Claude Code is great out of the box. These plugins make it <em>great at specific things</em> — rigor, design, security. Install them once, they teach Claude to behave differently on every future task.</p>
 
         <div class="callout callout--info">
@@ -433,7 +888,6 @@ archetype from the 5 available, and follow its 5-file contract
 
         <div class="plugin-grid">
 
-          <!-- SUPERPOWERS -->
           <article class="plugin-card plugin-card--featured">
             <header class="plugin-card__header">
               <span class="plugin-card__icon">🧠</span>
@@ -458,7 +912,6 @@ archetype from the 5 available, and follow its 5-file contract
             </div>
           </article>
 
-          <!-- FRONTEND DESIGN -->
           <article class="plugin-card plugin-card--featured">
             <header class="plugin-card__header">
               <span class="plugin-card__icon">🎨</span>
@@ -481,7 +934,6 @@ archetype from the 5 available, and follow its 5-file contract
             </div>
           </article>
 
-          <!-- SECURITY / CSO -->
           <article class="plugin-card plugin-card--featured">
             <header class="plugin-card__header">
               <span class="plugin-card__icon">🛡</span>
@@ -506,7 +958,6 @@ archetype from the 5 available, and follow its 5-file contract
             </div>
           </article>
 
-          <!-- CODE REVIEW -->
           <article class="plugin-card">
             <header class="plugin-card__header">
               <span class="plugin-card__icon">🔍</span>
@@ -524,7 +975,6 @@ archetype from the 5 available, and follow its 5-file contract
             </div>
           </article>
 
-          <!-- STITCH MCP -->
           <article class="plugin-card">
             <header class="plugin-card__header">
               <span class="plugin-card__icon">🪡</span>
@@ -542,7 +992,6 @@ archetype from the 5 available, and follow its 5-file contract
             </div>
           </article>
 
-          <!-- BROWSE FOR MORE -->
           <article class="plugin-card plugin-card--cta">
             <header class="plugin-card__header">
               <span class="plugin-card__icon">🔭</span>
@@ -563,31 +1012,62 @@ archetype from the 5 available, and follow its 5-file contract
 
         <div class="callout callout--warn" style="margin-top: 32px;">
           <h4>⚠ Plugin hygiene</h4>
-          <p>Each plugin adds to what Claude thinks about on every turn. More plugins = more context spent describing capabilities you may not need on this task. Start with 2-3 high-leverage plugins (Superpowers, Frontend Design, Security). Add others only when you find yourself manually doing the thing the plugin automates.</p>
+          <p>Each plugin adds to what Claude thinks about on every turn. More plugins = more context spent describing capabilities you may not need on this task. Start with 2–3 high-leverage plugins (Superpowers, Frontend Design, Security). Add others only when you find yourself manually doing the thing the plugin automates.</p>
         </div>
       </div>
     </section>
 
-    <!-- TROUBLESHOOTING -->
+    <!-- "No plugin ecosystem yet" — shown for Codex / Kimi -->
+    <section class="setup-section" data-tool="not-claude">
+      <div class="container setup-narrow">
+        <span class="setup-section__badge">🔌 Plugins</span>
+        <h2>Plugins <em>(Claude Code only, today)</em></h2>
+        <p class="lead">Honest note: as of April 2026, a true plugin marketplace exists for <strong>Claude Code only</strong>. Codex CLI and Kimi CLI both have lighter customisation hooks — system prompts, project-level config files, and slash commands — but nothing yet equivalent to Claude Code's <code>/plugin</code> menu and the third-party marketplace around it (Superpowers, Frontend Design, gstack, code-review, MCP servers, etc.).</p>
+
+        <div class="callout callout--info">
+          <h4>💡 What you <em>can</em> customise today</h4>
+          <p data-tool="codex">For <strong>Codex CLI</strong>: drop an <code>AGENTS.md</code> at the root of your project and the CLI will read it as a persistent system prompt. Use it to encode your coding standards, tech stack, and review rules. For OS-level config, edit <code>~/.codex/config.toml</code>.</p>
+          <p data-tool="kimi">For <strong>Kimi CLI</strong>: run <code>/init</code> in a project to auto-generate a project-aware system prompt that Kimi loads on every session. Edit it directly to add house rules, library preferences, or style guides.</p>
+        </div>
+
+        <div class="callout callout--info">
+          <h4>🔭 Want the plugin ecosystem?</h4>
+          <p>Switch the picker at the top to <strong>Claude Code</strong> to read the full plugins guide — Superpowers (rigor), Frontend Design (anti-AI-slop UI), Security Review (CSO mode), Code Review, Stitch (design MCP), and the <code>/plugin</code> marketplace. We'll keep this page updated as Codex and Kimi grow their own ecosystems.</p>
+        </div>
+      </div>
+    </section>
+    </div><!-- /#plugins -->
+
+    <!-- ─────────────────────────────────────────────────── -->
+    <!-- TROUBLESHOOTING                                       -->
+    <!-- ─────────────────────────────────────────────────── -->
     <section id="troubleshooting" class="setup-section">
       <div class="container setup-narrow">
         <h2>Common issues &amp; fixes</h2>
 
         <details class="troubleshoot">
           <summary><strong>"command not found: brew" (Mac)</strong></summary>
-          <p>You skipped the post-Homebrew <code>eval</code> commands in Step 2. Scroll up in your Terminal — Homebrew printed the exact lines you need. Usually:</p>
+          <p>You skipped the post-Homebrew <code>eval</code> commands. Scroll up in your Terminal — Homebrew printed the exact lines you need. Usually:</p>
           <div class="terminal-window">
             <pre class="terminal-window__body">(echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> ~/.zprofile
 eval "$(/opt/homebrew/bin/brew shellenv)"</pre>
           </div>
         </details>
 
-        <details class="troubleshoot">
+        <details class="troubleshoot" data-tool="claude">
           <summary><strong>"command not found: node" or "npm"</strong></summary>
           <p>Either Node isn't installed, or your terminal hasn't picked it up yet. Quit and reopen Terminal / Windows Terminal. On Windows also try: <code>$env:PATH</code> to see if Node's path is listed.</p>
         </details>
+        <details class="troubleshoot" data-tool="codex">
+          <summary><strong>"command not found: node" or "npm"</strong></summary>
+          <p>Either Node isn't installed, or your terminal hasn't picked it up yet. Quit and reopen Terminal / Windows Terminal. On Windows also try: <code>$env:PATH</code> to see if Node's path is listed. (Mac alternative: install via <code>brew install --cask codex</code>, which doesn't need Node.)</p>
+        </details>
+        <details class="troubleshoot" data-tool="kimi">
+          <summary><strong>"command not found: kimi"</strong></summary>
+          <p>The install script puts <code>kimi</code> in <code>~/.local/bin</code> (or the equivalent on Windows). Close and reopen your terminal so the new PATH entry takes effect. If still missing, run <code>which kimi</code> (Mac) or <code>where kimi</code> (Windows) to debug; you may need to add the install path to your shell profile manually.</p>
+        </details>
 
-        <details class="troubleshoot">
+        <details class="troubleshoot" data-tool="claude">
           <summary><strong>"EACCES: permission denied" when installing Claude Code (Mac)</strong></summary>
           <p>npm is trying to write to a system folder. Don't use <code>sudo</code> — that causes more problems. Instead, run:</p>
           <div class="terminal-window">
@@ -598,25 +1078,60 @@ source ~/.zprofile
 npm install -g @anthropic-ai/claude-code</pre>
           </div>
         </details>
+        <details class="troubleshoot" data-tool="codex">
+          <summary><strong>"EACCES: permission denied" when installing Codex (Mac)</strong></summary>
+          <p>npm is trying to write to a system folder. Don't use <code>sudo</code>. Either switch to the Homebrew cask (<code>brew install --cask codex</code>), or move npm's prefix to your home folder:</p>
+          <div class="terminal-window">
+            <pre class="terminal-window__body">mkdir -p ~/.npm-global
+npm config set prefix ~/.npm-global
+echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.zprofile
+source ~/.zprofile
+npm install -g @openai/codex</pre>
+          </div>
+        </details>
+        <details class="troubleshoot" data-tool="kimi">
+          <summary><strong>"Execution policy" error in PowerShell (Windows)</strong></summary>
+          <p>PowerShell's default policy blocks remote scripts. Allow scoped execution for the current window:</p>
+          <div class="terminal-window">
+            <pre class="terminal-window__body">Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass</pre>
+          </div>
+          <p>This change is temporary — it ends when you close the window.</p>
+        </details>
 
         <details class="troubleshoot">
           <summary><strong>Sign-in browser tab doesn't open</strong></summary>
-          <p>Copy the URL from the terminal output and paste it into your browser manually. After signing in, paste the code back into the terminal.</p>
+          <p>Copy the URL from the terminal output and paste it into your browser manually. After signing in, paste the code (or just close the tab — most CLIs detect the OAuth callback automatically) back into the terminal.</p>
         </details>
 
-        <details class="troubleshoot">
+        <details class="troubleshoot" data-tool="claude">
           <summary><strong>"Claude is slow / rate-limited"</strong></summary>
           <p>Free-tier claude.ai has daily message limits. Upgrade to Pro ($20/month) on claude.ai for 5× the limit plus access to Claude Code without a separate API key.</p>
         </details>
+        <details class="troubleshoot" data-tool="codex">
+          <summary><strong>"Codex is slow / rate-limited"</strong></summary>
+          <p>Codex usage on a free ChatGPT account is capped tightly. Upgrade to Plus ($20/month) or higher — your existing ChatGPT plan covers Codex CLI usage with much higher limits.</p>
+        </details>
+        <details class="troubleshoot" data-tool="kimi">
+          <summary><strong>"Kimi says I'm out of credits"</strong></summary>
+          <p>Top up your balance at <a href="https://platform.moonshot.ai" target="_blank" rel="noopener">platform.moonshot.ai</a>. Pricing is usage-based and notably cheaper than US providers, but you do need a positive balance.</p>
+        </details>
 
-        <details class="troubleshoot">
+        <details class="troubleshoot" data-tool="claude">
           <summary><strong>How do I exit Claude Code?</strong></summary>
+          <p>Type <code>/exit</code> or press <kbd>Ctrl</kbd> + <kbd>C</kbd> twice.</p>
+        </details>
+        <details class="troubleshoot" data-tool="codex">
+          <summary><strong>How do I exit Codex CLI?</strong></summary>
+          <p>Press <kbd>Ctrl</kbd> + <kbd>C</kbd> twice, or type <code>/exit</code> at the prompt.</p>
+        </details>
+        <details class="troubleshoot" data-tool="kimi">
+          <summary><strong>How do I exit Kimi CLI?</strong></summary>
           <p>Type <code>/exit</code> or press <kbd>Ctrl</kbd> + <kbd>C</kbd> twice.</p>
         </details>
 
         <details class="troubleshoot">
           <summary><strong>Where are my files saved?</strong></summary>
-          <p>In the folder you were in when you ran <code>claude</code>. Claude Code edits files on your disk — open the folder in Finder (Mac) or Explorer (Windows) to see them. It also runs <code>git</code> commands if you ask.</p>
+          <p>In the folder you were in when you launched the CLI. Coding CLIs edit files on your disk — open the folder in Finder (Mac) or Explorer (Windows) to see them. They also run <code>git</code> commands if you ask.</p>
         </details>
       </div>
     </section>
@@ -661,10 +1176,39 @@ npm install -g @anthropic-ai/claude-code</pre>
   </footer>
 
   <script>
+    // Hamburger
     document.getElementById('hamburger').addEventListener('click', function() {
       this.classList.toggle('open');
       document.getElementById('mobile-menu').classList.toggle('open');
     });
+
+    // ───── Tool picker (Claude Code / Codex CLI / Kimi CLI) ─────
+    (function () {
+      const TOOLS = ['claude', 'codex', 'kimi'];
+      const STORAGE_KEY = 'dt-setup-tool';
+      const body = document.body;
+      const buttons = document.querySelectorAll('.tool-picker__btn');
+
+      function setTool(tool) {
+        if (!TOOLS.includes(tool)) tool = 'claude';
+        body.setAttribute('data-tool-active', tool);
+        buttons.forEach(btn => {
+          const isActive = btn.dataset.pick === tool;
+          btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+        try { localStorage.setItem(STORAGE_KEY, tool); } catch (e) {}
+      }
+
+      // Restore saved choice on load
+      let saved = null;
+      try { saved = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+      if (saved && TOOLS.includes(saved)) setTool(saved);
+
+      // Wire clicks
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => setTool(btn.dataset.pick));
+      });
+    })();
   </script>
 </body>
 </html>

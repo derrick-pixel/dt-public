@@ -133,6 +133,16 @@ Refer to `FIELD-DICTIONARY.md` Section 3 for canonical types, required flags, an
 - **`website_design_rating`** — `null` at this stage. Agent 5 populates it from the 5-dimension rubric in `05-website-design.md`. Your job is to surface the URL, screenshot, and `website_screenshot_path`; Agent 5 scores.
 - **`website_design_notes`** — same delegation. Leave empty string if you haven't observed anything; Agent 5 fills it.
 - **`website_screenshot_path`** — relative path inside the repo where the screenshot will live once Agent 5 captures it. Reserve the path (`template/assets/screenshots/<id>.png`) even if the file isn't there yet, so Agent 5 has a target.
+- **`implications[]`** — optional. Use only when a single competitor fact has narrow, agent-specific consequences a downstream agent must act on. Each entry is `{ headline, body, agent_targets[] }` per `FIELD-DICTIONARY.md` §5.1.2. Examples worth recording: *"Pico's 350-staff in-house broadcast crew → agent_4 must score them 5/5 on hybrid_capability"*; *"Visionnaire is the only ISO 20121 + EcoVadis Gold holder → agent_3 must defend a price 30–40% below Visionnaire's premium tier"*. **Do not** mass-populate; one or two competitors with a structurally interesting fact suffice. Generic implications belong in `weaknesses` or `strengths`, not here.
+
+### 6.1 Reading from Agent 0 (brand-assets.json) before you start
+
+If `/template/data/brand-assets.json` exists, Agent 0 already ran. Read it before you start screenshotting. Two practical effects:
+
+- **Don't capture the client's own photos as competitor evidence.** Agent 0's `imagery[]` lists every photo lifted from the client's reference deck. If a competitor's homepage carousels look suspiciously like one of those photos, the competitor is likely re-using shared event-industry stock — flag it in `weaknesses`, do not save the screenshot.
+- **`brand-assets.json → palette` is the client's own colour identity.** When you note "competitor X uses orange/charcoal" in your `weaknesses` or `strengths`, that is only relevant if it overlaps with the *client's* palette (a brand-collision risk). Agent 0's palette tells you which collisions matter.
+
+If Agent 0 has not run (no `brand-assets.json`), proceed normally — this is an information advantage when present, not a gate.
 
 ## Scoring rubrics (0–5 scale each)
 

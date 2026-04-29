@@ -8,12 +8,92 @@
     "tam_sgd": 480000000,
     "sam_sgd": 92000000,
     "som_sgd": 4600000,
-    "reasoning": "TAM = APAC knowledge-worker count (48M) × note-tool ARPU (S$10/mo) × 12. SAM = SG+MY+ID mid/SME subset (9.2M workers × S$10 × 12). SOM = 5% of SAM over 3 years.",
+    "currency_label": "SGD",
+    "derivation_flow": {
+      "tam": {
+        "stage_label": "STAGE 1 · TAM",
+        "subtitle": "All APAC knowledge workers at theoretical full ARPU.",
+        "result_label": "S$480M",
+        "total_equation": "48M × S$10 × 12",
+        "stacks": [
+          {
+            "name": "APAC knowledge workers",
+            "source": "IDC APAC Productivity Software 2025",
+            "inputs": [
+              { "label": "Knowledge workers", "value": "48M" },
+              { "label": "Note-tool ARPU", "value": "S$10 / mo" },
+              { "label": "Months", "value": "12" }
+            ],
+            "equation": "48,000,000 × S$10 × 12",
+            "result_label": "S$480M"
+          }
+        ]
+      },
+      "sam": {
+        "stage_label": "STAGE 2 · SAM",
+        "subtitle": "Filtered to SG + MY + ID mid-market & SMEs we can credibly serve.",
+        "result_label": "S$92M",
+        "total_equation": "9.2M × S$10 × 12",
+        "filters": [
+          "SG + MY + ID only (the language and price-tolerance footprint)",
+          "Mid-market & SME segments (sub-50-seat)",
+          "English-primary teams"
+        ],
+        "stacks": [
+          {
+            "name": "Filtered SG + MY + ID workers",
+            "source": "ACRA active entity count + DOSM + BPS triangulation",
+            "inputs": [
+              { "label": "Workers in segment", "value": "9.2M" },
+              { "label": "ARPU", "value": "S$10 / mo" },
+              { "label": "Months", "value": "12" }
+            ],
+            "equation": "9,200,000 × S$10 × 12",
+            "result_label": "S$92M"
+          }
+        ]
+      },
+      "som": {
+        "stage_label": "STAGE 3 · SOM (3-year cumulative)",
+        "subtitle": "Realistic 3-year capture under the committed sales model.",
+        "result_label": "S$4.6M",
+        "total_equation": "5% × S$92M",
+        "stacks": [
+          {
+            "name": "Direct + product-led blend",
+            "source": "Internal capacity model — 2-rep team plus PLG self-serve",
+            "inputs": [
+              { "label": "SAM", "value": "S$92M" },
+              { "label": "3-yr capture", "value": "5%" }
+            ],
+            "equation": "5% × S$92M",
+            "result_label": "S$4.6M"
+          }
+        ]
+      }
+    },
+    "implications": [
+      {
+        "headline": "Wedge-first, not scale-first",
+        "body": "SOM S$4.6M / 3yr is meaningful but nowhere near winner-takes-all. The thesis is to compete on wedge specificity (a SG-mid-market workflow nobody else owns), not on overall APAC scale.",
+        "agent_targets": ["agent_3", "agent_4"]
+      },
+      {
+        "headline": "ARPU above S$10/mo erodes the SAM math",
+        "body": "Every S$2 of ARPU above S$10 cuts the addressable seat count in the same SAM dollar pool by ~20%. Agent 3 should treat S$10 as the anchor and any premium tier as an add-on, not a base price hike.",
+        "agent_targets": ["agent_3"]
+      },
+      {
+        "headline": "Country-readiness gates Y2 expansion",
+        "body": "Indonesia and Vietnam score 2/5 on price tolerance per `adoption_patterns`. Year-1 SOM should be 70%+ SG, with MY + ID treated as Year-2 partner-channel expansions, not direct-sales targets.",
+        "agent_targets": ["agent_3", "agent_4"]
+      }
+    ],
+    "methodology_appendix": "TAM = APAC knowledge-worker count (48M, IDC APAC Productivity Software 2025) × note-tool ARPU (S$10/mo, mid-band of competitor list prices) × 12 months. SAM filters to SG + MY + ID mid-market and SME workers (9.2M per ACRA + DOSM + BPS triangulation, English-primary teams) at the same S$10/mo ARPU. SOM is 5% of SAM cumulative over 3 years, reflecting a 2-rep direct sales team layered with PLG self-serve through a freemium funnel. The 5% figure is the empirical median for productivity-tool entrants in this region per pitch-deck benchmark scans (Y Combinator and Antler portfolio reads, 2023-2025).",
     "sources": [
       { "title": "IDC APAC Productivity Software 2025", "url": "https://idc.com/apac-productivity-2025" },
       { "title": "ACRA active entity count, SG", "url": "https://acra.gov.sg/statistics" }
-    ],
-    "implication_for_us": "SOM S$4.6M/yr is meaningful but not winner-takes-all; we compete on wedge specificity, not scale."
+    ]
   },
   "policies": [
     { "title": "PSG grant for productivity SaaS", "body": "Up to 50% support for pre-approved productivity tools listed by IMDA.", "sentiment": "support", "effective_date": "2020-01-01", "sunset_date": "2026-12-31", "url": "https://imda.gov.sg/psg", "data_as_of": "2026-04-24", "implication_for_us": "IMDA pre-approval halves effective price for SG SMEs, doubling WTP ceiling." },

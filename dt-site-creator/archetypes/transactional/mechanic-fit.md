@@ -7,6 +7,7 @@ Human-readable summary. Authoritative source: each mechanic's `meta.json.fits["t
 | og-social-meta | core | Mandatory |
 | meta-tags-generator | core | Per-page OG/Twitter/canonical/sitemap.xml (v2) |
 | schema-jsonld | core | Organization + WebSite + Product + BreadcrumbList; FAQPage where relevant (v2.1) |
+| semantic-html-audit | core | Heading hierarchy + landmarks + alt text + internal links (v2.1) |
 | paynow-qr | core | Default SG payment flow |
 | localstorage-state | core | Cart / draft / session state |
 | wizard-form | core | Multi-step checkout / submission |

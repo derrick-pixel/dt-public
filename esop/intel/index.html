@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Competitor Landscape — Elitez ESOP Intel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body class="admin-page">
+  <nav class="elitez-nav">
+    <a href="../index.html" class="brand" aria-label="Elitez ESOP — home">
+      <span>Elitez ESOP</span>
+      <span class="badge">Market Intel</span>
+    </a>
+    <div class="links">
+      <a href="../scheme.html">Scheme</a>
+      <a href="../portal.html">Portal</a>
+      <a href="../committee.html">Committee</a>
+      <a href="../trading.html">Trading</a>
+      <a href="index.html" class="active">Intel</a>
+    </div>
+  </nav>
+
+  <nav class="intel-nav">
+    <a href="index.html" class="active">Competitors</a>
+    <a href="insights.html">Market &amp; Pricing</a>
+    <a href="whitespace.html">Whitespace</a>
+    <a href="design-audit.html">Design Audit</a>
+    <a href="report.html">Report</a>
+  </nav>
+
+  <main class="container-wide">
+    <span class="eyebrow">Artefact 01 · 02</span>
+    <h1>Competitor Landscape</h1>
+    <p id="lede" style="max-width: 880px; color: var(--ink-soft); font-size: 1.02rem; line-height: 1.55;"></p>
+
+    <div class="kpi-grid" id="kpi-grid"></div>
+
+    <section style="padding: 24px 0;">
+      <span class="artefact-label">Top-5 threats</span>
+      <h2>Where Elitez ESOP must compete first</h2>
+      <div class="top5-grid" id="top5-list" style="margin-top: 18px;"></div>
+    </section>
+
+    <section style="padding: 32px 0 24px;">
+      <span class="artefact-label">Full database</span>
+      <h2 id="db-title">Competitor database</h2>
+      <div class="comp-controls">
+        <input type="search" class="comp-search" id="search-input" placeholder="Search by name, value prop, HQ, feature…">
+        <select name="filter-category" class="comp-filter">
+          <option value="">All categories</option>
+          <option value="global_incumbent">Global incumbent</option>
+          <option value="sg_local">SG local</option>
+          <option value="regional_challenger">Regional challenger</option>
+          <option value="diy_alternative">DIY alternative</option>
+          <option value="adjacent">Adjacent</option>
+          <option value="big_si">Big-4 / SI</option>
+        </select>
+        <select name="filter-hqRegion" class="comp-filter">
+          <option value="">All regions</option>
+          <option value="SEA">SEA</option>
+          <option value="APAC">APAC</option>
+          <option value="Global">Global</option>
+        </select>
+        <select name="filter-threatLevelMin" class="comp-filter">
+          <option value="">Any threat level</option>
+          <option value="3">Threat ≥ 3</option>
+          <option value="4">Threat ≥ 4</option>
+          <option value="5">Threat = 5</option>
+        </select>
+        <span class="comp-count" id="count-line"></span>
+      </div>
+      <table class="comp-table">
+        <thead><tr>
+          <th>Name</th><th>Category</th><th>HQ</th><th>S$/mo</th><th>Threat</th><th>Beat</th><th>Design</th>
+        </tr></thead>
+        <tbody id="competitor-tbody"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script type="module">
+    import { loadAppData, mountSampleBanner, mountUnstyledBanner } from './assets/js/app.js';
+    import { wireSearch } from './assets/js/viz/search.js';
+    import { fmtSGDFull, fmtScore } from './assets/js/format.js';
+    import { h, mount } from './assets/js/dom.js';
+
+    const data = await loadAppData();
+    mountSampleBanner();
+    mountUnstyledBanner();
+
+    const comps = data.competitors.competitors;
+    const byId = Object.fromEntries(comps.map(c => [c.id, c]));
+
+    // Lede line
+    const seaCount = comps.filter(c => c.hq_region === 'SEA').length;
+    const apacCount = comps.filter(c => c.hq_region === 'APAC').length;
+    const seaPct = Math.round((seaCount + apacCount) / comps.length * 100);
+    document.getElementById('lede').textContent =
+      `${comps.length} competitors mapped, ${seaPct}% SEA + APAC weighted. The SG SME ESOP buyer's real choice set is dominated by DIY (Excel + lawyer billing) at 78% market share — not Carta, not Qapita. Every attack plan downstream of this page treats DIY, not the global incumbent, as the incumbent to beat.`;
+
+    // KPI strip
+    const kpis = [
+      { l: 'Total mapped', v: String(comps.length) },
+      { l: 'SEA + APAC', v: seaPct + '%' },
+      { l: 'High-threat', v: String(comps.filter(c => c.threat_level >= 4).length), sub: 'threat ≥ 4' },
+      { l: 'Hidden pricing', v: Math.round(comps.filter(c => c.pricing_flag === 'hidden_estimated').length / comps.length * 100) + '%', sub: 'category-level finding' },
+      { l: 'PSG-listed', v: '0', sub: 'structural wedge' }
+    ];
+    mount(document.getElementById('kpi-grid'),
+      ...kpis.map(k => h('div', { class: 'kpi' },
+        h('div', { class: 'l' }, k.l),
+        h('div', { class: 'v' }, k.v),
+        k.sub ? h('div', { class: 'sub' }, k.sub) : null
+      ))
+    );
+
+    // Top-5
+    const top5 = data.competitors.top_five.map(t => {
+      const c = byId[t.competitor_id];
+      return h('div', { class: 'top5-card' },
+        h('div', { class: 'rank' }, 'Rank ' + t.rank),
+        h('div', { class: 'name' }, c?.name ?? t.competitor_id),
+        h('div', { class: 'why' }, t.rationale)
+      );
+    });
+    mount(document.getElementById('top5-list'), ...top5);
+
+    // Database table
+    document.getElementById('db-title').textContent = 'Competitor database — ' + comps.length + ' records';
+    const tbody = document.getElementById('competitor-tbody');
+    const countLine = document.getElementById('count-line');
+    const buildRow = c => h('tr', {},
+      h('td', {},
+        c.url
+          ? h('a', { href: c.url, target: '_blank', rel: 'noopener' }, c.name)
+          : c.name
+      ),
+      h('td', {}, c.category.replace(/_/g, ' ')),
+      h('td', {}, c.hq),
+      h('td', {}, c.sg_monthly_sgd != null ? fmtSGDFull(c.sg_monthly_sgd) : '—'),
+      h('td', {}, fmtScore(c.threat_level, '1-5')),
+      h('td', {}, fmtScore(c.beatability, '1-5')),
+      h('td', {}, c.website_design_rating != null ? fmtScore(c.website_design_rating, '1-10') : '—')
+    );
+    wireSearch({
+      input: document.getElementById('search-input'),
+      filtersEl: document.querySelector('.comp-controls'),
+      competitors: comps,
+      onUpdate: list => {
+        mount(tbody, ...list.map(buildRow));
+        countLine.textContent = 'Showing ' + list.length + ' of ' + comps.length;
+      }
+    });
+  </script>
+</body>
+</html>

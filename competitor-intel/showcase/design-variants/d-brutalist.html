@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Variant D · Brutalist — Strategic Intelligence (no decoration)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      font-family: 'Times New Roman', 'Times', serif;
+      background: #ffffff;
+      color: #000000;
+      line-height: 1.55;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 24px 96px;
+      font-size: 1rem;
+    }
+    a { color: #0000ee; text-underline-offset: 2px; }
+    a:visited { color: #551a8b; }
+    a:hover { background: #ffff00; color: #000; text-decoration: none; }
+
+    /* Top metadata */
+    .topbar { font-family: ui-monospace, 'Menlo', 'Courier New', monospace; font-size: 13px; padding: 8px 0; border-bottom: 2px solid #000; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .topbar a { color: #000; text-decoration: underline; }
+    .topbar a:hover { background: #ffff00; }
+    .topbar .right { display: flex; gap: 16px; }
+
+    /* Title block */
+    h1 { font-size: 28px; font-weight: 700; line-height: 1.2; margin: 36px 0 8px; letter-spacing: -0.005em; }
+    .sub { font-size: 16px; line-height: 1.55; margin-bottom: 6px; }
+    .meta { font-family: ui-monospace, monospace; font-size: 13px; color: #555; margin-bottom: 24px; }
+    .meta strong { color: #000; }
+
+    /* Headings */
+    h2 { font-size: 20px; font-weight: 700; margin: 36px 0 6px; letter-spacing: -0.005em; }
+    h2::before { content: '## '; color: #888; font-weight: 400; }
+    h3 { font-size: 16px; font-weight: 700; margin: 18px 0 4px; }
+    h3::before { content: '### '; color: #888; font-weight: 400; }
+
+    p { margin-bottom: 12px; }
+    p strong { font-weight: 700; }
+
+    /* ASCII boxes for callouts */
+    .ascii-box {
+      font-family: ui-monospace, monospace;
+      font-size: 13px;
+      background: #f8f8f8;
+      border: 1px solid #000;
+      padding: 12px 14px;
+      margin: 18px 0;
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+    .ascii-box .h { font-weight: 700; }
+
+    /* Table */
+    .data-table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 14px; font-family: ui-monospace, monospace; }
+    .data-table th, .data-table td { border: 1px solid #000; padding: 8px 10px; text-align: left; vertical-align: top; }
+    .data-table th { background: #000; color: #fff; font-weight: 700; }
+    .data-table tr.us td { background: #ffff00; font-weight: 700; }
+    .data-table .price { white-space: nowrap; }
+
+    /* Lists */
+    ul, ol { margin: 6px 0 18px 20px; }
+    ul li, ol li { margin-bottom: 4px; }
+
+    /* Pricing */
+    .price-block { border-top: 2px solid #000; border-bottom: 2px solid #000; padding: 16px 0; margin: 20px 0; }
+    .price-row { display: grid; grid-template-columns: 80px 90px 1fr; gap: 14px; padding: 10px 0; border-top: 1px solid #ccc; align-items: baseline; }
+    .price-row:first-child { border-top: none; }
+    .price-row.featured { background: #ffff00; padding-left: 8px; padding-right: 8px; }
+    .price-row .tier { font-family: ui-monospace, monospace; font-size: 14px; font-weight: 700; text-transform: uppercase; }
+    .price-row .amt { font-family: ui-monospace, monospace; font-size: 18px; font-weight: 700; }
+    .price-row .desc { font-size: 14px; line-height: 1.5; }
+    .price-row .desc small { color: #555; font-family: ui-monospace, monospace; font-size: 12px; display: block; margin-top: 2px; }
+
+    /* Footnote / hr */
+    hr { border: none; border-top: 1px dashed #000; margin: 36px 0 24px; }
+    hr.thick { border-top: 2px solid #000; margin: 48px 0 24px; }
+
+    /* Footer */
+    footer { font-family: ui-monospace, monospace; font-size: 13px; color: #555; margin-top: 48px; padding-top: 16px; border-top: 2px solid #000; }
+    footer a { color: #000; text-decoration: underline; }
+    footer .links { margin-top: 8px; }
+
+    /* Inline code */
+    code { font-family: ui-monospace, monospace; background: #f0f0f0; padding: 1px 4px; font-size: 0.92em; }
+
+    /* Definition list */
+    dl { font-family: ui-monospace, monospace; font-size: 14px; margin: 14px 0; }
+    dl dt { font-weight: 700; margin-top: 8px; }
+    dl dd { margin-left: 0; padding-left: 16px; line-height: 1.55; }
+
+    /* Pull quote */
+    blockquote { border-left: 4px solid #000; padding: 8px 0 8px 16px; margin: 24px 0; font-style: italic; font-size: 18px; line-height: 1.5; }
+    blockquote cite { display: block; font-style: normal; font-family: ui-monospace, monospace; font-size: 12px; color: #555; margin-top: 8px; }
+  </style>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+
+  <div class="topbar">
+    <span><strong>strategic-intelligence/</strong> · v1 · 2026-04-28</span>
+    <div class="right">
+      <a href="../index.html">home</a>
+      <a href="../pricing-thesis.html">pricing</a>
+      <a href="../pricing-benchmarks.html">benchmarks</a>
+      <a href="https://github.com/derrick-pixel/competitor-intel-template">github</a>
+    </div>
+  </div>
+
+  <h1>Strategic intelligence for SG &amp; HK mid-market businesses.</h1>
+  <p class="sub">Bespoke competitor intel, market sizing, pricing strategy, whitespace atlas. Built in 5 days. Starting at USD 1,500. No designed website. No agency pitch deck. Just the deliverable, sourced and audit-able.</p>
+  <p class="meta">
+    <strong>Operator:</strong> human + 9 AI agents.
+    <strong>Coverage:</strong> Singapore, Hong Kong (Phase 1).
+    <strong>Buyer:</strong> USD 5–100M revenue.
+    <strong>Format:</strong> live admin + PDF.
+  </p>
+
+  <p>
+    <a href="../pricing-thesis.html"><strong>→ See pricing</strong></a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/derrick-pixel/competitor-intel-template">→ Or run it yourself (MIT licence)</a>
+  </p>
+
+  <hr>
+
+  <h2>The mid-market gap</h2>
+  <p>If you run a Singapore or Hong Kong business between USD 5M and USD 100M revenue, every alternative below either prices you out or under-delivers. We sit in the gap.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Vendor</th>
+        <th>Price</th>
+        <th>Bespoke</th>
+        <th>Strategy</th>
+        <th>Verdict</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>McKinsey, Bain, BCG</td>
+        <td class="price">USD 100k+</td>
+        <td>Y</td>
+        <td>Y</td>
+        <td>Out of band</td>
+      </tr>
+      <tr>
+        <td>Frost &amp; Sullivan, Statista</td>
+        <td class="price">USD 1.5–15k</td>
+        <td>N</td>
+        <td>N</td>
+        <td>Too generic</td>
+      </tr>
+      <tr>
+        <td>Klue, Crayon, Kompyte</td>
+        <td class="price">USD 20–80k/yr</td>
+        <td>N</td>
+        <td>N</td>
+        <td>Monitoring only</td>
+      </tr>
+      <tr>
+        <td>Toptal / Upwork freelance</td>
+        <td class="price">USD 2–16k</td>
+        <td>Y</td>
+        <td>Var.</td>
+        <td>Quality risk</td>
+      </tr>
+      <tr class="us">
+        <td><strong>This service</strong></td>
+        <td class="price"><strong>USD 1.5–7k</strong></td>
+        <td><strong>Y</strong></td>
+        <td><strong>Y (8 artefacts)</strong></td>
+        <td><strong>Fits the buyer</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <h2>What you get</h2>
+  <p>Eight artefacts. Same set across all tiers; depth varies. Every claim sourced; every multiplier audited; methodology appendix at the back.</p>
+
+  <ol>
+    <li><strong>Competitor database.</strong> 15–50 firms profiled. Searchable, filterable.</li>
+    <li><strong>Top-5 threat brief.</strong> The five firms most likely to win deals you should be winning.</li>
+    <li><strong>Market sizing funnel.</strong> TAM → SAM → SOM with auditable derivation.</li>
+    <li><strong>Pricing strategy.</strong> Personas, willingness-to-pay bands, elasticity, three-tier recommendation.</li>
+    <li><strong>Whitespace atlas.</strong> Strategy canvas, segment×need heatmap, ranked attack plans.</li>
+    <li><strong>Website design audit.</strong> Top-15 sites scored on 5-D rubric. Mobile pass. Findability stopwatch.</li>
+    <li><strong>Live admin dashboard.</strong> Searchable, shareable. 12–24 month team access.</li>
+    <li><strong>Board-grade PDF.</strong> 10–14-page report. Methodology appendix.</li>
+  </ol>
+
+  <div class="ascii-box"><span class="h">Why this is built differently:</span>
++----------------------------------------------------------+
+|  AI agents do the parallel labour.                       |
+|  Operator (human) does the editorial, the calibration,   |
+|  the "is this realistic or aspirational?" judgment.      |
+|  Every claim sourced. Methodology appendix at the back.  |
+|  100% rework guarantee if it doesn't meet your bar.      |
++----------------------------------------------------------+</div>
+
+  <hr>
+
+  <h2>Pricing</h2>
+  <p>All in USD. Phase-1 SG/HK pricing. Quarterly Refresh subscription is optional (USD 990/qtr).</p>
+
+  <div class="price-block">
+    <div class="price-row">
+      <div class="tier">Lite</div>
+      <div class="amt">$1,500</div>
+      <div class="desc">15 competitors. TAM-only sizing. 2-tier pricing sketch. Whitespace canvas. 5-page PDF.<small>Ships 3–5 days · for founders validating a wedge</small></div>
+    </div>
+    <div class="price-row featured">
+      <div class="tier">Standard ★</div>
+      <div class="amt">$4,000</div>
+      <div class="desc">30 competitors. Full TAM/SAM/SOM. 3-tier pricing. Full whitespace atlas. Design audit. 10–14p PDF. 60-min readout.<small>Ships 5–7 days · most popular · the workhorse tier</small></div>
+    </div>
+    <div class="price-row">
+      <div class="tier">Pro</div>
+      <div class="amt">$7,000</div>
+      <div class="desc">50 competitors. Brand-aligned admin re-skin. Boardroom-grade PDF. 2× revisions. 90-min readout. 24-mo access.<small>Ships 8–12 days · for board / investor decks</small></div>
+    </div>
+    <div class="price-row">
+      <div class="tier">+ Refresh</div>
+      <div class="amt">$990/qtr</div>
+      <div class="desc">Re-run every 90 days. Monthly delta alerts on competitor pricing &amp; new entrants. Cancel anytime.<small>Optional add-on to any tier</small></div>
+    </div>
+  </div>
+
+  <p><a href="../pricing-thesis.html"><strong>→ Full pricing breakdown</strong></a> · <a href="../pricing-benchmarks.html">→ How we benchmarked against MBB &amp; research firms</a></p>
+
+  <hr>
+
+  <h2>FAQ</h2>
+
+  <h3>Why so much cheaper than McKinsey?</h3>
+  <p>McKinsey runs 30+ expert interviews and stages partner workshops. We use AI agents over a structured rubric and ship in 5 days. Different cost structure, same buying job for businesses that don't need partner-level interviews.</p>
+
+  <h3>Why more expensive than a Frost &amp; Sullivan report?</h3>
+  <p>That report sells to your competitor too. Ours profiles <em>your</em> 30 competitors, sizes <em>your</em> SAM, designs <em>your</em> three pricing tiers. Bespoke to you, not the category.</p>
+
+  <h3>Will the AI hallucinate?</h3>
+  <p>Every claim is sourced. Every multiplier in the market sizing has a citation or is explicitly flagged "estimated; to be validated." Operator reviews every artefact before delivery. Full rework guarantee covers the edge case.</p>
+
+  <h3>Can I run it myself?</h3>
+  <p>Yes. The template is open-source MIT-licensed. <a href="https://github.com/derrick-pixel/competitor-intel-template">GitHub repo here.</a> You're paying for the operator's editorial — knowing which 30 competitors to pick, where heatmap dimensions sit, what counts as a credible attack plan vs aspirational fluff.</p>
+
+  <h3>What if my market is outside SG/HK?</h3>
+  <p>Phase 1 is SG &amp; HK only because we know those markets cold (regulatory, grants, buyer behaviour). Phase 2 expands to MY/TH/PH/VN/ID at adjusted regional pricing.</p>
+
+  <hr>
+
+  <h2>Exhibits</h2>
+  <p>Real projects built on this template. Each one is a deeper view of the methodology in practice.</p>
+  <dl>
+    <dt><a href="../exhibits/xinceai.md">XinceAI</a> — AI automation for SG SMEs.</dt>
+    <dd>Reference implementation of the whitespace atlas pattern. 35 competitors, 8×8 heatmap, full pricing strategy.</dd>
+
+    <dt><a href="../exhibits/elix-eor.md">Elix EOR</a> — EOR for SG micro-businesses.</dt>
+    <dd>Scaled the heatmap to 15×15 with rich CPF/MOM/IRAS regulatory metadata. Edge case for the framework.</dd>
+
+    <dt><a href="../exhibits/lumana.md">Lumana</a> — Aged-care ambient monitoring (AU/HK/SG).</dt>
+    <dd>Multi-currency pricing, hardware-adjacent market. Shows the framework handles non-pure-software categories.</dd>
+  </dl>
+
+  <hr class="thick">
+
+  <blockquote>
+    Strategic intelligence shouldn't be a luxury reserved for businesses that can afford USD 250,000 consultants. Mid-market deserves the same rigor — at a price that fits the budget you actually have.
+    <cite>— the democratisation thesis</cite>
+  </blockquote>
+
+  <p style="margin-top: 32px;"><strong>Ready?</strong> <a href="../pricing-thesis.html">Book a 20-minute scoping call →</a></p>
+
+  <footer>
+    <div>Strategic Intelligence · Phase 1: Singapore &amp; Hong Kong only · open-source methodology, MIT licence</div>
+    <div class="links">
+      <a href="../pricing-thesis.html">pricing</a> ·
+      <a href="../pricing-benchmarks.html">benchmarks</a> ·
+      <a href="../exhibits/xinceai.md">xinceai</a> ·
+      <a href="../exhibits/elix-eor.md">elix-eor</a> ·
+      <a href="../exhibits/lumana.md">lumana</a> ·
+      <a href="https://github.com/derrick-pixel/competitor-intel-template">github</a> ·
+      <a href="index.html">other variants</a>
+    </div>
+  </footer>
+
+</body>
+</html>

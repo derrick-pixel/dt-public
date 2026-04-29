@@ -23,7 +23,60 @@ Bad dispatch moments:
 
 - "It's been a quarter, time to refresh" — no. The trigger is a shipped project, not the calendar.
 - "The methodology feels stale" — no. Curator doesn't fix vibes; it fixes observed deltas. If something feels stale, look for the specific project that made it feel that way and dispatch against that.
-- Mid-project on the current analytics work — you will confuse in-flight decisions with shipped patterns and pollute the proposal doc.
+- Mid-project on the current analytics work — for the **default mode** (pattern harvesting), this still applies; you will confuse in-flight decisions with shipped patterns and pollute the proposal doc. For **mid-flight mode** (§2.5 below), this is exactly the right moment.
+
+## 2.5 Mid-flight mode (read-only, no proposal output)
+
+Curator has a second mode, separate from pattern harvesting: a **read-only validation pass** that runs *during* a project, after Agent 6 has wired views but before Agent 8 compiles the PDF. The point is to surface rule violations during the work, not three months later in a proposal that arrives too late to help that project.
+
+Mid-flight mode is **strictly read-only**. It does not edit any methodology file, does not append to any proposal doc, does not mutate any data file. Its only output is a violation report that the human routes back to the responsible agent.
+
+### When to run mid-flight mode
+
+- After Agent 6 ships a working visual layer (every view renders without errors) and before Agent 8 starts the PDF.
+- Before any client review of an admin page, if the project has been re-running Agents 1–5 in chunks and the human has lost track of which gates have been re-validated.
+- Optionally, after Agent 9 ships, to verify the brand-resonance acceptance gate (see `09-aesthetics-presenter.md → §What "resonate" means`).
+
+### What mid-flight mode checks
+
+The full list of inter-agent quality gates lives in `FIELD-DICTIONARY.md §12`. Mid-flight mode runs all of them, plus a small set of within-agent checks:
+
+| Check | Source of truth | Failure surfaced as |
+|---|---|---|
+| `competitors[].length ≥ 30` AND `≥ 60% hq_region ∈ {SEA, APAC}` | Agent 1 methodology §5 (Coverage rubric) | "Agent 1 coverage breach: only 24 records / 41% SEA — re-run with VC-portfolio sweep step" |
+| `policies[].data_as_of` within 12 months for every entry | Agent 2 methodology §7.3 | "Agent 2 stale macro: 3 policies older than 12 months — re-run policy pass" |
+| Every `personas[].nba.monthly_sgd_equivalent` non-null AND `wtp_band.expected ∈ [0.4, 1.2] × monthly_sgd_equivalent` OR `nba.confidence < 0.6` | Agent 3 methodology §Pillar A | "Agent 3 ungrounded WTP: persona 'X' shows wtp.expected=599 vs nba.equivalent=200 (3.0×); flag exploratory" |
+| `personas[].length ≤ 5` AND no two personas share `≥ 60% pains[]` | Agent 3 methodology §Pillar A | "Agent 3 persona-collapse audit: persona 'X' and 'Y' share 4/5 pains — merge or differentiate" |
+| Every `attack_plans[].niche_name ≤ 60 chars` | Agent 4 methodology §3.2 | "Agent 4 niche_name overflow: rank 1 plan name is 64 chars — rewrite headline-style" |
+| Every cell's `competitors[].specialisation_for_cell` non-null AND ≤ 120 chars AND pair-specific (not generic copy of `strengths`) | Agent 4 methodology §2.4 | "Agent 4 generic specialisation: cell `(seg_X, need_Y)` competitor `Z` reads as a strengths copy-paste" |
+| Every competitor has `website_design_rating` non-null OR explicit `website_design_notes` recording unreachable status | Agent 5 methodology §7.3 | "Agent 5 silent null: competitor `Z` has no rating and no notes" |
+| Top-15 competitors have `website_screenshot_path_mobile` populated | Agent 5 methodology §7.5 | "Agent 5 mobile pass missing: 8 of 15 Top-15 competitors lack mobile screenshots" |
+| Top-15 competitors have `findability_seconds` populated | Agent 5 methodology §7.6 | "Agent 5 findability triplet missing: 11 of 15 Top-15 competitors un-timed" |
+| No inline currency/score formatting in `/template/assets/js/viz/*.js` (grep for `'S$' +`, ` / 10\``, `.toFixed`, `.toLocaleString` on numeric data) | Agent 6 methodology §Display-format helpers | "Agent 6 inline format: `viz/price-bars.js:47` constructs S$ string inline — use fmtSGD()" |
+| Every `1fr` in viz CSS appears as `minmax(0, 1fr)` | Agent 6 methodology §Layout invariants Rule 1 | "Agent 6 grid invariant: `viz/heatmap.css:23` declares `1fr` without minmax — overflow risk" |
+| `brand-tokens.json` exists OR every admin page renders the un-styled-draft banner | Agent 6 methodology §Un-styled draft banner | "Agent 6 banner missing: `admin/whitespace.html` does not call mountUnstyledBanner() and brand-tokens.json absent" |
+
+### Output of mid-flight mode
+
+A single Markdown report at `methodology/proposals/<date>-mid-flight-<project-slug>.md` (note: `mid-flight-` prefix distinguishes from the default-mode `<date>-<slug>.md` files). The report has exactly two sections:
+
+```markdown
+# Mid-flight validation — <project-slug> @ <date>
+
+## Pass
+- [list of gates that passed, by name]
+
+## Fail
+- [list of gates that failed, with the specific evidence and the responsible agent]
+```
+
+No proposals, no extraction notes, no opinions. The human reads the Fail list, dispatches the relevant agents to fix, and (optionally) re-runs mid-flight mode to confirm.
+
+### Why mid-flight mode is separate from default-mode
+
+The two modes have inverted polarity. Default-mode harvests learnings *upward* (project → methodology) and is permitted to propose changes. Mid-flight mode enforces existing rules *downward* (methodology → project) and is forbidden from proposing changes. Conflating them produces the failure where a single agent proposes a methodology change to "fix" what is actually a within-project violation that should be routed to the responsible agent. Keep them separate.
+
+The mid-flight pass is also cheap: read-only, no LLM-heavy reasoning, mostly file existence and grep checks. It can run in seconds. The default-mode pattern-harvesting pass is expensive and warrants the post-shipment trigger discipline.
 
 ## Inputs the agent needs
 

@@ -30,6 +30,34 @@ You do NOT edit `archetypes/`, `mechanics/`, `methodology/0N-*.md`, or `pitfalls
 
 ## Part 1: Site QA
 
+### Semantic HTML hygiene (semantic-html-audit)
+
+Use the `semantic-html-audit` mechanic. Run the Node CLI across every page in `sitemap.json.pages[]`:
+
+```bash
+node mechanics/semantic-html-audit/cli.js path/to/site/ --format=summary
+```
+
+Record per-page reports in `qa-report.json.semantic_audit[]` with `score`, `violations[]`, and `stats`. Score weights: critical 25, high 12, medium 6, low 2. A site averaging <70 across all pages fails this gate.
+
+Common violations (one-to-one with pitfall ids):
+- `seo-no-h1` / `seo-multiple-h1` — heading hierarchy broken
+- `seo-heading-skip` — h1→h3 with no h2
+- `seo-img-no-alt` / `seo-img-no-dimensions` — image hygiene
+- `seo-no-main` / `seo-no-header` / `seo-no-footer` / `seo-no-nav` — missing landmarks
+- `seo-no-lang-attr` — `<html>` missing lang
+- `seo-no-jsonld` — no structured data (cross-references `schema-jsonld` mechanic)
+- `seo-no-title` / `seo-no-meta-description` — head metadata missing
+- `seo-thin-content` — `<main>` <100 words
+- `seo-no-internal-links` / `seo-bad-anchor-text` — linking weak
+
+Quality bar:
+- Avg score across all pages ≥80
+- Zero `seo-no-h1`, `seo-multiple-h1`, `seo-no-main`, `seo-no-jsonld`, `seo-no-title`, `seo-no-meta-description` violations
+- `seo-img-no-alt` count = 0
+
+If the site fails this gate, the QA gate fails. Surface to the human — fix before pitfall curation.
+
 ### Accessibility (axe-core)
 
 Use the `a11y-axe-runner` mechanic to scan every page in `sitemap.json.pages[]`. Record violations in `qa-report.json.axe_violations[]` with severity (critical / serious / moderate / minor), selector, and a fix suggestion.
@@ -212,6 +240,9 @@ Each promotion proposal:
 ## Deliverable checklist
 
 - [ ] `qa-report.json` exists at `/data/qa-report.json`
+- [ ] semantic-html-audit run on every page in `sitemap.json.pages[]`
+- [ ] Average semantic-audit score ≥80 across all pages (otherwise QA gate fails)
+- [ ] Zero `seo-no-h1`, `seo-multiple-h1`, `seo-no-main`, `seo-no-jsonld`, `seo-no-title`, `seo-no-meta-description` violations
 - [ ] axe scan run on every page in `sitemap.json.pages[]`
 - [ ] 0 critical, 0 serious axe violations (otherwise QA gate fails — fix site first)
 - [ ] Mobile checks done on iPhone / Pixel / iPad widths

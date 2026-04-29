@@ -10,6 +10,105 @@ Dispatch only after agents 1–6 have finished and committed their outputs. The 
 
 Re-dispatch the generator whenever any upstream file changes materially. The PDF is cheap to regenerate — cheaper than shipping a stale one.
 
+## Pre-flight validator (hard gate)
+
+Agent 8 runs a pre-flight check before opening html2canvas. If any check fails, **the run halts and surfaces the violation rather than producing a half-bound PDF**. The violations route back to the responsible agent for repair. This validator is the eighth and final inter-agent quality gate from `FIELD-DICTIONARY.md §12` — it is the last line of defence before client delivery.
+
+The pre-flight runs in **four phases**. Phases 1–3 are pre-render (JSON-level, file-time); Phase 4 is post-render, pre-rasterise (DOM-level, after `renderPages()` has built every `.pdf-page` div but before the `html2canvas` rasterise loop opens). The split matters because structural drift — missing sections, off-by-one TOC numbers, blank-page leakage — only exists in the rendered DOM, never in the JSON. Validating JSON alone is what let the Passage casket report ship with six blank pages and a 10-section structure that violated the fixed-9-part rule.
+
+### Phase 1 — schema integrity (file-level)
+
+Every required JSON file exists and parses. For each file, every required field per `FIELD-DICTIONARY.md` is non-null. Specifically:
+
+- **`competitors.json`** — `competitors[].length ≥ 30`. Every record has `id`, `name`, `url`, `category`, `hq_region`, `threat_level`, `beatability`. Top-5 array has exactly 5 entries with rationales `≤ 200 chars`.
+- **`market-intelligence.json`** — `market_size.tam_sgd`, `sam_sgd`, `som_sgd` numeric. `derivation_flow.tam.stacks[].length ≥ 1`. `implications[].length ≥ 3`.
+- **`pricing-strategy.json`** — `personas[].length ∈ [3, 5]`. Every persona has `id`, `nba.monthly_sgd_equivalent` non-null, `wtp_band_sgd` complete. `recommended_tiers[].length ≥ 3`.
+- **`whitespace-framework.json`** — `strategy_canvas.headline_thesis` non-empty. Every heatmap cell with any competitor at score `≥ 3` has `specialisation_for_cell` populated AND `≤ 120 chars`. Every `attack_plans[].niche_name` `≤ 60 chars`.
+- **`brand-tokens.json`** OR un-styled-banner is rendered on every admin page (verifiable by reading `admin/*.html` for the banner mount call).
+
+### Phase 2 — referential integrity (cross-file)
+
+Every foreign key resolves:
+
+- Every `top_five[].competitor_id` resolves to a `competitors[].id`.
+- Every `recommended_tiers[].target_persona` resolves to a `personas[].id`.
+- Every `pricing_models[].score_by_persona.<key>` resolves to a `personas[].id` or `personas[].name`.
+- Every `personas[].whitespace_segment_ids[]` (when populated) resolves to a `heatmap.segments[].id`.
+- Every `attack_plans[].whitespace_segment_id` (when populated) resolves to a `heatmap.segments[].id`.
+- Every `cells[].competitors[].id` resolves to a `competitors[].id`.
+- Every `agent_targets[]` value across `implications[]` arrays is one of `"agent_1"` … `"agent_9"`.
+
+Phase 2 catches the failure mode where an agent renamed an ID in one file but not the others — a silent rot that would make the PDF show "[unknown competitor]" placeholders.
+
+### Phase 3 — render-format integrity (viz-level)
+
+- No inline currency or score formatting in `/template/assets/js/viz/*.js` (grep for `'S$' +`, `\` / 10\``, `.toFixed(0) + 'M'`). Per Agent 6 §Display-format helpers.
+- Every `1fr` in viz CSS appears as `minmax(0, 1fr)`. Per Agent 6 §Layout invariants Rule 1.
+- Every screenshot referenced in `competitors[].website_screenshot_path` resolves to a file on disk. (Top-15's `website_screenshot_path_mobile` likewise when populated.)
+
+Phase 3 is the cheapest of the three (file-existence checks plus grep) and catches the "the cards look broken" failure mode.
+
+### Phase 4 — render-time DOM integrity (post-build, pre-rasterise)
+
+Phase 4 runs *after* `renderPages()` has appended every section's pages to the preview root, but *before* the `html2canvas` rasterise loop begins. Its job is to catch the structural failures that JSON validation cannot see — they only exist once the renderers have actually drawn:
+
+- A renderer that silently no-op'd because of a JS error caught upstream.
+- A page-count formula that reported `2` but produced `1` page (or vice versa).
+- A footer omitted on a section because someone copy-pasted a page builder without the footer call.
+- A cover whose background colour got overridden by a project-time `report.css` tweak.
+- A TOC whose page numbers don't match the rendered footer page numbers.
+- A section that was renamed or reshuffled in violation of the canonical-order rule.
+- A page that rendered with no body content because a layout overflowed and pushed everything off-canvas.
+
+Phase 4 reads the live DOM. Each check is a small DOM query. The full set:
+
+**4a — Section count and canonical order.** At least 11 `.pdf-page` elements in the preview root, in this canonical order by `data-section`: `cover → toc → exec → landscape → market → pricing → ws-thesis → ws-heatmap → ws-cells → website → appendix`. Variable-length sections (`ws-cells`, `appendix`) are allowed to add pages, so the *minimum* is 11; reshuffling, renaming, dropping, or inserting any logical section fails. The check walks pages in document order and confirms each `data-section` attribute matches the expected next id (allowing repeats for multi-page sections).
+
+**4b — Cover full-bleed.** `.pdf-cover` exists, is the first page, and `getComputedStyle(coverEl).backgroundColor` is non-white and non-transparent (the white-frame failure mode in §Full-bleed implementation). Fails if `bg === 'rgb(255, 255, 255)'` or `bg === 'rgba(0, 0, 0, 0)'`. The Passage casket report failed exactly this check — its cover rasterised on cream paper, not full-bleed brand-primary.
+
+**4c — Footer presence.** Every `.pdf-page` *except* `.pdf-cover` contains a `.pdf-footer` element with three children (project, page-of-total, date). A page without a footer violates §Footer.
+
+**4d — TOC ↔ reality.** The TOC page (`.pdf-toc`) lists each content section's page number in a `.page-num` element. For each TOC row, the value must equal the actual rendered page index (1-based) of the section it points to. Walk the `.pdf-page` array, build `{ sectionId → renderedPage }`, and assert the TOC's stated number matches each entry. This is the check that catches "TOC says exec is on page 3 but it actually rendered on page 9 because pages 1–3, 5–7 came out blank" — the exact Passage failure.
+
+**4e — Cell Detail Appendix non-empty.** At least one page contains a `.cell-appendix` block, AND that block contains ≥ 1 `.cell-row.green` AND ≥ 1 `.cell-row.red`. Methodology §Report-structure §7c marks this as the hard precondition; the validator now enforces it at render time too. If the dataset genuinely has zero green or zero red cells, that is itself a defect worth surfacing — Agent 4 should not have written a heatmap with no decision-grade cells.
+
+**4f — Competitor appendix completeness.** The `appendix` section contains at least `Math.ceil(data.competitors.competitors.length / 20)` pages, and the `<tbody>` row counts of all `.appendix-table` blocks across those pages sum to the full competitor list length. Catches the "Appendix shows 19 records instead of 20" off-by-one Pitfall named in §Worked end-to-end example.
+
+**4g — No empty pages.** No `.pdf-page` whose body height (excluding the footer) is below 200mm of A4's 297mm. Symptom this catches: the six blank pages in the Passage casket report (1, 2, 3, 5, 6, 7). Implementation: `bodyHeightMm = (pageEl.scrollHeight - footerEl.offsetHeight) / pxPerMm; bodyHeightMm ≥ 200`. A page with too-little content is a layout bug — an overflowing prior page pushed content off-canvas, or a renderer threw and the page rendered empty.
+
+Phase 4 is implemented in `template/assets/js/report/preflight-dom.js` and wired into `pdf-generator.js` between `renderPages()` and the rasterise loop. It is template-owned (Agent 7 territory). Per-project Agent 8 must not modify the validator; if a project genuinely needs an additional check, file a proposal.
+
+### Halt and report
+
+On any Phase 1–4 failure, Agent 8 writes `methodology/proposals/<date>-pre-flight-fail-<project-slug>.md` listing every violation with the responsible agent (Phase 1–3 → upstream agent that produced the bad JSON; Phase 4a/d/e/f → upstream agent if data-driven, methodology-curator if it's a registry drift; Phase 4b/c/g → report-generator), then exits without producing a PDF. The `admin/report.html` side panel surfaces the failing check name plainly — e.g. *"Phase 4d: TOC says exec on p3 but rendered on p9 — check renderTOC and the page-count pass for ws-thesis."* Re-dispatch the responsible agents to fix; re-run Agent 8.
+
+The pre-flight is **not** the same as Agent 7 mid-flight mode. Mid-flight runs early (after Agent 6) as a courtesy; pre-flight runs late (in Agent 8) as a hard gate. They check overlapping rules, but pre-flight halts the build, mid-flight only reports.
+
+## PDF size budget (8 MB target)
+
+Image-based PDFs from html2canvas + jsPDF can balloon quickly: a 35-competitor project with full-resolution screenshots can produce a 40–60 MB PDF that breaks email attachments and frustrates recipients. The target is **≤ 8 MB**, the ceiling is **15 MB**. Agent 8 enforces both.
+
+### Knobs that matter
+
+In rough order of impact:
+
+1. **`scale` parameter on `html2canvas()`** — default `1.0` (safe), `2.0` (sharper but 4× the data), `3.0` (forbidden — produces 60 MB PDFs with no perceptual gain on screen). Use `1.0` for production; bump to `2.0` only if visual reviewer flags softness in the screenshot pages.
+2. **JPEG quality on `addImage()`** — `'JPEG', 0.62` is the sweet spot for screenshot-heavy pages. Below 0.55 produces visible blocking around text. Above 0.75 doubles file size with no perceptual gain.
+3. **Screenshot resolution at capture time** — Agent 5 captures at 2× (retina) for the gallery. For the PDF, downscale to **1024px on the long edge** before embedding. Agent 8 reads the original from disk, downscales in-memory via canvas, then embeds the downscaled raster. Original-resolution images stay in `/template/assets/screenshots/` for the on-screen gallery.
+4. **Number of screenshot pages** — the report embeds Top-15 screenshots in the design-audit appendix. Beyond 15, the PDF bloats faster than it informs. Cap at 15.
+
+### Auto-downscale path
+
+Agent 8 measures the in-progress PDF size after every page render. If the running total exceeds the 8 MB budget at the start of the design-audit appendix, it automatically downscales screenshots one tier:
+
+- Tier 0: 1024px long edge, JPEG 0.62 (default)
+- Tier 1: 800px long edge, JPEG 0.55
+- Tier 2: 640px long edge, JPEG 0.50
+
+If even Tier 2 produces a > 15 MB PDF, Agent 8 halts and reports — that is a defect of the input (e.g. 80+ competitor records when the spec is 30–50).
+
+The size budget is checked at three points: after the cover, after the heatmap (page 7), and after the screenshot appendix (page 9). The check is non-destructive — it only modifies subsequent renders, never re-renders earlier pages.
+
 ## Inputs the agent needs
 
 - **`/data/competitors.json`** — records, Top-5, rationales. Read every field; `strengths`, `weaknesses`, `sg_monthly_sgd`, and `website_design_*` all surface in the PDF.
@@ -34,6 +133,25 @@ Why not `pdfmake` or a headless-Chrome server pipeline? Because the template's o
 ## Report structure (fixed 9-part)
 
 The order is fixed. Do not reshuffle; downstream readers (and the TOC renderer) assume this sequence.
+
+### Template-owned vs. project-owned (the lockdown)
+
+The structure is **template-owned**. The skin is **project-owned**. Per-project Agent 8 invocations must respect this line — getting it wrong is the failure mode that produced the Passage casket and Elitez ESOP defects (10-section reshuffle, missing appendix, cream cover replacing full-bleed brand-primary).
+
+| Channel | Owner | Examples |
+|---|---|---|
+| Section list, page order, page-count formulas | **Template (Agent 7 only)** | The registry in `template/assets/js/report/page-templates.js`; the 9 logical sections (cover → toc → exec → landscape → market → pricing → ws-thesis → ws-heatmap → ws-cells → website → appendix) |
+| Page-template renderers (`renderCover`, `renderExec`, …) | **Template (Agent 7 only)** | DOM shape and class names every page uses |
+| TOC entry list, footer format, full-bleed-cover invariant | **Template (Agent 7 only)** | The `<project> · page N of M · <date>` footer; the `pdf-cover` full-bleed background |
+| Brand tokens (`--brand-primary`, `--font-sans`, palette, paper colour) | **Project (Agent 8)** | Loaded from `project.json` → `brand-tokens.json` |
+| Tagline, cover subtitle, "prepared by" line, opening composers | **Project (Agent 8)** | The interpolated `opening` paragraphs, masthead strings |
+| Project copy (niche names, persona names, headlines) | **Project (Agent 8)** — read from agent JSON | Whatever upstream JSON carries |
+
+**The failure mode this rule prevents**: a project agent renaming sections, dropping the appendix, or redesigning the cover to match the brand site. *That is a structural change disguised as a brand exercise.* Re-skin via tokens; never rewrite the registry.
+
+If a project genuinely needs a new section (rare — the existing nine cover almost every case), file a proposal to Agent 7 in `methodology/proposals/<date>-section-addition-<slug>.md`. Agent 7 owns the canonical structure; Agent 8 owns the canonical run. **Per-project Agent 8 runs treat `template/assets/js/report/*.js` as read-only.** Skin via tokens, copy, and openings — nothing else.
+
+### Canonical section sequence
 
 1. **Cover.** Full-bleed brand-primary background. Project name centred, date and "prepared by" in small type beneath. Optional logo top-left. No page number, no footer.
 2. **Table of Contents.** Auto-generated from the section registry. Section title left, page number right, dot-leader between. Always lands on page 2.
@@ -303,5 +421,7 @@ Self-audit against this list before declaring Agent 8 done.
 - [ ] `report.css` contains zero hard-coded hex values or font-family literals — only `var(--token)` references.
 - [ ] Opening paragraphs on sections 3–8 interpolate real numbers from the JSON (not placeholder text).
 - [ ] Preview in `admin/report.html` matches generated PDF, page for page.
+- [ ] **Phase 4 DOM validator passes** before rasterise — section count + canonical order (4a), full-bleed cover (4b), footer on every non-cover page (4c), TOC↔reality match (4d), Cell Detail Appendix non-empty (4e), competitor appendix complete (4f), no empty pages (4g).
+- [ ] **Section registry untouched at project-time.** `template/assets/js/report/page-templates.js`, `toc.js`, `pdf-generator.js`, `preflight-dom.js` show no per-project diff; structural changes filed as Agent 7 proposals if needed.
 
 If any item fails, fix it before handing the PDF to the project owner. A stale number on the cover or a blank chart on page 5 undermines the credibility of every upstream agent's work.

@@ -1,34 +1,43 @@
-# The eight-agent analytics workflow
+# The ten-agent analytics workflow
 
-This overview maps the seven analytics deliverables (plus the final PDF report) to the agents that own them, sketches the dependency graph, specifies the data handed off between adjacent agents, and calls out when each agent should be re-run. It is the entry point for anyone trying to understand how this template produces a finished competitor-intel package.
+This overview maps the seven analytics deliverables (plus the final PDF report and two cross-cutting agents) to the agents that own them, sketches the dependency graph, specifies the data handed off between adjacent agents, and calls out when each agent should be re-run. It is the entry point for anyone trying to understand how this template produces a finished competitor-intel package.
 
 ## 1. Map of deliverables to agents
 
-There are eight agents. Seven of them produce the seven analytics deliverables Derrick asked for. The eighth (Report PDF) binds them into the shippable output. Agent 7 (Methodology Curator) is cross-cutting: it does not produce a deliverable, it audits and mutates the methodology itself.
+There are ten agents. Seven (Agents 1–6 + 8) produce the seven analytics deliverables Derrick asked for plus the bound report. **Agent 0 (Asset Extractor)** is a setup step that runs before Agent 1 when the human supplies brand reference materials. **Agent 7 (Methodology Curator)** is cross-cutting: it audits the methodology (default mode, post-shipment) and runs read-only quality-gate validation (mid-flight mode, after Agent 6). **Agent 9 (Aesthetics Presenter)** is an opt-in final beautify pass that re-skins admin pages to resonate with the brand's public site after the human has approved the un-styled layout.
 
 | # | Deliverable | Agent | Methodology file | Primary output |
 |---|---|---|---|---|
-| 1 | Competitor insights | Agent 1: Competitor Intel | `01-competitor-intel.md` | `competitors.json` (all records + Top-5 entries) |
-| 2 | Top-5 highlights | Agent 1: Competitor Intel | `01-competitor-intel.md` | `top_five[]` inside `competitors.json` |
-| 3 | Search and filter | Agent 6: Visualisation | `06-visualisation.md` | Search/filter wiring for the competitor table view |
-| 4 | Market intelligence | Agent 2: Market Intelligence | `02-market-intelligence.md` | `market-intelligence.json` |
-| 5 | Pricing strategy | Agent 3: Pricing Strategy | `03-pricing-strategy.md` | `pricing-strategy.json` |
-| 6 | Whitespace atlas | Agent 4: Whitespace | `04-whitespace.md` | `whitespace-framework.json` |
-| 7 | Website design analysis | Agent 5: Website Design | `05-website-design.md` | `website_design_rating`, `website_design_notes`, `website_screenshot_path` fields populated in `competitors.json` |
-| +1 | Report PDF | Agent 8: Report PDF | `08-report-pdf.md` | Final bound PDF that references all four JSON files |
-| meta | Methodology curation | Agent 7: Methodology Curator | `07-methodology-curator.md` | Controlled edits to methodology and `FIELD-DICTIONARY.md` |
+| 0 | Brand DNA | Agent 0: Asset Extractor | `00-asset-extractor.md` | `brand-assets.json` + committed asset files |
+| 1 | Competitor insights | Agent 1: Competitor Intel | `01-competitor-research-analyst.md` | `competitors.json` (all records + Top-5 entries) |
+| 2 | Top-5 highlights | Agent 1: Competitor Intel | `01-competitor-research-analyst.md` | `top_five[]` inside `competitors.json` |
+| 3 | Search and filter | Agent 6: Visualisation | `06-data-visualization-engineer.md` | Search/filter wiring for the competitor table view |
+| 4 | Market intelligence | Agent 2: Market Intelligence | `02-market-intelligence-analyst.md` | `market-intelligence.json` |
+| 5 | Pricing strategy | Agent 3: Pricing Strategy | `03-pricing-strategy-analyst.md` | `pricing-strategy.json` |
+| 6 | Whitespace atlas | Agent 4: Whitespace | `04-whitespace-blue-ocean-analyst.md` | `whitespace-framework.json` |
+| 7 | Website design analysis | Agent 5: Website Design | `05-website-design-auditor.md` | `website_design_rating`, `website_design_notes`, `website_screenshot_path`, `website_screenshot_path_mobile`, `findability_seconds` fields on each competitor record |
+| +1 | Report PDF | Agent 8: Report PDF | `08-report-generator.md` | Final bound PDF that references all four JSON files |
+| meta | Methodology curation | Agent 7: Methodology Curator | `07-methodology-curator.md` | Default mode: controlled edits to methodology and `FIELD-DICTIONARY.md`. Mid-flight mode: read-only violation report at `methodology/proposals/<date>-mid-flight-<slug>.md` |
+| meta | Brand re-skin | Agent 9: Aesthetics Presenter | `09-aesthetics-presenter.md` | `brand-tokens.json` + restyled `/template/admin/*.html` and CSS. Three hard acceptance tests gate ship. |
 
-Note on the 7+1 framing: Derrick's brief names seven analytics deliverables and implicitly expects a bound report. Report PDF is therefore the "+1"; Methodology Curator sits outside the deliverable map because its product is the process, not a page in the pack.
+Note on the 7+1+2 framing: Derrick's brief names seven analytics deliverables and implicitly expects a bound report. Report PDF is the "+1"; Methodology Curator and Aesthetics Presenter sit outside the deliverable map because their products are process and presentation, not pages in the pack. Asset Extractor (Agent 0) is also outside the deliverable map — it produces inputs that other agents consume.
 
 ## 2. Workflow diagram
 
 ```
-[1 Competitor] -> [2 Market] -> [3 Pricing] -> [4 Whitespace] -> [5 Design] -> [6 Viz] -> [8 Report PDF]
-                                                                                           |
-                                               [7 Methodology Curator] <---------- runs against finished project (later)
+[0 Asset Extractor]* -> [1 Competitor] -> [2 Market] -> [3 Pricing] -> [4 Whitespace] -> [5 Design] -> [6 Viz] -> [8 Report PDF]
+                                                                                                                  ↑
+                              [7 Methodology Curator — mid-flight mode] (read-only validator runs here)----------+
+                                                                                                                  ↓
+                                                                                              [9 Aesthetics Presenter]**
+                                                                                                                  ↓
+                                       [7 Methodology Curator — default mode] <- runs against finished project (later)
+
+* = optional, runs only if human supplies reference materials
+** = opt-in, runs only after human approves un-styled layout
 ```
 
-In practice the hard dependencies are looser than this straight line (see Section 5 on parallelisation), but the diagram captures the canonical read-order: a reviewer going front-to-back should see competitors, then market, then pricing, then whitespace, then design, then visuals, then the bound report.
+In practice the hard dependencies are looser than this straight line (see Section 5 on parallelisation), but the diagram captures the canonical read-order: a reviewer going front-to-back should see competitors, then market, then pricing, then whitespace, then design, then visuals, then the bound report. Agent 7 (mid-flight) runs as a quality gate before Agent 8; Agent 9 runs after the bound report is approved by the human.
 
 ## 3. Handoff contracts
 

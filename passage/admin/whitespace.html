@@ -368,6 +368,10 @@
       <div class="atlas-nav-links">
         <a href="index.html">Orders</a>
         <a href="whitespace.html" class="active">White Space</a>
+        <a href="competitor-analytics.html">Competitors</a>
+        <a href="insights.html">Insights</a>
+        <a href="design-audit.html">Design Audit</a>
+        <a href="report.html">Report</a>
         <a href="../index.html">Site</a>
         <button class="logout-link" onclick="doLogout()">Sign out</button>
       </div>
@@ -379,7 +383,7 @@
         <h1 class="atlas-title">Because grief is burden enough.<br/><span style="color: var(--muted); font-weight: 400;">And the market hasn't been designed for it.</span></h1>
       </div>
       <div class="atlas-meta">
-        <div>Refreshed <span id="refresh-date">2026-04-22</span></div>
+        <div>Refreshed <span id="refresh-date">2026-04-27</span></div>
         <div><span id="comp-count-hdr">—</span> competitors · 8 segments · 8 needs</div>
       </div>
     </div>
@@ -395,7 +399,7 @@
     <section class="artifact">
       <div class="art-num">Artifact 01</div>
       <h2 class="art-title">Strategy Canvas</h2>
-      <p class="art-desc">Blue-Ocean radar. Each line plots a provider across 8 customer-valued dimensions. Passage's shape must break away on digital-first ordering + post-funeral admin + grief-sensitive UX — dimensions traditional parlours structurally cannot follow.</p>
+      <p class="art-desc">Blue-Ocean radar. Each line plots a provider across 8 casket-purchase dimensions. Passage's shape breaks away on transparency, all-in pricing, FSC + local assembly, audited charity giving, and the free-casket programme — none of which the parlour-package model can structurally match.</p>
       <div class="canvas-wrap">
         <canvas id="strategy-canvas" width="820" height="420"></canvas>
         <div class="canvas-legend" id="canvas-legend"></div>
@@ -488,95 +492,122 @@
   document.getElementById('pw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(e); });
 
   // Auth gate removed — open access for now.
-  showDashboard();
+  // Defer to DOMContentLoaded so the second <script> block (which defines initAtlas) is parsed first.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', showDashboard);
+  } else {
+    setTimeout(showDashboard, 0);
+  }
 </script>
 
 <script>
 // ── Atlas renderer ──
 function initAtlas() {
   const CANVAS_DIMS = [
-    'Price accessibility',
-    'Digital-first ordering',
-    'Ritual authenticity',
-    'Post-funeral admin',
-    'Livestream / memorial',
-    'Grief-sensitive UX',
-    'Speed to set-up',
-    'Multi-faith coverage'
+    'Casket-cost transparency',
+    'All-in published pricing',
+    '3-hour island-wide delivery',
+    'FSC + local SG assembly',
+    'Audited social-impact (% to charity)',
+    'Free-casket programme',
+    'Tripartite + PWM governance',
+    'Grief-sensitive 24/7 helpline'
   ];
   const CANVAS_LINES = [
-    { name: 'Passage',           us: true, color: '#725b3f', scores: [5, 5, 4, 5, 5, 5, 5, 4] },
-    { name: 'Singapore Casket',            color: '#8b2020', scores: [2, 1, 5, 1, 2, 2, 4, 4] },
-    { name: 'Ang Chin Moh',                color: '#b07020', scores: [3, 2, 5, 1, 2, 3, 4, 4] },
-    { name: 'Direct Funeral',              color: '#2a5080', scores: [4, 3, 4, 2, 3, 3, 5, 4] },
-    { name: 'Trinity Casket',              color: '#5a3878', scores: [3, 2, 4, 1, 2, 3, 4, 3] },
-    { name: 'Nirvana (ash / columb)',      color: '#3a7a50', scores: [3, 3, 4, 2, 2, 3, 2, 5] },
-    { name: 'WillCraft (admin only)',      color: '#596060', scores: [2, 5, 0, 4, 0, 2, 2, 3] },
-    { name: 'Church-led (Catholic)',       color: '#2a5080', scores: [4, 1, 5, 1, 1, 4, 3, 1] },
-    { name: 'DIY / community',             color: '#7b7b74', scores: [5, 0, 3, 0, 1, 1, 2, 3] },
-    { name: 'MOH funeral aid',             color: '#b07020', scores: [5, 1, 3, 2, 0, 3, 3, 2] }
+    { name: 'Passage',                       us: true, color: '#725b3f', scores: [5, 5, 5, 5, 5, 5, 5, 5] },
+    { name: 'Singapore Casket',              color: '#8b2020', scores: [1, 1, 4, 1, 0, 0, 1, 2] },
+    { name: 'Ang Chin Moh',                  color: '#b07020', scores: [1, 1, 4, 1, 0, 0, 2, 4] },
+    { name: 'Direct Funeral Services',       color: '#2a5080', scores: [3, 4, 3, 1, 1, 0, 1, 3] },
+    { name: 'Trinity Casket',                color: '#5a3878', scores: [1, 1, 3, 1, 0, 0, 1, 2] },
+    { name: 'Wholesale-mfr-typical (JB/SG)', color: '#596060', scores: [2, 1, 1, 1, 0, 0, 1, 0] },
+    { name: 'The Eco Casket',                color: '#3a7a50', scores: [4, 3, 1, 4, 0, 0, 1, 1] },
+    { name: 'Direct Cremation Bypass (NEA)', color: '#7b7b74', scores: [5, 5, 2, 0, 0, 1, 2, 1] },
+    { name: 'DIY Family',                    color: '#32332d', scores: [5, 5, 2, 0, 0, 0, 0, 0] }
   ];
 
   const SEGMENTS = [
-    { id: 'buddhist_traditional',    label: 'Buddhist traditional 3-day', note: 'Wake + 49-day rites' },
-    { id: 'christian_catholic',      label: 'Christian / Catholic',        note: 'Church-led, simpler flow' },
-    { id: 'taoist_traditional',      label: 'Taoist traditional',          note: 'Bak Gwa, paper offerings' },
-    { id: 'secular_simple',          label: 'Secular / simple',            note: 'Cremation, no rites' },
-    { id: 'muslim_islamic',          label: 'Muslim / Islamic',            note: 'Janazah, 24hr burial' },
-    { id: 'expat_cross_border',      label: 'Expat / cross-border',        note: 'Repatriation, embassy' },
-    { id: 'hdb_subsidised',          label: 'HDB / MOH-funded',            note: 'MOH aid, lean budget' },
-    { id: 'pre_arrangement_senior',  label: 'Pre-arrangement senior',      note: 'Living senior planning' }
+    { id: 'cost_conscious_bereaved',     label: 'Cost-conscious bereaved',       note: 'Refusing parlour casket markup' },
+    { id: 'anti_pressure_consumer',      label: 'Anti-pressure consumer',        note: 'Demands itemised pricing' },
+    { id: 'eco_values_buyer',            label: 'Eco / values-driven buyer',     note: 'FSC + local assembly + EV' },
+    { id: 'social_impact_buyer',         label: 'Social-impact buyer',           note: 'Buys because 30% to charity' },
+    { id: 'pre_arrangement_senior',      label: 'Pre-arrangement senior',        note: 'Fixed-price, plan ahead' },
+    { id: 'comcare_referred',            label: 'ComCare / social-referred',     note: 'Means-tested or no-NOK' },
+    { id: 'expat_cross_border',          label: 'Expat / cross-border',          note: 'English-first, repatriation' },
+    { id: 'hospital_eldercare_referral', label: 'Hospital / eldercare referral', note: 'MSW-led discharge-fast' }
   ];
   const NEEDS = [
-    { id: 'lowest_total_price',    label: 'Lowest package price',         short: 'Price' },
-    { id: 'ritual_authenticity',   label: 'Ritual authenticity / priest', short: 'Ritual' },
-    { id: 'digital_ordering',      label: 'Online ordering',              short: 'Digital' },
-    { id: 'post_admin_workflow',   label: 'CPF / bank / estate admin',    short: 'Admin' },
-    { id: 'livestream_memorial',   label: 'Livestream + memorial page',   short: 'Livestream' },
-    { id: 'grief_support',         label: 'Grief counselling follow-up',  short: 'Grief' },
-    { id: 'same_day_speed',        label: '<24hr setup',                  short: 'Speed' },
-    { id: 'transparent_fixed',     label: 'Fixed published price',        short: 'Transparent' }
+    { id: 'transparent_published_price',     label: 'Transparent published price', short: 'Transparent' },
+    { id: 'all_in_no_upsell',                label: 'All-in, no upsell',           short: 'All-in' },
+    { id: 'speed_to_delivery',               label: 'Hours-not-days delivery',     short: 'Delivery' },
+    { id: 'fsc_sustainable_timber',          label: 'FSC sustainable timber',      short: 'FSC' },
+    { id: 'local_sg_assembly_pwm',           label: 'Local SG assembly + PWM',     short: 'PWM' },
+    { id: 'verified_charity_giving',         label: 'Verified % to charity',       short: 'Charity' },
+    { id: 'grief_sensitive_24_7_helpline',   label: 'Grief-sensitive 24/7 line',   short: 'Helpline' },
+    { id: 'free_casket_eligibility_pathway', label: 'Free-casket pathway',         short: 'Free-casket' }
   ];
 
   function scoreCompetitor(c, segId, needId) {
     const tm = (c.target_market || '').toLowerCase();
     const vp = (c.primary_value_prop || '').toLowerCase();
     const str = (c.strengths || []).join(' ').toLowerCase();
+    const wkn = (c.weaknesses || []).join(' ').toLowerCase();
     const cat = c.category || '';
     const price = Number(c.package_price_sgd || 0);
-    const dig = Number(c.digital_tools_score || 0);
-    const faiths = (c.religious_affinity || []).map(f => f.toLowerCase());
-    const bundle = (str + ' ' + vp + ' ' + tm).toLowerCase();
+    const bundle = (str + ' ' + vp + ' ' + tm + ' ' + wkn).toLowerCase();
+
+    // Honour explicit specialisation_for_cell entries first (always score 4).
+    const cells = c.specialisation_for_cell || [];
+    for (const cell of cells) {
+      if (cell.segment === segId && cell.need === needId) return 4;
+    }
 
     const segMap = {
-      buddhist_traditional:   faiths.includes('buddhist') ? 5 : (/buddhist|三日|49-day|taoist|chinese/.test(bundle) ? 3 : (cat === 'sg_religious_community' ? 3 : 0)),
-      christian_catholic:     faiths.includes('christian') ? 5 : (/church|christian|catholic|wake service/.test(bundle) ? 4 : 0),
-      taoist_traditional:     faiths.includes('taoist') ? 5 : (/taoist|chinese traditional|bak gwa|paper offering/.test(bundle) ? 4 : 0),
-      secular_simple:         (/secular|simple|direct cremation|no religion|non-religious/.test(bundle) ? 4 : (cat === 'sg_digital_startup' ? 3 : 0)),
-      muslim_islamic:         faiths.includes('muslim') ? 5 : (/muslim|islamic|janazah|burial/.test(bundle) ? 4 : 0),
-      expat_cross_border:     (/expat|foreigner|repatriation|embassy|cross-border/.test(bundle) ? 4 : (cat === 'cross_border_specialist' ? 5 : 0)),
-      hdb_subsidised:         (/subsidised|moh|lean|affordable|government aid|hdb/.test(bundle) ? 4 : (price && price < 3500 ? 3 : 0)),
-      pre_arrangement_senior: (/pre-arrange|pre-planning|senior|advance/.test(bundle) ? 4 : 0)
+      cost_conscious_bereaved:     (/cost|budget|cheap|low-income|heartland|value-seek|cost-minim/.test(bundle) ? 4 : (price && price <= 4500 ? 3 : 0)),
+      anti_pressure_consumer:      (/transparent|public pricing|published|no upsell|consumer right|itemis/.test(bundle) ? 4 : (c.pricing_flag === 'public' ? 3 : 0)),
+      eco_values_buyer:            (/eco|fsc|sustainab|biodegrad|local timber|salvage|carbon/.test(bundle) ? 4 : 0),
+      social_impact_buyer:         (/charity|donat|welfare|hospice|metta|sasco|comcare|free casket/.test(bundle) ? 4 : 0),
+      pre_arrangement_senior:      (/pre-arrange|pre-need|pre-planning|senior|advance|silver|55-70|55\+/.test(bundle) ? 4 : 0),
+      comcare_referred:            (/comcare|msf|means-test|no-nok|unclaimed|social[- ]worker|welfare|hospice/.test(bundle) ? 4 : 0),
+      expat_cross_border:          (/expat|foreigner|repatriat|embassy|cross-border|iata|consular/.test(bundle) ? 4 : 0),
+      hospital_eldercare_referral: (/hospital|msw|palliative|hospice|eldercare|discharge|sasco/.test(bundle) ? 4 : 0)
     };
     const segScore = segMap[segId] || 0;
 
     const needMap = {
-      lowest_total_price:  (price && price <= 4000 ? 5 : price <= 6000 ? 3 : price <= 10000 ? 1 : 0),
-      ritual_authenticity: (faiths.length >= 2 ? 4 : faiths.length === 1 ? 4 : (/ritual|rites|priest|monk|imam/.test(bundle) ? 3 : 1)),
-      digital_ordering:    dig >= 4 ? 5 : dig >= 3 ? 3 : dig >= 2 ? 2 : 0,
-      post_admin_workflow: (/cpf|bank|estate|acra|mytax|post.?funeral|admin|paperwork/.test(bundle) ? 5 : (cat === 'admin_specialist' ? 5 : 0)),
-      livestream_memorial: (/livestream|memorial page|virtual|online memorial|tribute page/.test(bundle) ? 4 : (cat === 'livestream_specialist' ? 5 : 0)),
-      grief_support:       (/grief|counsell|support|bereavement|post-care/.test(bundle) ? 4 : 1),
-      same_day_speed:      (/same day|24 hour|fast|rapid|immediate|urgent/.test(bundle) ? 4 : (cat === 'sg_traditional_parlour' ? 4 : 2)),
-      transparent_fixed:   (c.pricing_flag === 'public' ? 5 : c.pricing_flag === 'partial' ? 2 : 0)
+      transparent_published_price:     (c.pricing_flag === 'public' ? 4 : c.pricing_flag === 'partial' ? 2 : 0),
+      all_in_no_upsell:                (/all-in|fixed price|no upsell|published package|flat fee/.test(bundle) ? 4 : (c.pricing_flag === 'public' ? 3 : 0)),
+      speed_to_delivery:               (/3.?hour|same.?day|24.?hour|rapid|fast|immediate|urgent|island.?wide|next.?day/.test(bundle) ? 4 : (cat === 'sg_traditional_parlour' ? 3 : 1)),
+      fsc_sustainable_timber:          (/fsc|sustainab|biodegrad|local timber|salvage|chain.?of.?custody|finoboard/.test(bundle) ? 4 : 0),
+      local_sg_assembly_pwm:           (/pwm|progressive wage|tripartite|local workforce|local assembl|sg.?assembl|carpentry/.test(bundle) ? 4 : 0),
+      verified_charity_giving:         (/charity|donat|welfare|hospice|metta|sasco|comcare/.test(bundle) ? 4 : 0),
+      grief_sensitive_24_7_helpline:   (/24.?hour hotline|24\/7|24-7|grief|bereavement|counsell|judgment.?free|helpline/.test(bundle) ? 4 : 1),
+      free_casket_eligibility_pathway: (/free casket|comcare|no-nok|unclaimed|means-test|welfare|subsid/.test(bundle) ? 4 : 0)
     };
     const needScore = needMap[needId] || 0;
     return Math.min(segScore, needScore);
   }
 
   function ourScore(segId, needId) {
-    const s = { buddhist_traditional:4, christian_catholic:5, taoist_traditional:3, secular_simple:5, muslim_islamic:2, expat_cross_border:3, hdb_subsidised:4, pre_arrangement_senior:4 }[segId] || 3;
-    const n = { lowest_total_price:4, ritual_authenticity:4, digital_ordering:5, post_admin_workflow:5, livestream_memorial:5, grief_support:4, same_day_speed:5, transparent_fixed:5 }[needId] || 3;
+    const s = {
+      cost_conscious_bereaved: 5,
+      anti_pressure_consumer: 5,
+      eco_values_buyer: 5,
+      social_impact_buyer: 5,
+      pre_arrangement_senior: 4,
+      comcare_referred: 5,
+      expat_cross_border: 3,
+      hospital_eldercare_referral: 4
+    }[segId] || 3;
+    const n = {
+      transparent_published_price: 5,
+      all_in_no_upsell: 5,
+      speed_to_delivery: 5,
+      fsc_sustainable_timber: 5,
+      local_sg_assembly_pwm: 5,
+      verified_charity_giving: 5,
+      grief_sensitive_24_7_helpline: 5,
+      free_casket_eligibility_pathway: 5
+    }[needId] || 3;
     return Math.min(s, n);
   }
 
@@ -585,44 +616,44 @@ function initAtlas() {
   const NICHES = [
     {
       rank: '01',
-      name: 'Digital-First Secular / Christian — "One Click, One Burden Less"',
-      icp: 'SG secular or Christian families who want a dignified wake without calling 5 parlours. Comfortable with web ordering. Want fixed price, livestream, online memorial, and post-funeral admin (CPF, banks, estate) in one package.',
-      tam: '~6,200 SG deaths annually in the secular / Christian / Catholic segments with household income above median (MOH death records + Christian denomination % + income deciles).',
-      why_underserved: 'Traditional parlours (Singapore Casket, Ang Chin Moh) require phone calls, quote on call, and stop at the cremation. No one in SG bundles wake + livestream + memorial page + post-funeral admin workflow (CPF/bank/ACRA). WillCraft and similar admin-only vendors leave the wake to someone else.',
-      why_we_win: '(1) Fixed-price published package with livestream + memorial page by default. (2) Post-funeral admin workflow (CPF claim, bank account closure, ACRA estate, MyTax) bundled — unique in SG. (3) Grief-sensitive UX — no upsell guilt. (4) Sub-24hr digital setup vs 2-3 days phone back-and-forth.',
+      name: 'Anti-Package Consumer Education — WhatsApp-shareable price strip',
+      icp: 'SG bereaved or anticipating-bereaved adults (35-65) who refuse to be quoted S$3,800 for a casket bundled in a S$10K parlour package. Phone-literate, suspicious of opacity, will compare prices on WhatsApp family chats before committing. Anti-pressure-consumer + cost-conscious-bereaved overlap.',
+      tam: '~24,000 SG deaths annually (MOH); ~65% pass through wake/embalming pipeline → ~15,600 households exposed to package-bundled casket markup. Conservative 3-year capture target ~3% = ~470 households / year for the casket-only DTC wedge at three SKUs S$800-S$1,200.',
+      why_underserved: 'Singapore Casket / Ang Chin Moh / Trinity / Nam Shan / Casket Fairprice all bundle casket cost inside a S$4K-S$15K package; even Direct Funeral Services (transparent on package) does not itemise the casket. Wholesale manufacturers (Millennium, TSTee, Soon Teck, Sinseeseng, Zhen Feng, White Artz) supply parlours wholesale at ~S$550-S$750 — proving the markup, but never selling DTC. No SG brand publishes a casket SKU price card consumers can screenshot and forward.',
+      why_we_win: '(1) Three published all-in SKUs S$800/S$1,000/S$1,200 incl. delivery + venue positioning + GST — vs typical S$2,000-S$4,000 hidden markup. (2) Calm, judgment-free UX with the "casket-cost transparency" narrative front-and-centre. (3) FSC + 30%-charity + free-casket stack reframes the buy as ethical, not transactional. (4) 24/7 helpline +65 9847 9776 for the grief window when the parlour quote arrives.',
       gtm: {
-        pricing: 'S$5,888 Heritage package: wake + cremation + livestream + memorial page + post-funeral admin. Upsell flowers and catering only via in-package add-on.',
-        channel: 'Partnership with SG grief counsellors (SCS Bereavement Care, SAMH) + SG hospital palliative care teams + Christian denomination church networks. Google Ads on "SG funeral services quote".',
-        pitch: '"One package. One price. One less person to call during the hardest week of your life."',
-        content: 'Post-funeral Admin Checklist — email-gated 20-step PDF covering CPF, bank accounts, ACRA, SingPass-for-deceased, MyTax, insurance claims.'
+        pricing: 'Serene S$800 / Tranquil S$1,000 / Eternal S$1,200, all-in (delivery + venue positioning + GST). Express +S$75 (2hr) / +S$150 (1hr emergency).',
+        channel: 'WhatsApp-shareable price-strip card (Serene/Tranquil/Eternal vs S$2K-S$4.5K typical), seeded via SG consumer-rights media (CNA Insider, ST Money desk, Mothership), Google Ads on "casket price Singapore" / "funeral package markup", and TikTok consumer-education shorts.',
+        pitch: '"We price the casket. They hide it. Here\'s the difference between S$800 and S$3,800 — and where the S$3,000 actually goes."',
+        content: '"Singapore Casket Price Decoder" — single-screen WhatsApp-forwardable PDF + an interactive cost-of-casket calculator that strips out the package and reprices a la carte.'
       }
     },
     {
       rank: '02',
-      name: 'Post-Funeral Admin as the Wedge',
-      icp: 'SG families who\'ve already used a traditional parlour but are stuck navigating CPF claims, bank account closure, ACRA estate, SingPass-for-deceased, and insurance. Passage sells the admin layer stand-alone even if wake was elsewhere.',
-      tam: '~21,000 SG deaths/year → 100% need admin workflow → ~12,000 households would pay for concierge support (MOH death records + informal survey of estate-admin pain).',
-      why_underserved: 'WillCraft handles pre-death wills. Parlours stop at cremation. Banks each have their own form. SingPass-for-deceased launched in 2023 but is self-serve. No concierge post-death admin service exists in SG today.',
-      why_we_win: '(1) Can sell stand-alone for S$499-1,299 even to families who went elsewhere for the wake. (2) First touchpoint = we\'re present in the grief window for future pre-arrangement referrals. (3) Builds the CPF/ACRA/bank playbook as product IP. (4) Natural B2B wedge for SG estate lawyers (referral split).',
+      name: 'Hospital Social-Worker Partnership — free-casket / discharge-fast pathway',
+      icp: 'SG hospital medical social workers (MSWs) and palliative-care coordinators triaging discharge / unclaimed-body / no-NOK / ComCare-eligible cases who today cobble together a casket via NEA Mandai or a parlour referral. Adjacent ICP: charity-org case workers (Singapore Hospice Council, SASCO, Metta) routing means-tested families.',
+      tam: '~24,000 SG deaths / year × ~5-7% means-tested or unclaimed = ~1,200-1,700 cases / year passing through MSW or welfare-org pathway. Passage capacity FY2025 target: 75-90 free caskets (vs FY2024 = 47) plus the same volume at full-paying social-impact buyers underwriting them via the 30%-charity flow.',
+      why_underserved: 'ComCare gates eligibility but does not contract a casket SLA. Hospital MSWs cannot guarantee a 3-hour casket to a discharge slot. NEA direct cremation is dignified-minimum but offers no aesthetic or grief-sensitive layer. No SG operator combines (a) free-casket pathway, (b) hours-not-days delivery, (c) audited charity-partner network (FY2024: SG Hospice Council, SASCO, Metta), (d) Tripartite + PWM workforce credibility hospitals can defend in procurement.',
+      why_we_win: '(1) FY2024 ledger: 47 free caskets given (31 social-worker referrals + 16 direct family + 8 welfare-org partners). (2) S$48,200 audited donations FY2024 across three named partners — quarterly published. (3) 3-hour island-wide delivery beats MSW-coordinated next-day pipeline. (4) Tripartite triple-signatory + PWM gives hospital procurement a defensible accountability stack.',
       gtm: {
-        pricing: 'S$499 "Admin Concierge Lite" (8 tasks, 30-day window). S$1,299 "Estate Full Concierge" (30 tasks + lawyer intro). Both stand-alone.',
-        channel: 'Direct sales to SG estate lawyers (10-15% referral). Landing page for SEO on "CPF claim after death Singapore" + "closing bank account after death Singapore". Funeral-parlour partnerships (they get a partner kickback for referrals).',
-        pitch: '"Someone died. The banks need 14 things. We do all 14."',
-        content: '"What To Do In The First 30 Days After a Death In Singapore" — gated 25-page PDF + CPF & ACRA walk-through videos.'
+        pricing: 'Free casket pathway via referral letter from MSW / ComCare / hospice partner — S$0. Paid SKUs underwrite the programme; every paid Tranquil / Eternal funds ~⅓ of a Serene given free.',
+        channel: 'Direct MOU outreach to public-hospital MSW teams (SGH, NUH, TTSH, KTPH, SKH, NTFGH); SG Hospice Council member-org briefings; SASCO + Metta + ComCare regional-office tabling; quarterly free-casket impact report sent to all partner case workers.',
+        pitch: '"You make the call. We deliver the casket in 3 hours. The family pays S$0. The audit trail is public."',
+        content: '"Free-Casket Eligibility Quick-Reference" — one-page MSW reference card + a public quarterly Impact Ledger (47 caskets FY2024, charity-partner breakdown, intake-to-delivery times).'
       }
     },
     {
       rank: '03',
-      name: 'Pre-Arrangement for the Digital-Native 55+',
-      icp: 'SG baby-boomers and early-retirees (55-70) who are planning ahead — either for elderly parents or for themselves. Comfortable with digital tools (SingPass, banking apps). Want to set up their funeral preferences, beneficiaries, and post-death admin in advance.',
-      tam: '~380,000 SG residents aged 55-70 with HH income >S$100K (SingStat + CPF member data) — of whom ~3% are actively considering pre-arrangement = 11,400.',
-      why_underserved: 'Parlours sell "pre-need" contracts but require meeting in person. Trust-based pre-funds (e.g., pre-paid plans) are opaque on where the money sits. WillCraft covers will but not funeral preferences. No digital-first pre-arrangement product exists in SG.',
-      why_we_win: '(1) Digital form captures wake preferences + beneficiaries + CPF nominations in 30 min from home. (2) Funds sit in escrow (not general revenue) — trust story. (3) Integrates with WillCraft / digital-will products as partner. (4) Creates a long-term customer relationship with a decade-plus horizon.',
+      name: 'Eco / Pre-Arrangement Subscription — FSC-aware Senior Planners',
+      icp: 'SG residents 55-70 with HH income above median who care about FSC + local-assembly + EV-by-2026, and who want to pre-capture casket choice for themselves or an aging parent. Eco-values-buyer + pre-arrangement-senior + social-impact-buyer overlap. Often retired professionals, faith-secular, sustainability-literate (carbon footprint, supply chain, audited reporting).',
+      tam: '~380,000 SG residents 55-70; ~3% actively considering pre-arrangement = ~11,400 prospects. Of these ~25% sustainability-leaning = ~2,800 addressable. Conservative 18-month capture ~5% = ~140 paid pre-arrangements at the Tranquil / Eternal tier (S$1,000-S$1,200 + optional flowers / care-coordinator add-on at the time of need).',
+      why_underserved: 'Parlour pre-need contracts require in-person meeting and bury the casket inside an opaque package. Wholesale manufacturers cannot retail. Roger & Sons salvage-carpentry tells the cleanest local-timber story but has no 3-hour delivery and no pre-arrangement product. The Eco Casket has a published RM price but is paper / Finoboard, no FSC solid-timber option, and no SG pre-arrangement flow. No SG brand combines FSC Chain-of-Custody + 60% local timber sourcing + 4.2 t CO₂e per casket disclosure + 2026 EV fleet target + a digital pre-arrangement capture.',
+      why_we_win: '(1) FSC Chain-of-Custody certified, 60% local timber FY2024, <5% material waste, full Scope 1+2 carbon report. (2) Tripartite triple-signatory + PWM 100% local workforce gives the local-assembly story regulatory teeth. (3) 30%-to-charity binding via constitution turns "I want to pre-arrange" into "I want to pre-arrange and fund free caskets". (4) Locked-price pre-arrangement (Eternal at S$1,200 today) hedges price drift through 2030.',
       gtm: {
-        pricing: '"Pre-Arrangement Lite" S$199 one-time (digital capture). "Full Pre-Paid Plan" starting S$4,888 held in escrow, locks 2026 pricing for 10 years.',
-        channel: 'SG silver-community Facebook groups, ActiveSG senior programmes, church senior ministries, financial-advisor partnerships (IFA referral split on the pre-paid plan).',
-        pitch: '"Your family won\'t have to guess. Capture your preferences in thirty minutes, funded only if you want it."',
-        content: '"Singapore Pre-Arrangement Readiness Quiz" — email-gated 12-question quiz producing a preference-capture PDF.'
+        pricing: '"Pre-Arrangement Capture" S$0 (digital intake stores SKU choice + delivery instructions + nominated NOK). "Locked-Price Pre-Pay" S$800-S$1,200 SKU price held in escrow, valid 10 years, refundable if cancelled.',
+        channel: 'Silver-community Facebook groups, ActiveSG senior programmes, sustainability-leaning publications (Eco-Business, The Straits Times Climate desk), retiree-investor IFA partnerships, FY2024 charity-partner co-branded talks (SG Hospice Council, SASCO, Metta).',
+        pitch: '"Choose your casket. Lock the price. Fund a free one for someone who can\'t. All in 30 minutes from your kitchen table."',
+        content: '"FY2024 Impact Ledger" public PDF (47 free caskets, S$48,200 donations, 4.2 t CO₂e per casket, 60% local timber) + a 12-question Pre-Arrangement Readiness Quiz that outputs a preference-capture PDF.'
       }
     }
   ];

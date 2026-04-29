@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Passage — Casket Market Intelligence Report</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #32332d;
+      --secondary: #596060;
+      --gold: #725b3f;
+      --surface: #fcf9f5;
+      --surface-1: #f0ece4;
+      --surface-2: #e4e0d8;
+      --border: #d8d4cc;
+      --muted: #7b7b74;
+      --white: #ffffff;
+      --green: #3a7a50;
+      --amber: #b07020;
+      --blue: #2a5080;
+      --red: #8b2020;
+      --purple: #5a3878;
+      --radius: 8px;
+      --radius-lg: 14px;
+      --font: 'Segoe UI', system-ui, sans-serif;
+      --serif: Georgia, 'Times New Roman', serif;
+    }
+    body { font-family: var(--font); background: var(--surface); color: var(--primary); min-height: 100vh; }
+
+    /* ── ATLAS NAV ── */
+    .atlas-nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid var(--border); background: var(--surface); position: sticky; top: 0; z-index: 50; }
+    .atlas-nav .brand { font-family: var(--serif); font-size: 1.2rem; font-weight: 700; letter-spacing: 0.08em; color: var(--primary); text-decoration: none; }
+    .atlas-nav .brand span { color: var(--gold); }
+    .atlas-nav-links { display: flex; gap: 12px; align-items: center; }
+    .atlas-nav-links a { font-size: 0.8rem; color: var(--secondary); padding: 6px 12px; border-radius: var(--radius); text-decoration: none; transition: background 0.15s; }
+    .atlas-nav-links a:hover { background: var(--surface-1); }
+    .atlas-nav-links a.active { background: var(--gold); color: var(--white); font-weight: 600; }
+
+    /* ── PDF DOWNLOAD BUTTON ── */
+    .pdf-dl { position: fixed; top: 76px; right: 24px; z-index: 100; background: var(--gold); color: var(--white); border: none; padding: 12px 22px; border-radius: var(--radius); font-family: var(--serif); font-size: 0.92rem; font-weight: 600; letter-spacing: 0.04em; cursor: pointer; box-shadow: 0 6px 18px rgba(50,51,45,0.18); transition: background 0.2s, transform 0.1s; }
+    .pdf-dl:hover { background: var(--primary); }
+    .pdf-dl:active { transform: scale(0.97); }
+    .pdf-dl:disabled { background: var(--muted); cursor: wait; }
+    .pdf-dl .ico { display: inline-block; margin-right: 8px; }
+
+    /* ── REPORT DOCUMENT ── */
+    #report-doc { max-width: 1100px; margin: 0 auto; }
+    .report-page { padding: 64px 56px; border-bottom: 1px solid var(--border); }
+    .report-page.bleed-surface { background: var(--surface); }
+    .report-page.bleed-card { background: var(--white); }
+    @media print {
+      .report-page { page-break-before: always; }
+      .pdf-dl, .atlas-nav { display: none !important; }
+    }
+
+    .sec-num { font-family: ui-monospace, monospace; font-size: 0.72rem; letter-spacing: 0.16em; color: var(--gold); text-transform: uppercase; font-weight: 700; margin-bottom: 10px; }
+    .sec-h2 { font-family: var(--serif); font-size: 2rem; font-weight: 700; letter-spacing: -0.01em; color: var(--primary); line-height: 1.2; margin-bottom: 14px; }
+    .sec-lede { font-size: 0.96rem; color: var(--muted); line-height: 1.65; max-width: 820px; margin-bottom: 28px; }
+
+    /* ── COVER ── */
+    .cover { min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 80px 56px 64px; background: var(--surface); }
+    .cover-mark { font-family: var(--serif); font-size: 2.2rem; font-weight: 700; letter-spacing: 0.12em; color: var(--primary); margin-bottom: 6px; }
+    .cover-mark span { color: var(--gold); }
+    .cover-sub { font-family: var(--serif); font-size: 0.86rem; color: var(--gold); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 60px; }
+    .cover-title { font-family: var(--serif); font-size: clamp(2.4rem, 5vw, 3.6rem); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; color: var(--primary); max-width: 880px; margin-bottom: 28px; }
+    .cover-tag { font-family: var(--serif); font-size: 1.1rem; font-style: italic; color: var(--gold); margin-bottom: 60px; max-width: 700px; }
+    .cover-stamp { font-family: ui-monospace, monospace; font-size: 0.78rem; color: var(--muted); letter-spacing: 0.06em; margin-bottom: 32px; }
+    .cover-acc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 40px; }
+    .cover-acc-chip { font-size: 0.7rem; font-family: ui-monospace, monospace; padding: 5px 11px; background: var(--surface-1); border: 1px solid var(--border); color: var(--secondary); border-radius: 100px; letter-spacing: 0.04em; }
+
+    /* ── TOC ── */
+    .toc-list { list-style: none; padding: 0; counter-reset: tocidx; }
+    .toc-item { counter-increment: tocidx; padding: 14px 0; border-bottom: 1px dashed var(--border); display: grid; grid-template-columns: 50px 1fr 60px; gap: 16px; align-items: baseline; }
+    .toc-item:last-child { border-bottom: none; }
+    .toc-num { font-family: ui-monospace, monospace; color: var(--gold); font-weight: 700; font-size: 0.84rem; letter-spacing: 0.06em; }
+    .toc-num::before { content: counter(tocidx, decimal-leading-zero); }
+    .toc-link { font-family: var(--serif); font-size: 1.08rem; color: var(--primary); text-decoration: none; font-weight: 600; }
+    .toc-link:hover { color: var(--gold); }
+    .toc-page { font-family: ui-monospace, monospace; color: var(--muted); font-size: 0.8rem; text-align: right; }
+
+    /* ── EXEC SUMMARY ── */
+    .exec-list { list-style: none; padding: 0; counter-reset: execidx; }
+    .exec-bullet { counter-increment: execidx; display: grid; grid-template-columns: 56px 1fr; gap: 18px; padding: 18px 0; border-bottom: 1px dashed var(--border); }
+    .exec-bullet:last-child { border-bottom: none; }
+    .exec-num { font-family: var(--serif); font-size: 1.6rem; color: var(--gold); font-weight: 700; line-height: 1; }
+    .exec-num::before { content: counter(execidx, decimal-leading-zero); }
+    .exec-body { font-size: 0.94rem; color: var(--secondary); line-height: 1.7; }
+    .exec-body strong { color: var(--primary); }
+    .exec-body em { color: var(--gold); font-style: normal; font-weight: 600; }
+
+    /* ── KPI strip ── */
+    .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 28px; }
+    .kpi { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; }
+    .kpi.on-card { background: var(--surface); }
+    .kpi-val { font-family: var(--serif); font-size: 1.7rem; font-weight: 700; color: var(--primary); letter-spacing: -0.02em; line-height: 1.1; }
+    .kpi-val.green { color: var(--green); }
+    .kpi-val.amber { color: var(--amber); }
+    .kpi-val.red { color: var(--red); }
+    .kpi-val.gold { color: var(--gold); }
+    .kpi-lbl { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-top: 8px; }
+
+    /* ── LANDSCAPE blocks ── */
+    .l-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 22px; }
+    .l-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
+    .l-card.on-card { background: var(--surface); }
+    .l-card .lbl { font-size: 0.66rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 6px; font-family: ui-monospace, monospace; }
+    .l-card .val { font-family: var(--serif); font-weight: 700; font-size: 1.1rem; color: var(--primary); line-height: 1.3; }
+    .l-list { list-style: none; padding: 0; }
+    .l-list li { padding: 10px 0; border-bottom: 1px dashed var(--border); font-size: 0.88rem; color: var(--secondary); line-height: 1.55; padding-left: 20px; position: relative; }
+    .l-list li:last-child { border-bottom: none; }
+    .l-list li::before { content: "◆"; position: absolute; left: 0; color: var(--gold); font-size: 0.7rem; top: 12px; }
+
+    /* ── COMPETITOR cards (top-5) ── */
+    .comp-list { display: flex; flex-direction: column; gap: 14px; }
+    .comp-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px 22px; }
+    .comp-card.on-card { background: var(--surface); }
+    .comp-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+    .comp-name { font-family: var(--serif); font-size: 1.15rem; font-weight: 700; color: var(--primary); line-height: 1.3; }
+    .comp-url { font-family: ui-monospace, monospace; font-size: 0.74rem; color: var(--muted); display: block; margin-top: 2px; word-break: break-all; }
+    .comp-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+    .badge { display: inline-block; padding: 3px 9px; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; font-family: ui-monospace, monospace; border-radius: 100px; border: 1px solid; white-space: nowrap; }
+    .b-vis-hidden { background: rgba(139,32,32,0.10); color: var(--red); border-color: var(--red); }
+    .b-vis-partial { background: rgba(176,112,32,0.14); color: var(--amber); border-color: var(--amber); }
+    .b-vis-full { background: rgba(58,122,80,0.12); color: var(--green); border-color: var(--green); }
+    .b-vis-na { background: var(--surface-1); color: var(--secondary); border-color: var(--border); }
+    .b-threat-high { background: rgba(139,32,32,0.10); color: var(--red); border-color: var(--red); }
+    .b-threat-medium { background: rgba(176,112,32,0.14); color: var(--amber); border-color: var(--amber); }
+    .b-threat-low { background: rgba(58,122,80,0.12); color: var(--green); border-color: var(--green); }
+    .comp-bars { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 12px 0; }
+    .bar-row { display: grid; grid-template-columns: 90px 1fr 32px; gap: 8px; align-items: center; font-size: 0.78rem; }
+    .bar-row .lbl { color: var(--muted); }
+    .bar { height: 8px; background: var(--surface-1); border-radius: 4px; overflow: hidden; }
+    .bar .fill { height: 100%; background: var(--gold); border-radius: 4px; }
+    .bar-row .val { font-family: ui-monospace, monospace; color: var(--primary); font-weight: 700; text-align: right; }
+    .comp-sw { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; padding-top: 14px; border-top: 1px dashed var(--border); }
+    @media (max-width: 600px) { .comp-sw { grid-template-columns: 1fr; } }
+    .comp-sw .col h5 { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 6px; font-family: ui-monospace, monospace; font-weight: 700; }
+    .comp-sw ul { list-style: none; padding: 0; font-size: 0.82rem; line-height: 1.55; color: var(--secondary); }
+    .comp-sw ul li { padding-left: 14px; position: relative; margin-bottom: 5px; }
+    .comp-sw ul li::before { content: ""; position: absolute; left: 0; top: 8px; width: 6px; height: 6px; border-radius: 50%; }
+    .comp-sw .col.strengths li::before { background: var(--green); }
+    .comp-sw .col.weaknesses li::before { background: var(--red); }
+
+    /* ── PRICING TABLE ── */
+    .pricing-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--white); }
+    .pricing { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 720px; }
+    .pricing thead th { background: var(--primary); color: var(--surface); padding: 12px 14px; text-align: left; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+    .pricing thead th.passage-col { background: var(--gold); color: var(--white); }
+    .pricing tbody th { background: var(--surface-1); color: var(--primary); text-align: left; font-weight: 700; padding: 12px 14px; font-size: 0.86rem; }
+    .pricing tbody td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.5; }
+    .pricing tbody tr:last-child td, .pricing tbody tr:last-child th { border-bottom: none; }
+    .pricing .price { font-family: ui-monospace, monospace; font-weight: 700; color: var(--primary); display: block; margin-bottom: 2px; }
+    .pricing .price-note { font-size: 0.74rem; color: var(--muted); display: block; }
+    .pricing td.passage-col { background: rgba(114,91,63,0.06); }
+    .footnote { font-size: 0.78rem; color: var(--muted); line-height: 1.6; margin-top: 14px; padding: 12px 14px; background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius); }
+    .footnote strong { color: var(--primary); }
+    .footnote em { color: var(--gold); font-style: normal; font-weight: 600; }
+
+    /* ── WHITESPACE STRATEGY CANVAS ── */
+    .canvas-wrap { display: grid; grid-template-columns: 1.7fr 1fr; gap: 24px; align-items: start; margin-bottom: 26px; }
+    @media (max-width: 900px) { .canvas-wrap { grid-template-columns: 1fr; } }
+    #strategy-canvas { width: 100%; max-width: 720px; height: 420px; }
+    .canvas-legend { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; }
+    .canvas-legend .leg { display: flex; align-items: center; gap: 8px; }
+    .canvas-legend .sw { width: 28px; height: 4px; flex-shrink: 0; border-radius: 2px; }
+    .canvas-legend .us { font-weight: 700; color: var(--gold); }
+
+    /* ── WHITESPACE TOP-5 PAIRS ── */
+    .pairs-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 26px; background: var(--white); }
+    .pairs { width: 100%; border-collapse: collapse; font-size: 0.84rem; min-width: 600px; }
+    .pairs thead th { background: var(--primary); color: var(--surface); padding: 10px 12px; font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; text-align: left; }
+    .pairs tbody td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .pairs tbody tr:last-child td { border-bottom: none; }
+    .pairs .pair-rank { font-family: ui-monospace, monospace; color: var(--gold); font-weight: 700; }
+    .pairs .pair-pair { font-family: var(--serif); font-weight: 700; color: var(--primary); }
+    .pairs .pair-count { text-align: center; font-family: ui-monospace, monospace; font-weight: 700; }
+    .pairs .pair-us { text-align: center; font-family: ui-monospace, monospace; font-weight: 700; color: var(--gold); }
+    .pair-tag { font-size: 0.62rem; padding: 2px 8px; border-radius: 100px; font-family: ui-monospace, monospace; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; border: 1px solid; }
+    .pair-tag.green { background: rgba(58,122,80,0.12); color: var(--green); border-color: var(--green); }
+    .pair-tag.amber { background: rgba(176,112,32,0.14); color: var(--amber); border-color: var(--amber); }
+
+    /* ── ATTACK NICHES ── */
+    .attack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+    .niche { background: linear-gradient(160deg, rgba(58,122,80,0.08), var(--white) 80%); border: 1.5px solid var(--green); border-radius: var(--radius-lg); padding: 22px 24px; }
+    .niche.on-card { background: linear-gradient(160deg, rgba(58,122,80,0.10), var(--surface) 80%); }
+    .niche-rank { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--green); margin-bottom: 6px; font-family: ui-monospace, monospace; }
+    .niche-name { font-family: var(--serif); font-size: 1.05rem; font-weight: 700; color: var(--primary); letter-spacing: -0.01em; margin-bottom: 10px; line-height: 1.3; }
+    .niche-icp { font-size: 0.84rem; color: var(--muted); margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px dashed var(--border); font-style: italic; line-height: 1.55; }
+    .niche-row { display: grid; grid-template-columns: 72px 1fr; gap: 10px; font-size: 0.8rem; padding: 5px 0; }
+    .niche-row .k { font-size: 0.62rem; font-weight: 700; color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px; font-family: ui-monospace, monospace; }
+    .niche-row .v { color: var(--muted); line-height: 1.5; }
+
+    /* ── DESIGN-AUDIT cards ── */
+    .da-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 14px; }
+    .da-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; }
+    .da-card.self { border: 2px solid var(--gold); background: linear-gradient(160deg, rgba(114,91,63,0.06), var(--white) 80%); }
+    .da-card.on-card { background: var(--surface); }
+    .da-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+    .da-name { font-family: var(--serif); font-weight: 700; color: var(--primary); font-size: 1.05rem; line-height: 1.25; }
+    .da-name .self-tag { font-size: 0.6rem; color: var(--gold); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-left: 8px; padding: 2px 8px; background: var(--surface-1); border-radius: 100px; font-family: ui-monospace, monospace; }
+    .da-overall { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; color: var(--gold); }
+    .da-overall .max { font-size: 0.7rem; color: var(--muted); font-family: ui-monospace, monospace; font-weight: 400; }
+    .da-bars { margin: 12px 0; }
+    .da-bar-row { display: grid; grid-template-columns: 1fr 70px 30px; gap: 8px; align-items: center; font-size: 0.78rem; padding: 4px 0; }
+    .da-bar-row .lbl { color: var(--muted); }
+    .da-bar { height: 6px; background: var(--surface-1); border-radius: 3px; overflow: hidden; }
+    .da-bar .fill { height: 100%; background: var(--gold); border-radius: 3px; }
+    .da-bar-row .val { text-align: right; font-family: ui-monospace, monospace; font-weight: 700; color: var(--primary); }
+    .da-verdict { font-size: 0.84rem; color: var(--secondary); line-height: 1.55; padding-top: 12px; border-top: 1px dashed var(--border); font-style: italic; }
+
+    .syn-card { background: var(--white); border: 1.5px solid var(--gold); border-radius: var(--radius-lg); padding: 22px 24px; margin-top: 18px; }
+    .syn-card.on-card { background: var(--surface); }
+    .syn-card h3 { font-family: var(--serif); font-size: 1.1rem; color: var(--primary); margin-bottom: 12px; }
+    .syn-block { margin-bottom: 16px; }
+    .syn-block:last-child { margin-bottom: 0; }
+    .syn-block .lbl { font-size: 0.66rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 8px; font-family: ui-monospace, monospace; }
+    .syn-block ul { list-style: none; padding: 0; }
+    .syn-block ul li { padding: 8px 0 8px 22px; position: relative; font-size: 0.86rem; color: var(--secondary); line-height: 1.6; border-bottom: 1px dashed var(--border); }
+    .syn-block ul li:last-child { border-bottom: none; }
+    .syn-block ul li::before { content: "→"; position: absolute; left: 0; color: var(--gold); font-weight: 700; }
+
+    /* ── RECOMMENDATIONS ── */
+    .rec-list { list-style: none; padding: 0; counter-reset: recidx; }
+    .rec-item { counter-increment: recidx; display: grid; grid-template-columns: 64px 1fr; gap: 18px; padding: 20px 0; border-bottom: 1px dashed var(--border); }
+    .rec-item:last-child { border-bottom: none; }
+    .rec-num { font-family: var(--serif); font-size: 1.8rem; color: var(--gold); font-weight: 700; line-height: 1; }
+    .rec-num::before { content: "0" counter(recidx); }
+    .rec-title { font-family: var(--serif); font-size: 1.08rem; font-weight: 700; color: var(--primary); margin-bottom: 6px; line-height: 1.3; }
+    .rec-body { font-size: 0.9rem; color: var(--muted); line-height: 1.65; }
+    .rec-body strong { color: var(--primary); }
+    .rec-body em { color: var(--gold); font-style: normal; font-weight: 600; }
+
+    /* ── METHODOLOGY ── */
+    .meth-block { margin-bottom: 22px; }
+    .meth-block .lbl { font-size: 0.7rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 8px; font-family: ui-monospace, monospace; }
+    .meth-block p { font-size: 0.9rem; color: var(--secondary); line-height: 1.7; }
+    .meth-block ul { list-style: none; padding: 0; }
+    .meth-block ul li { padding: 8px 0 8px 20px; position: relative; font-size: 0.86rem; color: var(--secondary); line-height: 1.6; }
+    .meth-block ul li::before { content: "◆"; position: absolute; left: 0; color: var(--gold); font-size: 0.7rem; top: 11px; }
+
+    .err-msg { padding: 24px; color: var(--red); font-family: ui-monospace, monospace; font-size: 0.86rem; background: rgba(139,32,32,0.06); border: 1px solid var(--red); border-radius: var(--radius); margin: 14px 0; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      body { font-size: 13px; }
+      .atlas-nav { padding: 10px 14px; flex-wrap: wrap; gap: 8px; }
+      .atlas-nav-links { flex-wrap: wrap; gap: 6px; }
+      .atlas-nav-links a { font-size: 0.72rem; padding: 5px 10px; }
+      .pdf-dl { top: auto; bottom: 14px; right: 14px; padding: 10px 16px; font-size: 0.84rem; }
+      .report-page { padding: 36px 18px; }
+      .cover { padding: 50px 18px 36px; }
+      .cover-mark { font-size: 1.6rem; }
+      .cover-title { font-size: 1.7rem !important; }
+      .cover-tag { font-size: 0.95rem; }
+      .sec-h2 { font-size: 1.4rem !important; }
+      .sec-lede { font-size: 0.86rem; }
+      .kpi-strip { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .kpi { padding: 12px 14px; }
+      .kpi-val { font-size: 1.2rem; }
+      .kpi-lbl { font-size: 0.6rem; }
+      .l-grid { grid-template-columns: 1fr; }
+      .toc-item { grid-template-columns: 36px 1fr 44px; }
+      .toc-link { font-size: 0.94rem; }
+      .exec-bullet { grid-template-columns: 36px 1fr; gap: 10px; }
+      .exec-num { font-size: 1.3rem; }
+      .exec-body { font-size: 0.84rem; }
+      .comp-bars { grid-template-columns: 1fr; }
+      .pricing { min-width: 560px; font-size: 0.74rem; }
+      .pricing thead th, .pricing tbody th, .pricing tbody td { padding: 8px 10px; }
+      #strategy-canvas { height: 280px; }
+      .canvas-wrap { grid-template-columns: 1fr; }
+      .pairs { min-width: 480px; font-size: 0.72rem; }
+      .attack-grid { grid-template-columns: 1fr; }
+      .niche { padding: 16px 16px; }
+      .niche-row { grid-template-columns: 60px 1fr; font-size: 0.74rem; }
+      .da-grid { grid-template-columns: 1fr; }
+      .da-card { padding: 14px 16px; }
+      .rec-item { grid-template-columns: 44px 1fr; gap: 12px; padding: 14px 0; }
+      .rec-num { font-size: 1.4rem; }
+      .rec-title { font-size: 0.96rem; }
+      .rec-body { font-size: 0.82rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="atlas-nav">
+  <a href="index.html" class="brand">PASSAGE<span>.</span></a>
+  <div class="atlas-nav-links">
+    <a href="index.html">Orders</a>
+    <a href="whitespace.html">White Space</a>
+    <a href="competitor-analytics.html">Competitors</a>
+    <a href="insights.html">Insights</a>
+    <a href="design-audit.html">Design Audit</a>
+    <a href="report.html" class="active">Report</a>
+    <a href="../index.html">Site</a>
+  </div>
+</nav>
+
+<button id="pdf-dl-btn" class="pdf-dl" type="button"><span class="ico">⬇</span>Download PDF</button>
+
+<main id="report-doc">
+
+  <!-- ── SECTION 1 — COVER ── -->
+  <section class="report-page cover bleed-surface" id="sec-cover">
+    <div class="cover-mark">PASSAGE<span>.</span></div>
+    <div class="cover-sub">Casket Market Intelligence · Singapore</div>
+    <h1 class="cover-title">Casket Market Intelligence Report — Singapore</h1>
+    <p class="cover-tag">Because grief is burden enough.</p>
+    <div class="cover-stamp">Report quarter · Q2 2026 &nbsp;·&nbsp; Refreshed <span id="cover-date">2026-04-27</span></div>
+    <div class="cover-acc">
+      <span class="cover-acc-chip">FSC Chain of Custody</span>
+      <span class="cover-acc-chip">Tripartite Triple-Signatory</span>
+      <span class="cover-acc-chip">Progressive Wage Mark</span>
+      <span class="cover-acc-chip">Carbon Reporting (Scope 1+2)</span>
+      <span class="cover-acc-chip">30% Net Profit to Charity</span>
+    </div>
+  </section>
+
+  <!-- ── SECTION 2 — TABLE OF CONTENTS ── -->
+  <section class="report-page bleed-card" id="sec-toc">
+    <div class="sec-num">Section 02</div>
+    <h2 class="sec-h2" id="contents">Table of Contents</h2>
+    <p class="sec-lede">Ten sections, in order. The market and regulatory frame, the competitive set, the pricing reality, the white space, the design gap, and the deck-grounded recommendations that flow from them.</p>
+    <ul class="toc-list" id="toc-list"></ul>
+  </section>
+
+  <!-- ── SECTION 3 — EXECUTIVE SUMMARY ── -->
+  <section class="report-page bleed-surface" id="sec-exec">
+    <div class="sec-num">Section 03</div>
+    <h2 class="sec-h2" id="executive-summary">Executive Summary</h2>
+    <p class="sec-lede">Five anchor findings. Each is backed by the data appendix that follows in Sections 4–10.</p>
+    <ol class="exec-list">
+      <li class="exec-bullet">
+        <div class="exec-num"></div>
+        <div class="exec-body"><strong>The Singapore casket market is structurally opaque.</strong> Roughly <strong>~24,000 deaths a year</strong>; about <em>~65% take the wake-and-embalm path</em> bundled into S$8–15K full packages, and <em>~35% take direct cremation</em>. Inside those packages the casket alone is marked up to <strong>S$2,000–S$4,000</strong> — never itemised, by design.</div>
+      </li>
+      <li class="exec-bullet">
+        <div class="exec-num"></div>
+        <div class="exec-body"><strong>Why Passage wins.</strong> All-in transparent <strong>S$800 / S$1,000 / S$1,200</strong> casket-only SKUs vs hidden S$2–4K parlour markup. <em>3-hour island-wide delivery</em> with 1-hour emergency surge. FSC Chain of Custody, 60% local timber, &lt;5% material waste. Binding <strong>30% of net profit to charity</strong> (FY2024 S$48,200 across Singapore Hospice Council, SASCO, Metta Welfare). <strong>47 free caskets</strong> given FY2024 (31 social-worker referrals + 16 family applications). Tripartite triple-signatory + Progressive Wage Mark.</div>
+      </li>
+      <li class="exec-bullet">
+        <div class="exec-num"></div>
+        <div class="exec-body"><strong>Top three white-space niches.</strong> (1) <em>Anti-Package Consumer Education — "The S$600 Casket Receipt"</em> aimed at ~5,500 cost-conscious / anti-pressure households per year. (2) <em>Hospital Social-Worker Partnership</em> — free-casket discharge-fast pathway, 200–400 addressable cases/year as referrals compound. (3) <em>Eco / Pre-Arrangement for the FSC-Aware Senior Planner</em> — ~5,700 households of 55–75-year-olds who weight ESG in legacy planning.</div>
+      </li>
+      <li class="exec-bullet">
+        <div class="exec-num"></div>
+        <div class="exec-body"><strong>Design audit reality.</strong> Industry average <strong>6.3</strong> across six SG players on a 5-dimension rubric; Passage scores <strong>6.4</strong>, third behind <em>Ang Chin Moh (7.4)</em> and <em>1Last (7.0)</em>. Gap to leader is 1.0 point — almost entirely on visual brand distinctiveness and surfaced credibility proofs. The fix is to <em>surface what already exists</em>: 30% charity meter on the hero, free-casket counter, audited ESG/charity PDF.</div>
+      </li>
+      <li class="exec-bullet">
+        <div class="exec-num"></div>
+        <div class="exec-body"><strong>Five recommended actions.</strong> Surface the 30% charity meter on the homepage hero. Ship an audited FY2024 ESG/Charity PDF download. Build persona-led landing pages for the five ICPs. Live free-casket counter on the hero (47 FY2024). Hospital social-worker discharge-fast pilot with on-call coordinator paging.</div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ── SECTION 4 — MARKET & REGULATORY LANDSCAPE ── -->
+  <section class="report-page bleed-card" id="sec-market">
+    <div class="sec-num">Section 04</div>
+    <h2 class="sec-h2" id="market-regulatory">Market &amp; Regulatory Landscape</h2>
+    <p class="sec-lede">The Singapore casket market sized, framed, and gated by the regulatory pipeline that runs from the MOH death certificate to the Mandai cremation slot.</p>
+
+    <div class="kpi-strip" id="market-kpis"></div>
+    <div class="l-grid" id="market-anchors"></div>
+
+    <h3 style="font-family: var(--serif); font-size: 1.1rem; color: var(--primary); margin: 22px 0 10px;">Key trends shaping the buyer side</h3>
+    <ul class="l-list" id="market-trends"></ul>
+
+    <h3 style="font-family: var(--serif); font-size: 1.1rem; color: var(--primary); margin: 22px 0 10px;">Regulatory notes</h3>
+    <ul class="l-list" id="market-regs"></ul>
+
+    <h3 style="font-family: var(--serif); font-size: 1.1rem; color: var(--primary); margin: 22px 0 10px;">SEA context</h3>
+    <p id="market-sea" style="font-size: 0.9rem; color: var(--secondary); line-height: 1.7;"></p>
+  </section>
+
+  <!-- ── SECTION 5 — COMPETITIVE LANDSCAPE ── -->
+  <section class="report-page bleed-surface" id="sec-comp">
+    <div class="sec-num">Section 05</div>
+    <h2 class="sec-h2" id="competitive-landscape">Competitive Landscape</h2>
+    <p class="sec-lede">The high-threat rivals — drawn from <code>competitors.json</code>, filtered to <code>threat_level_to_passage === 'high'</code>. Casket-cost visibility, design and mobile scores, and the structural strengths and weaknesses each one brings.</p>
+    <div class="comp-list" id="comp-list"></div>
+  </section>
+
+  <!-- ── SECTION 6 — PRICING TIERS ── -->
+  <section class="report-page bleed-card" id="sec-pricing">
+    <div class="sec-num">Section 06</div>
+    <h2 class="sec-h2" id="pricing-tiers">Pricing Tiers — 2026 SG Reality</h2>
+    <p class="sec-lede">What buyers are actually quoted, by tier, by path. Hidden-in-package floors are inferred — funeral parlours do not publish casket-only prices, by design.</p>
+
+    <div class="pricing-wrap">
+      <table class="pricing">
+        <thead>
+          <tr>
+            <th style="min-width: 180px;">Product / Path</th>
+            <th>Hidden-in-Package</th>
+            <th>Mid-tier Transparent</th>
+            <th class="passage-col">Passage DTC</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Casket-only (just the casket, all-in)</th>
+            <td><span class="price">S$2,000 – S$4,000</span><span class="price-note">Buried inside package · never itemised</span></td>
+            <td><span class="price">Not sold separately</span><span class="price-note">Casket bundled into transparent full package</span></td>
+            <td class="passage-col"><span class="price">S$800 / S$1,000 / S$1,200</span><span class="price-note">Serene · Tranquil · Eternal — all-in incl. 3-hr delivery, GST</span></td>
+          </tr>
+          <tr>
+            <th>Wake package (typical bundle)</th>
+            <td><span class="price">S$8,000 – S$15,000</span><span class="price-note">3-day Buddhist / Taoist / Christian rites + venue + embalming + casket</span></td>
+            <td><span class="price">S$4,500 – S$9,000</span><span class="price-note">Itemised line items, casket clearly priced inside</span></td>
+            <td class="passage-col"><span class="price">Not offered</span><span class="price-note">Passage sells caskets only — families pair with their own director</span></td>
+          </tr>
+          <tr>
+            <th>Direct cremation (no wake)</th>
+            <td><span class="price">S$2,500 – S$4,500</span><span class="price-note">"No-frills" upsold from full package; casket markup persists</span></td>
+            <td><span class="price">S$1,500 – S$3,500</span><span class="price-note">Mandai slot + transport + simple casket, fully published</span></td>
+            <td class="passage-col"><span class="price">S$800 (Serene) + cremation fees</span><span class="price-note">Family books Mandai directly; Passage delivers casket island-wide</span></td>
+          </tr>
+          <tr>
+            <th>Eco / paper / Finoboard casket</th>
+            <td><span class="price">Generally not stocked</span><span class="price-note">Conflicts with parlour margin model</span></td>
+            <td><span class="price">S$600 – S$1,800</span><span class="price-note">The Eco Casket (Selangor), select SG specialists</span></td>
+            <td class="passage-col"><span class="price">S$800 (Serene, FSC pine)</span><span class="price-note">FSC-certified solid timber — locally assembled, sustainably sourced</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footnote">
+      <strong>Footnote on positioning.</strong> Passage's S$800–S$1,200 all-in band sits at the bottom of the <em>published</em> casket spectrum, not necessarily at the bottom of the <em>actual</em> price spectrum. Hidden-in-package floors are unknown — parlours never sell caskets separately, so we cannot rule out cheaper trade-cost caskets bundled into S$8K+ packages. <em>Industry estimates above are derived from Straits Times and CNA cost-of-dying coverage 2023–2025, MOH death-certificate records, and Mandai Crematorium scheduling data.</em>
+    </div>
+  </section>
+
+  <!-- ── SECTION 7 — WHITESPACE & ATTACK PLANS ── -->
+  <section class="report-page bleed-surface" id="sec-whitespace">
+    <div class="sec-num">Section 07</div>
+    <h2 class="sec-h2" id="whitespace-attack">White Space &amp; Attack Plans</h2>
+    <p class="sec-lede">Strategy canvas across 8 customer-valued dimensions. Passage's shape must break away on transparency, audited charity, free-casket programme, and grief-sensitive UX — dimensions package-based parlours and B2B wholesalers cannot structurally follow.</p>
+
+    <div class="canvas-wrap">
+      <canvas id="strategy-canvas" width="720" height="420"></canvas>
+      <div class="canvas-legend" id="canvas-legend"></div>
+    </div>
+
+    <h3 style="font-family: var(--serif); font-size: 1.1rem; color: var(--primary); margin: 24px 0 10px;">Top 5 white-space pairs (segment × need)</h3>
+    <p class="sec-lede" style="margin-bottom: 14px;">Lowest count of credible competitors (score ≥3) per segment×need cell. Passage's own score is 5/5 across all five.</p>
+    <div class="pairs-wrap">
+      <table class="pairs">
+        <thead><tr><th>#</th><th>Segment × Need</th><th style="text-align:center;">Competitors ≥3</th><th style="text-align:center;">Passage</th><th>Class</th></tr></thead>
+        <tbody id="pairs-tbody"></tbody>
+      </table>
+    </div>
+
+    <h3 style="font-family: var(--serif); font-size: 1.1rem; color: var(--primary); margin: 24px 0 14px;">Top 3 attack niches</h3>
+    <div class="attack-grid" id="attack-grid"></div>
+  </section>
+
+  <!-- ── SECTION 8 — DESIGN AUDIT ── -->
+  <section class="report-page bleed-card" id="sec-design">
+    <div class="sec-num">Section 08</div>
+    <h2 class="sec-h2" id="design-audit">Website Design Audit</h2>
+    <p class="sec-lede">Six funeral sites, scored on the same 5-dimension rubric — typography &amp; hierarchy, layout &amp; IA, visual brand distinctiveness, content credibility, mobile polish — including Passage. Honestly.</p>
+
+    <div class="kpi-strip" id="da-kpis"></div>
+    <div class="da-grid" id="da-grid"></div>
+
+    <div class="syn-card" id="da-syn"></div>
+  </section>
+
+  <!-- ── SECTION 9 — RECOMMENDATIONS ── -->
+  <section class="report-page bleed-surface" id="sec-recs">
+    <div class="sec-num">Section 09</div>
+    <h2 class="sec-h2" id="recommendations">Recommendations</h2>
+    <p class="sec-lede">Five deck-grounded action items. Each one connects a real Passage proof point already on the public site to the place a buyer is most likely to decide.</p>
+
+    <ol class="rec-list">
+      <li class="rec-item">
+        <div class="rec-num"></div>
+        <div>
+          <div class="rec-title">Surface the 30% charity meter on the homepage hero</div>
+          <div class="rec-body">Move the binding <em>30% net profit to charity</em> commitment and the <strong>FY2024 S$48,200 across Singapore Hospice Council, SASCO, Metta Welfare</strong> totals into the hero zone of <code>index.html</code> and into a persistent strip at the top of every product page. Today this lives only on <code>accreditation.html</code>; the buyer is not reading it where they decide.</div>
+        </div>
+      </li>
+      <li class="rec-item">
+        <div class="rec-num"></div>
+        <div>
+          <div class="rec-title">Ship an audited FY2024 ESG / Charity PDF download</div>
+          <div class="rec-body">Add a <em>"Download FY2024 ESG &amp; Charity Report (PDF)"</em> CTA in the accreditation page header and the product-card footer. Quote the binding constitution clause inside. Convert the 4.2 t CO₂e per-casket figure, 60% local timber, FSC Chain of Custody ID, and Tripartite signatures into a single defensible artefact a journalist or a procurement officer can email around.</div>
+        </div>
+      </li>
+      <li class="rec-item">
+        <div class="rec-num"></div>
+        <div>
+          <div class="rec-title">Persona-led landing pages for the five ICPs</div>
+          <div class="rec-body">Five distinct entry points: <strong>Cost-Conscious Bereaved</strong>, <strong>Anti-Pressure Consumer</strong>, <strong>Eco / Values Buyer</strong>, <strong>Pre-Arrangement Senior</strong>, <strong>Social-Worker Referral</strong>. Each with its own hero copy, its own CTA, and its own proof stack — the cost-conscious page leads with the S$2-4K markup comparison; the social-worker page leads with the FY2024 47-casket programme, the +65 9847 9776 helpline and an eligibility checklist.</div>
+        </div>
+      </li>
+      <li class="rec-item">
+        <div class="rec-num"></div>
+        <div>
+          <div class="rec-title">Live free-casket counter widget on the hero</div>
+          <div class="rec-body">A counter that reads <em>"47 free caskets given in FY2024 — and counting"</em> on the homepage hero, updating live as families are accepted into the programme. Pulls from the same data source the audited charity ledger uses, so the counter and the report cannot drift out of sync.</div>
+        </div>
+      </li>
+      <li class="rec-item">
+        <div class="rec-num"></div>
+        <div>
+          <div class="rec-title">Hospital social-worker pilot — discharge-fast pathway</div>
+          <div class="rec-body">Direct outreach to SGH / NUH / TTSH / KKH bereavement social workers, MOH-funded nursing-home discharge planners, AIC eldercare and Singapore Hospice Council member teams. <em>One number, one form, one dignified casket within hours.</em> Eligibility checklist printed and PDF, response-time SLA, on-call coordinator paging, surge fee waived for verified welfare-org partners. SASCO and Metta as charity-partner co-branded referral cards.</div>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ── SECTION 10 — METHODOLOGY & SOURCES ── -->
+  <section class="report-page bleed-card" id="sec-method">
+    <div class="sec-num">Section 10</div>
+    <h2 class="sec-h2" id="methodology">Methodology &amp; Sources</h2>
+    <p class="sec-lede">Where every number in this report came from, and the dates each dataset was last refreshed.</p>
+
+    <div class="meth-block">
+      <div class="lbl">Research date</div>
+      <p>All four data files refreshed <strong id="meth-date">2026-04-27</strong>. Report compiled <strong>2026-04-27</strong> for Q2 2026 distribution.</p>
+    </div>
+
+    <div class="meth-block">
+      <div class="lbl">Passage positioning</div>
+      <p>Mission, vision, product line, accreditation stack, FY2024 charity totals (S$48,200), free-casket count (47), governance signatories, and the 5-pillar trust strip are taken <em>verbatim</em> from <code>docs/SITE-INTEL.md</code>, which is itself sourced verbatim from the public pages of <code>derrick-pixel.github.io/Passage/</code> (<code>index.html</code>, <code>products.html</code>, <code>accreditation.html</code>, <code>knowledge.html</code>, <code>faq.html</code>).</p>
+    </div>
+
+    <div class="meth-block">
+      <div class="lbl">Competitor intelligence (<code>competitors.json</code> · <code>whitespace-competitors.json</code>)</div>
+      <p>Triangulated from public competitor websites (Singapore Casket, Ang Chin Moh, Trinity, Nam Shan, Casket Fairprice, Direct Funeral Services, 1Last, Embrace Life, Serenity, Funeral Solutions SG, plus DTC reference players Titan / Costco / Walmart, eco players The Eco Casket / Bamboo Eco / Ecoffins, JB wholesale Millennium / TSTee / Sinseeseng / Soon Teck, and SG craft Roger &amp; Sons / White Artz / Zhen Feng), Straits Times and CNA "cost of dying" coverage 2023–2025, MOH death-certificate records, NEA after-death cremation pricing, and customer review aggregation. Casket-cost markups inside parlour packages are <em>triangulated estimates from family testimonials and ST funeral-cost articles</em>, not directly published.</p>
+    </div>
+
+    <div class="meth-block">
+      <div class="lbl">White-space framework (<code>whitespace-framework.json</code>)</div>
+      <p>The 8-segment × 8-need matrix and the 8-dimension strategy canvas are derived from the Site Intel ICP list cross-referenced against the eight customer-valued dimensions Passage's deck claims as differentiators. The scoring rubric (segment fit × need fit, capped) is reproducible — see the <code>scoreCompetitor</code> function in <a href="whitespace.html">White Space Atlas</a>.</p>
+    </div>
+
+    <div class="meth-block">
+      <div class="lbl">Design audit (<code>design-audit.json</code>)</div>
+      <p>Live site review of six SG funeral category URLs against a 5-dimension rubric scored 1–10. Subjects: Singapore Casket Company, Ang Chin Moh Funeral Directors, Direct Funeral Services, 1Last, Casket Fairprice, plus Passage (self) — assessed honestly. Industry average 6.3, Passage 6.4. Each subject's URL, screenshot capture set, and dimension notes are stored in the JSON and mirrored on <a href="design-audit.html">Design Audit</a>.</p>
+    </div>
+
+    <div class="meth-block">
+      <div class="lbl">Companion artefacts</div>
+      <ul>
+        <li><a href="whitespace.html">White Space Atlas</a> — interactive 8×8 heatmap and attack niche cards</li>
+        <li><a href="competitor-analytics.html">Competitor Analytics</a> — full per-competitor card view with strengths and weaknesses</li>
+        <li><a href="insights.html">Market &amp; Pricing Insights</a> — pricing tier table, persona profiles, willingness-to-pay analysis, NBA scripts</li>
+        <li><a href="design-audit.html">Design Audit</a> — full subject cards, dimension-level notes, and to-reach-10 prescriptions</li>
+        <li><a href="../docs/SITE-INTEL.md">Site Intel</a> — canonical Passage positioning brief</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// ── Constants verbatim from whitespace.html ──
+const CANVAS_DIMS = [
+  'Casket-cost transparency',
+  'All-in published pricing',
+  '3-hour delivery surge',
+  'FSC + local SG assembly',
+  'Audited charity giving',
+  'Free-casket programme',
+  'Tripartite + PWM workforce',
+  'Grief-sensitive UX'
+];
+const CANVAS_LINES = [
+  { name: 'Passage',                                  us: true, color: '#725b3f', scores: [5, 5, 5, 5, 5, 5, 5, 5] },
+  { name: 'Singapore Casket',                                   color: '#8b2020', scores: [1, 1, 4, 1, 1, 1, 2, 2] },
+  { name: 'Ang Chin Moh',                                       color: '#b07020', scores: [1, 1, 4, 1, 1, 1, 2, 4] },
+  { name: 'Direct Funeral Services',                            color: '#2a5080', scores: [3, 3, 3, 1, 1, 1, 2, 3] },
+  { name: 'Trinity Casket',                                     color: '#5a3878', scores: [1, 1, 3, 1, 1, 1, 2, 3] },
+  { name: 'Wholesale-mfr-typical (e.g. Millennium JB)',         color: '#3a7a50', scores: [2, 1, 1, 1, 0, 0, 1, 1] },
+  { name: 'The Eco Casket',                                     color: '#557a3a', scores: [4, 4, 2, 4, 1, 1, 1, 3] },
+  { name: 'Direct Cremation Bypass (NEA)',                      color: '#596060', scores: [5, 5, 1, 0, 0, 1, 3, 2] },
+  { name: 'DIY family / community',                             color: '#7b7b74', scores: [3, 3, 1, 0, 0, 1, 1, 1] }
+];
+const SEGMENTS = [
+  { id: 'cost_conscious_bereaved',     label: 'Cost-conscious bereaved',      note: 'Refusing opaque package' },
+  { id: 'anti_pressure_consumer',      label: 'Anti-pressure consumer',       note: 'Refuses director markup' },
+  { id: 'eco_values_buyer',            label: 'Eco / values buyer',           note: 'FSC, local, EV delivery' },
+  { id: 'social_impact_buyer',         label: 'Social-impact buyer',          note: '30% charity, free-casket' },
+  { id: 'pre_arrangement_senior',      label: 'Pre-arrangement senior',       note: 'Locking fixed price' },
+  { id: 'comcare_referred',            label: 'ComCare / social-worker',      note: 'Free-casket pathway' },
+  { id: 'expat_cross_border',          label: 'Expat / repatriation',         note: 'Discreet casket-only' },
+  { id: 'hospital_eldercare_referral', label: 'Hospital / eldercare ref',     note: 'Discharge / nursing-home' }
+];
+const NEEDS = [
+  { id: 'transparent_published_price',     label: 'Transparent published price',     short: 'Transparent' },
+  { id: 'all_in_no_upsell',                label: 'All-in price, no upsell',         short: 'All-in' },
+  { id: 'speed_to_delivery',               label: '3hr / 2hr / 1hr delivery',        short: 'Speed' },
+  { id: 'fsc_sustainable_timber',          label: 'FSC sustainable timber',          short: 'FSC' },
+  { id: 'local_sg_assembly_pwm',           label: 'Local SG assembly + PWM',         short: 'PWM' },
+  { id: 'verified_charity_giving',         label: 'Audited charity giving',          short: 'Charity' },
+  { id: 'grief_sensitive_24_7_helpline',   label: 'Grief-sensitive 24/7 helpline',   short: 'Helpline' },
+  { id: 'free_casket_eligibility_pathway', label: 'Free-casket eligibility pathway', short: 'Free' }
+];
+
+const NICHES = [
+  {
+    rank: '01',
+    name: 'Anti-Package Consumer Education — "The S$600 Casket Receipt"',
+    icp: 'SG cost-conscious and anti-pressure bereaved families (35-65) who refuse the opaque S$8-15K parlour package. Want the casket itemised, transparent, and broken out of the bundle — and want a WhatsApp-shareable price strip to send to siblings within minutes.',
+    tam: '~24,000 SG deaths annually × ~65% who pass through embalmed/wake workflows × ~35% in the cost-conscious / anti-pressure cohort = ~5,500 households per year willing to procure casket separately when shown a transparent S$800-1,200 SKU.',
+    why_underserved: 'Every SG parlour bundles the casket inside the package and refuses to itemise. "Transparent" players (Direct Funeral Services, 1Last, Serenity) publish total package price but still hide the casket cost line. JB wholesalers sell at ~S$300-700 cost but B2B-only, no 3hr SLA, no helpline. No one reaches the bereaved family with a casket-only DTC narrative.',
+    why_we_win: '(1) Three published SKUs S$800/$1,000/$1,200 — the only casket-line itemised in SG. (2) WhatsApp-shareable price-comparison strip ("S$3,800 in their package vs S$1,000 from Passage = S$2,800 to family"). (3) 3-hour island-wide delivery + 1hr emergency surge means we match parlour speed. (4) FAQ + 24/7 helpline arm the family to push back on directors.',
+    gtm: {
+      pricing: 'S$800 Serene / S$1,000 Tranquil / S$1,200 Eternal — all-in incl. 3hr delivery, venue positioning, nameplate, GST. Surge +S$75 (2hr) / +S$150 (1hr).',
+      channel: 'Google Ads on "casket price Singapore" + "funeral package markup". WhatsApp-share consumer-rights strip seeded via SG sub-Reddits, Hardware Zone, parenting Facebook groups. ST/CNA "cost of dying" PR cycle.',
+      pitch: '"The casket alone costs S$600 to make. They quote S$3,800. We charge S$1,000 — and tell you why."',
+      content: '"How To Spot A Casket Markup In A Funeral Package" — email-gated PDF + 90-second WhatsApp-shareable explainer video.'
+    }
+  },
+  {
+    rank: '02',
+    name: 'Hospital Social-Worker Partnership — Free-Casket / Discharge-Fast Pathway',
+    icp: 'Hospital social workers, nursing-home discharge planners, and palliative-care teams placing post-mortem discharge calls for ComCare-eligible, no-NOK, or means-tested cases. They need a 1-3 hour casket answer with verified free-casket eligibility, not a parlour upsell.',
+    tam: 'Of ~24,000 SG deaths/year, ~8% (~1,900) require social-work intervention for ComCare / no-NOK / means-tested support. FY2024 Passage gave 47 free caskets via this exact pathway — addressable target is 200-400/year as referral relationships compound.',
+    why_underserved: 'Hospital and eldercare social workers currently route to incumbent parlours by habit. Parlours fold a "free casket" into pity-discount packages but charge for the rest. NEA direct cremation gives no dignity. Hospice Council, SASCO, and Metta refer but hold no casket inventory. There is no published, deck-grounded free-casket SLA + eligibility pathway sitting on a social-worker desk.',
+    why_we_win: '(1) Audited 30% net-profit-to-charity programme (FY2024 = S$48,200 to 3 named partners) creates a real, not marketing, free-casket budget. (2) FY2024 47-casket track record + 8 welfare-org partners is concrete proof. (3) 1-hour emergency delivery (+S$150, waived for verified eligible) lets a discharge desk close a case in one call. (4) Tripartite + PWM workforce signals a governance posture social workers can defend internally.',
+    gtm: {
+      pricing: 'Free casket for verified ComCare / no-NOK / social-worker-referred. Paid SKUs S$800-1,200 for cases above eligibility threshold. Surge fee waived for welfare-org partners.',
+      channel: 'Direct outreach to SGH / NUH / TTSH / KKH bereavement social workers, MOH-funded nursing-home discharge planners, AIC eldercare network, Singapore Hospice Council member teams. SASCO and Metta as charity-partner co-branded referral cards.',
+      pitch: '"One number, one form, one dignified casket — within hours. We funded 47 of them last year."',
+      content: '"Social-Worker Quick-Reference Card" — printed + PDF eligibility checklist, hotline +65 9847 9776, response-time SLAs.'
+    }
+  },
+  {
+    rank: '03',
+    name: 'Eco / Values-Driven Pre-Arrangement for the FSC-Aware Senior Planner',
+    icp: 'SG seniors and early-retirees (55-75) who care about FSC sustainability, local SG assembly, and audited charity giving. They want to lock in a fixed S$800-1,200 casket with transparent ESG credentials so their family is not negotiating with a parlour during grief.',
+    tam: '~380,000 SG residents aged 55-75 × ~5% who are actively pre-arrangement-curious × ~30% who weight ESG / sustainability in purchase decisions (SingStat + ESG-attitudes survey proxies) = ~5,700 households per year.',
+    why_underserved: 'Parlour pre-need contracts require in-person meetings, lock funds in opaque trusts, and provide zero ESG disclosure. The Eco Casket (Selangor) has the only biodegradable narrative but is cross-border with no SG SLA. 1Last / Embrace pre-need flows are full-package, not casket-only, and don\'t publish FSC chain-of-custody or carbon footprint per casket.',
+    why_we_win: '(1) FSC Chain of Custody Certification + 60% local timber + 4.2t CO2e per-casket carbon disclosure (FY2024 deck data) — no SG competitor publishes this depth. (2) Tripartite triple-signatory + PWM + 100% local workforce arms the senior planner with a defensible governance story. (3) Fixed S$800-1,200 published price means a senior locks the entire purchase in 10 minutes online without parlour pressure. (4) 30% net-profit-to-charity overlay aligns with the legacy-giving instinct of this cohort.',
+    gtm: {
+      pricing: '"Pre-Arrangement Lock-In" — pay S$199 deposit today, lock 2026 SKU price (S$800/$1,000/$1,200) for 10 years; balance paid by family at need. No escrow drama: published sinking-fund posture in audited accounts.',
+      channel: 'AIC eldercare partner network, SG silver-community Facebook groups, ActiveSG senior programmes, church / temple senior ministries (with charity-partner co-brand), financial-adviser referrals on legacy-giving conversations.',
+      pitch: '"Choose your casket while you\'re well. Lock the price. Free your family from the showroom."',
+      content: '"FSC, PWM, and 30%-to-Charity: A Plain-English ESG Brief for Singapore Seniors" — 8-page PDF + 30-min walkthrough webinar."'
+    }
+  }
+];
+
+// ── DOM helpers (textContent only for any data-driven injection) ──
+function clearNode(el) { while (el.firstChild) el.removeChild(el.firstChild); }
+function makeEl(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text != null) e.textContent = String(text);
+  return e;
+}
+
+// ── Scoring (mirror of whitespace.html scoreCompetitor / ourScore) ──
+function scoreCompetitor(c, segId, needId) {
+  const tm = (c.target_market || '').toLowerCase();
+  const vp = (c.primary_value_prop || '').toLowerCase();
+  const str = (c.strengths || []).join(' ').toLowerCase();
+  const cat = c.category || '';
+  const price = Number(c.package_price_sgd || 0);
+  const dig = Number(c.digital_tools_score || 0);
+  const flag = c.pricing_flag || '';
+  const hq = (c.hq || '').toLowerCase();
+  const bundle = (str + ' ' + vp + ' ' + tm).toLowerCase();
+
+  const segMap = {
+    cost_conscious_bereaved:     (/cost-conscious|budget|value|cheapest|low.?cost|heartland|lean budget/.test(bundle) ? 4 : (price && price <= 5000 ? 3 : 0)),
+    anti_pressure_consumer:      (/transparent|published|public price|aggregator|direct|no.?phone|online quote/.test(bundle) ? 4 : (flag === 'public' ? 3 : 0)),
+    eco_values_buyer:            (/eco|fsc|biodegradable|finoboard|sustainable|local timber|craft/.test(bundle) ? 5 : 0),
+    social_impact_buyer:         (/charity|donation|welfare|hospice|impact|free.?casket/.test(bundle) ? 5 : 0),
+    pre_arrangement_senior:      (/pre-?need|pre-?arrang|pre-?planning|senior|advance|living senior/.test(bundle) ? 4 : 0),
+    comcare_referred:            (/comcare|welfare|no.?nok|next.?of.?kin|social.?worker|hospice|means.?test/.test(bundle) ? 5 : 0),
+    expat_cross_border:          (/expat|repatriation|embassy|cross.?border|foreigner|international/.test(bundle) ? 5 : 0),
+    hospital_eldercare_referral: (/hospital|nursing|eldercare|discharge|palliative|social.?work/.test(bundle) ? 5 : 0)
+  };
+  const segScore = segMap[segId] || 0;
+
+  const needMap = {
+    transparent_published_price:     (flag === 'public' ? 5 : flag === 'partial' ? 3 : 0),
+    all_in_no_upsell:                (flag === 'public' && /package|bundle|all-in|menu|tiered|flat/.test(bundle) ? 4 : flag === 'public' ? 3 : flag === 'partial' ? 2 : 0),
+    speed_to_delivery:               (/3.?hour|same day|24 hour|surge|express|emergency|rapid|immediate|urgent|first-touch/.test(bundle) ? 4 : (cat === 'sg_traditional_parlour' ? 3 : 1)),
+    fsc_sustainable_timber:          (/fsc|biodegradable|finoboard|sustainable|eco|local timber|craft.?furniture/.test(bundle) ? 5 : 0),
+    local_sg_assembly_pwm:           (/sg.?based|singapore|local|pwm|tripartite|atelier|local workforce/.test(bundle) && hq.includes('singapore') ? 4 : 0),
+    verified_charity_giving:         (/charity|donation|welfare|hospice|impact|metta|sasco/.test(bundle) ? 4 : 0),
+    grief_sensitive_24_7_helpline:   (/24.?hour|helpline|hotline|whatsapp|bereavement|grief|counsel|judgment/.test(bundle) ? 4 : (dig >= 4 ? 2 : 1)),
+    free_casket_eligibility_pathway: (/free.?casket|comcare|no.?nok|welfare|hospice|social.?worker|charity-funded|means.?test/.test(bundle) ? 5 : 0)
+  };
+  const needScore = needMap[needId] || 0;
+  return Math.min(segScore, needScore);
+}
+
+function ourScore(segId, needId) {
+  const s = { cost_conscious_bereaved:5, anti_pressure_consumer:5, eco_values_buyer:5, social_impact_buyer:5, pre_arrangement_senior:4, comcare_referred:5, expat_cross_border:4, hospital_eldercare_referral:4 }[segId] || 4;
+  const n = { transparent_published_price:5, all_in_no_upsell:5, speed_to_delivery:5, fsc_sustainable_timber:5, local_sg_assembly_pwm:5, verified_charity_giving:5, grief_sensitive_24_7_helpline:5, free_casket_eligibility_pathway:5 }[needId] || 4;
+  return Math.min(s, n);
+}
+
+// ── Renderers ──
+function renderTOC() {
+  const list = document.getElementById('toc-list');
+  clearNode(list);
+  const headings = document.querySelectorAll('main#report-doc h2.sec-h2[id]');
+  headings.forEach((h, i) => {
+    const li = makeEl('li', 'toc-item');
+    li.appendChild(makeEl('div', 'toc-num'));
+    const linkWrap = makeEl('div');
+    const a = makeEl('a', 'toc-link', h.textContent);
+    a.href = '#' + h.id;
+    linkWrap.appendChild(a);
+    li.appendChild(linkWrap);
+    li.appendChild(makeEl('div', 'toc-page', '§' + String(i + 2).padStart(2, '0')));
+    list.appendChild(li);
+  });
+}
+
+function renderMarket(landscape) {
+  const kpis = document.getElementById('market-kpis');
+  clearNode(kpis);
+  const kArr = [
+    { v: landscape.annualSGDeaths || '—', l: 'Annual SG Deaths', cls: 'gold' },
+    { v: landscape.wakeEmbalmedShare || '—', l: 'Wake + Embalmed', cls: 'amber' },
+    { v: landscape.directCremationShare || '—', l: 'Direct Cremation', cls: 'green' },
+    { v: landscape.typicalCasketHiddenCostRange || '—', l: 'Hidden Casket Cost', cls: 'red' },
+    { v: landscape.passageTransparentRange || '—', l: 'Passage Transparent', cls: 'gold' }
+  ];
+  kArr.forEach(k => {
+    const card = makeEl('div', 'kpi on-card');
+    card.appendChild(makeEl('div', 'kpi-val ' + k.cls, k.v));
+    card.appendChild(makeEl('div', 'kpi-lbl', k.l));
+    kpis.appendChild(card);
+  });
+
+  const anchors = document.getElementById('market-anchors');
+  clearNode(anchors);
+  const aArr = [
+    { lbl: 'Market size', val: landscape.marketSize },
+    { lbl: 'Growth rate', val: landscape.growthRate }
+  ];
+  aArr.forEach(a => {
+    if (!a.val) return;
+    const card = makeEl('div', 'l-card on-card');
+    card.appendChild(makeEl('div', 'lbl', a.lbl));
+    card.appendChild(makeEl('div', 'val', a.val));
+    anchors.appendChild(card);
+  });
+
+  const trends = document.getElementById('market-trends');
+  clearNode(trends);
+  (landscape.keyTrends || []).forEach(t => trends.appendChild(makeEl('li', null, t)));
+
+  const regs = document.getElementById('market-regs');
+  clearNode(regs);
+  (landscape.regulatoryNotes || []).forEach(r => regs.appendChild(makeEl('li', null, r)));
+
+  const sea = document.getElementById('market-sea');
+  sea.textContent = landscape.seaContext || '';
+}
+
+function renderCompetitors(competitors) {
+  const list = document.getElementById('comp-list');
+  clearNode(list);
+  const top = competitors.filter(c => c.threat_level_to_passage === 'high');
+  if (!top.length) {
+    list.appendChild(makeEl('div', 'err-msg', 'No high-threat competitors found in competitors.json.'));
+    return;
+  }
+  top.forEach(c => {
+    const card = makeEl('div', 'comp-card on-card');
+    const head = makeEl('div', 'comp-head');
+    const left = makeEl('div');
+    left.appendChild(makeEl('div', 'comp-name', c.name));
+    if (c.url && c.url !== 'n/a') {
+      const u = makeEl('a', 'comp-url', c.url);
+      u.href = c.url;
+      u.target = '_blank';
+      u.rel = 'noopener';
+      left.appendChild(u);
+    }
+    head.appendChild(left);
+    const badges = makeEl('div', 'comp-badges');
+    const visMap = { hidden_in_package: 'b-vis-hidden', partial_published: 'b-vis-partial', fully_published: 'b-vis-full', not_applicable: 'b-vis-na' };
+    const visClass = visMap[c.casket_price_visibility] || 'b-vis-na';
+    const visLabel = (c.casket_price_visibility || '—').replace(/_/g, ' ');
+    badges.appendChild(makeEl('span', 'badge ' + visClass, visLabel));
+    badges.appendChild(makeEl('span', 'badge b-threat-' + (c.threat_level_to_passage || 'low'), 'Threat: ' + (c.threat_level_to_passage || '—')));
+    head.appendChild(badges);
+    card.appendChild(head);
+
+    if (c.estimated_casket_markup_sgd) {
+      const mk = makeEl('div', null, c.estimated_casket_markup_sgd);
+      mk.style.fontSize = '0.84rem';
+      mk.style.color = 'var(--gold)';
+      mk.style.fontFamily = 'ui-monospace, monospace';
+      mk.style.marginBottom = '8px';
+      card.appendChild(mk);
+    }
+
+    const bars = makeEl('div', 'comp-bars');
+    [['Design', c.designScore], ['Mobile', c.mobileScore]].forEach(pair => {
+      if (pair[1] == null) return;
+      const row = makeEl('div', 'bar-row');
+      row.appendChild(makeEl('span', 'lbl', pair[0]));
+      const bar = makeEl('div', 'bar');
+      const fill = makeEl('div', 'fill');
+      const pct = Math.max(0, Math.min(10, Number(pair[1]))) * 10;
+      fill.style.width = pct + '%';
+      bar.appendChild(fill);
+      row.appendChild(bar);
+      row.appendChild(makeEl('span', 'val', pair[1] + '/10'));
+      bars.appendChild(row);
+    });
+    card.appendChild(bars);
+
+    const sw = makeEl('div', 'comp-sw');
+    [['strengths', c.strengths || []], ['weaknesses', c.weaknesses || []]].forEach(pair => {
+      const col = makeEl('div', 'col ' + pair[0]);
+      col.appendChild(makeEl('h5', null, pair[0].charAt(0).toUpperCase() + pair[0].slice(1)));
+      const ul = makeEl('ul');
+      pair[1].slice(0, 4).forEach(item => ul.appendChild(makeEl('li', null, item)));
+      col.appendChild(ul);
+      sw.appendChild(col);
+    });
+    card.appendChild(sw);
+    list.appendChild(card);
+  });
+}
+
+function renderStrategyCanvas() {
+  const ctx = document.getElementById('strategy-canvas').getContext('2d');
+  const datasets = CANVAS_LINES.map(l => ({
+    label: l.name, data: l.scores,
+    backgroundColor: l.us ? 'rgba(114,91,63,0.18)' : 'transparent',
+    borderColor: l.color, borderWidth: l.us ? 3 : 1.5,
+    pointRadius: l.us ? 4 : 2.5, pointBackgroundColor: l.color, tension: 0.15
+  }));
+  new Chart(ctx, {
+    type: 'radar',
+    data: { labels: CANVAS_DIMS, datasets },
+    options: {
+      animation: false,
+      scales: { r: {
+        suggestedMin: 0, suggestedMax: 5,
+        ticks: { stepSize: 1, backdropColor: 'rgba(0,0,0,0)', color: '#7b7b74', font: { size: 10 } },
+        grid: { color: 'rgba(50,51,45,0.08)' },
+        angleLines: { color: 'rgba(50,51,45,0.1)' },
+        pointLabels: { color: '#32332d', font: { family: 'Georgia, serif', size: 11, weight: 600 } }
+      } },
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: x => x.dataset.label + ': ' + x.raw } } },
+      responsive: true, maintainAspectRatio: false
+    }
+  });
+  const leg = document.getElementById('canvas-legend');
+  clearNode(leg);
+  CANVAS_LINES.forEach(l => {
+    const row = makeEl('div', 'leg');
+    const sw = makeEl('span', 'sw');
+    sw.style.background = l.color;
+    if (l.us) sw.style.boxShadow = '0 0 10px ' + l.color;
+    const n = makeEl('span', null, l.name);
+    if (l.us) n.classList.add('us');
+    row.appendChild(sw);
+    row.appendChild(n);
+    leg.appendChild(row);
+  });
+}
+
+function renderTopPairs(competitors) {
+  const tbody = document.getElementById('pairs-tbody');
+  clearNode(tbody);
+  const cells = [];
+  SEGMENTS.forEach(s => NEEDS.forEach(n => {
+    const count = competitors.reduce((acc, c) => acc + (scoreCompetitor(c, s.id, n.id) >= 3 ? 1 : 0), 0);
+    cells.push({ seg: s, need: n, count, us: ourScore(s.id, n.id) });
+  }));
+  cells.sort((a, b) => a.count - b.count || b.us - a.us);
+  cells.slice(0, 5).forEach((c, i) => {
+    const tr = makeEl('tr');
+    tr.appendChild(makeEl('td', 'pair-rank', String(i + 1).padStart(2, '0')));
+    tr.appendChild(makeEl('td', 'pair-pair', c.seg.label + ' × ' + c.need.label));
+    tr.appendChild(makeEl('td', 'pair-count', String(c.count)));
+    tr.appendChild(makeEl('td', 'pair-us', c.us + '/5'));
+    const tdT = makeEl('td');
+    const cls = c.count <= 1 ? 'green' : 'amber';
+    tdT.appendChild(makeEl('span', 'pair-tag ' + cls, c.count <= 1 ? 'White space' : 'Contested'));
+    tr.appendChild(tdT);
+    tbody.appendChild(tr);
+  });
+}
+
+function renderNiches() {
+  const host = document.getElementById('attack-grid');
+  clearNode(host);
+  NICHES.forEach(n => {
+    const c = makeEl('div', 'niche on-card');
+    c.appendChild(makeEl('div', 'niche-rank', 'Niche ' + n.rank));
+    c.appendChild(makeEl('div', 'niche-name', n.name));
+    c.appendChild(makeEl('div', 'niche-icp', n.icp));
+    [['TAM', n.tam], ['Why gap', n.why_underserved], ['Our win', n.why_we_win],
+     ['Pricing', n.gtm.pricing], ['Channel', n.gtm.channel], ['Pitch', n.gtm.pitch], ['Content', n.gtm.content]]
+    .forEach(pair => {
+      const row = makeEl('div', 'niche-row');
+      row.appendChild(makeEl('div', 'k', pair[0]));
+      row.appendChild(makeEl('div', 'v', pair[1]));
+      c.appendChild(row);
+    });
+    host.appendChild(c);
+  });
+}
+
+function renderDesignAudit(audit) {
+  const subjects = audit.subjects || [];
+  const synth = audit.synthesis || {};
+  const passage = subjects.find(s => s.is_self) || {};
+  const sortedNonSelf = subjects.filter(s => !s.is_self).sort((a, b) => b.overall_score - a.overall_score);
+  const leader = sortedNonSelf[0] || {};
+  const ranked = subjects.slice().sort((a, b) => b.overall_score - a.overall_score);
+  const passageRank = ranked.findIndex(s => s.is_self) + 1;
+  const gap = leader.overall_score && passage.overall_score ? Math.max(0, leader.overall_score - passage.overall_score).toFixed(1) : '—';
+
+  const kpis = document.getElementById('da-kpis');
+  clearNode(kpis);
+  const kArr = [
+    { v: (synth.industry_average != null ? synth.industry_average.toFixed(1) : '—'), l: 'Industry Average', cls: 'gold' },
+    { v: (passage.overall_score != null ? passage.overall_score.toFixed(1) : '—'), l: 'Passage Score', cls: '' },
+    { v: passageRank ? String(passageRank) + ' of ' + subjects.length : '—', l: 'Passage Rank', cls: 'amber' },
+    { v: gap, l: 'Gap to Leader', cls: 'red' }
+  ];
+  kArr.forEach(k => {
+    const card = makeEl('div', 'kpi');
+    card.appendChild(makeEl('div', 'kpi-val ' + k.cls, k.v));
+    card.appendChild(makeEl('div', 'kpi-lbl', k.l));
+    kpis.appendChild(card);
+  });
+
+  const grid = document.getElementById('da-grid');
+  clearNode(grid);
+  const orderedSubjects = subjects.slice().sort((a, b) => {
+    if (a.is_self) return -1;
+    if (b.is_self) return 1;
+    return b.overall_score - a.overall_score;
+  });
+  orderedSubjects.forEach(s => {
+    const card = makeEl('div', 'da-card' + (s.is_self ? ' self' : ''));
+    const head = makeEl('div', 'da-head');
+    const nameWrap = makeEl('div');
+    const nm = makeEl('span', 'da-name', s.name);
+    if (s.is_self) {
+      nm.appendChild(makeEl('span', 'self-tag', 'Self'));
+    }
+    nameWrap.appendChild(nm);
+    head.appendChild(nameWrap);
+    const ov = makeEl('div', 'da-overall', s.overall_score != null ? s.overall_score.toFixed(1) : '—');
+    ov.appendChild(makeEl('span', 'max', '/10'));
+    head.appendChild(ov);
+    card.appendChild(head);
+
+    const bars = makeEl('div', 'da-bars');
+    (audit.rubric || []).forEach(r => {
+      const dim = (s.scores || {})[r.id];
+      if (!dim) return;
+      const row = makeEl('div', 'da-bar-row');
+      row.appendChild(makeEl('span', 'lbl', r.label));
+      const bar = makeEl('div', 'da-bar');
+      const fill = makeEl('div', 'fill');
+      fill.style.width = (Math.max(0, Math.min(10, dim.score)) * 10) + '%';
+      bar.appendChild(fill);
+      row.appendChild(bar);
+      row.appendChild(makeEl('span', 'val', String(dim.score)));
+      bars.appendChild(row);
+    });
+    card.appendChild(bars);
+
+    if (s.verdict) card.appendChild(makeEl('div', 'da-verdict', s.verdict));
+    grid.appendChild(card);
+  });
+
+  const syn = document.getElementById('da-syn');
+  clearNode(syn);
+  syn.appendChild(makeEl('h3', null, 'Synthesis — easy wins and 10× aspirations'));
+  if (synth.passage_position) {
+    const pos = makeEl('p', null, synth.passage_position);
+    pos.style.fontSize = '0.88rem';
+    pos.style.color = 'var(--secondary)';
+    pos.style.lineHeight = '1.65';
+    pos.style.marginBottom = '14px';
+    syn.appendChild(pos);
+  }
+  const blocks = [
+    { lbl: 'Easy wins for Passage', items: synth.easy_wins_for_passage || [] },
+    { lbl: '10× aspirations', items: synth.ten_x_aspirations || [] }
+  ];
+  blocks.forEach(b => {
+    if (!b.items.length) return;
+    const block = makeEl('div', 'syn-block');
+    block.appendChild(makeEl('div', 'lbl', b.lbl));
+    const ul = makeEl('ul');
+    b.items.forEach(it => ul.appendChild(makeEl('li', null, it)));
+    block.appendChild(ul);
+    syn.appendChild(block);
+  });
+}
+
+// ── Data loading ──
+async function loadAll() {
+  try {
+    const [compRes, wsCompRes, daRes] = await Promise.all([
+      fetch('../data/competitors.json'),
+      fetch('../data/whitespace-competitors.json'),
+      fetch('../data/design-audit.json')
+    ]);
+    if (!compRes.ok) throw new Error('competitors.json HTTP ' + compRes.status);
+    if (!wsCompRes.ok) throw new Error('whitespace-competitors.json HTTP ' + wsCompRes.status);
+    if (!daRes.ok) throw new Error('design-audit.json HTTP ' + daRes.status);
+
+    const competitors = await compRes.json();
+    const wsCompetitors = await wsCompRes.json();
+    const designAudit = await daRes.json();
+
+    const stamp = competitors.research_date || wsCompetitors.research_date || designAudit.research_date || '2026-04-27';
+    document.getElementById('cover-date').textContent = stamp;
+    document.getElementById('meth-date').textContent = stamp;
+
+    renderTOC();
+    renderMarket(competitors.landscape || {});
+    renderCompetitors(competitors.competitors || []);
+    renderStrategyCanvas();
+    renderTopPairs(wsCompetitors.competitors || []);
+    renderNiches();
+    renderDesignAudit(designAudit);
+  } catch (e) {
+    const main = document.getElementById('report-doc');
+    const err = makeEl('div', 'err-msg', 'Data load failed: ' + e.message + ' — confirm /data/*.json files exist.');
+    err.style.margin = '24px';
+    main.insertBefore(err, main.firstChild);
+  }
+}
+
+// ── PDF download ──
+async function downloadPdf() {
+  const btn = document.getElementById('pdf-dl-btn');
+  if (!btn) return;
+  if (typeof window.html2canvas !== 'function' || typeof window.jspdf === 'undefined') {
+    alert('PDF libraries failed to load. Check network / CSP and refresh.');
+    return;
+  }
+  const origText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Rendering…';
+  try {
+    const target = document.getElementById('report-doc');
+    const canvas = await window.html2canvas(target, {
+      scale: 1.0,
+      backgroundColor: '#fcf9f5',
+      useCORS: true,
+      logging: false,
+      windowWidth: target.scrollWidth,
+      windowHeight: target.scrollHeight
+    });
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+    const imgW = pageW;
+    const imgH = canvas.height * (imgW / canvas.width);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.62);
+
+    if (imgH <= pageH) {
+      pdf.addImage(dataUrl, 'JPEG', 0, 0, imgW, imgH, undefined, 'FAST');
+    } else {
+      let remaining = imgH;
+      let position = 0;
+      while (remaining > 0) {
+        pdf.addImage(dataUrl, 'JPEG', 0, position, imgW, imgH, undefined, 'FAST');
+        remaining -= pageH;
+        if (remaining > 0) {
+          position -= pageH;
+          pdf.addPage();
+          pdf.setFillColor(252, 249, 245);
+          pdf.rect(0, 0, pageW, pageH, 'F');
+        }
+      }
+    }
+    pdf.save('passage-casket-market-intelligence-q2-2026.pdf');
+  } catch (err) {
+    alert('PDF render failed: ' + (err && err.message ? err.message : err));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '⬇ Download PDF';
+  }
+}
+
+document.getElementById('pdf-dl-btn').addEventListener('click', downloadPdf);
+loadAll();
+</script>
+
+</body>
+</html>

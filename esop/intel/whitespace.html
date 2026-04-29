@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Whitespace Atlas — Elitez ESOP Intel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <script src="assets/vendor/chart.umd.js"></script>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body class="admin-page">
+  <nav class="elitez-nav">
+    <a href="../index.html" class="brand">
+      <span>Elitez ESOP</span>
+      <span class="badge">Market Intel</span>
+    </a>
+    <div class="links">
+      <a href="../scheme.html">Scheme</a>
+      <a href="../portal.html">Portal</a>
+      <a href="../committee.html">Committee</a>
+      <a href="../trading.html">Trading</a>
+      <a href="index.html" class="active">Intel</a>
+    </div>
+  </nav>
+
+  <nav class="intel-nav">
+    <a href="index.html">Competitors</a>
+    <a href="insights.html">Market &amp; Pricing</a>
+    <a href="whitespace.html" class="active">Whitespace</a>
+    <a href="design-audit.html">Design Audit</a>
+    <a href="report.html">Report</a>
+  </nav>
+
+  <main class="container-wide">
+    <span class="eyebrow">Artefact 06</span>
+    <h1>Whitespace Atlas</h1>
+
+    <section style="padding: 16px 0 32px;">
+      <div class="radar-container">
+        <span class="artefact-label">Strategy canvas</span>
+        <h2>Eight axes vs. 42 competitors</h2>
+        <p class="radar-thesis" id="thesis"></p>
+        <div style="height: 540px; min-width: 0;"><canvas id="radar-canvas" aria-label="Radar chart of strategic dimensions versus competitors"></canvas></div>
+      </div>
+    </section>
+
+    <section style="padding: 16px 0 32px;">
+      <span class="artefact-label">Heatmap</span>
+      <h2 id="heatmap-title">Segment × Need</h2>
+      <p style="max-width: 820px; color: var(--ink-soft); font-size: 0.9rem; line-height: 1.55;">
+        Each cell shows two numbers: count of competitors genuinely serving that pair (score ≥ 3), and Elitez's own capability score (out of 5). Click any cell for the pair-specific competitor breakdown.
+      </p>
+      <div class="heatmap-wrap"><div id="heatmap"></div></div>
+      <div class="legend">
+        <span><span class="legend-swatch" style="background: var(--band-green-bg); border: 1px solid var(--band-green);"></span>Green ≤ 1 — whitespace, attack</span>
+        <span><span class="legend-swatch" style="background: var(--band-amber-bg); border: 1px solid var(--band-amber);"></span>Amber 2-3 — contested</span>
+        <span><span class="legend-swatch" style="background: var(--band-red-bg); border: 1px solid var(--band-red);"></span>Red ≥ 4 — crowded</span>
+      </div>
+      <div id="cell-detail" class="cell-detail" style="display: none;"></div>
+    </section>
+
+    <section style="padding: 16px 0 56px;">
+      <span class="artefact-label">Attack plans · Top 3</span>
+      <h2>Where Elitez ESOP attacks first</h2>
+      <p style="max-width: 760px; color: var(--ink-soft); font-size: 0.9rem; line-height: 1.55;">Ranked by win probability × addressable size. Each plan binds to a green or low-amber cell on the heatmap above.</p>
+      <div id="attack-plans" class="attack-grid" style="margin-top: 18px;"></div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { loadAppData, mountSampleBanner, mountUnstyledBanner } from './assets/js/app.js';
+    import { renderRadar } from './assets/js/viz/radar.js';
+    import { renderHeatmap, renderCellDetail } from './assets/js/viz/heatmap.js';
+    import { fmtSGD } from './assets/js/format.js';
+    import { h, mount } from './assets/js/dom.js';
+
+    const data = await loadAppData();
+    mountSampleBanner();
+    mountUnstyledBanner();
+
+    const ws = data.whitespace;
+    document.getElementById('thesis').textContent = ws.strategy_canvas.headline_thesis;
+
+    const top5Ids = data.competitors.top_five.map(t => t.competitor_id);
+    renderRadar({
+      canvas: document.getElementById('radar-canvas'),
+      dimensions: ws.strategy_canvas.dimensions,
+      scores: ws.strategy_canvas.scores,
+      focusedIds: top5Ids
+    });
+
+    document.getElementById('heatmap-title').textContent =
+      `Segment × Need — ${ws.heatmap.segments.length} × ${ws.heatmap.needs.length}`;
+
+    const panel = document.getElementById('cell-detail');
+    renderHeatmap({
+      container: document.getElementById('heatmap'),
+      segments: ws.heatmap.segments,
+      needs: ws.heatmap.needs,
+      cells: ws.heatmap.cells,
+      onCellClick: detail => {
+        panel.style.display = 'block';
+        renderCellDetail(panel, detail);
+        panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+
+    // Attack-plan cards (the elitez-events left-rail pattern)
+    const pad2 = n => String(n).padStart(2, '0');
+    const niche = p => h('div', { class: 'niche' },
+      h('div', { class: 'niche-rail' },
+        h('div', {},
+          h('div', { class: 'niche-rank-tag' }, 'Attack plan'),
+          h('div', { class: 'niche-rank-num' }, h('span', {}, '#'), pad2(p.rank))
+        ),
+        h('div', { class: 'niche-tam-block' },
+          h('div', { class: 'niche-tam-label' }, 'Addressable TAM'),
+          h('div', { class: 'niche-tam-value' }, fmtSGD(p.tam_estimate_sgd)),
+          h('div', { class: 'niche-tam-suffix' }, 'annual / SG')
+        )
+      ),
+      h('div', { class: 'niche-body' },
+        h('h3', { class: 'niche-name' }, p.niche_name),
+        h('div', { class: 'niche-icp' },
+          h('div', { class: 'label' }, 'ICP'),
+          h('div', { class: 'text' }, p.icp)
+        ),
+        h('div', { class: 'niche-strategy' },
+          h('div', { class: 'niche-strat-card gap' },
+            h('div', { class: 'head' }, h('span', { class: 'glyph' }, '!'), 'Why the gap exists'),
+            h('div', { class: 'body' }, p.why_gap)
+          ),
+          h('div', { class: 'niche-strat-card win' },
+            h('div', { class: 'head' }, h('span', { class: 'glyph' }, '✓'), 'Why we win'),
+            h('div', { class: 'body' }, p.why_we_win)
+          )
+        ),
+        h('div', { class: 'niche-tam-logic' },
+          h('strong', {}, 'TAM derivation'), p.tam_reasoning
+        ),
+        h('div', { class: 'niche-gtm' },
+          h('div', { class: 'niche-gtm-title' }, 'Go-to-market plays'),
+          h('div', { class: 'niche-gtm-rows' },
+            ...[
+              ['Pricing', p.gtm.pricing, 'pricing'],
+              ['Channel', p.gtm.channel, ''],
+              ['Pitch',   p.gtm.pitch, ''],
+              ['Content', p.gtm.content, '']
+            ].map(([k, v, mod]) =>
+              h('div', { class: 'niche-gtm-row ' + mod },
+                h('div', { class: 'k' }, k),
+                h('div', { class: 'v' }, v)
+              )
+            )
+          )
+        )
+      )
+    );
+
+    mount(document.getElementById('attack-plans'), ...ws.attack_plans.map(niche));
+  </script>
+</body>
+</html>

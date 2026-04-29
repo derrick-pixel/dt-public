@@ -20,13 +20,14 @@ This agent is cross-cutting rather than sequential — it does not produce new d
 
 ## Visualisation inventory (reference)
 
-The template ships five visualisations. Every file below is the canonical source; do not fork a chart into a page-local script.
+The template ships six visualisations. Every file below is the canonical source; do not fork a chart into a page-local script.
 
 - **Radar** — `template/assets/js/viz/radar.js` (Chart.js radar controller).
 - **Heatmap** — `template/assets/js/viz/heatmap.js` (HTML + CSS grid, **not** Chart.js — the grid cells need to be DOM clickable with per-cell detail panels, which Chart.js canvases cannot do cleanly).
 - **Price bars** — `template/assets/js/viz/price-bars.js` (Chart.js horizontal bar controller).
 - **Donut** — `template/assets/js/viz/donut.js` (Chart.js doughnut controller).
 - **Search + filter** — `template/assets/js/viz/search.js` (vanilla JS predicate + debounced input).
+- **Market sizing funnel** — `template/assets/js/viz/market-funnel.js` (HTML + CSS, no Chart.js — three stage blocks plus arrow connectors, plus an implications grid and a `<details>` appendix).
 
 Every viz exports two shapes: a pure helper for logic (tested under `_tests/`) and a render function that accepts a DOM container plus the relevant JSON slice. Render functions never fetch data themselves; the admin page wires the JSON through.
 
@@ -81,6 +82,26 @@ If `detail` is `null` (deselection), the panel clears but keeps its slot in the 
 
 **What the panel does not do.** It does not re-score, re-rank, or re-write specialisations. It is a dumb renderer over Agent 4's output. If the panel looks wrong, the fix is in Agent 4's JSON, not in `panel.js`.
 
+## Market sizing funnel contract (strict)
+
+The funnel is the canonical render for `market-intelligence.json` `market_size.derivation_flow`. It replaced the legacy "wall-of-text reasoning + wall-of-text implication" rendering that Agent 6 used to produce. Strict rules, because Agent 2 writes the structured shape against this contract:
+
+- **Three stage blocks** in fixed order: TAM → SAM → SOM. Each block reads its slice from `derivation_flow.tam`, `derivation_flow.sam`, `derivation_flow.som` respectively. If any stage is missing in the JSON, render an inline error block — do not silently skip.
+- **Arrow connectors** between adjacent stage blocks. Each arrow carries an optional filter-tag label sourced from the *receiving* stage's first `filters[]` entry (or a default label `"Reach filter"` for TAM→SAM and `"Capture filter"` for SAM→SOM).
+- **Stage block layout** — head row (stage_label + subtitle on the left, big result_label on the right), optional `filters[]` chip row, stacks grid (`repeat(auto-fit, minmax(280px, 1fr))`), total bar (total_equation ≈ result_label).
+- **Stack card layout** — name + result_label on the head, source line in italic, inputs as label/value chips, equation in a code-styled monospace block.
+- **Banding by stage** — stage block CSS receives a modifier class (`tam`, `sam`, `som`) that paints the top border, the stage-label colour, the result-label colour, and the equation chip background. Do not theme stage blocks any other way; the modifier class is the contract.
+- **Implications row** — `derivation_flow` is followed by an `implications[]` grid: one card per item, with the headline in display font and the body underneath. Cards render in input order; do not sort.
+- **Methodology appendix** — `methodology_appendix` renders inside a `<details>` element, summary text `"Methodology & full derivation"`, collapsed by default. The verbatim prose lives inside the panel as a single `<p>`.
+- **Sources line** — render `sources[]` as a comma-separated list of underlined `<a>` links beneath the appendix.
+- **Legacy fallback** — if `derivation_flow` is absent but `reasoning` is present, fall back to a single `<p>` rendering of `reasoning`. If `implications[]` is absent but `implication_for_us` is present, render that as a single `<p>` with a `What this means:` lead. The fallback paths exist only for projects that have not yet migrated; new projects must populate the structured shape.
+
+`buildFunnelData(market_size)` is the pure helper. It takes `market_size` and returns a normalised object with `stages[]`, `implications[]`, `appendix`, `sources[]`, and `legacy_mode: boolean`. The render function consumes this normalised shape so there is exactly one path that handles fallback logic.
+
+**Worked example.** Input `market_size.derivation_flow.tam.stacks[]` has 4 entries (AU, HK, SG, APAC-shoulder), each with `inputs: [{label: "Beds", value: "..."}, {label: "ARPU", value: "..."}]` and `equation: "<beds> × <arpu> × 12"`. The TAM stage block paints with the `tam` modifier (gold top border on Passage, brand-primary on XinceAI), shows four stack cards in a grid, and totals at the bottom with the equation `"228 + 41 + 16 + 84"` ≈ `"A$528M"`. The SAM block follows with `filters[]` rendered as three chips above its stacks. Arrow between TAM and SAM carries the label `"> 60-bed scale"` (the first SAM filter).
+
+**Why HTML + CSS grid, not Chart.js.** The funnel's value comes from per-cell text density (per-stack inputs as label/value chips, equation strings in monospace, source citations in italic). A Chart.js render would lose all that — funnels in Chart.js are pure rectangles with a single label per slice. The funnel is read top-to-bottom by reviewers checking arithmetic; that is a DOM/text task, not a canvas/graphics task.
+
 ## Search contract
 
 Used on the competitor database page. Split cleanly into pure predicate and render.
@@ -129,6 +150,126 @@ export function h(tag, props = {}, ...children) {
 ```
 
 String children become text nodes, never parsed HTML. That is the whole safety property. If a render needs to output rich content (bold, links), build the elements explicitly: `h('p', {}, 'Prefix ', h('strong', {}, userText), ' suffix')`. This is more verbose than template strings and that is the intended trade-off.
+
+## Layout invariants (non-negotiable)
+
+These three CSS rules apply to every container Agent 6 ships. Together they prevent the single biggest class of bug I see across projects: content overflowing or clipping when the underlying data has long tokens, when the viewport narrows, or when a CSS Grid cell refuses to shrink below its content size. Skipping any of them produces failures that look like "Agent 6 made an ugly card" but are actually structural CSS-grid defaults.
+
+### Rule 1 — every `1fr` track uses `minmax(0, 1fr)`
+
+CSS Grid columns and rows declared as `1fr` default to `min-width: auto`, which means **the track refuses to shrink below the size of its content**. A cell with a long unbreakable token (`brand_activation_marketer`, `government_procurement`, a URL, a deeply-nested code identifier) forces the entire grid wider than its container, producing horizontal overflow that clips against the viewport.
+
+```css
+/* Bad — track will not shrink below content */
+.card { display: grid; grid-template-columns: 240px 1fr; }
+
+/* Good — track can shrink, content wraps */
+.card { display: grid; grid-template-columns: 240px minmax(0, 1fr); }
+```
+
+This applies recursively. If the right cell of `.card` is itself a 2-column grid, both inner tracks need `minmax(0, 1fr)` too. There is no upper bound — every nested `1fr` gets the override.
+
+### Rule 2 — every text container gets `overflow-wrap: anywhere`
+
+Even with `minmax(0, 1fr)`, a single unbreakable string longer than the cell will visually overflow because `word-break: normal` (the default) only breaks at whitespace. The fix:
+
+```css
+.card-body { overflow-wrap: anywhere; }
+```
+
+`anywhere` is preferred over `break-word` because it permits more soft-wrap opportunities and produces better line-balance on technical content. Apply at the lowest container that holds user-supplied text (paragraph, table cell, list item) — not at the page root, which would over-break decorative typography.
+
+### Rule 3 — every fixed-width label column has a mobile-collapse rule
+
+Grids that use a fixed-width label column (e.g. `grid-template-columns: 110px 1fr` for key-value rows) must collapse to single-column at narrow viewports, otherwise the label squeezes the value to unreadable. The pattern:
+
+```css
+.row { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 14px; }
+
+@media (max-width: 640px) {
+  .row { grid-template-columns: 1fr; gap: 4px; }
+}
+```
+
+If the label is a small uppercase eyebrow ("CHANNEL", "PRICING"), the collapsed mobile state usually reads better than the desktop 2-col anyway.
+
+### Layout invariants checklist (apply before commit)
+
+For every new view module Agent 6 produces, grep the CSS for these three patterns:
+
+- [ ] Every `grid-template-columns` with a `1fr` token also contains `minmax(0,`
+- [ ] Every container that holds user data (`<p>`, `<td>`, list items) has `overflow-wrap: anywhere` somewhere in its cascade
+- [ ] Every fixed-pixel label column has a `@media (max-width: …)` collapse rule
+
+These three lines, applied uniformly, prevent the entire failure mode where "the data is excellent but the cards look broken."
+
+## Display-format helpers (use these, not inline formatting)
+
+All currency, score, and range formatting lives in `/template/assets/js/format.js`. Agent 6 imports these helpers in every render module; no inline formatting is permitted. The contract per `FIELD-DICTIONARY.md §11`:
+
+```js
+import { fmtSGD, fmtSGDFull, fmtRange, fmtScore, fmtPct } from '../format.js';
+
+fmtSGD(48000000)               // "S$48M"
+fmtSGD(95000000)               // "S$95M"
+fmtSGD(2400)                   // "S$2K"
+fmtSGD(149)                    // "S$149"
+fmtSGDFull(48000000)           // "S$48,000,000" (use in tables and PDF appendices)
+fmtRange(199, 299, 499)        // "S$199 — S$499 (target S$299)"
+fmtScore(4.2, "1-10")          // "4.2 / 10"
+fmtScore(3, "0-5")             // "3 / 5"
+fmtPct(12.5)                   // "12.5%"
+fmtPct(20)                     // "20%"  (no trailing .0)
+```
+
+The implementation reads `meta.market_size.currency_label` from any of the four data files (whichever is loaded for the current view) so a project with `currency_label: "AUD"` gets `"A$48M"` automatically without per-renderer overrides. The scale token on `fmtScore` is **explicit** — never inferred from the value — so a 1-5 field and a 1-10 field cannot accidentally share a denominator.
+
+**What's forbidden:**
+
+```js
+// All of these are inline-format defects flagged by Agent 7's mid-flight pass.
+'S$' + (n / 1e6).toFixed(0) + 'M'                  // bad — bypasses currency_label
+`${rating} / 10`                                   // bad — assumes 1-10 scale
+n.toLocaleString() + ' SGD'                        // bad — no compact mode
+```
+
+If a renderer needs a format the helpers don't provide, propose a new helper via Agent 7 — don't write a one-off inline.
+
+## Un-styled draft banner (until Agent 9 runs)
+
+Every admin page Agent 6 produces operates in one of two states:
+
+- **Un-styled draft** — `/template/data/brand-tokens.json` does not exist (Agent 9 has not yet run).
+- **Branded** — `brand-tokens.json` exists with `extracted_from.type` ≠ `"manual_override"`.
+
+In the un-styled state, every admin page **must** render a top-of-page banner so the human reviewer cannot confuse "Agent 6 produced ugly output" with "Agent 9 has not yet been invoked." This was the root cause of the Elitez Events "monotonous design" feedback on 2026-04-27.
+
+The banner contract:
+
+- **Position:** Sticky at top of `<main>`, below the nav.
+- **Copy (verbatim):** `"Un-styled draft — Agent 9 (Aesthetics Presenter) has not yet been run. The layout is functionally complete; visual polish is pending. After human review, dispatch Agent 9 to apply brand DNA from the public site."`
+- **Visual:** High-contrast info band — never red/error coloured. Use `--ee-amber` / `--accent` tone with a 1px border in `--ee-orange-deep` / `--brand-primary`.
+- **Auto-dismissal:** The renderer reads `brand-tokens.json` existence at page load. Banner DOM emits only when the file is absent. No explicit dismissal toggle, no `localStorage` flag — the file's presence is the truth.
+- **Excluded pages:** The public site (`/index.html`, `/services.html`, `/work.html`, `/about.html`, `/contact.html`) does NOT show this banner — only `/admin/*.html` pages.
+
+Implementation lives in `/template/assets/js/app.js → mountUnstyledBanner()`. Agent 6 calls it from every admin page's bootstrap script. Agent 9, when run, writes `brand-tokens.json` and the banner stops emitting on next reload — no code change required to dismiss.
+
+## Section-pattern picker (use named patterns, not blank starts)
+
+Agent 6 does not start every render module from a blank file. The Agent 9 methodology defines six canonical section patterns (`09-aesthetics-presenter.md → §Card library contract`):
+
+| Section name in admin | Pattern Agent 6 picks | Source-of-truth reference |
+|---|---|---|
+| Top-5 competitor highlights | `kpi` cards in a 5-up grid | `/codings/xinceai/admin/index.html` |
+| Personas grid | `persona-card` with NBA stat | `/codings/elix-eor/admin/index.html` |
+| NBA arithmetic block | `nba-card` showing `nba.inputs` and `monthly_sgd_equivalent` | `/codings/elix-eor/admin/insights.html` |
+| Attack plans | `attack-plan-card` (left rail + zoned body) | `/codings/elitez-events/admin/whitespace.html` |
+| Heatmap niches | `niche-card` with rank + TAM | `/codings/elitez-events/admin/whitespace.html` |
+| Market sizing stats | `market-stat` with derivation funnel | `/codings/xinceai/admin/insights.html` |
+
+When Agent 6 builds a new admin page, it picks a pattern by section name (looking it up in `09-aesthetics-presenter.md` or the reference admins) and adapts the HTML/CSS structure, not the content. The patterns are **structural**: card geometry, grid scaffold, label position, mobile-collapse breakpoint. Branding (colour tokens, typography weights, gradient direction) is Agent 9's job.
+
+If the section name does not match any of the six patterns, Agent 6 picks the closest archetype and notes the divergence in its handoff to Agent 9 ("New section `vendor_scorecard` adapted from `kpi` pattern; needs review for whether it warrants a new canonical pattern"). Agent 7 in mid-flight mode flags any admin page that introduces an unnamed pattern more than once across projects — that is a signal the pattern library should grow.
 
 ## Performance
 
@@ -260,6 +401,11 @@ Self-audit before declaring Agent 6 done.
 - [ ] Pure-logic tests exist for `cellCount`, `cellBand`, `buildCellDetail`, `matchesCompetitor`, `computePageIndex`, `buildRadarData`.
 - [ ] Chart.js init wrapped in IntersectionObserver; no immediate paint for off-screen charts.
 - [ ] Heatmap container observed with ResizeObserver, not `window.resize`.
+- [ ] Market sizing funnel renders TAM → SAM → SOM in fixed order with arrow connectors carrying filter-tag labels.
+- [ ] Each stage block applies the correct modifier class (`tam`, `sam`, `som`) — top border, label colour, total colour, equation chip background all keyed off it.
+- [ ] `implications[]` cards render in input order, one per array entry, no client-side sort.
+- [ ] `methodology_appendix` lives inside `<details>` collapsed by default, summary `"Methodology & full derivation"`.
+- [ ] Legacy fallback path triggers only when `derivation_flow` or `implications[]` is absent — and never silently overrides structured data.
 - [ ] Manual browser QA walked against `methodology/08-qa-checklist.md`.
 - [ ] Contract documented here for any new viz added in this run.
 

@@ -20,7 +20,11 @@
 
   <main class="container-wide">
     <h1>Market Intelligence</h1>
-    <section><h2>Market size</h2><div id="market-size"></div></section>
+    <section>
+      <h2>Market size</h2>
+      <div class="kpi-strip" id="market-kpis" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px;"></div>
+      <div id="market-size"></div>
+    </section>
     <section><h2>Policy landscape</h2><div id="policies"></div></section>
     <section>
       <h2>Country readiness</h2>
@@ -41,20 +45,32 @@
     import { loadAppData, mountSampleBanner } from '../assets/js/app.js';
     import { renderPriceBars } from '../assets/js/viz/price-bars.js';
     import { renderMarketDonut } from '../assets/js/viz/donut.js';
+    import { renderMarketFunnel } from '../assets/js/viz/market-funnel.js';
     import { h, mount } from '../assets/js/dom.js';
 
     const { competitors, market, pricing } = await loadAppData();
     mountSampleBanner();
 
-    mount(document.getElementById('market-size'),
-      h('p', {},
-        h('strong', {}, 'TAM: '), `S$${market.market_size.tam_sgd.toLocaleString()} · `,
-        h('strong', {}, 'SAM: '), `S$${market.market_size.sam_sgd.toLocaleString()} · `,
-        h('strong', {}, 'SOM: '), `S$${market.market_size.som_sgd.toLocaleString()}`
+    // KPI strip — TAM / SAM / SOM headline numbers, currency-aware.
+    const ms = market.market_size;
+    const cur = ms.currency_label || 'S$';
+    const fmt = n => `${cur === 'SGD' ? 'S$' : cur === 'AUD' ? 'A$' : cur === 'HKD' ? 'HK$' : cur === 'USD' ? 'US$' : cur + ' '}${(n / 1000000).toFixed(n >= 100000000 ? 0 : 1)}M`;
+    mount(document.getElementById('market-kpis'),
+      h('div', { style: { background: 'white', borderRadius: '12px', padding: '18px', border: '1px solid rgba(0,0,0,0.08)', borderTop: '4px solid var(--brand-primary)' } },
+        h('div', { style: { fontFamily: 'var(--font-mono)', fontSize: '11px', letterSpacing: '0.12em', color: 'rgba(0,0,0,0.5)', textTransform: 'uppercase' } }, 'TAM'),
+        h('div', { style: { fontSize: '28px', fontWeight: '800', color: 'var(--brand-primary)', marginTop: '4px' } }, fmt(ms.tam_sgd)),
       ),
-      h('p', { style: { fontStyle: 'italic' } }, market.market_size.reasoning),
-      h('p', {}, h('strong', {}, 'Implication: '), market.market_size.implication_for_us)
+      h('div', { style: { background: 'white', borderRadius: '12px', padding: '18px', border: '1px solid rgba(0,0,0,0.08)', borderTop: '4px solid var(--brand-secondary)' } },
+        h('div', { style: { fontFamily: 'var(--font-mono)', fontSize: '11px', letterSpacing: '0.12em', color: 'rgba(0,0,0,0.5)', textTransform: 'uppercase' } }, 'SAM'),
+        h('div', { style: { fontSize: '28px', fontWeight: '800', color: 'var(--brand-secondary)', marginTop: '4px' } }, fmt(ms.sam_sgd)),
+      ),
+      h('div', { style: { background: 'white', borderRadius: '12px', padding: '18px', border: '1px solid rgba(0,0,0,0.08)', borderTop: '4px solid var(--accent)' } },
+        h('div', { style: { fontFamily: 'var(--font-mono)', fontSize: '11px', letterSpacing: '0.12em', color: 'rgba(0,0,0,0.5)', textTransform: 'uppercase' } }, 'SOM'),
+        h('div', { style: { fontSize: '28px', fontWeight: '800', color: 'var(--accent)', marginTop: '4px' } }, fmt(ms.som_sgd)),
+      ),
     );
+
+    renderMarketFunnel(document.getElementById('market-size'), ms);
 
     const policyColor = s => s === 'support' ? 'var(--success)' : s === 'against' ? 'var(--danger)' : 'var(--neutral-dark)';
     mount(document.getElementById('policies'), ...market.policies.map(p =>

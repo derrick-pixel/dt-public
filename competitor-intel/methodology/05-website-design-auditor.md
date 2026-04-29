@@ -165,6 +165,53 @@ Handling:
 
 `website_screenshot_path` is a foreign-key-like reference that Agent 6 and Agent 8 read. Do not rename the file on a re-run unless the competitor's `id` itself changed (which it should almost never do — see `01-competitor-research-analyst.md` §5.2). On a re-run where a competitor has redesigned, overwrite the file at the same path; the filename stays stable, the content updates, the `research_date` on the record updates.
 
+### 7.5 Mobile-viewport pass (required for the Top-15)
+
+The 1440×900 desktop capture is the canonical comparison frame, but a single-viewport audit misses mobile-first competitors who look dated at 1440 yet polished at 375. For the **Top-15** (Top-5 plus the next-10 ranked by `attack_plans[].rank` proximity), capture a second screenshot at **375×667 (iPhone SE/8 baseline)** with the same 2-second settle, same DPI, same filename suffix:
+
+- Filename: `<competitor_id>-home-mobile.png`
+- Path: same `/template/assets/screenshots/` directory
+- Field: `website_screenshot_path_mobile` (per `FIELD-DICTIONARY.md` §3) — leave unset (no key) for competitors below Top-15
+
+The mobile capture changes scoring on **Coherence (5.3)** and **UI Clarity (5.4)** materially. A site whose desktop hero scores 6 on Coherence may drop to 3 on mobile if the hero stack collapses to an unscannable wall of text; a site whose desktop nav hides pricing behind a hover may score better on mobile because the hamburger surfaces it. Score both viewports and use the lower of the two as the dimension score, then average to the single `website_design_rating`. Note the divergence in `website_design_notes` if it is > 2 points on any single dimension ("desktop 8, mobile 4 on UI Clarity — pricing hidden behind hover on desktop, accessible via hamburger on mobile").
+
+### 7.6 Three-intent findability triplet (stopwatch test)
+
+For every Top-15 competitor, run the **three-intent timing test** on the live desktop site at 1440×900. Open the homepage cold (no prior session, no cookies), and time how long it takes to reach each of three buyer intents:
+
+| Intent | Definition of "found" | Stopwatch upper bound |
+|---|---|---|
+| `pricing` | Any artefact showing a price, a tier table, "from S$X/mo," or even an explicit "Contact for pricing" CTA | 30 seconds |
+| `demo` | A demo / trial / sandbox CTA, free-tier signup, or a calendar booking link | 30 seconds |
+| `contact` | A sales contact form, sales email, phone number, or scheduling link to a sales rep (not a generic support page) | 30 seconds |
+
+Record under `competitors[].findability_seconds` per `FIELD-DICTIONARY.md §3.1`:
+
+```json
+"findability_seconds": { "pricing": 8, "demo": 4, "contact": 22 }
+```
+
+Use `null` when an intent could not be found inside 30 seconds. Examples worth recording verbatim because they are diagnostic, not just numbers:
+
+- **Pricing = null** is the strongest single signal of `pricing_flag: hidden_estimated`. Cross-check against Agent 1's flag; mismatches surface as defects.
+- **Demo = null** for a B2B SaaS suggests sales-led GTM only — a structural advantage if the buyer is enterprise, a structural weakness if the buyer is SMB self-serve.
+- **Contact > 20s** with `pricing > 20s` is the "designed-not-to-sell" pattern — common on agency sites that prefer warm referrals.
+
+The triplet feeds two downstream consumers:
+- **Agent 6** can render a "Findability Speed" mini-stat-card on each competitor row (median: <8s green / 8–20s amber / >20s or null red).
+- **Agent 8** can include a one-page "Findability scoreboard" appendix in the report for procurement teams.
+
+The triplet does NOT replace the **UI Clarity (5.4)** dimension score — UI Clarity reads broader (typography, hierarchy, hover state legibility); findability is a hard-numeric subset of UI Clarity. Both ship.
+
+### 7.7 Cross-check against Agent 0 (brand-assets.json)
+
+If `/template/data/brand-assets.json` exists, read it before screenshotting. Two practical effects:
+
+- **Avoid lifting the client's own photos as competitor evidence.** Agent 0's `imagery[]` lists every photo extracted from the client's reference deck. If a competitor's hero carousels match a slug there, they are likely re-using shared event-industry stock — record the observation in `website_design_notes` (`"Hero photo matches client's deck imagery — likely shared stock"`) but do not flag the competitor as a copycat without further evidence.
+- **Detect palette collisions.** When a competitor's palette (sampled from their hero) overlaps materially with `brand-assets.json → palette`, that is a brand-collision risk for the project. Flag in `website_design_notes` with the hex values: *"Hero palette `#FF6A00`-led overlaps client primary `#FF6A00`; brand-collision risk."*
+
+Agent 5 does **not** own brand-asset extraction — that is Agent 0's job. If the human did not supply reference materials and Agent 0 did not run, Agent 5 proceeds normally without the cross-check.
+
 ## Self-audit
 
 After rating every competitor, score our own site on the same rubric. This is the diagnostic section: where are we behind the top-scoring competitor, and by how much?

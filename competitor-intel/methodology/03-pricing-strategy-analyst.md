@@ -42,10 +42,20 @@ Personas are the load-bearing fiction of the whole pricing file. Every tier exis
 
 **What to produce**
 
-Build 3–5 personas that collectively cover the ICP. Three is the floor: one core buyer, one adjacent buyer, one stretch buyer. Five is the ceiling: past five, personas blur together and tiers start double-booking the same buyer under two names. If you think you need six, collapse two near-identical ones into a single persona with a broader `icp` sentence.
+Build 3–5 personas that collectively cover the ICP. Three is the floor: one core buyer, one adjacent buyer, one stretch buyer. Five is the **hard cap** — Agent 7 in mid-flight mode flags any project shipping with six or more personas. Past five, personas blur together and tiers start double-booking the same buyer under two names.
+
+**Persona-collapse audit (run before declaring Pillar A done):**
+
+For every pair of personas, compute the intersection of their `pains[]` sets. If two personas share **≥ 60% of pains** (e.g. 3 out of 5 pains are duplicated), one of two outcomes is required:
+
+- **Merge** — combine into a single persona with a broader `icp` sentence and the union of pains. The new persona inherits the higher `wtp_band_sgd.upper_stretch`.
+- **Differentiate** — rewrite one persona's `pains[]` to focus on what is genuinely distinct. If the rewrite produces fewer than 3 pains, that persona was a shadow of the other and should be cut, not kept.
+
+Skipping this audit produces the failure mode where Tier 2 and Tier 3 target nominally-different personas but are actually pricing the same buyer twice. Agent 4 (Whitespace) inherits the duplication and writes attack plans that point at the same heatmap row from two angles.
 
 Fields per persona follow `FIELD-DICTIONARY.md` §6.1:
 
+- `id` — stable lowercase-with-underscores. Foreign-key target referenced by `pricing_models[].score_by_persona`, `recommended_tiers[].target_persona`, and (new) `attack_plans[]` when Agent 4 wants to bind a plan to a persona.
 - `name` — a short memorable label. "Boutique Agency Owner" beats "SME Persona 1."
 - `icp` — one sentence describing who they are, by title, company size, and trigger. Include the trigger because the trigger is what makes them buy this quarter. "Founder-operator of an SG boutique creative agency (5–20 staff) preparing to pitch a 2× larger retainer that demands a client-proof project intake flow" beats "SMB creative services."
 - `pains[]` — the top pains this persona feels *today*, in their words where possible. 3–5 entries. Anchored in observation (win/loss interviews, G2 1-star review patterns, community threads), not speculation.
@@ -54,7 +64,8 @@ Fields per persona follow `FIELD-DICTIONARY.md` §6.1:
   - `low_anchor` — the price at which adoption becomes easy because it fits inside their existing discretionary spend. Often "less than a current subscription they already pay for."
   - `expected` — the price they'd expect to pay if they solved the problem properly. Derive from NBA math (see Section 5).
   - `upper_stretch` — the price at which they'd still pay but only with visible ROI. Usually 2–3× `expected`. Past `upper_stretch`, they defer.
-- `nba` — the Next-Best-Alternative, with a numeric cost attached. Not "do nothing" — "status quo (4 hr/week context-switching ≈ S$400/mo opportunity cost at a SGD 25/hr ops-lead rate)." The numeric cost is what lets later tiers argue "our price beats their NBA on perceived value."
+- `nba` — the Next-Best-Alternative, as a **structured arithmetic block** per `FIELD-DICTIONARY.md` §6.1.1. Carries `method` (`wage` | `competitor_price` | `tooling_stack` | `time_value`), `summary`, `inputs` (the numbers that combine), `monthly_sgd_equivalent` (the single number every other arithmetic flows to), and `confidence` (0.0–1.0). The structured form forces every persona's `wtp_band_sgd.expected` to trace to verifiable arithmetic, not vibes. **Hard rule:** `wtp_band_sgd.expected` must sit between `0.4 ×` and `1.2 ×` `nba.monthly_sgd_equivalent`; outside that band, `nba.confidence` must be `< 0.6` and the persona is flagged as exploratory.
+- `whitespace_segment_ids[]` — optional, but populate when known. Foreign keys into `whitespace-framework.json → heatmap.segments[].id`. One persona may map to multiple segments. Lets Agent 8 auto-cross-link "Persona X" to its corresponding heatmap row(s) in the report. If Agent 4 has not yet run, leave empty and Agent 4 will back-fill on its first pass.
 
 **How to score**
 
@@ -64,25 +75,38 @@ Personas don't have a numeric score on their own. They get scored transitively v
 - **The NBA-with-number test.** `nba` carries a S$ figure or a time-and-wage figure that converts to S$. No bare "do nothing" allowed.
 - **The coverage test.** Across all 3–5 personas, > 80% of expected revenue in the first 12 months maps to exactly one persona. If a plausible buyer doesn't fit any persona, add a persona or widen an `icp`. If a persona has no plausible buyer in the SG SOM, cut it.
 
-**Worked example 1 — a full persona entry**
+**Worked example 1 — a full persona entry (structured nba)**
 
-```
-name: "Boutique Agency Owner"
-icp: "Founder-operator of an SG boutique creative or marketing agency (5–20 staff) preparing to pitch a 2–3× larger retainer that demands a repeatable client-intake and scoping flow."
-pains:
-  - "Every new pitch re-invents the intake brief from scratch; pre-sales eats 8–12 hr/week of founder time"
-  - "Scope creep kills margin; no systematic record of what was signed vs. what got delivered"
-  - "Can't hire a junior AE because the process lives in the founder's head"
-  - "Larger retainers demand a 'we have a system' answer in the pitch — currently a bluff"
-current_workaround: "Google Docs templates + WhatsApp briefs + a Notion database the founder maintains alone; scoping happens in a 45-min call with no artefact other than a handwritten note."
-wtp_band_sgd:
-  low_anchor: 79
-  expected: 149
-  upper_stretch: 299
-nba: "Hire a part-time ops lead at SGD 3,000/mo to own intake + scoping, or keep the status quo at ~8 hr/week founder time (≈ SGD 1,600/mo opportunity cost at a SGD 50/hr founder-productive rate). NBA floor: SGD 1,600/mo in avoided founder-hours, or SGD 3,000/mo fully-loaded hire."
+```json
+{
+  "id": "boutique_agency_owner",
+  "name": "Boutique Agency Owner",
+  "icp": "Founder-operator of an SG boutique creative or marketing agency (5–20 staff) preparing to pitch a 2–3× larger retainer that demands a repeatable client-intake and scoping flow.",
+  "pains": [
+    "Every new pitch re-invents the intake brief from scratch; pre-sales eats 8–12 hr/week of founder time",
+    "Scope creep kills margin; no systematic record of what was signed vs. what got delivered",
+    "Can't hire a junior AE because the process lives in the founder's head",
+    "Larger retainers demand a 'we have a system' answer in the pitch — currently a bluff"
+  ],
+  "current_workaround": "Google Docs templates + WhatsApp briefs + a Notion database the founder maintains alone; scoping happens in a 45-min call with no artefact other than a handwritten note.",
+  "wtp_band_sgd": { "low_anchor": 79, "expected": 149, "upper_stretch": 299 },
+  "nba": {
+    "method": "wage",
+    "summary": "Founder spending 8 hr/week on intake & scoping; alternative is hiring a part-time ops lead at SGD 3,000/mo.",
+    "inputs": {
+      "hourly_sgd": 50,
+      "hours_saved_per_month": 32
+    },
+    "monthly_sgd_equivalent": 1600,
+    "confidence": 0.75
+  },
+  "whitespace_segment_ids": ["sg_creative_smb"]
+}
 ```
 
-Notice: the `nba` field carries *two* alternatives with explicit S$ figures, not one. That's deliberate — the buyer rarely has only one substitute. `pains[]` are observable, not speculative ("Can't hire a junior AE because the process lives in the founder's head" is a statement someone said in a win/loss interview, not an assumption). `current_workaround` names specific tools, not a vague "manual processes."
+Notice: `nba.monthly_sgd_equivalent` is `1600` (= 50 × 32). `wtp_band_sgd.expected` is `149`, which is `0.093 ×` the equivalent — well below the `0.4×` floor. **This is a deliberate signal**: the buyer's perceived budget for software is ~10% of the labour they're displacing, not 50%. The pricing strategy must therefore lean on PSG / annual-contract incentives to lift `expected` toward `0.4 ×` (i.e. SGD 640/mo equivalent, or SGD 320/mo with 50% PSG funding) rather than treat 149 as the ceiling. A `confidence: 0.75` signals the agent is confident in the labour math — the gap to WTP is a known commercial problem, not a measurement defect.
+
+`pains[]` are observable, not speculative ("Can't hire a junior AE because the process lives in the founder's head" is a statement someone said in a win/loss interview, not an assumption). `current_workaround` names specific tools, not a vague "manual processes."
 
 **Worked example 2 — a stretch persona**
 
@@ -99,10 +123,20 @@ wtp_band_sgd:
   low_anchor: 299
   expected: 599
   upper_stretch: 1200
-nba: "Status quo (60 hr/yr of audit-prep reconstruction ≈ SGD 6,000/yr at a SGD 100/hr ops-lead fully-loaded rate ≈ SGD 500/mo amortised), plus a looming migration off Confluence (SGD 15,000–30,000 one-time consultant spend if we don't find an SG-residency-native tool). NBA floor: ~SGD 500/mo in avoided audit-prep, with a consultant tail-risk that compounds."
+nba:
+  method: "tooling_stack"
+  summary: "Confluence (non-SG-residency, flagged in audit) + Google Drive + the ops-lead's personal Excel binder. Migration tail-risk: SGD 15–30k consultant spend if we don't replace Confluence with SG-residency-native tooling."
+  inputs:
+    tooling_lines:
+      - { tool: "Confluence Standard, 25 seats", monthly_sgd: 175 }
+      - { tool: "Audit-prep ops-lead time, 5 hr/mo @ SGD 100/hr", monthly_sgd: 500 }
+      - { tool: "Confluence-to-compliant migration amortised over 36 mo (one-time SGD 22k midpoint)", monthly_sgd: 611 }
+  monthly_sgd_equivalent: 1286
+  confidence: 0.65
+whitespace_segment_ids: ["sg_regulated_sme_ops"]
 ```
 
-Note the higher `wtp_band_sgd` relative to the boutique agency. Regulated-sector buyers have larger budgets and harder walls (SG data residency, audit trails) that justify a 3–4× price multiple on the same underlying product if the compliance story is real. This is where the pricing ladder earns its top tier.
+Note the higher `wtp_band_sgd` relative to the boutique agency. Regulated-sector buyers have larger budgets and harder walls (SG data residency, audit trails) that justify a 3–4× price multiple on the same underlying product if the compliance story is real. `nba.monthly_sgd_equivalent: 1286` makes the math explicit: `wtp_band.expected: 599` is `0.47 ×` the displaced spend — comfortably inside the `0.4–1.2 ×` band. `confidence: 0.65` reflects the migration-amortisation guess (the SGD 15–30k range introduces material variance). This is where the pricing ladder earns its top tier.
 
 ### Pillar B — Pricing models
 

@@ -419,4 +419,110 @@ Scar tissue from past sites. Dashboard parses this file's YAML block.
     Validate with https://validator.schema.org/ on any commit that touches schema.
   lesson: "JSON syntax errors are silent killers. Serialize, never hand-type."
   mechanic: schema-jsonld
+
+# ── SEO rigor track Week 2 — semantic HTML hygiene (added 2026-04-29) ──
+
+- id: seo-multiple-h1
+  title: "Two h1s on the same page; crawler picks at random"
+  severity: high
+  phase: building
+  story: "Hero section had h1 'Lumana — Aged-care monitoring'. Below, 'How it works' section also used h1 because the dev wanted that bigger size. Google Rich Results Test flagged 'multiple top-level headings'; the section h1 outranked the brand h1 in some queries."
+  source: "Anticipated — common when devs use heading tags for visual size"
+  fix: |
+    Exactly one <h1> per page. Use CSS to size other headings, not h1.
+    Run semantic-html-audit (browser banner or CLI) — flags this automatically.
+  lesson: "Heading level is structure, not size. Style with CSS."
+  mechanic: semantic-html-audit
+
+- id: seo-heading-skip
+  title: "h1 → h3 with no h2 between"
+  severity: medium
+  phase: building
+  story: "Page had h1 hero, then h3 section titles because the dev preferred the smaller size. Screen readers announced an outline that skipped h2. Google's crawler treated h3s as detached fragments instead of nested sections."
+  source: "Anticipated — pattern across multiple sites"
+  fix: |
+    Heading levels must descend without skipping: h1 → h2 → h3.
+    To make h2 visually smaller, use CSS (font-size, font-weight) — don't drop to h3.
+    semantic-html-audit flags level skips automatically.
+  lesson: "Outline structure is for crawlers + screen readers, not visual taste."
+  mechanic: semantic-html-audit
+
+- id: seo-img-no-alt
+  title: "Decorative images without alt; SEO + a11y double loss"
+  severity: high
+  phase: building
+  story: "Marketing site had 12 product images. None had alt attributes. Screen readers said 'image, image, image…'. Google Image search couldn't index them. axe flagged each one as critical."
+  source: "Anticipated — pervasive across vanilla-HTML sites"
+  fix: |
+    Every <img> needs alt. Two cases:
+    - Informational image: alt='descriptive sentence'
+    - Decorative image: alt='' (empty string is correct, not omitted)
+    semantic-html-audit + a11y-axe-runner both catch this.
+  lesson: "alt='' is a deliberate decision; missing alt is a defect."
+  mechanic: semantic-html-audit
+
+- id: seo-img-no-dimensions
+  title: "<img> without width/height triggers Cumulative Layout Shift"
+  severity: medium
+  phase: building
+  story: "Hero image loaded after page render → text below jumped 280px. Lighthouse CLS score dropped from 0.05 to 0.42 (anything above 0.25 is poor). Core Web Vital fail. Google Search Console flagged the page."
+  source: "Anticipated — common when devs let CSS aspect-ratio handle it"
+  fix: |
+    Always add width + height attributes to <img> (even with CSS sizing).
+    The browser uses them to reserve space before image loads — prevents jump.
+    Optional but recommended: loading='lazy' for below-fold images.
+  lesson: "Reserved space prevents jump. Width + height are not optional."
+  mechanic: semantic-html-audit
+
+- id: seo-no-landmarks
+  title: "Page wrapped in <div>s only; crawler can't find primary content"
+  severity: high
+  phase: building
+  story: "Site built with <div class='nav'>, <div class='main'>, <div class='footer'>. Worked visually. Lighthouse SEO score 72. Google's reading-order extraction merged nav text with hero text in 'About this site' summaries."
+  source: "Anticipated — legacy of pre-HTML5 div-itis"
+  fix: |
+    Use HTML5 landmarks: <header>, <nav>, <main>, <footer>.
+    Optional inside <main>: <article>, <section>, <aside>.
+    semantic-html-audit checks for presence of all four.
+  lesson: "Landmarks are the cheapest SEO upgrade. ~10 minutes per site."
+  mechanic: semantic-html-audit
+
+- id: seo-no-lang-attr
+  title: "<html> without lang attribute; locale inference broken"
+  severity: medium
+  phase: building
+  story: "SG-targeted site shipped with <html> (no lang). Google indexed for global English instead of en-SG. Bing flagged in markup validator. Screen readers used default voice instead of region voice."
+  source: "Anticipated — easy to forget"
+  fix: |
+    <html lang='en'> at minimum. <html lang='en-SG'> for SG-targeted.
+    Other valid: en-GB, zh-Hant, ja, etc.
+    semantic-html-audit catches missing lang attribute.
+  lesson: "One attribute, multiple downstream effects: SEO, screen readers, region targeting."
+  mechanic: semantic-html-audit
+
+- id: seo-thin-content
+  title: "Landing page with <100 words triggers 'thin content' penalty"
+  severity: medium
+  phase: building
+  story: "Hero-only landing page: 38 words of copy. Google's quality classifier flagged as thin. Page de-ranked in 4 weeks. Took 2 months to recover after content expansion."
+  source: "Anticipated — common with 'less is more' design instincts"
+  fix: |
+    Pages need ≥100 words in <main>; ≥300 ideal for content pages.
+    Marketing landings can be terse but should still cross 100 — about 2 short paragraphs + section copy.
+    semantic-html-audit reports word count per page.
+  lesson: "Visual minimalism ≠ content minimalism. Crawlers count words."
+  mechanic: semantic-html-audit
+
+- id: seo-no-internal-links
+  title: "Orphan page: zero links to other site pages"
+  severity: low
+  phase: building
+  story: "Pricing page had only external links (Stripe, calendar booking). Crawler couldn't traverse from /pricing back into the rest of the site. PageRank dead-end."
+  source: "Anticipated — pages built in isolation"
+  fix: |
+    Every content page links to ≥3 other site pages (internal links).
+    Footer + cross-references + 'Related' sections are common patterns.
+    semantic-html-audit reports internal-link count per page.
+  lesson: "Sites are graphs. Orphan nodes are invisible nodes."
+  mechanic: semantic-html-audit
 ```

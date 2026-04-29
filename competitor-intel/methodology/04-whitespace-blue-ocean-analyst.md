@@ -125,6 +125,23 @@ This is the most important rule in the heatmap. For every (competitor, segment, 
 
 If you cannot write a pair-specific specialisation, the competitor's score on that cell is probably < 3. Lower the score rather than paper over a generic line. This is the single lever that makes or breaks Agent 8's Cell Detail Appendix.
 
+**Specialisation patterns by category archetype.** Pattern-match to the closest archetype below for the texture of a passing line. The pattern is in the *shape*, not the words.
+
+- **SaaS feature × segment** — name the feature, name a piece of evidence:
+  *"Notion × sg_sme_prof_services × structured_docs: law-firm template pack with precedent libraries; cited in 40% of SG law firm G2 reviews."*
+- **Compliance/credential × regulated segment** — name the credential, name what it gates:
+  *"Visionnaire × esg_screened_glc × iso_20121_esg: ISO 20121 + EcoVadis Gold; only SG agency cleared for SGX-Climate-Disclosure-aligned event RFPs."*
+- **In-house capacity × throughput-sensitive segment** — name the headcount/capacity, name the throughput it unlocks:
+  *"Pico × annual_dnd_coordinator × broadcast_hybrid: 350-staff in-house broadcast crew; 4-camera switcher + captioning ships day-of with no subcontract."*
+- **Pricing model × budget-anchored segment** — name the model, name the anchor it competes with:
+  *"Get Out! Events × annual_dnd_coordinator × published_pricing: 2026 cost guide PDF lists per-pax bands SGD 80–180; only mid-market agency below the 'contact us' wall."*
+- **Geographic/lang reach × cross-border segment** — name the country and what works there:
+  *"Financio × my_sg_sme × paynow_reconciliation: SG PayNow added 2025 but only for SGD accounts; MY-first billing means MYR multi-currency stays the wedge."*
+- **Adjacent-product attach × adjacent need** — name the existing product, name the attach mechanism:
+  *"Xero × sg_accounting_firm × paynow_reconciliation: native bank feeds into the existing GL workflow; no separate login or export step."*
+
+What every passing line has in common: a **proper noun** (the feature, the credential, the headcount, the geography), and a **piece of evidence or numeric** (a review percentage, a SGD figure, a year, a count). Lines without either are wallpaper.
+
 ### 2.5 Score `us` on each cell → `our_score`
 
 Same 0–5 scale. Be honest — an `our_score: 5` in a green cell is an attack candidate; an `our_score: 2` in a green cell is a "we would need to build this first" candidate, which is a different kind of plan.
@@ -174,8 +191,13 @@ Where `inverse(competitor_count)` = `1 / (count + 1)` (so count 0 → 1.0, count
 Each attack plan carries:
 
 - `rank` — 1, 2, 3 (strictly ordered).
-- `niche_name` — short marketable label, e.g. "PSG-priced RegTech wedge."
+- `niche_name` — **≤ 60 characters, headline-style.** This is the field most often abused: agents write paragraph-length subtitles ("Manpower-bundled brand activation (Elitez Group ecosystem moat)" = 64 chars, too long). Cards and the PDF report assume the niche name fits a single line at H3 weight. The rule:
+  - **Good (≤ 60):** "PSG-priced PayNow reconciliation wedge" (38), "Opacity-arbitrage pricing wedge" (32), "ISO-20121 ESG wedge for GLC procurement" (40)
+  - **Bad (> 60):** "Manpower-bundled brand activation (Elitez Group ecosystem moat)" (64), "AI-enabled hybrid production lined up for IMDA 2027-Q1 GenAI grant" (67)
+  - If your name needs parentheses to qualify it, the parenthetical belongs in `why_we_win`, not the name.
+  - Agent 7 in mid-flight mode (and Agent 8's pre-flight validator) hard-fail any `niche_name > 60 chars`.
 - `icp` — one sentence describing the buyer archetype inside the cell's segment.
+- `whitespace_segment_id` — optional FK into `heatmap.segments[].id`. Populate when the plan maps cleanly onto a single heatmap row; lets Agent 8 visually cross-link plan → cell. Leave empty when the plan spans multiple segments.
 - `tam_estimate_sgd` — integer SGD annual TAM for this cell's ICP × need.
 - `tam_reasoning` — 2–3 sentences showing how you arrived at the TAM (count × price × attach rate), consistent with Agent 2's market sizing method.
 - `why_gap` — why the cell is green; which structural reason keeps competitors out.

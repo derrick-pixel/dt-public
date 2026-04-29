@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Variant C · Modern SaaS — Strategic Intelligence Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff;
+      --bg-soft: #fafafa;
+      --bg-card: #ffffff;
+      --ink: #0a0a0f;
+      --ink-2: #4a4a55;
+      --ink-3: #8a8a95;
+      --line: #ececf0;
+      --line-2: #d4d4dc;
+      --primary: #6d28d9;
+      --primary-2: #a855f7;
+      --primary-soft: rgba(109,40,217,0.08);
+      --grad: linear-gradient(135deg, #6d28d9 0%, #a855f7 50%, #ec4899 100%);
+      --grad-soft: linear-gradient(135deg, rgba(109,40,217,0.10), rgba(168,85,247,0.06), rgba(236,72,153,0.04));
+    }
+    body { font-family: 'Inter Tight', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; font-size: 15.5px; -webkit-font-smoothing: antialiased; }
+    .container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+    a { color: var(--primary); }
+
+    /* Nav */
+    .nav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.78); backdrop-filter: blur(12px) saturate(140%); -webkit-backdrop-filter: blur(12px) saturate(140%); border-bottom: 1px solid var(--line); }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; gap: 24px; }
+    .nav .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -0.01em; font-size: 15px; }
+    .nav .brand .mark { width: 28px; height: 28px; border-radius: 8px; background: var(--grad); display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 700; }
+    .nav .links { display: flex; gap: 28px; font-size: 14px; }
+    .nav .links a { color: var(--ink-2); text-decoration: none; font-weight: 500; transition: color 0.15s; }
+    .nav .links a:hover { color: var(--ink); }
+    .nav .cta { padding: 8px 16px; background: var(--ink); color: white; border-radius: 8px; text-decoration: none; font-size: 13.5px; font-weight: 600; transition: background 0.15s; }
+    .nav .cta:hover { background: var(--primary); }
+
+    /* Hero */
+    .hero { padding: 96px 0 64px; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; top: -200px; left: 50%; transform: translateX(-50%); width: 1000px; height: 600px; background: radial-gradient(ellipse at center, rgba(109,40,217,0.18), rgba(168,85,247,0.10) 30%, transparent 60%); pointer-events: none; z-index: 0; }
+    .hero-inner { position: relative; z-index: 1; text-align: center; }
+    .hero .pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: white; border: 1px solid var(--line-2); border-radius: 100px; font-size: 12.5px; color: var(--ink-2); font-weight: 500; margin-bottom: 28px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+    .hero .pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 0 4px rgba(109,40,217,0.15); }
+    .hero h1 { font-family: 'Inter Tight', sans-serif; font-size: clamp(40px, 7vw, 76px); font-weight: 700; line-height: 1.04; letter-spacing: -0.035em; margin-bottom: 22px; }
+    .hero h1 .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .hero .deck { font-size: 19px; line-height: 1.55; color: var(--ink-2); max-width: 680px; margin: 0 auto 36px; }
+    .hero .deck strong { color: var(--ink); }
+
+    /* CTAs */
+    .ctas { display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .cta-btn { font-size: 15px; font-weight: 600; padding: 13px 24px; border-radius: 12px; text-decoration: none; transition: all 0.15s; display: inline-flex; align-items: center; gap: 8px; }
+    .cta-btn.primary { background: var(--ink); color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.10); }
+    .cta-btn.primary:hover { background: var(--primary); transform: translateY(-1px); box-shadow: 0 8px 20px rgba(109,40,217,0.30); }
+    .cta-btn.ghost { color: var(--ink); border: 1px solid var(--line-2); background: white; }
+    .cta-btn.ghost:hover { border-color: var(--ink); }
+
+    /* Hero stats strip */
+    .hero-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin: 56px 0 0; padding: 24px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    @media (max-width: 720px) { .hero-stats { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
+    .stat { text-align: center; }
+    .stat .v { font-family: 'Inter Tight', sans-serif; font-size: 28px; font-weight: 700; letter-spacing: -0.025em; color: var(--ink); line-height: 1.1; }
+    .stat .v .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .stat .l { font-size: 12.5px; color: var(--ink-3); margin-top: 4px; font-weight: 500; }
+
+    /* Section */
+    .section { padding: 96px 0 32px; }
+    .section .label { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; color: var(--primary); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 14px; text-align: center; }
+    .section h2 { font-family: 'Inter Tight', sans-serif; font-size: clamp(30px, 4.5vw, 48px); font-weight: 700; line-height: 1.1; letter-spacing: -0.025em; text-align: center; margin-bottom: 18px; max-width: 24ch; margin-left: auto; margin-right: auto; }
+    .section .deck { font-size: 17px; color: var(--ink-2); max-width: 640px; margin: 0 auto 56px; line-height: 1.55; text-align: center; }
+
+    /* Problem cards */
+    .problem-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+    .problem-card { background: white; border: 1px solid var(--line); border-radius: 16px; padding: 24px; transition: all 0.2s; }
+    .problem-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 12px 28px rgba(109,40,217,0.10); }
+    .problem-card .who { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 8px; }
+    .problem-card h3 { font-family: 'Inter Tight', sans-serif; font-size: 17px; font-weight: 600; margin-bottom: 8px; letter-spacing: -0.01em; }
+    .problem-card p { font-size: 14px; color: var(--ink-2); line-height: 1.55; margin-bottom: 12px; }
+    .problem-card .price { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; padding: 6px 10px; background: var(--bg-soft); border-radius: 6px; color: var(--ink); font-weight: 500; display: inline-block; }
+
+    /* Feature grid (deliverables) */
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .feature-card { background: white; border: 1px solid var(--line); border-radius: 16px; padding: 28px; position: relative; overflow: hidden; transition: all 0.2s; }
+    .feature-card:hover { border-color: var(--primary); }
+    .feature-card .icon { width: 44px; height: 44px; border-radius: 12px; background: var(--grad-soft); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 600; color: var(--primary); }
+    .feature-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; letter-spacing: -0.01em; }
+    .feature-card p { font-size: 14px; color: var(--ink-2); line-height: 1.55; }
+
+    /* Pricing */
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 1000px; margin: 0 auto; }
+    @media (max-width: 720px) { .pricing-grid { grid-template-columns: 1fr; } }
+    .price-card { background: white; border: 1px solid var(--line); border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 18px; transition: all 0.2s; }
+    .price-card.featured { border: 2px solid transparent; background:
+      linear-gradient(white, white) padding-box,
+      var(--grad) border-box;
+      position: relative; box-shadow: 0 16px 40px rgba(109,40,217,0.18);
+    }
+    .price-card.featured::before {
+      content: 'POPULAR';
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--grad); color: white;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.16em; padding: 5px 12px; border-radius: 6px;
+    }
+    .price-card .name { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-3); letter-spacing: 0.08em; text-transform: uppercase; }
+    .price-card .amt { font-family: 'Inter Tight', sans-serif; font-size: 48px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; color: var(--ink); }
+    .price-card.featured .amt { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .price-card .unit { font-size: 13px; color: var(--ink-3); margin-top: -8px; }
+    .price-card .tag { font-size: 14px; color: var(--ink-2); line-height: 1.5; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+    .price-card ul { list-style: none; }
+    .price-card ul li { padding: 7px 0 7px 24px; position: relative; font-size: 14px; color: var(--ink); }
+    .price-card ul li::before { content: ''; position: absolute; left: 0; top: 12px; width: 14px; height: 14px; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 14 14' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 7l3 3 5-6' stroke='%236d28d9' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+    .price-card .btn { padding: 12px 18px; border-radius: 10px; font-size: 14.5px; font-weight: 600; text-decoration: none; text-align: center; transition: all 0.15s; margin-top: auto; }
+    .price-card:not(.featured) .btn { background: var(--bg-soft); color: var(--ink); border: 1px solid var(--line); }
+    .price-card:not(.featured) .btn:hover { border-color: var(--ink); }
+    .price-card.featured .btn { background: var(--ink); color: white; }
+    .price-card.featured .btn:hover { background: var(--primary); }
+
+    /* Refresh banner */
+    .refresh { margin-top: 28px; max-width: 1000px; margin-left: auto; margin-right: auto; padding: 24px 28px; background: var(--bg-soft); border: 1px solid var(--line); border-radius: 16px; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+    .refresh .l h4 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+    .refresh .l p { font-size: 13.5px; color: var(--ink-2); line-height: 1.55; }
+    .refresh .r { text-align: right; flex-shrink: 0; }
+    .refresh .r .amt { font-family: 'Inter Tight', sans-serif; font-size: 22px; font-weight: 700; }
+    .refresh .r .unit { font-size: 12px; color: var(--ink-3); }
+
+    /* Exhibits */
+    .exhibits { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    @media (max-width: 760px) { .exhibits { grid-template-columns: 1fr; } }
+    .exhibit-card { background: white; border: 1px solid var(--line); border-radius: 16px; padding: 24px; text-decoration: none; color: inherit; transition: all 0.2s; display: block; }
+    .exhibit-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 12px 28px rgba(109,40,217,0.10); }
+    .exhibit-card .badge { display: inline-block; padding: 4px 10px; background: var(--grad-soft); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary); margin-bottom: 14px; font-weight: 500; }
+    .exhibit-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; letter-spacing: -0.01em; }
+    .exhibit-card p { font-size: 14px; color: var(--ink-2); line-height: 1.55; }
+
+    /* CTA strip */
+    .cta-strip { margin: 96px 0 48px; padding: 56px 32px; background: var(--ink); color: white; border-radius: 24px; text-align: center; position: relative; overflow: hidden; }
+    .cta-strip::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 20%, rgba(168,85,247,0.30), transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(236,72,153,0.20), transparent 50%); pointer-events: none; }
+    .cta-strip-inner { position: relative; z-index: 1; }
+    .cta-strip h2 { font-size: clamp(26px, 4vw, 40px); font-weight: 700; letter-spacing: -0.025em; line-height: 1.15; margin-bottom: 14px; }
+    .cta-strip p { font-size: 17px; opacity: 0.85; margin-bottom: 28px; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .cta-strip .ctas { justify-content: center; }
+    .cta-strip .cta-btn.primary { background: white; color: var(--ink); }
+    .cta-strip .cta-btn.primary:hover { background: var(--primary-2); color: white; }
+    .cta-strip .cta-btn.ghost { color: white; border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.05); }
+    .cta-strip .cta-btn.ghost:hover { border-color: white; background: rgba(255,255,255,0.1); }
+
+    /* Footer */
+    .footer { padding: 48px 0; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--ink-3); }
+    .footer-row { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+    .footer .links { display: flex; gap: 24px; }
+    .footer .links a { color: var(--ink-2); text-decoration: none; }
+    .footer .links a:hover { color: var(--ink); }
+  </style>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="../index.html" class="brand"><span class="mark">SI</span> Strategic Intelligence</a>
+      <nav class="links">
+        <a href="../pricing-thesis.html">Pricing</a>
+        <a href="../pricing-benchmarks.html">Benchmarks</a>
+        <a href="https://github.com/derrick-pixel/competitor-intel-template">GitHub</a>
+      </nav>
+      <a href="../pricing-thesis.html" class="cta">Get started →</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="pill"><span class="dot"></span> Now in Singapore + Hong Kong · Phase 1</div>
+        <h1>Strategic intelligence,<br><span class="grad">built like a product.</span></h1>
+        <p class="deck">Bespoke competitor intelligence, market sizing, pricing strategy, and a Blue-Ocean whitespace atlas — for SG/HK businesses (USD 5–100M revenue) who need <strong>McKinsey-grade rigor</strong> at <strong>SaaS-grade pricing</strong>. Built in 5 days. Starting at USD 1,500.</p>
+        <p class="ctas">
+          <a href="../pricing-thesis.html" class="cta-btn primary">See pricing →</a>
+          <a href="https://github.com/derrick-pixel/competitor-intel-template" class="cta-btn ghost">Run it yourself</a>
+        </p>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat"><div class="v"><span class="grad">5–7</span><span style="font-size: 18px; color: var(--ink-3); margin-left: 4px;">days</span></div><div class="l">From kickoff to PDF</div></div>
+        <div class="stat"><div class="v">8</div><div class="l">Bespoke artefacts</div></div>
+        <div class="stat"><div class="v"><span class="grad">9</span></div><div class="l">Named AI agents</div></div>
+        <div class="stat"><div class="v">100%</div><div class="l">Sources cited</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="label">◆ THE MID-MARKET GAP</div>
+      <h2>Every alternative is wrong<br>for businesses your size.</h2>
+      <p class="deck">If you run a SG or HK business between USD 5M–100M revenue, you've already tried — and rejected — every option below. None fit your budget <em>and</em> your need at the same time.</p>
+      <div class="problem-grid">
+        <div class="problem-card">
+          <div class="who">Big consulting</div>
+          <h3>McKinsey, Bain, BCG</h3>
+          <p>Won't take a project under USD 100k. A "diagnostic" runs USD 250k+. Out of band before the conversation starts.</p>
+          <div class="price">USD 100k–3M+</div>
+        </div>
+        <div class="problem-card">
+          <div class="who">Off-the-shelf</div>
+          <h3>Frost &amp; Sullivan, Statista</h3>
+          <p>Affordable but generic. The same report sells to your competitor. Doesn't score <em>your</em> 30 firms.</p>
+          <div class="price">USD 1.5–15k</div>
+        </div>
+        <div class="problem-card">
+          <div class="who">CI software</div>
+          <h3>Klue, Crayon, Kompyte</h3>
+          <p>Tracks news and pricing. Doesn't size your TAM, recommend your tiers, or map your whitespace.</p>
+          <div class="price">USD 20–80k / yr</div>
+        </div>
+        <div class="problem-card">
+          <div class="who">Freelance</div>
+          <h3>Upwork, Toptal</h3>
+          <p>Quality varies wildly. One person, six weeks, deck-driven. No reproducible methodology.</p>
+          <div class="price">USD 2–16k</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="label">◆ WHAT'S IN THE BOX</div>
+      <h2>Eight bespoke artefacts.<br>One unified dashboard.</h2>
+      <p class="deck">The live admin is the working tool your team uses for months. The PDF is what goes in your board pack.</p>
+      <div class="feature-grid">
+        <div class="feature-card"><div class="icon">01</div><h3>Competitor database</h3><p>15–50 firms profiled across the dimensions your buyer evaluates. Searchable, filterable.</p></div>
+        <div class="feature-card"><div class="icon">02</div><h3>Top-5 threat brief</h3><p>The five firms most likely to win deals you should be winning, and why.</p></div>
+        <div class="feature-card"><div class="icon">03</div><h3>Market sizing funnel</h3><p>TAM → SAM → SOM with auditable derivation. Every multiplier sourced.</p></div>
+        <div class="feature-card"><div class="icon">04</div><h3>Pricing strategy</h3><p>Personas, willingness-to-pay bands, elasticity, three-tier recommendation.</p></div>
+        <div class="feature-card"><div class="icon">05</div><h3>Whitespace atlas</h3><p>Strategy canvas, segment×need heatmap, ranked attack plans.</p></div>
+        <div class="feature-card"><div class="icon">06</div><h3>Design audit</h3><p>Top-15 sites scored on 5-D rubric. Mobile pass. Findability stopwatch.</p></div>
+        <div class="feature-card"><div class="icon">07</div><h3>Live admin dashboard</h3><p>Searchable, shareable with your team. 12–24 month access.</p></div>
+        <div class="feature-card"><div class="icon">08</div><h3>Board-grade PDF</h3><p>10–14-page report. Drop into your board pack or investor update.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="label">◆ PRICING</div>
+      <h2>Pick the depth<br>that fits your stage.</h2>
+      <p class="deck">All in USD. SGD &amp; HKD equivalents on the full pricing page. Cancel the Refresh subscription anytime.</p>
+      <div class="pricing-grid">
+        <div class="price-card">
+          <div class="name">Lite</div>
+          <div class="amt">$1,500</div>
+          <div class="unit">one-time · 3–5 days</div>
+          <div class="tag">For founders validating a wedge before committing budget.</div>
+          <ul>
+            <li>15 competitors</li>
+            <li>TAM-only sizing</li>
+            <li>2-tier pricing sketch</li>
+            <li>Whitespace canvas</li>
+            <li>5-page PDF</li>
+          </ul>
+          <a href="../pricing-thesis.html" class="btn">Start with Lite</a>
+        </div>
+        <div class="price-card featured">
+          <div class="name">Standard</div>
+          <div class="amt">$4,000</div>
+          <div class="unit">one-time · 5–7 days</div>
+          <div class="tag">For mid-market businesses doing a serious competitive review.</div>
+          <ul>
+            <li>30 competitors</li>
+            <li>Full TAM/SAM/SOM</li>
+            <li>3-tier pricing strategy</li>
+            <li>Full whitespace atlas</li>
+            <li>Design audit</li>
+            <li>10–14-page PDF</li>
+            <li>60-min readout</li>
+          </ul>
+          <a href="../pricing-thesis.html" class="btn">Choose Standard</a>
+        </div>
+        <div class="price-card">
+          <div class="name">Pro</div>
+          <div class="amt">$7,000</div>
+          <div class="unit">one-time · 8–12 days</div>
+          <div class="tag">For brands taking the deliverable to investors or board.</div>
+          <ul>
+            <li>50 competitors</li>
+            <li>Brand-aligned admin re-skin</li>
+            <li>Boardroom-grade PDF</li>
+            <li>2× revisions</li>
+            <li>90-min readout</li>
+            <li>24-month access</li>
+          </ul>
+          <a href="../pricing-thesis.html" class="btn">Choose Pro</a>
+        </div>
+      </div>
+      <div class="refresh">
+        <div class="l">
+          <h4>Quarterly Refresh subscription</h4>
+          <p>Re-runs your full pack every 90 days. Monthly delta alerts on pricing changes &amp; new entrants. Cancel anytime.</p>
+        </div>
+        <div class="r">
+          <div class="amt">$990 / qtr</div>
+          <div class="unit">per project</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="label">◆ EXHIBITS</div>
+      <h2>Real projects<br>built on this stack.</h2>
+      <div class="exhibits">
+        <a href="../exhibits/xinceai.md" class="exhibit-card">
+          <div class="badge">AI · SG SMEs</div>
+          <h3>XinceAI</h3>
+          <p>AI automation for SG SMEs. Reference implementation of the whitespace atlas pattern — 35 competitors, 8×8 heatmap.</p>
+        </a>
+        <a href="../exhibits/elix-eor.md" class="exhibit-card">
+          <div class="badge">EOR · SG</div>
+          <h3>Elix EOR</h3>
+          <p>EOR for SG micro-businesses. Scaled the heatmap to 15×15 with rich CPF/MOM/IRAS regulatory metadata.</p>
+        </a>
+        <a href="../exhibits/lumana.md" class="exhibit-card">
+          <div class="badge">Healthtech · APAC</div>
+          <h3>Lumana</h3>
+          <p>Aged-care ambient monitoring across AU/HK/SG. Multi-currency pricing, hardware-adjacent market.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="cta-strip">
+      <div class="cta-strip-inner">
+        <h2>Ready to see your<br>competitive landscape?</h2>
+        <p>Book a 20-minute scoping call. We'll walk through your competitive set, confirm the right tier, and lock a delivery date.</p>
+        <p class="ctas">
+          <a href="../pricing-thesis.html" class="cta-btn primary">Book a call →</a>
+          <a href="https://github.com/derrick-pixel/competitor-intel-template" class="cta-btn ghost">Run it yourself</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container footer-row">
+      <div>© 2026 Strategic Intelligence · Phase 1: SG &amp; HK only</div>
+      <nav class="links">
+        <a href="../pricing-thesis.html">Pricing</a>
+        <a href="../pricing-benchmarks.html">Benchmarks</a>
+        <a href="index.html">Other variants</a>
+        <a href="https://github.com/derrick-pixel/competitor-intel-template">GitHub</a>
+      </nav>
+    </div>
+  </footer>
+
+</body>
+</html>

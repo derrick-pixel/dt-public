@@ -4,6 +4,36 @@ Append-only. Every methodology change gets a dated entry. Agent 7 (Pitfall Curat
 
 ---
 
+## v2.1.1 — 2026-04-29 — SEO rigor track (Week 2 of 7) — semantic-html-audit
+
+**Why:** JSON-LD (Week 1) gives crawlers structured signals, but the underlying HTML must also be semantic. 2026-Q1 audit caught: 4/6 sites had multiple h1s, 5/6 sites had decorative images without alt, 6/6 sites missed `loading="lazy"` on below-fold images. Need a systematic, automatable detector.
+
+**Added:**
+- `mechanics/semantic-html-audit/` — 5-file mechanic. Pure-JS audit core; two surfaces: browser dev banner (drop-in script tag, activates on localhost or `?audit=1`) and Node CLI (`cli.js` for batch audit across the shipped fleet). Returns per-page `{ score, violations[], stats }`.
+
+**Audit dimensions (8):**
+1. Heading hierarchy — exactly one h1, no skipped levels
+2. Semantic landmarks — `<main>`, `<header>`, `<nav>`, `<footer>` present
+3. Image hygiene — `alt`, `width`, `height` on every `<img>`
+4. Internal linking — ≥3 internal links per page, descriptive anchor text
+5. Lang attribute — `<html lang="...">` present
+6. Title + meta description — present, correct length, not duplicates
+7. JSON-LD presence — cross-references schema-jsonld mechanic
+8. Content thinness — `<main>` ≥100 words
+
+**Changed:**
+- `methodology/07-qa-pitfall-curator.md` — Agent 7 now runs semantic-html-audit BEFORE axe-core. Quality bar: avg score ≥80 across all pages; zero high-severity violations of certain ids. Updated deliverable checklist.
+
+**Added pitfalls (8):**
+- `seo-multiple-h1` (high), `seo-heading-skip` (medium), `seo-img-no-alt` (high), `seo-img-no-dimensions` (medium), `seo-no-landmarks` / `seo-no-main` (high), `seo-no-lang-attr` (medium), `seo-thin-content` (medium), `seo-no-internal-links` (low)
+
+**Roadmap progress:**
+- Week 1 ✅ — schema-jsonld mechanic + Agent 6 integration (v2.1.0)
+- Week 2 ✅ — semantic-html-audit mechanic + Agent 7 integration (this entry)
+- Week 3 → next — fleet audit across 20+ shipped sites; produce ranked fix list
+
+---
+
 ## v2.1.0 — 2026-04-29 — SEO rigor track (Week 1 of 7)
 
 **Why:** 2026-Q1 audit of 6 dt-site-creator-shipped sites (Lumana, Passage, ELIX EOR, XinceAI, Elitez Pulse, Aevum MRI) found **0 of 6 had any structured data**. The single biggest under-shipped SEO win in vanilla-HTML projects is JSON-LD. Schema-rich pages outrank schema-less peers by 20–35%, and LLM-era search (ChatGPT, Claude, Perplexity citations) parses JSON-LD natively. We must close this gap systematically before more sites ship.

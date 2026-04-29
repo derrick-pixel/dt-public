@@ -157,8 +157,8 @@
     }
     .lp-tab-btn:hover { color: #0f172a; }
     .lp-tab-btn.active { color: #0ea5e9; border-bottom-color: #0ea5e9; }
-    .lp-tab-panel { display: none; }
-    .lp-tab-panel.active { display: block; }
+    .lp-tab-panel { display: block; scroll-margin-top: 120px; }
+    .lp-tab-btn.active { color: #0ea5e9; border-bottom-color: #0ea5e9; }
   </style>
   <!-- Favicon set -->
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
@@ -170,7 +170,6 @@
   <link rel="mask-icon" href="safari-pinned-tab.svg" color="#38bdf8" />
   <meta name="theme-color" content="#0a0f1e" media="(prefers-color-scheme: dark)" />
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-  <meta name="robots" content="noindex, nofollow">
 <script type="application/ld+json" data-injected="schema-jsonld">
 {
   "@context": "https://schema.org",
@@ -189,10 +188,11 @@
 }
 </script>
   <meta name="description" content="ElitezAI deploys agentic AI workflows for Southeast Asian SMEs. 250 paying clients, 20,000 A/B tests, 577 hours saved per month. MOM-compliant." />
+  <meta name="robots" content="noindex, nofollow">
 </head>
 <body class="bg-white text-slate-800">
-
 <header>
+
 <!-- ═══════════════════════════════════════════════════
      BOOTH ANNOUNCEMENT BAR
 ════════════════════════════════════════════════════ -->
@@ -207,14 +207,13 @@
 <script>
   // Push nav and hero down to account for booth bar
   function switchTab(name) {
-    // panels
+    // Scroll to the target panel
+    const panel = document.getElementById('lp-panel-' + name);
+    if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Update active tab highlight
     ['product','traction','analytics','pricing'].forEach(t => {
-      document.getElementById('lp-panel-' + t).classList.toggle('active', t === name);
       document.getElementById('lp-btn-' + t).classList.toggle('active', t === name);
     });
-    // scroll to tab bar
-    const bar = document.getElementById('lp-tab-bar');
-    if (bar) bar.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -1195,10 +1194,11 @@
   </div>
 </section>
 
+</main>
+
 <!-- ═══════════════════════════════════════════════════
      FOOTER
 ════════════════════════════════════════════════════ -->
-</main>
 <footer class="bg-slate-900 py-12 border-t border-slate-800">
   <div class="max-w-7xl mx-auto px-6">
     <div class="flex flex-col md:flex-row justify-between items-start gap-8">

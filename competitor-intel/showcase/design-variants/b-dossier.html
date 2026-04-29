@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Variant B · Dossier — Strategic Intelligence Brief</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0e1a;
+      --bg-2: #121826;
+      --bg-3: #1a1f2e;
+      --line: rgba(245,237,224,0.08);
+      --line-2: rgba(245,237,224,0.15);
+      --line-strong: rgba(245,237,224,0.32);
+      --ink: #f5ede0;
+      --ink-2: #c8c0b3;
+      --ink-3: #8a8275;
+      --amber: #ffb547;
+      --amber-glow: rgba(255,181,71,0.15);
+      --teal: #5eead4;
+      --red: #ff5e7a;
+      --green: #6ee7a8;
+    }
+    body { font-family: 'IBM Plex Sans', -apple-system, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; font-size: 15px; min-height: 100vh; }
+    body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse at 30% 0%, rgba(255,181,71,0.04), transparent 60%); pointer-events: none; z-index: 0; }
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+    a { color: var(--amber); }
+
+    /* Top classification bar */
+    .classified { background: var(--amber); color: var(--bg); padding: 6px 0; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.3em; text-align: center; text-transform: uppercase; }
+
+    /* Header */
+    .header { padding: 24px 0; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+    .header .brand { display: flex; align-items: center; gap: 12px; }
+    .header .brand-mark { width: 40px; height: 40px; border: 2px solid var(--amber); display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 700; color: var(--amber); }
+    .header .brand-text { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.16em; line-height: 1.3; }
+    .header .brand-text .name { font-weight: 700; text-transform: uppercase; color: var(--ink); }
+    .header .brand-text .sub { color: var(--ink-3); font-size: 10px; letter-spacing: 0.2em; }
+    .header nav { display: flex; gap: 24px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; }
+    .header nav a { color: var(--ink-2); text-decoration: none; transition: color 0.15s; }
+    .header nav a:hover { color: var(--amber); }
+
+    /* Document metadata strip */
+    .doc-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0; border-bottom: 1px solid var(--line); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; }
+    .doc-meta .cell { padding: 14px 16px 14px 0; border-right: 1px solid var(--line); padding-left: 16px; }
+    .doc-meta .cell:last-child { border-right: none; }
+    .doc-meta .label { color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.16em; margin-bottom: 4px; font-size: 10px; }
+    .doc-meta .value { color: var(--ink); font-weight: 500; }
+    .doc-meta .value .accent { color: var(--amber); }
+
+    /* Hero */
+    .hero { padding: 80px 0 56px; display: grid; grid-template-columns: 1fr 280px; gap: 48px; border-bottom: 1px solid var(--line); }
+    @media (max-width: 880px) { .hero { grid-template-columns: 1fr; } }
+    .hero-section-tag { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: var(--amber); text-transform: uppercase; margin-bottom: 18px; }
+    .hero h1 { font-family: 'IBM Plex Mono', monospace; font-size: clamp(34px, 5.5vw, 60px); font-weight: 500; line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 24px; }
+    .hero h1 .red { color: var(--red); }
+    .hero h1 .accent { color: var(--amber); }
+    .hero .deck { font-size: 17px; line-height: 1.65; color: var(--ink-2); max-width: 60ch; margin-bottom: 32px; }
+    .hero .deck strong { color: var(--ink); }
+    .hero-side { padding: 24px 0 0 32px; border-left: 1px solid var(--line); font-family: 'IBM Plex Mono', monospace; font-size: 11px; line-height: 1.8; }
+    .hero-side .h { color: var(--amber); letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 12px; font-size: 10px; }
+    .hero-side dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; }
+    .hero-side dt { color: var(--ink-3); }
+    .hero-side dd { color: var(--ink); }
+
+    /* CTAs */
+    .ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+    .cta { font-family: 'IBM Plex Mono', monospace; font-size: 13px; padding: 12px 20px; text-decoration: none; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; transition: all 0.15s; display: inline-block; }
+    .cta.primary { background: var(--amber); color: var(--bg); }
+    .cta.primary:hover { background: var(--ink); }
+    .cta.ghost { color: var(--ink); border: 1px solid var(--line-2); }
+    .cta.ghost:hover { border-color: var(--amber); color: var(--amber); }
+
+    /* Section */
+    .section { padding: 64px 0 32px; border-bottom: 1px solid var(--line); }
+    .section-num { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--amber); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 12px; }
+    .section h2 { font-family: 'IBM Plex Mono', monospace; font-size: clamp(26px, 3.5vw, 40px); font-weight: 500; line-height: 1.15; letter-spacing: -0.015em; margin-bottom: 14px; max-width: 24ch; }
+    .section .deck { font-size: 16px; color: var(--ink-2); max-width: 70ch; margin-bottom: 36px; line-height: 1.65; }
+
+    /* Gap dossier table */
+    .dossier-table { width: 100%; border-collapse: collapse; font-family: 'IBM Plex Mono', monospace; font-size: 13px; }
+    .dossier-table th { text-align: left; padding: 10px 14px; background: var(--bg-2); color: var(--ink-3); font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; font-size: 10px; border-bottom: 1px solid var(--line-2); }
+    .dossier-table td { padding: 16px 14px; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.55; }
+    .dossier-table tr:hover td { background: var(--bg-2); }
+    .dossier-table .name { color: var(--ink); font-weight: 600; }
+    .dossier-table .name .firms { color: var(--ink-3); font-weight: 400; font-size: 11px; display: block; margin-top: 2px; }
+    .dossier-table .price { color: var(--amber); font-weight: 600; white-space: nowrap; }
+    .dossier-table .verdict { color: var(--red); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; }
+    .dossier-table tr.us td { background: rgba(255,181,71,0.08); border-left: 3px solid var(--amber); }
+    .dossier-table tr.us .verdict { color: var(--green); }
+
+    /* Deliverables matrix */
+    .matrix { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line-2); border: 1px solid var(--line-2); }
+    @media (max-width: 920px) { .matrix { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 540px) { .matrix { grid-template-columns: 1fr; } }
+    .matrix-cell { background: var(--bg); padding: 22px 20px; min-height: 140px; }
+    .matrix-cell .id { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--amber); letter-spacing: 0.16em; margin-bottom: 8px; }
+    .matrix-cell h3 { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 8px; line-height: 1.3; }
+    .matrix-cell p { font-size: 12.5px; color: var(--ink-3); line-height: 1.55; }
+
+    /* Pricing dossier */
+    .price-dossier { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line-2); border: 1px solid var(--line-2); }
+    @media (max-width: 720px) { .price-dossier { grid-template-columns: 1fr; } }
+    .price-tier { background: var(--bg); padding: 32px 28px; position: relative; }
+    .price-tier.featured { background: var(--bg-2); }
+    .price-tier.featured::before { content: "RECOMMENDED"; position: absolute; top: 0; left: 0; background: var(--amber); color: var(--bg); font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 700; letter-spacing: 0.2em; padding: 4px 10px; }
+    .price-tier .tier-id { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--amber); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 16px; }
+    .price-tier .tier-name { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
+    .price-tier .tier-price { font-family: 'IBM Plex Mono', monospace; font-size: 36px; font-weight: 600; color: var(--ink); letter-spacing: -0.02em; line-height: 1; margin-bottom: 4px; }
+    .price-tier.featured .tier-price { color: var(--amber); }
+    .price-tier .tier-unit { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-3); margin-bottom: 18px; letter-spacing: 0.04em; }
+    .price-tier ul { list-style: none; font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 1.6; color: var(--ink-2); }
+    .price-tier ul li { padding: 4px 0 4px 16px; position: relative; }
+    .price-tier ul li::before { content: '▸'; position: absolute; left: 0; color: var(--amber); }
+
+    /* Pull data */
+    .pull-data { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line-2); border: 1px solid var(--line-2); margin: 56px 0; }
+    @media (max-width: 720px) { .pull-data { grid-template-columns: repeat(2, 1fr); } }
+    .pull-stat { background: var(--bg); padding: 24px 20px; text-align: left; }
+    .pull-stat .num { font-family: 'IBM Plex Mono', monospace; font-size: 32px; color: var(--amber); font-weight: 500; letter-spacing: -0.02em; line-height: 1; margin-bottom: 8px; }
+    .pull-stat .lbl { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-3); letter-spacing: 0.16em; text-transform: uppercase; line-height: 1.5; }
+
+    /* Footer */
+    .footer { padding: 48px 0 56px; border-top: 1px solid var(--line); margin-top: 64px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+    @media (max-width: 720px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+    .footer h4 { font-size: 10px; color: var(--ink-3); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 12px; }
+    .footer a { display: block; color: var(--ink-2); text-decoration: none; padding: 4px 0; transition: color 0.15s; }
+    .footer a:hover { color: var(--amber); }
+    .footer .copy { margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--line); color: var(--ink-3); font-size: 10px; letter-spacing: 0.1em; }
+  </style>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+  <div class="classified">◆ STRATEGIC INTELLIGENCE BRIEF · DOSSIER · UNCLASSIFIED · INTERNAL DISTRIBUTION ◆</div>
+
+  <div class="container">
+
+    <header class="header">
+      <div class="brand">
+        <div class="brand-mark">SI</div>
+        <div class="brand-text">
+          <div class="name">Strategic Intelligence</div>
+          <div class="sub">SG · HK · MID-MARKET DOSSIER</div>
+        </div>
+      </div>
+      <nav>
+        <a href="../index.html">Home</a>
+        <a href="../pricing-thesis.html">Pricing</a>
+        <a href="../pricing-benchmarks.html">Benchmarks</a>
+        <a href="https://github.com/derrick-pixel/competitor-intel-template">GitHub</a>
+      </nav>
+    </header>
+
+    <div class="doc-meta">
+      <div class="cell">
+        <div class="label">Document</div>
+        <div class="value">SI-2026-Q2-001</div>
+      </div>
+      <div class="cell">
+        <div class="label">Issued</div>
+        <div class="value">2026-04-28</div>
+      </div>
+      <div class="cell">
+        <div class="label">Coverage</div>
+        <div class="value">SG · HK · <span class="accent">Phase 1</span></div>
+      </div>
+      <div class="cell">
+        <div class="label">Buyer profile</div>
+        <div class="value">USD 5–100M revenue</div>
+      </div>
+      <div class="cell">
+        <div class="label">Pages</div>
+        <div class="value">N of 14</div>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div>
+        <div class="hero-section-tag">§ 0.0 — Executive summary</div>
+        <h1>Strategic clarity, <span class="accent">declassified</span>. Mid-market access at <span class="accent">USD 1.5k–7k</span>.</h1>
+        <p class="deck">Bespoke competitor intelligence, market sizing, pricing strategy, and a Blue-Ocean whitespace atlas. Built by an experienced operator with AI agents doing the parallel analysis. <strong>Every claim sourced. Every multiplier audited. Methodology appendix at the back of the dossier.</strong> Phase 1 coverage: Singapore + Hong Kong mid-market.</p>
+        <div class="ctas">
+          <a href="../pricing-thesis.html" class="cta primary">→ Request access</a>
+          <a href="https://github.com/derrick-pixel/competitor-intel-template" class="cta ghost">View methodology (open-source)</a>
+        </div>
+      </div>
+      <aside class="hero-side">
+        <div class="h">▸ Specifications</div>
+        <dl>
+          <dt>FORMAT</dt><dd>Live admin + PDF</dd>
+          <dt>DELIVERY</dt><dd>5–10 working days</dd>
+          <dt>SCOPE</dt><dd>15–50 firms</dd>
+          <dt>DEPTH</dt><dd>8 artefacts</dd>
+          <dt>SOURCING</dt><dd>100% cited</dd>
+          <dt>REWORK</dt><dd>Full guarantee</dd>
+          <dt>RETAINER</dt><dd>USD 990 / qtr</dd>
+        </dl>
+      </aside>
+    </section>
+
+    <section class="section">
+      <div class="section-num">§ 1.0 — Threat assessment · Alternatives the buyer has rejected</div>
+      <h2>The mid-market gap</h2>
+      <p class="deck">If you operate a Singapore or Hong Kong business between USD 5–100M revenue, every alternative below is either too expensive, too generic, or too thin. The dossier sits at a deliberate price point in the gap they leave open.</p>
+      <table class="dossier-table">
+        <thead>
+          <tr>
+            <th>Vendor archetype</th>
+            <th>Typical fee</th>
+            <th>Bespoke</th>
+            <th>Strategy</th>
+            <th>Verdict</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="name">Big consulting<span class="firms">McKinsey · Bain · BCG</span></td>
+            <td class="price">USD 100k–3M+</td>
+            <td>YES</td>
+            <td>YES</td>
+            <td><span class="verdict">▲ OUT OF BAND</span></td>
+          </tr>
+          <tr>
+            <td class="name">Off-the-shelf reports<span class="firms">Frost &amp; Sullivan · Statista · IBISWorld</span></td>
+            <td class="price">USD 1.5–15k</td>
+            <td>NO</td>
+            <td>NO</td>
+            <td><span class="verdict">▲ TOO GENERIC</span></td>
+          </tr>
+          <tr>
+            <td class="name">CI software<span class="firms">Klue · Crayon · Kompyte</span></td>
+            <td class="price">USD 20–80k / yr</td>
+            <td>NO</td>
+            <td>NO</td>
+            <td><span class="verdict">▲ NO STRATEGY</span></td>
+          </tr>
+          <tr>
+            <td class="name">Freelance consultant<span class="firms">Upwork · Toptal · ex-MBB freelance</span></td>
+            <td class="price">USD 2–16k</td>
+            <td>YES</td>
+            <td>VAR</td>
+            <td><span class="verdict">▲ QUALITY RISK</span></td>
+          </tr>
+          <tr class="us">
+            <td class="name">Strategic Intelligence (this dossier)<span class="firms">9 named AI agents · operator review</span></td>
+            <td class="price">USD 1.5k–7k</td>
+            <td>YES</td>
+            <td>YES (8 ARTEFACTS)</td>
+            <td><span class="verdict">▼ FITS PROFILE</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <div class="section-num">§ 2.0 — Deliverable manifest</div>
+      <h2>Eight artefacts. <span style="color: var(--amber);">Bespoke to your competitive set.</span></h2>
+      <p class="deck">Every artefact is sourced and cross-referenced. The Methodology Appendix at the back of the bound PDF lets any reader trace any claim back to its source.</p>
+      <div class="matrix">
+        <div class="matrix-cell"><div class="id">ART · 01</div><h3>Competitor database</h3><p>15–50 firms profiled across the dimensions your buyer evaluates. Searchable.</p></div>
+        <div class="matrix-cell"><div class="id">ART · 02</div><h3>Top-5 threat brief</h3><p>The five firms most likely to win deals you should be winning, and why.</p></div>
+        <div class="matrix-cell"><div class="id">ART · 03</div><h3>Market sizing</h3><p>TAM → SAM → SOM funnel. Every multiplier sourced.</p></div>
+        <div class="matrix-cell"><div class="id">ART · 04</div><h3>Pricing strategy</h3><p>Personas, WTP bands, elasticity, three-tier recommendation.</p></div>
+        <div class="matrix-cell"><div class="id">ART · 05</div><h3>Whitespace atlas</h3><p>Strategy canvas, segment×need heatmap, ranked attack plans.</p></div>
+        <div class="matrix-cell"><div class="id">ART · 06</div><h3>Design audit</h3><p>Top-15 sites scored on 5-D rubric, mobile pass, findability.</p></div>
+        <div class="matrix-cell"><div class="id">ART · 07</div><h3>Live admin dashboard</h3><p>Searchable, shareable. 12–24 month team access.</p></div>
+        <div class="matrix-cell"><div class="id">ART · 08</div><h3>Board-grade PDF</h3><p>10–14-page editorial layout. Methodology appendix included.</p></div>
+      </div>
+
+      <div class="pull-data">
+        <div class="pull-stat"><div class="num">100%</div><div class="lbl">Claims sourced</div></div>
+        <div class="pull-stat"><div class="num">5–10d</div><div class="lbl">Time to ship</div></div>
+        <div class="pull-stat"><div class="num">9</div><div class="lbl">Named AI agents</div></div>
+        <div class="pull-stat"><div class="num">100%</div><div class="lbl">Rework guarantee</div></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-num">§ 3.0 — Access tiers</div>
+      <h2>Three levels of clearance.</h2>
+      <p class="deck">All in USD. SGD &amp; HKD equivalents on the full pricing page. The Quarterly Refresh subscription (USD 990/qtr) re-runs your full dossier every 90 days plus monthly delta alerts.</p>
+      <div class="price-dossier">
+        <div class="price-tier">
+          <div class="tier-id">L · 1.0</div>
+          <div class="tier-name">Lite</div>
+          <div class="tier-price">$1,500</div>
+          <div class="tier-unit">one-time · 3–5 days</div>
+          <ul>
+            <li>15 competitors profiled</li>
+            <li>Top-5 threat brief</li>
+            <li>TAM-only sizing</li>
+            <li>2-tier pricing sketch</li>
+            <li>Whitespace canvas</li>
+            <li>5-page PDF</li>
+          </ul>
+        </div>
+        <div class="price-tier featured">
+          <div class="tier-id">L · 2.0</div>
+          <div class="tier-name">Standard</div>
+          <div class="tier-price">$4,000</div>
+          <div class="tier-unit">one-time · 5–7 days</div>
+          <ul>
+            <li>30 competitors profiled</li>
+            <li>Full TAM/SAM/SOM funnel</li>
+            <li>3-tier pricing strategy</li>
+            <li>Full whitespace atlas</li>
+            <li>Website design audit</li>
+            <li>10–14-page PDF</li>
+            <li>60-min readout call</li>
+          </ul>
+        </div>
+        <div class="price-tier">
+          <div class="tier-id">L · 3.0</div>
+          <div class="tier-name">Pro</div>
+          <div class="tier-price">$7,000</div>
+          <div class="tier-unit">one-time · 8–12 days</div>
+          <ul>
+            <li>50 competitors profiled</li>
+            <li>Brand-aligned admin re-skin</li>
+            <li>Boardroom-grade PDF</li>
+            <li>2× revision rounds</li>
+            <li>90-min executive readout</li>
+            <li>24-month admin access</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-num">§ 4.0 — Validated implementations · Field record</div>
+      <h2>Three declassified case studies.</h2>
+      <div class="matrix" style="grid-template-columns: repeat(3, 1fr);">
+        <a href="../exhibits/xinceai.md" style="text-decoration: none;"><div class="matrix-cell"><div class="id">CASE · 01</div><h3>XinceAI</h3><p>AI automation for SG SMEs. 35 competitors, 8×8 whitespace heatmap. Reference implementation.</p></div></a>
+        <a href="../exhibits/elix-eor.md" style="text-decoration: none;"><div class="matrix-cell"><div class="id">CASE · 02</div><h3>Elix EOR</h3><p>EOR for SG micro-businesses. 15×15 heatmap with rich CPF/MOM/IRAS regulatory metadata.</p></div></a>
+        <a href="../exhibits/lumana.md" style="text-decoration: none;"><div class="matrix-cell"><div class="id">CASE · 03</div><h3>Lumana</h3><p>Aged-care monitoring AU/HK/SG. Multi-currency pricing, hardware-adjacent market.</p></div></a>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-grid">
+        <div>
+          <h4>STRATEGIC INTELLIGENCE</h4>
+          <p style="color: var(--ink-3); line-height: 1.65; font-size: 12px;">Productized competitor intelligence, market sizing, pricing strategy, and whitespace mapping for Singapore + Hong Kong mid-market businesses. Phase 2 expands SEA-wide.</p>
+        </div>
+        <div>
+          <h4>PRODUCT</h4>
+          <a href="../pricing-thesis.html">Pricing</a>
+          <a href="../pricing-benchmarks.html">Benchmarks</a>
+          <a href="index.html">Other variants</a>
+        </div>
+        <div>
+          <h4>EXHIBITS</h4>
+          <a href="../exhibits/xinceai.md">XinceAI</a>
+          <a href="../exhibits/elix-eor.md">Elix EOR</a>
+          <a href="../exhibits/lumana.md">Lumana</a>
+        </div>
+        <div>
+          <h4>OPEN</h4>
+          <a href="https://github.com/derrick-pixel/competitor-intel-template">GitHub</a>
+          <a href="../../methodology/FIELD-DICTIONARY.md">Schema</a>
+          <a href="../../AGENT.md">AGENT.md</a>
+        </div>
+      </div>
+      <div class="copy">▸ DOSSIER ID SI-2026-Q2-001 · ISSUED 2026-04-28 · OPEN-SOURCE METHODOLOGY · MIT LICENCE</div>
+    </footer>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Passage — Competitor Analytics</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #32332d;
+      --secondary: #596060;
+      --gold: #725b3f;
+      --surface: #fcf9f5;
+      --surface-1: #f0ece4;
+      --surface-2: #e4e0d8;
+      --border: #d8d4cc;
+      --muted: #7b7b74;
+      --white: #ffffff;
+      --green: #3a7a50;
+      --amber: #b07020;
+      --blue: #2a5080;
+      --red: #8b2020;
+      --purple: #5a3878;
+      --radius: 8px;
+      --radius-lg: 14px;
+      --font: 'Segoe UI', system-ui, sans-serif;
+      --serif: Georgia, 'Times New Roman', serif;
+    }
+    body { font-family: var(--font); background: var(--surface); color: var(--primary); min-height: 100vh; }
+
+    /* ── LOGIN ── */
+    #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--primary); }
+    .login-box { background: var(--white); border-radius: var(--radius-lg); padding: 48px 40px; width: 100%; max-width: 380px; box-shadow: 0 24px 48px rgba(0,0,0,0.3); }
+    .login-logo { font-family: var(--serif); font-size: 1.8rem; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; margin-bottom: 4px; text-align: center; }
+    .login-logo span { color: var(--gold); }
+    .login-sub { font-size: 0.78rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 32px; text-align: center; }
+    .login-box label { display: block; font-size: 0.74rem; font-weight: 600; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; margin-top: 16px; }
+    .login-box input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--radius); font-size: 0.95rem; font-family: var(--font); outline: none; transition: border-color 0.2s; background: var(--surface); }
+    .login-box input:focus { border-color: var(--gold); }
+    .login-btn { margin-top: 20px; width: 100%; padding: 12px 18px; background: var(--primary); color: var(--white); border: none; border-radius: var(--radius); font-family: var(--serif); font-size: 0.95rem; font-weight: 600; letter-spacing: 0.06em; cursor: pointer; transition: background 0.2s; }
+    .login-btn:hover { background: var(--gold); }
+    .login-error { display: none; margin-top: 12px; padding: 10px 12px; background: rgba(139,32,32,0.08); color: var(--red); font-size: 0.82rem; border-radius: var(--radius); text-align: center; }
+    .login-error.show { display: block; }
+
+    /* ── ATLAS ── */
+    #dashboard { display: none; }
+    .atlas-body { max-width: 1340px; margin: 0 auto; padding: 32px 24px 80px; }
+    .atlas-nav { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+    .atlas-nav .brand { font-family: var(--serif); font-size: 1.2rem; font-weight: 700; letter-spacing: 0.08em; color: var(--primary); text-decoration: none; }
+    .atlas-nav .brand span { color: var(--gold); }
+    .atlas-nav-links { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .atlas-nav-links a { font-size: 0.8rem; color: var(--secondary); padding: 6px 12px; border-radius: var(--radius); text-decoration: none; transition: background 0.15s; }
+    .atlas-nav-links a:hover { background: var(--surface-1); }
+    .atlas-nav-links a.active { background: var(--gold); color: var(--white); font-weight: 600; }
+    .atlas-nav-links .logout-link { border: 1px solid var(--border); color: var(--muted); cursor: pointer; background: none; font-family: var(--font); font-size: 0.8rem; padding: 6px 12px; border-radius: var(--radius); }
+
+    .atlas-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
+    .atlas-tag { font-family: var(--serif); font-size: 0.76rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+    .atlas-title { font-family: var(--serif); font-size: clamp(1.7rem, 3.5vw, 2.4rem); font-weight: 700; letter-spacing: -0.01em; line-height: 1.15; color: var(--primary); }
+    .atlas-meta { font-size: 0.78rem; color: var(--muted); text-align: right; font-family: ui-monospace, monospace; letter-spacing: 0.04em; }
+
+    .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 32px; }
+    .kpi { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; }
+    .kpi-val { font-family: var(--serif); font-size: 2rem; font-weight: 700; color: var(--primary); letter-spacing: -0.02em; line-height: 1; }
+    .kpi-val.green { color: var(--green); }
+    .kpi-val.amber { color: var(--amber); }
+    .kpi-val.red { color: var(--red); }
+    .kpi-val.gold { color: var(--gold); }
+    .kpi-lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-top: 8px; }
+
+    .artifact { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px 28px; margin-bottom: 22px; }
+    .art-num { font-size: 0.72rem; color: var(--gold); letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
+    .art-title { font-family: var(--serif); font-size: 1.35rem; font-weight: 700; color: var(--primary); letter-spacing: -0.01em; margin-bottom: 8px; }
+    .art-desc { font-size: 0.92rem; color: var(--muted); max-width: 820px; line-height: 1.6; margin-bottom: 22px; }
+
+    /* Radar wrap */
+    .chart-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px; }
+    #radar-chart { width: 100% !important; max-width: 720px; height: 460px !important; margin: 0 auto; display: block; }
+
+    /* Filter bar */
+    .comp-controls { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+    .comp-search, .comp-filter { padding: 9px 14px; border: 1.5px solid var(--border); background: var(--surface); color: var(--primary); font-family: var(--font); font-size: 0.88rem; border-radius: var(--radius); outline: none; }
+    .comp-search:focus, .comp-filter:focus { border-color: var(--gold); }
+    .comp-search { flex: 1; min-width: 220px; }
+    .comp-count { font-size: 0.78rem; color: var(--muted); font-family: ui-monospace, monospace; }
+
+    /* Competitor cards */
+    .comp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; }
+    .comp-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px 22px; display: flex; flex-direction: column; gap: 12px; }
+    .comp-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .comp-name { font-family: var(--serif); font-size: 1.08rem; font-weight: 700; color: var(--primary); letter-spacing: -0.01em; }
+    .comp-url { display: block; font-size: 0.74rem; color: var(--gold); text-decoration: none; margin-top: 2px; word-break: break-all; }
+    .comp-url:hover { text-decoration: underline; }
+    .comp-target { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+
+    .badge-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .badge { display: inline-block; padding: 3px 9px; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; font-family: ui-monospace, monospace; border-radius: 100px; border: 1px solid var(--border); }
+    .b-tier-premium { background: rgba(90,56,120,0.10); color: var(--purple); border-color: var(--purple); }
+    .b-tier-mid { background: rgba(42,80,128,0.10); color: var(--blue); border-color: var(--blue); }
+    .b-tier-budget { background: rgba(58,122,80,0.10); color: var(--green); border-color: var(--green); }
+    .b-tier-dtc-direct { background: rgba(114,91,63,0.12); color: var(--gold); border-color: var(--gold); }
+    .b-cat { background: rgba(114,91,63,0.08); color: var(--gold); border-color: rgba(114,91,63,0.3); }
+    .b-vis-hidden_in_package { background: rgba(139,32,32,0.10); color: var(--red); border-color: var(--red); }
+    .b-vis-bundled_transparent { background: rgba(176,112,32,0.14); color: var(--amber); border-color: var(--amber); }
+    .b-vis-partial { background: rgba(176,112,32,0.14); color: var(--amber); border-color: var(--amber); }
+    .b-vis-fully_published { background: rgba(58,122,80,0.12); color: var(--green); border-color: var(--green); }
+    .b-vis-wholesale_only { background: rgba(123,123,116,0.14); color: var(--muted); border-color: var(--muted); }
+    .b-vis-quote_on_call { background: rgba(139,32,32,0.08); color: var(--red); border-color: var(--red); }
+    .b-vis-self_sourced { background: rgba(123,123,116,0.14); color: var(--muted); border-color: var(--muted); }
+    .b-threat-high { background: rgba(139,32,32,0.10); color: var(--red); border-color: var(--red); }
+    .b-threat-medium { background: rgba(176,112,32,0.14); color: var(--amber); border-color: var(--amber); }
+    .b-threat-low { background: rgba(58,122,80,0.12); color: var(--green); border-color: var(--green); }
+
+    .price-strip { font-size: 0.82rem; color: var(--secondary); padding: 8px 12px; background: var(--surface-1); border-radius: var(--radius); border: 1px solid var(--border); }
+    .price-strip b { color: var(--primary); }
+
+    .score-row { display: grid; grid-template-columns: 90px 1fr 28px; gap: 10px; align-items: center; font-size: 0.78rem; }
+    .score-lbl { color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.66rem; font-weight: 700; }
+    .score-bar { height: 8px; background: var(--surface-2); border-radius: 4px; overflow: hidden; position: relative; }
+    .score-bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--amber)); border-radius: 4px; transition: width 0.4s ease; }
+    .score-num { font-family: ui-monospace, monospace; font-weight: 700; color: var(--primary); text-align: right; }
+
+    .lists-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 540px) { .lists-wrap { grid-template-columns: 1fr; } }
+    .list-block h4 { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; font-family: ui-monospace, monospace; }
+    .list-block ul { list-style: none; padding: 0; margin: 0; }
+    .list-block li { font-size: 0.78rem; color: var(--secondary); padding: 4px 0 4px 14px; position: relative; line-height: 1.5; }
+    .list-block li::before { content: '•'; color: var(--gold); position: absolute; left: 0; top: 4px; font-weight: 700; }
+    .list-block.weak li::before { color: var(--red); }
+    .list-block.strong li::before { color: var(--green); }
+
+    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 760px) { .insight-grid { grid-template-columns: 1fr; } }
+    .insight-block { background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
+    .insight-block h4 { font-family: var(--serif); font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+    .insight-block ul { list-style: none; padding: 0; margin: 0; }
+    .insight-block li { font-size: 0.84rem; color: var(--secondary); padding: 5px 0 5px 16px; position: relative; line-height: 1.55; }
+    .insight-block li::before { content: '◆'; color: var(--gold); position: absolute; left: 0; top: 5px; font-size: 0.7rem; }
+
+    .loading { color: var(--muted); font-size: 0.86rem; padding: 32px; text-align: center; font-family: ui-monospace, monospace; grid-column: 1 / -1; }
+
+    /* ── ARTIFACT 04 — SOURCED EVIDENCE ── */
+    .ev-anchor { background: linear-gradient(135deg, rgba(114,91,63,0.09), rgba(176,112,32,0.05)); border: 1.5px solid var(--gold); border-radius: var(--radius-lg); padding: 22px 24px; margin-bottom: 22px; }
+    .ev-anchor-tag { font-size: 0.66rem; color: var(--gold); letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; font-family: ui-monospace, monospace; }
+    .ev-anchor h3 { font-family: var(--serif); font-size: 1.15rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; line-height: 1.3; }
+    .ev-anchor p { font-size: 0.86rem; color: var(--secondary); line-height: 1.6; margin-bottom: 12px; }
+    .ev-anchor-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin: 14px 0; }
+    .ev-anchor-stat { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
+    .ev-stat-num { font-family: var(--serif); font-size: 1.3rem; font-weight: 700; color: var(--gold); line-height: 1.1; letter-spacing: -0.01em; }
+    .ev-stat-cap { font-size: 0.72rem; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+    .ev-anchor-cite { font-size: 0.78rem; color: var(--secondary); margin-top: 4px; }
+    .ev-anchor-cite a { color: var(--gold); text-decoration: none; word-break: break-all; }
+    .ev-anchor-cite a:hover { text-decoration: underline; }
+
+    .ev-pending { background: rgba(176,112,32,0.08); border: 1px dashed var(--amber); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 22px; font-size: 0.85rem; color: var(--secondary); line-height: 1.6; }
+    .ev-pending b { color: var(--amber); font-family: ui-monospace, monospace; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 6px; }
+    .ev-pending code { color: var(--primary); background: var(--surface-1); padding: 1px 6px; border-radius: 4px; font-family: ui-monospace, monospace; font-size: 0.78rem; }
+
+    .ev-section-h { font-family: var(--serif); font-size: 1.05rem; font-weight: 700; color: var(--primary); margin: 8px 0 12px; letter-spacing: -0.01em; }
+
+    .ev-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 22px; background: var(--white); }
+    .ev-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 760px; }
+    .ev-table thead { background: var(--surface-1); }
+    .ev-table th { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); padding: 11px 14px; text-align: left; border-bottom: 1.5px solid var(--border); font-family: ui-monospace, monospace; }
+    .ev-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); color: var(--secondary); line-height: 1.5; vertical-align: top; }
+    .ev-table tr:last-child td { border-bottom: none; }
+    .ev-table .ev-prov { font-weight: 700; color: var(--primary); white-space: nowrap; }
+    .ev-table .ev-fig { font-family: ui-monospace, monospace; font-weight: 700; color: var(--primary); white-space: nowrap; }
+    .ev-table .ev-cred { display: inline-block; font-size: 0.64rem; padding: 2px 8px; border-radius: 100px; border: 1px solid var(--border); font-family: ui-monospace, monospace; letter-spacing: 0.04em; white-space: nowrap; font-weight: 700; }
+    .ev-cred-high { background: rgba(58,122,80,0.12); color: var(--green); border-color: var(--green); }
+    .ev-cred-med { background: rgba(176,112,32,0.12); color: var(--amber); border-color: var(--amber); }
+    .ev-cred-low { background: rgba(123,123,116,0.14); color: var(--muted); border-color: var(--muted); }
+    .ev-cred-gov { background: rgba(42,80,128,0.10); color: var(--blue); border-color: var(--blue); }
+    .ev-table a { color: var(--gold); text-decoration: none; word-break: break-word; }
+    .ev-table a:hover { text-decoration: underline; }
+
+    .ev-themes { list-style: none; padding: 0; margin: 0 0 22px; counter-reset: themecount; }
+    .ev-themes li { background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px 12px 42px; margin-bottom: 8px; font-size: 0.86rem; color: var(--secondary); line-height: 1.55; position: relative; counter-increment: themecount; }
+    .ev-themes li::before { content: counter(themecount); position: absolute; left: 14px; top: 11px; font-family: var(--serif); font-size: 1rem; font-weight: 700; color: var(--gold); }
+    .ev-themes li b { color: var(--primary); }
+
+    .ev-sourcelib { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+    .ev-sourcecat { background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+    .ev-sourcecat h4 { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; font-family: ui-monospace, monospace; }
+    .ev-sourcecat ul { list-style: none; padding: 0; margin: 0; }
+    .ev-sourcecat li { font-size: 0.78rem; padding: 5px 0 5px 16px; position: relative; line-height: 1.45; }
+    .ev-sourcecat li::before { content: '↗'; color: var(--gold); position: absolute; left: 0; top: 5px; font-size: 0.78rem; }
+    .ev-sourcecat a { color: var(--secondary); text-decoration: none; word-break: break-word; }
+    .ev-sourcecat a:hover { color: var(--gold); text-decoration: underline; }
+    .ev-sourcecat .ev-date { color: var(--muted); font-size: 0.7rem; margin-left: 4px; font-family: ui-monospace, monospace; }
+
+    /* Integrated banner (replaces pending) */
+    .ev-integrated { background: rgba(58,122,80,0.06); border: 1px solid rgba(58,122,80,0.4); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 22px; font-size: 0.85rem; color: var(--secondary); line-height: 1.6; }
+    .ev-integrated b { color: var(--green); font-family: ui-monospace, monospace; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 6px; }
+    .ev-integrated code { color: var(--primary); background: var(--white); padding: 1px 6px; border-radius: 4px; font-family: ui-monospace, monospace; font-size: 0.78rem; border: 1px solid var(--border); }
+    .ev-integrated a { color: var(--gold); text-decoration: none; }
+    .ev-integrated a:hover { text-decoration: underline; }
+
+    /* Reddit pull-quotes */
+    .ev-quotes { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 22px; }
+    .ev-quote { background: var(--white); border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 4px; padding: 12px 14px; }
+    .ev-quote-text { color: var(--primary); font-size: 0.86rem; line-height: 1.5; margin-bottom: 8px; font-style: italic; }
+    .ev-quote-attr { font-size: 0.7rem; color: var(--muted); font-family: ui-monospace, monospace; letter-spacing: 0.04em; }
+    .ev-quote-attr a { color: var(--gold); text-decoration: none; }
+    .ev-quote-attr a:hover { text-decoration: underline; }
+
+    /* International DTC benchmarks */
+    .ev-intl { background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 22px; }
+    .ev-intl-lead { font-size: 0.86rem; color: var(--secondary); line-height: 1.55; margin-bottom: 12px; }
+    .ev-intl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+    .ev-intl-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; padding: 11px 13px; }
+    .ev-intl-card .name { font-weight: 700; color: var(--primary); font-size: 0.86rem; line-height: 1.2; }
+    .ev-intl-card .geo { font-size: 0.62rem; color: var(--muted); font-family: ui-monospace, monospace; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
+    .ev-intl-card .price { font-family: ui-monospace, monospace; color: var(--gold); font-size: 0.84rem; font-weight: 700; margin: 6px 0 4px; }
+    .ev-intl-card .note { font-size: 0.74rem; color: var(--secondary); line-height: 1.42; }
+    .ev-intl-card .note a { color: var(--gold); text-decoration: none; }
+    .ev-intl-card .note a:hover { text-decoration: underline; }
+
+    /* ── MOBILE RESPONSIVE OVERRIDES ─────────────────── */
+    @media (max-width: 768px) {
+      body { font-size: 13px; }
+      h1, .atlas-title { font-size: 1.45rem !important; line-height: 1.2 !important; }
+      h2, .art-title { font-size: 1.05rem !important; line-height: 1.25 !important; }
+      .atlas-meta { text-align: left !important; margin-top: 6px !important; font-size: 0.7rem !important; }
+      .atlas-body { padding-left: 14px !important; padding-right: 14px !important; }
+      .atlas-top { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
+
+      .kpi-strip { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; margin-bottom: 20px !important; }
+      .kpi { padding: 14px 16px !important; border-radius: 10px !important; }
+      .kpi-val { font-size: 1.35rem !important; line-height: 1.1 !important; }
+      .kpi-lbl { font-size: 0.6rem !important; letter-spacing: 0.06em !important; }
+
+      .artifact { padding: 18px 16px !important; margin-bottom: 14px !important; border-radius: 10px !important; }
+      .art-desc { font-size: 0.82rem !important; margin-bottom: 14px !important; }
+
+      #radar-chart { height: 320px !important; max-height: 360px !important; width: 100% !important; }
+      .chart-wrap { padding: 14px !important; }
+
+      .comp-controls { gap: 8px !important; margin-bottom: 10px !important; flex-wrap: wrap !important; }
+      .comp-search { width: 100% !important; min-width: 100% !important; }
+      .comp-filter { flex: 1 1 calc(50% - 4px) !important; min-width: calc(50% - 4px) !important; }
+      .comp-count { font-size: 0.7rem !important; width: 100% !important; }
+
+      .comp-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+      .comp-card { padding: 16px 16px !important; border-radius: 10px !important; }
+      .comp-name { font-size: 0.98rem !important; }
+      .badge { font-size: 0.56rem !important; padding: 2px 6px !important; letter-spacing: 0.02em !important; }
+
+      .login-box { padding: 32px 24px !important; max-width: calc(100vw - 32px) !important; }
+      .login-logo { font-size: 1.5rem !important; }
+
+      .atlas-nav { flex-wrap: wrap !important; padding: 10px 0 !important; gap: 8px !important; }
+      .atlas-nav-links { flex-wrap: wrap !important; gap: 6px !important; }
+      .atlas-nav-links a { font-size: 0.72rem !important; padding: 5px 10px !important; }
+    }
+
+    @media (max-width: 420px) {
+      .kpi-strip { grid-template-columns: 1fr !important; }
+      body { font-size: 12px; }
+      .kpi-val { font-size: 1.2rem !important; }
+      .comp-filter { flex: 1 1 100% !important; min-width: 100% !important; }
+    }
+
+    /* Artifact 04 mobile */
+    @media (max-width: 768px) {
+      .ev-anchor { padding: 16px 14px !important; }
+      .ev-anchor h3 { font-size: 1rem !important; }
+      .ev-anchor-stats { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+      .ev-anchor-stat { padding: 10px 12px !important; }
+      .ev-stat-num { font-size: 1.05rem !important; }
+      .ev-stat-cap { font-size: 0.66rem !important; }
+      .ev-table { font-size: 0.74rem !important; min-width: 640px !important; }
+      .ev-table th, .ev-table td { padding: 9px 10px !important; }
+      .ev-sourcelib { grid-template-columns: 1fr !important; }
+      .ev-themes li { font-size: 0.8rem !important; padding: 10px 14px 10px 38px !important; }
+      .ev-section-h { font-size: 0.95rem !important; }
+      .ev-quotes { grid-template-columns: 1fr !important; gap: 8px !important; }
+      .ev-intl { padding: 12px 14px !important; }
+      .ev-intl-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+      .ev-intl-card { padding: 9px 10px !important; }
+      .ev-intl-card .name { font-size: 0.78rem !important; }
+      .ev-intl-card .price { font-size: 0.76rem !important; }
+      .ev-intl-card .note { font-size: 0.68rem !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">PASSAGE<span>.</span></div>
+    <div class="login-sub">Competitor Analytics</div>
+    <form id="login-form" onsubmit="return false;">
+      <label for="un">Username</label>
+      <input id="un" type="text" placeholder="Username" autocomplete="username" />
+      <label for="pw">Password</label>
+      <input id="pw" type="password" placeholder="Password" autocomplete="current-password" />
+      <button type="submit" class="login-btn" onclick="doLogin(event)">Enter Analytics</button>
+      <p class="login-error" id="login-err">Incorrect username or password.</p>
+    </form>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard">
+  <div class="atlas-body">
+
+    <nav class="atlas-nav">
+      <a href="index.html" class="brand">PASSAGE<span>.</span></a>
+      <div class="atlas-nav-links">
+        <a href="index.html">Orders</a>
+        <a href="whitespace.html">White Space</a>
+        <a href="competitor-analytics.html" class="active">Competitors</a>
+        <a href="insights.html">Insights</a>
+        <a href="design-audit.html">Design Audit</a>
+        <a href="report.html">Report</a>
+        <a href="../index.html">Site</a>
+        <button class="logout-link" onclick="doLogout()">Sign out</button>
+      </div>
+    </nav>
+
+    <div class="atlas-top">
+      <div>
+        <div class="atlas-tag">◆ Competitor Analytics · v1</div>
+        <h1 class="atlas-title">The casket cost has been hidden long enough.<br/><span style="color: var(--muted); font-weight: 400;">Here's everyone selling around it — and where Passage stands.</span></h1>
+      </div>
+      <div class="atlas-meta">
+        <div>Refreshed <span id="refresh-date">—</span></div>
+        <div><span id="comp-count-hdr">—</span> competitors mapped</div>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-strip">
+      <div class="kpi"><div class="kpi-val gold" id="kpi-total">—</div><div class="kpi-lbl">Competitors mapped</div></div>
+      <div class="kpi"><div class="kpi-val" id="kpi-design">—</div><div class="kpi-lbl">Avg design score (10)</div></div>
+      <div class="kpi"><div class="kpi-val red" id="kpi-hidden">—</div><div class="kpi-lbl">% hiding casket price</div></div>
+      <div class="kpi"><div class="kpi-val amber" id="kpi-threats">—</div><div class="kpi-lbl">High threat to Passage</div></div>
+    </div>
+
+    <!-- Radar -->
+    <section class="artifact">
+      <div class="art-num">Artifact 01</div>
+      <h2 class="art-title">Top-5 Threat Radar</h2>
+      <p class="art-desc">Five most-direct competitors plotted across five dimensions: price visibility, design quality, mobile experience, casket-only focus, and threat level. Passage occupies a quadrant nobody else does — DTC casket-only with full transparency.</p>
+      <div class="chart-wrap">
+        <canvas id="radar-chart" width="720" height="460"></canvas>
+      </div>
+    </section>
+
+    <!-- Insights -->
+    <section class="artifact">
+      <div class="art-num">Artifact 02</div>
+      <h2 class="art-title">Strategic Insights</h2>
+      <p class="art-desc">What the landscape tells us — common weaknesses across the field, Passage's deck-grounded advantages, and the design lessons we borrow vs improve on.</p>
+      <div class="insight-grid">
+        <div class="insight-block">
+          <h4>Common competitor weaknesses</h4>
+          <ul id="weaknesses-list"></ul>
+        </div>
+        <div class="insight-block">
+          <h4>Passage advantages (deck-grounded)</h4>
+          <ul id="advantages-list"></ul>
+        </div>
+        <div class="insight-block">
+          <h4>Design — borrowed from</h4>
+          <ul id="borrowed-list"></ul>
+        </div>
+        <div class="insight-block">
+          <h4>Design — improved on</h4>
+          <ul id="improved-list"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Competitor cards -->
+    <section class="artifact">
+      <div class="art-num">Artifact 03</div>
+      <h2 class="art-title">Competitor Deep-dive</h2>
+      <p class="art-desc">All <span id="comp-count-inline">—</span> competitors with tier, casket-price visibility, design + mobile scores, strengths and weaknesses.</p>
+      <div class="comp-controls">
+        <input type="search" id="comp-search" class="comp-search" placeholder="Search name, target, strengths..." />
+        <select id="comp-cat" class="comp-filter"><option value="">All categories</option></select>
+        <select id="comp-threat" class="comp-filter">
+          <option value="">All threats</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+        <select id="comp-vis" class="comp-filter">
+          <option value="">All price visibility</option>
+          <option value="hidden_in_package">Hidden in package</option>
+          <option value="bundled_transparent">Bundled transparent</option>
+          <option value="partial">Partial</option>
+          <option value="fully_published">Fully published</option>
+          <option value="wholesale_only">Wholesale only</option>
+          <option value="quote_on_call">Quote on call</option>
+          <option value="self_sourced">Self-sourced</option>
+        </select>
+        <span class="comp-count" id="comp-count-tbl">—</span>
+      </div>
+      <div class="comp-grid" id="comp-grid">
+        <div class="loading">Loading competitor data…</div>
+      </div>
+    </section>
+
+    <!-- Artifact 04 — Sourced Pricing Evidence -->
+    <section class="artifact">
+      <div class="art-num">Artifact 04</div>
+      <h2 class="art-title">Sourced Pricing Evidence</h2>
+      <p class="art-desc">Where the casket-price ranges actually come from. Cited data points from the Singapore consumer regulator, SG forums, manual Reddit research, mainstream journalism, and operator-published quotes — replacing modelled estimates with named sources you can click through and verify. Now extended with international DTC benchmarks (Titan, Costco, Pure Cremation, Ecoffins) for positioning context, plus a direct-cremation operator-published pricing slice (panel-coffin floor 2026-04-29).</p>
+
+      <!-- Direct cremation operator-published callout -->
+      <div class="ev-integrated">
+        <b>◆ Direct cremation operator-published prices · added 2026-04-29</b>
+        Two large SG operators publicly publish their direct cremation packages, with the casket bundled in at the cheapest tier. <a href="https://www.singaporecasket.com.sg/our-services/funeral-package/" target="_blank" rel="noopener noreferrer">Singapore Casket</a> lists S$1,500 (S$1,635 w/GST) for "Direct Cremation" and S$1,800 (S$1,962 w/GST) for "Direct Cremation Plus" — both spec a <i>"panel shape wooden coffin"</i> (cheap particle-board / veneer). <a href="https://www.casketfairpricefuneral.com.sg/direct-cremation/" target="_blank" rel="noopener noreferrer">Casket Fairprice Funeral</a> lists S$1,888 nett with a generic Model S03 casket. <b>The panel-coffin floor exposes the casket-quality differentiator</b>: at near-parity total spend, a Passage Tranquil customer sourcing body-care + hearse + cremation booking a-la-carte gets an FSC hardwood casket vs a panel coffin. Strategy: hold pricing, publish the a-la-carte math on the public site (light-touch FAQ), don't sell the bundle.
+      </div>
+
+      <!-- Primary anchor: CCCS -->
+      <div class="ev-anchor">
+        <div class="ev-anchor-tag">◆ Primary anchor · Government regulator · Nov 2023</div>
+        <h3>CCCS Market Study on the Funeral Services Industry in Singapore</h3>
+        <p>The Competition and Consumer Commission of Singapore commissioned a Blackbox Research consumer survey (n=500) and published findings that confirm the opacity thesis. This is the most defensible cite in the whole stack — government-backed, methodologically rigorous, post-2023, and quotable in any public-facing claim Passage makes.</p>
+        <div class="ev-anchor-stats">
+          <div class="ev-anchor-stat">
+            <div class="ev-stat-num">S$8K → S$20K</div>
+            <div class="ev-stat-cap">Headline anecdote: package-to-final-bill upcharge via à la carte add-ons</div>
+          </div>
+          <div class="ev-anchor-stat">
+            <div class="ev-stat-num">&gt; 25%</div>
+            <div class="ev-stat-cap">of consumers expected wake-funeral to cost &lt; S$1,000</div>
+          </div>
+          <div class="ev-anchor-stat">
+            <div class="ev-stat-num">~ 1%</div>
+            <div class="ev-stat-cap">of those who actually arranged one paid less than S$1,000</div>
+          </div>
+          <div class="ev-anchor-stat">
+            <div class="ev-stat-num">n = 500</div>
+            <div class="ev-stat-cap">Blackbox Research consumer survey sample, commissioned by CCCS</div>
+          </div>
+        </div>
+        <div class="ev-anchor-cite">Source: <a href="https://www.cccs.gov.sg/case-register/public-register/market-studies/funeral-services-industry-in-singapore" target="_blank" rel="noopener noreferrer">cccs.gov.sg/case-register/public-register/market-studies/funeral-services-industry-in-singapore</a></div>
+      </div>
+
+      <!-- Reddit research integrated -->
+      <div class="ev-integrated">
+        <b>◆ Reddit research · integrated 2026-04-28</b>
+        Manual Reddit research now folded in. Four primary threads anchor the SG community findings: <a href="https://www.reddit.com/r/singapore/comments/17xaixi/" target="_blank" rel="noopener noreferrer">r/singapore <code>17xaixi</code></a> (CCCS-validated, with first-hand cost breakdowns from u/loservins and u/lizhien), <a href="https://www.reddit.com/r/AskUK/comments/evljcu/" target="_blank" rel="noopener noreferrer">r/AskUK <code>evljcu</code></a> (UK Co-op funeral itemised at £4,736), the r/frugal funeral-industry-insider AMA (FTC Funeral Rule + US burial floor), and <a href="https://www.reddit.com/r/mildlyinteresting/comments/1dza6ba/" target="_blank" rel="noopener noreferrer">r/mildlyinteresting <code>1dza6ba</code></a> — the viral '$85 cardboard casket' post (82,000 upvotes, 5,907 comments, July 2024) — the strongest demand signal in the entire dataset for affordable / eco alternatives.
+      </div>
+
+      <!-- Reddit verbatim quotes -->
+      <h3 class="ev-section-h">Reddit community quotes (verbatim)</h3>
+      <div class="ev-quotes">
+        <div class="ev-quote">
+          <div class="ev-quote-text">"Not just funerals, the industry is super opaque with all their enquire-for-price nonsense."</div>
+          <div class="ev-quote-attr">u/uwubirdkawkaw · <a href="https://www.reddit.com/r/singapore/comments/17xaixi/" target="_blank" rel="noopener noreferrer">r/singapore 17xaixi</a></div>
+        </div>
+        <div class="ev-quote">
+          <div class="ev-quote-text">Surprise add-ons after the package quote: backdrop ~S$1,000, chanting ~S$1,500, toilet facilities ~S$700.</div>
+          <div class="ev-quote-attr">u/loservins · <a href="https://www.reddit.com/r/singapore/comments/17xaixi/" target="_blank" rel="noopener noreferrer">r/singapore 17xaixi</a></div>
+        </div>
+        <div class="ev-quote">
+          <div class="ev-quote-text">Real 3-day void deck funeral total: ~S$10,000.</div>
+          <div class="ev-quote-attr">u/loservins · r/singapore — first-hand</div>
+        </div>
+        <div class="ev-quote">
+          <div class="ev-quote-text">Real 5-day Buddhist funeral with basic rites: ~S$15,000. Mandai niche fee S$500+.</div>
+          <div class="ev-quote-attr">u/lizhien · r/singapore — first-hand</div>
+        </div>
+        <div class="ev-quote">
+          <div class="ev-quote-text">Co-op Funeralcare full cremation total: £4,736 (cremation + dark coffin + celebrant + 2 floral arrangements). Of that, third-party fees were £1,331.</div>
+          <div class="ev-quote-attr">u/homeisaquestionmark · <a href="https://www.reddit.com/r/AskUK/comments/evljcu/" target="_blank" rel="noopener noreferrer">r/AskUK evljcu</a> (2020)</div>
+        </div>
+        <div class="ev-quote">
+          <div class="ev-quote-text">"Funeral homes are required by law to provide a price sheet if you ask for one." — FTC Funeral Rule, 16 CFR Part 453 (mandatory price disclosure + must accept third-party caskets).</div>
+          <div class="ev-quote-attr">funeral industry worker · r/frugal AMA</div>
+        </div>
+      </div>
+
+      <!-- Sourced data points table -->
+      <h3 class="ev-section-h">Sourced price points (33 data points)</h3>
+      <div class="ev-table-wrap">
+        <table class="ev-table">
+          <thead>
+            <tr>
+              <th>Provider</th>
+              <th>What is being priced</th>
+              <th>S$ figure</th>
+              <th>Source</th>
+              <th>Quality</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="ev-prov">NEA (statutory)</td>
+              <td>Mandai cremation fee, adult</td>
+              <td class="ev-fig">$100</td>
+              <td><a href="https://www.nea.gov.sg/our-services/after-death/post-death-matters/arranging-a-funeral" target="_blank" rel="noopener noreferrer">NEA — Arranging a Funeral</a></td>
+              <td><span class="ev-cred ev-cred-gov">Gov</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">NEA (statutory)</td>
+              <td>Coffin permit fee</td>
+              <td class="ev-fig">$10</td>
+              <td><a href="https://www.nea.gov.sg/our-services/after-death/post-death-matters/arranging-a-funeral" target="_blank" rel="noopener noreferrer">NEA — Arranging a Funeral</a></td>
+              <td><span class="ev-cred ev-cred-gov">Gov</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Singapore Casket</td>
+              <td>3-day wake at parlour, full package (casket included)</td>
+              <td class="ev-fig">$5,836 / $6,361 incl. GST</td>
+              <td><a href="https://www.singaporecasket.com.sg/our-services/funeral-packages/" target="_blank" rel="noopener noreferrer">singaporecasket.com.sg — Funeral Packages</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Singapore Casket</td>
+              <td>3-day wake at HDB / MPH, full package</td>
+              <td class="ev-fig">$6,238 / $6,800 incl. GST</td>
+              <td><a href="https://www.singaporecasket.com.sg/our-services/funeral-packages/" target="_blank" rel="noopener noreferrer">singaporecasket.com.sg — Funeral Packages</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Singapore Casket</td>
+              <td>Taoist 70-pax full package</td>
+              <td class="ev-fig">$11,931 / $13,005 incl. GST</td>
+              <td><a href="https://www.singaporecasket.com.sg/our-services/funeral-packages/" target="_blank" rel="noopener noreferrer">singaporecasket.com.sg — Funeral Packages</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Singapore Casket</td>
+              <td>Taoist 5-day starter (described as "atas")</td>
+              <td class="ev-fig">from $8,238</td>
+              <td><a href="https://forums.hardwarezone.com.sg/threads/how-much-does-it-cost-to-hold-a-taoist-wake-for-5-days-what-about-the-other-costs-such-as-the-food-cremating-and-a-place-at-the-columbarium.6825764/page-7" target="_blank" rel="noopener noreferrer">HWZ — Taoist 5-day wake (snippet)</a></td>
+              <td><span class="ev-cred ev-cred-med">Snippet</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Singapore Funeral Group</td>
+              <td>Buddhist 3-day package</td>
+              <td class="ev-fig">from $5,888</td>
+              <td><a href="https://www.funeralgroup.com.sg/singapore-funeral-packages" target="_blank" rel="noopener noreferrer">funeralgroup.com.sg — Singapore Funeral Packages</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Singapore Funeral Group</td>
+              <td>Buddhist 5-day package</td>
+              <td class="ev-fig">from $6,588</td>
+              <td><a href="https://www.funeralgroup.com.sg/singapore-funeral-packages" target="_blank" rel="noopener noreferrer">funeralgroup.com.sg — Singapore Funeral Packages</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Direct Funeral Services</td>
+              <td>Buddhist 3-day, casket included</td>
+              <td class="ev-fig">$5,888 / $6,418 incl. GST</td>
+              <td><a href="https://forums.hardwarezone.com.sg/threads/what-is-considered-a-low-cost-funeral.7171240/" target="_blank" rel="noopener noreferrer">HWZ — what is considered a low cost funeral (Nov 2025)</a></td>
+              <td><span class="ev-cred ev-cred-high">Quote pasted</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Direct Funeral Services</td>
+              <td>Direct cremation</td>
+              <td class="ev-fig">$1,800 / $1,962 incl. GST</td>
+              <td><a href="https://forums.hardwarezone.com.sg/threads/what-is-considered-a-low-cost-funeral.7171240/" target="_blank" rel="noopener noreferrer">HWZ — what is considered a low cost funeral (Nov 2025)</a></td>
+              <td><span class="ev-cred ev-cred-high">Quote pasted</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Casket Fairprice</td>
+              <td>Direct cremation</td>
+              <td class="ev-fig">$1,888 nett</td>
+              <td><a href="https://forums.hardwarezone.com.sg/threads/direct-cremation-service-in-singapore.7108761/" target="_blank" rel="noopener noreferrer">HWZ — Direct Cremation Service in Singapore (2024)</a></td>
+              <td><span class="ev-cred ev-cred-high">Quote pasted</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Singapore Casket</td>
+              <td>Direct Cremation (panel-shape wooden coffin + manpower + body care + Mercedes Vito hearse)</td>
+              <td class="ev-fig">$1,500 / $1,635 incl. GST</td>
+              <td><a href="https://www.singaporecasket.com.sg/our-services/funeral-package/" target="_blank" rel="noopener noreferrer">singaporecasket.com.sg — Funeral Package</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Singapore Casket</td>
+              <td>Direct Cremation Plus (DC base + 1hr private farewell at parlour + 1 carton mineral water)</td>
+              <td class="ev-fig">$1,800 / $1,962 incl. GST</td>
+              <td><a href="https://www.singaporecasket.com.sg/our-services/funeral-package/" target="_blank" rel="noopener noreferrer">singaporecasket.com.sg — Funeral Package</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Casket Fairprice Funeral</td>
+              <td>Direct Cremation (Casket Model S03 + service team + hearse + dressing &amp; make-up + S$100 cremation fee)</td>
+              <td class="ev-fig">$1,888 nett</td>
+              <td><a href="https://www.casketfairpricefuneral.com.sg/direct-cremation/" target="_blank" rel="noopener noreferrer">casketfairpricefuneral.com.sg — Direct Cremation</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Singapore Indian Casket</td>
+              <td>Some ceremonies S$4,000; doubles to S$8,000 with premium coffin + flowers + garlands</td>
+              <td class="ev-fig">$4K → $8K</td>
+              <td><a href="https://mothership.sg/2024/03/paper-coffin/" target="_blank" rel="noopener noreferrer">Mothership — paper coffin (Mar 2024)</a></td>
+              <td><span class="ev-cred ev-cred-med">Industry insider</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Paper coffin operator</td>
+              <td>Paper coffin (basic / elaborate)</td>
+              <td class="ev-fig">$300 / $600</td>
+              <td><a href="https://mothership.sg/2024/03/paper-coffin/" target="_blank" rel="noopener noreferrer">Mothership — paper coffin (Mar 2024)</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator quote</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Paper coffin operator</td>
+              <td>Basic wooden coffin equivalent</td>
+              <td class="ev-fig">$600</td>
+              <td><a href="https://mothership.sg/2024/03/paper-coffin/" target="_blank" rel="noopener noreferrer">Mothership — paper coffin (Mar 2024)</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator quote</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">DollarsAndSense (itemised)</td>
+              <td>Real 3-day cremation funeral: $3,900 base + $2,000 catering + $500 refreshments</td>
+              <td class="ev-fig">$8,350 total</td>
+              <td><a href="https://dollarsandsense.sg/funeral-guide-singapore-death-loved-one/" target="_blank" rel="noopener noreferrer">dollarsandsense.sg — Funeral Guide in Singapore (upd. Jun 2024)</a></td>
+              <td><span class="ev-cred ev-cred-high">Itemised</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Industry aggregate (post-CCCS)</td>
+              <td>Avg 3-day funeral / Taoist / Muslim</td>
+              <td class="ev-fig">$8,232 / $11,191 / $1,431</td>
+              <td><a href="https://eugenechaitf.com/saving/budget/funeral-costs-singapore/" target="_blank" rel="noopener noreferrer">eugenechaitf.com — Funeral Costs in Singapore (Jul 2024)</a></td>
+              <td><span class="ev-cred ev-cred-med">Aggregator</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">u/loservins (Reddit)</td>
+              <td>Surprise add-on: backdrop</td>
+              <td class="ev-fig">~$1,000</td>
+              <td><a href="https://www.reddit.com/r/singapore/comments/17xaixi/" target="_blank" rel="noopener noreferrer">r/singapore 17xaixi (Nov 2023)</a></td>
+              <td><span class="ev-cred ev-cred-high">Verbatim · first-hand</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">u/loservins (Reddit)</td>
+              <td>Surprise add-on: chanting</td>
+              <td class="ev-fig">~$1,500</td>
+              <td><a href="https://www.reddit.com/r/singapore/comments/17xaixi/" target="_blank" rel="noopener noreferrer">r/singapore 17xaixi (Nov 2023)</a></td>
+              <td><span class="ev-cred ev-cred-high">Verbatim · first-hand</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">u/loservins (Reddit)</td>
+              <td>Surprise add-on: toilet facilities</td>
+              <td class="ev-fig">~$700</td>
+              <td><a href="https://www.reddit.com/r/singapore/comments/17xaixi/" target="_blank" rel="noopener noreferrer">r/singapore 17xaixi (Nov 2023)</a></td>
+              <td><span class="ev-cred ev-cred-high">Verbatim · first-hand</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">u/loservins (Reddit)</td>
+              <td>Real 3-day void deck funeral total</td>
+              <td class="ev-fig">~$10,000</td>
+              <td><a href="https://www.reddit.com/r/singapore/comments/17xaixi/" target="_blank" rel="noopener noreferrer">r/singapore 17xaixi (Nov 2023)</a></td>
+              <td><span class="ev-cred ev-cred-high">First-hand</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">u/lizhien (Reddit)</td>
+              <td>Real 5-day Buddhist funeral, basic rites</td>
+              <td class="ev-fig">~$15,000</td>
+              <td><a href="https://www.reddit.com/r/singapore/comments/17xaixi/" target="_blank" rel="noopener noreferrer">r/singapore 17xaixi (Nov 2023)</a></td>
+              <td><span class="ev-cred ev-cred-high">First-hand</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">u/lizhien (Reddit)</td>
+              <td>Mandai niche fee</td>
+              <td class="ev-fig">$500+</td>
+              <td><a href="https://www.reddit.com/r/singapore/comments/17xaixi/" target="_blank" rel="noopener noreferrer">r/singapore 17xaixi (Nov 2023)</a></td>
+              <td><span class="ev-cred ev-cred-high">Verbatim</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Singapore Casket (Reddit consensus)</td>
+              <td>Basic cremation package</td>
+              <td class="ev-fig">~$7,000</td>
+              <td><a href="https://www.reddit.com/r/singapore/" target="_blank" rel="noopener noreferrer">r/singapore — community consensus</a></td>
+              <td><span class="ev-cred ev-cred-med">Reddit consensus</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Singapore Casket (Reddit consensus)</td>
+              <td>No-wake direct cremation</td>
+              <td class="ev-fig">~$4,000</td>
+              <td><a href="https://www.reddit.com/r/singapore/" target="_blank" rel="noopener noreferrer">r/singapore — community consensus</a></td>
+              <td><span class="ev-cred ev-cred-med">Reddit consensus</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Ang Chin Moh (Reddit consensus)</td>
+              <td>Buddhist / Christian premium full package range</td>
+              <td class="ev-fig">$12,000 – $25,000</td>
+              <td><a href="https://www.reddit.com/r/singapore/" target="_blank" rel="noopener noreferrer">r/singapore — community consensus</a></td>
+              <td><span class="ev-cred ev-cred-low">Anecdotal range</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Casket Fairprice</td>
+              <td>Caskets sold separately (basic pine → solid wood)</td>
+              <td class="ev-fig">$688 – $3,200+</td>
+              <td><a href="https://www.casketfairprice.com" target="_blank" rel="noopener noreferrer">casketfairprice.com — published price list</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Casket Fairprice</td>
+              <td>Direct cremation package (lowest transparent SG)</td>
+              <td class="ev-fig">from $1,680</td>
+              <td><a href="https://www.casketfairprice.com" target="_blank" rel="noopener noreferrer">casketfairprice.com — published price list</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Simplicity Funerals SG</td>
+              <td>Standard 3-day Chinese / Buddhist package</td>
+              <td class="ev-fig">$4,581 – $5,471</td>
+              <td><a href="https://www.simplicitycasket.com" target="_blank" rel="noopener noreferrer">simplicitycasket.com — published</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Co-op Funeralcare (UK)</td>
+              <td>Full cremation funeral itemised (£1,331 of which is third-party fees)</td>
+              <td class="ev-fig">£4,736</td>
+              <td><a href="https://www.reddit.com/r/AskUK/comments/evljcu/" target="_blank" rel="noopener noreferrer">r/AskUK evljcu — u/homeisaquestionmark (2020)</a></td>
+              <td><span class="ev-cred ev-cred-high">Reddit-validated</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">r/mildlyinteresting (viral signal)</td>
+              <td>Cardboard casket at US local funeral home — strongest community demand signal in dataset</td>
+              <td class="ev-fig">US$85</td>
+              <td><a href="https://www.reddit.com/r/mildlyinteresting/comments/1dza6ba/" target="_blank" rel="noopener noreferrer">r/mildlyinteresting 1dza6ba — 82k upvotes / 5,907 comments (Jul 2024)</a></td>
+              <td><span class="ev-cred ev-cred-high">Viral demand signal</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- International DTC benchmarks -->
+      <h3 class="ev-section-h">International DTC benchmarks (Reddit-validated)</h3>
+      <div class="ev-intl">
+        <p class="ev-intl-lead">The reference set for Passage's positioning. These DTC casket retailers and direct-cremation providers are widely cited on r/frugal, r/personalfinance and r/AskUK as the price floor in their home markets. Singapore has no equivalent DTC casket retailer with this level of price transparency — that gap is Passage's wedge.</p>
+        <div class="ev-intl-grid">
+          <div class="ev-intl-card">
+            <div class="name">Titan Casket</div>
+            <div class="geo">USA · DTC online</div>
+            <div class="price">US$995 – $3,495</div>
+            <div class="note">Steel from $995, premium wood $2,495+. Reddit estimates 60-80% saving vs FH equivalent. <a href="https://www.titancasket.com" target="_blank" rel="noopener noreferrer">titancasket.com</a></div>
+          </div>
+          <div class="ev-intl-card">
+            <div class="name">Costco Caskets</div>
+            <div class="geo">USA · Wholesale</div>
+            <div class="price">US$999 – $1,799</div>
+            <div class="note">Reddit-reported saving ~US$2,400 per purchase vs FH. The original disruptor of the US casket monopoly.</div>
+          </div>
+          <div class="ev-intl-card">
+            <div class="name">Walmart Caskets</div>
+            <div class="geo">USA · Marketplace</div>
+            <div class="price">US$899 – $2,399</div>
+            <div class="note">5-15% below Costco for like-for-like. No membership required — lowest barrier.</div>
+          </div>
+          <div class="ev-intl-card">
+            <div class="name">Millennium Casket Industries</div>
+            <div class="geo">USA · DTC online</div>
+            <div class="price">US$695 – $2,995</div>
+            <div class="note">Entry-level US$695 — lowest confirmed price in the US online casket space.</div>
+          </div>
+          <div class="ev-intl-card">
+            <div class="name">Pure Cremation</div>
+            <div class="geo">UK · Direct cremation</div>
+            <div class="price">£995 – £1,495</div>
+            <div class="note">Unattended £995 / attended £1,495. 67-79% saving vs Co-op £4,736 benchmark. Coffin included.</div>
+          </div>
+          <div class="ev-intl-card">
+            <div class="name">Ecoffins UK</div>
+            <div class="geo">UK · Eco</div>
+            <div class="price">£195 – £695</div>
+            <div class="note">Cardboard from £195, bamboo £350-£495, wicker £450-£695. <a href="https://ecoffins.co.uk" target="_blank" rel="noopener noreferrer">ecoffins.co.uk</a></div>
+          </div>
+          <div class="ev-intl-card">
+            <div class="name">FTC Funeral Rule</div>
+            <div class="geo">USA · Regulation</div>
+            <div class="price">16 CFR Part 453</div>
+            <div class="note">Funeral homes MUST accept third-party caskets and cannot charge handling fees. SG has no equivalent — the regulatory white space.</div>
+          </div>
+          <div class="ev-intl-card">
+            <div class="name">US burial floor (r/frugal AMA)</div>
+            <div class="geo">USA · Industry-insider</div>
+            <div class="price">US$6,000+</div>
+            <div class="note">Funeral industry worker on r/frugal: even with cost-saving, full burial minimum US$6,000 (cheaper states); higher-cost areas US$16,000+.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seven themes -->
+      <h3 class="ev-section-h">Seven themes that emerge from the data</h3>
+      <ol class="ev-themes">
+        <li><b>3-4× spread for "the same" wake.</b> Posters describing nominally identical 3-day Buddhist / Taoist wakes report figures from ~$5K (Direct Funeral Services, Casket Fairprice, Seng Heng) to $17-23K (Singapore Casket, unnamed "atas" parlours). The 3-4× spread is the smoking gun for opacity — same service, wildly different bills.</li>
+        <li><b>Direct cremation is the de facto floor</b>, not a casket figure. When forum users want to anchor "honest minimum," they cite direct cremation (~$1.8-2K). Passage's positioning therefore benchmarks better against <i>package inflation</i> than against <i>casket-only markup</i>.</li>
+        <li><b>The casket itself is rarely discussed as a line item — but the add-ons are.</b> u/loservins (r/singapore 17xaixi) gave specific surprise add-on prices: backdrop ~$1,000, chanting ~$1,500, toilet facilities ~$700. u/lizhien added Mandai niche $500+. The casket-only markup is still <i>modelled</i>, but the S$5K → S$15K-20K final-bill arc is now Reddit-verified line-by-line. The hidden cost isn't one item — it's the cumulative drip.</li>
+        <li><b>Singapore Casket = "atas" benchmark in lived language.</b> Posters consistently use Singapore Casket as the upmarket reference. Ang Chin Moh, Trinity, and Nam Shan get effectively zero pricing discussion in user-quoted SGD figures — they appear on review aggregators but not in invoices.</li>
+        <li><b>Religion-driven price tiering, not casket quality.</b> Christian / free-thinker $4-5.4K, Buddhist $5.3-6.9K, Taoist $7.5-10K+, Muslim ~$1.4K. The casket inside these tiers is plausibly the same SKU; the variance is rituals + duration. Casket cost is decoupled from package price by design.</li>
+        <li><b>Singapore has no DTC casket retailer with global price transparency.</b> Titan US$995, Costco US$999, Walmart US$899, Pure Cremation £995, Ecoffins £195 — every one is Reddit-validated as the price floor in its home market. The FTC Funeral Rule (mandatory price disclosure + must-accept third-party caskets) protects US consumers; <i>Singapore has no equivalent</i>. CCCS confirmed the SG industry as "self-regulated and largely opaque". The viral r/mildlyinteresting cardboard-casket post (82k upvotes) is the global demand signal Passage is positioned to convert in SG.</li>
+        <li><b>The "panel-coffin floor" exposes the casket-quality differentiator.</b> Singapore Casket and Casket Fairprice publish direct cremation packages at S$1,500-1,888 with a panel / Model-S03 coffin bundled in. Backing out a generous S$200-400 wholesale on the coffin leaves S$1,100-1,500 for body collection + embalming + hearse + cremation booking. A Passage Tranquil customer sourcing those same a-la-carte services hits a comparable total (~S$1,800-2,200) but with an FSC hardwood casket vs a particle-board panel. <i>Implication for Passage: hold pricing, do not sell the bundle, publish the a-la-carte math on a public-facing FAQ so direct-cremation comparison shoppers see the trade.</i></li>
+      </ol>
+
+      <!-- Source library -->
+      <h3 class="ev-section-h">Full source library (clickable)</h3>
+      <div class="ev-sourcelib">
+
+        <div class="ev-sourcecat">
+          <h4>Reddit — community-verified</h4>
+          <ul>
+            <li><a href="https://www.reddit.com/r/singapore/comments/17xaixi/" target="_blank" rel="noopener noreferrer">r/singapore 17xaixi — CCCS-validated funeral cost discussion (u/loservins, u/lizhien, u/uwubirdkawkaw quotes)</a><span class="ev-date">Nov 2023</span></li>
+            <li><a href="https://www.reddit.com/r/AskUK/comments/evljcu/" target="_blank" rel="noopener noreferrer">r/AskUK evljcu — Co-op £4,736 itemised breakdown (u/homeisaquestionmark)</a><span class="ev-date">2020</span></li>
+            <li><a href="https://www.reddit.com/r/mildlyinteresting/comments/1dza6ba/" target="_blank" rel="noopener noreferrer">r/mildlyinteresting 1dza6ba — '$85 cardboard casket' viral post (82k upvotes)</a><span class="ev-date">Jul 2024</span></li>
+            <li><a href="https://www.reddit.com/r/frugal/" target="_blank" rel="noopener noreferrer">r/frugal — funeral-industry-insider AMA (FTC Funeral Rule, US burial floor ~$6K)</a></li>
+            <li><a href="https://www.reddit.com/r/askfuneraldirectors/" target="_blank" rel="noopener noreferrer">r/askfuneraldirectors</a></li>
+            <li><a href="https://www.reddit.com/r/singapore/" target="_blank" rel="noopener noreferrer">r/singapore (search: funeral cost · casket price)</a></li>
+            <li><a href="https://www.reddit.com/r/asksingapore/" target="_blank" rel="noopener noreferrer">r/asksingapore</a></li>
+          </ul>
+        </div>
+
+        <div class="ev-sourcecat">
+          <h4>Regulator &amp; government</h4>
+          <ul>
+            <li><a href="https://www.cccs.gov.sg/case-register/public-register/market-studies/funeral-services-industry-in-singapore" target="_blank" rel="noopener noreferrer">CCCS Market Study — Funeral Services Industry in Singapore</a><span class="ev-date">Nov 2023</span></li>
+            <li><a href="https://www.cccs.gov.sg/media-and-events/newsroom/announcements-and-media-releases/helping-consumers-make-informed-decisions-for-funeral-products" target="_blank" rel="noopener noreferrer">CCCS press release — Helping Consumers Make Informed Decisions for Funeral Products</a><span class="ev-date">Nov 2023</span></li>
+            <li><a href="https://www.nea.gov.sg/our-services/after-death/post-death-matters/arranging-a-funeral" target="_blank" rel="noopener noreferrer">NEA — Arranging a Funeral (statutory fees)</a></li>
+          </ul>
+        </div>
+
+        <div class="ev-sourcecat">
+          <h4>HardwareZone forums</h4>
+          <ul>
+            <li><a href="https://forums.hardwarezone.com.sg/threads/what-is-considered-a-low-cost-funeral.7171240/" target="_blank" rel="noopener noreferrer">What is considered a low cost funeral</a><span class="ev-date">Nov 2025</span></li>
+            <li><a href="https://forums.hardwarezone.com.sg/threads/whats-the-rate-for-funeral-nowadays.7165996/" target="_blank" rel="noopener noreferrer">What's the rate for funeral nowadays?</a><span class="ev-date">Oct 2025</span></li>
+            <li><a href="https://forums.hardwarezone.com.sg/threads/how-much-to-do-a-funeral-these-days.7083446/" target="_blank" rel="noopener noreferrer">How much to do a funeral these days??</a><span class="ev-date">Nov 2024</span></li>
+            <li><a href="https://forums.hardwarezone.com.sg/threads/direct-cremation-service-in-singapore.7108761/" target="_blank" rel="noopener noreferrer">Direct Cremation Service in Singapore</a><span class="ev-date">2024</span></li>
+            <li><a href="https://forums.hardwarezone.com.sg/threads/bo-pangtang-anyone-planned-your-funeral-le.7059102/" target="_blank" rel="noopener noreferrer">[Bo Pangtang] Anyone planned your funeral le?</a><span class="ev-date">Aug 2024</span></li>
+            <li><a href="https://forums.hardwarezone.com.sg/threads/funeral-industry-encouraged-to-provide-greater-price-transparency-clarity-on-packages.6971677/" target="_blank" rel="noopener noreferrer">Funeral industry encouraged to provide price transparency</a><span class="ev-date">Nov 2023</span></li>
+          </ul>
+        </div>
+
+        <div class="ev-sourcecat">
+          <h4>Seedly community</h4>
+          <ul>
+            <li><a href="https://seedly.sg/posts/how-much-it-cost-for-a-funeral-service-for-an-single-lady-age-80-no-family-member-no-sibling-in-singapore/" target="_blank" rel="noopener noreferrer">Funeral cost for 80yo single lady, no family</a><span class="ev-date">Nov 2023</span></li>
+            <li><a href="https://blog.seedly.sg/cost-guide-funeral-services-singapore/" target="_blank" rel="noopener noreferrer">Seedly Blog — Funeral cost guide Singapore</a></li>
+          </ul>
+        </div>
+
+        <div class="ev-sourcecat">
+          <h4>Mainstream &amp; longform journalism</h4>
+          <ul>
+            <li><a href="https://www.ricemedia.co/culture-people-10-questions-dapper-don-singapores-funeral-industry/" target="_blank" rel="noopener noreferrer">RICE Media — 10 Questions with the Dapper Don (Westbound / Chris Cheah)</a><span class="ev-date">Dec 2018</span></li>
+            <li><a href="https://www.ricemedia.co/culture-people-830am-strangers-funeral-angjolie-mei/" target="_blank" rel="noopener noreferrer">RICE Media — 8:30AM at a Stranger's Funeral (Angjolie Mei)</a><span class="ev-date">Apr 2018</span></li>
+            <li><a href="https://www.ricemedia.co/led-wreaths-funeral-wake-singapore/" target="_blank" rel="noopener noreferrer">RICE Media — LED Funeral Wreaths</a><span class="ev-date">Jul 2022</span></li>
+            <li><a href="https://thesmartlocal.com/read/planning-a-funeral-singapore/" target="_blank" rel="noopener noreferrer">TheSmartLocal — Planning a Funeral in Singapore Guide</a><span class="ev-date">Mar 2023</span></li>
+            <li><a href="https://dollarsandsense.sg/funeral-guide-singapore-death-loved-one/" target="_blank" rel="noopener noreferrer">DollarsAndSense — Funeral Guide in Singapore (itemised)</a><span class="ev-date">Jun 2024</span></li>
+            <li><a href="https://mothership.sg/2024/03/paper-coffin/" target="_blank" rel="noopener noreferrer">Mothership — Paper coffin / Singapore Indian Casket quote</a><span class="ev-date">Mar 2024</span></li>
+            <li><a href="https://mothership.sg/2023/11/never-understood-the-need-for-funerals-firsthand/" target="_blank" rel="noopener noreferrer">Mothership Firsthand — never understood the need for funerals</a><span class="ev-date">Nov 2023</span></li>
+            <li><a href="https://mothership.sg/2024/10/singapore-elderly-arrange-pay-funeral-before-passing/" target="_blank" rel="noopener noreferrer">Mothership — 100yo planned own funeral</a><span class="ev-date">Oct 2024</span></li>
+            <li><a href="https://mothership.sg/2019/02/singapore-funeral-parlour-free/" target="_blank" rel="noopener noreferrer">Mothership — funeral parlour offers free cremation</a><span class="ev-date">Feb 2019</span></li>
+            <li><a href="https://mothership.sg/2018/08/bundled-package-obituary-digital-sph-rates/" target="_blank" rel="noopener noreferrer">Mothership — obituary bundling / SPH digital rates</a><span class="ev-date">Aug 2018</span></li>
+            <li><a href="https://theindependent.sg/covid-death-toll-how-the-funeral-industry-has-changed-since-the-pandemic-began/" target="_blank" rel="noopener noreferrer">The Independent SG — COVID death toll &amp; funeral industry</a><span class="ev-date">Dec 2021</span></li>
+            <li><a href="https://theindependent.sg/singapores-funeral-industry-and-the-new-burial-system/" target="_blank" rel="noopener noreferrer">The Independent SG — Funeral industry &amp; new burial system</a><span class="ev-date">Jan 2014</span></li>
+            <li><a href="https://www.youtube.com/watch?v=rIkRPffYEK4" target="_blank" rel="noopener noreferrer">CNA Money Talks — Breaking down funeral costs (Ang Ziqian, AFD)</a></li>
+            <li><a href="https://eugenechaitf.com/saving/budget/funeral-costs-singapore/" target="_blank" rel="noopener noreferrer">Eugene Chai — Funeral Costs in Singapore Complete Guide</a><span class="ev-date">Jul 2024</span></li>
+          </ul>
+        </div>
+
+        <div class="ev-sourcecat">
+          <h4>Operator pages &amp; aggregators</h4>
+          <ul>
+            <li><a href="https://www.singaporecasket.com.sg/our-services/funeral-packages/" target="_blank" rel="noopener noreferrer">Singapore Casket — Funeral Packages (price list)</a></li>
+            <li><a href="https://www.funeralgroup.com.sg/singapore-funeral-packages" target="_blank" rel="noopener noreferrer">Singapore Funeral Group — Packages</a></li>
+            <li><a href="https://memorialfuneral.com.sg/blog/funeral-cost-in-singapore-understanding-expenses-budgeting-and-options/" target="_blank" rel="noopener noreferrer">Memorial Funeral — Funeral cost in Singapore</a></li>
+            <li><a href="https://www.moneykinetics.sg/how-much-does-a-funeral-service-cost-in-singapore-price-breakdown/" target="_blank" rel="noopener noreferrer">Money Kinetics — How much does a funeral cost</a></li>
+            <li><a href="https://www.alifegrad.com/a-simple-casket-guide-and-prices-in-singapore/" target="_blank" rel="noopener noreferrer">A Life Grad — Casket Guide and Prices in Singapore</a></li>
+          </ul>
+        </div>
+
+        <div class="ev-sourcecat">
+          <h4>Malaysia / JB wholesale (for spread analysis)</h4>
+          <ul>
+            <li><a href="https://funeralservicesmalaysia.com.my/funeral-products/casket/casket-cost/" target="_blank" rel="noopener noreferrer">Funeral Services Malaysia — Casket cost</a></li>
+            <li><a href="https://www.funeralsmalaysia.com/en/products/casket" target="_blank" rel="noopener noreferrer">Funerals Malaysia — Casket products</a></li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+  // ── Auth ── (mirrors whitespace.html pattern)
+  const ADMIN_USER_HASH = '8740ec05f8a139bb7d692e8f65cf7517a59ab7f87583a07c23a377d2e39e3ad0';
+  const ADMIN_PASS_HASH = '96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e';
+  const AUTH_KEY = 'passage_competitor_auth';
+
+  async function _sha256Hex(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  async function doLogin(e) {
+    if (e) e.preventDefault();
+    const un = document.getElementById('un').value.trim();
+    const pw = document.getElementById('pw').value;
+    const [unH, pwH] = await Promise.all([_sha256Hex(un), _sha256Hex(pw)]);
+    if (unH === ADMIN_USER_HASH && pwH === ADMIN_PASS_HASH) {
+      sessionStorage.setItem(AUTH_KEY, '1');
+      showDashboard();
+    } else {
+      document.getElementById('login-err').classList.add('show');
+    }
+    return false;
+  }
+
+  function doLogout() {
+    sessionStorage.removeItem(AUTH_KEY);
+    location.reload();
+  }
+
+  function showDashboard() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    initAnalytics();
+  }
+
+  document.getElementById('login-form').addEventListener('submit', doLogin);
+  document.getElementById('pw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(e); });
+
+  // Auth gate currently open (matches whitespace.html); flip to require auth by removing the line below.
+  // Defer to DOMContentLoaded so the second <script> block (which defines initAnalytics) is parsed first.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', showDashboard);
+  } else {
+    setTimeout(showDashboard, 0);
+  }
+</script>
+
+<script>
+// ── Analytics renderer ──
+const STATE = { competitors: [], categories: {}, insights: {}, landscape: {}, filtered: [] };
+
+function el(tag, opts) {
+  const e = document.createElement(tag);
+  if (!opts) return e;
+  if (opts.cls) e.className = opts.cls;
+  if (opts.text != null) e.textContent = String(opts.text);
+  if (opts.attrs) for (const [k,v] of Object.entries(opts.attrs)) e.setAttribute(k, v);
+  if (opts.children) for (const c of opts.children) if (c) e.appendChild(c);
+  return e;
+}
+
+function initAnalytics() {
+  fetch('../data/competitors.json')
+    .then(r => {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(data => {
+      STATE.competitors = Array.isArray(data.competitors) ? data.competitors : [];
+      STATE.categories = data.categories || {};
+      STATE.insights = data.insights || {};
+      STATE.landscape = data.landscape || {};
+      STATE.filtered = STATE.competitors.slice();
+      document.getElementById('refresh-date').textContent = data.research_date || '—';
+      renderKPIs();
+      renderCategoryFilter();
+      renderInsights();
+      renderRadar();
+      attachFilterHandlers();
+      renderCards();
+    })
+    .catch(err => {
+      console.error(err);
+      const grid = document.getElementById('comp-grid');
+      grid.textContent = '';
+      const fail = el('div', { cls: 'loading', text: 'Failed to load competitor data: ' + err.message });
+      grid.appendChild(fail);
+    });
+}
+
+function renderKPIs() {
+  const total = STATE.competitors.length;
+  const ds = STATE.competitors.map(c => Number(c.designScore || 0));
+  const avg = ds.length ? (ds.reduce((a,b) => a+b, 0) / ds.length) : 0;
+  const hidden = STATE.competitors.filter(c => c.casket_price_visibility === 'hidden_in_package').length;
+  const threats = STATE.competitors.filter(c => c.threat_level_to_passage === 'high').length;
+
+  document.getElementById('kpi-total').textContent = String(total);
+  document.getElementById('kpi-design').textContent = avg.toFixed(1);
+  document.getElementById('kpi-hidden').textContent = total ? Math.round((hidden / total) * 100) + '%' : '—';
+  document.getElementById('kpi-threats').textContent = String(threats);
+  document.getElementById('comp-count-hdr').textContent = String(total);
+  document.getElementById('comp-count-inline').textContent = String(total);
+}
+
+function renderCategoryFilter() {
+  const sel = document.getElementById('comp-cat');
+  // Keep first "all" option
+  while (sel.options.length > 1) sel.remove(1);
+  const cats = STATE.categories || {};
+  Object.keys(cats).forEach(k => {
+    const opt = el('option', { attrs: { value: k }, text: k.replace(/_/g, ' ') });
+    sel.appendChild(opt);
+  });
+}
+
+function renderInsights() {
+  const ins = STATE.insights || {};
+  const fill = (id, list) => {
+    const ul = document.getElementById(id);
+    if (!ul) return;
+    ul.textContent = '';
+    (Array.isArray(list) ? list : []).forEach(item => {
+      ul.appendChild(el('li', { text: item }));
+    });
+  };
+  fill('weaknesses-list', ins.commonWeaknesses);
+  fill('advantages-list', ins.passageAdvantages);
+  fill('borrowed-list', ins.designRationale && ins.designRationale.borrowed);
+  fill('improved-list', ins.designRationale && ins.designRationale.improved);
+}
+
+function renderRadar() {
+  const ctx = document.getElementById('radar-chart');
+  if (!ctx || typeof Chart === 'undefined') return;
+
+  // Pick top-5 most direct threats: prefer high-threat with the highest design+mobile,
+  // and always include the most-published-price DTC casket retailer for contrast.
+  const high = STATE.competitors.filter(c => c.threat_level_to_passage === 'high');
+  high.sort((a,b) => (b.designScore + b.mobileScore) - (a.designScore + a.mobileScore));
+  const picks = high.slice(0, 4);
+
+  // Add a published-price DTC retailer for global benchmark
+  const titan = STATE.competitors.find(c => c.name === 'Titan Casket');
+  if (titan && !picks.includes(titan)) picks.push(titan);
+  // Trim to 5
+  const top5 = picks.slice(0, 5);
+
+  const dims = ['Price visibility', 'Design quality', 'Mobile UX', 'Casket-only focus', 'Threat to Passage'];
+
+  function visScore(v) {
+    return ({
+      fully_published: 5,
+      bundled_transparent: 4,
+      partial: 3,
+      quote_on_call: 2,
+      wholesale_only: 1,
+      hidden_in_package: 1,
+      self_sourced: 2
+    })[v] || 0;
+  }
+  function threatScore(t) {
+    return ({ high: 5, medium: 3, low: 1 })[t] || 0;
+  }
+
+  const passageRow = {
+    label: 'Passage (us)',
+    data: [5, 9, 9, 5, 5].map(n => Math.min(5, Math.round(n / 2))),
+    backgroundColor: 'rgba(114,91,63,0.18)',
+    borderColor: '#725b3f',
+    borderWidth: 2.5,
+    pointBackgroundColor: '#725b3f'
+  };
+  // Passage is fully published (5), design 5 (we are the bar), mobile 5, casket-only 5, low-self-threat -> we plot Passage's *strength*
+  passageRow.data = [5, 5, 5, 5, 5];
+
+  const palette = ['#8b2020', '#b07020', '#2a5080', '#5a3878', '#3a7a50'];
+
+  const datasets = [passageRow];
+  top5.forEach((c, i) => {
+    datasets.push({
+      label: c.name,
+      data: [
+        visScore(c.casket_price_visibility),
+        Math.round((Number(c.designScore || 0) / 10) * 5),
+        Math.round((Number(c.mobileScore || 0) / 10) * 5),
+        c.casket_only_offering ? 5 : 1,
+        threatScore(c.threat_level_to_passage)
+      ],
+      backgroundColor: 'rgba(0,0,0,0.06)',
+      borderColor: palette[i % palette.length],
+      borderWidth: 1.5,
+      pointBackgroundColor: palette[i % palette.length]
+    });
+  });
+
+  // eslint-disable-next-line no-undef
+  new Chart(ctx, {
+    type: 'radar',
+    data: { labels: dims, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { size: 11 }, color: '#32332d' } },
+        tooltip: { backgroundColor: '#32332d', padding: 10 }
+      },
+      scales: {
+        r: {
+          min: 0,
+          max: 5,
+          ticks: { stepSize: 1, color: '#7b7b74', backdropColor: 'transparent', font: { size: 10 } },
+          pointLabels: { font: { size: 11 }, color: '#32332d' },
+          grid: { color: '#d8d4cc' },
+          angleLines: { color: '#d8d4cc' }
+        }
+      }
+    }
+  });
+}
+
+function attachFilterHandlers() {
+  const search = document.getElementById('comp-search');
+  const cat = document.getElementById('comp-cat');
+  const thr = document.getElementById('comp-threat');
+  const vis = document.getElementById('comp-vis');
+  [search, cat, thr, vis].forEach(elx => elx.addEventListener('input', applyFilters));
+}
+
+function applyFilters() {
+  const q = (document.getElementById('comp-search').value || '').toLowerCase().trim();
+  const cat = document.getElementById('comp-cat').value;
+  const thr = document.getElementById('comp-threat').value;
+  const vis = document.getElementById('comp-vis').value;
+
+  STATE.filtered = STATE.competitors.filter(c => {
+    if (cat && c.category !== cat) return false;
+    if (thr && c.threat_level_to_passage !== thr) return false;
+    if (vis && c.casket_price_visibility !== vis) return false;
+    if (q) {
+      const blob = [
+        c.name, c.target_market, (c.strengths || []).join(' '),
+        (c.weaknesses || []).join(' '), (c.notableFeatures || []).join(' ')
+      ].join(' ').toLowerCase();
+      if (!blob.includes(q)) return false;
+    }
+    return true;
+  });
+  renderCards();
+}
+
+function renderCards() {
+  const grid = document.getElementById('comp-grid');
+  grid.textContent = '';
+  document.getElementById('comp-count-tbl').textContent =
+    STATE.filtered.length + ' / ' + STATE.competitors.length + ' shown';
+
+  if (!STATE.filtered.length) {
+    grid.appendChild(el('div', { cls: 'loading', text: 'No competitors match the current filters.' }));
+    return;
+  }
+
+  STATE.filtered.forEach(c => grid.appendChild(buildCard(c)));
+}
+
+function buildCard(c) {
+  const card = el('div', { cls: 'comp-card' });
+
+  // Head: name + threat
+  const head = el('div', { cls: 'comp-card-head' });
+  const nameWrap = el('div');
+  nameWrap.appendChild(el('div', { cls: 'comp-name', text: c.name || '—' }));
+  if (c.url) {
+    const a = el('a', { cls: 'comp-url', text: c.url, attrs: { href: c.url, target: '_blank', rel: 'noopener noreferrer' } });
+    nameWrap.appendChild(a);
+  }
+  head.appendChild(nameWrap);
+  const threat = c.threat_level_to_passage || 'low';
+  head.appendChild(el('span', { cls: 'badge b-threat-' + threat, text: threat + ' threat' }));
+  card.appendChild(head);
+
+  // Target market
+  if (c.target_market) {
+    card.appendChild(el('div', { cls: 'comp-target', text: c.target_market }));
+  }
+
+  // Badges
+  const badges = el('div', { cls: 'badge-row' });
+  if (c.tier) badges.appendChild(el('span', { cls: 'badge b-tier-' + c.tier, text: c.tier }));
+  if (c.category) badges.appendChild(el('span', { cls: 'badge b-cat', text: c.category.replace(/_/g, ' ') }));
+  if (c.casket_price_visibility) {
+    badges.appendChild(el('span', {
+      cls: 'badge b-vis-' + c.casket_price_visibility,
+      text: c.casket_price_visibility.replace(/_/g, ' ')
+    }));
+  }
+  card.appendChild(badges);
+
+  // Price strip
+  if (c.estimated_casket_markup_sgd) {
+    const strip = el('div', { cls: 'price-strip' });
+    const lbl = el('b', { text: 'Casket price: ' });
+    strip.appendChild(lbl);
+    strip.appendChild(document.createTextNode(c.estimated_casket_markup_sgd));
+    card.appendChild(strip);
+  }
+
+  // Score bars
+  const scores = el('div');
+  scores.appendChild(scoreRow('Design', c.designScore));
+  scores.appendChild(scoreRow('Mobile', c.mobileScore));
+  card.appendChild(scores);
+
+  // Strengths + weaknesses
+  const lists = el('div', { cls: 'lists-wrap' });
+  if (Array.isArray(c.strengths) && c.strengths.length) {
+    lists.appendChild(listBlock('Strengths', c.strengths, 'strong'));
+  }
+  if (Array.isArray(c.weaknesses) && c.weaknesses.length) {
+    lists.appendChild(listBlock('Weaknesses', c.weaknesses, 'weak'));
+  }
+  card.appendChild(lists);
+
+  return card;
+}
+
+function scoreRow(label, val) {
+  const v = Math.max(0, Math.min(10, Number(val || 0)));
+  const row = el('div', { cls: 'score-row' });
+  row.appendChild(el('div', { cls: 'score-lbl', text: label }));
+  const bar = el('div', { cls: 'score-bar' });
+  const fill = el('div', { cls: 'score-bar-fill' });
+  fill.style.width = (v * 10) + '%';
+  bar.appendChild(fill);
+  row.appendChild(bar);
+  row.appendChild(el('div', { cls: 'score-num', text: v + '/10' }));
+  return row;
+}
+
+function listBlock(title, items, kind) {
+  const block = el('div', { cls: 'list-block ' + (kind || '') });
+  block.appendChild(el('h4', { text: title }));
+  const ul = el('ul');
+  items.forEach(it => ul.appendChild(el('li', { text: it })));
+  block.appendChild(ul);
+  return block;
+}
+</script>
+
+</body>
+</html>

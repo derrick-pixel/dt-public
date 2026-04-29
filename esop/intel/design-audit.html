@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design Audit — Elitez ESOP Intel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body class="admin-page">
+  <nav class="elitez-nav">
+    <a href="../index.html" class="brand">
+      <span>Elitez ESOP</span>
+      <span class="badge">Market Intel</span>
+    </a>
+    <div class="links">
+      <a href="../scheme.html">Scheme</a>
+      <a href="../portal.html">Portal</a>
+      <a href="../committee.html">Committee</a>
+      <a href="../trading.html">Trading</a>
+      <a href="index.html" class="active">Intel</a>
+    </div>
+  </nav>
+
+  <nav class="intel-nav">
+    <a href="index.html">Competitors</a>
+    <a href="insights.html">Market &amp; Pricing</a>
+    <a href="whitespace.html">Whitespace</a>
+    <a href="design-audit.html" class="active">Design Audit</a>
+    <a href="report.html">Report</a>
+  </nav>
+
+  <main class="container-wide">
+    <span class="eyebrow">Artefact 07</span>
+    <h1>Design audit</h1>
+    <p style="max-width: 880px; color: var(--ink-soft); font-size: 1rem;">5-dimension rubric (Modernness, Attractiveness, Coherence, UI Clarity, Accessibility) on a 1-10 scale, mean rating shown. Top-15 also carry a 3-intent findability stopwatch (pricing / demo / contact in seconds). DIY entries have no platform site to score.</p>
+
+    <div class="comp-controls">
+      <input type="search" class="comp-search" id="search-input" placeholder="Search by name or notes…">
+      <select class="comp-filter" id="sort-by">
+        <option value="rating-desc">Rating · high → low</option>
+        <option value="rating-asc">Rating · low → high</option>
+        <option value="name-asc">Name · A → Z</option>
+      </select>
+      <span class="comp-count" id="count-line"></span>
+    </div>
+
+    <div class="design-grid" id="design-grid"></div>
+  </main>
+
+  <script type="module">
+    import { loadAppData, mountSampleBanner, mountUnstyledBanner } from './assets/js/app.js';
+    import { fmtScore } from './assets/js/format.js';
+    import { h, mount } from './assets/js/dom.js';
+
+    const data = await loadAppData();
+    mountSampleBanner();
+    mountUnstyledBanner();
+    const comps = data.competitors.competitors;
+
+    const fmtFb = v => v == null ? '—' : v + 's';
+    const card = c => {
+      const fb = c.findability_seconds;
+      return h('div', { class: c.website_design_rating == null ? 'design-card unaudited' : 'design-card' },
+        h('div', { class: 'row-top' },
+          h('h3', { class: 'name' }, c.name),
+          c.website_design_rating != null
+            ? h('div', { class: 'rating' }, fmtScore(c.website_design_rating, '1-10'))
+            : h('div', { class: 'rating', style: 'color: var(--muted);' }, 'No site')
+        ),
+        c.website_screenshot_path
+          ? h('img', { class: 'shot', src: c.website_screenshot_path, alt: c.name + ' homepage', loading: 'lazy', onerror: function() { this.style.display = 'none'; } })
+          : null,
+        fb && (fb.pricing != null || fb.demo != null || fb.contact != null)
+          ? h('div', { class: 'findability' },
+              h('span', { class: 'item' }, h('span', { class: 'l' }, 'pricing'), fmtFb(fb.pricing)),
+              h('span', { class: 'item' }, h('span', { class: 'l' }, 'demo'), fmtFb(fb.demo)),
+              h('span', { class: 'item' }, h('span', { class: 'l' }, 'contact'), fmtFb(fb.contact))
+            )
+          : null,
+        c.website_design_notes
+          ? h('div', { class: 'notes' }, c.website_design_notes)
+          : null
+      );
+    };
+
+    const search = document.getElementById('search-input');
+    const sort = document.getElementById('sort-by');
+    const grid = document.getElementById('design-grid');
+    const count = document.getElementById('count-line');
+
+    function render() {
+      const q = search.value.toLowerCase();
+      const filtered = comps.filter(c => {
+        if (!q) return true;
+        const hay = [c.name, c.website_design_notes, c.category].filter(Boolean).join(' ').toLowerCase();
+        return hay.includes(q);
+      });
+      filtered.sort((a, b) => {
+        switch (sort.value) {
+          case 'rating-asc': return (a.website_design_rating ?? 99) - (b.website_design_rating ?? 99);
+          case 'name-asc':   return a.name.localeCompare(b.name);
+          default:           return (b.website_design_rating ?? -1) - (a.website_design_rating ?? -1);
+        }
+      });
+      mount(grid, ...filtered.map(card));
+      count.textContent = `Showing ${filtered.length} of ${comps.length}`;
+    }
+    search.oninput = render;
+    sort.onchange = render;
+    render();
+  </script>
+</body>
+</html>

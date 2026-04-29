@@ -35,7 +35,12 @@ for entry in "${WIP_REPOS[@]}"; do
   folder="${entry##*:}"
   echo "→ derrick-pixel/$repo  →  ./$folder"
   rm -rf ".tmp-sync"
-  git clone --quiet --depth=1 "https://github.com/derrick-pixel/$repo.git" ".tmp-sync"
+  # Clone without populating working tree (-n) to avoid macOS Finder
+  # racing to create .DS_Store before git's own checkout runs.
+  git clone --quiet --depth=1 -n "https://github.com/derrick-pixel/$repo.git" ".tmp-sync"
+  # Now populate the working tree with -f to ignore any .DS_Store Finder
+  # may have created in the empty clone directory.
+  git -C ".tmp-sync" checkout -f HEAD -- . 2>/dev/null || git -C ".tmp-sync" checkout -f HEAD
   rm -rf ".tmp-sync/.git" ".tmp-sync/.github"
   find ".tmp-sync" -name '.DS_Store' -delete
   rm -rf "./$folder"
@@ -97,6 +102,9 @@ else
     echo "→ Syncing cloudflare/workers-autoconfig branch + deploying dt-public Worker"
     WORKER_TMP="$(mktemp -d -t dt-public-worker-XXXX)"
     git clone --quiet "$(git config --get remote.origin.url)" "$WORKER_TMP"
+    # Defensive cleanup — macOS .DS_Store files can block branch checkout
+    # if they exist as untracked files in a state git considers "would be overwritten".
+    find "$WORKER_TMP" -name '.DS_Store' -delete 2>/dev/null || true
     (
       cd "$WORKER_TMP" || exit 1
       git checkout cloudflare/workers-autoconfig 2>&1 | tail -1

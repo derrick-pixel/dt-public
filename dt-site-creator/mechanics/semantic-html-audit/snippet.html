@@ -1,0 +1,199 @@
+<!--
+semantic-html-audit snippet — browser-side dev banner.
+
+Drop into every page's <head> or include via shared partial.
+Activates only on localhost OR when ?audit=1 query param present. Zero shipping cost.
+
+For batch / Node CLI usage, see cli.js (sibling file in this mechanic folder).
+The audit() function below is the shared core; both modes call it.
+-->
+
+<script>
+(function () {
+  if (location.hostname !== 'localhost' && !location.search.includes('audit=1')) return;
+
+  // ---- Pure audit function -------------------------------------------------
+  // Takes a Document or document-like and returns { violations: [...], stats: {...} }
+  function audit(doc) {
+    const violations = [];
+
+    // 1. Heading hierarchy
+    const h1s = doc.querySelectorAll('h1');
+    if (h1s.length === 0) {
+      violations.push({ id: 'seo-no-h1', severity: 'high', message: 'No <h1> on page' });
+    } else if (h1s.length > 1) {
+      violations.push({ id: 'seo-multiple-h1', severity: 'high', message: `${h1s.length} <h1> elements (should be exactly 1)`, count: h1s.length });
+    }
+
+    const headings = Array.from(doc.querySelectorAll('h1, h2, h3, h4, h5, h6'));
+    let prevLevel = 0;
+    for (const h of headings) {
+      const level = parseInt(h.tagName.substring(1), 10);
+      if (prevLevel > 0 && level > prevLevel + 1) {
+        violations.push({ id: 'seo-heading-skip', severity: 'medium', message: `Heading skipped from h${prevLevel} to h${level}`, selector: cssPath(h) });
+      }
+      prevLevel = level;
+    }
+
+    // 2. Semantic landmarks
+    if (!doc.querySelector('main')) {
+      violations.push({ id: 'seo-no-main', severity: 'high', message: 'No <main> landmark' });
+    } else if (doc.querySelectorAll('main').length > 1) {
+      violations.push({ id: 'seo-multiple-main', severity: 'medium', message: 'Multiple <main> landmarks (should be exactly 1)' });
+    }
+    if (!doc.querySelector('header')) {
+      violations.push({ id: 'seo-no-header', severity: 'low', message: 'No <header> landmark' });
+    }
+    if (!doc.querySelector('footer')) {
+      violations.push({ id: 'seo-no-footer', severity: 'low', message: 'No <footer> landmark' });
+    }
+    if (!doc.querySelector('nav')) {
+      violations.push({ id: 'seo-no-nav', severity: 'low', message: 'No <nav> landmark' });
+    }
+
+    // 3. Image hygiene
+    const imgs = Array.from(doc.querySelectorAll('img'));
+    const noAlt = imgs.filter(img => !img.hasAttribute('alt'));
+    const noDim = imgs.filter(img => !img.hasAttribute('width') || !img.hasAttribute('height'));
+    if (noAlt.length > 0) {
+      violations.push({ id: 'seo-img-no-alt', severity: 'high', message: `${noAlt.length} <img> missing alt attribute`, samples: noAlt.slice(0, 3).map(cssPath) });
+    }
+    if (noDim.length > 0) {
+      violations.push({ id: 'seo-img-no-dimensions', severity: 'medium', message: `${noDim.length} <img> missing width/height (CLS risk)`, samples: noDim.slice(0, 3).map(cssPath) });
+    }
+
+    // 4. Lang attribute
+    const html = doc.documentElement;
+    if (!html.hasAttribute('lang') || !html.getAttribute('lang').trim()) {
+      violations.push({ id: 'seo-no-lang-attr', severity: 'medium', message: '<html> missing lang attribute' });
+    }
+
+    // 5. Title + meta description
+    const titleEl = doc.querySelector('title');
+    const titleText = titleEl ? titleEl.textContent.trim() : '';
+    if (!titleText) {
+      violations.push({ id: 'seo-no-title', severity: 'high', message: '<title> empty or missing' });
+    } else if (titleText.length < 10 || titleText.length > 80) {
+      violations.push({ id: 'seo-title-length', severity: 'low', message: `<title> length ${titleText.length} (target 30–70 chars)` });
+    }
+    const metaDesc = doc.querySelector('meta[name="description"]');
+    const metaDescContent = metaDesc ? (metaDesc.getAttribute('content') || '').trim() : '';
+    if (!metaDescContent) {
+      violations.push({ id: 'seo-no-meta-description', severity: 'high', message: '<meta name="description"> empty or missing' });
+    } else if (metaDescContent.length < 50 || metaDescContent.length > 200) {
+      violations.push({ id: 'seo-meta-description-length', severity: 'low', message: `meta description length ${metaDescContent.length} (target 80–160 chars)` });
+    }
+    if (titleText && metaDescContent && titleText === metaDescContent) {
+      violations.push({ id: 'seo-meta-description-duplicates-title', severity: 'medium', message: 'meta description identical to <title>' });
+    }
+
+    // 6. Internal linking
+    const main = doc.querySelector('main') || doc.body;
+    const anchors = Array.from(main.querySelectorAll('a[href]'));
+    const internal = anchors.filter(a => {
+      const href = a.getAttribute('href');
+      if (!href) return false;
+      if (href.startsWith('#')) return false;
+      if (href.startsWith('mailto:') || href.startsWith('tel:')) return false;
+      if (href.startsWith('http://') || href.startsWith('https://')) {
+        try {
+          const u = new URL(href);
+          return u.hostname === location.hostname;
+        } catch (e) { return false; }
+      }
+      return true; // relative
+    });
+    if (internal.length < 3) {
+      violations.push({ id: 'seo-no-internal-links', severity: 'low', message: `Only ${internal.length} internal link(s) in <main> (target ≥3)` });
+    }
+
+    // 7. Bad anchor text
+    const badAnchorPatterns = /^(click here|read more|learn more|here|more|link|this)$/i;
+    const badAnchors = anchors.filter(a => badAnchorPatterns.test((a.textContent || '').trim()));
+    if (badAnchors.length > 0) {
+      violations.push({ id: 'seo-bad-anchor-text', severity: 'low', message: `${badAnchors.length} non-descriptive anchor(s) ("click here", "read more"…)`, samples: badAnchors.slice(0, 3).map(a => (a.textContent || '').trim()) });
+    }
+
+    // 8. Content thinness — words inside <main>
+    const mainText = (main.textContent || '').trim();
+    const wordCount = mainText.split(/\s+/).filter(Boolean).length;
+    if (wordCount < 100) {
+      violations.push({ id: 'seo-thin-content', severity: 'medium', message: `<main> has ${wordCount} words (target ≥100; ≥300 ideal)` });
+    }
+
+    // ---- Stats summary -----------------------------------------------------
+    const stats = {
+      h1_count: h1s.length,
+      heading_count: headings.length,
+      img_count: imgs.length,
+      img_missing_alt: noAlt.length,
+      img_missing_dimensions: noDim.length,
+      internal_links: internal.length,
+      external_links: anchors.length - internal.length,
+      bad_anchors: badAnchors.length,
+      word_count: wordCount,
+      has_main: !!doc.querySelector('main'),
+      has_header: !!doc.querySelector('header'),
+      has_footer: !!doc.querySelector('footer'),
+      has_nav: !!doc.querySelector('nav'),
+      has_lang_attr: html.hasAttribute('lang'),
+      title_chars: titleText.length,
+      meta_desc_chars: metaDescContent.length
+    };
+
+    // Score: 100 minus weighted severity sum
+    const weights = { critical: 25, high: 12, medium: 6, low: 2 };
+    const score = Math.max(0, 100 - violations.reduce((s, v) => s + (weights[v.severity] || 2), 0));
+
+    return { violations, stats, score };
+  }
+
+  function cssPath(el) {
+    if (!el || el.nodeType !== 1) return '';
+    if (el.id) return '#' + el.id;
+    const parts = [];
+    let cur = el;
+    while (cur && cur.nodeType === 1 && cur !== document.documentElement) {
+      let part = cur.tagName.toLowerCase();
+      if (cur.className && typeof cur.className === 'string') {
+        const cls = cur.className.trim().split(/\s+/).slice(0, 2).join('.');
+        if (cls) part += '.' + cls;
+      }
+      parts.unshift(part);
+      cur = cur.parentNode;
+      if (parts.length > 4) break;
+    }
+    return parts.join(' > ');
+  }
+
+  // ---- Browser banner UX --------------------------------------------------
+  function run() {
+    const r = audit(document);
+    if (r.violations.length === 0) {
+      console.log('%c[semantic-html-audit] 0 violations · score 100', 'color: #34d399; font-weight: bold;');
+      return;
+    }
+    const summary = r.violations.map(v => ({ severity: v.severity, id: v.id, message: v.message }));
+    console.group(`%c[semantic-html-audit] ${r.violations.length} violation(s) · score ${r.score}`, 'color: #f87171; font-weight: bold;');
+    console.table(summary);
+    console.log('Stats:', r.stats);
+    console.groupEnd();
+
+    const banner = document.createElement('div');
+    banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#fef3c7;color:#78350f;padding:8px 16px;font:14px/1.4 system-ui;z-index:99998;text-align:center;border-bottom:2px solid #f59e0b;';
+    const high = r.violations.filter(v => v.severity === 'high').length;
+    const med = r.violations.filter(v => v.severity === 'medium').length;
+    banner.textContent = `[semantic-html-audit] ${r.violations.length} violation(s) — score ${r.score} — ${high} high, ${med} medium — see console`;
+    document.body.appendChild(banner);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run);
+  } else {
+    run();
+  }
+
+  // Expose for tests / console use
+  window.__semanticHtmlAudit = audit;
+})();
+</script>

@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Passage — Market & Pricing Insights</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #32332d;
+      --secondary: #596060;
+      --gold: #725b3f;
+      --surface: #fcf9f5;
+      --surface-1: #f0ece4;
+      --surface-2: #e4e0d8;
+      --border: #d8d4cc;
+      --muted: #7b7b74;
+      --white: #ffffff;
+      --green: #3a7a50;
+      --amber: #b07020;
+      --blue: #2a5080;
+      --red: #8b2020;
+      --purple: #5a3878;
+      --radius: 8px;
+      --radius-lg: 14px;
+      --font: 'Segoe UI', system-ui, sans-serif;
+      --serif: Georgia, 'Times New Roman', serif;
+    }
+    body { font-family: var(--font); background: var(--surface); color: var(--primary); min-height: 100vh; }
+
+    /* ── LOGIN ── */
+    #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--primary); }
+    .login-box { background: var(--white); border-radius: var(--radius-lg); padding: 48px 40px; width: 100%; max-width: 380px; box-shadow: 0 24px 48px rgba(0,0,0,0.3); }
+    .login-logo { font-family: var(--serif); font-size: 1.8rem; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; margin-bottom: 4px; text-align: center; }
+    .login-logo span { color: var(--gold); }
+    .login-sub { font-size: 0.78rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 32px; text-align: center; }
+    .login-box label { display: block; font-size: 0.74rem; font-weight: 600; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; margin-top: 16px; }
+    .login-box input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--radius); font-size: 0.95rem; font-family: var(--font); outline: none; transition: border-color 0.2s; background: var(--surface); }
+    .login-box input:focus { border-color: var(--gold); }
+    .login-btn { margin-top: 20px; width: 100%; padding: 12px 18px; background: var(--primary); color: var(--white); border: none; border-radius: var(--radius); font-family: var(--serif); font-size: 0.95rem; font-weight: 600; letter-spacing: 0.06em; cursor: pointer; transition: background 0.2s; }
+    .login-btn:hover { background: var(--gold); }
+    .login-error { display: none; margin-top: 12px; padding: 10px 12px; background: rgba(139,32,32,0.08); color: var(--red); font-size: 0.82rem; border-radius: var(--radius); text-align: center; }
+    .login-error.show { display: block; }
+
+    /* ── ATLAS ── */
+    #dashboard { display: none; }
+    .atlas-body { max-width: 1340px; margin: 0 auto; padding: 32px 24px 80px; }
+    .atlas-nav { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 28px; }
+    .atlas-nav .brand { font-family: var(--serif); font-size: 1.2rem; font-weight: 700; letter-spacing: 0.08em; color: var(--primary); text-decoration: none; }
+    .atlas-nav .brand span { color: var(--gold); }
+    .atlas-nav-links { display: flex; gap: 12px; align-items: center; }
+    .atlas-nav-links a { font-size: 0.8rem; color: var(--secondary); padding: 6px 12px; border-radius: var(--radius); text-decoration: none; transition: background 0.15s; }
+    .atlas-nav-links a:hover { background: var(--surface-1); }
+    .atlas-nav-links a.active { background: var(--gold); color: var(--white); font-weight: 600; }
+    .atlas-nav-links .logout-link { border: 1px solid var(--border); color: var(--muted); cursor: pointer; background: none; font-family: var(--font); font-size: 0.8rem; padding: 6px 12px; border-radius: var(--radius); }
+
+    .atlas-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
+    .atlas-tag { font-family: var(--serif); font-size: 0.76rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+    .atlas-title { font-family: var(--serif); font-size: clamp(1.7rem, 3.5vw, 2.4rem); font-weight: 700; letter-spacing: -0.01em; line-height: 1.15; color: var(--primary); }
+    .atlas-meta { font-size: 0.78rem; color: var(--muted); text-align: right; font-family: ui-monospace, monospace; letter-spacing: 0.04em; }
+
+    .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 32px; }
+    .kpi { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; }
+    .kpi-val { font-family: var(--serif); font-size: 1.85rem; font-weight: 700; color: var(--primary); letter-spacing: -0.02em; line-height: 1.05; }
+    .kpi-val.green { color: var(--green); }
+    .kpi-val.amber { color: var(--amber); }
+    .kpi-val.red { color: var(--red); }
+    .kpi-val.gold { color: var(--gold); }
+    .kpi-lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-top: 8px; }
+    .kpi-sub { font-size: 0.7rem; color: var(--secondary); margin-top: 4px; line-height: 1.4; }
+
+    .artifact { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px 28px; margin-bottom: 22px; }
+    .art-num { font-size: 0.72rem; color: var(--gold); letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
+    .art-title { font-family: var(--serif); font-size: 1.35rem; font-weight: 700; color: var(--primary); letter-spacing: -0.01em; margin-bottom: 8px; }
+    .art-desc { font-size: 0.92rem; color: var(--muted); max-width: 820px; line-height: 1.6; margin-bottom: 22px; }
+
+    /* Insight (industry overview) card */
+    .insight-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; }
+    .insight-card p { font-size: 0.92rem; color: var(--secondary); line-height: 1.7; margin-bottom: 14px; }
+    .insight-card p:last-child { margin-bottom: 0; }
+    .insight-card strong { color: var(--primary); font-weight: 700; }
+    .insight-card .shift-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-top: 18px; }
+    .insight-card .shift { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+    .insight-card .shift-tag { font-size: 0.66rem; font-weight: 700; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; font-family: ui-monospace, monospace; }
+    .insight-card .shift-name { font-family: var(--serif); font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
+    .insight-card .shift-text { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+
+    /* Pricing tiers table */
+    .tier-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    .tier-table thead th { background: var(--primary); color: var(--surface); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.66rem; padding: 12px 14px; text-align: left; }
+    .tier-table thead th:first-child { background: var(--surface-1); color: var(--primary); }
+    .tier-table tbody td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.5; color: var(--secondary); }
+    .tier-table tbody th { padding: 12px 14px; border-bottom: 1px solid var(--border); background: var(--surface-1); color: var(--primary); font-weight: 600; text-align: left; font-size: 0.84rem; vertical-align: top; }
+    .tier-table tbody tr:hover td { background: var(--surface); }
+    .tier-table .col-passage { background: rgba(114,91,63,0.05); }
+    .tier-table .price-big { font-family: var(--serif); font-weight: 700; color: var(--primary); font-size: 0.96rem; display: block; margin-bottom: 4px; }
+    .tier-table .price-note { font-size: 0.74rem; color: var(--muted); display: block; }
+
+    /* Persona cards */
+    .persona-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .persona { background: linear-gradient(160deg, rgba(114,91,63,0.06), var(--white) 75%); border: 1.5px solid var(--gold); border-radius: var(--radius-lg); padding: 22px 24px; }
+    .persona-rank { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; font-family: ui-monospace, monospace; }
+    .persona-name { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+    .persona-icp { font-size: 0.86rem; color: var(--muted); margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed var(--border); font-style: italic; line-height: 1.6; }
+    .persona-row { display: grid; grid-template-columns: 78px 1fr; gap: 10px; font-size: 0.84rem; padding: 5px 0; }
+    .persona-row .k { font-size: 0.62rem; font-weight: 700; color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px; font-family: ui-monospace, monospace; }
+    .persona-row .v { color: var(--secondary); line-height: 1.55; }
+
+    /* WTP cards */
+    .wtp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .wtp-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px 22px; position: relative; }
+    .wtp-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+    .wtp-name { font-family: var(--serif); font-size: 1rem; font-weight: 700; color: var(--primary); line-height: 1.25; }
+    .wtp-band { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; color: var(--gold); margin: 8px 0; line-height: 1; letter-spacing: -0.01em; }
+    .wtp-band-lbl { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 600; }
+    .wtp-driver { font-size: 0.84rem; color: var(--secondary); line-height: 1.55; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border); }
+    .sens-badge { display: inline-block; padding: 3px 10px; font-size: 0.64rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; border-radius: 100px; font-family: ui-monospace, monospace; flex-shrink: 0; }
+    .sens-high { background: rgba(139,32,32,0.10); color: var(--red); border: 1px solid var(--red); }
+    .sens-med { background: rgba(176,112,32,0.14); color: var(--amber); border: 1px solid var(--amber); }
+    .sens-low { background: rgba(58,122,80,0.12); color: var(--green); border: 1px solid var(--green); }
+
+    /* Differentiation list */
+    .diff-list { counter-reset: diff; list-style: none; display: grid; grid-template-columns: 1fr; gap: 14px; }
+    .diff-item { background: var(--surface); border-left: 4px solid var(--gold); border-radius: var(--radius); padding: 18px 22px; position: relative; counter-increment: diff; }
+    .diff-item::before { content: counter(diff, decimal-leading-zero); position: absolute; left: -4px; top: -10px; background: var(--gold); color: var(--white); font-family: ui-monospace, monospace; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; padding: 3px 8px; border-radius: 4px; }
+    .diff-title { font-family: var(--serif); font-size: 1.05rem; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
+    .diff-text { font-size: 0.88rem; color: var(--secondary); line-height: 1.6; }
+    .diff-text em { color: var(--gold); font-style: normal; font-weight: 600; }
+
+    /* NBA cards */
+    .nba-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .nba-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px 22px; }
+    .nba-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+    .nba-name { font-family: var(--serif); font-size: 1rem; font-weight: 700; color: var(--primary); line-height: 1.3; }
+    .nba-row { display: grid; grid-template-columns: 80px 1fr; gap: 8px; font-size: 0.82rem; padding: 5px 0; line-height: 1.5; }
+    .nba-row .k { font-size: 0.62rem; font-weight: 700; color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px; font-family: ui-monospace, monospace; }
+    .nba-row .v { color: var(--secondary); }
+    .threat-badge { display: inline-block; padding: 3px 10px; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; border-radius: 100px; font-family: ui-monospace, monospace; flex-shrink: 0; }
+    .t-high { background: rgba(139,32,32,0.10); color: var(--red); border: 1px solid var(--red); }
+    .t-med { background: rgba(176,112,32,0.14); color: var(--amber); border: 1px solid var(--amber); }
+    .t-low { background: rgba(58,122,80,0.12); color: var(--green); border: 1px solid var(--green); }
+
+    .source-note { font-size: 0.74rem; color: var(--muted); font-style: italic; margin-top: 16px; line-height: 1.55; padding: 12px 14px; background: var(--surface-1); border-radius: var(--radius); border-left: 3px solid var(--border); }
+
+  /* ── MOBILE RESPONSIVE OVERRIDES ─────────────────── */
+  @media (max-width: 768px) {
+    body { font-size: 13px; }
+    h1, .atlas-title { font-size: 1.45rem !important; line-height: 1.2 !important; }
+    h2, .art-title { font-size: 1.1rem !important; }
+    .atlas-meta { text-align: left !important; margin-top: 6px !important; font-size: 0.7rem !important; }
+    .atlas-body { padding-left: 14px !important; padding-right: 14px !important; }
+    .atlas-top { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
+
+    .kpi-strip { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; margin-bottom: 20px !important; }
+    .kpi { padding: 12px 14px !important; }
+    .kpi-val { font-size: 1.3rem !important; }
+    .kpi-lbl { font-size: 0.6rem !important; letter-spacing: 0.06em !important; }
+    .kpi-sub { font-size: 0.62rem !important; }
+
+    .artifact { padding: 18px 16px !important; margin-bottom: 14px !important; border-radius: 10px !important; }
+    .art-title { font-size: 1.05rem !important; }
+    .art-desc { font-size: 0.82rem !important; margin-bottom: 14px !important; }
+
+    .insight-card { padding: 16px 14px !important; }
+    .insight-card p { font-size: 0.82rem !important; }
+    .insight-card .shift-list { grid-template-columns: 1fr !important; gap: 10px !important; }
+
+    .persona-grid, .wtp-grid, .nba-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+    .persona, .wtp-card, .nba-card { padding: 16px 14px !important; border-radius: 10px !important; }
+    .persona-name, .wtp-name, .nba-name { font-size: 0.96rem !important; }
+    .persona-icp { font-size: 0.8rem !important; margin-bottom: 10px !important; padding-bottom: 10px !important; }
+    .persona-row, .nba-row { grid-template-columns: 70px 1fr !important; gap: 8px !important; font-size: 0.76rem !important; }
+    .persona-row .k, .nba-row .k { font-size: 0.58rem !important; letter-spacing: 0.05em !important; }
+    .wtp-band { font-size: 1.15rem !important; }
+
+    .diff-item { padding: 14px 16px !important; }
+    .diff-title { font-size: 0.95rem !important; }
+    .diff-text { font-size: 0.8rem !important; }
+
+    .tier-table { display: block !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; font-size: 0.72rem !important; white-space: nowrap !important; }
+    .tier-table thead, .tier-table tbody, .tier-table tr { display: table !important; width: 100% !important; min-width: 640px !important; table-layout: auto !important; }
+    .tier-table thead th { font-size: 0.55rem !important; padding: 8px !important; }
+    .tier-table tbody th, .tier-table tbody td { padding: 8px !important; white-space: normal !important; font-size: 0.74rem !important; }
+    .tier-table .price-big { font-size: 0.84rem !important; }
+
+    .login-box { padding: 32px 24px !important; max-width: calc(100vw - 32px) !important; }
+    .login-logo { font-size: 1.5rem !important; }
+
+    .atlas-nav { flex-wrap: wrap !important; padding: 10px 14px !important; gap: 8px !important; }
+    .atlas-nav-links { flex-wrap: wrap !important; gap: 6px !important; }
+    .atlas-nav-links a { font-size: 0.72rem !important; padding: 5px 10px !important; }
+  }
+
+  @media (max-width: 420px) {
+    .kpi-strip { grid-template-columns: 1fr !important; }
+    .persona-row, .nba-row { grid-template-columns: 56px 1fr !important; font-size: 0.74rem !important; }
+    body { font-size: 12px; }
+    .kpi-val { font-size: 1.18rem !important; }
+  }
+  /* ── END MOBILE OVERRIDES ─────────────────────────────── */
+  </style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">PASSAGE<span>.</span></div>
+    <div class="login-sub">Market &amp; Pricing Insights</div>
+    <form id="login-form" onsubmit="return false;">
+      <label for="un">Username</label>
+      <input id="un" type="text" placeholder="Username" autocomplete="username" />
+      <label for="pw">Password</label>
+      <input id="pw" type="password" placeholder="Password" autocomplete="current-password" />
+      <button type="submit" class="login-btn" onclick="doLogin(event)">Enter Insights</button>
+      <p class="login-error" id="login-err">Incorrect username or password.</p>
+    </form>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard">
+  <div class="atlas-body">
+
+    <nav class="atlas-nav">
+      <a href="index.html" class="brand">PASSAGE<span>.</span></a>
+      <div class="atlas-nav-links">
+        <a href="index.html">Orders</a>
+        <a href="whitespace.html">White Space</a>
+        <a href="competitor-analytics.html">Competitors</a>
+        <a href="insights.html" class="active">Insights</a>
+        <a href="design-audit.html">Design Audit</a>
+        <a href="report.html">Report</a>
+        <a href="../index.html">Site</a>
+        <button class="logout-link" onclick="doLogout()">Sign out</button>
+      </div>
+    </nav>
+
+    <div class="atlas-top">
+      <div>
+        <div class="atlas-tag">◆ Market &amp; Pricing Insights · v1</div>
+        <h1 class="atlas-title">Market &amp; Pricing Insights<br/><span style="color: var(--muted); font-weight: 400; font-size: 0.62em;">Singapore casket buyer landscape, willingness-to-pay, and the structural gap Passage closes.</span></h1>
+      </div>
+      <div class="atlas-meta">
+        <div>Refreshed <span id="refresh-date">2026-04-27</span></div>
+        <div>5 personas · 5 WTP bands · 6 alternatives</div>
+      </div>
+    </div>
+
+    <!-- Section 4: KPI Strip -->
+    <div class="kpi-strip">
+      <div class="kpi">
+        <div class="kpi-val gold">~24,000</div>
+        <div class="kpi-lbl">SG annual deaths</div>
+        <div class="kpi-sub">Addressable casket events per year (industry estimate, MOH death-cert records).</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-val amber">~65%</div>
+        <div class="kpi-lbl">Wake + embalmed route</div>
+        <div class="kpi-sub">Families opting for full traditional package (industry estimate, Straits Times / CNA cost-of-dying coverage 2023-2025).</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-val green">~35%</div>
+        <div class="kpi-lbl">Direct cremation route</div>
+        <div class="kpi-sub">No-wake or minimal-wake cohort growing year-on-year (industry estimate).</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-val red">S$2K–4K</div>
+        <div class="kpi-lbl">Hidden casket markup</div>
+        <div class="kpi-sub">Typical casket cost concealed inside an S$8–15K all-in funeral package (verbatim, Passage index.html).</div>
+      </div>
+    </div>
+
+    <!-- Section 5: Industry Overview -->
+    <section class="artifact">
+      <div class="art-num">Section 01</div>
+      <h2 class="art-title">Industry Overview — Why Casket Pricing Stays Hidden</h2>
+      <p class="art-desc">Singapore's funeral economy bundles caskets inside opaque all-in packages because the buying decision happens within hours of bereavement, when comparison shopping is structurally impossible. This is the gap Passage exists to close.</p>
+
+      <div class="insight-card">
+        <p>Across <strong>Singapore's ~24,000 annual deaths</strong>, the casket purchase is almost never a standalone consumer decision. Funeral directors quote a single "all-in" figure between <strong>S$8,000 and S$15,000</strong> covering wake space, embalming, hearse, rites, refreshments, and casket. Within that bundle, the casket alone is marked up to between <strong>S$2,000 and S$4,000</strong> — verbatim from Passage's own anchoring testimonial: <em>"We were quoted S$3,800 as part of the 'standard package'. We only found out afterwards that the casket alone was marked up from a S$600 cost price."</em></p>
+        <p>The hiding works because the <strong>MOH death-certificate flow</strong> compresses decision-making: the certificate is issued within hours, Mandai cremation slots are booked under finite daily capacity, and bereaved families have no time to research alternatives. Directors know this. <strong>Pressure tactics are common</strong> — some threaten to withhold services if families decline their in-house casket. Casket-only pricing is deliberately not published, even on category-leading parlour websites.</p>
+        <p>Three structural shifts are now eroding the bundle's defensibility:</p>
+        <div class="shift-list">
+          <div class="shift">
+            <div class="shift-tag">Shift 01</div>
+            <div class="shift-name">Direct cremation rising</div>
+            <div class="shift-text">An estimated ~35% of Singapore families now choose minimal-wake or direct-cremation routes (industry estimate). The traditional bundle's price-anchoring weakens once the wake itself is optional.</div>
+          </div>
+          <div class="shift">
+            <div class="shift-tag">Shift 02</div>
+            <div class="shift-name">Pre-arrangement normalising</div>
+            <div class="shift-text">Living seniors increasingly plan ahead, removing the time-pressure that historically protected the bundled-pricing model. Pre-buyers comparison-shop with calm.</div>
+          </div>
+          <div class="shift">
+            <div class="shift-tag">Shift 03</div>
+            <div class="shift-name">Consumer-rights media coverage</div>
+            <div class="shift-text">Straits Times and CNA cost-of-dying coverage (2023–2025) has put casket markups on the public record. Anti-pressure consumer sentiment is now organised, vocal, and shopping for transparent alternatives.</div>
+          </div>
+        </div>
+        <p class="source-note">Sources: SITE-INTEL.md (verbatim Passage page content). Volumetric figures (24K deaths, 65/35 split) flagged as industry estimate, anchored to Straits Times / CNA cost-of-dying coverage 2023–2025 and MOH death-certificate records.</p>
+      </div>
+    </section>
+
+    <!-- Section 6: Pricing Tiers Table -->
+    <section class="artifact">
+      <div class="art-num">Section 02</div>
+      <h2 class="art-title">Pricing Tiers — Hidden vs Transparent vs Passage</h2>
+      <p class="art-desc">Three regimes coexist in the Singapore casket market. Passage occupies the only one where the casket is sold as a standalone, all-in published price.</p>
+
+      <table class="tier-table">
+        <thead>
+          <tr>
+            <th>&nbsp;</th>
+            <th>Hidden-in-Package</th>
+            <th>Mid-tier Transparent</th>
+            <th>Premium DTC <span style="font-weight: 400; opacity: 0.7;">(Passage)</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Casket-only price</th>
+            <td>
+              <span class="price-big">S$2,000–4,000</span>
+              <span class="price-note">Embedded inside S$8–15K funeral bundle. Not published. Disclosed only when customer demands itemisation post-quote.</span>
+            </td>
+            <td>
+              <span class="price-big">S$1,500–2,500</span>
+              <span class="price-note">A few directors (e.g. Direct Funeral Services) publish package-level pricing but rarely casket-line. Customer can negotiate downward.</span>
+            </td>
+            <td class="col-passage">
+              <span class="price-big">S$800–1,200 all-in</span>
+              <span class="price-note">Three SKUs published: Serene S$800 · Tranquil S$1,000 · Eternal S$1,200. Includes 3-hr island-wide delivery, venue positioning, engraved nameplate, GST.</span>
+            </td>
+          </tr>
+          <tr>
+            <th>Wake package <small style="display:block; font-weight:400; color:var(--muted); margin-top:2px;">(typical bundle)</small></th>
+            <td>
+              <span class="price-big">S$8,000–15,000</span>
+              <span class="price-note">Wake space, embalming, hearse, rites, refreshments, urn, casket. Single line-item quote.</span>
+            </td>
+            <td>
+              <span class="price-big">S$3,500–9,000</span>
+              <span class="price-note">Published full-package pricing tiers; itemisation visible. Customer assembles package from menu.</span>
+            </td>
+            <td class="col-passage">
+              <span class="price-big">Not offered</span>
+              <span class="price-note">Passage sells caskets only. Family arranges wake/rites separately with provider of choice — restoring negotiating power.</span>
+            </td>
+          </tr>
+          <tr>
+            <th>Direct cremation</th>
+            <td>
+              <span class="price-big">S$3,000–5,000</span>
+              <span class="price-note">"Simple cremation" still bundles a parlour-supplied casket at marked-up internal price.</span>
+            </td>
+            <td>
+              <span class="price-big">S$1,800–3,200</span>
+              <span class="price-note">Stripped-back package: pickup, casket, Mandai slot. Casket line still bundled.</span>
+            </td>
+            <td class="col-passage">
+              <span class="price-big">S$800 + Mandai fee</span>
+              <span class="price-note">Buy Serene casket from Passage, book Mandai slot independently. Total spend can drop below S$1,500.</span>
+            </td>
+          </tr>
+          <tr>
+            <th>Eco / paper casket</th>
+            <td>
+              <span class="price-big">Not stocked</span>
+              <span class="price-note">Most parlours do not stock biodegradable options; eco caskets erode bundle margins.</span>
+            </td>
+            <td>
+              <span class="price-big">S$1,200–2,200</span>
+              <span class="price-note">Specialist import (e.g. The Eco Casket / Selangor Finoboard) re-sold at parlour markup.</span>
+            </td>
+            <td class="col-passage">
+              <span class="price-big">FSC-certified, S$800–1,200</span>
+              <span class="price-note">Every Passage SKU uses FSC-certified timber, locally assembled, &lt;5% material waste, 4.2 t CO<sub>2</sub>e per casket lifecycle.</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source-note">Hidden &amp; mid-tier ranges: industry estimate triangulated from Straits Times / CNA cost-of-dying coverage 2023–2025 and publicly-listed parlour websites (Singapore Casket, Ang Chin Moh, Trinity, Nam Shan, Direct Funeral Services). Passage prices: verbatim from products.html.</p>
+    </section>
+
+    <!-- Section 7: Buyer Personas -->
+    <section class="artifact">
+      <div class="art-num">Section 03</div>
+      <h2 class="art-title">Buyer Personas — Five Who Buy Direct</h2>
+      <p class="art-desc">Five distinct buyer types choose a transparent casket-only purchase over a bundled funeral package. Each has a different trigger, sensitivity, and trust signal.</p>
+
+      <div class="persona-grid">
+        <div class="persona">
+          <div class="persona-rank">Persona 01 · Primary</div>
+          <div class="persona-name">Cost-conscious bereaved</div>
+          <div class="persona-icp">Recently-bereaved Singaporean family of 2–4 working adults, household income S$80–160K, facing an opaque parlour quote within 24 hours of a death.</div>
+          <div class="persona-row"><div class="k">Trigger</div><div class="v">First all-in quote received from parlour at S$8K+. Family asks "what's the casket actually worth?"</div></div>
+          <div class="persona-row"><div class="k">Channel</div><div class="v">Google search "casket price Singapore", forum referrals, 24/7 helpline.</div></div>
+          <div class="persona-row"><div class="k">Trust signal</div><div class="v">All-in published price · 30% to charity · 47 free caskets given FY2024.</div></div>
+          <div class="persona-row"><div class="k">Decision window</div><div class="v">2–6 hours.</div></div>
+        </div>
+
+        <div class="persona">
+          <div class="persona-rank">Persona 02</div>
+          <div class="persona-name">Anti-pressure consumer</div>
+          <div class="persona-icp">Adult child or executor who refuses funeral-director pressure tactics and intends to challenge casket markups on principle.</div>
+          <div class="persona-row"><div class="k">Trigger</div><div class="v">Director threatens to withhold services if family declines in-house casket. Customer pushes back.</div></div>
+          <div class="persona-row"><div class="k">Channel</div><div class="v">Consumer-rights forums, FAQ page, word-of-mouth from prior Passage customers.</div></div>
+          <div class="persona-row"><div class="k">Trust signal</div><div class="v">Tripartite Standards triple-signatory · PWM compliance · transparent itemisation.</div></div>
+          <div class="persona-row"><div class="k">Decision window</div><div class="v">4–12 hours.</div></div>
+        </div>
+
+        <div class="persona">
+          <div class="persona-rank">Persona 03</div>
+          <div class="persona-name">Eco / values-driven buyer</div>
+          <div class="persona-icp">Environmentally-conscious bereaved buyer who refuses imported tropical hardwood and wants traceable, low-carbon, locally-assembled caskets.</div>
+          <div class="persona-row"><div class="k">Trigger</div><div class="v">Discovers parlour caskets are non-FSC; researches biodegradable / eco options.</div></div>
+          <div class="persona-row"><div class="k">Channel</div><div class="v">Sustainability pages, FSC search, eco-funeral discussions.</div></div>
+          <div class="persona-row"><div class="k">Trust signal</div><div class="v">FSC Chain of Custody · 4.2 t CO<sub>2</sub>e per casket · 60% local FSC timber · 2026 EV fleet target.</div></div>
+          <div class="persona-row"><div class="k">Decision window</div><div class="v">Often pre-arranged · 1–4 weeks.</div></div>
+        </div>
+
+        <div class="persona">
+          <div class="persona-rank">Persona 04</div>
+          <div class="persona-name">Pre-arrangement senior</div>
+          <div class="persona-icp">Singaporean aged 65–85, planning their own arrangements while still well, often after a peer's bereavement experience.</div>
+          <div class="persona-row"><div class="k">Trigger</div><div class="v">Wants fixed-price certainty; refuses to leave family with an opaque future quote.</div></div>
+          <div class="persona-row"><div class="k">Channel</div><div class="v">Adult child research · senior-care advisors · pre-need consultations.</div></div>
+          <div class="persona-row"><div class="k">Trust signal</div><div class="v">All-in transparent published pricing locked in writing · phone helpline staffed 24/7.</div></div>
+          <div class="persona-row"><div class="k">Decision window</div><div class="v">Weeks to months.</div></div>
+        </div>
+
+        <div class="persona">
+          <div class="persona-rank">Persona 05</div>
+          <div class="persona-name">Social-worker referral</div>
+          <div class="persona-icp">ComCare recipient, deceased without next-of-kin, or compassionate-basis case routed via welfare partners (Singapore Hospice Council, SASCO, Metta Welfare Association).</div>
+          <div class="persona-row"><div class="k">Trigger</div><div class="v">Social worker confirms means-test eligibility under Passage's free-casket programme.</div></div>
+          <div class="persona-row"><div class="k">Channel</div><div class="v">8 welfare-org partners · direct social-worker line · helpline.</div></div>
+          <div class="persona-row"><div class="k">Trust signal</div><div class="v">47 free caskets given FY2024 (31 social-referred + 16 direct family). Programme is binding via constitution.</div></div>
+          <div class="persona-row"><div class="k">Decision window</div><div class="v">24–48 hours from referral.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 8: Willingness to Pay -->
+    <section class="artifact">
+      <div class="art-num">Section 04</div>
+      <h2 class="art-title">Willingness-to-Pay — Five Bands</h2>
+      <p class="art-desc">Each persona maps to a distinct WTP band and price-sensitivity profile. The band reflects what the buyer would pay <em>specifically for the casket</em> — not a full funeral package.</p>
+
+      <div class="wtp-grid">
+        <div class="wtp-card">
+          <div class="wtp-head">
+            <div class="wtp-name">Cost-conscious bereaved</div>
+            <span class="sens-badge sens-high">High sensitivity</span>
+          </div>
+          <div class="wtp-band-lbl">WTP band</div>
+          <div class="wtp-band">S$700–1,100</div>
+          <div class="wtp-driver">Family is acutely aware of total funeral spend. Will choose Serene (S$800) or Tranquil (S$1,000) and reject any add-on. Every dollar saved on casket is a dollar redirected to wake or columbarium.</div>
+        </div>
+
+        <div class="wtp-card">
+          <div class="wtp-head">
+            <div class="wtp-name">Anti-pressure consumer</div>
+            <span class="sens-badge sens-med">Medium sensitivity</span>
+          </div>
+          <div class="wtp-band-lbl">WTP band</div>
+          <div class="wtp-band">S$900–1,300</div>
+          <div class="wtp-driver">Will pay slightly above floor to make the principled point: dignified casket, transparently priced, not via pressure. Often selects Tranquil S$1,000. Values the receipt as evidence.</div>
+        </div>
+
+        <div class="wtp-card">
+          <div class="wtp-head">
+            <div class="wtp-name">Eco / values-driven</div>
+            <span class="sens-badge sens-low">Low sensitivity</span>
+          </div>
+          <div class="wtp-band-lbl">WTP band</div>
+          <div class="wtp-band">S$1,000–1,500</div>
+          <div class="wtp-driver">Premium for FSC certification, local assembly, low-carbon footprint. Will reach for Eternal (S$1,200) if mahogany sourcing is documented. Sustainability is the trigger, not price.</div>
+        </div>
+
+        <div class="wtp-card">
+          <div class="wtp-head">
+            <div class="wtp-name">Pre-arrangement senior</div>
+            <span class="sens-badge sens-low">Low sensitivity</span>
+          </div>
+          <div class="wtp-band-lbl">WTP band</div>
+          <div class="wtp-band">S$1,000–1,400</div>
+          <div class="wtp-driver">Wants the comfort of a locked-in price. Will pay for Tranquil or Eternal because it removes the burden from family. Often pre-pays. Certainty &gt; cost-saving.</div>
+        </div>
+
+        <div class="wtp-card">
+          <div class="wtp-head">
+            <div class="wtp-name">Social-worker referral</div>
+            <span class="sens-badge sens-high">High sensitivity</span>
+          </div>
+          <div class="wtp-band-lbl">WTP band</div>
+          <div class="wtp-band">S$0 (programme)</div>
+          <div class="wtp-driver">Free casket programme: ComCare-eligible, no-NOK, or compassionate cases. Cost is borne by Passage's binding 30% net-profit charity allocation. 47 caskets delivered FY2024.</div>
+        </div>
+      </div>
+      <p class="source-note">WTP bands inferred from Passage published prices (S$800/1,000/1,200) plus persona-level price sensitivity. Free-casket persona is verbatim from accreditation.html FY2024 reporting.</p>
+    </section>
+
+    <!-- Section 9: Competitive Gaps & Differentiation -->
+    <section class="artifact">
+      <div class="art-num">Section 05</div>
+      <h2 class="art-title">Competitive Gaps &amp; Passage Differentiation</h2>
+      <p class="art-desc">Five deck-grounded advantages traditional parlour bundles structurally cannot copy without dismantling their own margin model.</p>
+
+      <ol class="diff-list">
+        <li class="diff-item">
+          <div class="diff-title">All-in transparent published pricing</div>
+          <div class="diff-text">Passage publishes <em>S$800 / S$1,000 / S$1,200</em> all-in including delivery, venue positioning, engraved nameplate, and GST. Parlour competitors hide casket cost between <em>S$2,000–4,000</em> inside an S$8–15K bundle. The gap is not a price war — it is a disclosure regime mismatch the incumbents cannot close without re-pricing their wake business.</div>
+        </li>
+        <li class="diff-item">
+          <div class="diff-title">3-hour island-wide delivery with surge options</div>
+          <div class="diff-text">Standard 3-hour delivery to any address in Singapore. Surge options: <em>+S$75 for 2-hour</em>, <em>+S$150 for 1-hour emergency</em>. No parlour publishes equivalent SLAs because their casket is bundled in-house and tied to a wake-venue booking, not a logistics product.</div>
+        </li>
+        <li class="diff-item">
+          <div class="diff-title">FSC-certified timber + local Singapore assembly</div>
+          <div class="diff-text">FSC Chain-of-Custody certified, <em>60% locally-sourced FSC timber</em>, <em>4.2 t CO<sub>2</sub>e per casket</em> total lifecycle, &lt;5% material waste at assembly, 100% local workforce, Progressive Wage Model compliant. The parlour ecosystem imports tropical hardwood through wholesale chains with no published carbon accounting.</div>
+        </li>
+        <li class="diff-item">
+          <div class="diff-title">30% net profit to charity — binding, audited, quarterly published</div>
+          <div class="diff-text">Charity allocation is locked into the company constitution, not a marketing line. <em>FY2024 donations: S$48,200</em> across Singapore Hospice Council, SASCO Senior Citizens' Home, and Metta Welfare Association. Audited and quarterly published. No incumbent operates an equivalent binding mechanism.</div>
+        </li>
+        <li class="diff-item">
+          <div class="diff-title">Free casket programme — proven, not aspirational</div>
+          <div class="diff-text">FY2024: <em>47 free caskets given</em> — 31 social-worker referrals + 16 direct family applications, channelled via 8 welfare-org partners. Eligibility: ComCare recipients, deceased without next-of-kin, social-worker referrals, compassionate-basis assessments. Parlour packages have no equivalent at-cost commitment.</div>
+        </li>
+      </ol>
+      <p class="source-note">All five differentiators verbatim from SITE-INTEL.md sections 4, 5, and 9 (trust strip, accreditation, deck-grounded differentiators).</p>
+    </section>
+
+    <!-- Section 10: Next-Best Alternatives -->
+    <section class="artifact">
+      <div class="art-num">Section 06</div>
+      <h2 class="art-title">Next-Best Alternatives — Six Substitutes</h2>
+      <p class="art-desc">When a Singapore family does not buy from Passage, where does the casket-spend go instead? Six alternatives, each with a threat level reflecting how much demand they pull from Passage's transparent-DTC wedge.</p>
+
+      <div class="nba-grid">
+        <div class="nba-card">
+          <div class="nba-head">
+            <div class="nba-name">Traditional parlour package</div>
+            <span class="threat-badge t-high">High</span>
+          </div>
+          <div class="nba-row"><div class="k">What it is</div><div class="v">Singapore Casket, Ang Chin Moh, Trinity, Nam Shan — full-bundle wake + casket + rites at S$8–15K.</div></div>
+          <div class="nba-row"><div class="k">Pulls from</div><div class="v">Cost-conscious bereaved (under time pressure) and pre-arrangement seniors with traditional family expectations.</div></div>
+          <div class="nba-row"><div class="k">Why it wins</div><div class="v">One-stop convenience under bereavement-grade time compression. Cultural defaults.</div></div>
+          <div class="nba-row"><div class="k">Why it loses</div><div class="v">Hidden markup of S$2–4K on casket alone. No published itemisation. Pressure tactics increasingly resented.</div></div>
+        </div>
+
+        <div class="nba-card">
+          <div class="nba-head">
+            <div class="nba-name">Eco / paper DTC casket</div>
+            <span class="threat-badge t-med">Medium</span>
+          </div>
+          <div class="nba-row"><div class="k">What it is</div><div class="v">The Eco Casket (Selangor) — Finoboard biodegradable casket, imported into SG.</div></div>
+          <div class="nba-row"><div class="k">Pulls from</div><div class="v">Eco / values-driven buyers prioritising biodegradability over aesthetic.</div></div>
+          <div class="nba-row"><div class="k">Why it wins</div><div class="v">Genuinely lower-impact materials. Strong sustainability story.</div></div>
+          <div class="nba-row"><div class="k">Why it loses</div><div class="v">Cross-border logistics, no SG assembly, no Tripartite/PWM workforce stack, no charity binding mechanism.</div></div>
+        </div>
+
+        <div class="nba-card">
+          <div class="nba-head">
+            <div class="nba-name">Direct cremation (no-wake)</div>
+            <span class="threat-badge t-med">Medium</span>
+          </div>
+          <div class="nba-row"><div class="k">What it is</div><div class="v">Stripped-back service: pickup, parlour-supplied basic casket, Mandai cremation slot. Total S$1.8–3.2K.</div></div>
+          <div class="nba-row"><div class="k">Pulls from</div><div class="v">Cost-conscious bereaved and anti-pressure consumers willing to forgo wake.</div></div>
+          <div class="nba-row"><div class="k">Why it wins</div><div class="v">Lowest total spend. Gaining cultural acceptance — ~35% of SG families now no-wake.</div></div>
+          <div class="nba-row"><div class="k">Why it loses</div><div class="v">Casket line still bundled and marked-up internally; Passage Serene + Mandai slot beats it on transparency and total cost.</div></div>
+        </div>
+
+        <div class="nba-card">
+          <div class="nba-head">
+            <div class="nba-name">DIY / no-casket-purchase</div>
+            <span class="threat-badge t-low">Low</span>
+          </div>
+          <div class="nba-row"><div class="k">What it is</div><div class="v">Family arranges directly with Mandai using a parlour-loaned or simple wood casket; no DTC purchase.</div></div>
+          <div class="nba-row"><div class="k">Pulls from</div><div class="v">Hardship cases not yet routed through social-worker referral. Edge cases.</div></div>
+          <div class="nba-row"><div class="k">Why it wins</div><div class="v">Near-zero casket spend.</div></div>
+          <div class="nba-row"><div class="k">Why it loses</div><div class="v">Logistical burden on grieving family. Many such cases qualify for Passage's free-casket programme — a structurally better outcome.</div></div>
+        </div>
+
+        <div class="nba-card">
+          <div class="nba-head">
+            <div class="nba-name">Hospital basic casket</div>
+            <span class="threat-badge t-med">Medium</span>
+          </div>
+          <div class="nba-row"><div class="k">What it is</div><div class="v">Hospital-routed minimum-viable casket option, often via in-house mortuary partner.</div></div>
+          <div class="nba-row"><div class="k">Pulls from</div><div class="v">Cost-conscious bereaved at point of death-certification. Captive-channel buyers.</div></div>
+          <div class="nba-row"><div class="k">Why it wins</div><div class="v">Zero search cost. Hospital is the trusted authority in the moment.</div></div>
+          <div class="nba-row"><div class="k">Why it loses</div><div class="v">Limited choice, no transparency, no FSC story, no charity allocation. Passage's 24/7 helpline + 3-hour delivery defuses the captive-channel advantage.</div></div>
+        </div>
+
+        <div class="nba-card">
+          <div class="nba-head">
+            <div class="nba-name">Columbarium-only path</div>
+            <span class="threat-badge t-low">Low</span>
+          </div>
+          <div class="nba-row"><div class="k">What it is</div><div class="v">Family pre-buys columbarium niche; casket purchase deferred to any minimum-viable provider at point of death.</div></div>
+          <div class="nba-row"><div class="k">Pulls from</div><div class="v">Pre-arrangement seniors who pre-bought niche but never selected a casket provider.</div></div>
+          <div class="nba-row"><div class="k">Why it wins</div><div class="v">Niche secured early; defers casket decision indefinitely.</div></div>
+          <div class="nba-row"><div class="k">Why it loses</div><div class="v">Defers, does not solve the casket transparency problem. Passage's pre-arrangement option locks in price ahead of family bereavement.</div></div>
+        </div>
+      </div>
+      <p class="source-note">Threat levels reflect estimated demand-pull on Passage's transparent-DTC wedge, not absolute market size. Provider names verbatim from SITE-INTEL.md section 8 (real direct competitors).</p>
+    </section>
+
+  </div>
+</div>
+
+<script>
+  // ── Auth ── (client-side gate; admin-only page is noindex,nofollow)
+  const ADMIN_USER_HASH = '8740ec05f8a139bb7d692e8f65cf7517a59ab7f87583a07c23a377d2e39e3ad0';
+  const ADMIN_PASS_HASH = '96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e';
+  const AUTH_KEY = 'passage_whitespace_auth';
+
+  async function _sha256Hex(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  async function doLogin(e) {
+    if (e) e.preventDefault();
+    const un = document.getElementById('un').value.trim();
+    const pw = document.getElementById('pw').value;
+    const [unH, pwH] = await Promise.all([_sha256Hex(un), _sha256Hex(pw)]);
+    if (unH === ADMIN_USER_HASH && pwH === ADMIN_PASS_HASH) {
+      sessionStorage.setItem(AUTH_KEY, '1');
+      showDashboard();
+    } else {
+      document.getElementById('login-err').classList.add('show');
+    }
+    return false;
+  }
+
+  function doLogout() {
+    sessionStorage.removeItem(AUTH_KEY);
+    location.reload();
+  }
+
+  function showDashboard() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+  }
+
+  document.getElementById('login-form').addEventListener('submit', doLogin);
+  document.getElementById('pw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(e); });
+
+  // Auth gate removed — open access for now (mirrors whitespace.html).
+  showDashboard();
+</script>
+
+</body>
+</html>
