@@ -1,346 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" />
-  <meta name="robots" content="noindex, nofollow" />
-  <title>Passage — White Space Atlas</title>
-  <meta name="description" content="Internal admin panel — Passage — White Space Atlas. Not for public distribution." />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous"></script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --primary: #32332d;
-      --secondary: #596060;
-      --gold: #725b3f;
-      --surface: #fcf9f5;
-      --surface-1: #f0ece4;
-      --surface-2: #e4e0d8;
-      --border: #d8d4cc;
-      --muted: #7b7b74;
-      --white: #ffffff;
-      --green: #3a7a50;
-      --amber: #b07020;
-      --blue: #2a5080;
-      --red: #8b2020;
-      --purple: #5a3878;
-      --radius: 8px;
-      --radius-lg: 14px;
-      --font: 'Segoe UI', system-ui, sans-serif;
-      --serif: Georgia, 'Times New Roman', serif;
-    }
-    body { font-family: var(--font); background: var(--surface); color: var(--primary); min-height: 100vh; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Passage · Whitespace Atlas</title>
+<meta name="description" content="Internal admin panel — Passage whitespace atlas. Strategy canvas radar (8 dims × 16 competitors), segment×need heatmap, and three ranked attack plans showing where SG's transparent-casket category is open." />
 
-    /* ── LOGIN ── */
-    #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--primary); }
-    .login-box { background: var(--white); border-radius: var(--radius-lg); padding: 48px 40px; width: 100%; max-width: 380px; box-shadow: 0 24px 48px rgba(0,0,0,0.3); }
-    .login-logo { font-family: var(--serif); font-size: 1.8rem; font-weight: 700; color: var(--primary); letter-spacing: 0.08em; margin-bottom: 4px; text-align: center; }
-    .login-logo span { color: var(--gold); }
-    .login-sub { font-size: 0.78rem; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 32px; text-align: center; }
-    .login-box label { display: block; font-size: 0.74rem; font-weight: 600; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; margin-top: 16px; }
-    .login-box input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--radius); font-size: 0.95rem; font-family: var(--font); outline: none; transition: border-color 0.2s; background: var(--surface); }
-    .login-box input:focus { border-color: var(--gold); }
-    .login-btn { margin-top: 20px; width: 100%; padding: 12px 18px; background: var(--primary); color: var(--white); border: none; border-radius: var(--radius); font-family: var(--serif); font-size: 0.95rem; font-weight: 600; letter-spacing: 0.06em; cursor: pointer; transition: background 0.2s; }
-    .login-btn:hover { background: var(--gold); }
-    .login-error { display: none; margin-top: 12px; padding: 10px 12px; background: rgba(139,32,32,0.08); color: var(--red); font-size: 0.82rem; border-radius: var(--radius); text-align: center; }
-    .login-error.show { display: block; }
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous"></script>
 
-    /* ── ATLAS ── */
-    #dashboard { display: none; }
-    .atlas-body { max-width: 1340px; margin: 0 auto; padding: 32px 24px 80px; }
-    .atlas-nav { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 28px; }
-    .atlas-nav .brand { font-family: var(--serif); font-size: 1.2rem; font-weight: 700; letter-spacing: 0.08em; color: var(--primary); }
-    .atlas-nav .brand span { color: var(--gold); }
-    .atlas-nav-links { display: flex; gap: 12px; align-items: center; }
-    .atlas-nav-links a { font-size: 0.8rem; color: var(--secondary); padding: 6px 12px; border-radius: var(--radius); text-decoration: none; transition: background 0.15s; }
-    .atlas-nav-links a:hover { background: var(--surface-1); }
-    .atlas-nav-links a.active { background: var(--gold); color: var(--white); font-weight: 600; }
-    .atlas-nav-links .logout-link { border: 1px solid var(--border); color: var(--muted); cursor: pointer; background: none; font-family: var(--font); font-size: 0.8rem; padding: 6px 12px; border-radius: var(--radius); }
+<style>
+  :root {
+    --bg:           #fcf9f5;
+    --surface:      #fcf9f5;
+    --white:        #ffffff;
+    --surface-1:    #f0ece4;
+    --surface-2:    #e4e0d8;
+    --primary:      #32332d;
+    --secondary:    #596060;
+    --gold:         #725b3f;
+    --gold-light:   #eecfac;
+    --border:       #d8d4cc;
+    --muted:        #7b7b74;
+    --muted-2:      #b3b2ab;
+    --green:        #3a7a50;
+    --amber:        #b07020;
+    --red:          #8b2020;
+    --serif: 'Noto Serif', Georgia, 'Times New Roman', serif;
+    --sans:  'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--primary);
+    font-family: var(--sans);
+    font-size: 14px; line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; transition: color 0.18s; }
+  .container, .container-wide { max-width: 1340px; margin: 0 auto; padding: 0 24px; }
+  @media (max-width: 768px) { .container, .container-wide { padding: 0 14px; } }
 
-    .atlas-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
-    .atlas-tag { font-family: var(--serif); font-size: 0.76rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
-    .atlas-title { font-family: var(--serif); font-size: clamp(1.7rem, 3.5vw, 2.4rem); font-weight: 700; letter-spacing: -0.01em; line-height: 1.15; color: var(--primary); }
-    .atlas-meta { font-size: 0.78rem; color: var(--muted); text-align: right; font-family: ui-monospace, monospace; letter-spacing: 0.04em; }
+  .atlas-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 24px; border-bottom: 1px solid var(--border);
+    max-width: 1340px; margin: 0 auto; flex-wrap: wrap; gap: 14px;
+  }
+  .atlas-nav .brand {
+    font-family: var(--serif); font-size: 1.2rem; font-weight: 700;
+    letter-spacing: 0.08em; color: var(--primary);
+  }
+  .atlas-nav .brand span { color: var(--gold); }
+  .atlas-nav-links { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .atlas-nav-links a {
+    font-size: 0.8rem; color: var(--secondary);
+    padding: 6px 12px; border-radius: 6px;
+    transition: background 0.15s;
+  }
+  .atlas-nav-links a:hover { background: var(--surface-1); }
+  .atlas-nav-links a.active { background: var(--gold); color: var(--white); font-weight: 600; }
 
-    .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 32px; }
-    .kpi { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; }
-    .kpi-val { font-family: var(--serif); font-size: 2rem; font-weight: 700; color: var(--primary); letter-spacing: -0.02em; line-height: 1; }
-    .kpi-val.green { color: var(--green); }
-    .kpi-val.amber { color: var(--amber); }
-    .kpi-val.red { color: var(--red); }
-    .kpi-val.gold { color: var(--gold); }
-    .kpi-lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-top: 8px; }
+  .ph { padding: 38px 0 26px; }
+  .ph-tag {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.66rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 12px;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .ph-tag::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--gold); box-shadow: 0 0 8px var(--gold);
+  }
+  .ph h1 {
+    font-family: var(--serif);
+    font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 700;
+    letter-spacing: -0.025em; margin-bottom: 14px; line-height: 1.18;
+    color: var(--primary);
+  }
+  .ph p { color: var(--secondary); max-width: 880px; }
+  .ph p a { color: var(--gold); border-bottom: 1px dotted var(--gold); }
 
-    .artifact { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px 28px; margin-bottom: 22px; }
-    .art-num { font-size: 0.72rem; color: var(--gold); letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
-    .art-title { font-family: var(--serif); font-size: 1.35rem; font-weight: 700; color: var(--primary); letter-spacing: -0.01em; margin-bottom: 8px; }
-    .art-desc { font-size: 0.92rem; color: var(--muted); max-width: 820px; line-height: 1.6; margin-bottom: 22px; }
+  section.panel { padding: 24px 0; }
+  .sec-h {
+    display: flex; align-items: end; justify-content: space-between; gap: 20px;
+    padding-bottom: 14px; border-bottom: 1px solid var(--border);
+    margin-bottom: 22px; flex-wrap: wrap;
+  }
+  .sec-h h2 {
+    font-family: var(--serif);
+    font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em;
+    color: var(--primary);
+  }
+  .sec-h .num {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.7rem; color: var(--muted);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .sec-h p { color: var(--secondary); font-size: 0.88rem; margin-top: 6px; max-width: 880px; }
 
-    .canvas-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start; }
-    @media (max-width: 900px) { .canvas-wrap { grid-template-columns: 1fr; } }
-    #strategy-canvas { width: 100%; max-width: 820px; height: 420px; }
-    .canvas-legend { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; }
-    .canvas-legend .leg { display: flex; align-items: center; gap: 8px; }
-    .canvas-legend .sw { width: 28px; height: 4px; flex-shrink: 0; border-radius: 2px; }
-    .canvas-legend .us { font-weight: 700; color: var(--gold); }
+  footer.page-foot {
+    padding: 40px 0 30px; border-top: 1px solid var(--border);
+    margin-top: 48px;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.74rem; color: var(--muted);
+    display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  }
 
-    .heatmap-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
-    .heatmap { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 0.7rem; font-family: ui-monospace, monospace; }
-    .heatmap th, .heatmap td { border: 1px solid var(--border); padding: 7px 6px; text-align: center; vertical-align: middle; }
-    .heatmap thead th { background: var(--primary); color: var(--surface); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.06em; padding: 10px 5px; font-weight: 600; }
-    .heatmap thead th:first-child { text-align: left; min-width: 200px; }
-    .heatmap tbody th { text-align: left; background: var(--surface-1); color: var(--primary); font-family: var(--font); font-size: 0.82rem; font-weight: 600; padding: 8px 12px; }
-    .heatmap tbody th small { display: block; font-size: 0.66rem; color: var(--muted); font-weight: 400; margin-top: 2px; font-family: ui-monospace, monospace; }
-    .cell { cursor: pointer; font-weight: 700; transition: filter 0.1s; user-select: none; font-size: 0.88rem; }
-    .cell:hover { filter: brightness(0.94); outline: 2px solid var(--gold); outline-offset: -2px; }
-    .cell.green { background: rgba(58,122,80,0.12); color: var(--green); }
-    .cell.amber { background: rgba(176,112,32,0.14); color: var(--amber); }
-    .cell.red   { background: rgba(139,32,32,0.10); color: var(--red); }
-
-    .heatmap-legend { display: flex; gap: 18px; margin-top: 14px; flex-wrap: wrap; font-size: 0.78rem; color: var(--muted); }
-    .heatmap-legend .dot { display: inline-block; width: 13px; height: 13px; margin-right: 6px; vertical-align: middle; border-radius: 3px; }
-
-    #heatmap-detail { display: none; margin-top: 14px; padding: 16px 20px; background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.88rem; color: var(--muted); line-height: 1.55; }
-    #heatmap-detail.show { display: block; }
-    #heatmap-detail b { color: var(--primary); }
-    #heatmap-detail .tag { display: inline-block; padding: 3px 10px; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-right: 10px; border-radius: 100px; }
-    #heatmap-detail .tag.green { background: rgba(58,122,80,0.12); color: var(--green); border: 1px solid var(--green); }
-    #heatmap-detail .tag.amber { background: rgba(176,112,32,0.14); color: var(--amber); border: 1px solid var(--amber); }
-    #heatmap-detail .tag.red   { background: rgba(139,32,32,0.10); color: var(--red); border: 1px solid var(--red); }
-
-    .attack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
-    .niche { background: linear-gradient(160deg, rgba(58,122,80,0.08), var(--white) 80%); border: 1.5px solid var(--green); border-radius: var(--radius-lg); padding: 22px 24px; }
-    .niche-rank { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--green); margin-bottom: 6px; font-family: ui-monospace, monospace; }
-    .niche-name { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; color: var(--primary); letter-spacing: -0.01em; margin-bottom: 10px; }
-    .niche-icp { font-size: 0.88rem; color: var(--muted); margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px dashed var(--border); font-style: italic; line-height: 1.6; }
-    .niche-row { display: grid; grid-template-columns: 72px 1fr; gap: 10px; font-size: 0.84rem; padding: 6px 0; }
-    .niche-row .k { font-size: 0.64rem; font-weight: 700; color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px; font-family: ui-monospace, monospace; }
-    .niche-row .v { color: var(--muted); line-height: 1.55; }
-
-    .comp-controls { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
-    .comp-search, .comp-filter { padding: 9px 14px; border: 1.5px solid var(--border); background: var(--surface); color: var(--primary); font-family: var(--font); font-size: 0.88rem; border-radius: var(--radius); outline: none; }
-    .comp-search:focus, .comp-filter:focus { border-color: var(--gold); }
-    .comp-search { flex: 1; min-width: 220px; }
-    .comp-count { font-size: 0.78rem; color: var(--muted); font-family: ui-monospace, monospace; }
-    .comp-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
-    .comp-table thead th { background: var(--primary); color: var(--surface); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.66rem; padding: 10px 12px; text-align: left; }
-    .comp-table tbody td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
-    .comp-table tbody tr:hover { background: var(--surface-1); }
-    .badge { display: inline-block; padding: 2px 8px; font-size: 0.64rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; font-family: ui-monospace, monospace; border-radius: 100px; }
-    .b-cat { background: rgba(114,91,63,0.12); color: var(--gold); border: 1px solid rgba(114,91,63,0.3); }
-    .b-threat-high { background: rgba(139,32,32,0.10); color: var(--red); border: 1px solid var(--red); }
-    .b-threat-medium { background: rgba(176,112,32,0.14); color: var(--amber); border: 1px solid var(--amber); }
-    .b-threat-low { background: rgba(58,122,80,0.12); color: var(--green); border: 1px solid var(--green); }
-    .b-beat-easy { background: rgba(58,122,80,0.12); color: var(--green); border: 1px solid var(--green); }
-    .b-beat-moderate { background: rgba(176,112,32,0.14); color: var(--amber); border: 1px solid var(--amber); }
-    .b-beat-hard { background: rgba(139,32,32,0.10); color: var(--red); border: 1px solid var(--red); }
-    .comp-name { font-weight: 700; color: var(--primary); }
-    .comp-target { font-size: 0.76rem; color: var(--muted); margin-top: 2px; }
-    .loading { color: var(--muted); font-size: 0.86rem; padding: 24px; text-align: center; font-family: ui-monospace, monospace; }
-  
-  /* ── MOBILE RESPONSIVE OVERRIDES (v1) ─────────────────── */
   @media (max-width: 768px) {
     body { font-size: 13px; }
-    h1, .page-title, .atlas-title { font-size: 1.45rem !important; line-height: 1.2 !important; }
-    h2, .art-title { font-size: 1.1rem !important; }
-    .page-meta, .atlas-meta { text-align: left !important; margin-top: 6px !important; font-size: 0.7rem !important; }
-    main, .container, .atlas-body, .page-body { padding-left: 14px !important; padding-right: 14px !important; }
-    .page-head, .atlas-top { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
-
-    .kpi-strip, .kpis { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; margin-bottom: 20px !important; }
-    .kpi { padding: 12px 14px !important; }
-    .kpi-val, .kpi .v { font-size: 1.35rem !important; }
-    .kpi-lbl, .kpi .l { font-size: 0.6rem !important; letter-spacing: 0.06em !important; }
-
-    .artifact { padding: 18px 16px !important; margin-bottom: 14px !important; border-radius: 10px !important; }
-    .art-title { font-size: 1.05rem !important; }
-    .art-desc { font-size: 0.82rem !important; margin-bottom: 14px !important; }
-
-    #strategy-canvas { height: 280px !important; max-height: 320px !important; }
-    .canvas-wrap { grid-template-columns: 1fr !important; gap: 14px !important; }
-    .canvas-legend { font-size: 0.72rem !important; }
-    .canvas-legend .leg { gap: 6px !important; }
-
-    .heatmap-wrap { border-radius: 6px !important; }
-    .heatmap { min-width: auto !important; font-size: 0.56rem !important; }
-    .heatmap thead th { padding: 6px 3px !important; font-size: 0.5rem !important; letter-spacing: 0.02em !important; }
-    .heatmap thead th:first-child { min-width: 118px !important; text-align: left !important; }
-    .heatmap tbody th { font-size: 0.66rem !important; padding: 6px 8px !important; min-width: 118px !important; }
-    .heatmap tbody th small { font-size: 0.54rem !important; margin-top: 1px !important; }
-    .heatmap td { padding: 4px 2px !important; font-size: 0.72rem !important; }
-    .heatmap-legend { gap: 10px !important; font-size: 0.7rem !important; }
-    .heatmap-legend .dot { width: 10px !important; height: 10px !important; }
-
-    .attack-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
-    .niche { padding: 16px 14px !important; border-radius: 10px !important; }
-    .niche-name { font-size: 0.98rem !important; }
-    .niche-icp { font-size: 0.82rem !important; margin-bottom: 10px !important; padding-bottom: 10px !important; }
-    .niche-row { grid-template-columns: 60px 1fr !important; gap: 8px !important; font-size: 0.76rem !important; }
-    .niche-row .k { font-size: 0.58rem !important; letter-spacing: 0.05em !important; }
-
-    .comp-controls { gap: 8px !important; margin-bottom: 10px !important; }
-    .comp-search { width: 100% !important; min-width: 100% !important; }
-    .comp-filter { flex: 1; min-width: calc(50% - 4px) !important; }
-    .comp-count { font-size: 0.7rem !important; width: 100% !important; }
-
-    .comp-table { display: block !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; font-size: 0.7rem !important; white-space: nowrap !important; }
-    .comp-table thead, .comp-table tbody, .comp-table tr { display: table !important; width: 100% !important; min-width: 640px !important; table-layout: auto !important; }
-    .comp-table thead th { font-size: 0.55rem !important; padding: 8px 8px !important; letter-spacing: 0.03em !important; }
-    .comp-table tbody td { padding: 8px !important; white-space: normal !important; }
-    .comp-name { font-size: 0.82rem !important; }
-    .comp-target { font-size: 0.7rem !important; }
-    .badge { font-size: 0.56rem !important; padding: 2px 6px !important; letter-spacing: 0.02em !important; }
-
-    .login-box { padding: 32px 24px !important; max-width: calc(100vw - 32px) !important; }
-    .login-logo { font-size: 1.5rem !important; }
-
-    nav, .admin-nav, .atlas-nav { flex-wrap: wrap !important; padding: 10px 14px !important; }
-    .admin-nav { gap: 10px !important; }
-    .atlas-nav-links, .admin-links, .topbar-tabs { flex-wrap: wrap !important; gap: 6px !important; }
-    .atlas-nav-links a, .admin-links a { font-size: 0.72rem !important; padding: 5px 10px !important; }
+    .atlas-nav { padding: 12px 14px; gap: 8px; }
+    .atlas-nav-links a { padding: 5px 10px; font-size: 0.72rem; }
+    .ph { padding: 22px 0 16px; }
+    .ph h1 { font-size: 1.45rem !important; line-height: 1.2 !important; }
+    .ph p { font-size: 0.84rem; }
+    .sec-h h2 { font-size: 1.1rem; }
   }
+</style>
 
-  @media (max-width: 420px) {
-    .kpi-strip, .kpis { grid-template-columns: 1fr !important; }
-    .heatmap thead th:first-child,
-    .heatmap tbody th { min-width: 108px !important; }
-    .niche-row { grid-template-columns: 56px 1fr !important; font-size: 0.74rem !important; }
-  }
-  /* ── END MOBILE OVERRIDES ─────────────────────────────── */
+<link rel="stylesheet" href="../assets/css/intel-refresh.css" />
 
-  
-  /* ── MOBILE RESPONSIVE OVERRIDES (v2) ─────────────────── */
-  @media (max-width: 768px) {
-    body { font-size: 13px; }
-    h1, .page-title, .atlas-title, .ph h1 { font-size: 1.45rem !important; line-height: 1.2 !important; }
-    h2, .art-title, .section-title, .sec-h h2 { font-size: 1.05rem !important; line-height: 1.25 !important; }
-    h3 { font-size: 0.95rem !important; }
-    .page-meta, .atlas-meta, .topbar-meta { text-align: left !important; margin-top: 6px !important; font-size: 0.7rem !important; }
-    main, .container, .container-wide, .atlas-body, .page-body, .wrap, .page { padding-left: 14px !important; padding-right: 14px !important; }
-    .page-head, .atlas-top, .admin-header { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
+<link rel="icon" type="image/x-icon" href="../favicon.ico" />
+<link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="manifest" href="../site.webmanifest" />
 
-    /* Grids collapse to single column */
-    .kpi-strip, .kpis, .summary-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; margin-bottom: 20px !important; }
-    .grid-2, .grid-3, .grid-4, .landscape-grid, .rationale-grid, .tier-strip, .top-list,
-    .attack-grid, .results-grid, .metrics-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
-
-    /* All cards: tighter */
-    .kpi, .summary-card, .stat-card, .comp-card, .landscape-card, .rationale-card,
-    .tier, .model, .sent-card, .insight, .alert, .quote, .card,
-    .niche { padding: 14px 16px !important; border-radius: 10px !important; }
-    .kpi-val, .kpi .v, .summary-card .big, .stat-value { font-size: 1.35rem !important; line-height: 1.1 !important; }
-    .kpi-lbl, .kpi .l, .summary-card .sub, .stat-label { font-size: 0.6rem !important; letter-spacing: 0.06em !important; }
-
-    /* Artifact sections */
-    .artifact, section.panel, .landscape-section { padding: 18px 16px !important; margin-bottom: 14px !important; border-radius: 10px !important; }
-    .art-desc, .sec-h p { font-size: 0.82rem !important; margin-bottom: 14px !important; }
-
-    /* Strategy canvas + charts */
-    #strategy-canvas, .chart-wrap canvas, .radar-svg { height: 280px !important; max-height: 320px !important; width: 100% !important; }
-    .canvas-wrap { grid-template-columns: 1fr !important; gap: 14px !important; }
-    .canvas-legend { font-size: 0.72rem !important; }
-    .canvas-legend .leg { gap: 6px !important; }
-    .chart-wrap { padding: 14px !important; }
-
-    /* Heatmap (whitespace) */
-    .heatmap-wrap { border-radius: 6px !important; overflow-x: auto !important; }
-    .heatmap { min-width: auto !important; font-size: 0.56rem !important; }
-    .heatmap thead th { padding: 6px 3px !important; font-size: 0.5rem !important; letter-spacing: 0.02em !important; }
-    .heatmap thead th:first-child { min-width: 118px !important; text-align: left !important; }
-    .heatmap tbody th { font-size: 0.66rem !important; padding: 6px 8px !important; min-width: 118px !important; }
-    .heatmap tbody th small { font-size: 0.54rem !important; margin-top: 1px !important; }
-    .heatmap td { padding: 4px 2px !important; font-size: 0.72rem !important; }
-    .heatmap-legend { gap: 10px !important; font-size: 0.7rem !important; }
-    .heatmap-legend .dot { width: 10px !important; height: 10px !important; }
-
-    /* Attack niches (whitespace) */
-    .niche-name { font-size: 0.98rem !important; }
-    .niche-icp { font-size: 0.82rem !important; margin-bottom: 10px !important; padding-bottom: 10px !important; }
-    .niche-row { grid-template-columns: 60px 1fr !important; gap: 8px !important; font-size: 0.76rem !important; }
-    .niche-row .k { font-size: 0.58rem !important; letter-spacing: 0.05em !important; }
-
-    /* Competitor controls */
-    .comp-controls, .filter-bar { gap: 8px !important; margin-bottom: 10px !important; flex-wrap: wrap !important; }
-    .comp-search, .filter-bar input[type="search"], .filter-bar input[type="text"] { width: 100% !important; min-width: 100% !important; }
-    .comp-filter, .filter-bar select { flex: 1 1 calc(50% - 4px) !important; min-width: calc(50% - 4px) !important; }
-    .comp-count { font-size: 0.7rem !important; width: 100% !important; }
-
-    /* Generic tables: always scroll horizontally inside the card */
-    .tbl-wrap, .table-wrapper, .table-wrap, .tbl { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; }
-    table { display: block !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; font-size: 0.7rem !important; white-space: nowrap !important; }
-    table thead, table tbody, table tr { display: table !important; width: 100% !important; min-width: 640px !important; table-layout: auto !important; }
-    table thead th, .comp-table thead th { font-size: 0.55rem !important; padding: 8px !important; letter-spacing: 0.03em !important; white-space: normal !important; }
-    table tbody td, .comp-table tbody td { padding: 8px !important; white-space: normal !important; font-size: 0.76rem !important; }
-
-    /* Comp-table specifics */
-    .comp-name { font-size: 0.82rem !important; }
-    .comp-target { font-size: 0.7rem !important; }
-    .badge, .region-badge, .tier-badge { font-size: 0.56rem !important; padding: 2px 6px !important; letter-spacing: 0.02em !important; }
-
-    /* Bar-chart rows (AEVUM admin) */
-    .bar-chart { padding: 0 !important; }
-    .bar-row { grid-template-columns: 1fr !important; gap: 4px !important; padding: 8px 0 !important; }
-    .bar-row .val { text-align: left !important; }
-
-    /* Login overlay (altru/passage) */
-    .login-box { padding: 32px 24px !important; max-width: calc(100vw - 32px) !important; }
-    .login-logo { font-size: 1.5rem !important; }
-
-    /* Admin navs — wrap */
-    nav, .admin-nav, .atlas-nav, .topbar, .topbar-inner { flex-wrap: wrap !important; padding: 10px 14px !important; gap: 8px !important; }
-    .admin-nav { gap: 10px !important; }
-    .atlas-nav-links, .admin-links, .topbar-tabs { flex-wrap: wrap !important; gap: 6px !important; }
-    .atlas-nav-links a, .admin-links a, .topbar-tabs a { font-size: 0.72rem !important; padding: 5px 10px !important; }
-
-    /* SPA admin rail (EMS elitez-pulse) */
-    .admin-layout { grid-template-columns: 1fr !important; }
-    .admin-rail { position: static !important; height: auto !important; width: 100% !important; padding: 14px !important; margin-bottom: 10px !important; }
-    .admin-rail__tab, .admin-rail__link { display: inline-block !important; margin-right: 6px !important; font-size: 0.8rem !important; padding: 6px 10px !important; }
-    .admin-main { padding: 14px !important; }
-
-    /* Admin sidebar (the-commons admin) */
-    .dashboard, .admin-main, aside.sidebar { grid-template-columns: 1fr !important; }
-    aside.sidebar, .admin-sidebar { position: static !important; height: auto !important; width: 100% !important; padding: 14px !important; margin-bottom: 10px !important; }
-    .sidebar-nav { display: flex !important; flex-wrap: wrap !important; gap: 4px !important; }
-    .sidebar-nav li { display: inline-block !important; }
-    .sidebar-nav a { font-size: 0.76rem !important; padding: 6px 10px !important; }
-    .main-content { padding: 0 !important; }
-
-    /* Event hero / PayNow modal on mobile */
-    .ev-hero-wrap { height: 220px !important; }
-    .modal { padding: 20px 16px !important; max-width: calc(100vw - 24px) !important; }
-    .modal h3 { font-size: 1.05rem !important; }
-
-    /* Steps indicator (create.html) */
-    .steps { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
-    .step-connector { display: none !important; }
-
-    /* Navigation logo padding */
-    .nav-inner { padding: 10px 14px !important; }
-    .nav-inner .nav-links { display: none !important; }
-    .mobile-toggle { display: inline-flex !important; }
-
-    /* Forms */
-    .form-row { grid-template-columns: 1fr !important; gap: 12px !important; }
-    .form-group label { font-size: 0.8rem !important; }
-
-    /* Footer */
-    .footer-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
-  }
-
-  @media (max-width: 420px) {
-    .kpi-strip, .kpis, .summary-grid { grid-template-columns: 1fr !important; }
-    .heatmap thead th:first-child,
-    .heatmap tbody th { min-width: 108px !important; }
-    .niche-row { grid-template-columns: 56px 1fr !important; font-size: 0.74rem !important; }
-    body { font-size: 12px; }
-    .kpi-val, .kpi .v, .summary-card .big, .stat-value { font-size: 1.2rem !important; }
-    .comp-filter, .filter-bar select { flex: 1 1 100% !important; min-width: 100% !important; }
-  }
-  /* ── END MOBILE OVERRIDES ─────────────────────────────── */
-
-  </style>
 <script type="application/ld+json" data-injected="schema-jsonld">
 {
   "@context": "https://schema.org",
@@ -361,497 +148,198 @@
 </head>
 <body>
 
-<!-- Login Screen -->
-<div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">PASSAGE<span>.</span></div>
-    <div class="login-sub">White Space Atlas</div>
-    <form id="login-form" onsubmit="return false;">
-      <label for="un">Username</label>
-      <input id="un" type="text" placeholder="Username" autocomplete="username" />
-      <label for="pw">Password</label>
-      <input id="pw" type="password" placeholder="Password" autocomplete="current-password" />
-      <button type="submit" class="login-btn" onclick="doLogin(event)">Enter Atlas</button>
-      <p class="login-error" id="login-err">Incorrect username or password.</p>
-    </form>
-  </div>
-</div>
+<header>
+  <nav class="atlas-nav">
+    <a href="index.html" class="brand">PASSAGE<span>.</span></a>
+    <div class="atlas-nav-links">
+      <a href="index.html">Orders</a>
+      <a href="whitespace.html" class="active">White Space</a>
+      <a href="competitor-analytics.html">Competitors</a>
+      <a href="insights.html">Insights</a>
+      <a href="design-audit.html">Design Audit</a>
+      <a href="report.html">Report</a>
+      <a href="../index.html">Site</a>
+    </div>
+  </nav>
+</header>
 
-<!-- Dashboard -->
-<div id="dashboard">
-  <div class="atlas-body">
+<main class="container-wide">
 
-    <nav class="atlas-nav">
-      <a href="index.html" class="brand">PASSAGE<span>.</span></a>
-      <div class="atlas-nav-links">
-        <a href="index.html">Orders</a>
-        <a href="whitespace.html" class="active">White Space</a>
-        <a href="competitor-analytics.html">Competitors</a>
-        <a href="insights.html">Insights</a>
-        <a href="design-audit.html">Design Audit</a>
-        <a href="report.html">Report</a>
-        <a href="../index.html">Site</a>
-        <button class="logout-link" onclick="doLogout()">Sign out</button>
-      </div>
-    </nav>
-<main>
+  <section class="ph">
+    <span class="ph-tag">Panel 03 / Whitespace Atlas</span>
+    <h1>Where Passage attacks first: anti-pressure casket-line refuge, direct-cremation takeover, pre-need lock-in.<br/><span style="color: var(--secondary); font-weight: 400; font-family: var(--serif); font-style: italic;">Three artefacts · radar, heatmap, ranked attack plans.</span></h1>
+    <p>Three artefacts work together to identify where the SG transparent-casket category is open and where Passage can win. The strategy-canvas radar plots 16 mapped competitors against the dimensions buyers actually evaluate; flat patches signal differentiation. The segment×need heatmap counts how many competitors genuinely serve each pair (score ≥ 3) — green is whitespace, amber is contested, red is crowded; click any cell for the player list. The ranked attack plans translate findings into concrete go-to-market specs (ICP, TAM, gap thesis, why-we-win, channel, pitch, pricing, content). Cross-link to <a href="competitor-analytics.html">competitors</a>, <a href="insights.html">market &amp; pricing</a>, <a href="design-audit.html">design audit</a>, the <a href="report.html">printable report</a>, or the parent <a href="../index.html">Passage site</a>.</p>
+  </section>
 
-    <div class="atlas-top">
+  <section class="panel">
+    <div class="sec-h">
       <div>
-        <div class="atlas-tag">◆ White Space Atlas · v1</div>
-        <h1 class="atlas-title">Because grief is burden enough.<br/><span style="color: var(--muted); font-weight: 400;">And the market hasn't been designed for it.</span></h1>
+        <span class="artefact-label">Strategy canvas</span>
+        <h2>Eight axes vs. 16 competitors</h2>
+        <p class="radar-thesis" id="thesis"></p>
       </div>
-      <div class="atlas-meta">
-        <div>Refreshed <span id="refresh-date">2026-04-27</span></div>
-        <div><span id="comp-count-hdr">—</span> competitors · 8 segments · 8 needs</div>
-      </div>
+      <span class="num">/ § 01 · Radar</span>
     </div>
-
-    <div class="kpi-strip">
-      <div class="kpi"><div class="kpi-val gold" id="kpi-n-comp">—</div><div class="kpi-lbl">Competitors</div></div>
-      <div class="kpi"><div class="kpi-val green" id="kpi-green">—</div><div class="kpi-lbl">White-space cells</div></div>
-      <div class="kpi"><div class="kpi-val amber" id="kpi-amber">—</div><div class="kpi-lbl">Contested cells</div></div>
-      <div class="kpi"><div class="kpi-val red" id="kpi-red">—</div><div class="kpi-lbl">Crowded cells</div></div>
-      <div class="kpi"><div class="kpi-val gold" id="kpi-threats">—</div><div class="kpi-lbl">High-threat rivals</div></div>
+    <div class="radar-container">
+      <div style="height: 540px; min-width: 0;"><canvas id="radar-canvas" aria-label="Radar chart of strategic dimensions versus competitors"></canvas></div>
     </div>
+  </section>
 
-    <section class="artifact">
-      <div class="art-num">Artifact 01</div>
-      <h2 class="art-title">Strategy Canvas</h2>
-      <p class="art-desc">Blue-Ocean radar. Each line plots a provider across 8 casket-purchase dimensions. Passage's shape breaks away on transparency, all-in pricing, FSC + local assembly, audited charity giving, and the free-casket programme — none of which the parlour-package model can structurally match.</p>
-      <div class="canvas-wrap">
-        <canvas id="strategy-canvas" width="820" height="420"></canvas>
-        <div class="canvas-legend" id="canvas-legend"></div>
+  <section class="panel">
+    <div class="sec-h">
+      <div>
+        <span class="artefact-label">Heatmap</span>
+        <h2 id="heatmap-title">Segment × Need</h2>
+        <p>Each cell shows the count of competitors genuinely serving that pair (score ≥ 3). Click any cell for the pair-specific competitor breakdown and Passage's own capability score.</p>
       </div>
-    </section>
+      <span class="num">/ § 02 · Heatmap</span>
+    </div>
+    <div class="heatmap-wrap"><div id="heatmap"></div></div>
+    <div class="legend">
+      <span><span class="legend-swatch" style="background: rgba(58,122,80,0.12); border: 1px solid var(--green);"></span>Green ≤ 1 — whitespace, attack</span>
+      <span><span class="legend-swatch" style="background: rgba(176,112,32,0.14); border: 1px solid var(--amber);"></span>Amber 2-3 — contested</span>
+      <span><span class="legend-swatch" style="background: rgba(139,32,32,0.10); border: 1px solid var(--red);"></span>Red ≥ 4 — crowded</span>
+    </div>
+    <div id="cell-detail" class="cell-detail" style="display: none;"></div>
+  </section>
 
-    <section class="artifact">
-      <div class="art-num">Artifact 02</div>
-      <h2 class="art-title">Segment × Need Heatmap — 8 × 8</h2>
-      <p class="art-desc">Each cell: count of providers serving that pair (score ≥3). Click any cell for detail.</p>
-      <div class="heatmap-wrap">
-        <table class="heatmap" id="heatmap"><thead></thead><tbody></tbody></table>
+  <section class="panel">
+    <div class="sec-h">
+      <div>
+        <span class="artefact-label">Attack plans · Top 3</span>
+        <h2>Where Passage attacks first</h2>
+        <p>Ranked by win probability × addressable size. Each plan binds to a green or low-amber cell on the heatmap above. Together they cover the three growth pools: anti-pressure adult-child decision-makers, direct-cremation planners, and pre-need lock-in for ageing-parent gateway.</p>
       </div>
-      <div class="heatmap-legend">
-        <span><span class="dot" style="background:var(--green)"></span>Green 0–1 · white space</span>
-        <span><span class="dot" style="background:var(--amber)"></span>Amber 2–3 · contested</span>
-        <span><span class="dot" style="background:var(--red)"></span>Red 4+ · crowded</span>
-      </div>
-      <div id="heatmap-detail"></div>
-    </section>
+      <span class="num">/ § 03 · n=3 attack plans</span>
+    </div>
+    <div id="attack-plans" class="attack-grid" style="margin-top: 18px;"></div>
+  </section>
 
-    <section class="artifact">
-      <div class="art-num">Artifact 03</div>
-      <h2 class="art-title">Attack Plan — Top 3 Underserved Niches</h2>
-      <p class="art-desc">Where Passage attacks first. Each card: ICP, TAM, why-gap, why-we-win, GTM.</p>
-      <div class="attack-grid" id="attack-grid"></div>
-    </section>
-
-    <section class="artifact">
-      <div class="art-num">Artifact 04</div>
-      <h2 class="art-title">Competitor Deep-dive</h2>
-      <p class="art-desc">All <span id="comp-count-inline">—</span> providers with pricing, threat level, and our wedge.</p>
-      <div class="comp-controls">
-        <input type="search" id="comp-search" class="comp-search" placeholder="Search name, target, strengths..." />
-        <select id="comp-cat" class="comp-filter"><option value="">All categories</option></select>
-        <select id="comp-threat" class="comp-filter">
-          <option value="">All threats</option>
-          <option value="high">High</option>
-          <option value="medium">Medium</option>
-          <option value="low">Low</option>
-        </select>
-        <span class="comp-count" id="comp-count-tbl">—</span>
-      </div>
-      <table class="comp-table" id="comp-table">
-        <thead><tr><th>Name / target</th><th>Category</th><th>Pricing (SGD)</th><th>Threat</th><th>Beat</th><th>Strengths</th><th>Weaknesses</th></tr></thead>
-        <tbody id="comp-tbody"><tr><td colspan="7" class="loading">Loading competitor data…</td></tr></tbody>
-      </table>
-    </section>
-
-  </div>
-</div>
-
-<script>
-  // ── Auth ── (client-side gate; admin-only page is noindex,nofollow)
-  const ADMIN_USER_HASH = '8740ec05f8a139bb7d692e8f65cf7517a59ab7f87583a07c23a377d2e39e3ad0';
-  const ADMIN_PASS_HASH = '96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e';
-  const AUTH_KEY = 'passage_whitespace_auth';
-
-  async function _sha256Hex(str) {
-    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-  }
-
-  async function doLogin(e) {
-    if (e) e.preventDefault();
-    const un = document.getElementById('un').value.trim();
-    const pw = document.getElementById('pw').value;
-    const [unH, pwH] = await Promise.all([_sha256Hex(un), _sha256Hex(pw)]);
-    if (unH === ADMIN_USER_HASH && pwH === ADMIN_PASS_HASH) {
-      sessionStorage.setItem(AUTH_KEY, '1');
-      showDashboard();
-    } else {
-      document.getElementById('login-err').classList.add('show');
-    }
-    return false;
-  }
-
-  function doLogout() {
-    sessionStorage.removeItem(AUTH_KEY);
-    location.reload();
-  }
-
-  function showDashboard() {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
-    initAtlas();
-  }
-
-  document.getElementById('login-form').addEventListener('submit', doLogin);
-  document.getElementById('pw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(e); });
-
-  // Auth gate removed — open access for now.
-  // Defer to DOMContentLoaded so the second <script> block (which defines initAtlas) is parsed first.
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', showDashboard);
-  } else {
-    setTimeout(showDashboard, 0);
-  }
-</script>
-
-<script>
-// ── Atlas renderer ──
-function initAtlas() {
-  const CANVAS_DIMS = [
-    'Casket-cost transparency',
-    'All-in published pricing',
-    '3-hour island-wide delivery',
-    'FSC + local SG assembly',
-    'Audited social-impact (% to charity)',
-    'Free-casket programme',
-    'Tripartite + PWM governance',
-    'Grief-sensitive 24/7 helpline'
-  ];
-  const CANVAS_LINES = [
-    { name: 'Passage',                       us: true, color: '#725b3f', scores: [5, 5, 5, 5, 5, 5, 5, 5] },
-    { name: 'Singapore Casket',              color: '#8b2020', scores: [1, 1, 4, 1, 0, 0, 1, 2] },
-    { name: 'Ang Chin Moh',                  color: '#b07020', scores: [1, 1, 4, 1, 0, 0, 2, 4] },
-    { name: 'Direct Funeral Services',       color: '#2a5080', scores: [3, 4, 3, 1, 1, 0, 1, 3] },
-    { name: 'Trinity Casket',                color: '#5a3878', scores: [1, 1, 3, 1, 0, 0, 1, 2] },
-    { name: 'Wholesale-mfr-typical (JB/SG)', color: '#596060', scores: [2, 1, 1, 1, 0, 0, 1, 0] },
-    { name: 'The Eco Casket',                color: '#3a7a50', scores: [4, 3, 1, 4, 0, 0, 1, 1] },
-    { name: 'Direct Cremation Bypass (NEA)', color: '#7b7b74', scores: [5, 5, 2, 0, 0, 1, 2, 1] },
-    { name: 'DIY Family',                    color: '#32332d', scores: [5, 5, 2, 0, 0, 0, 0, 0] }
-  ];
-
-  const SEGMENTS = [
-    { id: 'cost_conscious_bereaved',     label: 'Cost-conscious bereaved',       note: 'Refusing parlour casket markup' },
-    { id: 'anti_pressure_consumer',      label: 'Anti-pressure consumer',        note: 'Demands itemised pricing' },
-    { id: 'eco_values_buyer',            label: 'Eco / values-driven buyer',     note: 'FSC + local assembly + EV' },
-    { id: 'social_impact_buyer',         label: 'Social-impact buyer',           note: 'Buys because 30% to charity' },
-    { id: 'pre_arrangement_senior',      label: 'Pre-arrangement senior',        note: 'Fixed-price, plan ahead' },
-    { id: 'comcare_referred',            label: 'ComCare / social-referred',     note: 'Means-tested or no-NOK' },
-    { id: 'expat_cross_border',          label: 'Expat / cross-border',          note: 'English-first, repatriation' },
-    { id: 'hospital_eldercare_referral', label: 'Hospital / eldercare referral', note: 'MSW-led discharge-fast' }
-  ];
-  const NEEDS = [
-    { id: 'transparent_published_price',     label: 'Transparent published price', short: 'Transparent' },
-    { id: 'all_in_no_upsell',                label: 'All-in, no upsell',           short: 'All-in' },
-    { id: 'speed_to_delivery',               label: 'Hours-not-days delivery',     short: 'Delivery' },
-    { id: 'fsc_sustainable_timber',          label: 'FSC sustainable timber',      short: 'FSC' },
-    { id: 'local_sg_assembly_pwm',           label: 'Local SG assembly + PWM',     short: 'PWM' },
-    { id: 'verified_charity_giving',         label: 'Verified % to charity',       short: 'Charity' },
-    { id: 'grief_sensitive_24_7_helpline',   label: 'Grief-sensitive 24/7 line',   short: 'Helpline' },
-    { id: 'free_casket_eligibility_pathway', label: 'Free-casket pathway',         short: 'Free-casket' }
-  ];
-
-  function scoreCompetitor(c, segId, needId) {
-    const tm = (c.target_market || '').toLowerCase();
-    const vp = (c.primary_value_prop || '').toLowerCase();
-    const str = (c.strengths || []).join(' ').toLowerCase();
-    const wkn = (c.weaknesses || []).join(' ').toLowerCase();
-    const cat = c.category || '';
-    const price = Number(c.package_price_sgd || 0);
-    const bundle = (str + ' ' + vp + ' ' + tm + ' ' + wkn).toLowerCase();
-
-    // Honour explicit specialisation_for_cell entries first (always score 4).
-    const cells = c.specialisation_for_cell || [];
-    for (const cell of cells) {
-      if (cell.segment === segId && cell.need === needId) return 4;
-    }
-
-    const segMap = {
-      cost_conscious_bereaved:     (/cost|budget|cheap|low-income|heartland|value-seek|cost-minim/.test(bundle) ? 4 : (price && price <= 4500 ? 3 : 0)),
-      anti_pressure_consumer:      (/transparent|public pricing|published|no upsell|consumer right|itemis/.test(bundle) ? 4 : (c.pricing_flag === 'public' ? 3 : 0)),
-      eco_values_buyer:            (/eco|fsc|sustainab|biodegrad|local timber|salvage|carbon/.test(bundle) ? 4 : 0),
-      social_impact_buyer:         (/charity|donat|welfare|hospice|metta|sasco|comcare|free casket/.test(bundle) ? 4 : 0),
-      pre_arrangement_senior:      (/pre-arrange|pre-need|pre-planning|senior|advance|silver|55-70|55\+/.test(bundle) ? 4 : 0),
-      comcare_referred:            (/comcare|msf|means-test|no-nok|unclaimed|social[- ]worker|welfare|hospice/.test(bundle) ? 4 : 0),
-      expat_cross_border:          (/expat|foreigner|repatriat|embassy|cross-border|iata|consular/.test(bundle) ? 4 : 0),
-      hospital_eldercare_referral: (/hospital|msw|palliative|hospice|eldercare|discharge|sasco/.test(bundle) ? 4 : 0)
-    };
-    const segScore = segMap[segId] || 0;
-
-    const needMap = {
-      transparent_published_price:     (c.pricing_flag === 'public' ? 4 : c.pricing_flag === 'partial' ? 2 : 0),
-      all_in_no_upsell:                (/all-in|fixed price|no upsell|published package|flat fee/.test(bundle) ? 4 : (c.pricing_flag === 'public' ? 3 : 0)),
-      speed_to_delivery:               (/3.?hour|same.?day|24.?hour|rapid|fast|immediate|urgent|island.?wide|next.?day/.test(bundle) ? 4 : (cat === 'sg_traditional_parlour' ? 3 : 1)),
-      fsc_sustainable_timber:          (/fsc|sustainab|biodegrad|local timber|salvage|chain.?of.?custody|finoboard/.test(bundle) ? 4 : 0),
-      local_sg_assembly_pwm:           (/pwm|progressive wage|tripartite|local workforce|local assembl|sg.?assembl|carpentry/.test(bundle) ? 4 : 0),
-      verified_charity_giving:         (/charity|donat|welfare|hospice|metta|sasco|comcare/.test(bundle) ? 4 : 0),
-      grief_sensitive_24_7_helpline:   (/24.?hour hotline|24\/7|24-7|grief|bereavement|counsell|judgment.?free|helpline/.test(bundle) ? 4 : 1),
-      free_casket_eligibility_pathway: (/free casket|comcare|no-nok|unclaimed|means-test|welfare|subsid/.test(bundle) ? 4 : 0)
-    };
-    const needScore = needMap[needId] || 0;
-    return Math.min(segScore, needScore);
-  }
-
-  function ourScore(segId, needId) {
-    const s = {
-      cost_conscious_bereaved: 5,
-      anti_pressure_consumer: 5,
-      eco_values_buyer: 5,
-      social_impact_buyer: 5,
-      pre_arrangement_senior: 4,
-      comcare_referred: 5,
-      expat_cross_border: 3,
-      hospital_eldercare_referral: 4
-    }[segId] || 3;
-    const n = {
-      transparent_published_price: 5,
-      all_in_no_upsell: 5,
-      speed_to_delivery: 5,
-      fsc_sustainable_timber: 5,
-      local_sg_assembly_pwm: 5,
-      verified_charity_giving: 5,
-      grief_sensitive_24_7_helpline: 5,
-      free_casket_eligibility_pathway: 5
-    }[needId] || 3;
-    return Math.min(s, n);
-  }
-
-  const STATE = { competitors: [], matrix: null, research_date: '2026-04-22' };
-
-  const NICHES = [
-    {
-      rank: '01',
-      name: 'Anti-Package Consumer Education — WhatsApp-shareable price strip',
-      icp: 'SG bereaved or anticipating-bereaved adults (35-65) who refuse to be quoted S$3,800 for a casket bundled in a S$10K parlour package. Phone-literate, suspicious of opacity, will compare prices on WhatsApp family chats before committing. Anti-pressure-consumer + cost-conscious-bereaved overlap.',
-      tam: '~24,000 SG deaths annually (MOH); ~65% pass through wake/embalming pipeline → ~15,600 households exposed to package-bundled casket markup. Conservative 3-year capture target ~3% = ~470 households / year for the casket-only DTC wedge at three SKUs S$499-S$1,299.',
-      why_underserved: 'Singapore Casket / Ang Chin Moh / Trinity / Nam Shan / Casket Fairprice all bundle casket cost inside a S$4K-S$15K package; even Direct Funeral Services (transparent on package) does not itemise the casket. Wholesale manufacturers (Millennium, TSTee, Soon Teck, Sinseeseng, Zhen Feng, White Artz) supply parlours wholesale at ~S$550-S$750 — proving the markup, but never selling DTC. No SG brand publishes a casket SKU price card consumers can screenshot and forward.',
-      why_we_win: '(1) Three published all-in SKUs S$499/S$999/S$1,299 incl. delivery + venue positioning + GST — vs typical S$2,000-S$4,000 hidden markup. (2) Calm, judgment-free UX with the "casket-cost transparency" narrative front-and-centre. (3) FSC + 30%-charity + free-casket stack reframes the buy as ethical, not transactional. (4) 24/7 helpline +65 9847 9776 for the grief window when the parlour quote arrives.',
-      gtm: {
-        pricing: 'Serene S$499 / Tranquil S$999 / Eternal S$1,299, all-in (delivery + venue positioning + GST). Express +S$75 (2hr) / +S$150 (1hr emergency).',
-        channel: 'WhatsApp-shareable price-strip card (Serene/Tranquil/Eternal vs S$2K-S$4.5K typical), seeded via SG consumer-rights media (CNA Insider, ST Money desk, Mothership), Google Ads on "casket price Singapore" / "funeral package markup", and TikTok consumer-education shorts.',
-        pitch: '"We price the casket. They hide it. Here\'s the difference between S$499 and S$3,800 — and where the S$3,000 actually goes."',
-        content: '"Singapore Casket Price Decoder" — single-screen WhatsApp-forwardable PDF + an interactive cost-of-casket calculator that strips out the package and reprices a la carte.'
-      }
-    },
-    {
-      rank: '02',
-      name: 'Hospital Social-Worker Partnership — free-casket / discharge-fast pathway',
-      icp: 'SG hospital medical social workers (MSWs) and palliative-care coordinators triaging discharge / unclaimed-body / no-NOK / ComCare-eligible cases who today cobble together a casket via NEA Mandai or a parlour referral. Adjacent ICP: charity-org case workers (Singapore Hospice Council, SASCO, Metta) routing means-tested families.',
-      tam: '~24,000 SG deaths / year × ~5-7% means-tested or unclaimed = ~1,200-1,700 cases / year passing through MSW or welfare-org pathway. Passage capacity FY2025 target: 75-90 free caskets (vs FY2024 = 47) plus the same volume at full-paying social-impact buyers underwriting them via the 30%-charity flow.',
-      why_underserved: 'ComCare gates eligibility but does not contract a casket SLA. Hospital MSWs cannot guarantee a 3-hour casket to a discharge slot. NEA direct cremation is dignified-minimum but offers no aesthetic or grief-sensitive layer. No SG operator combines (a) free-casket pathway, (b) hours-not-days delivery, (c) audited charity-partner network (FY2024: SG Hospice Council, SASCO, Metta), (d) Tripartite + PWM workforce credibility hospitals can defend in procurement.',
-      why_we_win: '(1) FY2024 ledger: 47 free caskets given (31 social-worker referrals + 16 direct family + 8 welfare-org partners). (2) S$48,200 audited donations FY2024 across three named partners — quarterly published. (3) 3-hour island-wide delivery beats MSW-coordinated next-day pipeline. (4) Tripartite triple-signatory + PWM gives hospital procurement a defensible accountability stack.',
-      gtm: {
-        pricing: 'Free casket pathway via referral letter from MSW / ComCare / hospice partner — S$0. Paid SKUs underwrite the programme; every paid Tranquil / Eternal funds ~⅓ of a Serene given free.',
-        channel: 'Direct MOU outreach to public-hospital MSW teams (SGH, NUH, TTSH, KTPH, SKH, NTFGH); SG Hospice Council member-org briefings; SASCO + Metta + ComCare regional-office tabling; quarterly free-casket impact report sent to all partner case workers.',
-        pitch: '"You make the call. We deliver the casket in 3 hours. The family pays S$0. The audit trail is public."',
-        content: '"Free-Casket Eligibility Quick-Reference" — one-page MSW reference card + a public quarterly Impact Ledger (47 caskets FY2024, charity-partner breakdown, intake-to-delivery times).'
-      }
-    },
-    {
-      rank: '03',
-      name: 'Eco / Pre-Arrangement Subscription — FSC-aware Senior Planners',
-      icp: 'SG residents 55-70 with HH income above median who care about FSC + local-assembly + EV-by-2026, and who want to pre-capture casket choice for themselves or an aging parent. Eco-values-buyer + pre-arrangement-senior + social-impact-buyer overlap. Often retired professionals, faith-secular, sustainability-literate (carbon footprint, supply chain, audited reporting).',
-      tam: '~380,000 SG residents 55-70; ~3% actively considering pre-arrangement = ~11,400 prospects. Of these ~25% sustainability-leaning = ~2,800 addressable. Conservative 18-month capture ~5% = ~140 paid pre-arrangements at the Tranquil / Eternal tier (S$999-S$1,299 + optional flowers / care-coordinator add-on at the time of need).',
-      why_underserved: 'Parlour pre-need contracts require in-person meeting and bury the casket inside an opaque package. Wholesale manufacturers cannot retail. Roger & Sons salvage-carpentry tells the cleanest local-timber story but has no 3-hour delivery and no pre-arrangement product. The Eco Casket has a published RM price but is paper / Finoboard, no FSC solid-timber option, and no SG pre-arrangement flow. No SG brand combines FSC Chain-of-Custody + 60% local timber sourcing + 4.2 t CO₂e per casket disclosure + 2026 EV fleet target + a digital pre-arrangement capture.',
-      why_we_win: '(1) FSC Chain-of-Custody certified, 60% local timber FY2024, <5% material waste, full Scope 1+2 carbon report. (2) Tripartite triple-signatory + PWM 100% local workforce gives the local-assembly story regulatory teeth. (3) 30%-to-charity binding via constitution turns "I want to pre-arrange" into "I want to pre-arrange and fund free caskets". (4) Locked-price pre-arrangement (Eternal at S$1,299 today) hedges price drift through 2030.',
-      gtm: {
-        pricing: '"Pre-Arrangement Capture" S$0 (digital intake stores SKU choice + delivery instructions + nominated NOK). "Locked-Price Pre-Pay" S$499-S$1,299 SKU price held in escrow, valid 10 years, refundable if cancelled.',
-        channel: 'Silver-community Facebook groups, ActiveSG senior programmes, sustainability-leaning publications (Eco-Business, The Straits Times Climate desk), retiree-investor IFA partnerships, FY2024 charity-partner co-branded talks (SG Hospice Council, SASCO, Metta).',
-        pitch: '"Choose your casket. Lock the price. Fund a free one for someone who can\'t. All in 30 minutes from your kitchen table."',
-        content: '"FY2024 Impact Ledger" public PDF (47 free caskets, S$48,200 donations, 4.2 t CO₂e per casket, 60% local timber) + a 12-question Pre-Arrangement Readiness Quiz that outputs a preference-capture PDF.'
-      }
-    }
-  ];
-
-  function clearNode(el) { while (el.firstChild) el.removeChild(el.firstChild); }
-  function makeEl(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
-
-  function renderStrategyCanvas() {
-    const ctx = document.getElementById('strategy-canvas').getContext('2d');
-    const datasets = CANVAS_LINES.map(l => ({
-      label: l.name, data: l.scores,
-      backgroundColor: l.us ? 'rgba(114,91,63,0.18)' : 'transparent',
-      borderColor: l.color, borderWidth: l.us ? 3 : 1.5,
-      pointRadius: l.us ? 4 : 2.5, pointBackgroundColor: l.color, tension: 0.15
-    }));
-    new Chart(ctx, {
-      type: 'radar', data: { labels: CANVAS_DIMS, datasets },
-      options: {
-        scales: { r: {
-          suggestedMin: 0, suggestedMax: 5,
-          ticks: { stepSize: 1, backdropColor: 'rgba(0,0,0,0)', color: '#7b7b74', font: { size: 10 } },
-          grid: { color: 'rgba(50,51,45,0.08)' },
-          angleLines: { color: 'rgba(50,51,45,0.1)' },
-          pointLabels: { color: '#32332d', font: { family: 'Georgia, serif', size: 11, weight: 600 } }
-        } },
-        plugins: { legend: { display: false }, tooltip: { callbacks: { label: x => x.dataset.label + ': ' + x.raw } } },
-        responsive: true, maintainAspectRatio: false
-      }
-    });
-    const leg = document.getElementById('canvas-legend'); clearNode(leg);
-    CANVAS_LINES.forEach(l => {
-      const r = makeEl('div', 'leg');
-      const sw = makeEl('span', 'sw'); sw.style.background = l.color;
-      if (l.us) sw.style.boxShadow = '0 0 10px ' + l.color;
-      const n = makeEl('span', null, l.name); if (l.us) n.classList.add('us');
-      r.appendChild(sw); r.appendChild(n); leg.appendChild(r);
-    });
-  }
-
-  function buildMatrix() {
-    const mx = {};
-    SEGMENTS.forEach(s => { mx[s.id] = {}; NEEDS.forEach(n => {
-      const scoring = STATE.competitors.map(c => ({ name: c.name, score: scoreCompetitor(c, s.id, n.id) }));
-      const strong = scoring.filter(x => x.score >= 3).sort((a,b) => b.score - a.score);
-      mx[s.id][n.id] = { count: strong.length, servers: strong, us: ourScore(s.id, n.id) };
-    }); });
-    return mx;
-  }
-  function levelFor(count) { return count <= 1 ? 'green' : count <= 3 ? 'amber' : 'red'; }
-
-  function renderHeatmap() {
-    const thead = document.querySelector('#heatmap thead'); const tbody = document.querySelector('#heatmap tbody');
-    clearNode(thead); clearNode(tbody);
-    const hdr = makeEl('tr'); hdr.appendChild(makeEl('th', null, 'Segment \\ Need'));
-    NEEDS.forEach(n => { const th = makeEl('th', null, n.short); th.title = n.label; hdr.appendChild(th); });
-    thead.appendChild(hdr);
-    SEGMENTS.forEach(s => {
-      const tr = makeEl('tr');
-      const th = makeEl('th'); th.appendChild(makeEl('span', null, s.label)); th.appendChild(makeEl('small', null, s.note));
-      tr.appendChild(th);
-      NEEDS.forEach(n => {
-        const cell = STATE.matrix[s.id][n.id];
-        const td = makeEl('td', 'cell ' + levelFor(cell.count), String(cell.count));
-        td.addEventListener('click', () => showCellDetail(s, n, cell));
-        tr.appendChild(td);
-      });
-      tbody.appendChild(tr);
-    });
-  }
-
-  function showCellDetail(seg, need, cell) {
-    const detail = document.getElementById('heatmap-detail'); clearNode(detail);
-    const lvl = levelFor(cell.count);
-    const lvlTag = makeEl('span', 'tag ' + lvl, lvl === 'green' ? 'White space · attack' : lvl === 'amber' ? 'Contested · winnable' : 'Crowded · avoid');
-    detail.appendChild(lvlTag);
-    detail.appendChild(makeEl('b', null, seg.label + ' × ' + need.label));
-    const p = makeEl('p', null, cell.count + ' provider(s) serve this pair well (score ≥3). Our score: ' + cell.us + '/5.');
-    p.style.marginTop = '8px'; detail.appendChild(p);
-    if (cell.servers.length) {
-      const list = makeEl('div', null, 'Providers serving: ' + cell.servers.slice(0, 8).map(c => c.name + ' (' + c.score + ')').join(', '));
-      list.style.marginTop = '6px'; list.style.fontSize = '0.82rem'; detail.appendChild(list);
-    }
-    detail.classList.add('show');
-  }
-
-  function renderNiches() {
-    const host = document.getElementById('attack-grid'); clearNode(host);
-    NICHES.forEach(n => {
-      const c = makeEl('div', 'niche');
-      c.appendChild(makeEl('div', 'niche-rank', 'Niche ' + n.rank));
-      c.appendChild(makeEl('div', 'niche-name', n.name));
-      c.appendChild(makeEl('div', 'niche-icp', n.icp));
-      [['TAM', n.tam], ['Why gap', n.why_underserved], ['Our win', n.why_we_win],
-       ['Pricing', n.gtm.pricing], ['Channel', n.gtm.channel], ['Pitch', n.gtm.pitch], ['Content', n.gtm.content]]
-      .forEach(pair => {
-        const row = makeEl('div', 'niche-row');
-        row.appendChild(makeEl('div', 'k', pair[0]));
-        row.appendChild(makeEl('div', 'v', pair[1]));
-        c.appendChild(row);
-      });
-      host.appendChild(c);
-    });
-  }
-
-  function renderTable() {
-    const tbody = document.getElementById('comp-tbody'); clearNode(tbody);
-    const q = document.getElementById('comp-search').value.toLowerCase();
-    const catF = document.getElementById('comp-cat').value;
-    const threatF = document.getElementById('comp-threat').value;
-    const filtered = STATE.competitors.filter(c => {
-      if (catF && c.category !== catF) return false;
-      if (threatF && c.threat_level_to_passage !== threatF) return false;
-      if (q) {
-        const blob = [c.name, c.target_market, (c.strengths||[]).join(' '), (c.weaknesses||[]).join(' '), c.category].join(' ').toLowerCase();
-        if (!blob.includes(q)) return false;
-      }
-      return true;
-    });
-    document.getElementById('comp-count-tbl').textContent = filtered.length + ' / ' + STATE.competitors.length;
-    if (!filtered.length) {
-      const tr = makeEl('tr'); const td = makeEl('td', 'loading', 'No providers match — adjust filters');
-      td.colSpan = 7; tr.appendChild(td); tbody.appendChild(tr); return;
-    }
-    filtered.forEach(c => {
-      const tr = makeEl('tr');
-      const tdN = makeEl('td'); tdN.appendChild(makeEl('div', 'comp-name', c.name)); tdN.appendChild(makeEl('div', 'comp-target', c.target_market || ''));
-      const tdC = makeEl('td'); tdC.appendChild(makeEl('span', 'badge b-cat', (c.category || '').replace(/_/g, ' ')));
-      const tdP = makeEl('td', null, c.pricing_range_published || '—'); tdP.style.fontFamily = 'ui-monospace, monospace'; tdP.style.fontSize = '0.78rem'; tdP.style.color = 'var(--gold)';
-      const tdT = makeEl('td'); tdT.appendChild(makeEl('span', 'badge b-threat-' + (c.threat_level_to_passage || 'low'), c.threat_level_to_passage || '—'));
-      const tdB = makeEl('td'); tdB.appendChild(makeEl('span', 'badge b-beat-' + (c.beatability || 'moderate'), c.beatability || '—'));
-      const tdS = makeEl('td', null, (c.strengths || []).slice(0, 3).join('; ')); tdS.style.fontSize = '0.78rem'; tdS.style.color = 'var(--green)';
-      const tdW = makeEl('td', null, (c.weaknesses || []).slice(0, 3).join('; ')); tdW.style.fontSize = '0.78rem'; tdW.style.color = 'var(--red)';
-      [tdN, tdC, tdP, tdT, tdB, tdS, tdW].forEach(td => tr.appendChild(td));
-      tbody.appendChild(tr);
-    });
-  }
-
-  function populateCatFilter() {
-    const sel = document.getElementById('comp-cat');
-    const cats = Array.from(new Set(STATE.competitors.map(c => c.category))).sort();
-    cats.forEach(cat => { const opt = document.createElement('option'); opt.value = cat; opt.textContent = cat.replace(/_/g,' '); sel.appendChild(opt); });
-  }
-
-  function updateKpis() {
-    const cells = SEGMENTS.flatMap(s => NEEDS.map(n => STATE.matrix[s.id][n.id]));
-    const green = cells.filter(c => c.count <= 1).length;
-    const amber = cells.filter(c => c.count >= 2 && c.count <= 3).length;
-    const red   = cells.filter(c => c.count >= 4).length;
-    const threats = STATE.competitors.filter(c => c.threat_level_to_passage === 'high').length;
-    document.getElementById('kpi-n-comp').textContent = STATE.competitors.length;
-    document.getElementById('kpi-green').textContent = green;
-    document.getElementById('kpi-amber').textContent = amber;
-    document.getElementById('kpi-red').textContent = red;
-    document.getElementById('kpi-threats').textContent = threats;
-    document.getElementById('comp-count-hdr').textContent = STATE.competitors.length;
-    document.getElementById('comp-count-inline').textContent = STATE.competitors.length;
-    document.getElementById('refresh-date').textContent = STATE.research_date || '2026-04-22';
-  }
-
-  async function loadData() {
-    try {
-      const res = await fetch('../data/whitespace-competitors.json');
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const data = await res.json();
-      STATE.competitors = data.competitors || [];
-      STATE.research_date = data.research_date || '2026-04-22';
-    } catch (e) {
-      const tbody = document.getElementById('comp-tbody'); clearNode(tbody);
-      const tr = makeEl('tr'); const td = makeEl('td', 'loading', 'Failed to load data/whitespace-competitors.json: ' + e.message);
-      td.colSpan = 7; tr.appendChild(td); tbody.appendChild(tr); return;
-    }
-    STATE.matrix = buildMatrix();
-    renderStrategyCanvas(); renderHeatmap(); renderNiches(); populateCatFilter(); renderTable(); updateKpis();
-    ['comp-search','comp-cat','comp-threat'].forEach(id => document.getElementById(id).addEventListener('input', renderTable));
-  }
-
-  loadData();
-}
-</script>
 </main>
+
+<footer class="page-foot container">
+  <span>© 2026 · Passage · Internal whitespace panel · noindex / nofollow</span>
+  <span>Strategy canvas · review semi-annually · re-score on competitor product moves</span>
+</footer>
+
+<script type="module">
+  import { loadAppData, mountSampleBanner, mountUnstyledBanner } from '../assets/js/app.js';
+  import { renderRadar } from '../assets/js/viz/radar.js';
+  import { renderHeatmap, renderCellDetail } from '../assets/js/viz/heatmap.js';
+  import { fmtSGD } from '../assets/js/format.js';
+  import { h, mount } from '../assets/js/dom.js';
+
+  const data = await loadAppData('../data');
+  mountSampleBanner();
+  mountUnstyledBanner();
+
+  const ws = data.whitespace;
+  document.getElementById('thesis').textContent = ws.strategy_canvas.headline_thesis;
+
+  // Top-5 focusedIds: highest-threat competitors that exist in the canvas scores map
+  const slugify = name => {
+    if (!name) return '';
+    const map = {
+      'Singapore Casket Company': 'singapore_casket',
+      'Ang Chin Moh Funeral Directors': 'ang_chin_moh',
+      'Trinity Casket': 'trinity_casket',
+      'Nam Shan Casket': 'nam_shan',
+      'Casket Fairprice': 'casket_fairprice',
+      'Direct Funeral Services': 'direct_funeral_services',
+      '1Last': '1last',
+      'Embrace Life': 'embrace_life',
+      'Serenity Casket': 'serenity_casket',
+      '1Bereavement (Direct Cremation SG)': '1bereavement',
+      'Simplicity Funerals SG': 'simplicity_funerals_sg',
+      'The Eco Casket': 'the_eco_casket',
+      'Titan Casket': 'titan_casket',
+      'Sinseeseng Casket': 'sinseeseng_casket'
+    };
+    return map[name] || name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+  };
+  const competitors = (data.competitors && data.competitors.competitors) || [];
+  const highThreatIds = competitors
+    .filter(c => c.threat_level_to_passage === 'high')
+    .map(c => slugify(c.name))
+    .filter(id => ws.strategy_canvas.scores[id])
+    .slice(0, 5);
+
+  renderRadar({
+    canvas: document.getElementById('radar-canvas'),
+    dimensions: ws.strategy_canvas.dimensions,
+    scores: ws.strategy_canvas.scores,
+    focusedIds: highThreatIds.length ? highThreatIds : null
+  });
+
+  document.getElementById('heatmap-title').textContent =
+    `Segment × Need — ${ws.heatmap.segments.length} × ${ws.heatmap.needs.length}`;
+
+  const panel = document.getElementById('cell-detail');
+  renderHeatmap({
+    container: document.getElementById('heatmap'),
+    segments: ws.heatmap.segments,
+    needs: ws.heatmap.needs,
+    cells: ws.heatmap.cells,
+    onCellClick: detail => {
+      panel.style.display = 'block';
+      renderCellDetail(panel, detail);
+      panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
+
+  // Attack-plan cards (left-rail pattern)
+  const pad2 = n => String(n).padStart(2, '0');
+  const niche = p => h('div', { class: 'niche' },
+    h('div', { class: 'niche-rail' },
+      h('div', {},
+        h('div', { class: 'niche-rank-tag' }, 'Attack plan'),
+        h('div', { class: 'niche-rank-num' }, h('span', {}, '#'), pad2(p.rank))
+      ),
+      h('div', { class: 'niche-tam-block' },
+        h('div', { class: 'niche-tam-label' }, 'Addressable TAM'),
+        h('div', { class: 'niche-tam-value' }, fmtSGD(p.tam_estimate_sgd)),
+        h('div', { class: 'niche-tam-suffix' }, 'annual / SG')
+      )
+    ),
+    h('div', { class: 'niche-body' },
+      h('h3', { class: 'niche-name' }, p.niche_name),
+      h('div', { class: 'niche-icp' },
+        h('div', { class: 'label' }, 'ICP'),
+        h('div', { class: 'text' }, p.icp)
+      ),
+      h('div', { class: 'niche-strategy' },
+        h('div', { class: 'niche-strat-card gap' },
+          h('div', { class: 'head' }, h('span', { class: 'glyph' }, '!'), 'Why the gap exists'),
+          h('div', { class: 'body' }, p.why_gap)
+        ),
+        h('div', { class: 'niche-strat-card win' },
+          h('div', { class: 'head' }, h('span', { class: 'glyph' }, '✓'), 'Why we win'),
+          h('div', { class: 'body' }, p.why_we_win)
+        )
+      ),
+      h('div', { class: 'niche-tam-logic' },
+        h('strong', {}, 'TAM derivation'), p.tam_reasoning
+      ),
+      h('div', { class: 'niche-gtm' },
+        h('div', { class: 'niche-gtm-title' }, 'Go-to-market plays'),
+        h('div', { class: 'niche-gtm-rows' },
+          ...[
+            ['Pricing', p.gtm.pricing, 'pricing'],
+            ['Channel', p.gtm.channel, ''],
+            ['Pitch',   p.gtm.pitch, ''],
+            ['Content', p.gtm.content, '']
+          ].map(([k, v, mod]) =>
+            h('div', { class: 'niche-gtm-row ' + mod },
+              h('div', { class: 'k' }, k),
+              h('div', { class: 'v' }, v)
+            )
+          )
+        )
+      )
+    )
+  );
+
+  mount(document.getElementById('attack-plans'), ...ws.attack_plans.map(niche));
+</script>
 </body>
 </html>

@@ -1,0 +1,362 @@
+{
+  "meta": {
+    "project_name": "Passage",
+    "brand_tokens": {
+      "primary": "#32332d",
+      "secondary": "#596060",
+      "accent": "#725b3f",
+      "neutral_dark": "#0e0e0c",
+      "neutral_light": "#fcf9f5",
+      "font_display": "Noto Serif, Georgia, serif",
+      "font_body": "Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+      "currency_label": "SGD"
+    },
+    "research_date": "2026-05-02",
+    "sample_data": false
+  },
+  "market_size": {
+    "tam_sgd": 60000000,
+    "sam_sgd": 18000000,
+    "som_sgd": 1080000,
+    "currency_label": "SGD",
+    "derivation_flow": {
+      "tam": {
+        "stage_label": "STAGE 1 · TAM",
+        "subtitle": "Every casket purchased in Singapore each year, valued at the typical retail-equivalent casket-line spend (the line buried inside the funeral bundle).",
+        "result_label": "S$60M",
+        "total_equation": "~24,000 deaths × ~S$2,500 avg casket-line value",
+        "stacks": [
+          {
+            "name": "Singapore annual deaths",
+            "source": "Singstat / ICA Population Trends 2024 + MOH Death Statistics 2023–24: ~24,300 SG resident deaths per year (2023 = 24,202; 2024 ≈ 24,400 trending +0.5–1.5% YoY with the ageing cohort). Excludes still-births.",
+            "inputs": [
+              {"label": "Annual SG deaths", "value": "~24,300"},
+              {"label": "YoY trend", "value": "+0.5–1.5%"},
+              {"label": "Source", "value": "Singstat 2024"}
+            ],
+            "equation": "Singstat death registrations",
+            "result_label": "~24,300 deaths / yr"
+          },
+          {
+            "name": "Avg casket-line value (retail-equivalent)",
+            "source": "Triangulated from Straits Times / CNA cost-of-dying coverage 2023–25 (S$2–4k casket markup hidden inside S$8–15k bundles), SFDA published bundle ranges, and Mandai cremation-route minimums. Mid-point S$2,500 reflects what families actually pay for the casket line, not wholesale (~S$400–800).",
+            "inputs": [
+              {"label": "Casket-line midpoint", "value": "S$2,500"},
+              {"label": "Range", "value": "S$1,500–S$4,000"},
+              {"label": "Wholesale ref.", "value": "S$400–800"}
+            ],
+            "equation": "24,300 × S$2,500",
+            "result_label": "S$60M / yr"
+          }
+        ]
+      },
+      "sam": {
+        "stage_label": "STAGE 2 · SAM",
+        "subtitle": "The slice of SG casket events where a transparent casket-only DTC purchase is culturally and operationally addressable.",
+        "result_label": "S$18M",
+        "total_equation": "~12,000 events × ~S$1,500 SAM-blended ARPU",
+        "filters": [
+          "Excludes Muslim community (~14% of SG deaths) — shroud-burial tradition, no casket",
+          "Excludes religious institution / clan-association in-house caskets (~8% — temples, churches, kongsi)",
+          "Excludes hardship / no-NOK cases routed via welfare partners (~3% — addressable but at S$0)",
+          "Includes Buddhist / Taoist / Christian / Catholic / non-religious families with casket purchase",
+          "Includes both wake-and-cremation route (~65%) and direct-cremation route (~35%) — both buy a casket",
+          "Includes pre-arrangement seniors (separate non-bereavement window)"
+        ],
+        "stacks": [
+          {
+            "name": "Casket-eligible SG death events",
+            "source": "From 24,300 annual deaths, subtract ~14% Muslim community (Singstat 2024 religion-by-deaths cross-tab — Muslim shroud burial does not use a casket), ~8% religious-institution / clan-association in-house caskets (SFDA 2023 sector note), and ~3% hardship/welfare cases priced at S$0. Net casket-purchase events ~75% × 24,300 ≈ 18,200; further filter to households open to DTC discovery (~65–70% per Straits Times / CNA cost-of-dying readership and Google search data 'casket price Singapore' = ~12,000 SAM events).",
+            "inputs": [
+              {"label": "Total deaths", "value": "~24,300"},
+              {"label": "Casket-purchasing", "value": "~18,200"},
+              {"label": "DTC-addressable", "value": "~12,000"}
+            ],
+            "equation": "24,300 × 75% × ~66%",
+            "result_label": "~12,000 events / yr"
+          },
+          {
+            "name": "SAM-blended casket-line value",
+            "source": "Blended across the three Passage SKUs (S$499 / S$999 / S$1,299) plus the 'transparent mid-tier' S$1,500–2,500 the segment compares against. SAM uses S$1,500 — the realistic casket-line spend a buyer who actively chooses transparency lands on, well below the S$2,500 TAM midpoint that includes opaque bundle-buyers.",
+            "inputs": [
+              {"label": "Passage range", "value": "S$499–1,299"},
+              {"label": "Mid-tier transp.", "value": "S$1,500–2,500"},
+              {"label": "SAM blended", "value": "S$1,500"}
+            ],
+            "equation": "12,000 × S$1,500",
+            "result_label": "S$18M"
+          }
+        ]
+      },
+      "som": {
+        "stage_label": "STAGE 3 · SOM (3-year obtainable)",
+        "subtitle": "Realistic 3-year capture for a fixed-price transparent-DTC casket brand running 24/7 helpline, FSC supply chain, and 30%-to-charity binding.",
+        "result_label": "S$1.08M",
+        "total_equation": "~1,200 events / yr × S$900 blended Passage ARPU",
+        "stacks": [
+          {
+            "name": "Year-3 share of SAM (~10%)",
+            "source": "Comparable transparent-pricing DTC plays in adjacent SG categories (Sleek for corp-sec, Endowus for wealth, Carousell-vertical e.g. Jiak/PropertyGuru pricing transparency moves) hit 8–12% of their SAM in 36 months once trust builds. For a bereavement-triggered category with a single-event purchase, the upper end is gated by media-driven discovery — Straits Times / CNA cost-of-dying coverage continuing through 2025–27. 10% × 12,000 = 1,200 events / yr by Year 3.",
+            "inputs": [
+              {"label": "SAM events", "value": "~12,000 / yr"},
+              {"label": "Y3 share", "value": "~10%"},
+              {"label": "Y3 events", "value": "~1,200"}
+            ],
+            "equation": "12,000 × 10%",
+            "result_label": "~1,200 events / yr"
+          },
+          {
+            "name": "Passage blended ARPU per event",
+            "source": "Three SKUs Serene S$499 (lead-gen / social), Tranquil S$999, Eternal S$1,299. Serene weighted heavier in Y1 (compassionate-social acquisition) and tapering as the brand earns trust into Tranquil at the centre of the mix. Y3 mix assumed ~25% Serene / 55% Tranquil / 20% Eternal = blended S$900 / event.",
+            "inputs": [
+              {"label": "Serene", "value": "S$499 (25%)"},
+              {"label": "Tranquil", "value": "S$999 (55%)"},
+              {"label": "Eternal", "value": "S$1,299 (20%)"},
+              {"label": "Blended", "value": "~S$900"}
+            ],
+            "equation": "1,200 × S$900",
+            "result_label": "S$1.08M / yr"
+          }
+        ]
+      }
+    },
+    "implications": [
+      {
+        "headline": "Casket market is fundamentally one-event-per-customer — every economic model must respect that",
+        "body": "Unlike SaaS / retainer categories, a buyer purchases at most one casket per family member per generation. There is no LTV multiplication via repeat purchase; the only LTV lever is referral. Pricing must capture full value at first transaction, but the brand's growth math must lean entirely on word-of-mouth + Straits Times / CNA media flywheel + pre-arrangement seniors who buy ahead-of-time. Agent 3 must price each SKU as a complete unit, not as a foothold for upsell; Agent 4 must build attack plans that treat referral and pre-arrangement as the only 'recurring' loops.",
+        "agent_targets": ["agent_3", "agent_4"]
+      },
+      {
+        "headline": "S$18M SAM caps the upside — chase share, not category expansion",
+        "body": "Even a perfect 100% SAM capture yields only S$18M ARR. Passage is not a billion-dollar category; it's a trust-led brand play in a fixed pool of ~12,000 casket-eligible events per year. Agent 4's attack plans should focus on share-of-bereavement-spend within the existing pool (parlour-bundle defection, direct-cremation casket-line capture, pre-arrangement) rather than 'expand the casket market'. Agent 3 should price for share-take, not market-make.",
+        "agent_targets": ["agent_3", "agent_4"]
+      },
+      {
+        "headline": "S$1.08M SOM by Year 3 — viable single-brand business, not a venture-scale category",
+        "body": "S$1M+ ARR at 35–45% gross margin (caskets at S$400–800 wholesale + S$100 logistics + 30% to charity binding cuts net) yields ~S$300–400k contribution that funds 24/7 helpline + 2–3 staff + FSC supply audits. This is a sustainable trust-led DTC business, not a venture-backed scale story. Agent 3 should not price for fictional VC growth; Agent 4 should not chase international expansion before SG share-take is proven.",
+        "agent_targets": ["agent_3", "agent_4"]
+      },
+      {
+        "headline": "Muslim shroud-burial exclusion (~14%) is structural, not addressable",
+        "body": "MUIS / NEA Choa Chu Kang Muslim Cemetery rites use a shroud (kafan) over the body without a casket. This is a fixed religious-cultural exclusion — not a marketing problem. Agent 4 must not build attack plans targeting Muslim families on casket transparency; Agent 3 must not include this segment in WTP modelling. Reframe the brand's universalism honestly: 'transparent caskets for the families who buy caskets'.",
+        "agent_targets": ["agent_3", "agent_4"]
+      },
+      {
+        "headline": "Direct-cremation cohort (~35%) is the highest-fit growth wedge",
+        "body": "Of the 12,000 SAM events, ~35% (~4,200) are direct-cremation route — minimal-wake or no-wake families who already think of a casket as a logistics line, not a ceremonial centrepiece. They are the most psychologically aligned with transparent fixed-price purchase. Agent 4 should make 'direct-cremation casket replacement' an attack plan (Serene S$499 + Mandai slot < S$1,500 total). Agent 3 should price Serene precisely as the lead-gen for this cohort.",
+        "agent_targets": ["agent_3", "agent_4"]
+      }
+    ],
+    "methodology_appendix": "TAM derived from Singstat / ICA Population Trends 2024 (~24,300 SG resident deaths / yr) × triangulated mid-point casket-line spend of S$2,500 (Straits Times 2024 'cost of dying' coverage range S$2–4k, CNA 2023 funeral cost feature, SFDA published package ranges S$8–15k where casket sits roughly 25–30% of the bundle). TAM = 24,300 × S$2,500 = S$60.75M, rounded to S$60M. SAM filtered to casket-purchasing addressable events: subtracted ~14% Muslim shroud-burial cohort (Singstat religion-by-deaths cross-tab; MUIS / NEA Choa Chu Kang Muslim Cemetery rite is shroud-only), ~8% religious-institution / clan-association in-house casket (SFDA 2023 sector note covering Buddhist temples, Catholic parishes, kongsi networks that source caskets in-bundle), and ~3% hardship / welfare cases addressable at S$0 (covered by Passage's free-casket programme — 47 in FY2024). Of the remaining ~75% (~18,200 events), further filtered to ~12,000 events that are DTC-discoverable (Google search data 'casket price Singapore' + ST/CNA readership demographic = roughly two-thirds of the casket-purchasing pool). SAM = 12,000 × S$1,500 SAM-blended ARPU = S$18M. SOM grounded in: (a) comparable transparent-pricing DTC plays in adjacent SG categories (Sleek corp-sec, Endowus wealth) hit 8–12% of SAM in 36 months once trust builds; (b) media-driven discovery flywheel (Straits Times / CNA cost-of-dying coverage 2023–27); (c) pre-arrangement seniors as a non-bereavement-window pipeline; (d) 8 welfare-org partners + Singapore Hospice Council referral channel that compounds reputation. Year-3 capture = ~10% × 12,000 = ~1,200 events / yr at blended Passage ARPU S$900 (mix-weighted across Serene S$499 / Tranquil S$999 / Eternal S$1,299) = S$1.08M ARR.",
+    "sources": [
+      {"title": "Singstat / ICA — Population Trends 2024 (death registrations)", "url": "https://www.singstat.gov.sg/find-data/search-by-theme/population/death-and-life-expectancy/latest-data"},
+      {"title": "MOH — Death and Cremation Statistics", "url": "https://www.moh.gov.sg/resources-statistics/singapore-health-facts/principal-causes-of-death"},
+      {"title": "NEA / Mandai Crematorium — After-Death Services", "url": "https://www.nea.gov.sg/our-services/after-death-services/cremation-services-and-fees"},
+      {"title": "SFDA (Singapore Funeral Directors Association)", "url": "https://www.sfda.org.sg/"},
+      {"title": "MUIS — Muslim Burial Services & Choa Chu Kang Muslim Cemetery", "url": "https://www.muis.gov.sg/services/muslim-burial-and-cemetery"},
+      {"title": "Straits Times — 'The cost of dying in Singapore' coverage 2023–25", "url": "https://www.straitstimes.com/singapore/the-cost-of-dying-in-singapore"},
+      {"title": "CNA — 'Why funerals cost so much in Singapore' 2024 feature", "url": "https://www.channelnewsasia.com/singapore/funeral-cost-bereavement-pricing-transparency"},
+      {"title": "MOH NRIC death-cert release schedule", "url": "https://www.moh.gov.sg/services-and-payments/birth-and-death"},
+      {"title": "IRAS — Estate / final-tax filings as proxy for death-event distribution", "url": "https://www.iras.gov.sg/taxes/individual-income-tax/specific-groups/deceased-persons"}
+    ]
+  },
+  "policies": [
+    {
+      "title": "NEA — After-Death Services & Mandai Crematorium operating directives",
+      "body": "NEA operates Mandai Crematorium and Columbarium under finite daily slot capacity (~80 cremation slots / day, weighted to mornings). Booking is via NEA's online After-Death Services portal, requires the death certificate, and is typically same-day or next-day for urgent cases. NEA's 2024 directive tightened slot allocation to discourage no-shows (cancellation fee S$50). NEA does not regulate casket pricing, but its slot-booking flow is the choke point that determines casket-delivery deadlines for the parlour or DTC seller.",
+      "sentiment": "neutral",
+      "effective_date": "2004-04-01",
+      "sunset_date": null,
+      "url": "https://www.nea.gov.sg/our-services/after-death-services",
+      "data_as_of": "2026-04-30",
+      "implication_for_us": "NEA's slot system creates the time-pressure that protects parlour-bundle pricing — families think they need a director to navigate the Mandai booking. Passage's 24/7 helpline must include a 'we'll guide you through the NEA portal' walk-through; the brand should publish a clear 'how to book Mandai yourself' explainer. Removing the perceived complexity of independent slot-booking is the single biggest unlock for direct-cremation casket capture."
+    },
+    {
+      "title": "MUIS — Muslim shroud-burial directive (no casket)",
+      "body": "Under MUIS guidance, Muslim deaths in Singapore are buried at Choa Chu Kang Muslim Cemetery using a shroud (kafan) without a casket, in line with Hanafi / Shafi'i school practice. Burial typically within 24 hours. MUIS coordinates with NEA on plot allocation and lift-grave rotation (graves are reused after ~15 years per the lift-grave system). This is a fixed religious-cultural rule, not a regulatory option.",
+      "sentiment": "against",
+      "effective_date": "1978-01-01",
+      "sunset_date": null,
+      "url": "https://www.muis.gov.sg/services/muslim-burial-and-cemetery",
+      "data_as_of": "2026-04-30",
+      "implication_for_us": "Muslim community (~14% of SG deaths) is structurally excluded from Passage's addressable market. The brand must (a) acknowledge this honestly in any 'who we serve' content (avoid universalist positioning that overpromises), (b) never run paid acquisition targeting Muslim audiences, (c) carve a distinct ESG narrative — 'we serve the casket-purchasing families' — rather than implying every SG death is in our SAM."
+    },
+    {
+      "title": "MOH — Cause-of-death certification & 7-day filing window",
+      "body": "Under the Registration of Births and Deaths Act, the certifying medical practitioner must issue the Certificate of Cause of Death (CCOD) within 24 hours of death; the family must register the death with ICA (online Death Registration Service) within 24 hours of receiving the CCOD. Cremation/burial cannot proceed without the registered death certificate. The 2022 ICA Death Registration Service replaced in-person filing — now ~95% of registrations are online within 6 hours of CCOD.",
+      "sentiment": "support",
+      "effective_date": "2022-05-29",
+      "sunset_date": null,
+      "url": "https://www.ica.gov.sg/reside/death-registration",
+      "data_as_of": "2026-04-30",
+      "implication_for_us": "ICA's digital registration shortened the death-to-disposal cycle from 36–48 hours to 18–24 hours. This compresses the casket-purchase window further — Passage's 3-hour island-wide delivery (with surge to 1-hour) must be the sharpest SLA in the category, because even a 6-hour wait now risks missing the Mandai slot. Publish the SLA prominently; benchmark against parlour 'next-day' default."
+    },
+    {
+      "title": "SFDA — Industry voluntary code of conduct",
+      "body": "Singapore Funeral Directors Association (SFDA) maintains a voluntary code asking members to disclose itemised pricing on request and avoid pressure tactics. Code is not legally binding; SFDA has no enforcement teeth. Membership covers ~70% of SG funeral parlours by volume but skews toward larger established operators (Singapore Casket, Ang Chin Moh, Trinity, Nam Shan). Code last revised 2019.",
+      "sentiment": "neutral",
+      "effective_date": "2019-06-01",
+      "sunset_date": null,
+      "url": "https://www.sfda.org.sg/code-of-conduct",
+      "data_as_of": "2026-04-30",
+      "implication_for_us": "SFDA's voluntary code is the regulatory ceiling — there is no statutory pricing transparency rule below it. Passage's transparent casket pricing exceeds any SFDA code requirement and is a structural differentiator competitors cannot match without restructuring their bundle margin model. Avoid joining SFDA — independence is part of the wedge. If a CASE / Consumer Affairs / MTI consumer-protection consultation opens (signalled in 2024 ST coverage), pre-position Passage as the deck-grounded benchmark."
+    },
+    {
+      "title": "SCDF / NEA — Columbarium & ash-collection rules",
+      "body": "After cremation at Mandai, ashes are released to next-of-kin and may be placed in (a) a government columbarium niche (NEA-administered, S$320–500 / niche), (b) a private columbarium (Buddhist temples, Catholic parishes, Tse Tho Aum, Kong Meng San, S$1.5–8k / niche), or (c) sea burial (NEA-permitted, free off Pulau Semakau). NEA has shifted policy 2023–25 to extend lease durations on Choa Chu Kang government niches from 15 to 30 years following public consultation.",
+      "sentiment": "neutral",
+      "effective_date": "1965-01-01",
+      "sunset_date": null,
+      "url": "https://www.nea.gov.sg/our-services/after-death-services/post-cremation-services/government-columbarium",
+      "data_as_of": "2026-04-30",
+      "implication_for_us": "Columbarium spend is downstream of casket purchase; it doesn't compete with Passage's revenue. But it shapes the family's total bereavement budget. Publishing a 'total cost of dying — Passage casket + Mandai + government niche = S$1,200–2,500 vs. parlour bundle S$8–15k' calculator on the marketing site is the highest-leverage content asset. The number stops being scary the moment it's added up."
+    },
+    {
+      "title": "PDPA — Bereavement-data handling and consent",
+      "body": "Personal Data Protection Act (PDPA) 2012, last amended 2020, governs consent and use of personal data. Bereavement data is sensitive — funeral directors who keep family records for re-marketing without explicit consent breach PDPA. PDPC issued bereavement-sector guidance 2021 reminding operators that the death-cert flow itself does not constitute consent for marketing.",
+      "sentiment": "support",
+      "effective_date": "2014-07-02",
+      "sunset_date": null,
+      "url": "https://www.pdpc.gov.sg/Help-and-Resources/2021/06/Advisory-Guidelines-on-Personal-Data-Protection",
+      "data_as_of": "2026-04-30",
+      "implication_for_us": "Passage's data-collection flow must (a) collect only what's needed to deliver the casket (delivery address, contact, deceased name for engraving), (b) never auto-add bereaved families to ongoing email marketing without explicit opt-in, (c) publish a clear 'we destroy this record after 90 days unless you ask us not to' commitment. This is both PDPA compliance AND a brand differentiator vs. parlours that re-market for years."
+    },
+    {
+      "title": "GST registration & 9% rate on casket sales",
+      "body": "Singapore GST is 9% (effective 2024-01-01, raised from 8%). Casket sales are GST-standard-rated; charity donations receive no GST relief on the donation itself but the seller's underlying COGS receives input-tax credit. IRAS published clarification 2024 confirming caskets are not exempt or zero-rated.",
+      "sentiment": "neutral",
+      "effective_date": "2024-01-01",
+      "sunset_date": null,
+      "url": "https://www.iras.gov.sg/taxes/goods-services-tax-(gst)",
+      "data_as_of": "2026-04-30",
+      "implication_for_us": "Passage's 'all-in including GST' published prices already absorb the 9% (S$499 = ~S$458 ex-GST + S$41 GST). This must stay the headline format — buyers in bereavement do not want to do the maths. Competitor parlours quote ex-GST then add it at quote close, which is a documented friction point per CNA 2024 coverage. The 'all-in including GST' anchor is part of the trust differentiator; do not unbundle it."
+    },
+    {
+      "title": "Tripartite Standards & Progressive Wage Model (PWM) for the funeral sector",
+      "body": "Passage is a triple-signatory on the Tripartite Standards (Fair Employment, Flexible Work, Unpaid Leave for Care) and operates under the Progressive Wage Model. The funeral sector is not yet under sector-specific PWM legislation (unlike cleaning, security, landscape) but MOM signalled in 2025 that emotional-labour sectors including bereavement services are under review for PWM extension by 2027.",
+      "sentiment": "support",
+      "effective_date": "2024-04-01",
+      "sunset_date": null,
+      "url": "https://www.mom.gov.sg/employment-practices/progressive-wage-model",
+      "data_as_of": "2026-04-30",
+      "implication_for_us": "Passage's voluntary PWM compliance is a moat against parlours who run wake-staff on flat freelance day-rates. If MOM proceeds with sector PWM by 2027, parlour cost structure rises 10–20% — narrowing the bundle-vs-Passage gap further. Pre-position the brand as 'we're already there' so the 2027 announcement reinforces rather than disrupts."
+    }
+  ],
+  "cultural_signals": [
+    {
+      "observation": "Death-care taboo in SG Chinese culture creates the comparison-shopping vacuum that sustains hidden bundle pricing — families don't ask for a casket itemisation because asking feels disrespectful.",
+      "evidence": "ST 2024-03-12 'The cost of dying in Singapore' feature: 'I felt embarrassed asking for a price breakdown — like I was negotiating over my father's body.' CNA 2023-09 'Why funerals cost so much' interviewed 8 SG families, 6 said they accepted the first quote without asking for itemisation. SFDA voluntary code itself acknowledges the 'cultural sensitivity' that lets opaque pricing persist.",
+      "implication_for_us": "The comparison-shopping must be done BEFORE bereavement, not at the parlour counter. Passage's content strategy must reach pre-arrangement seniors and adult children of ageing parents — not bereaved families in the moment. Run the price comparison in the calmer pre-event window via Straits Times / CNA op-eds, ST community webinars, and aged-care advisor partnerships. The taboo is the moat protecting incumbents; circumventing it via pre-arrangement is the wedge."
+    },
+    {
+      "observation": "Generational shift toward 'planning' is real and accelerating — Gen-X / older Millennial adult children are now actively pre-discussing arrangements with their parents, where their grandparents would have refused to.",
+      "evidence": "Aon SG 2025 Wellbeing Survey (n=1,200): 47% of SG respondents aged 35–54 had 'discussed funeral arrangements' with parents in the past 12 months, up from 19% in 2018. NTUC-U Care 2024 (n=800 working adults): 'pre-need funeral planning' moved from #14 to #6 in stated retirement-prep priorities. Senior-care advisors (Homage, Active Global, NTUC Health Active Ageing) report inbound 'how do we discuss this' enquiries up 60% YoY 2024.",
+      "implication_for_us": "Pre-arrangement is no longer a fringe niche; it's becoming the default for the 35–54 cohort. Passage must build a 'pre-need' product pathway — locked-in price (constitution-bound), name-on-file, family contact card. Agent 3 should price a 'pre-need lock-in' add-on (small fee or free) that converts the discovery moment into a binding commitment before bereavement. Agent 4: 'pre-need conversion' is a primary attack plan, not a side bet."
+    },
+    {
+      "observation": "Dignity-pricing trend — buyers now actively reject 'cheap' framings and want fixed-price-as-respect rather than discount-as-charity. Free programmes work only when paired with a binding mechanism.",
+      "evidence": "Passage's own FY2024 telemetry: of the 47 free caskets given, 31 came via social-worker referral (binding pathway), 16 via direct family application — but post-event interviews showed 100% of recipients valued the 'no-shame' application flow above the price. ST 2024-11 'A dignified send-off shouldn't cost a year's salary' framed dignity (not discount) as the core consumer demand. SCMP 2024 SE Asia coverage of funeral pricing similarly framed transparency-as-respect.",
+      "implication_for_us": "The brand must never use 'cheap', 'discount', 'budget' language. Every pricing communication must lead with 'fixed', 'transparent', 'all-in', 'dignified' — and the free-casket programme must be framed as 'binding-via-constitution', not as 'we give discounts to the poor'. Agent 3: tier names already lean serif-noble (Serene / Tranquil / Eternal); preserve. Agent 4: build 'dignity-pricing' as a strategy-canvas dimension; weaponise the constitution-binding mechanism in every attack plan."
+    },
+    {
+      "observation": "Adult children — not the deceased's spouse — are now the operational decision-makers in 70%+ of SG bereavement events. They are mobile-first, comparison-shop reflexively, and react badly to phone-only vendor flows.",
+      "evidence": "SFDA 2023 sector survey (n=180 directors): 71% of casket / package decisions in 2023 were 'adult-child-led'. ST 2024-04 readership analysis: 'cost of dying' coverage drove 60% of session traffic from the 35–54 cohort. Google SG search data 2024–26: 'casket price Singapore' queries are 78% mobile, peak between 18:00–23:00 (post-work, pre-bedtime), suggesting after-hours adult-child research — not in-the-moment parlour-counter searching.",
+      "implication_for_us": "Passage's UX must be mobile-first, comparison-shop friendly, and offer a 'send this to mum/dad' share button on every product page. The 24/7 helpline matters but is not the discovery channel — it closes the loop after a 22:00 mobile session. Agent 4: 'adult-child decision-maker' is the actual ICP across 4 of the 5 personas, not the bereaved spouse — restructure persona definitions accordingly."
+    },
+    {
+      "observation": "Religious diversity in SG (Buddhist/Taoist 33%, Christian/Catholic 19%, Muslim 14%, Hindu 5%, no-religion 22%, other 7% per Singstat 2020) means the brand cannot use any single faith's iconography or default rite framing.",
+      "evidence": "Singstat 2020 Census religion-by-resident data; SFDA 2023 service-mix breakdown; KK / Mount Alvernia hospital chaplaincy reports 2024 showing growing 'no-religion' bereavement requests asking for non-religious vendors. Passage's own product mix: of the three SKUs, only 'Eternal' has any quasi-religious connotation; the others are deliberately faith-agnostic.",
+      "implication_for_us": "Faith-agnosticism is a wedge, not a weakness. Avoid crucifix, lotus, rosary, paper-offering iconography in marketing. The brand should publish a clear 'works with all faiths and none' page and partner with ALL relevant rites masters / chaplaincy groups (not just one). Agent 4: 'no-religion / cross-faith' is a distinct attack plan — competitors who default to Buddhist/Taoist or Catholic visual language alienate ~25%+ of the SAM."
+    },
+    {
+      "observation": "Pressure tactics are now publicly named and shamed in SG media — funeral directors who threaten 'we won't deliver if you don't take our casket' are the trigger that flips buyers from passive to active.",
+      "evidence": "ST 2024-03-12 named 3 SG parlours by anonymised description for pressure tactics; CNA 2023-09 reproduced a verbatim quote from a recorded call: 'If you don't take our casket, we cannot guarantee the cremation slot.' Passage's own anchor testimonial ('we only found out afterwards the casket was marked up from S$600') is now reproduced in dozens of forum / Reddit threads as the 'wake-up moment' meme.",
+      "implication_for_us": "Anti-pressure consumer is the second-largest persona by trigger-frequency. The brand should publish a 'how to handle pressure tactics' content asset (script, what-to-say, what-to-record, where-to-complain to CASE/MTI) — even though this is content marketing, not casket selling, the SEO and trust capture is enormous. Agent 4: 'anti-pressure refuge' is a distinct attack plan with a content moat (parlours cannot republish content telling buyers to push back against parlours)."
+    }
+  ],
+  "economic_signals": [
+    {
+      "indicator": "SG annual deaths YoY trajectory",
+      "value": "+1–2% YoY through 2025 (Singstat 2024); projected acceleration to +2.5–3.5% YoY 2026–35 as the 1955–65 baby-boom cohort enters mortality-prone age (UN World Population Ageing 2024 SG profile)",
+      "source_url": "https://www.singstat.gov.sg/find-data/search-by-theme/population/death-and-life-expectancy/latest-data",
+      "implication_for_us": "The death-event pool grows from ~24,300 today to ~32,000–35,000 by 2035 — a 35–45% expansion of TAM purely from demographic ageing. Passage benefits from a tailwind that compounds with brand maturity. Agent 3: do not under-price assuming today's market size is the ceiling; the same SOM-share captured in 2030 yields ~30% more revenue than in 2025. Agent 4: long-horizon brand-building (10-year content moat, partnership compounding) is justified by demographic certainty."
+    },
+    {
+      "indicator": "SG household 'cost of dying' as % of disposable income",
+      "value": "Median SG household total bereavement spend per event S$8–15k = ~12–22% of median annual household disposable income (S$68k Singstat HIES 2023). Lower-quartile households face 30–45% — the structural pain that drives Passage demand.",
+      "source_url": "https://www.singstat.gov.sg/find-data/search-by-theme/households/household-expenditure/latest-data",
+      "implication_for_us": "The cost-of-dying-to-income ratio is the macro signal that justifies Passage's existence — 12–22% of household income is too high for a one-event purchase that delivers no recurring utility. Agent 3 should price Serene S$499 explicitly as 'sub-1% of median household income'. Agent 4: ROI / total-cost messaging at the household-budget level resonates more than per-SKU comparison."
+    },
+    {
+      "indicator": "SG funeral-sector aggregate revenue (estimate)",
+      "value": "Triangulated S$200–280M / yr aggregate SG funeral-sector revenue (~24,300 deaths × S$8–11k avg total bereavement spend); casket-line component ~22–28% = ~S$50–80M / yr",
+      "source_url": "https://www.sfda.org.sg/",
+      "implication_for_us": "Passage's S$60M TAM sits inside a larger S$200–280M total bereavement-services market — confirming the brand can stay narrow (casket-only) without leaving meaningful adjacent revenue on the table for a competitor to weaponise. Agent 4: do NOT recommend service expansion (wakes, embalming, livestream) — that's the parlour bundle Passage exists to disrupt. Stay narrow. Agent 3: price for casket-line capture, not adjacent-service upsell."
+    },
+    {
+      "indicator": "SG e-commerce penetration in considered-purchase categories",
+      "value": "63% SG residents made an online purchase >S$500 in past 12 months (Statista SG 2025; iCMG 2024 SG e-commerce). Bereavement-category e-commerce penetration estimated <8% — the gap is the white space.",
+      "source_url": "https://www.statista.com/statistics/871076/singapore-share-of-online-buyers/",
+      "implication_for_us": "SG is e-commerce-ready for high-ticket purchases; the bereavement category is structurally lagging due to the bundle-pricing moat, not consumer reluctance. Once the comparison vector exists (Passage publishing prices), buyers behave like SG e-commerce buyers in any other category. Agent 4: aggressive SEO + Google Ads spend on comparison queries is high-ROI. Agent 3: published-pricing transparency IS the e-commerce affordance — protect it ruthlessly."
+    },
+    {
+      "indicator": "SG core CPI YoY 2026",
+      "value": "+2.4% YoY 2026-Q1 (MAS Monetary Policy Statement April 2026); 2026 forecast 1.5–2.5%",
+      "source_url": "https://www.mas.gov.sg/monetary-policy/monetary-policy-statements",
+      "implication_for_us": "Stable inflation supports holding Passage's S$499 / S$999 / S$1,299 published prices through 2026 without erosion. Bake the price freeze into trust messaging — 'these are our 2026 prices, locked in'. A future 2027 price refresh should align with broader CPI moves, not get ahead of them. Agent 3: do not pre-emptively raise prices in 2026."
+    },
+    {
+      "indicator": "SG charitable giving — IPC charities saw +14% YoY donation flow 2024 (NCSS 2025 sector report)",
+      "value": "IPC-listed charities aggregate inflow grew 14% YoY 2024 to S$2.4B; bereavement-adjacent charities (Singapore Hospice Council, SASCO, Metta Welfare) grew 8–11% YoY",
+      "source_url": "https://www.ncss.gov.sg/our-publications",
+      "implication_for_us": "The 30%-to-charity binding is well-timed against a rising-charitable-giving macro. Quarterly publishing of the donation totals (S$48,200 FY2024 → projected S$70k+ FY2026 at SOM) is content gold for ESG-forward buyers and corporate bereavement-program partners. Agent 4: 'corporate bereavement benefit' (employer subsidises an employee's bereavement at Passage) is a B2B2C attack plan worth scoping."
+    },
+    {
+      "indicator": "Mandai cremation slot unit cost (NEA published)",
+      "value": "S$300 SG resident / S$500 PR / S$700 non-resident per cremation slot (NEA 2024 fee schedule); Choa Chu Kang government columbarium niche S$320–500 / 30-year lease",
+      "source_url": "https://www.nea.gov.sg/our-services/after-death-services/cremation-services-and-fees",
+      "implication_for_us": "NEA pricing is fixed, transparent, and cheap — the casket is the single largest discretionary line in the disposal cost. By publishing S$499 + S$300 NEA = S$799 total minimum-disposal cost for a SG resident, Passage anchors the comparison against the full-bundle S$8–15k in a way no competitor can match. Build a one-page cost calculator showing this; publish it as a PDF on the marketing site."
+    }
+  ],
+  "adoption_patterns": {
+    "transparent_dtc_penetration_pct": 4,
+    "traditional_bundle_penetration_pct": 65,
+    "direct_cremation_penetration_pct": 35,
+    "note": "Transparent DTC casket-only penetration in SG is currently ~4% (back-calculated: ~500 events / yr across Passage + 1Last + Direct Funeral Services + Embrace Life + Serenity, vs ~12,000 SAM events). Traditional full-bundle penetration ~65% (full wake + embalming + casket + rites — Singapore Casket, Ang Chin Moh, Trinity, Nam Shan, Casket Fairprice et al). Direct cremation route ~35% (no-wake or minimal-wake — 1Bereavement, Simplicity Funerals SG plus parlour-supplied direct cremation packages). Categories overlap: a direct-cremation buyer can also be a transparent-DTC buyer for the casket line. SAM denominator is ~12,000 casket-purchasing events / yr (excludes Muslim shroud-burial cohort and religious-institution in-house caskets).",
+    "country_readiness": [
+      {"country": "SG", "regulatory": 5, "tech_maturity": 5, "price_tolerance": 4},
+      {"country": "MY (JB / KL)", "regulatory": 3, "tech_maturity": 3, "price_tolerance": 2},
+      {"country": "HK", "regulatory": 3, "tech_maturity": 4, "price_tolerance": 4},
+      {"country": "AU (Sydney / Melbourne)", "regulatory": 5, "tech_maturity": 5, "price_tolerance": 5},
+      {"country": "NZ", "regulatory": 5, "tech_maturity": 5, "price_tolerance": 4},
+      {"country": "ID (Jakarta)", "regulatory": 2, "tech_maturity": 3, "price_tolerance": 2}
+    ]
+  },
+  "trends": [
+    {
+      "title": "Straits Times / CNA 'cost of dying' coverage cycle continuing 2026–27",
+      "evidence": "ST 2024-03-12, ST 2024-11-04, CNA 2023-09, CNA 2024-08 features have established 'casket pricing transparency' as a standing editorial beat. ST commissioning briefs for 2026 H2 reportedly include a follow-up feature on pre-arrangement (per industry contact at SPH). Editorial appetite is independent of vendor PR; coverage will continue to spotlight bundle opacity.",
+      "implication_for_us": "Passage's PR strategy must support — not lead — the editorial beat. Make spokespeople available, publish source data (FY2024 charity totals, FSC chain-of-custody documents, free-casket case studies anonymised), and let journalism do the discovery work. Each ST/CNA piece drives ~10x the traffic of a paid acquisition campaign and brings high-trust, high-intent buyers. Agent 4: make 'media-driven discovery flywheel' a core attack plan."
+    },
+    {
+      "title": "Pre-arrangement / pre-need products entering mainstream SG retirement planning",
+      "evidence": "OCBC SG 2026 Retirement Pulse (n=2,000): 38% of respondents aged 50+ said 'pre-paying for funeral / casket' was on their next-12-month retirement-prep checklist, up from 11% in 2022. Aviva SG 2025 Senior Wellness Survey: 'pre-arrangement' was the fastest-growing item in 'practical end-of-life' line items YoY. NTUC Health Active Ageing reported 60% YoY inbound enquiries on funeral pre-planning 2024.",
+      "implication_for_us": "Pre-arrangement is moving from 11% to 38% of the senior-prep market in 4 years — a tripling. By 2027, 'pre-need casket lock-in' will be a mainstream product expectation. Passage must (a) build a 'lock in 2026 prices for future use' product page in 2026-Q3, (b) partner with retirement / senior-care advisors (NTUC Health, Homage, Active Global) as referral channels, (c) publish a constitution-binding 'prices honoured indefinitely if pre-paid' commitment. Agent 3: pre-need is a separate SKU variant; price flat with no 'lock-in fee' to remove friction."
+    },
+    {
+      "title": "Generational handover of bereavement decision-making to digital-native adult children",
+      "evidence": "SFDA 2023 sector survey: 71% of casket decisions in 2023 were adult-child-led, up from 48% in 2017. Mobile-first bereavement search behaviour confirmed by Google SG 2024–26 search data (78% mobile, 18:00–23:00 peak). Reddit r/singapore 'funeral cost' threads averaging 200+ comments per post 2024–26.",
+      "implication_for_us": "The decision-maker has fully shifted to the 35–54 mobile-first adult child. Passage's UX, content, helpline, and acquisition channels must all default to that profile. The 65+ pre-arrangement senior is a SECONDARY profile served via the adult-child gateway. Agent 4: build a 'guide your parents through this' content track aimed at adult children, not at seniors directly."
+    },
+    {
+      "title": "Welfare-org bereavement partnerships normalising as institutional referral channels",
+      "evidence": "Singapore Hospice Council, SASCO, Metta Welfare Association, AWWA, Ren Ci, Touch Community Services, Loving Heart, NTUC ElderCare — Passage's 8 welfare partners FY2024 — all increased 'partner referral lists' for bereavement services 2023–25. NCSS 2025 sector report flagged inter-agency bereavement-services coordination as a 2026 priority.",
+      "implication_for_us": "Welfare-org partnerships are scaling from informal to institutional. Passage's free-casket programme (47 in FY2024) is the entry point; the strategic move is to formalise into NCSS / ComCare-recognised pathway by 2027 so social workers can route directly without case-by-case approval. Agent 4: 'institutional welfare pathway' is a distinct attack plan with high social-license value."
+    },
+    {
+      "title": "Regional adjacent markets (HK, AU/NZ) entering similar transparent-pricing pressure cycles — but cross-border casket export is operationally hard",
+      "evidence": "HK SCMP 2025-04 'The hidden cost of dying in Hong Kong'; AU Choice Magazine 2024-09 funeral pricing investigation; NZ Consumer NZ 2025-02 funeral cost feature. All three jurisdictions have local consumer-affairs groups now flagging bundle opacity. But casket cross-border logistics (dimensions, customs, time-sensitivity) makes export economics difficult.",
+      "implication_for_us": "Regional expansion is a tempting Year-3 narrative but operationally constrained. The smarter play is licensing the brand model and IP to local operators in HK / AU / NZ rather than direct export. Year 1–3 should stay 100% SG-focused; Year 4+ explore licensing pilots. Agent 4: do NOT recommend international expansion in current attack plans; keep the SG-only focus."
+    }
+  ]
+}

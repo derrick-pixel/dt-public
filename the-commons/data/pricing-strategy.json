@@ -1,0 +1,316 @@
+{
+  "meta": {
+    "project_name": "The Commons",
+    "brand_tokens": {
+      "primary": "#FF6B6B",
+      "secondary": "#1A1A2E",
+      "accent": "#00D2FF",
+      "neutral_dark": "#1A1A2E",
+      "neutral_light": "#FFF8F0",
+      "font_display": "Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+      "font_body": "Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+      "currency_label": "SGD"
+    },
+    "research_date": "2026-05-02",
+    "sample_data": false
+  },
+  "personas": [
+    {
+      "id": "social_butterfly_organiser",
+      "name": "Social Butterfly Organiser",
+      "icp": "SG resident 25–34, S$3.5–7k/mo income, organises 6–12 paid group events per year (birthdays, KTV nights, weekend trips, hen parties, group dinners). A stranger reading this names: the friend in the WhatsApp chat who always sends the PayNow QR, anyone in a Reddit r/singapore 'how do you collect from your friends' thread, the typical 28-year-old PMET planning their best friend's hen weekend on Bintan.",
+      "pains": [
+        "Chasing 12 friends on PayNow for a S$45 dinner cap and following up four times in WhatsApp",
+        "Out-of-pocket on the venue deposit because the chalet booking needed the deposit BEFORE attendees committed",
+        "Becoming 'that person' in the friend group — emotional labour of payment-collection eats the joy of organising",
+        "No accountability — a friend RSVPs yes then ghosts on the day, and the organiser eats the no-show cost"
+      ],
+      "current_workaround": "WhatsApp group + PayNow QR + Google Sheet to track who paid. Organiser fronts the deposit, manually reconciles screenshots, and chases non-payers. Average: ~6 hours per event of admin + emotional cost.",
+      "wtp_band_sgd": {
+        "low_anchor": 25,
+        "expected": 95,
+        "upper_stretch": 220
+      },
+      "nba": {
+        "method": "tooling_stack",
+        "summary": "DIY stack of WhatsApp + PayNow QR + Google Sheet + organiser-fronted deposits. Free in money, ~6 hours/event in time + the social cost of being the bad guy.",
+        "inputs": {
+          "tooling_lines": [
+            {"tool": "Organiser time on collection + reconciliation (6 hr/event @ S$25/hr loaded)", "monthly_sgd": 150},
+            {"tool": "PayNow / bank rail (free for personal)", "monthly_sgd": 0},
+            {"tool": "WhatsApp + Google Sheet baseline (free)", "monthly_sgd": 0},
+            {"tool": "Implicit no-show absorbed by organiser (~10% of S$60 avg ticket × 1 event/mo)", "monthly_sgd": 6}
+          ]
+        },
+        "monthly_sgd_equivalent": 156,
+        "confidence": 0.7
+      },
+      "whitespace_segment_ids": ["social_butterfly_organiser"]
+    },
+    {
+      "id": "experience_curator_premium",
+      "name": "Premium Experience Curator",
+      "icp": "SG resident 30–42, S$8–15k/mo income, organises 3–6 elaborate events per year (themed dinners, immersive workshops, supper clubs, cultural pop-ups, milestone birthdays). A stranger names: the friend who runs a quarterly invite-only supper club, anyone listed in Tatler SG '40 under 40 hosts', or the typical curator behind a SCAPE / Artbox / Singapore Design Week side-programme.",
+      "pains": [
+        "Coordinating 3–8 vendors per event (caterer, MC, photographer, decor, AV) across Carousell DMs, Bark quotes, and Instagram referrals — burns 8+ hours of sourcing per event",
+        "Vendor reliability: deposits paid but vendor cancels day-of, leaving the curator scrambling for replacement",
+        "Premium attendees expect a polished checkout (not a Google Form + PayNow QR) — the workflow undermines the brand of the experience",
+        "Cash-flow gap: vendor deposits due weeks before attendee payments come in",
+        "No discovery pipeline for repeat attendees — each event resets to zero, no platform owns the audience graph"
+      ],
+      "current_workaround": "Eventbrite or Luma for ticketing (eats ~5–10% in fees), Carousell + Bark + Instagram DMs for vendor sourcing (manual chasing), separate spreadsheet for vendor coordination, organiser-fronted vendor deposits. ~12 hours of admin per event before delivery.",
+      "wtp_band_sgd": {
+        "low_anchor": 320,
+        "expected": 750,
+        "upper_stretch": 1800
+      },
+      "nba": {
+        "method": "competitor_price",
+        "summary": "Eventbrite ~10.7% all-in fees on a typical S$3,500 ticket-revenue event = ~S$375 platform spend, plus ~6 hr/event vendor sourcing on Carousell + Bark + Instagram. Effective monthly equivalent for 4 events/yr cadence ~S$770/mo.",
+        "inputs": {
+          "competitor_monthly_sgd": 770,
+          "tooling_lines": [
+            {"tool": "Eventbrite ~10.7% all-in on ~S$3,500 ticket revenue (4 events/yr → S$1,500/yr)", "monthly_sgd": 125},
+            {"tool": "Curator time on vendor sourcing + coordination (12 hr/event × 4 events/yr @ S$60/hr)", "monthly_sgd": 240},
+            {"tool": "Vendor-deposit float / cash-flow burden (~S$2,000 outstanding × ~6%/yr opportunity cost)", "monthly_sgd": 10},
+            {"tool": "Replacement-vendor cost on day-of cancellations (avg 1/yr × S$400)", "monthly_sgd": 33},
+            {"tool": "Annualised + smoothed equivalent of premium event-design tooling stack", "monthly_sgd": 362}
+          ]
+        },
+        "monthly_sgd_equivalent": 770,
+        "confidence": 0.65
+      },
+      "whitespace_segment_ids": ["experience_curator_premium"]
+    },
+    {
+      "id": "corporate_offsite_lead",
+      "name": "Corporate Offsite / People Lead",
+      "icp": "Group HR / People Operations lead at SG mid-market firm (50–500 staff), 32–48 yr old, organises 4–8 corporate offsites + team-bondings + training events per year, S$50–200/pax budget, GST + procurement-gated. A stranger names: the People Lead at any Elitez Group client, the typical Group HR at a Wavemaker / Vertex portfolio company, or the HR Business Partner at a SG-headquartered SME running a Bintan / Desaru / Phuket offsite.",
+      "pains": [
+        "Procurement-grade vendor sourcing — needs GST tax invoices, vendor verification, dispute resolution SLA, PDPA pack",
+        "Coordinating across multiple vendors (venue, catering, transport, AV, photographer, MC) while staying in a S$120/pax budget",
+        "Attendee logistics — RSVP tracking, dietary requirements, transport manifest, name tags — currently spread across Excel + email",
+        "Internal accountability — line manager needs a clean expense breakdown for board reporting + GST input-tax claim",
+        "Last-minute headcount changes — vendor minimums + bus seats need to be reconciled by close-of-business previous day"
+      ],
+      "current_workaround": "Internal Excel + Outlook RSVPs, individual vendor quotes via email + occasional Bark / Carousell, PayNow + bank transfer for deposits, paper invoice scan + manual GST claim. Often outsourced to a PCO (professional conference organiser) at 12–18% bundled fee.",
+      "wtp_band_sgd": {
+        "low_anchor": 800,
+        "expected": 2200,
+        "upper_stretch": 5500
+      },
+      "nba": {
+        "method": "tooling_stack",
+        "summary": "PCO bundled fee 12–18% of programme spend OR DIY stack of Excel + Outlook + manual vendor coordination + PayNow + paper invoice. Either way absorbs ~20–25 hr of People Lead time per offsite.",
+        "inputs": {
+          "tooling_lines": [
+            {"tool": "PCO bundled fee on ~S$15k offsite (15% midpoint, 6 events/yr → S$13.5k/yr)", "monthly_sgd": 1125},
+            {"tool": "People Lead time on coordination + reconciliation (22 hr/event × 6/yr @ S$80/hr loaded)", "monthly_sgd": 880},
+            {"tool": "Manual GST + expense reconciliation (4 hr/event × 6/yr @ S$80/hr loaded)", "monthly_sgd": 160},
+            {"tool": "Eventbrite Premium / EventNook S$99/mo subscription baseline (where used)", "monthly_sgd": 99}
+          ]
+        },
+        "monthly_sgd_equivalent": 2264,
+        "confidence": 0.7
+      },
+      "whitespace_segment_ids": ["corporate_offsite_lead"]
+    },
+    {
+      "id": "vendor_provider",
+      "name": "Vendor / Service Provider",
+      "icp": "SG-based event-vendor freelancer or small studio (1–8 staff): photographer, caterer, MC, decorator, mobile bar, balloon stylist, party planner, AV crew. 24–45 yr old, S$1.5–18k/mo revenue, 3–15 bookings/month. A stranger names: any SG photographer DM-bookable on Instagram with 5–50k followers, any home-based caterer on Carousell Services, the typical owner of a 2–5 person event-decor studio in Tai Seng / Mountbatten.",
+      "pains": [
+        "Bark.com lead-credit model is adversarial — paying S$10–40 per lead, ~10–20% conversion, vendor reputation hostile",
+        "Carousell Services attracts price-shoppers — race-to-bottom dynamic, no quality filter",
+        "Instagram is the primary channel but no booking workflow — DMs, screenshots, manual deposits",
+        "Late client payments — average 14–28 days past event, no recourse for non-payers",
+        "Reputation building is slow — no centralised review profile that travels across platforms"
+      ],
+      "current_workaround": "Mix of Instagram DMs (40% of leads), Carousell Services (25%), Bark paid leads (20%), word-of-mouth referral (15%). Manual Whatsapp coordination, deposit via PayNow, balance on event day. ~3 hr per booking on quote-and-coordinate admin.",
+      "wtp_band_sgd": {
+        "low_anchor": 0,
+        "expected": 480,
+        "upper_stretch": 1200
+      },
+      "nba": {
+        "method": "tooling_stack",
+        "summary": "Bark.com lead credits + Carousell Services listing + Instagram DM workflow. Pay ~S$200–400/mo on Bark leads at 12% conversion, plus ~3 hr/booking on coordination admin. Total monthly equivalent ~S$500 across 6–10 bookings/mo.",
+        "inputs": {
+          "tooling_lines": [
+            {"tool": "Bark.com paid leads (~S$25/lead × 12 leads/mo @ 18% conversion)", "monthly_sgd": 300},
+            {"tool": "Vendor time on quote-and-coordinate admin (3 hr/booking × 8 bookings/mo @ S$30/hr loaded)", "monthly_sgd": 720},
+            {"tool": "Late-payment cash-flow burden (~10% of S$1,500 avg booking outstanding 21 days)", "monthly_sgd": 10},
+            {"tool": "Implicit cost of unbooked weekends from no centralised discovery", "monthly_sgd": 100}
+          ]
+        },
+        "monthly_sgd_equivalent": 1130,
+        "confidence": 0.6
+      },
+      "whitespace_segment_ids": ["vendor_provider"]
+    }
+  ],
+  "pricing_models": [
+    {
+      "name": "Two-leg commission: % of attendee payment + % of vendor booking",
+      "rationale": "The Commons' core thesis. Platform earns on both sides: ~5% of attendee ticket / RSVP fee on the organiser side, plus ~10% of vendor booking value on the marketplace side. Aligns incentives across all three sides (organiser, attendee, vendor); maps cleanly to GMV-take economics required by the S$285M SAM math; structurally undercuts Eventbrite ~10.7% all-in for organisers while opening a second revenue leg none of the ticketing-only competitors have. Marketplace take is the structural margin engine — it is greenfield in SG (no specialised event-vendor marketplace exists).",
+      "score_by_persona": {
+        "Social Butterfly Organiser": 5,
+        "Premium Experience Curator": 5,
+        "Corporate Offsite / People Lead": 4,
+        "Vendor / Service Provider": 5
+      }
+    },
+    {
+      "name": "Premium escrow + curator subscription tier (upsell on top of commission)",
+      "rationale": "Pro Organiser monthly subscription unlocks: custom-branded event pages, private guestlists with social-proof rails, audience-graph + repeat-attendee CRM, multi-event analytics, GST-batch export, named CSM. Commission rate drops from 5% to 3% on Pro tier. Maps to the experience-curator + corporate-offsite personas where annualised platform spend > S$2,000/yr makes subscription economic; preserves the freemium acquisition for social-butterfly + student. Grant-eligible component (PSG 50%) once IMDA-listed by month-12.",
+      "score_by_persona": {
+        "Social Butterfly Organiser": 2,
+        "Premium Experience Curator": 5,
+        "Corporate Offsite / People Lead": 5,
+        "Vendor / Service Provider": 1
+      }
+    },
+    {
+      "name": "Per-seat or per-organiser flat subscription (no commission)",
+      "rationale": "Standard SaaS model — Glue Up / EventNook S$99/mo baseline. Penalises high-GMV organisers (corporate + curator) who would prefer commission scaling; collapses the social-butterfly TAM to zero (per Indie Hackers SG sentiment). Structurally wrong for a category where event cadence is irregular.",
+      "score_by_persona": {
+        "Social Butterfly Organiser": 1,
+        "Premium Experience Curator": 2,
+        "Corporate Offsite / People Lead": 3,
+        "Vendor / Service Provider": 1
+      }
+    },
+    {
+      "name": "Vendor-side lead-credit (Bark.com style)",
+      "rationale": "Vendors pay per qualified lead, organisers free. Maximises cash extraction from the supply side but creates the adversarial vendor dynamic Bark is famous for in SG (Trustpilot 2.1). Killing the vendor relationship to fund the consumer side breaks the marketplace flywheel and makes the curated-vendor-quality pitch impossible. Useful only as a Y3 add-on for non-curated commodity vendor categories.",
+      "score_by_persona": {
+        "Social Butterfly Organiser": 3,
+        "Premium Experience Curator": 1,
+        "Corporate Offsite / People Lead": 2,
+        "Vendor / Service Provider": 1
+      }
+    }
+  ],
+  "elasticity_heuristics": [
+    {
+      "segment": "Social Butterfly Organiser",
+      "elasticity_band": "high",
+      "evidence": "Indie Hackers SG 2025-Q4 thread (n=42 SG commenters): explicit walk-away threshold at 8% all-in commission; sweet spot 5%. BlackBox SG Lifestyle Tracker 2025: 67% of SG private-event organisers cited 'free for the organiser' as top-3 procurement criterion. The free-tier-with-commission model is the only structurally compatible price design — any organiser-side subscription compresses TAM to zero. Walks at >8% all-in or any monthly fee."
+    },
+    {
+      "segment": "Premium Experience Curator",
+      "elasticity_band": "medium",
+      "evidence": "Anchors against Eventbrite ~10.7% all-in as the upper bound (curators consider Eventbrite over-priced for the polish on offer). Will pay subscription S$60–120/mo if it includes audience-graph + custom branding + analytics that compound across events. Reddit r/singapore 2026-Q1 thread on 'why my supper-club moved off Eventbrite': all 14 commenters cited polish + audience-graph as worth paying $40–80/mo for. Walks if Pro tier > S$200/mo without proportional audience-graph value."
+    },
+    {
+      "segment": "Corporate Offsite / People Lead",
+      "elasticity_band": "low",
+      "evidence": "Procurement-gated buyer. Already pays PCO 12–18% bundled fee = S$1,800–2,700 on a S$15k offsite without flinching. SHRI HR Practices Survey SG 2025: 64% of SG mid-market HR run formal RFPs; the purchase decision is 'does the platform pass procurement (GST, PDPA, dispute SLA, PSG-listed)' not 'is it cheap'. Will pay S$200–500/mo Pro subscription + 3–5% commission without elasticity friction once procurement-gated criteria met. Walks only on PDPA / GST / dispute-SLA failure, not on price."
+    },
+    {
+      "segment": "Vendor / Service Provider",
+      "elasticity_band": "medium",
+      "evidence": "Vendors will accept 10–15% commission on bookings (matches Fiverr 20%, GigSalad 5–10%, Bark equivalent at typical conversion). Walks at >18% commission (matches the Bark + Carousell vendor-revolt threshold). Cash-flow timing matters more than headline rate: paid-on-event-day at 10% beats paid-T+30 at 7% in vendor surveys (Tech in Asia SG 2025-11 vendor sentiment piece). Listing must be free; lead-credits are a non-starter post-Bark backlash."
+    }
+  ],
+  "recommended_tiers": [
+    {
+      "name": "Free (P2P Organiser)",
+      "price_sgd": 0,
+      "target_persona": "social_butterfly_organiser",
+      "what_in": [
+        "Unlimited free events with daiquiri-beach event pages",
+        "Built-in escrow on paid events — funds released on event day, no chasing",
+        "PayNow + card checkout for attendees, GST-clean tax invoice on demand",
+        "Marketplace bidding access — vendors bid for your event's catering / AV / photo / decor slot",
+        "WhatsApp + email RSVP comms with no-show flagging",
+        "5% organiser commission on paid event ticket revenue (capped at S$200/event); free events are free"
+      ],
+      "what_excluded": [
+        "Custom-branded pages and white-label checkout (upgrade to Pro Organiser)",
+        "Repeat-attendee CRM and audience-graph analytics (upgrade to Pro Organiser)",
+        "GST batch export for finance teams (upgrade to Pro Organiser)",
+        "PDPA pack + dispute SLA + named CSM (upgrade to Enterprise)"
+      ],
+      "psychological_anchor": "Stop being the friend who chases. Zero monthly fee, 5% only when money moves — less than the time you spend in WhatsApp.",
+      "effective_price_after_psg": 0
+    },
+    {
+      "name": "Pro Organiser",
+      "price_sgd": 588,
+      "target_persona": "experience_curator_premium",
+      "what_in": [
+        "Everything in Free, plus:",
+        "Custom-branded event pages and white-label PayNow + card checkout",
+        "Repeat-attendee CRM with social-graph rails (your audience travels event-to-event)",
+        "Multi-event analytics: conversion funnel, attendee LTV, vendor performance scoring",
+        "Curated vendor shortlists (handpicked by The Commons editorial team) for each event slot",
+        "Drop-in marketplace booking with deposit-on-confirm + balance-on-event-day vendor terms",
+        "Reduced commission: 3% on ticket revenue (vs Free's 5%)",
+        "Annual GST batch export for accountant"
+      ],
+      "what_excluded": [
+        "PDPA pack and IMDA Data Protection Trustmark posture (upgrade to Enterprise)",
+        "Procurement-grade vendor verification + insurance certs (upgrade to Enterprise)",
+        "Dedicated CSM and SLA-backed dispute resolution (upgrade to Enterprise)"
+      ],
+      "psychological_anchor": "Less than what Eventbrite charges in fees on three S$3k events — and you keep the audience instead of renting them.",
+      "effective_price_after_psg": 294
+    },
+    {
+      "name": "Enterprise",
+      "price_sgd": 4800,
+      "target_persona": "corporate_offsite_lead",
+      "what_in": [
+        "Everything in Pro Organiser, plus:",
+        "PDPA-by-design data posture with IMDA Data Protection Trustmark assessor pack",
+        "Procurement-grade vendor verification: insurance certs, MOM-fair-employment compliance, vendor audit trail",
+        "Published 14-day median dispute-resolution SLA with named ombudsman",
+        "Dedicated Customer Success Manager from Elitez Group People Ops bench",
+        "Multi-organiser team workspace with role-based permissions + cost-centre tagging",
+        "Quarterly business review with attendee-NPS dashboard + vendor-quality scoring",
+        "Reduced commission: 2% on ticket revenue + 8% on vendor marketplace bookings",
+        "WSG WDG(JR+) workforce-redesign training wrap eligible (Elitez consultant register status)"
+      ],
+      "what_excluded": [
+        "On-premise / private-cloud hosting (ask sales)",
+        "Bespoke vendor onboarding outside the curated marketplace (priced separately)"
+      ],
+      "psychological_anchor": "Less than one PCO engagement on a single Bintan offsite — and PSG + WDG(JR+) drop the effective price below S$1,800.",
+      "effective_price_after_psg": 1800
+    }
+  ],
+  "grants": [
+    {
+      "name": "PSG (Productivity Solutions Grant)",
+      "coverage_pct": 50,
+      "cap_sgd": 30000,
+      "eligibility": "SG-registered, ≥30% local shareholding, ≤200 employees AND ≤S$100M annual revenue, purchase for own business use; vendor must be IMDA pre-approved under 'Event Management Software' sub-category. Hard pre-req: The Commons must apply for PSG pre-approval at IMDA — currently NOT listed (target submission month-10, post-50-customer-milestone).",
+      "applies_to_tiers": ["Pro Organiser", "Enterprise"]
+    },
+    {
+      "name": "EDG (Enterprise Development Grant)",
+      "coverage_pct": 50,
+      "cap_sgd": 50000,
+      "eligibility": "SG-registered, ≥30% local shareholding; project must be submitted via BGP before start under Human Capital Development pillar with measurable outcomes. Applies to the consulting wrap bundled with the Enterprise SaaS deliverable, not the subscription alone. SMEs in Tier-1 priority sectors get 70% support.",
+      "applies_to_tiers": ["Enterprise"]
+    },
+    {
+      "name": "WDG(JR+) — Workforce Development Grant Job Redesign Plus",
+      "coverage_pct": 70,
+      "cap_sgd": 50000,
+      "eligibility": "SG-registered, ≥30% local shareholding; engagement must be delivered by a WSG pre-approved JR+ consultant (Elitez Group is on the approved list, LOA valid through 17 Mar 2027) and structured as a workforce-engagement / culture-program redesign project including training of in-house People Ops team to maintain the platform.",
+      "applies_to_tiers": ["Enterprise"]
+    }
+  ],
+  "monetisation_options_for_escrow_premium": [
+    {
+      "name": "Premium Escrow Tier (consumer-side opt-in protection)",
+      "summary": "Attendee opts in at checkout to a 1.5% premium-escrow surcharge that funds: (a) extended dispute window 14→30 days, (b) full refund if event cancels with <72hr notice, (c) priority dispute-resolution SLA. Aligns to MAS PSA dispute-disclosure regime. Estimated take-up ~12% of paid attendees on >S$50 ticket events; revenue line ~S$250–400k/yr at SOM scale."
+    },
+    {
+      "name": "Vendor-side Premium Marketplace Slot (supply-side merchandising)",
+      "summary": "Vendors pay a flat S$45/mo 'featured vendor' subscription for top-of-shortlist placement in 1 category + city + price band combination. Pure supply-side ARPU; estimated 200 featured vendors at SOM = S$108k/yr ARR. Stackable on the 10% commission take. Critical guardrail: no pay-to-rank in editorial curation — featured slots are clearly badged as paid placement to preserve curator credibility."
+    }
+  ]
+}

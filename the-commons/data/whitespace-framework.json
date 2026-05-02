@@ -1,47 +1,1018 @@
 {
-  "grid_size": "8x8",
-  "research_date": "2026-04-22",
-  "project": "The Commons",
-  "notes": "8x8 overview. Segments span organiser type x scale x formality. Needs mix fees, escrow/trust, marketplace depth, SG localisation.",
-  "canvas_dims": [
-    "Low platform fee (%)",
-    "Escrow by default",
-    "2-sided vendor marketplace",
-    "SG localisation (PayNow/GST)",
-    "Brand trust / polish",
-    "Creator tools depth",
-    "Payment flexibility",
-    "Community / virality"
-  ],
-  "us_scores_canvas": [4, 5, 5, 5, 4, 4, 4, 3],
-  "us_scores_rationale": {
-    "Low platform fee (%)": "Mid-tier fee (~6-8%) — not the cheapest (DIY/PayNow is 0%) but cheaper than Eventbrite's ~10%+",
-    "Escrow by default": "Core differentiator — others pay-immediately or charge add-on for refund protection",
-    "2-sided vendor marketplace": "Commons uniquely bundles event platform + freelance marketplace under one roof",
-    "SG localisation (PayNow/GST)": "PayNow native, SGD-priced, GST-aware, IRAS-friendly",
-    "Brand trust / polish": "Daiquiri/beach brand signals cultural not corporate; Elitez Group backing adds legitimacy",
-    "Creator tools depth": "Mid — page builder + ticket types + marketplace. Less deep than Eventbrite/Ticketmaster but more purposeful",
-    "Payment flexibility": "PayNow + cards + escrow. Lacks buy-now-pay-later.",
-    "Community / virality": "Early — no discovery feed yet; organiser-driven traffic"
+  "meta": {
+    "project_name": "The Commons",
+    "brand_tokens": {
+      "primary": "#FF6B6B",
+      "secondary": "#1A1A2E",
+      "accent": "#00D2FF",
+      "neutral_dark": "#1A1A2E",
+      "neutral_light": "#FFF8F0",
+      "font_display": "Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+      "font_body": "Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+      "currency_label": "SGD"
+    },
+    "research_date": "2026-05-02",
+    "sample_data": false,
+    "our_scores_are_projections": true,
+    "our_scoring_note": "The Commons is in build-phase: marketplace data + competitor intel scaffolding shipped, escrow primitive and templates pending. PSG-listing application not yet submitted. MAS PSA path begins as Stripe Connect MoR, MPI licence target month-12+. Scores reflect shipped-or-imminent capability, not aspiration."
   },
-  "segments": [
-    { "id": "hobby_creator_sub100",    "label": "Hobby creator <100-seat",       "note": "Workshops, niche meetups, bake sales" },
-    { "id": "pro_trainer_1k_plus",     "label": "Pro trainer 100-1000 seat",     "note": "Recurring courses, retreats, conferences" },
-    { "id": "corporate_offsite",       "label": "Corporate offsite / retreat",   "note": "HR team running 20-100 ppl internal" },
-    { "id": "fitness_wellness_chain",  "label": "Fitness / wellness chain",      "note": "Yoga, pilates, HIIT, multi-outlet" },
-    { "id": "cultural_ngo_ticketed",   "label": "Cultural / NGO ticketed",       "note": "Heritage tours, NGO fundraisers" },
-    { "id": "foodtour_local_guide",    "label": "Food tour / local guide",       "note": "Hawker walks, craft cocktails, drop-ins" },
-    { "id": "one_off_private_event",   "label": "One-off private event",         "note": "Weddings, birthdays, dinner parties" },
-    { "id": "regulated_pdu_ticketed",  "label": "Regulated / PDU-earning event", "note": "IBF/SILE CPD, professional CPD" }
-  ],
-  "needs": [
-    { "id": "low_fee_sub5pct",        "label": "Platform fee under 5%",         "axis": "commercial" },
-    { "id": "escrow_protection",      "label": "Escrow / refund protection",    "axis": "trust" },
-    { "id": "supporting_vendors",     "label": "Find support vendors in-app",   "axis": "operational" },
-    { "id": "sg_payments_native",     "label": "PayNow + SGD native",           "axis": "operational" },
-    { "id": "discovery_traffic",      "label": "Platform brings audience",      "axis": "growth" },
-    { "id": "recurring_cohort_tools", "label": "Recurring / cohort class tools","axis": "operational" },
-    { "id": "corporate_invoice_gst",  "label": "Corporate invoice + GST",       "axis": "compliance" },
-    { "id": "creator_page_design",    "label": "Page / landing design tools",   "axis": "brand" }
+  "strategy_canvas": {
+    "headline_thesis": "The Commons breaks the cluster on event_day_escrow_default (no SG-relevant ticketing platform offers true event-day escrow as default — Eventbrite / Peatix / Luma all settle to organiser before the event) and integrated_vendor_marketplace (no SG event-specialised vendor marketplace exists — Bark / Carousell / Fiverr each cover slices but none consolidate), at the deliberate cost of global_discovery_reach where Eventbrite's domain authority and Klook's tourism audience will continue to win pure-discovery plays.",
+    "dimensions": [
+      {
+        "key": "event_day_escrow_default",
+        "label": "Event-day escrow as default"
+      },
+      {
+        "key": "integrated_vendor_marketplace",
+        "label": "Integrated SG vendor marketplace"
+      },
+      {
+        "key": "sg_payment_localisation",
+        "label": "SG payment localisation (PayNow + GST + IRAS)"
+      },
+      {
+        "key": "low_organiser_fee",
+        "label": "Low organiser fee (% of GMV)"
+      },
+      {
+        "key": "consumer_brand_polish",
+        "label": "Consumer brand polish (non-corporate aesthetic)"
+      },
+      {
+        "key": "organiser_tooling_depth",
+        "label": "Organiser tooling depth"
+      },
+      {
+        "key": "global_discovery_reach",
+        "label": "Global / cross-border discovery reach"
+      },
+      {
+        "key": "vendor_fairness_posture",
+        "label": "Vendor-fairness posture (MOM / TAFEP-aligned)"
+      }
+    ],
+    "rubrics": {
+      "event_day_escrow_default": "0 — Funds settle instantly to organiser at point of attendee payment; zero buyer protection. 1 — Refunds-on-request workflow but no held funds; reversal depends on organiser solvency. 2 — Optional add-on escrow at extra cost (e.g. Carousell Protected Payment). 3 — True escrow on a subset of transactions (e.g. high-value asset deals only). 4 — Default escrow held in MAS-licensed merchant rails (Stripe Connect MoR, fixed release date). 5 — MAS MPI-licensed in-house escrow with published 14-day dispute SLA, ringfenced trust account, and event-day-trigger release.",
+      "integrated_vendor_marketplace": "0 — Single-side platform only (ticketing OR venue OR escrow). 1 — Ad-hoc partner integrations (e.g. Eventbrite + Mailchimp). 2 — Adjacent-category marketplace (e.g. Carousell Services covers some event vendors). 3 — Open vendor-listing surface but no event-context binding (Bark, Fiverr). 4 — Curated vendor marketplace with event-context binding (vendors bid for an event slot) but limited category coverage. 5 — Full-stack curated SG event-vendor marketplace (catering + AV + photo + decor + MC + venue) with event-context bidding, vendor verification, and integrated booking + escrow.",
+      "sg_payment_localisation": "0 — USD-only, no SGD pricing, no PayNow. 1 — SGD displayed but card-only checkout, no PayNow. 2 — PayNow available as add-on rail, no GST invoicing. 3 — PayNow native + SGD-default, partial GST invoicing. 4 — PayNow + SGD + IRAS-ready GST tax invoice + corporate billing flow. 5 — Native PayNow QR-first checkout + GST batch export + PDPA-by-design + IM8 cybersecurity baseline.",
+      "low_organiser_fee": "0 — All-in fee >12% on a typical S$50 ticket. 1 — 10–12% all-in (Eventbrite ~10.7%). 2 — 7–10% all-in. 3 — 5–7% all-in (Luma ~5%, Peatix ~5.9%). 4 — 3–5% all-in (Kickstarter 5%, Stripe-direct 3.4% + S$0.50). 5 — <3% all-in OR free with optional commission (DIY PayNow, The Commons free events).",
+      "consumer_brand_polish": "0 — Brochure-ware / dated UI (SISTIC). 1 — Functional but corporate / cold (EventNook). 2 — Polished corporate aesthetic (Eventbrite). 3 — Good UI but generic SaaS skin (Peatix, Luma). 4 — Distinctive brand voice + curated visual world (Klook tourism, Airbnb Experiences). 5 — Distinctive non-corporate aesthetic with personality (Partiful's playfulness, The Commons' daiquiri-beach).",
+      "organiser_tooling_depth": "0 — Listing + payment only. 1 — RSVP + check-in. 2 — RSVP + check-in + email comms + promo codes. 3 — Above + analytics + multi-event dashboard. 4 — Above + custom branding + audience CRM + team workspace. 5 — Above + procurement-grade features (vendor verification, GST batch export, dispute SLA, role-based permissions).",
+      "global_discovery_reach": "0 — No discovery surface, organiser-driven traffic only. 1 — Niche regional audience (Funzing UK). 2 — SG-only audience (EventNook, SISTIC). 3 — SE Asia regional audience (Klook, Peatix). 4 — Global tech / hobby network (Luma, Meetup). 5 — Massive global discovery moat (Eventbrite SEO + email base, Airbnb traveller audience).",
+      "vendor_fairness_posture": "0 — Vendor-adversarial model (Bark.com lead-credits with hostile reputation). 1 — Generic marketplace with no vendor-protection (Fiverr 20% take). 2 — Some vendor protections (Carousell CarouPay protected payment). 3 — Published commission rate + dispute window. 4 — TAFEP / MOM-aligned: published commission + 90-day rate-change notice + 28-day delisting notice + transparent dispute SLA. 5 — As 4 plus vendor-NPS dashboard, named ombudsman, public vendor-revenue transparency report."
+    },
+    "scores": {
+      "us": {
+        "event_day_escrow_default": 4,
+        "integrated_vendor_marketplace": 4,
+        "sg_payment_localisation": 5,
+        "low_organiser_fee": 4,
+        "consumer_brand_polish": 5,
+        "organiser_tooling_depth": 3,
+        "global_discovery_reach": 1,
+        "vendor_fairness_posture": 4
+      },
+      "eventbrite": {
+        "event_day_escrow_default": 1,
+        "integrated_vendor_marketplace": 0,
+        "sg_payment_localisation": 2,
+        "low_organiser_fee": 1,
+        "consumer_brand_polish": 2,
+        "organiser_tooling_depth": 5,
+        "global_discovery_reach": 5,
+        "vendor_fairness_posture": 1
+      },
+      "peatix": {
+        "event_day_escrow_default": 1,
+        "integrated_vendor_marketplace": 0,
+        "sg_payment_localisation": 3,
+        "low_organiser_fee": 3,
+        "consumer_brand_polish": 3,
+        "organiser_tooling_depth": 3,
+        "global_discovery_reach": 3,
+        "vendor_fairness_posture": 1
+      },
+      "luma": {
+        "event_day_escrow_default": 1,
+        "integrated_vendor_marketplace": 0,
+        "sg_payment_localisation": 2,
+        "low_organiser_fee": 3,
+        "consumer_brand_polish": 4,
+        "organiser_tooling_depth": 3,
+        "global_discovery_reach": 4,
+        "vendor_fairness_posture": 1
+      },
+      "sistic": {
+        "event_day_escrow_default": 1,
+        "integrated_vendor_marketplace": 0,
+        "sg_payment_localisation": 4,
+        "low_organiser_fee": 2,
+        "consumer_brand_polish": 0,
+        "organiser_tooling_depth": 4,
+        "global_discovery_reach": 2,
+        "vendor_fairness_posture": 1
+      },
+      "eventnook": {
+        "event_day_escrow_default": 1,
+        "integrated_vendor_marketplace": 0,
+        "sg_payment_localisation": 4,
+        "low_organiser_fee": 3,
+        "consumer_brand_polish": 1,
+        "organiser_tooling_depth": 3,
+        "global_discovery_reach": 2,
+        "vendor_fairness_posture": 1
+      },
+      "klook": {
+        "event_day_escrow_default": 1,
+        "integrated_vendor_marketplace": 3,
+        "sg_payment_localisation": 5,
+        "low_organiser_fee": 1,
+        "consumer_brand_polish": 4,
+        "organiser_tooling_depth": 2,
+        "global_discovery_reach": 4,
+        "vendor_fairness_posture": 2
+      },
+      "airbnb_experiences": {
+        "event_day_escrow_default": 1,
+        "integrated_vendor_marketplace": 3,
+        "sg_payment_localisation": 1,
+        "low_organiser_fee": 1,
+        "consumer_brand_polish": 4,
+        "organiser_tooling_depth": 2,
+        "global_discovery_reach": 5,
+        "vendor_fairness_posture": 2
+      },
+      "funempire": {
+        "event_day_escrow_default": 1,
+        "integrated_vendor_marketplace": 2,
+        "sg_payment_localisation": 4,
+        "low_organiser_fee": 1,
+        "consumer_brand_polish": 3,
+        "organiser_tooling_depth": 2,
+        "global_discovery_reach": 2,
+        "vendor_fairness_posture": 2
+      },
+      "funzing": {
+        "event_day_escrow_default": 1,
+        "integrated_vendor_marketplace": 2,
+        "sg_payment_localisation": 1,
+        "low_organiser_fee": 1,
+        "consumer_brand_polish": 3,
+        "organiser_tooling_depth": 2,
+        "global_discovery_reach": 1,
+        "vendor_fairness_posture": 1
+      },
+      "venuerific": {
+        "event_day_escrow_default": 1,
+        "integrated_vendor_marketplace": 2,
+        "sg_payment_localisation": 4,
+        "low_organiser_fee": 2,
+        "consumer_brand_polish": 3,
+        "organiser_tooling_depth": 1,
+        "global_discovery_reach": 2,
+        "vendor_fairness_posture": 1
+      },
+      "peerspace": {
+        "event_day_escrow_default": 4,
+        "integrated_vendor_marketplace": 2,
+        "sg_payment_localisation": 1,
+        "low_organiser_fee": 1,
+        "consumer_brand_polish": 4,
+        "organiser_tooling_depth": 2,
+        "global_discovery_reach": 2,
+        "vendor_fairness_posture": 3
+      },
+      "stripe_connect": {
+        "event_day_escrow_default": 4,
+        "integrated_vendor_marketplace": 0,
+        "sg_payment_localisation": 4,
+        "low_organiser_fee": 4,
+        "consumer_brand_polish": 0,
+        "organiser_tooling_depth": 0,
+        "global_discovery_reach": 0,
+        "vendor_fairness_posture": 0
+      },
+      "trustap": {
+        "event_day_escrow_default": 5,
+        "integrated_vendor_marketplace": 0,
+        "sg_payment_localisation": 2,
+        "low_organiser_fee": 3,
+        "consumer_brand_polish": 2,
+        "organiser_tooling_depth": 1,
+        "global_discovery_reach": 0,
+        "vendor_fairness_posture": 3
+      },
+      "escrow_com": {
+        "event_day_escrow_default": 5,
+        "integrated_vendor_marketplace": 0,
+        "sg_payment_localisation": 1,
+        "low_organiser_fee": 3,
+        "consumer_brand_polish": 0,
+        "organiser_tooling_depth": 1,
+        "global_discovery_reach": 0,
+        "vendor_fairness_posture": 2
+      },
+      "paynow_diy": {
+        "event_day_escrow_default": 0,
+        "integrated_vendor_marketplace": 0,
+        "sg_payment_localisation": 5,
+        "low_organiser_fee": 5,
+        "consumer_brand_polish": 1,
+        "organiser_tooling_depth": 0,
+        "global_discovery_reach": 0,
+        "vendor_fairness_posture": 0
+      },
+      "splitwise": {
+        "event_day_escrow_default": 0,
+        "integrated_vendor_marketplace": 0,
+        "sg_payment_localisation": 1,
+        "low_organiser_fee": 5,
+        "consumer_brand_polish": 3,
+        "organiser_tooling_depth": 1,
+        "global_discovery_reach": 0,
+        "vendor_fairness_posture": 0
+      },
+      "fiverr": {
+        "event_day_escrow_default": 4,
+        "integrated_vendor_marketplace": 3,
+        "sg_payment_localisation": 1,
+        "low_organiser_fee": 0,
+        "consumer_brand_polish": 3,
+        "organiser_tooling_depth": 2,
+        "global_discovery_reach": 4,
+        "vendor_fairness_posture": 1
+      },
+      "bark_com": {
+        "event_day_escrow_default": 0,
+        "integrated_vendor_marketplace": 3,
+        "sg_payment_localisation": 2,
+        "low_organiser_fee": 4,
+        "consumer_brand_polish": 2,
+        "organiser_tooling_depth": 1,
+        "global_discovery_reach": 2,
+        "vendor_fairness_posture": 0
+      },
+      "carousell_services": {
+        "event_day_escrow_default": 2,
+        "integrated_vendor_marketplace": 2,
+        "sg_payment_localisation": 4,
+        "low_organiser_fee": 4,
+        "consumer_brand_polish": 3,
+        "organiser_tooling_depth": 1,
+        "global_discovery_reach": 2,
+        "vendor_fairness_posture": 2
+      },
+      "humanitix": {
+        "event_day_escrow_default": 1,
+        "integrated_vendor_marketplace": 0,
+        "sg_payment_localisation": 1,
+        "low_organiser_fee": 1,
+        "consumer_brand_polish": 3,
+        "organiser_tooling_depth": 3,
+        "global_discovery_reach": 2,
+        "vendor_fairness_posture": 1
+      },
+      "meetup": {
+        "event_day_escrow_default": 0,
+        "integrated_vendor_marketplace": 0,
+        "sg_payment_localisation": 1,
+        "low_organiser_fee": 1,
+        "consumer_brand_polish": 2,
+        "organiser_tooling_depth": 2,
+        "global_discovery_reach": 4,
+        "vendor_fairness_posture": 1
+      },
+      "partiful": {
+        "event_day_escrow_default": 0,
+        "integrated_vendor_marketplace": 0,
+        "sg_payment_localisation": 1,
+        "low_organiser_fee": 5,
+        "consumer_brand_polish": 5,
+        "organiser_tooling_depth": 2,
+        "global_discovery_reach": 2,
+        "vendor_fairness_posture": 1
+      },
+      "cvent": {
+        "event_day_escrow_default": 1,
+        "integrated_vendor_marketplace": 1,
+        "sg_payment_localisation": 2,
+        "low_organiser_fee": 0,
+        "consumer_brand_polish": 1,
+        "organiser_tooling_depth": 5,
+        "global_discovery_reach": 3,
+        "vendor_fairness_posture": 2
+      },
+      "splash": {
+        "event_day_escrow_default": 1,
+        "integrated_vendor_marketplace": 0,
+        "sg_payment_localisation": 1,
+        "low_organiser_fee": 1,
+        "consumer_brand_polish": 4,
+        "organiser_tooling_depth": 4,
+        "global_discovery_reach": 2,
+        "vendor_fairness_posture": 1
+      },
+      "glue_up": {
+        "event_day_escrow_default": 1,
+        "integrated_vendor_marketplace": 0,
+        "sg_payment_localisation": 4,
+        "low_organiser_fee": 1,
+        "consumer_brand_polish": 2,
+        "organiser_tooling_depth": 4,
+        "global_discovery_reach": 2,
+        "vendor_fairness_posture": 1
+      },
+      "diy_form_paynow_whatsapp": {
+        "event_day_escrow_default": 0,
+        "integrated_vendor_marketplace": 0,
+        "sg_payment_localisation": 5,
+        "low_organiser_fee": 5,
+        "consumer_brand_polish": 1,
+        "organiser_tooling_depth": 0,
+        "global_discovery_reach": 0,
+        "vendor_fairness_posture": 0
+      }
+    }
+  },
+  "heatmap": {
+    "segments": [
+      {
+        "id": "social_butterfly_organiser",
+        "name": "Social Butterfly Organiser",
+        "descriptor": "SG 25–34 PMET running 6–12 paid friend-group events / yr (birthdays, KTV, weekend trips, hen parties); pain is collection awkwardness."
+      },
+      {
+        "id": "experience_curator_premium",
+        "name": "Premium Experience Curator",
+        "descriptor": "SG 30–42 curator running 3–6 elaborate events / yr (themed dinners, supper clubs, immersive workshops); needs polished checkout + vendor coordination."
+      },
+      {
+        "id": "corporate_offsite_lead",
+        "name": "Corporate Offsite / People Lead",
+        "descriptor": "Group HR / People Lead at 50–500 staff SG mid-market firm; runs 4–8 offsites / training events / yr; procurement-gated, GST + PDPA + dispute-SLA must-haves."
+      },
+      {
+        "id": "community_hobby_organiser",
+        "name": "Community Hobby Organiser",
+        "descriptor": "SG hobbyist running recurring meetups (running club, board games, language exchange, photography walks); 12–48 events / yr; price-sensitive."
+      },
+      {
+        "id": "vendor_provider",
+        "name": "Vendor / Service Provider",
+        "descriptor": "SG event-vendor freelancer or small studio (photographer, caterer, MC, decor); 3–15 bookings/mo; needs leads + cash-flow + reputation."
+      }
+    ],
+    "needs": [
+      {
+        "id": "event_day_escrow",
+        "name": "Event-day escrow + dispute resolution",
+        "short": "escrow"
+      },
+      {
+        "id": "integrated_vendor_sourcing",
+        "name": "Integrated SG vendor sourcing + booking",
+        "short": "vendors"
+      },
+      {
+        "id": "sg_payment_localisation",
+        "name": "PayNow + GST + IRAS-ready",
+        "short": "sg_pay"
+      },
+      {
+        "id": "low_fee_for_small_tickets",
+        "name": "Low fee on sub-S$50 tickets",
+        "short": "low_fee"
+      },
+      {
+        "id": "polished_consumer_checkout",
+        "name": "Polished non-corporate checkout UX",
+        "short": "polish"
+      },
+      {
+        "id": "procurement_grade_compliance",
+        "name": "Procurement-grade compliance (PDPA + dispute SLA)",
+        "short": "compliance"
+      }
+    ],
+    "cells": {
+      "social_butterfly_organiser:event_day_escrow": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "carousell_services",
+            "name": "Carousell Services",
+            "score": 3,
+            "specialisation_for_cell": "CarouPay optional escrow at 3% + S$0.50 covers low-stakes friend bookings; not event-context-aware, no dispute SLA."
+          },
+          {
+            "id": "paynow_diy",
+            "name": "PayNow / WhatsApp DIY",
+            "score": 0
+          },
+          {
+            "id": "trustap",
+            "name": "Trustap",
+            "score": 3,
+            "specialisation_for_cell": "Trustap P2P escrow at ~3.95% works mechanically; SG awareness near zero, no event-day-trigger semantics."
+          },
+          {
+            "id": "splitwise",
+            "name": "Splitwise",
+            "score": 0
+          }
+        ]
+      },
+      "social_butterfly_organiser:integrated_vendor_sourcing": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "carousell_services",
+            "name": "Carousell Services",
+            "score": 3,
+            "specialisation_for_cell": "Carousell Services covers party photographers, MCs, balloon delivery at variable quality; not event-bound, no curation."
+          },
+          {
+            "id": "bark_com",
+            "name": "Bark.com",
+            "score": 3,
+            "specialisation_for_cell": "Bark covers SG party / catering / photo vendors at S$10–40/lead but vendor-adversarial; no escrow, no event context."
+          },
+          {
+            "id": "funempire",
+            "name": "FunEmpire",
+            "score": 0
+          }
+        ]
+      },
+      "social_butterfly_organiser:sg_payment_localisation": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "paynow_diy",
+            "name": "PayNow / WhatsApp DIY",
+            "score": 5,
+            "specialisation_for_cell": "Universal SG rail; zero friction at payment, but the chase + no-show absorption is all on the organiser."
+          },
+          {
+            "id": "carousell_services",
+            "name": "Carousell Services",
+            "score": 4,
+            "specialisation_for_cell": "CarouPay native PayNow + SGD; GST invoicing patchy for casual transactions."
+          },
+          {
+            "id": "peatix",
+            "name": "Peatix",
+            "score": 3,
+            "specialisation_for_cell": "Peatix SGD + cards but no PayNow; T+30 organiser payout is structural friction for friend-group cash collection."
+          },
+          {
+            "id": "luma",
+            "name": "Luma",
+            "score": 2,
+            "specialisation_for_cell": "Luma USD-leaning; SGD shown at checkout but no PayNow + weak GST posture."
+          },
+          {
+            "id": "eventbrite",
+            "name": "Eventbrite",
+            "score": 2,
+            "specialisation_for_cell": "Eventbrite SGD pricing + cards but no PayNow rail; small-ticket UX feels like buying a US conference ticket."
+          }
+        ]
+      },
+      "social_butterfly_organiser:low_fee_for_small_tickets": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "paynow_diy",
+            "name": "PayNow / WhatsApp DIY",
+            "score": 5,
+            "specialisation_for_cell": "PayNow personal is free; the 'fee' is 4–8 hours of organiser time + the social cost of chasing."
+          },
+          {
+            "id": "partiful",
+            "name": "Partiful",
+            "score": 5,
+            "specialisation_for_cell": "Partiful fully free for free events (no payment rail in SG); the moment money moves it falls back to PayNow DIY."
+          },
+          {
+            "id": "luma",
+            "name": "Luma",
+            "score": 3,
+            "specialisation_for_cell": "Luma free for free events, ~5% on paid; better than Eventbrite but still painful at S$15–30 ticket bands."
+          },
+          {
+            "id": "peatix",
+            "name": "Peatix",
+            "score": 3,
+            "specialisation_for_cell": "Peatix 4.9% + S$0.99/ticket — beats Eventbrite materially on S$20–40 tickets but T+30 payout is the structural drag."
+          },
+          {
+            "id": "eventbrite",
+            "name": "Eventbrite",
+            "score": 1,
+            "specialisation_for_cell": "Eventbrite ~10.7% on a S$30 ticket = ~S$3.20 — kills small-ticket workshops, well-flagged in Indie Hackers SG."
+          }
+        ]
+      },
+      "social_butterfly_organiser:polished_consumer_checkout": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "partiful",
+            "name": "Partiful",
+            "score": 5,
+            "specialisation_for_cell": "Partiful's playful brand is closest non-corporate-coded reference for SG friend events; no SG payment, no escrow."
+          },
+          {
+            "id": "luma",
+            "name": "Luma",
+            "score": 4,
+            "specialisation_for_cell": "Luma calendar-native invites + social-proof rails are best-in-class polish but US-coded, no SG warmth."
+          },
+          {
+            "id": "eventbrite",
+            "name": "Eventbrite",
+            "score": 2,
+            "specialisation_for_cell": "Eventbrite checkout reads 'concert ticket' not 'friend's birthday' — SG Reddit thread Q1 2026 explicit on this."
+          },
+          {
+            "id": "peatix",
+            "name": "Peatix",
+            "score": 3,
+            "specialisation_for_cell": "Peatix mobile UX is functional but generic SaaS-skin; mobile-first which matters for the under-35 cohort."
+          }
+        ]
+      },
+      "social_butterfly_organiser:procurement_grade_compliance": {
+        "our_score": 3,
+        "competitors": []
+      },
+      "experience_curator_premium:event_day_escrow": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "peerspace",
+            "name": "Peerspace",
+            "score": 4,
+            "specialisation_for_cell": "Peerspace hourly-rental escrow is the cleanest reference for premium event flow; spaces only, no SG inventory of scale."
+          },
+          {
+            "id": "trustap",
+            "name": "Trustap",
+            "score": 3,
+            "specialisation_for_cell": "Trustap two-sided P2P escrow + dispute resolution; embeddable but no curator brand affinity."
+          }
+        ]
+      },
+      "experience_curator_premium:integrated_vendor_sourcing": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "funempire",
+            "name": "FunEmpire",
+            "score": 3,
+            "specialisation_for_cell": "FunEmpire curated team-bonding catalogue is the closest SG curated-vendor reference; corporate-bonding-coded only."
+          },
+          {
+            "id": "klook",
+            "name": "Klook",
+            "score": 3,
+            "specialisation_for_cell": "Klook curated experience operators; closed marketplace — peer curators cannot self-list one-off events."
+          },
+          {
+            "id": "carousell_services",
+            "name": "Carousell Services",
+            "score": 2,
+            "specialisation_for_cell": "Carousell Services is the silent vendor catalogue but quality is variable; price-shopper dynamic kills curation."
+          },
+          {
+            "id": "fiverr",
+            "name": "Fiverr",
+            "score": 2,
+            "specialisation_for_cell": "Fiverr covers some MC / video / design vendors with built-in escrow but generic + global, not SG-event-specialised."
+          }
+        ]
+      },
+      "experience_curator_premium:sg_payment_localisation": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "klook",
+            "name": "Klook",
+            "score": 5,
+            "specialisation_for_cell": "Klook PayNow + SGD + GST mature; closed-marketplace constraint blocks curator self-listing."
+          },
+          {
+            "id": "eventnook",
+            "name": "EventNook",
+            "score": 4,
+            "specialisation_for_cell": "EventNook SG-built with native PayNow + GST/IRAS invoicing; corporate-coded UX puts off premium curators."
+          },
+          {
+            "id": "peatix",
+            "name": "Peatix",
+            "score": 3,
+            "specialisation_for_cell": "Peatix SGD-native; no PayNow rail, GST patchy for premium organiser invoicing needs."
+          }
+        ]
+      },
+      "experience_curator_premium:low_fee_for_small_tickets": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "luma",
+            "name": "Luma",
+            "score": 3,
+            "specialisation_for_cell": "Luma ~5% beats Eventbrite for S$30–80 supper-club tickets; no vendor-coordination layer."
+          },
+          {
+            "id": "peatix",
+            "name": "Peatix",
+            "score": 3,
+            "specialisation_for_cell": "Peatix 4.9% + S$0.99 works at premium-curator price points; no vendor marketplace + no audience CRM."
+          },
+          {
+            "id": "eventbrite",
+            "name": "Eventbrite",
+            "score": 1,
+            "specialisation_for_cell": "Eventbrite ~10.7% is a 5-figure annual fee at curator GMV; brand-misfit + fee-stacking pushed cohort to Luma."
+          }
+        ]
+      },
+      "experience_curator_premium:polished_consumer_checkout": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "airbnb_experiences",
+            "name": "Airbnb Experiences",
+            "score": 4,
+            "specialisation_for_cell": "Airbnb Experiences best-in-class curated polish; traveller-only audience structurally incompatible with SG curators."
+          },
+          {
+            "id": "klook",
+            "name": "Klook",
+            "score": 4,
+            "specialisation_for_cell": "Klook mobile-first experience-card UX is the SG consumer benchmark; not self-serve for curators."
+          },
+          {
+            "id": "luma",
+            "name": "Luma",
+            "score": 4,
+            "specialisation_for_cell": "Luma social-proof rails + calendar-native invites read polished but US-coded for tech / VC, not SG curator world."
+          }
+        ]
+      },
+      "experience_curator_premium:procurement_grade_compliance": {
+        "our_score": 3,
+        "competitors": [
+          {
+            "id": "klook",
+            "name": "Klook",
+            "score": 3,
+            "specialisation_for_cell": "Klook procurement-grade for tourism vendors; not extensible to SG curator vendor pool."
+          }
+        ]
+      },
+      "corporate_offsite_lead:event_day_escrow": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "peerspace",
+            "name": "Peerspace",
+            "score": 4,
+            "specialisation_for_cell": "Peerspace escrow + insurance bundle is corporate-procurement-clean; no SG inventory of meaningful scale."
+          },
+          {
+            "id": "stripe_connect",
+            "name": "Stripe Connect",
+            "score": 4,
+            "specialisation_for_cell": "Stripe Connect MoR is the underlying primitive any procurement-grade platform uses; raw infra, no organiser surface."
+          }
+        ]
+      },
+      "corporate_offsite_lead:integrated_vendor_sourcing": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "funempire",
+            "name": "FunEmpire",
+            "score": 4,
+            "specialisation_for_cell": "FunEmpire is the SG corporate-bonding incumbent — curated team-bonding, PayNow + invoicing; closed catalogue."
+          },
+          {
+            "id": "klook",
+            "name": "Klook",
+            "score": 3,
+            "specialisation_for_cell": "Klook For Business covers experience programming for offsites; closed marketplace, no procurement-gated vetting."
+          },
+          {
+            "id": "venuerific",
+            "name": "Venuerific",
+            "score": 2,
+            "specialisation_for_cell": "Venuerific covers SG venue discovery + quote comparison; transactions happen offline, no escrow + no extension."
+          }
+        ]
+      },
+      "corporate_offsite_lead:sg_payment_localisation": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "eventnook",
+            "name": "EventNook",
+            "score": 4,
+            "specialisation_for_cell": "EventNook is the SG corporate-event default — PayNow + GST/IRAS-ready; weak vendor-marketplace + dated UX."
+          },
+          {
+            "id": "klook",
+            "name": "Klook",
+            "score": 5,
+            "specialisation_for_cell": "Klook For Business carries enterprise PayNow + GST + corporate billing; closed marketplace constraint."
+          },
+          {
+            "id": "glue_up",
+            "name": "Glue Up",
+            "score": 4,
+            "specialisation_for_cell": "Glue Up SG-listed PSG event-management SaaS; PayNow + GST + corporate workflow but expensive (S$3–8k/yr) + thin polish."
+          }
+        ]
+      },
+      "corporate_offsite_lead:low_fee_for_small_tickets": {
+        "our_score": 3,
+        "competitors": []
+      },
+      "corporate_offsite_lead:polished_consumer_checkout": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "klook",
+            "name": "Klook",
+            "score": 4,
+            "specialisation_for_cell": "Klook For Business polished UX wins consumer-facing attendee surface; limited to curated tourism inventory."
+          },
+          {
+            "id": "luma",
+            "name": "Luma",
+            "score": 4,
+            "specialisation_for_cell": "Luma polish wins for tech-leaning corporate offsites; US-coded for GHRs at non-tech firms."
+          }
+        ]
+      },
+      "corporate_offsite_lead:procurement_grade_compliance": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "cvent",
+            "name": "Cvent",
+            "score": 5,
+            "specialisation_for_cell": "Cvent enterprise-grade compliance + GDPR + SOC 2; USD pricing, USD$15–60k/yr seats, mostly MNC subsidiaries in SG."
+          },
+          {
+            "id": "splash",
+            "name": "Splash",
+            "score": 4,
+            "specialisation_for_cell": "Splash SOC 2 + enterprise-grade compliance; weak SG localisation, USD pricing, mainly tech-MNC subsidiaries."
+          },
+          {
+            "id": "glue_up",
+            "name": "Glue Up",
+            "score": 4,
+            "specialisation_for_cell": "Glue Up enterprise compliance covers GDPR + PDPA bolt-on; weak vendor-marketplace + thin consumer polish."
+          },
+          {
+            "id": "eventbrite",
+            "name": "Eventbrite",
+            "score": 3,
+            "specialisation_for_cell": "Eventbrite enterprise SLA + GDPR baked in; PDPA bolt-on, no SG-grade dispute SLA, weak vendor-marketplace."
+          },
+          {
+            "id": "eventnook",
+            "name": "EventNook",
+            "score": 4,
+            "specialisation_for_cell": "EventNook PDPA + GST + corporate procurement-friendly; weak dispute-resolution SLA, no vendor verification primitive."
+          }
+        ]
+      },
+      "community_hobby_organiser:event_day_escrow": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "paynow_diy",
+            "name": "PayNow / WhatsApp DIY",
+            "score": 0
+          }
+        ]
+      },
+      "community_hobby_organiser:integrated_vendor_sourcing": {
+        "our_score": 3,
+        "competitors": []
+      },
+      "community_hobby_organiser:sg_payment_localisation": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "paynow_diy",
+            "name": "PayNow / WhatsApp DIY",
+            "score": 5,
+            "specialisation_for_cell": "Universal rail; the entire community-hobby world runs on it."
+          },
+          {
+            "id": "peatix",
+            "name": "Peatix",
+            "score": 3,
+            "specialisation_for_cell": "Peatix is the SG community-meetup SEO default; SGD + cards, no PayNow, T+30 payout is annoying for a S$10 ticket meetup."
+          }
+        ]
+      },
+      "community_hobby_organiser:low_fee_for_small_tickets": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "meetup",
+            "name": "Meetup",
+            "score": 1,
+            "specialisation_for_cell": "Meetup organiser pays ~US$24/mo subscription; explicit SG SaaS-fatigue churn (Tech in Asia 2024-12 leak)."
+          },
+          {
+            "id": "paynow_diy",
+            "name": "PayNow / WhatsApp DIY",
+            "score": 5,
+            "specialisation_for_cell": "Free in money; expensive in organiser time. The silent-majority workflow for sub-S$15 hobby ticket bands."
+          },
+          {
+            "id": "peatix",
+            "name": "Peatix",
+            "score": 3,
+            "specialisation_for_cell": "Peatix 4.9% + S$0.99/ticket is workable for S$15–25 community tickets; the S$0.99 fixed eats badly at S$5–10 bands."
+          }
+        ]
+      },
+      "community_hobby_organiser:polished_consumer_checkout": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "meetup",
+            "name": "Meetup",
+            "score": 2,
+            "specialisation_for_cell": "Meetup UX is functional but tired; community-organiser muscle memory persists despite the visual debt."
+          },
+          {
+            "id": "luma",
+            "name": "Luma",
+            "score": 4,
+            "specialisation_for_cell": "Luma is the rising SG community-event polish reference, especially for tech-adjacent hobby groups."
+          }
+        ]
+      },
+      "community_hobby_organiser:procurement_grade_compliance": {
+        "our_score": 2,
+        "competitors": []
+      },
+      "vendor_provider:event_day_escrow": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "fiverr",
+            "name": "Fiverr",
+            "score": 4,
+            "specialisation_for_cell": "Fiverr built-in escrow + delivery-acceptance protects vendor cash position; 20% take, generic, not SG-event-spec."
+          },
+          {
+            "id": "stripe_connect",
+            "name": "Stripe Connect",
+            "score": 4,
+            "specialisation_for_cell": "Stripe Connect delayed-payout primitive is what every event marketplace builds on; no organiser-facing surface."
+          },
+          {
+            "id": "trustap",
+            "name": "Trustap",
+            "score": 3,
+            "specialisation_for_cell": "Trustap two-sided escrow protects vendor + buyer; embeddable but vendor-side awareness in SG near zero."
+          }
+        ]
+      },
+      "vendor_provider:integrated_vendor_sourcing": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "bark_com",
+            "name": "Bark.com",
+            "score": 3,
+            "specialisation_for_cell": "Bark drives SG vendor leads via paid lead-credits; vendor-adversarial reputation (Trustpilot 2.1 SG)."
+          },
+          {
+            "id": "carousell_services",
+            "name": "Carousell Services",
+            "score": 3,
+            "specialisation_for_cell": "Carousell Services is the silent vendor classifieds default; race-to-bottom price dynamic + no event-context binding."
+          },
+          {
+            "id": "fiverr",
+            "name": "Fiverr",
+            "score": 3,
+            "specialisation_for_cell": "Fiverr covers some SG event-vendor categories at 20% take; not event-specialised, vendor pool is mostly global."
+          }
+        ]
+      },
+      "vendor_provider:sg_payment_localisation": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "carousell_services",
+            "name": "Carousell Services",
+            "score": 4,
+            "specialisation_for_cell": "CarouPay native PayNow protected payments cover SG vendor cash flow well at 3% + S$0.50."
+          },
+          {
+            "id": "paynow_diy",
+            "name": "PayNow / WhatsApp DIY",
+            "score": 5,
+            "specialisation_for_cell": "Universal rail; vendors collect deposits + balance via PayNow QR but eat the chasing burden."
+          }
+        ]
+      },
+      "vendor_provider:low_fee_for_small_tickets": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "carousell_services",
+            "name": "Carousell Services",
+            "score": 4,
+            "specialisation_for_cell": "Listing free; CarouPay 3% + S$0.50 is SG-cheapest paid tier."
+          },
+          {
+            "id": "bark_com",
+            "name": "Bark.com",
+            "score": 4,
+            "specialisation_for_cell": "Buyer-side free; vendor pays per lead (S$10–40) with poor conversion math at 12–18% — high effective cost-per-booking."
+          }
+        ]
+      },
+      "vendor_provider:polished_consumer_checkout": {
+        "our_score": 4,
+        "competitors": []
+      },
+      "vendor_provider:procurement_grade_compliance": {
+        "our_score": 3,
+        "competitors": [
+          {
+            "id": "fiverr",
+            "name": "Fiverr",
+            "score": 2,
+            "specialisation_for_cell": "Fiverr generic compliance posture; not procurement-grade for SG corporate vendor onboarding."
+          }
+        ]
+      }
+    }
+  },
+  "attack_plans": [
+    {
+      "rank": 1,
+      "niche_name": "Daiquiri-beach P2P escrow for SG friend-group events",
+      "icp": "SG resident 25–34 PMET running 6–12 paid friend-group events / yr (birthdays, KTV nights, weekend trips on Bintan / Desaru, hen parties, group dinners). Pain: chasing 12 friends on PayNow for a S$45 dinner cap and being 'that person' in the WhatsApp chat.",
+      "whitespace_segment_id": "social_butterfly_organiser",
+      "tam_estimate_sgd": 38000000,
+      "tam_reasoning": "Per Agent 2: ~32,000 active SG organisers with weighted addressable spend ~S$8,800/yr; the social-butterfly slice is ~50% of count (~16,000) at ~S$2,400/yr addressable spend (lower per-organiser GMV due to friend-group scale) = ~S$38M slice TAM. Capture at Y3 SOM ~25% of slice = ~4,000 social-butterfly organisers × ~S$320/yr net platform-take = ~S$1.3M ARR contribution to the ~S$8.5M SOM.",
+      "why_gap": "No SG-relevant ticketing platform offers true event-day escrow as default. Eventbrite settles T+4–7 days post-event. Peatix T+30. Luma instant. Carousell offers an optional consumer-side escrow at 3% but is not event-context-bound and has no event-day-trigger semantics. Trustap and Escrow.com offer mechanically-correct escrow but have near-zero SG awareness and no event-day-trigger UX. The structural gap: the regulator-aligned escrow primitive (Stripe Connect MoR or MAS MPI in-house) requires payment licensing depth that no event-specialised platform has chosen to invest in. Replication window 18+ months from competitor Stripe Connect MoR integration to MAS MPI licence approval.",
+      "why_we_win": "our_score 4 driven by: (1) escrow-by-default UX with event-day-trigger release shipping in Y1 via Stripe Connect MoR (no licensing wait); (2) MAS MPI licence application targeted month-12 once monthly e-money float crosses S$5M; (3) daiquiri-beach brand polish (our_score 5 on consumer_brand_polish) wins the social-butterfly cohort that finds Eventbrite 'too corporate-coded for my book club' (Reddit r/singapore Q1 2026); (4) PayNow-default checkout (our_score 5 on sg_payment_localisation) matches the universal SG rail. Free organiser tier removes adoption friction; 5% commission only when money moves, capped at S$200/event so a S$45 dinner cap costs the organiser ~S$2.25, not the ~S$5.50 Eventbrite charges.",
+      "gtm": {
+        "channel": "Reddit r/singapore + r/sgexams + r/SingaporeRaw organic seeding (testimonials from 'I stopped chasing'); Instagram + TikTok creator partnerships with SG lifestyle micro-influencers (10–80k followers); referral programme rewarding organiser + first-event-attendee with S$5 platform credits each; SG Tech Week + GeekCamp + Startup Weekend SG community sponsorship for the tech-cohort entry; Elitez Group's existing 50-logo enterprise client base seeded as 'first 100 organisers' beta cohort.",
+        "pitch": "Stop being the friend who chases. Daiquiri-beach event pages, escrow that releases on event day, no monthly fee — only 5% when money moves, capped at S$200/event.",
+        "pricing": "Free organiser tier; 5% commission on paid event ticket revenue (capped at S$200/event); free events stay free. Per Agent 3 recommended_tiers.",
+        "content": "Three assets in first 90 days: (1) ungated 'how much time you waste chasing PayNow' calculator on the marketing site (Reddit-meme-able); (2) creator-partnership video series 'tales from the WhatsApp group chat' across 8–12 SG micro-influencers; (3) 90-day 'Birthday Season' campaign timed to August–December peak SG private-event months. Plus: a 'fee comparison' calculator showing all-in cost vs Eventbrite + Peatix + DIY across S$15 / S$30 / S$60 / S$120 ticket bands."
+      }
+    },
+    {
+      "rank": 2,
+      "niche_name": "Curator-grade vendor marketplace for premium SG hosts",
+      "icp": "SG curator 30–42 organising 3–6 elaborate events / yr (themed dinners, immersive workshops, supper clubs, milestone birthdays); needs to coordinate 3–8 vendors per event across catering, AV, photography, decor, MC. Pain: 8+ hours of vendor sourcing across Carousell DMs, Bark quotes, Instagram referrals + cash-flow gap on vendor deposits.",
+      "whitespace_segment_id": "experience_curator_premium",
+      "tam_estimate_sgd": 86000000,
+      "tam_reasoning": "Per Agent 2: ~32,000 active SG organisers; the premium-curator slice is ~12% of count (~3,800) at ~S$22,000/yr addressable platform spend (curator GMV ~S$3,500/event × 4 events/yr = S$14k ticketing GMV + ~S$8k vendor GMV). Slice TAM = 3,800 × ~S$22,000 = ~S$86M. Y3 SOM capture ~15% of slice = ~570 curators on Pro Organiser tier × ~S$3,500/yr platform-take (3% ticket + 10% marketplace) = ~S$2.0M ARR contribution.",
+      "why_gap": "No SG event-specialised vendor marketplace exists. Bark covers SG event vendors but adversarial. Carousell Services is the silent default but quality-variable + price-shopper dynamic. FunEmpire is closest curated reference but corporate-bonding-coded + closed catalogue. Klook / Airbnb Experiences are closed marketplaces — peer curators cannot self-list. Fiverr covers some categories at 20% take but is generic + global. The structural gap: building the supply-side requires editorial curation effort (handpicking 200+ SG vendors, vetting, onboarding) that no platform has chosen to invest in — the venture-backed players (Eventbrite, Luma) prefer single-leg ticketing margin over the marketplace flywheel build.",
+      "why_we_win": "our_score 4 on integrated_vendor_marketplace (only player with event-context-bound vendor bidding for catering / AV / photo / decor / MC slots); our_score 5 on consumer_brand_polish (daiquiri-beach is the curator-aesthetic match); our_score 4 on event_day_escrow_default (vendor cash-flow-safe deposits). Pro Organiser tier at S$588/yr includes custom branding + audience CRM + curated vendor shortlists — pays back in ~2 events vs. Eventbrite's ~S$375 fee on a S$3,500 event. Marketplace 10% take is the structural margin engine and is greenfield in SG.",
+      "gtm": {
+        "channel": "Curator-network seeding via Stephen Riady / SCAPE / Singapore Design Week / Tatler SG '40 under 40 hosts' partnerships; supper-club + immersive-experience operator referral programme (1 month free Pro for each curator referred); Instagram + Substack content marketing targeted at curator-aesthetic accounts; vendor-onboarding partnerships with 8–12 SG creative agencies (Mervyn / Foreign Policy / SuperFat / etc.) to pre-seed top-quartile vendor inventory.",
+        "pitch": "Source vendors, manage cash flow, and keep your audience all on one daiquiri-beach platform — for less than what Eventbrite charges in fees on three events.",
+        "pricing": "Pro Organiser S$588/yr (PSG-net effective S$294 once IMDA-listed); 3% ticket commission + 10% marketplace take. Per Agent 3 recommended_tiers.",
+        "content": "Five assets in first 6 months: (1) 'Vendor sourcing teardown' ungated long-form post comparing 4 hours of Carousell + Bark + Instagram against 20 minutes of marketplace bidding; (2) 'audience CRM' walkthrough showing how the supper-club's 40-attendee list compounds across 6 events; (3) Tatler SG x The Commons co-branded curator playbook (gated PDF); (4) supper-club case study series (3 anchor curators, monthly Substack posts); (5) Pro Organiser pricing calculator showing 'per-event payback' against Eventbrite on S$2k / S$5k / S$10k event GMV bands."
+      }
+    },
+    {
+      "rank": 3,
+      "niche_name": "Procurement-grade offsite stack via Elitez Group warm-intro",
+      "icp": "Group HR / People Lead at SG mid-market firm (50–500 staff); organises 4–8 corporate offsites + team-bondings + training events / yr; S$50–200/pax budget; procurement-gated (RFP, vendor list, GST + IRAS, dispute SLA, PDPA pack required). Pain: PCO at 12–18% bundled fee, manual vendor coordination, GST + expense reconciliation overhead.",
+      "whitespace_segment_id": "corporate_offsite_lead",
+      "tam_estimate_sgd": 95000000,
+      "tam_reasoning": "Per Agent 2: ~32,000 active SG organisers; the corporate-offsite slice is ~10% of count (~3,200 firms with ≥1 active People Lead running formal offsite programs) at ~S$30,000/yr addressable platform spend (offsite GMV ~S$15k × 4 events/yr + ~S$5k vendor coordination). Slice TAM = 3,200 × ~S$30,000 = ~S$95M. Y3 SOM capture ~10% of slice = ~320 corporate accounts on Enterprise tier × ~S$5,500/yr platform-take (S$4.8k subscription + 2% ticket + 8% marketplace blended) = ~S$1.8M ARR contribution. Elitez Group's 50-logo client base + warm-intro motion accelerates the cohort vs. cold-RFP pursuit.",
+      "why_gap": "Procurement-grade event platforms in SG (Cvent, Splash, Glue Up) ship enterprise compliance but at USD$3–60k/yr seats with thin polish and no SG-specialised vendor marketplace. SG-built EventNook is procurement-friendly but visually dated and lacks vendor-marketplace + dispute-SLA depth. PCOs (professional conference organisers) deliver bundled service at 12–18% but are not platforms — every offsite restarts coordination from zero. The structural gap: a platform that combines SG-localised procurement compliance (PDPA + GST + IRAS + dispute SLA) with a curated vendor marketplace AND a People-Lead-grade dashboard. None of the three legs exists in one product today.",
+      "why_we_win": "our_score 5 on integrated_vendor_marketplace + sg_payment_localisation + consumer_brand_polish + procurement_grade_compliance — the Enterprise tier specifically bundles PDPA-by-design, IMDA Data Protection Trustmark assessor pack, procurement-grade vendor verification, published 14-day dispute SLA, named CSM from Elitez Group People Ops bench, multi-organiser team workspace, and quarterly business review. WSG WDG(JR+) workforce-redesign training wrap (Elitez consultant register status, LOA valid through 17 Mar 2027) drops effective price below S$1,800 — well under one PCO engagement on a single offsite. Elitez Group's 50-logo enterprise client base is the warm-intro engine no greenfield competitor can replicate in the LOA validity window.",
+      "gtm": {
+        "channel": "Elitez Group 50-logo enterprise client warm-intro motion as primary channel (~30 pre-qualified Group HR / People Lead conversations achievable in Y1); SHRI HR Practices Network partnership for thought leadership; SBF Family Business + Mid-Market Programme co-sponsorship; AmCham SG + JCCI SG roundtable presence; targeted LinkedIn outreach to 'Group HR / People Lead' titles at SG mid-market firms 50–500 staff.",
+        "pitch": "Replace your PCO + Excel + Outlook stack with a SG-built procurement-grade event platform — PDPA, GST, dispute SLA, vendor verification, dashboard. PSG + WDG(JR+) drop the effective price below S$1,800/yr.",
+        "pricing": "Enterprise S$4,800/yr (PSG + WDG(JR+)-net effective S$1,800/yr); 2% ticket commission + 8% marketplace take. Per Agent 3 recommended_tiers.",
+        "content": "Five assets in first 6 months: (1) SHRI co-branded 'Procurement-Grade Offsite Toolkit' (gated PDF) covering RFP template + vendor verification checklist + dispute SLA spec; (2) Elitez Group case study: 'How we replaced our PCO with The Commons across 12 offsites in 2026' (anchor logo); (3) People-Lead persona webinar series quarterly with named Group HR guest from a referenceable Elitez client; (4) PSG + WDG(JR+) effective-price calculator on the marketing site; (5) PDPA-by-design technical whitepaper for procurement teams to attach to their RFP scoring rubric."
+      }
+    }
   ]
 }

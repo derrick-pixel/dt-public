@@ -4,340 +4,75 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>White Space Atlas — Elitez Security Admin</title>
-  <meta name="description" content="Strategic competitive intelligence: competitor universe, strategy canvas, segment x need coverage heatmap, attack plan. Admin-only.">
+  <meta name="description" content="Strategic competitive intelligence: strategy canvas radar, segment x need coverage heatmap, and ranked attack plans showing where the SG security category is open to bespoke entry. Admin-only.">
   <meta name="robots" content="noindex, nofollow">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../assets/css/intel-refresh.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous"></script>
 
-  <style>
-    :root {
-      --atlas-green: #34d399;
-      --atlas-green-bg: rgba(52,211,153,0.14);
-      --atlas-amber: #f59e0b;
-      --atlas-amber-bg: rgba(245,158,11,0.14);
-      --atlas-red: #f87171;
-      --atlas-red-bg: rgba(248,113,113,0.14);
-    }
-    .atlas-body { padding-top: 92px; padding-bottom: 80px; max-width: 1360px; margin: 0 auto; padding-left: 24px; padding-right: 24px; }
-    .atlas-top { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
-    .atlas-tag { font-family: 'Share Tech Mono', monospace; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--atlas-green); margin-bottom: 10px; display: inline-block; }
-    .atlas-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: clamp(1.9rem, 4.2vw, 2.8rem); line-height: 1.05; color: var(--text); }
-    .atlas-meta { font-family: 'Share Tech Mono', monospace; font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; text-align: right; }
+  <!-- Favicon set -->
+  <link rel="icon" type="image/x-icon" href="../favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png" />
+  <link rel="manifest" href="../site.webmanifest" />
+  <link rel="mask-icon" href="../safari-pinned-tab.svg" color="#34d399" />
+  <meta name="theme-color" content="#242428">
 
-    .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 32px; }
-    .kpi { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
-    .kpi-val { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 2rem; color: var(--accent); line-height: 1; }
-    .kpi-val.green { color: var(--atlas-green); }
-    .kpi-val.amber { color: var(--atlas-amber); }
-    .kpi-val.red   { color: var(--atlas-red); }
-    .kpi-lbl { font-family: 'Share Tech Mono', monospace; font-size: 0.68rem; color: var(--muted2); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 8px; }
-
-    .artifact { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; margin-bottom: 24px; }
-    .art-num { font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
-    .art-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 1.5rem; color: var(--text); text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 8px; }
-    .art-desc { color: var(--muted); font-size: 0.94rem; max-width: 820px; line-height: 1.55; margin-bottom: 20px; }
-
-    .canvas-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start; }
-    @media (max-width: 900px) { .canvas-wrap { grid-template-columns: 1fr; } }
-    #strategy-canvas { width: 100%; max-width: 820px; height: 420px; }
-    .canvas-legend { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; font-family: 'Share Tech Mono', monospace; }
-    .canvas-legend .leg { display: flex; align-items: center; gap: 8px; }
-    .canvas-legend .sw { width: 28px; height: 4px; flex-shrink: 0; }
-    .canvas-legend .us { font-weight: 700; color: var(--accent); }
-
-    .heatmap-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
-    .heatmap { border-collapse: collapse; width: 100%; min-width: 780px; font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; }
-    .heatmap th, .heatmap td { border: 1px solid var(--border); padding: 7px 6px; text-align: center; vertical-align: middle; line-height: 1.15; }
-    .heatmap thead th { background: #1e1e22; color: var(--muted2); font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.04em; padding: 10px 5px; font-weight: 700; }
-    .heatmap thead th:first-child { text-align: left; min-width: 200px; }
-    .heatmap tbody th { text-align: left; background: #1e1e22; color: var(--text); font-family: 'Barlow', sans-serif; font-size: 0.82rem; font-weight: 600; padding: 8px 12px; }
-    .heatmap tbody th small { display: block; font-size: 0.64rem; color: var(--muted2); font-weight: 400; margin-top: 2px; }
-    .cell { cursor: pointer; font-weight: 700; transition: filter 0.1s; user-select: none; font-size: 0.9rem; }
-    .cell:hover { filter: brightness(1.25); outline: 2px solid var(--accent); outline-offset: -2px; }
-    .cell.green { background: var(--atlas-green-bg); color: var(--atlas-green); }
-    .cell.amber { background: var(--atlas-amber-bg); color: var(--atlas-amber); }
-    .cell.red   { background: var(--atlas-red-bg); color: var(--atlas-red); }
-
-    .heatmap-legend { display: flex; align-items: center; gap: 18px; margin-top: 14px; font-family: 'Share Tech Mono', monospace; font-size: 0.76rem; color: var(--muted); flex-wrap: wrap; }
-    .heatmap-legend .dot { display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: middle; }
-
-    #heatmap-detail { display: none; margin-top: 14px; padding: 14px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--muted); font-size: 0.9rem; line-height: 1.55; }
-    #heatmap-detail.show { display: block; }
-    #heatmap-detail b { color: var(--text); }
-    #heatmap-detail .tag { display: inline-block; padding: 2px 10px; font-family: 'Share Tech Mono', monospace; font-size: 0.64rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-right: 8px; border-radius: 100px; }
-    #heatmap-detail .tag.green { background: var(--atlas-green-bg); color: var(--atlas-green); border: 1px solid var(--atlas-green); }
-    #heatmap-detail .tag.amber { background: var(--atlas-amber-bg); color: var(--atlas-amber); border: 1px solid var(--atlas-amber); }
-    #heatmap-detail .tag.red   { background: var(--atlas-red-bg); color: var(--atlas-red); border: 1px solid var(--atlas-red); }
-
-    .attack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
-    .niche { background: linear-gradient(160deg, var(--atlas-green-bg), transparent 85%); border: 1.5px solid var(--atlas-green); border-radius: 12px; padding: 22px 24px; }
-    .niche-rank { font-family: 'Share Tech Mono', monospace; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--atlas-green); margin-bottom: 6px; }
-    .niche-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 1.1rem; color: var(--text); text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 10px; }
-    .niche-icp { color: var(--muted); font-size: 0.88rem; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px dashed var(--border); font-style: italic; }
-    .niche-row { display: grid; grid-template-columns: 72px 1fr; gap: 10px; font-size: 0.82rem; padding: 6px 0; }
-    .niche-row .k { font-family: 'Share Tech Mono', monospace; font-size: 0.64rem; font-weight: 700; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px; }
-    .niche-row .v { color: var(--muted); line-height: 1.55; }
-
-    .comp-controls { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
-    .comp-search, .comp-filter { padding: 9px 14px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-family: 'Barlow', sans-serif; font-size: 0.88rem; border-radius: 6px; outline: none; }
-    .comp-search:focus, .comp-filter:focus { border-color: var(--accent); }
-    .comp-search { flex: 1; min-width: 220px; }
-    .comp-count { font-family: 'Share Tech Mono', monospace; font-size: 0.76rem; color: var(--muted2); }
-
-    .comp-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
-    .comp-table thead th { background: #1e1e22; color: var(--muted2); font-family: 'Share Tech Mono', monospace; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.66rem; padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); }
-    .comp-table tbody td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
-    .comp-table tbody tr:hover { background: rgba(52,211,153,0.04); }
-    .badge { display: inline-block; padding: 2px 8px; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; font-family: 'Share Tech Mono', monospace; border-radius: 100px; }
-    .b-cat { background: rgba(52,211,153,0.08); color: var(--accent); border: 1px solid rgba(52,211,153,0.2); }
-    .b-threat-high { background: var(--atlas-red-bg); color: var(--atlas-red); border: 1px solid var(--atlas-red); }
-    .b-threat-medium { background: var(--atlas-amber-bg); color: var(--atlas-amber); border: 1px solid var(--atlas-amber); }
-    .b-threat-low { background: var(--atlas-green-bg); color: var(--atlas-green); border: 1px solid var(--atlas-green); }
-    .b-beat-easy { background: var(--atlas-green-bg); color: var(--atlas-green); border: 1px solid var(--atlas-green); }
-    .b-beat-moderate { background: var(--atlas-amber-bg); color: var(--atlas-amber); border: 1px solid var(--atlas-amber); }
-    .b-beat-hard { background: var(--atlas-red-bg); color: var(--atlas-red); border: 1px solid var(--atlas-red); }
-    .comp-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; color: var(--text); font-size: 0.98rem; }
-    .comp-target { font-size: 0.76rem; color: var(--muted2); margin-top: 2px; }
-    .loading { color: var(--muted); font-family: 'Share Tech Mono', monospace; font-size: 0.86rem; padding: 24px; text-align: center; }
-  
-  /* ── MOBILE RESPONSIVE OVERRIDES (v1) ─────────────────── */
-  @media (max-width: 768px) {
-    body { font-size: 13px; }
-    h1, .page-title, .atlas-title { font-size: 1.45rem !important; line-height: 1.2 !important; }
-    h2, .art-title { font-size: 1.1rem !important; }
-    .page-meta, .atlas-meta { text-align: left !important; margin-top: 6px !important; font-size: 0.7rem !important; }
-    main, .container, .atlas-body, .page-body { padding-left: 14px !important; padding-right: 14px !important; }
-    .page-head, .atlas-top { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
-
-    .kpi-strip, .kpis { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; margin-bottom: 20px !important; }
-    .kpi { padding: 12px 14px !important; }
-    .kpi-val, .kpi .v { font-size: 1.35rem !important; }
-    .kpi-lbl, .kpi .l { font-size: 0.6rem !important; letter-spacing: 0.06em !important; }
-
-    .artifact { padding: 18px 16px !important; margin-bottom: 14px !important; border-radius: 10px !important; }
-    .art-title { font-size: 1.05rem !important; }
-    .art-desc { font-size: 0.82rem !important; margin-bottom: 14px !important; }
-
-    #strategy-canvas { height: 280px !important; max-height: 320px !important; }
-    .canvas-wrap { grid-template-columns: 1fr !important; gap: 14px !important; }
-    .canvas-legend { font-size: 0.72rem !important; }
-    .canvas-legend .leg { gap: 6px !important; }
-
-    .heatmap-wrap { border-radius: 6px !important; }
-    .heatmap { min-width: auto !important; font-size: 0.56rem !important; }
-    .heatmap thead th { padding: 6px 3px !important; font-size: 0.5rem !important; letter-spacing: 0.02em !important; }
-    .heatmap thead th:first-child { min-width: 118px !important; text-align: left !important; }
-    .heatmap tbody th { font-size: 0.66rem !important; padding: 6px 8px !important; min-width: 118px !important; }
-    .heatmap tbody th small { font-size: 0.54rem !important; margin-top: 1px !important; }
-    .heatmap td { padding: 4px 2px !important; font-size: 0.72rem !important; }
-    .heatmap-legend { gap: 10px !important; font-size: 0.7rem !important; }
-    .heatmap-legend .dot { width: 10px !important; height: 10px !important; }
-
-    .attack-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
-    .niche { padding: 16px 14px !important; border-radius: 10px !important; }
-    .niche-name { font-size: 0.98rem !important; }
-    .niche-icp { font-size: 0.82rem !important; margin-bottom: 10px !important; padding-bottom: 10px !important; }
-    .niche-row { grid-template-columns: 60px 1fr !important; gap: 8px !important; font-size: 0.76rem !important; }
-    .niche-row .k { font-size: 0.58rem !important; letter-spacing: 0.05em !important; }
-
-    .comp-controls { gap: 8px !important; margin-bottom: 10px !important; }
-    .comp-search { width: 100% !important; min-width: 100% !important; }
-    .comp-filter { flex: 1; min-width: calc(50% - 4px) !important; }
-    .comp-count { font-size: 0.7rem !important; width: 100% !important; }
-
-    .comp-table { display: block !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; font-size: 0.7rem !important; white-space: nowrap !important; }
-    .comp-table thead, .comp-table tbody, .comp-table tr { display: table !important; width: 100% !important; min-width: 640px !important; table-layout: auto !important; }
-    .comp-table thead th { font-size: 0.55rem !important; padding: 8px 8px !important; letter-spacing: 0.03em !important; }
-    .comp-table tbody td { padding: 8px !important; white-space: normal !important; }
-    .comp-name { font-size: 0.82rem !important; }
-    .comp-target { font-size: 0.7rem !important; }
-    .badge { font-size: 0.56rem !important; padding: 2px 6px !important; letter-spacing: 0.02em !important; }
-
-    .login-box { padding: 32px 24px !important; max-width: calc(100vw - 32px) !important; }
-    .login-logo { font-size: 1.5rem !important; }
-
-    nav, .admin-nav, .atlas-nav { flex-wrap: wrap !important; padding: 10px 14px !important; }
-    .admin-nav { gap: 10px !important; }
-    .atlas-nav-links, .admin-links, .topbar-tabs { flex-wrap: wrap !important; gap: 6px !important; }
-    .atlas-nav-links a, .admin-links a { font-size: 0.72rem !important; padding: 5px 10px !important; }
+  <script type="application/ld+json" data-injected="schema-jsonld">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Elitez Security",
+    "url": "https://derrickteo.com/elitez-security/",
+    "description": "SSIA 2023 award-winning Singapore security agency. PWM+ accredited. Tech-augmented manpower with proven cost-saving case studies."
   }
-
-  @media (max-width: 420px) {
-    .kpi-strip, .kpis { grid-template-columns: 1fr !important; }
-    .heatmap thead th:first-child,
-    .heatmap tbody th { min-width: 108px !important; }
-    .niche-row { grid-template-columns: 56px 1fr !important; font-size: 0.74rem !important; }
+  </script>
+  <script type="application/ld+json" data-injected="schema-jsonld">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Elitez Security",
+    "url": "https://derrickteo.com/elitez-security/"
   }
-  /* ── END MOBILE OVERRIDES ─────────────────────────────── */
-
-  
-  /* ── MOBILE RESPONSIVE OVERRIDES (v2) ─────────────────── */
-  @media (max-width: 768px) {
-    body { font-size: 13px; }
-    h1, .page-title, .atlas-title, .ph h1 { font-size: 1.45rem !important; line-height: 1.2 !important; }
-    h2, .art-title, .section-title, .sec-h h2 { font-size: 1.05rem !important; line-height: 1.25 !important; }
-    h3 { font-size: 0.95rem !important; }
-    .page-meta, .atlas-meta, .topbar-meta { text-align: left !important; margin-top: 6px !important; font-size: 0.7rem !important; }
-    main, .container, .container-wide, .atlas-body, .page-body, .wrap, .page { padding-left: 14px !important; padding-right: 14px !important; }
-    .page-head, .atlas-top, .admin-header { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
-
-    /* Grids collapse to single column */
-    .kpi-strip, .kpis, .summary-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; margin-bottom: 20px !important; }
-    .grid-2, .grid-3, .grid-4, .landscape-grid, .rationale-grid, .tier-strip, .top-list,
-    .attack-grid, .results-grid, .metrics-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
-
-    /* All cards: tighter */
-    .kpi, .summary-card, .stat-card, .comp-card, .landscape-card, .rationale-card,
-    .tier, .model, .sent-card, .insight, .alert, .quote, .card,
-    .niche { padding: 14px 16px !important; border-radius: 10px !important; }
-    .kpi-val, .kpi .v, .summary-card .big, .stat-value { font-size: 1.35rem !important; line-height: 1.1 !important; }
-    .kpi-lbl, .kpi .l, .summary-card .sub, .stat-label { font-size: 0.6rem !important; letter-spacing: 0.06em !important; }
-
-    /* Artifact sections */
-    .artifact, section.panel, .landscape-section { padding: 18px 16px !important; margin-bottom: 14px !important; border-radius: 10px !important; }
-    .art-desc, .sec-h p { font-size: 0.82rem !important; margin-bottom: 14px !important; }
-
-    /* Strategy canvas + charts */
-    #strategy-canvas, .chart-wrap canvas, .radar-svg { height: 280px !important; max-height: 320px !important; width: 100% !important; }
-    .canvas-wrap { grid-template-columns: 1fr !important; gap: 14px !important; }
-    .canvas-legend { font-size: 0.72rem !important; }
-    .canvas-legend .leg { gap: 6px !important; }
-    .chart-wrap { padding: 14px !important; }
-
-    /* Heatmap (whitespace) */
-    .heatmap-wrap { border-radius: 6px !important; overflow-x: auto !important; }
-    .heatmap { min-width: auto !important; font-size: 0.56rem !important; }
-    .heatmap thead th { padding: 6px 3px !important; font-size: 0.5rem !important; letter-spacing: 0.02em !important; }
-    .heatmap thead th:first-child { min-width: 118px !important; text-align: left !important; }
-    .heatmap tbody th { font-size: 0.66rem !important; padding: 6px 8px !important; min-width: 118px !important; }
-    .heatmap tbody th small { font-size: 0.54rem !important; margin-top: 1px !important; }
-    .heatmap td { padding: 4px 2px !important; font-size: 0.72rem !important; }
-    .heatmap-legend { gap: 10px !important; font-size: 0.7rem !important; }
-    .heatmap-legend .dot { width: 10px !important; height: 10px !important; }
-
-    /* Attack niches (whitespace) */
-    .niche-name { font-size: 0.98rem !important; }
-    .niche-icp { font-size: 0.82rem !important; margin-bottom: 10px !important; padding-bottom: 10px !important; }
-    .niche-row { grid-template-columns: 60px 1fr !important; gap: 8px !important; font-size: 0.76rem !important; }
-    .niche-row .k { font-size: 0.58rem !important; letter-spacing: 0.05em !important; }
-
-    /* Competitor controls */
-    .comp-controls, .filter-bar { gap: 8px !important; margin-bottom: 10px !important; flex-wrap: wrap !important; }
-    .comp-search, .filter-bar input[type="search"], .filter-bar input[type="text"] { width: 100% !important; min-width: 100% !important; }
-    .comp-filter, .filter-bar select { flex: 1 1 calc(50% - 4px) !important; min-width: calc(50% - 4px) !important; }
-    .comp-count { font-size: 0.7rem !important; width: 100% !important; }
-
-    /* Generic tables: always scroll horizontally inside the card */
-    .tbl-wrap, .table-wrapper, .table-wrap, .tbl { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; }
-    table { display: block !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; font-size: 0.7rem !important; white-space: nowrap !important; }
-    table thead, table tbody, table tr { display: table !important; width: 100% !important; min-width: 640px !important; table-layout: auto !important; }
-    table thead th, .comp-table thead th { font-size: 0.55rem !important; padding: 8px !important; letter-spacing: 0.03em !important; white-space: normal !important; }
-    table tbody td, .comp-table tbody td { padding: 8px !important; white-space: normal !important; font-size: 0.76rem !important; }
-
-    /* Comp-table specifics */
-    .comp-name { font-size: 0.82rem !important; }
-    .comp-target { font-size: 0.7rem !important; }
-    .badge, .region-badge, .tier-badge { font-size: 0.56rem !important; padding: 2px 6px !important; letter-spacing: 0.02em !important; }
-
-    /* Bar-chart rows (AEVUM admin) */
-    .bar-chart { padding: 0 !important; }
-    .bar-row { grid-template-columns: 1fr !important; gap: 4px !important; padding: 8px 0 !important; }
-    .bar-row .val { text-align: left !important; }
-
-    /* Login overlay (altru/passage) */
-    .login-box { padding: 32px 24px !important; max-width: calc(100vw - 32px) !important; }
-    .login-logo { font-size: 1.5rem !important; }
-
-    /* Admin navs — wrap */
-    nav, .admin-nav, .atlas-nav, .topbar, .topbar-inner { flex-wrap: wrap !important; padding: 10px 14px !important; gap: 8px !important; }
-    .admin-nav { gap: 10px !important; }
-    .atlas-nav-links, .admin-links, .topbar-tabs { flex-wrap: wrap !important; gap: 6px !important; }
-    .atlas-nav-links a, .admin-links a, .topbar-tabs a { font-size: 0.72rem !important; padding: 5px 10px !important; }
-
-    /* SPA admin rail (EMS elitez-pulse) */
-    .admin-layout { grid-template-columns: 1fr !important; }
-    .admin-rail { position: static !important; height: auto !important; width: 100% !important; padding: 14px !important; margin-bottom: 10px !important; }
-    .admin-rail__tab, .admin-rail__link { display: inline-block !important; margin-right: 6px !important; font-size: 0.8rem !important; padding: 6px 10px !important; }
-    .admin-main { padding: 14px !important; }
-
-    /* Admin sidebar (the-commons admin) */
-    .dashboard, .admin-main, aside.sidebar { grid-template-columns: 1fr !important; }
-    aside.sidebar, .admin-sidebar { position: static !important; height: auto !important; width: 100% !important; padding: 14px !important; margin-bottom: 10px !important; }
-    .sidebar-nav { display: flex !important; flex-wrap: wrap !important; gap: 4px !important; }
-    .sidebar-nav li { display: inline-block !important; }
-    .sidebar-nav a { font-size: 0.76rem !important; padding: 6px 10px !important; }
-    .main-content { padding: 0 !important; }
-
-    /* Event hero / PayNow modal on mobile */
-    .ev-hero-wrap { height: 220px !important; }
-    .modal { padding: 20px 16px !important; max-width: calc(100vw - 24px) !important; }
-    .modal h3 { font-size: 1.05rem !important; }
-
-    /* Steps indicator (create.html) */
-    .steps { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
-    .step-connector { display: none !important; }
-
-    /* Navigation logo padding */
-    .nav-inner { padding: 10px 14px !important; }
-    .nav-inner .nav-links { display: none !important; }
-    .mobile-toggle { display: inline-flex !important; }
-
-    /* Forms */
-    .form-row { grid-template-columns: 1fr !important; gap: 12px !important; }
-    .form-group label { font-size: 0.8rem !important; }
-
-    /* Footer */
-    .footer-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
-  }
-
-  @media (max-width: 420px) {
-    .kpi-strip, .kpis, .summary-grid { grid-template-columns: 1fr !important; }
-    .heatmap thead th:first-child,
-    .heatmap tbody th { min-width: 108px !important; }
-    .niche-row { grid-template-columns: 56px 1fr !important; font-size: 0.74rem !important; }
-    body { font-size: 12px; }
-    .kpi-val, .kpi .v, .summary-card .big, .stat-value { font-size: 1.2rem !important; }
-    .comp-filter, .filter-bar select { flex: 1 1 100% !important; min-width: 100% !important; }
-  }
-  /* ── END MOBILE OVERRIDES ─────────────────────────────── */
-
-  </style>
-<script type="application/ld+json" data-injected="schema-jsonld">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "Elitez Security",
-  "url": "https://derrickteo.com/elitez-security/",
-  "description": "SSIA 2023 award-winning Singapore security agency. PWM+ accredited. Tech-augmented manpower with proven cost-saving case studies."
-}
-</script>
-<script type="application/ld+json" data-injected="schema-jsonld">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "Elitez Security",
-  "url": "https://derrickteo.com/elitez-security/"
-}
-</script>
+  </script>
 </head>
 <body>
 
+<!-- Navigation -->
 <nav>
   <a href="../index.html" class="nav-logo">Elitez Security</a>
   <div class="nav-links">
     <a href="../services.html">Core Services</a>
     <a href="../command-center.html">Command Centre</a>
     <a href="../robotics.html">Technology</a>
+    <a href="index.html#why">Why Elitez</a>
+    <a href="index.html#contact">Contact</a>
     <a href="index.html">Analytics</a>
-    <a href="insights.html">Insights</a>
-    <a href="whitespace.html" style="color:var(--accent);">White Space</a>
   </div>
+  <a href="index.html#contact" class="nav-cta">Get Assessment</a>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
+<main>
+<div id="mobile-menu">
+  <a href="../services.html" onclick="toggleMenu()">Core Services</a>
+  <a href="../command-center.html">Command Center</a>
+  <a href="../robotics.html">Robotics</a>
+  <a href="index.html#why" onclick="toggleMenu()">Why Elitez</a>
+  <a href="index.html#contact" onclick="toggleMenu()">Contact</a>
+  <a href="index.html">Analytics</a>
+  <a href="whitespace.html">White Space</a>
+</div>
+
+<!-- Admin Sub-Nav -->
 <div class="admin-nav container" style="margin-top:80px; padding-top:16px;">
   <a href="index.html">Competitor Analytics</a>
   <a href="competitor-analytics.html">Analytics (v2)</a>
@@ -347,393 +82,178 @@
   <a href="report.html">Report</a>
 </div>
 
-<main class="atlas-body">
+<div class="container container-wide">
 
-  <div class="atlas-top">
-    <div>
-      <div class="atlas-tag">◆ White Space Atlas — Security v1</div>
-      <h1 class="atlas-title">Where Certis skips, where Soverus bends —<br/>and we win mid-market.</h1>
-    </div>
-    <div class="atlas-meta">
-      <div>Refreshed <span id="refresh-date">2026-04-22</span></div>
-      <div><span id="comp-count-hdr">—</span> competitors · 8 segments · 8 needs · admin-only</div>
-    </div>
-  </div>
+  <section style="padding: 30px 0 24px;">
+    <span class="eyebrow">Whitespace · radar + heatmap + attack plans</span>
+    <h2 style="margin-bottom: 12px;">White Space Atlas</h2>
+    <p style="max-width:880px;line-height:1.65;color:var(--muted);font-size:0.98rem;">
+      Three artefacts work together to identify where the SG security category is open and where Elitez can win. The strategy-canvas radar plots the mapped competitor universe (top-tier APO, mid-tier guarding, tech-only entrants, IFM bundlers) against the dimensions buyers actually evaluate; flat patches signal differentiation opportunities. The segment×need heatmap counts how many competitors genuinely serve each pair (score ≥ 3) — green is whitespace, amber is contested, red is crowded; click any cell for the player list. The ranked attack plans translate findings into concrete go-to-market specs (ICP, TAM, gap thesis, why-we-win, channel, pitch, pricing, content). Cross-link to <a href="index.html" style="color:var(--accent);">competitor analytics</a>, <a href="insights.html" style="color:var(--accent);">market &amp; pricing</a>, <a href="design-audit.html" style="color:var(--accent);">design audit</a>, the <a href="report.html" style="color:var(--accent);">printable report</a>, or the parent <a href="../index.html" style="color:var(--accent);">Elitez Security site</a>.
+    </p>
+  </section>
 
-  <div class="kpi-strip">
-    <div class="kpi"><div class="kpi-val" id="kpi-n-comp">—</div><div class="kpi-lbl">Competitors</div></div>
-    <div class="kpi"><div class="kpi-val green" id="kpi-green">—</div><div class="kpi-lbl">White-space cells</div></div>
-    <div class="kpi"><div class="kpi-val amber" id="kpi-amber">—</div><div class="kpi-lbl">Contested cells</div></div>
-    <div class="kpi"><div class="kpi-val red" id="kpi-red">—</div><div class="kpi-lbl">Crowded cells</div></div>
-    <div class="kpi"><div class="kpi-val" id="kpi-threats">—</div><div class="kpi-lbl">High-threat rivals</div></div>
-  </div>
-
-  <section class="artifact">
-    <div class="art-num">Artifact 01</div>
-    <h2 class="art-title">Strategy Canvas</h2>
-    <p class="art-desc">Blue-Ocean radar. Each line plots a competitor across 8 customer-valued dimensions. Our shape must break away on price accessibility, tech augmentation, and event surge — where premiums can't follow on price and mid-market can't follow on tech.</p>
-    <div class="canvas-wrap">
-      <canvas id="strategy-canvas" width="820" height="420"></canvas>
-      <div class="canvas-legend" id="canvas-legend"></div>
+  <section style="padding: 16px 0 32px;">
+    <div class="radar-container">
+      <span class="artefact-label">Strategy canvas</span>
+      <h2>Eight axes vs. mapped competitors</h2>
+      <p class="radar-thesis" id="thesis"></p>
+      <div style="height: 540px; min-width: 0;"><canvas id="radar-canvas" aria-label="Radar chart of strategic dimensions versus competitors"></canvas></div>
     </div>
   </section>
 
-  <section class="artifact">
-    <div class="art-num">Artifact 02</div>
-    <h2 class="art-title">Segment × Need Heatmap — 8 × 8</h2>
-    <p class="art-desc">Each cell: count of competitors who genuinely serve that pair (score ≥3). Click a cell for detail.</p>
-    <div class="heatmap-wrap">
-      <table class="heatmap" id="heatmap"><thead></thead><tbody></tbody></table>
+  <section style="padding: 16px 0 32px;">
+    <span class="artefact-label">Heatmap</span>
+    <h2 id="heatmap-title">Segment × Need</h2>
+    <p style="max-width: 820px; color: var(--muted); font-size: 0.9rem; line-height: 1.55;">
+      Each cell shows two numbers: count of competitors genuinely serving that pair (score ≥ 3), and Elitez's own capability score (out of 5). Click any cell for the pair-specific competitor breakdown.
+    </p>
+    <div class="heatmap-wrap"><div id="heatmap"></div></div>
+    <div class="legend">
+      <span><span class="legend-swatch" style="background: rgba(52,211,153,0.14); border: 1px solid #34d399;"></span>Green ≤ 1 — whitespace, attack</span>
+      <span><span class="legend-swatch" style="background: rgba(245,158,11,0.14); border: 1px solid #f59e0b;"></span>Amber 2-3 — contested</span>
+      <span><span class="legend-swatch" style="background: rgba(248,113,113,0.14); border: 1px solid #f87171;"></span>Red ≥ 4 — crowded</span>
     </div>
-    <div class="heatmap-legend">
-      <span><span class="dot" style="background:var(--atlas-green)"></span>Green 0–1 · white space</span>
-      <span><span class="dot" style="background:var(--atlas-amber)"></span>Amber 2–3 · contested</span>
-      <span><span class="dot" style="background:var(--atlas-red)"></span>Red 4+ · crowded</span>
-    </div>
-    <div id="heatmap-detail"></div>
+    <div id="cell-detail" class="cell-detail" style="display: none;"></div>
   </section>
 
-  <section class="artifact">
-    <div class="art-num">Artifact 03</div>
-    <h2 class="art-title">Attack Plan — Top 3 Underserved Niches</h2>
-    <p class="art-desc">Where Elitez Security attacks first. Each card: ICP, TAM, why-gap, why-we-win, GTM.</p>
-    <div class="attack-grid" id="attack-grid"></div>
+  <section style="padding: 16px 0 56px;">
+    <span class="artefact-label">Attack plans · Top 3</span>
+    <h2>Where Elitez Security attacks first</h2>
+    <p style="max-width: 760px; color: var(--muted); font-size: 0.9rem; line-height: 1.55;">Ranked by win probability × addressable size. Each plan binds to a green or low-amber cell on the heatmap above.</p>
+    <div id="attack-plans" class="attack-grid" style="margin-top: 18px;"></div>
   </section>
 
-  <section class="artifact">
-    <div class="art-num">Artifact 04</div>
-    <h2 class="art-title">Competitor Deep-dive</h2>
-    <p class="art-desc">All <span id="comp-count-inline">—</span> competitors with pricing, threat level, and our wedge.</p>
-    <div class="comp-controls">
-      <input type="search" id="comp-search" class="comp-search" placeholder="Search name, target, strengths...">
-      <select id="comp-cat" class="comp-filter"><option value="">All categories</option></select>
-      <select id="comp-threat" class="comp-filter">
-        <option value="">All threats</option>
-        <option value="high">High</option>
-        <option value="medium">Medium</option>
-        <option value="low">Low</option>
-      </select>
-      <span class="comp-count" id="comp-count-tbl">—</span>
-    </div>
-    <table class="comp-table" id="comp-table">
-      <thead>
-        <tr><th>Name / target</th><th>Category</th><th>Pricing (SG)</th><th>Threat</th><th>Beat</th><th>Strengths</th><th>Weaknesses</th></tr>
-      </thead>
-      <tbody id="comp-tbody"><tr><td colspan="7" class="loading">Loading competitor data…</td></tr></tbody>
-    </table>
-  </section>
-
+</div>
 </main>
 
-<script>
-(function() {
-  const CANVAS_DIMS = [
-    'Price defensibility (PWM-compliant)',
-    'Officer welfare / no double shift',
-    'PWM+ / SSIA / ISO compliance depth',
-    'Tech-augmented manpower reduction',
-    'Group HR / training depth',
-    '24/7 command centre capability',
-    'Residential MCST trust track record',
-    'Documented cost-saving case studies'
-  ];
-  const CANVAS_LINES = [
-    { name: 'Elitez Security', us: true, color: '#34d399', scores: [5, 5, 5, 5, 5, 5, 4, 5] },
-    { name: 'Certis',                     color: '#f87171', scores: [2, 3, 5, 5, 4, 5, 3, 3] },
-    { name: 'Aetos',                      color: '#ef4444', scores: [3, 3, 5, 4, 4, 4, 2, 3] },
-    { name: 'Soverus (Secura)',           color: '#f59e0b', scores: [3, 3, 4, 4, 3, 4, 3, 3] },
-    { name: 'Metropolis',                 color: '#d97706', scores: [4, 3, 3, 2, 2, 2, 5, 2] },
-    { name: 'Concorde Security',          color: '#b45309', scores: [4, 3, 3, 2, 2, 2, 4, 1] },
-    { name: 'KH / Centurion (mid)',       color: '#92400e', scores: [4, 2, 2, 1, 2, 1, 3, 0] },
-    { name: 'Event boutique',             color: '#a78bfa', scores: [3, 2, 3, 2, 2, 2, 1, 1] },
-    { name: 'Budget sub-PWM',             color: '#6b7280', scores: [1, 1, 1, 0, 1, 0, 2, 0] }
-  ];
+<!-- Footer -->
+<footer style="padding:24px;border-top:1px solid var(--border);font-size:13px;color:var(--muted);max-width:1400px;margin:48px auto 0;">
+  <p>Elitez Security whitespace atlas · scoring grounded in deck (R00, 15 Apr 2023) + SSIA 2023 + post-deck client wins. Aviation specialism and robotics services are NOT scored / NOT claimed — neither exists in the Elitez Security stack. Internal — not for public indexing.</p>
+</footer>
 
-  const SEGMENTS = [
-    { id: 'high_end_condo',        label: 'High-end condominium MCST',     note: 'Park Infinia / Hillsta / St Regis class' },
-    { id: 'mid_tier_ec',           label: 'Mid-tier EC / mass condo',      note: 'Northwave EC, La Casa EC, Sims Urban Oasis' },
-    { id: 'commercial_building',   label: 'Commercial / mixed-use',        note: 'Seng Kee, Fu Lu Shou, Junction Nine' },
-    { id: 'industrial_mnc',        label: 'Industrial MNC plant',          note: 'Mead Johnson, GlobalFoundries class' },
-    { id: 'religious_site',        label: 'Religious / community site',    note: 'Churches, temples, community halls' },
-    { id: 'healthcare_eldercare',  label: 'Healthcare / eldercare',        note: 'Nursing homes, hospices, day-care' },
-    { id: 'retail_fnb_cluster',    label: 'Retail / F&B cluster',          note: 'Multi-tenant retail + F&B precincts' },
-    { id: 'event_adhoc',           label: 'Event / ad-hoc / VIP',          note: 'Crowd control, X-ray, concierge, escort' }
-  ];
-  const NEEDS = [
-    { id: 'pwm_compliant_pricing',   label: 'PWM-compliant pricing',                  short: 'PWM' },
-    { id: 'manpower_reduction_proof',label: 'Documented manpower-reduction',          short: 'Savings' },
-    { id: 'no_double_shift',         label: 'No-double-shift staffing reliability',   short: 'No 2× shift' },
-    { id: 'wsq_trained_officers',    label: 'WSQ-trained officers (GEM)',             short: 'WSQ' },
-    { id: 'command_centre_24_7',     label: '24/7 manned command centre',             short: 'CC 24/7' },
-    { id: 'ai_cctv_lpr_vms_bundle',  label: 'AI-CCTV / LPR / VMS bundle',             short: 'Tech' },
-    { id: 'single_vendor_admin',     label: 'Single-vendor admin',                    short: '1-vendor' },
-    { id: 'mcst_committee_reporting',label: 'MCST committee-friendly reporting',      short: 'MCST rpt' }
-  ];
+<script src="../js/main.js"></script>
 
-  function scoreCompetitor(c, segId, needId) {
-    const tm = (c.target_market || '').toLowerCase();
-    const vp = (c.primary_value_prop || '').toLowerCase();
-    const str = (c.strengths || []).join(' ').toLowerCase();
-    const cat = c.category || '';
-    const hq = (c.hq || '').toLowerCase();
-    const price = Number(c.sg_monthly_per_guard_sgd || 0);
-    const techScore = Number(c.tech_integration_score || 0);
-    const services = (c.services || []).map(s => s.toLowerCase());
-    const bundle = (str + ' ' + vp + ' ' + tm).toLowerCase();
-    const isSGHQ = hq === 'singapore' || hq === 'sg';
+<script type="module">
+  import { loadAppData, mountSampleBanner, mountUnstyledBanner } from '../assets/js/app.js';
+  import { renderRadar } from '../assets/js/viz/radar.js';
+  import { renderHeatmap, renderCellDetail } from '../assets/js/viz/heatmap.js';
+  import { fmtSGD } from '../assets/js/format.js';
+  import { h, mount } from '../assets/js/dom.js';
 
-    const segMap = {
-      high_end_condo:        (tm.match(/condo|residential|mcst|estate|apartment|premium|high.?end|luxury/) ? 4 : (cat === 'mid_market_guard' ? 2 : 0)),
-      mid_tier_ec:           (tm.match(/condo|mcst|residential|ec|executive condo|mass condo/) ? 4 : (cat === 'mid_market_guard' ? 3 : 0)),
-      commercial_building:   (tm.match(/commercial|office|building|mixed.?use|landlord/) ? 4 : (cat === 'tier1_premium' ? 3 : (cat === 'facility_mgmt' ? 4 : 0))),
-      industrial_mnc:        (tm.match(/industrial|mnc|enterprise|corporate|plant|semicon|pharma/) ? 4 : (cat === 'tier1_premium' ? 5 : 0)),
-      religious_site:        (tm.match(/religious|church|temple|mosque|community/) ? 4 : (cat === 'mid_market_guard' ? 2 : 0)),
-      healthcare_eldercare:  (tm.match(/healthcare|hospital|eldercare|nursing|hospice|clinic/) ? 4 : (cat === 'mid_market_guard' ? 2 : 0)),
-      retail_fnb_cluster:    (tm.match(/retail|mall|shopping|f&b|food/) ? 4 : (cat === 'tier1_premium' ? 3 : 0)),
-      event_adhoc:           (services.includes('event_security') ? 5 : (cat === 'event_boutique' ? 5 : (tm.match(/event|concert|ad.?hoc|crowd/) ? 4 : 0)))
+  const data = await loadAppData('../data');
+  mountSampleBanner();
+  mountUnstyledBanner();
+
+  const ws = data.whitespace;
+  document.getElementById('thesis').textContent = ws.strategy_canvas.headline_thesis;
+
+  // Focused radar overlay: top-5 by deck-stated tier === premium + mid that are mapped in scores
+  const slugify = name => {
+    if (!name) return '';
+    const map = {
+      'Certis Group': 'certis_group',
+      'Aetos Holdings': 'aetos_holdings',
+      'Soverus (Secura Group)': 'soverus_secura',
+      'Metropolis Security': 'metropolis_security',
+      'Concorde Security': 'concorde_security',
+      'Ramky Cleantech Services': 'ramky_cleantech',
+      'Crystal Clear Cleaning Services': 'crystal_clear',
+      'Ademco Security Group': 'ademco_sg',
+      'Oneberry Technologies': 'oneberry',
+      'ST Engineering Urban Solutions': 'ste_urban_solutions',
+      'Allied Universal (former G4S Singapore)': 'allied_universal_sg',
+      'Securitas Singapore': 'securitas_sg',
+      'Prosegur Singapore': 'prosegur_sg',
+      'CISCO Auxiliary Police (Certis CISCO)': 'cisco_apo',
+      'IPS Securex': 'ips_securex',
+      'Centurion Security': 'centurion_security',
+      'Premas Security (Sembcorp)': 'premas_sembcorp'
     };
-    const segScore = segMap[segId] || 0;
+    return map[name] || name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+  };
+  const competitors = (data.competitors && data.competitors.competitors) || [];
+  const focusedIds = competitors
+    .filter(c => c.tier === 'premium' || c.tier === 'mid')
+    .map(c => slugify(c.name))
+    .filter(id => ws.strategy_canvas.scores[id])
+    .slice(0, 5);
 
-    const needMap = {
-      pwm_compliant_pricing:   (isSGHQ && /pwm|progressive wage|grade a|compliant|fair employ|tafep/.test(bundle) ? 5 : (price && price >= 3400 ? 4 : (price && price >= 3000 ? 2 : 0))),
-      manpower_reduction_proof:(/case stud|cost.?sav|manpower reduction|virtual patrol|remote command|manpower cut/.test(bundle) ? 4 : (techScore >= 4 ? 3 : 0)),
-      no_double_shift:         (/no double shift|welfare|union|ntuc|leave|hospitalisation|wage|highest pay/.test(bundle) ? 5 : (cat === 'tier1_premium' ? 3 : 1)),
-      wsq_trained_officers:    (isSGHQ && /wsq|adept|skill|training|gem|going.?the.?extra/.test(bundle) ? 5 : (isSGHQ ? 3 : 1)),
-      command_centre_24_7:     (/command centre|command center|operations centre|24.?7|live feed|remote monitoring|virtual guard/.test(bundle) ? 4 : (cat === 'tier1_premium' ? 5 : 1)),
-      ai_cctv_lpr_vms_bundle:  (techScore >= 4 ? 5 : techScore >= 3 ? 3 : techScore >= 2 ? 2 : 0),
-      single_vendor_admin:     (services.length >= 5 ? 5 : services.length >= 4 ? 4 : services.length >= 3 ? 3 : 1),
-      mcst_committee_reporting:(/mcst|committee|residential|condo|reporting|dashboard|monthly report/.test(bundle) ? 4 : 1)
-    };
-    const needScore = needMap[needId] || 0;
-    return Math.min(segScore, needScore);
-  }
+  renderRadar({
+    canvas: document.getElementById('radar-canvas'),
+    dimensions: ws.strategy_canvas.dimensions,
+    scores: ws.strategy_canvas.scores,
+    focusedIds: focusedIds.length ? focusedIds : null
+  });
 
-  function ourScore(segId, needId) {
-    const s = { high_end_condo:4, mid_tier_ec:5, commercial_building:5, industrial_mnc:4, religious_site:5, healthcare_eldercare:5, retail_fnb_cluster:4, event_adhoc:5 }[segId] || 3;
-    const n = { pwm_compliant_pricing:5, manpower_reduction_proof:5, no_double_shift:5, wsq_trained_officers:5, command_centre_24_7:5, ai_cctv_lpr_vms_bundle:5, single_vendor_admin:4, mcst_committee_reporting:4 }[needId] || 3;
-    return Math.min(s, n);
-  }
+  document.getElementById('heatmap-title').textContent =
+    `Segment × Need — ${ws.heatmap.segments.length} × ${ws.heatmap.needs.length}`;
 
-  const STATE = { competitors: [], matrix: null, research_date: '2026-04-22' };
-
-  const NICHES = [
-    {
-      rank: '01',
-      name: 'MCST Renewal Capture — Mid-Tier EC & Mass Condo',
-      icp: 'Northwave EC, La Casa EC, Sims Urban Oasis, CityLife Tampines class. MCST committees on year-3 renewal facing PWM 2024 (S$2,938) → 2028 (S$4,400) wage escalation, who would normally swallow a 12-18% rate hike or shop on price and lose service quality.',
-      tam: '~1,100 SG MCSTs with 8-25 officer posts up for renewal in any 12-month window (MCST registry + URA condo stock + 3-yr renewal cycle).',
-      why_underserved: 'Metropolis / Centurion / KH Security are pure-manpower and have to pass on the full PWM hike. Tier-1s (Certis/Aetos) skip sub-15-guard MCSTs. Soverus and Concorde have CCTV but no costed manpower-reduction case studies to show committees.',
-      why_we_win: '(1) Six documented case studies aggregating $14.6k/mo savings — most relevant: Hillington Green ($1.2k/mo, won SSIA 2023 Buyer of the Year) and Hillsta ($4.2k/mo). (2) PWM+ accreditation reassures the audit committee. (3) Strictly no-double-shift = lower attrition than competitors mid-contract. (4) 3 SSIA 2023 awards as committee credibility material.',
-      gtm: {
-        pricing: 'Match incumbent year-3 rate; replace one daytime post with virtual-clocking + LPR + command-centre supervision. Net contract value flat for resident — saves committee from rate-hike vote.',
-        channel: 'Property managers (Premier Property Consultancy, Smart Property, etc.) running multiple MCSTs; SISV / APMA referrals; targeted outreach 60 days before expiry of competitor contracts.',
-        pitch: '"Same monthly cost as last contract, no rate hike. We absorb PWM by replacing one watch-post with technology, supervised from our 24/7 command centre."',
-        content: '"PWM 2024-2028 Cost Calculator" gated PDF: shows committee what their rate hike will be on like-for-like vs. tech-augmented model.'
-      }
-    },
-    {
-      rank: '02',
-      name: 'Cost-Saving Migration — Religious & Healthcare Sites',
-      icp: 'St Joseph\'s Church / Ju Eng Home pattern. Faith-based and eldercare clients with budget pressure but high duty-of-care, currently running 2-3 manned posts including overnight that they cannot afford to keep.',
-      tam: '~480 SG religious sites with paid security + ~140 nursing/eldercare sites + ~90 hospices/clinics (NCSS + NHCS + ROS records).',
-      why_underserved: 'Mid-market guards focus on commercial; tier-1s avoid the segment as too small. Pure-tech vendors (Ademco, IPS Securex) sell hardware without the command-centre service layer. No vendor packages auto-gate + LPR + virtual patrol + remote command for under $4.5k/mo retainer.',
-      why_we_win: '(1) St Joseph\'s ($4.2k/mo savings) and Ju Eng Home ($1.2k/mo savings) — ready-made reference visits. (2) Free site risk assessment removes the buyer\'s biggest objection. (3) bizSAFE Star + ISO 45001 reassure the duty-of-care board. (4) Anti-exhaustion fleet device for visiting supervisors aligns with eldercare safety culture.',
-      gtm: {
-        pricing: 'Auto-gate + LPR + 17-station virtual patrol + facial-recognition staff entry as a single bundle around $4-5k/mo, displacing $7-9k/mo in current manpower.',
-        channel: 'Direct via Catholic Archdiocese, NCC, AIC, NCSS-affiliated nursing-home operator networks. Case-study breakfast briefings hosted at command centre.',
-        pitch: '"$1,200-$4,200 per month back into your operating budget — without compromising the duty of care to your community."',
-        content: '"Eldercare Security Walk-Through Checklist" — printable, owner-board-friendly, branded credible.'
-      }
-    },
-    {
-      rank: '03',
-      name: 'MNC Industrial Compliance Bundle',
-      icp: 'Mead Johnson, GlobalFoundries class. Multinational pharma / semicon / FMCG plants with corporate-mandated compliance frameworks (ISO 45001, OSHA-equivalent, supplier code of conduct). Their procurement teams will reject any vendor that flunks audit.',
-      tam: '~360 SG MNC plants with on-site dedicated security teams (EDB pioneer cert holders + MNC HQ list).',
-      why_underserved: 'Tier-1s are credentialed but slow and bureaucratic on the audit-pack side. Mid-market guards cannot produce credible bizSAFE Star + ISO 45001 + TAFEP + PWM+ + NS Mark Gold all on file. Group-HR depth is rare.',
-      why_we_win: '(1) Full credential stack (5 separate accreditations) maps cleanly onto MNC audit pack. (2) WSQ-trained officers with 5S + service-quality modules — rare among guards. (3) Captive Adept Academy gives audit-trail of training records. (4) Group HR via Elitez parent can demobilise/re-mobilise faster than competitors when client headcount changes.',
-      gtm: {
-        pricing: 'Premium S$4,200-4,600/officer/mo — a 10-15% premium accepted in exchange for compliance certainty. Annual audit support included.',
-        channel: 'Procurement teams of MNC pharma/semicon/FMCG; EDB-introduction events; SBF/SNEF supplier days; LinkedIn outreach to Plant Director / EHS Director titles.',
-        pitch: '"The audit-ready security partner. bizSAFE Star, NS Mark Gold, ISO 45001:2018, PWM+, TAFEP — five credentials, one supplier."',
-        content: '"MNC Plant Security Audit Pack" — sample audit-response binder, downloadable on request, surfacing all five accreditations in MNC-procurement language.'
-      }
+  const panel = document.getElementById('cell-detail');
+  renderHeatmap({
+    container: document.getElementById('heatmap'),
+    segments: ws.heatmap.segments,
+    needs: ws.heatmap.needs,
+    cells: ws.heatmap.cells,
+    onCellClick: detail => {
+      panel.style.display = 'block';
+      renderCellDetail(panel, detail);
+      panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-  ];
+  });
 
-  function clearNode(el) { while (el.firstChild) el.removeChild(el.firstChild); }
-  function makeEl(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  // Attack-plan cards (the elitez-events left-rail pattern)
+  const pad2 = n => String(n).padStart(2, '0');
+  const niche = p => h('div', { class: 'niche' },
+    h('div', { class: 'niche-rail' },
+      h('div', {},
+        h('div', { class: 'niche-rank-tag' }, 'Attack plan'),
+        h('div', { class: 'niche-rank-num' }, h('span', {}, '#'), pad2(p.rank))
+      ),
+      h('div', { class: 'niche-tam-block' },
+        h('div', { class: 'niche-tam-label' }, 'Addressable TAM'),
+        h('div', { class: 'niche-tam-value' }, fmtSGD(p.tam_estimate_sgd)),
+        h('div', { class: 'niche-tam-suffix' }, 'annual / SG slice')
+      )
+    ),
+    h('div', { class: 'niche-body' },
+      h('h3', { class: 'niche-name' }, p.niche_name),
+      h('div', { class: 'niche-icp' },
+        h('div', { class: 'label' }, 'ICP'),
+        h('div', { class: 'text' }, p.icp)
+      ),
+      h('div', { class: 'niche-strategy' },
+        h('div', { class: 'niche-strat-card gap' },
+          h('div', { class: 'head' }, h('span', { class: 'glyph' }, '!'), 'Why the gap exists'),
+          h('div', { class: 'body' }, p.why_gap)
+        ),
+        h('div', { class: 'niche-strat-card win' },
+          h('div', { class: 'head' }, h('span', { class: 'glyph' }, '✓'), 'Why we win'),
+          h('div', { class: 'body' }, p.why_we_win)
+        )
+      ),
+      h('div', { class: 'niche-tam-logic' },
+        h('strong', {}, 'TAM derivation'), p.tam_reasoning
+      ),
+      h('div', { class: 'niche-gtm' },
+        h('div', { class: 'niche-gtm-title' }, 'Go-to-market plays'),
+        h('div', { class: 'niche-gtm-rows' },
+          ...[
+            ['Pricing', p.gtm.pricing, 'pricing'],
+            ['Channel', p.gtm.channel, ''],
+            ['Pitch',   p.gtm.pitch, ''],
+            ['Content', p.gtm.content, '']
+          ].map(([k, v, mod]) =>
+            h('div', { class: 'niche-gtm-row ' + mod },
+              h('div', { class: 'k' }, k),
+              h('div', { class: 'v' }, v)
+            )
+          )
+        )
+      )
+    )
+  );
 
-  function renderStrategyCanvas() {
-    const ctx = document.getElementById('strategy-canvas').getContext('2d');
-    const datasets = CANVAS_LINES.map(l => ({
-      label: l.name, data: l.scores,
-      backgroundColor: l.us ? 'rgba(52,211,153,0.18)' : 'transparent',
-      borderColor: l.color, borderWidth: l.us ? 3 : 1.5,
-      pointRadius: l.us ? 4 : 2.5, pointBackgroundColor: l.color, tension: 0.15
-    }));
-    new Chart(ctx, {
-      type: 'radar', data: { labels: CANVAS_DIMS, datasets },
-      options: {
-        scales: { r: {
-          suggestedMin: 0, suggestedMax: 5,
-          ticks: { stepSize: 1, backdropColor: 'rgba(0,0,0,0)', color: '#888', font: { size: 10 } },
-          grid: { color: 'rgba(255,255,255,0.06)' },
-          angleLines: { color: 'rgba(255,255,255,0.08)' },
-          pointLabels: { color: '#fafafa', font: { family: 'Barlow, sans-serif', size: 11, weight: 600 } }
-        } },
-        plugins: { legend: { display: false }, tooltip: { callbacks: { label: x => x.dataset.label + ': ' + x.raw } } },
-        responsive: true, maintainAspectRatio: false
-      }
-    });
-    const leg = document.getElementById('canvas-legend'); clearNode(leg);
-    CANVAS_LINES.forEach(l => {
-      const r = makeEl('div', 'leg');
-      const sw = makeEl('span', 'sw'); sw.style.background = l.color;
-      if (l.us) sw.style.boxShadow = '0 0 10px ' + l.color;
-      const n = makeEl('span', null, l.name); if (l.us) n.classList.add('us');
-      r.appendChild(sw); r.appendChild(n); leg.appendChild(r);
-    });
-  }
-
-  function buildMatrix() {
-    const mx = {};
-    SEGMENTS.forEach(s => { mx[s.id] = {}; NEEDS.forEach(n => {
-      const scoring = STATE.competitors.map(c => ({ name: c.name, score: scoreCompetitor(c, s.id, n.id) }));
-      const strong = scoring.filter(x => x.score >= 3).sort((a,b) => b.score - a.score);
-      mx[s.id][n.id] = { count: strong.length, servers: strong, us: ourScore(s.id, n.id) };
-    }); });
-    return mx;
-  }
-  function levelFor(count) { return count <= 1 ? 'green' : count <= 3 ? 'amber' : 'red'; }
-
-  function renderHeatmap() {
-    const thead = document.querySelector('#heatmap thead'); const tbody = document.querySelector('#heatmap tbody');
-    clearNode(thead); clearNode(tbody);
-    const hdr = makeEl('tr'); hdr.appendChild(makeEl('th', null, 'Segment \\ Need'));
-    NEEDS.forEach(n => { const th = makeEl('th', null, n.short); th.title = n.label; hdr.appendChild(th); });
-    thead.appendChild(hdr);
-    SEGMENTS.forEach(s => {
-      const tr = makeEl('tr');
-      const th = makeEl('th'); th.appendChild(makeEl('span', null, s.label)); th.appendChild(makeEl('small', null, s.note));
-      tr.appendChild(th);
-      NEEDS.forEach(n => {
-        const cell = STATE.matrix[s.id][n.id];
-        const td = makeEl('td', 'cell ' + levelFor(cell.count), String(cell.count));
-        td.addEventListener('click', () => showCellDetail(s, n, cell));
-        tr.appendChild(td);
-      });
-      tbody.appendChild(tr);
-    });
-  }
-
-  function showCellDetail(seg, need, cell) {
-    const detail = document.getElementById('heatmap-detail'); clearNode(detail);
-    const lvl = levelFor(cell.count);
-    const lvlTag = makeEl('span', 'tag ' + lvl, lvl === 'green' ? 'White space · attack' : lvl === 'amber' ? 'Contested · winnable' : 'Crowded · avoid');
-    detail.appendChild(lvlTag);
-    detail.appendChild(makeEl('b', null, seg.label + ' × ' + need.label));
-    const p = makeEl('p', null, cell.count + ' competitor(s) serve this pair well (score ≥3). Our score: ' + cell.us + '/5.');
-    p.style.marginTop = '8px'; detail.appendChild(p);
-    if (cell.servers.length) {
-      const list = makeEl('div', null, 'Competitors serving: ' + cell.servers.slice(0, 8).map(c => c.name + ' (' + c.score + ')').join(', '));
-      list.style.marginTop = '6px'; list.style.fontSize = '0.82rem'; detail.appendChild(list);
-    }
-    detail.classList.add('show');
-  }
-
-  function renderNiches() {
-    const host = document.getElementById('attack-grid'); clearNode(host);
-    NICHES.forEach(n => {
-      const c = makeEl('div', 'niche');
-      c.appendChild(makeEl('div', 'niche-rank', 'Niche ' + n.rank));
-      c.appendChild(makeEl('div', 'niche-name', n.name));
-      c.appendChild(makeEl('div', 'niche-icp', n.icp));
-      [['TAM', n.tam], ['Why gap', n.why_underserved], ['Our win', n.why_we_win],
-       ['Pricing', n.gtm.pricing], ['Channel', n.gtm.channel], ['Pitch', n.gtm.pitch], ['Content', n.gtm.content]]
-      .forEach(pair => {
-        const row = makeEl('div', 'niche-row');
-        row.appendChild(makeEl('div', 'k', pair[0]));
-        row.appendChild(makeEl('div', 'v', pair[1]));
-        c.appendChild(row);
-      });
-      host.appendChild(c);
-    });
-  }
-
-  function renderTable() {
-    const tbody = document.getElementById('comp-tbody'); clearNode(tbody);
-    const q = document.getElementById('comp-search').value.toLowerCase();
-    const catF = document.getElementById('comp-cat').value;
-    const threatF = document.getElementById('comp-threat').value;
-    const filtered = STATE.competitors.filter(c => {
-      if (catF && c.category !== catF) return false;
-      if (threatF && c.threat_level_to_elitez_security !== threatF) return false;
-      if (q) {
-        const blob = [c.name, c.target_market, (c.strengths||[]).join(' '), (c.weaknesses||[]).join(' '), c.category].join(' ').toLowerCase();
-        if (!blob.includes(q)) return false;
-      }
-      return true;
-    });
-    document.getElementById('comp-count-tbl').textContent = filtered.length + ' / ' + STATE.competitors.length;
-    if (!filtered.length) {
-      const tr = makeEl('tr'); const td = makeEl('td', 'loading', 'No competitors match — adjust filters');
-      td.colSpan = 7; tr.appendChild(td); tbody.appendChild(tr); return;
-    }
-    filtered.forEach(c => {
-      const tr = makeEl('tr');
-      const tdN = makeEl('td'); tdN.appendChild(makeEl('div', 'comp-name', c.name)); tdN.appendChild(makeEl('div', 'comp-target', c.target_market || ''));
-      const tdC = makeEl('td'); tdC.appendChild(makeEl('span', 'badge b-cat', (c.category || '').replace(/_/g, ' ')));
-      const tdP = makeEl('td', null, c.sg_pricing_range_published || '—'); tdP.style.fontFamily = 'Share Tech Mono, monospace'; tdP.style.fontSize = '0.76rem'; tdP.style.color = 'var(--accent)';
-      const tdT = makeEl('td'); tdT.appendChild(makeEl('span', 'badge b-threat-' + (c.threat_level_to_elitez_security || 'low'), c.threat_level_to_elitez_security || '—'));
-      const tdB = makeEl('td'); tdB.appendChild(makeEl('span', 'badge b-beat-' + (c.beatability || 'moderate'), c.beatability || '—'));
-      const tdS = makeEl('td', null, (c.strengths || []).slice(0, 3).join('; ')); tdS.style.fontSize = '0.78rem'; tdS.style.color = 'var(--atlas-green)';
-      const tdW = makeEl('td', null, (c.weaknesses || []).slice(0, 3).join('; ')); tdW.style.fontSize = '0.78rem'; tdW.style.color = 'var(--atlas-red)';
-      [tdN, tdC, tdP, tdT, tdB, tdS, tdW].forEach(td => tr.appendChild(td));
-      tbody.appendChild(tr);
-    });
-  }
-
-  function populateCatFilter() {
-    const sel = document.getElementById('comp-cat');
-    const cats = Array.from(new Set(STATE.competitors.map(c => c.category))).sort();
-    cats.forEach(cat => { const opt = document.createElement('option'); opt.value = cat; opt.textContent = cat.replace(/_/g,' '); sel.appendChild(opt); });
-  }
-
-  function updateKpis() {
-    const cells = SEGMENTS.flatMap(s => NEEDS.map(n => STATE.matrix[s.id][n.id]));
-    const green = cells.filter(c => c.count <= 1).length;
-    const amber = cells.filter(c => c.count >= 2 && c.count <= 3).length;
-    const red   = cells.filter(c => c.count >= 4).length;
-    const threats = STATE.competitors.filter(c => c.threat_level_to_elitez_security === 'high').length;
-    document.getElementById('kpi-n-comp').textContent = STATE.competitors.length;
-    document.getElementById('kpi-green').textContent = green;
-    document.getElementById('kpi-amber').textContent = amber;
-    document.getElementById('kpi-red').textContent = red;
-    document.getElementById('kpi-threats').textContent = threats;
-    document.getElementById('comp-count-hdr').textContent = STATE.competitors.length;
-    document.getElementById('comp-count-inline').textContent = STATE.competitors.length;
-    document.getElementById('refresh-date').textContent = STATE.research_date || '2026-04-22';
-  }
-
-  async function init() {
-    try {
-      const res = await fetch('../data/whitespace-competitors.json');
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const data = await res.json();
-      STATE.competitors = data.competitors || [];
-      STATE.research_date = data.research_date || '2026-04-22';
-    } catch (e) {
-      const tbody = document.getElementById('comp-tbody'); clearNode(tbody);
-      const tr = makeEl('tr'); const td = makeEl('td', 'loading', 'Failed to load data/whitespace-competitors.json: ' + e.message);
-      td.colSpan = 7; tr.appendChild(td); tbody.appendChild(tr); return;
-    }
-    STATE.matrix = buildMatrix();
-    renderStrategyCanvas(); renderHeatmap(); renderNiches(); populateCatFilter(); renderTable(); updateKpis();
-    ['comp-search','comp-cat','comp-threat'].forEach(id => document.getElementById(id).addEventListener('input', renderTable));
-  }
-  init();
-})();
+  mount(document.getElementById('attack-plans'), ...ws.attack_plans.map(niche));
 </script>
 </body>
 </html>

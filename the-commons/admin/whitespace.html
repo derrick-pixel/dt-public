@@ -4,333 +4,43 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>White Space Atlas — The Commons Admin</title>
-  <meta name="description" content="Strategic competitive intelligence: competitor universe, strategy canvas, segment x need coverage heatmap, attack plan. Admin-only.">
+  <meta name="description" content="Whitespace atlas for The Commons: strategy canvas radar, segment×need heatmap, and ranked attack plans showing where the SG P2P event-organisation category is open to bespoke entry.">
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous"></script>
-
+  <link rel="stylesheet" href="../assets/css/intel-refresh.css">
+  <script src="../assets/vendor/chart.umd.js"></script>
   <style>
-    :root {
-      --atlas-green: #00E676;
-      --atlas-green-bg: rgba(0,230,118,0.16);
-      --atlas-green-solid: #00C853;
-      --atlas-amber: #FF8E53;
-      --atlas-amber-bg: rgba(255,142,83,0.18);
-      --atlas-red: #FF4081;
-      --atlas-red-bg: rgba(255,64,129,0.14);
-    }
     .admin-nav-bar {
       display: flex; gap: 8px; background: var(--navy); padding: 10px 24px;
       margin-top: var(--nav-height); position: sticky; top: var(--nav-height); z-index: 100;
     }
-    .admin-nav-bar a { color: rgba(255,255,255,0.6); padding: 10px 20px; border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 600; }
+    .admin-nav-bar a {
+      color: rgba(255,255,255,0.6); padding: 10px 20px; border-radius: var(--radius-sm);
+      font-size: 0.85rem; font-weight: 600;
+    }
     .admin-nav-bar a:hover { background: rgba(255,255,255,0.08); color: white; }
     .admin-nav-bar a.active { background: rgba(255,107,107,0.2); color: var(--coral); }
 
-    .atlas-body { padding: 40px 0 80px; background: var(--sand); min-height: calc(100vh - var(--nav-height)); }
-    .atlas-top { max-width: 1340px; margin: 0 auto; padding: 0 24px; display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
-    .atlas-tag {
-      display: inline-block; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.14em;
-      text-transform: uppercase; color: var(--coral); margin-bottom: 8px;
-      padding: 4px 12px; border: 2px solid var(--coral); border-radius: 999px; background: white;
+    .ph { padding: 50px 0 30px; max-width: 1400px; margin: 0 auto; padding-left: 28px; padding-right: 28px; }
+    .ph h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; letter-spacing: -0.025em; margin-bottom: 14px; line-height: 1.15; color: var(--navy); }
+    .ph p { color: var(--slate); max-width: 880px; line-height: 1.6; font-size: 0.98rem; }
+    .ph p a { color: var(--coral); border-bottom: 1px dotted var(--coral); }
+
+    .intel-section { padding: 16px 0 32px; }
+    .intel-section h2 { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; color: var(--navy); margin-bottom: 8px; }
+
+    @media (max-width: 768px) {
+      .admin-nav-bar { flex-wrap: wrap; }
+      .ph { padding-left: 16px; padding-right: 16px; padding-top: 30px; }
+      .ph h1 { font-size: 1.45rem !important; line-height: 1.2 !important; }
+      .ph p { font-size: 0.84rem; }
+      .intel-section h2 { font-size: 1.05rem !important; }
     }
-    .atlas-title { font-size: clamp(1.7rem, 3.5vw, 2.4rem); font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; color: var(--navy); }
-    .atlas-meta { font-size: 0.76rem; color: var(--slate); font-family: ui-monospace, monospace; text-align: right; }
-
-    .atlas-wrap { max-width: 1340px; margin: 0 auto; padding: 0 24px; }
-
-    .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 24px; }
-    .kpi { background: white; border: 2px solid rgba(26,26,46,0.08); border-radius: var(--radius-md); padding: 18px 20px; box-shadow: var(--shadow-sm); }
-    .kpi-val { font-size: 2rem; font-weight: 900; color: var(--coral); letter-spacing: -0.03em; line-height: 1; }
-    .kpi-val.green { color: var(--atlas-green-solid); }
-    .kpi-val.amber { color: var(--atlas-amber); }
-    .kpi-val.red { color: var(--atlas-red); }
-    .kpi-lbl { font-size: 0.72rem; color: var(--slate); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-top: 8px; }
-
-    .artifact { background: white; border: 2px solid rgba(26,26,46,0.08); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 28px 30px; margin-bottom: 22px; }
-    .art-num {
-      display: inline-block; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.14em;
-      text-transform: uppercase; color: var(--coral); background: rgba(255,107,107,0.1);
-      padding: 4px 12px; border-radius: 999px; border: 1.5px solid rgba(255,107,107,0.3);
-      margin-bottom: 10px;
-    }
-    .art-title { font-size: 1.4rem; font-weight: 800; color: var(--navy); letter-spacing: -0.01em; margin-bottom: 8px; }
-    .art-desc { color: var(--slate); font-size: 0.92rem; max-width: 820px; line-height: 1.55; margin-bottom: 22px; }
-
-    .canvas-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start; }
-    @media (max-width: 900px) { .canvas-wrap { grid-template-columns: 1fr; } }
-    #strategy-canvas { width: 100%; max-width: 820px; height: 420px; }
-    .canvas-legend { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; }
-    .canvas-legend .leg { display: flex; align-items: center; gap: 8px; }
-    .canvas-legend .sw { width: 28px; height: 4px; flex-shrink: 0; border-radius: 2px; }
-    .canvas-legend .us { font-weight: 800; color: var(--coral); }
-
-    .heatmap-wrap { overflow-x: auto; border: 2px solid rgba(26,26,46,0.08); border-radius: 12px; background: var(--sand); }
-    .heatmap { border-collapse: collapse; width: 100%; min-width: 780px; font-size: 0.72rem; }
-    .heatmap th, .heatmap td { border: 1px solid rgba(26,26,46,0.1); padding: 7px 6px; text-align: center; vertical-align: middle; line-height: 1.15; }
-    .heatmap thead th { background: var(--navy); color: white; font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.04em; padding: 10px 5px; font-weight: 700; }
-    .heatmap thead th:first-child { text-align: left; min-width: 200px; }
-    .heatmap tbody th { text-align: left; background: white; color: var(--navy); font-size: 0.82rem; font-weight: 700; padding: 8px 12px; }
-    .heatmap tbody th small { display: block; font-size: 0.66rem; color: var(--slate); font-weight: 400; margin-top: 2px; }
-    .cell { cursor: pointer; font-weight: 800; transition: filter 0.1s; user-select: none; font-size: 0.95rem; }
-    .cell:hover { filter: brightness(0.92); outline: 2px solid var(--coral); outline-offset: -2px; }
-    .cell.green { background: var(--atlas-green-bg); color: var(--atlas-green-solid); }
-    .cell.amber { background: var(--atlas-amber-bg); color: var(--atlas-amber); }
-    .cell.red   { background: var(--atlas-red-bg); color: var(--atlas-red); }
-
-    .heatmap-legend { display: flex; gap: 18px; margin-top: 14px; flex-wrap: wrap; font-size: 0.84rem; color: var(--slate); }
-    .heatmap-legend .dot { display: inline-block; width: 14px; height: 14px; margin-right: 6px; vertical-align: middle; border-radius: 4px; }
-
-    #heatmap-detail { display: none; margin-top: 14px; padding: 16px 20px; background: var(--sand); border: 1.5px solid rgba(26,26,46,0.12); border-radius: 12px; color: var(--slate); font-size: 0.9rem; line-height: 1.55; }
-    #heatmap-detail.show { display: block; }
-    #heatmap-detail b { color: var(--navy); }
-    #heatmap-detail .tag {
-      display: inline-block; padding: 3px 12px; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.08em;
-      text-transform: uppercase; margin-right: 10px; border-radius: 999px;
-    }
-    #heatmap-detail .tag.green { background: var(--atlas-green-bg); color: var(--atlas-green-solid); border: 1px solid var(--atlas-green-solid); }
-    #heatmap-detail .tag.amber { background: var(--atlas-amber-bg); color: var(--atlas-amber); border: 1px solid var(--atlas-amber); }
-    #heatmap-detail .tag.red   { background: var(--atlas-red-bg); color: var(--atlas-red); border: 1px solid var(--atlas-red); }
-
-    .attack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
-    .niche { background: linear-gradient(160deg, var(--atlas-green-bg), transparent 85%); border: 2px solid var(--atlas-green-solid); border-radius: var(--radius-md); padding: 22px 24px; box-shadow: var(--shadow-sm); }
-    .niche-rank { font-size: 0.68rem; font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; color: var(--atlas-green-solid); margin-bottom: 6px; }
-    .niche-name { font-size: 1.08rem; font-weight: 900; margin-bottom: 10px; color: var(--navy); letter-spacing: -0.01em; }
-    .niche-icp { color: var(--slate); font-size: 0.86rem; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1.5px dashed rgba(26,26,46,0.15); font-style: italic; }
-    .niche-row { display: grid; grid-template-columns: 72px 1fr; gap: 10px; font-size: 0.82rem; padding: 6px 0; }
-    .niche-row .k { font-size: 0.66rem; font-weight: 800; color: var(--coral); letter-spacing: 0.08em; text-transform: uppercase; padding-top: 2px; }
-    .niche-row .v { color: var(--slate); line-height: 1.55; }
-
-    .comp-controls { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
-    .comp-search, .comp-filter {
-      padding: 9px 14px; border: 1.5px solid rgba(26,26,46,0.12); background: white; color: var(--navy);
-      font-family: inherit; font-size: 0.88rem; border-radius: 8px; outline: none;
-    }
-    .comp-search:focus, .comp-filter:focus { border-color: var(--coral); }
-    .comp-search { flex: 1; min-width: 220px; }
-    .comp-count { font-size: 0.78rem; color: var(--slate); font-family: ui-monospace, monospace; }
-
-    .comp-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
-    .comp-table thead th { background: var(--navy); color: white; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.68rem; padding: 10px 12px; text-align: left; }
-    .comp-table tbody td { padding: 10px 12px; border-bottom: 1px solid rgba(26,26,46,0.08); vertical-align: top; }
-    .comp-table tbody tr:hover { background: var(--sand); }
-    .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.64rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; }
-    .b-cat { background: rgba(26,26,46,0.08); color: var(--navy); }
-    .b-threat-high { background: var(--atlas-red-bg); color: var(--atlas-red); border: 1px solid var(--atlas-red); }
-    .b-threat-medium { background: var(--atlas-amber-bg); color: var(--atlas-amber); border: 1px solid var(--atlas-amber); }
-    .b-threat-low { background: var(--atlas-green-bg); color: var(--atlas-green-solid); border: 1px solid var(--atlas-green-solid); }
-    .b-beat-easy { background: var(--atlas-green-bg); color: var(--atlas-green-solid); border: 1px solid var(--atlas-green-solid); }
-    .b-beat-moderate { background: var(--atlas-amber-bg); color: var(--atlas-amber); border: 1px solid var(--atlas-amber); }
-    .b-beat-hard { background: var(--atlas-red-bg); color: var(--atlas-red); border: 1px solid var(--atlas-red); }
-    .comp-name { font-weight: 800; color: var(--navy); }
-    .comp-target { font-size: 0.76rem; color: var(--slate); margin-top: 2px; }
-    .loading { color: var(--slate); font-size: 0.86rem; padding: 24px; text-align: center; font-family: ui-monospace, monospace; }
-  
-  /* ── MOBILE RESPONSIVE OVERRIDES (v1) ─────────────────── */
-  @media (max-width: 768px) {
-    body { font-size: 13px; }
-    h1, .page-title, .atlas-title { font-size: 1.45rem !important; line-height: 1.2 !important; }
-    h2, .art-title { font-size: 1.1rem !important; }
-    .page-meta, .atlas-meta { text-align: left !important; margin-top: 6px !important; font-size: 0.7rem !important; }
-    main, .container, .atlas-body, .page-body { padding-left: 14px !important; padding-right: 14px !important; }
-    .page-head, .atlas-top { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
-
-    .kpi-strip, .kpis { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; margin-bottom: 20px !important; }
-    .kpi { padding: 12px 14px !important; }
-    .kpi-val, .kpi .v { font-size: 1.35rem !important; }
-    .kpi-lbl, .kpi .l { font-size: 0.6rem !important; letter-spacing: 0.06em !important; }
-
-    .artifact { padding: 18px 16px !important; margin-bottom: 14px !important; border-radius: 10px !important; }
-    .art-title { font-size: 1.05rem !important; }
-    .art-desc { font-size: 0.82rem !important; margin-bottom: 14px !important; }
-
-    #strategy-canvas { height: 280px !important; max-height: 320px !important; }
-    .canvas-wrap { grid-template-columns: 1fr !important; gap: 14px !important; }
-    .canvas-legend { font-size: 0.72rem !important; }
-    .canvas-legend .leg { gap: 6px !important; }
-
-    .heatmap-wrap { border-radius: 6px !important; }
-    .heatmap { min-width: auto !important; font-size: 0.56rem !important; }
-    .heatmap thead th { padding: 6px 3px !important; font-size: 0.5rem !important; letter-spacing: 0.02em !important; }
-    .heatmap thead th:first-child { min-width: 118px !important; text-align: left !important; }
-    .heatmap tbody th { font-size: 0.66rem !important; padding: 6px 8px !important; min-width: 118px !important; }
-    .heatmap tbody th small { font-size: 0.54rem !important; margin-top: 1px !important; }
-    .heatmap td { padding: 4px 2px !important; font-size: 0.72rem !important; }
-    .heatmap-legend { gap: 10px !important; font-size: 0.7rem !important; }
-    .heatmap-legend .dot { width: 10px !important; height: 10px !important; }
-
-    .attack-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
-    .niche { padding: 16px 14px !important; border-radius: 10px !important; }
-    .niche-name { font-size: 0.98rem !important; }
-    .niche-icp { font-size: 0.82rem !important; margin-bottom: 10px !important; padding-bottom: 10px !important; }
-    .niche-row { grid-template-columns: 60px 1fr !important; gap: 8px !important; font-size: 0.76rem !important; }
-    .niche-row .k { font-size: 0.58rem !important; letter-spacing: 0.05em !important; }
-
-    .comp-controls { gap: 8px !important; margin-bottom: 10px !important; }
-    .comp-search { width: 100% !important; min-width: 100% !important; }
-    .comp-filter { flex: 1; min-width: calc(50% - 4px) !important; }
-    .comp-count { font-size: 0.7rem !important; width: 100% !important; }
-
-    .comp-table { display: block !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; font-size: 0.7rem !important; white-space: nowrap !important; }
-    .comp-table thead, .comp-table tbody, .comp-table tr { display: table !important; width: 100% !important; min-width: 640px !important; table-layout: auto !important; }
-    .comp-table thead th { font-size: 0.55rem !important; padding: 8px 8px !important; letter-spacing: 0.03em !important; }
-    .comp-table tbody td { padding: 8px !important; white-space: normal !important; }
-    .comp-name { font-size: 0.82rem !important; }
-    .comp-target { font-size: 0.7rem !important; }
-    .badge { font-size: 0.56rem !important; padding: 2px 6px !important; letter-spacing: 0.02em !important; }
-
-    .login-box { padding: 32px 24px !important; max-width: calc(100vw - 32px) !important; }
-    .login-logo { font-size: 1.5rem !important; }
-
-    nav, .admin-nav, .atlas-nav { flex-wrap: wrap !important; padding: 10px 14px !important; }
-    .admin-nav { gap: 10px !important; }
-    .atlas-nav-links, .admin-links, .topbar-tabs { flex-wrap: wrap !important; gap: 6px !important; }
-    .atlas-nav-links a, .admin-links a { font-size: 0.72rem !important; padding: 5px 10px !important; }
-  }
-
-  @media (max-width: 420px) {
-    .kpi-strip, .kpis { grid-template-columns: 1fr !important; }
-    .heatmap thead th:first-child,
-    .heatmap tbody th { min-width: 108px !important; }
-    .niche-row { grid-template-columns: 56px 1fr !important; font-size: 0.74rem !important; }
-  }
-  /* ── END MOBILE OVERRIDES ─────────────────────────────── */
-
-  
-  /* ── MOBILE RESPONSIVE OVERRIDES (v2) ─────────────────── */
-  @media (max-width: 768px) {
-    body { font-size: 13px; }
-    h1, .page-title, .atlas-title, .ph h1 { font-size: 1.45rem !important; line-height: 1.2 !important; }
-    h2, .art-title, .section-title, .sec-h h2 { font-size: 1.05rem !important; line-height: 1.25 !important; }
-    h3 { font-size: 0.95rem !important; }
-    .page-meta, .atlas-meta, .topbar-meta { text-align: left !important; margin-top: 6px !important; font-size: 0.7rem !important; }
-    main, .container, .container-wide, .atlas-body, .page-body, .wrap, .page { padding-left: 14px !important; padding-right: 14px !important; }
-    .page-head, .atlas-top, .admin-header { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
-
-    /* Grids collapse to single column */
-    .kpi-strip, .kpis, .summary-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; margin-bottom: 20px !important; }
-    .grid-2, .grid-3, .grid-4, .landscape-grid, .rationale-grid, .tier-strip, .top-list,
-    .attack-grid, .results-grid, .metrics-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
-
-    /* All cards: tighter */
-    .kpi, .summary-card, .stat-card, .comp-card, .landscape-card, .rationale-card,
-    .tier, .model, .sent-card, .insight, .alert, .quote, .card,
-    .niche { padding: 14px 16px !important; border-radius: 10px !important; }
-    .kpi-val, .kpi .v, .summary-card .big, .stat-value { font-size: 1.35rem !important; line-height: 1.1 !important; }
-    .kpi-lbl, .kpi .l, .summary-card .sub, .stat-label { font-size: 0.6rem !important; letter-spacing: 0.06em !important; }
-
-    /* Artifact sections */
-    .artifact, section.panel, .landscape-section { padding: 18px 16px !important; margin-bottom: 14px !important; border-radius: 10px !important; }
-    .art-desc, .sec-h p { font-size: 0.82rem !important; margin-bottom: 14px !important; }
-
-    /* Strategy canvas + charts */
-    #strategy-canvas, .chart-wrap canvas, .radar-svg { height: 280px !important; max-height: 320px !important; width: 100% !important; }
-    .canvas-wrap { grid-template-columns: 1fr !important; gap: 14px !important; }
-    .canvas-legend { font-size: 0.72rem !important; }
-    .canvas-legend .leg { gap: 6px !important; }
-    .chart-wrap { padding: 14px !important; }
-
-    /* Heatmap (whitespace) */
-    .heatmap-wrap { border-radius: 6px !important; overflow-x: auto !important; }
-    .heatmap { min-width: auto !important; font-size: 0.56rem !important; }
-    .heatmap thead th { padding: 6px 3px !important; font-size: 0.5rem !important; letter-spacing: 0.02em !important; }
-    .heatmap thead th:first-child { min-width: 118px !important; text-align: left !important; }
-    .heatmap tbody th { font-size: 0.66rem !important; padding: 6px 8px !important; min-width: 118px !important; }
-    .heatmap tbody th small { font-size: 0.54rem !important; margin-top: 1px !important; }
-    .heatmap td { padding: 4px 2px !important; font-size: 0.72rem !important; }
-    .heatmap-legend { gap: 10px !important; font-size: 0.7rem !important; }
-    .heatmap-legend .dot { width: 10px !important; height: 10px !important; }
-
-    /* Attack niches (whitespace) */
-    .niche-name { font-size: 0.98rem !important; }
-    .niche-icp { font-size: 0.82rem !important; margin-bottom: 10px !important; padding-bottom: 10px !important; }
-    .niche-row { grid-template-columns: 60px 1fr !important; gap: 8px !important; font-size: 0.76rem !important; }
-    .niche-row .k { font-size: 0.58rem !important; letter-spacing: 0.05em !important; }
-
-    /* Competitor controls */
-    .comp-controls, .filter-bar { gap: 8px !important; margin-bottom: 10px !important; flex-wrap: wrap !important; }
-    .comp-search, .filter-bar input[type="search"], .filter-bar input[type="text"] { width: 100% !important; min-width: 100% !important; }
-    .comp-filter, .filter-bar select { flex: 1 1 calc(50% - 4px) !important; min-width: calc(50% - 4px) !important; }
-    .comp-count { font-size: 0.7rem !important; width: 100% !important; }
-
-    /* Generic tables: always scroll horizontally inside the card */
-    .tbl-wrap, .table-wrapper, .table-wrap, .tbl { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; }
-    table { display: block !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; font-size: 0.7rem !important; white-space: nowrap !important; }
-    table thead, table tbody, table tr { display: table !important; width: 100% !important; min-width: 640px !important; table-layout: auto !important; }
-    table thead th, .comp-table thead th { font-size: 0.55rem !important; padding: 8px !important; letter-spacing: 0.03em !important; white-space: normal !important; }
-    table tbody td, .comp-table tbody td { padding: 8px !important; white-space: normal !important; font-size: 0.76rem !important; }
-
-    /* Comp-table specifics */
-    .comp-name { font-size: 0.82rem !important; }
-    .comp-target { font-size: 0.7rem !important; }
-    .badge, .region-badge, .tier-badge { font-size: 0.56rem !important; padding: 2px 6px !important; letter-spacing: 0.02em !important; }
-
-    /* Bar-chart rows (AEVUM admin) */
-    .bar-chart { padding: 0 !important; }
-    .bar-row { grid-template-columns: 1fr !important; gap: 4px !important; padding: 8px 0 !important; }
-    .bar-row .val { text-align: left !important; }
-
-    /* Login overlay (altru/passage) */
-    .login-box { padding: 32px 24px !important; max-width: calc(100vw - 32px) !important; }
-    .login-logo { font-size: 1.5rem !important; }
-
-    /* Admin navs — wrap */
-    nav, .admin-nav, .atlas-nav, .topbar, .topbar-inner { flex-wrap: wrap !important; padding: 10px 14px !important; gap: 8px !important; }
-    .admin-nav { gap: 10px !important; }
-    .atlas-nav-links, .admin-links, .topbar-tabs { flex-wrap: wrap !important; gap: 6px !important; }
-    .atlas-nav-links a, .admin-links a, .topbar-tabs a { font-size: 0.72rem !important; padding: 5px 10px !important; }
-
-    /* SPA admin rail (EMS elitez-pulse) */
-    .admin-layout { grid-template-columns: 1fr !important; }
-    .admin-rail { position: static !important; height: auto !important; width: 100% !important; padding: 14px !important; margin-bottom: 10px !important; }
-    .admin-rail__tab, .admin-rail__link { display: inline-block !important; margin-right: 6px !important; font-size: 0.8rem !important; padding: 6px 10px !important; }
-    .admin-main { padding: 14px !important; }
-
-    /* Admin sidebar (the-commons admin) */
-    .dashboard, .admin-main, aside.sidebar { grid-template-columns: 1fr !important; }
-    aside.sidebar, .admin-sidebar { position: static !important; height: auto !important; width: 100% !important; padding: 14px !important; margin-bottom: 10px !important; }
-    .sidebar-nav { display: flex !important; flex-wrap: wrap !important; gap: 4px !important; }
-    .sidebar-nav li { display: inline-block !important; }
-    .sidebar-nav a { font-size: 0.76rem !important; padding: 6px 10px !important; }
-    .main-content { padding: 0 !important; }
-
-    /* Event hero / PayNow modal on mobile */
-    .ev-hero-wrap { height: 220px !important; }
-    .modal { padding: 20px 16px !important; max-width: calc(100vw - 24px) !important; }
-    .modal h3 { font-size: 1.05rem !important; }
-
-    /* Steps indicator (create.html) */
-    .steps { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
-    .step-connector { display: none !important; }
-
-    /* Navigation logo padding */
-    .nav-inner { padding: 10px 14px !important; }
-    .nav-inner .nav-links { display: none !important; }
-    .mobile-toggle { display: inline-flex !important; }
-
-    /* Forms */
-    .form-row { grid-template-columns: 1fr !important; gap: 12px !important; }
-    .form-group label { font-size: 0.8rem !important; }
-
-    /* Footer */
-    .footer-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
-  }
-
-  @media (max-width: 420px) {
-    .kpi-strip, .kpis, .summary-grid { grid-template-columns: 1fr !important; }
-    .heatmap thead th:first-child,
-    .heatmap tbody th { min-width: 108px !important; }
-    .niche-row { grid-template-columns: 56px 1fr !important; font-size: 0.74rem !important; }
-    body { font-size: 12px; }
-    .kpi-val, .kpi .v, .summary-card .big, .stat-value { font-size: 1.2rem !important; }
-    .comp-filter, .filter-bar select { flex: 1 1 100% !important; min-width: 100% !important; }
-  }
-  /* ── END MOBILE OVERRIDES ─────────────────────────────── */
-
   </style>
 <script type="application/ld+json" data-injected="schema-jsonld">
 {
@@ -351,21 +61,43 @@
 </script>
 </head>
 <body>
-
-  <!-- Re-use the-commons nav style; minimal local nav for admin. -->
-  <nav class="nav-main" style="background: var(--navy); height: var(--nav-height); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; position: fixed; top: 0; left: 0; right: 0; z-index: 200;">
-    <a href="../index.html" class="logo" style="color: white; font-weight: 900; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
-      <span style="background: var(--coral); color: white; width: 32px; height: 32px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.82rem;">TC</span>
-      The Commons
-    </a>
-    <div style="display: flex; gap: 18px;">
-      <a href="../events.html" style="color: rgba(255,255,255,0.7); font-size: 0.9rem; font-weight: 600;">Discover</a>
-      <a href="../marketplace.html" style="color: rgba(255,255,255,0.7); font-size: 0.9rem; font-weight: 600;">Marketplace</a>
-      <a href="index.html" style="color: rgba(255,255,255,0.7); font-size: 0.9rem; font-weight: 600;">Admin</a>
-      <a href="whitespace.html" style="color: var(--coral); font-size: 0.9rem; font-weight: 700;">White Space</a>
+  <!-- Navigation -->
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-inner">
+      <a href="../index.html" class="nav-logo">
+        <div class="logo-icon">TC</div>
+        The Commons
+      </a>
+      <ul class="nav-links">
+        <li><a href="../events.html">Discover</a></li>
+        <li><a href="../create.html">Create Event</a></li>
+        <li><a href="../marketplace.html">Marketplace</a></li>
+        <li><a href="../dashboard.html">Dashboard</a></li>
+        <li><a href="index.html">Admin</a></li>
+        <li><a href="competitor-analytics.html">Competitors</a></li>
+        <li><a href="whitespace.html" class="active">Whitespace</a></li>
+      </ul>
+      <div class="nav-actions">
+        <span class="badge badge-coral">Research</span>
+      </div>
+      <button class="mobile-toggle" onclick="toggleMobileMenu()">&#9776;</button>
     </div>
   </nav>
+<main>
 
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="../index.html">Home</a>
+    <a href="../events.html">Discover Events</a>
+    <a href="../marketplace.html">Marketplace</a>
+    <a href="index.html">Admin Panel</a>
+    <a href="competitor-analytics.html">Competitors</a>
+    <a href="insights.html">Market &amp; Pricing</a>
+    <a href="whitespace.html">White Space</a>
+    <a href="design-audit.html">Design Audit</a>
+    <a href="report.html">Report</a>
+  </div>
+
+  <!-- Admin Sub-Nav -->
   <div class="admin-nav-bar">
     <a href="index.html">Platform Admin</a>
     <a href="competitor-analytics.html">Competitor Analytics</a>
@@ -375,393 +107,153 @@
     <a href="report.html">Report</a>
   </div>
 
-  <main class="atlas-body">
-    <div class="atlas-wrap">
-      <div class="atlas-top">
-        <div>
-          <span class="atlas-tag">◆ White Space Atlas — v1</span>
-          <h1 class="atlas-title">Escrow + SG-local + vendor marketplace.<br/>No one else has the trio.</h1>
-        </div>
-        <div class="atlas-meta">
-          <div>Refreshed <span id="refresh-date">2026-04-22</span></div>
-          <div><span id="comp-count-hdr">—</span> competitors · 8 segments · 8 needs · admin-only</div>
-        </div>
+  <section class="ph">
+    <span class="eyebrow">Artefact 06</span>
+    <h1>Whitespace Atlas</h1>
+    <p>Three artefacts work together to identify where the SG P2P event-organisation category is open and where The Commons can win. The strategy-canvas radar plots existing competitors against the dimensions buyers evaluate; flat patches signal differentiation opportunities. The segment&times;need heatmap counts how many competitors genuinely serve each pair (score &ge; 3) — green is whitespace, amber is contested, red is crowded; click any cell for the player list. The ranked attack plans translate findings into concrete go-to-market specs (ICP, TAM, gap thesis, why-we-win, channel, pitch, pricing, content). Cross-link to <a href="competitor-analytics.html">competitors</a>, <a href="insights.html">market &amp; pricing</a>, <a href="design-audit.html">design audit</a>, the <a href="report.html">printable report</a>, or the parent <a href="../index.html">site</a>.</p>
+  </section>
+
+  <div class="container-wide">
+
+    <section class="intel-section">
+      <div class="radar-container">
+        <span class="artefact-label">Strategy canvas</span>
+        <h2>Eight axes vs. SG event-platform field</h2>
+        <p class="radar-thesis" id="thesis"></p>
+        <div style="height: 540px; min-width: 0;"><canvas id="radar-canvas" aria-label="Radar chart of strategic dimensions versus competitors"></canvas></div>
       </div>
+    </section>
 
-      <div class="kpi-strip">
-        <div class="kpi"><div class="kpi-val" id="kpi-n-comp">—</div><div class="kpi-lbl">Competitors</div></div>
-        <div class="kpi"><div class="kpi-val green" id="kpi-green">—</div><div class="kpi-lbl">White-space cells</div></div>
-        <div class="kpi"><div class="kpi-val amber" id="kpi-amber">—</div><div class="kpi-lbl">Contested cells</div></div>
-        <div class="kpi"><div class="kpi-val red" id="kpi-red">—</div><div class="kpi-lbl">Crowded cells</div></div>
-        <div class="kpi"><div class="kpi-val" id="kpi-threats">—</div><div class="kpi-lbl">High-threat rivals</div></div>
+    <section class="intel-section">
+      <span class="artefact-label">Heatmap</span>
+      <h2 id="heatmap-title">Segment &times; Need</h2>
+      <p style="max-width: 820px; color: var(--slate); font-size: 0.9rem; line-height: 1.55;">
+        Each cell shows two numbers: count of competitors genuinely serving that pair (score &ge; 3), and The Commons' own capability score (out of 5). Click any cell for the pair-specific competitor breakdown.
+      </p>
+      <div class="heatmap-wrap"><div id="heatmap"></div></div>
+      <div class="legend">
+        <span><span class="legend-swatch" style="background: rgba(16,185,129,0.10); border: 1px solid #10B981;"></span>Green &le; 1 — whitespace, attack</span>
+        <span><span class="legend-swatch" style="background: rgba(255,142,83,0.14); border: 1px solid #FF8E53;"></span>Amber 2-3 — contested</span>
+        <span><span class="legend-swatch" style="background: rgba(255,64,129,0.10); border: 1px solid #FF4081;"></span>Red &ge; 4 — crowded</span>
       </div>
+      <div id="cell-detail" class="cell-detail" style="display: none;"></div>
+    </section>
 
-      <section class="artifact">
-        <div class="art-num">Artifact 01</div>
-        <h2 class="art-title">Strategy Canvas</h2>
-        <p class="art-desc">Blue-Ocean radar. Each line plots a competitor across 8 customer-valued dimensions. Our shape must break away on escrow-by-default + 2-sided marketplace + SG localisation — nobody else clusters on that trio.</p>
-        <div class="canvas-wrap">
-          <canvas id="strategy-canvas" width="820" height="420"></canvas>
-          <div class="canvas-legend" id="canvas-legend"></div>
-        </div>
-      </section>
+    <section class="intel-section" style="padding-bottom: 56px;">
+      <span class="artefact-label">Attack plans &middot; Top 3</span>
+      <h2>Where The Commons attacks first</h2>
+      <p style="max-width: 760px; color: var(--slate); font-size: 0.9rem; line-height: 1.55;">Ranked by win probability &times; addressable size. Each plan binds to a green or low-amber cell on the heatmap above.</p>
+      <div id="attack-plans" class="attack-grid" style="margin-top: 18px;"></div>
+    </section>
 
-      <section class="artifact">
-        <div class="art-num">Artifact 02</div>
-        <h2 class="art-title">Segment × Need Heatmap — 8 × 8</h2>
-        <p class="art-desc">Each cell: count of platforms serving that (segment, need) pair (score ≥3). Click any cell for detail.</p>
-        <div class="heatmap-wrap">
-          <table class="heatmap" id="heatmap"><thead></thead><tbody></tbody></table>
-        </div>
-        <div class="heatmap-legend">
-          <span><span class="dot" style="background:var(--atlas-green-solid)"></span>Green 0–1 · white space</span>
-          <span><span class="dot" style="background:var(--atlas-amber)"></span>Amber 2–3 · contested</span>
-          <span><span class="dot" style="background:var(--atlas-red)"></span>Red 4+ · crowded</span>
-        </div>
-        <div id="heatmap-detail"></div>
-      </section>
+  </div>
 
-      <section class="artifact">
-        <div class="art-num">Artifact 03</div>
-        <h2 class="art-title">Attack Plan — Top 3 Underserved Niches</h2>
-        <p class="art-desc">Where The Commons attacks first. Each card: ICP, TAM, why-gap, why-we-win, GTM.</p>
-        <div class="attack-grid" id="attack-grid"></div>
-      </section>
-
-      <section class="artifact">
-        <div class="art-num">Artifact 04</div>
-        <h2 class="art-title">Competitor Deep-dive</h2>
-        <p class="art-desc">All <span id="comp-count-inline">—</span> event/ticketing/marketplace platforms with fee structures, threat level, and our wedge.</p>
-        <div class="comp-controls">
-          <input type="search" id="comp-search" class="comp-search" placeholder="Search name, target, strengths...">
-          <select id="comp-cat" class="comp-filter"><option value="">All categories</option></select>
-          <select id="comp-threat" class="comp-filter">
-            <option value="">All threats</option>
-            <option value="high">High</option>
-            <option value="medium">Medium</option>
-            <option value="low">Low</option>
-          </select>
-          <span class="comp-count" id="comp-count-tbl">—</span>
-        </div>
-        <table class="comp-table" id="comp-table">
-          <thead><tr><th>Name / target</th><th>Category</th><th>Fees</th><th>Threat</th><th>Beat</th><th>Strengths</th><th>Weaknesses</th></tr></thead>
-          <tbody id="comp-tbody"><tr><td colspan="7" class="loading">Loading competitor data…</td></tr></tbody>
-        </table>
-      </section>
-
-    </div>
   </main>
 
-<script>
-(function() {
-  const CANVAS_DIMS = [
-    'Low platform fee',
-    'Escrow by default',
-    '2-sided vendor marketplace',
-    'SG localisation',
-    'Brand trust / polish',
-    'Creator tools depth',
-    'Payment flex',
-    'Community / virality'
-  ];
-  const CANVAS_LINES = [
-    { name: 'The Commons', us: true, color: '#FF6B6B', scores: [4, 5, 5, 5, 4, 4, 4, 3] },
-    { name: 'Eventbrite',          color: '#B33A3A', scores: [1, 0, 0, 2, 5, 5, 3, 5] },
-    { name: 'Peatix SG',           color: '#8b2424', scores: [3, 0, 0, 3, 4, 4, 3, 3] },
-    { name: 'Klook',               color: '#dc2626', scores: [0, 4, 2, 4, 5, 4, 4, 4] },
-    { name: 'Peerspace',           color: '#FF8E53', scores: [1, 3, 1, 1, 4, 4, 4, 2] },
-    { name: 'Fiverr (freelancer)', color: '#FF4081', scores: [1, 3, 0, 2, 4, 4, 3, 4] },
-    { name: 'Airbnb Experiences',  color: '#E040FB', scores: [1, 5, 0, 3, 5, 3, 5, 5] },
-    { name: 'SISTIC',              color: '#1A1A2E', scores: [1, 0, 0, 5, 4, 2, 2, 3] },
-    { name: 'Meetup',              color: '#3A7BD5', scores: [4, 0, 0, 2, 3, 2, 2, 5] },
-    { name: 'DIY (Form+PayNow+WA)',color: '#4A5568', scores: [5, 0, 0, 5, 0, 0, 4, 2] }
-  ];
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border-top: none; padding-top: 0;">
+        <span>&copy; 2026 The Commons. Whitespace atlas &middot; sourced from public competitor pricing, STB SG, IMDA, and SG community-event coverage.</span>
+      </div>
+    </div>
+  </footer>
 
-  const SEGMENTS = [
-    { id: 'hobby_creator_sub100',   label: 'Hobby creator <100-seat',    note: 'Workshops, niche meetups' },
-    { id: 'pro_trainer_1k_plus',    label: 'Pro trainer 100–1000 seat',  note: 'Recurring courses, retreats' },
-    { id: 'corporate_offsite',      label: 'Corporate offsite / retreat',note: 'HR 20–100 ppl internal' },
-    { id: 'fitness_wellness_chain', label: 'Fitness / wellness chain',   note: 'Yoga, pilates, HIIT' },
-    { id: 'cultural_ngo_ticketed',  label: 'Cultural / NGO ticketed',    note: 'Heritage tours, fundraisers' },
-    { id: 'foodtour_local_guide',   label: 'Food tour / local guide',    note: 'Hawker walks, craft cocktails' },
-    { id: 'one_off_private_event',  label: 'One-off private event',      note: 'Weddings, birthdays' },
-    { id: 'regulated_pdu_ticketed', label: 'Regulated / PDU event',      note: 'CPD, SILE, IBF' }
-  ];
-  const NEEDS = [
-    { id: 'low_fee_sub5pct',        label: 'Fee under 5%',               short: '<5% fee' },
-    { id: 'escrow_protection',     label: 'Escrow / refund protection',  short: 'Escrow' },
-    { id: 'supporting_vendors',    label: 'Support vendors in-app',      short: 'Vendors' },
-    { id: 'sg_payments_native',    label: 'PayNow + SGD native',         short: 'PayNow' },
-    { id: 'discovery_traffic',     label: 'Platform brings audience',    short: 'Discovery' },
-    { id: 'recurring_cohort_tools',label: 'Recurring cohort tools',      short: 'Cohort' },
-    { id: 'corporate_invoice_gst', label: 'Corporate invoice + GST',     short: 'GST' },
-    { id: 'creator_page_design',   label: 'Page / landing tools',        short: 'Design' }
-  ];
+  <div class="toast" id="toast"></div>
 
-  function scoreCompetitor(c, segId, needId) {
-    const tm = (c.target_market || '').toLowerCase();
-    const vp = (c.primary_value_prop || '').toLowerCase();
-    const str = (c.strengths || []).join(' ').toLowerCase();
-    const cat = c.category || '';
-    const hq = (c.hq || '').toLowerCase();
-    const fee = Number(c.platform_fee_percent || 0);
-    const hasEscrow = !!c.has_escrow;
-    const hasMarket = !!c.has_marketplace;
-    const sgLocal = Number(c.sg_localisation_score || 0);
-    const bundle = (str + ' ' + vp + ' ' + tm).toLowerCase();
+  <script type="module">
+    import { loadAppData, mountSampleBanner, mountUnstyledBanner } from '../assets/js/app.js';
+    import { renderRadar } from '../assets/js/viz/radar.js';
+    import { renderHeatmap, renderCellDetail } from '../assets/js/viz/heatmap.js';
+    import { fmtSGD } from '../assets/js/format.js';
+    import { h, mount } from '../assets/js/dom.js';
 
-    const segMap = {
-      hobby_creator_sub100:   (tm.match(/hobby|small|creator|indie|diy|diy.?first|under 100|micro|niche/) ? 4 : (cat === 'global_ticketing' ? 3 : (cat === 'diy_alt' ? 5 : 0))),
-      pro_trainer_1k_plus:    (tm.match(/pro|trainer|course|retreat|workshop|instructor|conference|100.?1000|scale/) ? 4 : (cat === 'class_workshop' ? 4 : (cat === 'global_ticketing' ? 3 : 0))),
-      corporate_offsite:      (tm.match(/corporate|hr|offsite|retreat|company|employer|team build/) ? 4 : (cat === 'space_rental' ? 3 : 0)),
-      fitness_wellness_chain: (tm.match(/fitness|yoga|pilates|wellness|gym|hiit|boutique/) ? 4 : (cat === 'class_workshop' ? 3 : 0)),
-      cultural_ngo_ticketed:  (tm.match(/cultural|ngo|non-profit|heritage|museum|fundraiser|charity/) ? 4 : (cat === 'global_ticketing' ? 3 : 0)),
-      foodtour_local_guide:   (tm.match(/food|tour|guide|hawker|experience|drinks|local|walk/) ? 4 : (cat === 'experience_marketplace' ? 5 : 0)),
-      one_off_private_event:  (tm.match(/private|wedding|birthday|dinner|one.?off|rsvp/) ? 4 : (cat === 'payment_escrow' ? 3 : (cat === 'diy_alt' ? 5 : 0))),
-      regulated_pdu_ticketed: (tm.match(/regulated|cpd|ibf|sile|accredit|professional|pdu|license/) ? 4 : (cat === 'global_ticketing' ? 3 : 0))
-    };
-    const segScore = segMap[segId] || 0;
+    const data = await loadAppData('../data');
+    mountSampleBanner();
+    mountUnstyledBanner();
 
-    const needMap = {
-      low_fee_sub5pct:        (fee > 0 && fee <= 5 ? 5 : fee <= 8 ? 2 : (cat === 'diy_alt' || cat === 'payment_escrow' ? 5 : 0)),
-      escrow_protection:      hasEscrow ? 5 : 0,
-      supporting_vendors:     hasMarket ? 5 : (cat === 'freelance_marketplace' ? 4 : 0),
-      sg_payments_native:     sgLocal >= 4 ? 5 : sgLocal >= 3 ? 3 : sgLocal >= 2 ? 2 : 0,
-      discovery_traffic:      (/discovery|audience|organic|seo|brand|network|community|explore/.test(bundle) ? 4 : (cat === 'global_ticketing' ? 4 : (cat === 'experience_marketplace' ? 4 : 1))),
-      recurring_cohort_tools: (/recurring|subscription|cohort|series|course|class/.test(bundle) ? 4 : (cat === 'class_workshop' ? 4 : 1)),
-      corporate_invoice_gst:  (sgLocal >= 4 && /gst|invoice|corporate|b2b/.test(bundle) ? 4 : (sgLocal >= 3 ? 2 : 0)),
-      creator_page_design:    (/page|landing|builder|design|template|brand|custom/.test(bundle) ? 4 : (cat === 'global_ticketing' ? 4 : 2))
-    };
-    const needScore = needMap[needId] || 0;
-    return Math.min(segScore, needScore);
-  }
+    const ws = data.whitespace;
+    document.getElementById('thesis').textContent = ws.strategy_canvas.headline_thesis;
 
-  function ourScore(segId, needId) {
-    const s = { hobby_creator_sub100:5, pro_trainer_1k_plus:4, corporate_offsite:4, fitness_wellness_chain:4, cultural_ngo_ticketed:3, foodtour_local_guide:4, one_off_private_event:3, regulated_pdu_ticketed:4 }[segId] || 3;
-    const n = { low_fee_sub5pct:3, escrow_protection:5, supporting_vendors:5, sg_payments_native:5, discovery_traffic:2, recurring_cohort_tools:3, corporate_invoice_gst:5, creator_page_design:4 }[needId] || 3;
-    return Math.min(s, n);
-  }
+    // Focus the radar to top-5 SG-relevant competitors so the chart stays readable
+    const focusedIds = ['eventbrite', 'peatix', 'luma', 'klook', 'paynow_diy'];
+    renderRadar({
+      canvas: document.getElementById('radar-canvas'),
+      dimensions: ws.strategy_canvas.dimensions,
+      scores: ws.strategy_canvas.scores,
+      focusedIds
+    });
 
-  const STATE = { competitors: [], matrix: null, research_date: '2026-04-22' };
+    document.getElementById('heatmap-title').textContent =
+      `Segment × Need — ${ws.heatmap.segments.length} × ${ws.heatmap.needs.length}`;
 
-  const NICHES = [
-    {
-      rank: '01',
-      name: 'SG Hobby-to-Business Creator (sub-100 seats)',
-      icp: 'SG creators (workshops, classes, niche meetups) running sub-100-seat paid events. Currently stuck on the DIY stack (Google Form + PayNow + WhatsApp) — free but with zero escrow, zero discovery, zero vendor-sourcing. Peatix/Eventbrite feel too corporate and take 8-11%.',
-      tam: '~8,400 SG active hobby-to-pro creators running ≥1 paid event/quarter (Meetup + Peatix SG + FB groups + LinkedIn creators data).',
-      why_underserved: 'DIY is free but risky for both sides. Eventbrite takes 10.7%. Peatix takes 7.6% but has no escrow, no vendor side. Peerspace/Fiverr/Klook are specialised elsewhere. The combo of escrow + SG-local + vendor marketplace doesn\'t exist anywhere.',
-      why_we_win: '(1) Escrow-by-default → buyer trust lowers conversion friction. (2) In-app freelance marketplace → creator finds MC + photographer + venue without leaving platform. (3) SG-localised: PayNow, SGD, GST invoice, IRAS-clean. (4) Mid-tier 6-8% fee vs Eventbrite 10.7% (we win on price) AND trust (DIY stack loses on trust).',
-      gtm: {
-        pricing: '6% platform fee (launch promo: 3% for first 12 months). No monthly base fee.',
-        channel: 'Migration incentive for current Peatix SG / Eventbrite SG creators: "import your past event + we absorb first month fees". BYOB SG / SG Ladies / Meetup.com SG organiser DM outreach. Creator-focused IG/TikTok content.',
-        pitch: '"Escrow protects you. Vendors grow you. And your first three bookings are on us."',
-        content: '"Event Fee Calculator" — compares Eventbrite vs Peatix vs Commons vs DIY on a S$50 × 30-seat workshop. Email-gated.'
-      }
-    },
-    {
-      rank: '02',
-      name: 'Corporate Offsite — HR Procurement, End-to-End',
-      icp: 'SG HR / People Ops buying 20-100 pax offsites, retreats, team-builds. Currently juggles 4-5 vendors (venue, catering, MC, photographer, activity) via email + PayNow. Wants invoice + GST + audit trail for corporate. Commons = single-procurement-order for an entire event.',
-      tam: '~4,800 SG companies with 50+ employees running ≥1 offsite/year (MOM labour + Glassdoor HR benefit surveys + SAF/MOE public budgets).',
-      why_underserved: 'Eventbrite doesn\'t bundle vendors. Peerspace is venue-only. Venuerific is venue + lead-gen but not a true marketplace. Fiverr is freelancers without events. No one packages "one PO, many vendors, escrow, GST-ready invoice" for HR procurement.',
-      why_we_win: '(1) 2-sided marketplace = 1 invoice vs 5 POs. (2) GST + corporate invoice baked in. (3) Escrow = HR accountable to finance (funds move only when event delivered). (4) Elitez Group can bundle security + transport via sister companies — 10× the moat.',
-      gtm: {
-        pricing: '"Corporate" tier: 4% platform fee + S$199/mo flat (unlocks bulk-invoice, GST, multi-approver workflow).',
-        channel: 'SG HR networks (IHRP, SHRI, HR Tech Fest SG). CHRO LinkedIn targeting. Co-marketing with SG venue operators (KLK, South Beach, Andaz).',
-        pitch: '"Twenty people. Five vendors. One invoice. Funds only move when the offsite actually happens."',
-        content: '"HR Offsite Procurement Playbook" — 12-page PDF + vendor checklist, gated as lead capture.'
-      }
-    },
-    {
-      rank: '03',
-      name: 'Regulated CPD / Professional-Accreditation Events',
-      icp: 'IBF / SILE / SAC / CPD event organisers running accreditation-earning sessions (finance, legal, medical, engineering CPD). Needs audit-trail, attendance tracking, certificate issue, GST-correct invoicing, refund process. Current tools force piecemeal compliance.',
-      tam: '~920 SG organisations running ≥4 CPD events/year (IBF member roll + Law Society CPD tracker + SEC engineering CPD + MOH specialist CPD).',
-      why_underserved: 'Eventbrite lacks audit trail for CPD. SISTIC is venue-heavyweight, not creator-friendly. Peatix has no compliance layer. Corporate LMS platforms (Coursera for Business) don\'t do in-person ticketed. No one combines event ticketing + attendance audit + certificate + GST + refund under escrow.',
-      why_we_win: '(1) Escrow + GST + certificate issue in one flow = audit-ready out-of-box. (2) Commons can partner with IBF/SILE for joint CPD-listing badge. (3) Recurring cohort tools → CPD organisers run quarterly series naturally.',
-      gtm: {
-        pricing: '"Accreditation" tier: 5% platform fee + S$99/mo (unlocks attendance scanning, certificate builder, refund workflow).',
-        channel: 'Direct partnership with IBF, SILE, SAC, SEC, MOH specialist boards. Pre-accredited "CPD-ready" badge listing as lead hook. Co-branded landing pages with each regulator.',
-        pitch: '"CPD audit-ready by default. Attendance + certificate + GST + escrow — in one invoice your compliance officer will sign."',
-        content: '"CPD Organiser Compliance Matrix" — 8-regulator comparison PDF, email-gated.'
-      }
-    }
-  ];
-
-  function clearNode(el) { while (el.firstChild) el.removeChild(el.firstChild); }
-  function makeEl(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
-
-  function renderStrategyCanvas() {
-    const ctx = document.getElementById('strategy-canvas').getContext('2d');
-    const datasets = CANVAS_LINES.map(l => ({
-      label: l.name, data: l.scores,
-      backgroundColor: l.us ? 'rgba(255,107,107,0.18)' : 'transparent',
-      borderColor: l.color, borderWidth: l.us ? 3 : 1.5,
-      pointRadius: l.us ? 4 : 2.5, pointBackgroundColor: l.color, tension: 0.15
-    }));
-    new Chart(ctx, {
-      type: 'radar', data: { labels: CANVAS_DIMS, datasets },
-      options: {
-        scales: { r: {
-          suggestedMin: 0, suggestedMax: 5,
-          ticks: { stepSize: 1, backdropColor: 'rgba(0,0,0,0)', color: '#4A5568', font: { size: 10 } },
-          grid: { color: 'rgba(26,26,46,0.08)' },
-          angleLines: { color: 'rgba(26,26,46,0.1)' },
-          pointLabels: { color: '#1A1A2E', font: { family: 'Inter, sans-serif', size: 11, weight: 700 } }
-        } },
-        plugins: { legend: { display: false }, tooltip: { callbacks: { label: x => x.dataset.label + ': ' + x.raw } } },
-        responsive: true, maintainAspectRatio: false
+    const panel = document.getElementById('cell-detail');
+    renderHeatmap({
+      container: document.getElementById('heatmap'),
+      segments: ws.heatmap.segments,
+      needs: ws.heatmap.needs,
+      cells: ws.heatmap.cells,
+      onCellClick: detail => {
+        panel.style.display = 'block';
+        renderCellDetail(panel, detail);
+        panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     });
-    const leg = document.getElementById('canvas-legend'); clearNode(leg);
-    CANVAS_LINES.forEach(l => {
-      const r = makeEl('div', 'leg');
-      const sw = makeEl('span', 'sw'); sw.style.background = l.color;
-      if (l.us) sw.style.boxShadow = '0 0 10px ' + l.color;
-      const n = makeEl('span', null, l.name); if (l.us) n.classList.add('us');
-      r.appendChild(sw); r.appendChild(n); leg.appendChild(r);
-    });
-  }
 
-  function buildMatrix() {
-    const mx = {};
-    SEGMENTS.forEach(s => { mx[s.id] = {}; NEEDS.forEach(n => {
-      const scoring = STATE.competitors.map(c => ({ name: c.name, score: scoreCompetitor(c, s.id, n.id) }));
-      const strong = scoring.filter(x => x.score >= 3).sort((a,b) => b.score - a.score);
-      mx[s.id][n.id] = { count: strong.length, servers: strong, us: ourScore(s.id, n.id) };
-    }); });
-    return mx;
-  }
-  function levelFor(count) { return count <= 1 ? 'green' : count <= 3 ? 'amber' : 'red'; }
+    // Attack-plan cards (the elitez-events left-rail pattern)
+    const pad2 = n => String(n).padStart(2, '0');
+    const niche = p => h('div', { class: 'niche' },
+      h('div', { class: 'niche-rail' },
+        h('div', {},
+          h('div', { class: 'niche-rank-tag' }, 'Attack plan'),
+          h('div', { class: 'niche-rank-num' }, h('span', {}, '#'), pad2(p.rank))
+        ),
+        h('div', { class: 'niche-tam-block' },
+          h('div', { class: 'niche-tam-label' }, 'Addressable TAM'),
+          h('div', { class: 'niche-tam-value' }, fmtSGD(p.tam_estimate_sgd)),
+          h('div', { class: 'niche-tam-suffix' }, 'annual / SG')
+        )
+      ),
+      h('div', { class: 'niche-body' },
+        h('h3', { class: 'niche-name' }, p.niche_name),
+        h('div', { class: 'niche-icp' },
+          h('div', { class: 'label' }, 'ICP'),
+          h('div', { class: 'text' }, p.icp)
+        ),
+        h('div', { class: 'niche-strategy' },
+          h('div', { class: 'niche-strat-card gap' },
+            h('div', { class: 'head' }, h('span', { class: 'glyph' }, '!'), 'Why the gap exists'),
+            h('div', { class: 'body' }, p.why_gap)
+          ),
+          h('div', { class: 'niche-strat-card win' },
+            h('div', { class: 'head' }, h('span', { class: 'glyph' }, '✓'), 'Why we win'),
+            h('div', { class: 'body' }, p.why_we_win)
+          )
+        ),
+        h('div', { class: 'niche-tam-logic' },
+          h('strong', {}, 'TAM derivation'), p.tam_reasoning
+        ),
+        h('div', { class: 'niche-gtm' },
+          h('div', { class: 'niche-gtm-title' }, 'Go-to-market plays'),
+          h('div', { class: 'niche-gtm-rows' },
+            ...[
+              ['Pricing', p.gtm.pricing, 'pricing'],
+              ['Channel', p.gtm.channel, ''],
+              ['Pitch',   p.gtm.pitch, ''],
+              ['Content', p.gtm.content, '']
+            ].map(([k, v, mod]) =>
+              h('div', { class: 'niche-gtm-row ' + mod },
+                h('div', { class: 'k' }, k),
+                h('div', { class: 'v' }, v)
+              )
+            )
+          )
+        )
+      )
+    );
 
-  function renderHeatmap() {
-    const thead = document.querySelector('#heatmap thead'); const tbody = document.querySelector('#heatmap tbody');
-    clearNode(thead); clearNode(tbody);
-    const hdr = makeEl('tr'); hdr.appendChild(makeEl('th', null, 'Segment \\ Need'));
-    NEEDS.forEach(n => { const th = makeEl('th', null, n.short); th.title = n.label; hdr.appendChild(th); });
-    thead.appendChild(hdr);
-    SEGMENTS.forEach(s => {
-      const tr = makeEl('tr');
-      const th = makeEl('th'); th.appendChild(makeEl('span', null, s.label)); th.appendChild(makeEl('small', null, s.note));
-      tr.appendChild(th);
-      NEEDS.forEach(n => {
-        const cell = STATE.matrix[s.id][n.id];
-        const td = makeEl('td', 'cell ' + levelFor(cell.count), String(cell.count));
-        td.addEventListener('click', () => showCellDetail(s, n, cell));
-        tr.appendChild(td);
-      });
-      tbody.appendChild(tr);
-    });
-  }
+    mount(document.getElementById('attack-plans'), ...ws.attack_plans.map(niche));
+  </script>
 
-  function showCellDetail(seg, need, cell) {
-    const detail = document.getElementById('heatmap-detail'); clearNode(detail);
-    const lvl = levelFor(cell.count);
-    const lvlTag = makeEl('span', 'tag ' + lvl, lvl === 'green' ? 'White space · attack' : lvl === 'amber' ? 'Contested · winnable' : 'Crowded · avoid');
-    detail.appendChild(lvlTag);
-    detail.appendChild(makeEl('b', null, seg.label + ' × ' + need.label));
-    const p = makeEl('p', null, cell.count + ' platform(s) serve this pair well (score ≥3). Our score: ' + cell.us + '/5.');
-    p.style.marginTop = '8px'; detail.appendChild(p);
-    if (cell.servers.length) {
-      const list = makeEl('div', null, 'Platforms serving: ' + cell.servers.slice(0, 8).map(c => c.name + ' (' + c.score + ')').join(', '));
-      list.style.marginTop = '6px'; list.style.fontSize = '0.82rem'; detail.appendChild(list);
-    }
-    detail.classList.add('show');
-  }
-
-  function renderNiches() {
-    const host = document.getElementById('attack-grid'); clearNode(host);
-    NICHES.forEach(n => {
-      const c = makeEl('div', 'niche');
-      c.appendChild(makeEl('div', 'niche-rank', 'Niche ' + n.rank));
-      c.appendChild(makeEl('div', 'niche-name', n.name));
-      c.appendChild(makeEl('div', 'niche-icp', n.icp));
-      [['TAM', n.tam], ['Why gap', n.why_underserved], ['Our win', n.why_we_win],
-       ['Pricing', n.gtm.pricing], ['Channel', n.gtm.channel], ['Pitch', n.gtm.pitch], ['Content', n.gtm.content]]
-      .forEach(pair => {
-        const row = makeEl('div', 'niche-row');
-        row.appendChild(makeEl('div', 'k', pair[0]));
-        row.appendChild(makeEl('div', 'v', pair[1]));
-        c.appendChild(row);
-      });
-      host.appendChild(c);
-    });
-  }
-
-  function renderTable() {
-    const tbody = document.getElementById('comp-tbody'); clearNode(tbody);
-    const q = document.getElementById('comp-search').value.toLowerCase();
-    const catF = document.getElementById('comp-cat').value;
-    const threatF = document.getElementById('comp-threat').value;
-    const filtered = STATE.competitors.filter(c => {
-      if (catF && c.category !== catF) return false;
-      if (threatF && c.threat_level_to_the_commons !== threatF) return false;
-      if (q) {
-        const blob = [c.name, c.target_market, (c.strengths||[]).join(' '), (c.weaknesses||[]).join(' '), c.category].join(' ').toLowerCase();
-        if (!blob.includes(q)) return false;
-      }
-      return true;
-    });
-    document.getElementById('comp-count-tbl').textContent = filtered.length + ' / ' + STATE.competitors.length;
-    if (!filtered.length) {
-      const tr = makeEl('tr'); const td = makeEl('td', 'loading', 'No platforms match — adjust filters');
-      td.colSpan = 7; tr.appendChild(td); tbody.appendChild(tr); return;
-    }
-    filtered.forEach(c => {
-      const tr = makeEl('tr');
-      const tdN = makeEl('td'); tdN.appendChild(makeEl('div', 'comp-name', c.name)); tdN.appendChild(makeEl('div', 'comp-target', c.target_market || ''));
-      const tdC = makeEl('td'); tdC.appendChild(makeEl('span', 'badge b-cat', (c.category || '').replace(/_/g, ' ')));
-      const tdP = makeEl('td', null, c.pricing_notes || (c.platform_fee_percent ? (c.platform_fee_percent + '%') : '—')); tdP.style.fontFamily = 'ui-monospace, monospace'; tdP.style.fontSize = '0.78rem'; tdP.style.color = 'var(--coral)';
-      const tdT = makeEl('td'); tdT.appendChild(makeEl('span', 'badge b-threat-' + (c.threat_level_to_the_commons || 'low'), c.threat_level_to_the_commons || '—'));
-      const tdB = makeEl('td'); tdB.appendChild(makeEl('span', 'badge b-beat-' + (c.beatability || 'moderate'), c.beatability || '—'));
-      const tdS = makeEl('td', null, (c.strengths || []).slice(0, 3).join('; ')); tdS.style.fontSize = '0.78rem'; tdS.style.color = 'var(--atlas-green-solid)';
-      const tdW = makeEl('td', null, (c.weaknesses || []).slice(0, 3).join('; ')); tdW.style.fontSize = '0.78rem'; tdW.style.color = 'var(--atlas-red)';
-      [tdN, tdC, tdP, tdT, tdB, tdS, tdW].forEach(td => tr.appendChild(td));
-      tbody.appendChild(tr);
-    });
-  }
-
-  function populateCatFilter() {
-    const sel = document.getElementById('comp-cat');
-    const cats = Array.from(new Set(STATE.competitors.map(c => c.category))).sort();
-    cats.forEach(cat => { const opt = document.createElement('option'); opt.value = cat; opt.textContent = cat.replace(/_/g,' '); sel.appendChild(opt); });
-  }
-
-  function updateKpis() {
-    const cells = SEGMENTS.flatMap(s => NEEDS.map(n => STATE.matrix[s.id][n.id]));
-    const green = cells.filter(c => c.count <= 1).length;
-    const amber = cells.filter(c => c.count >= 2 && c.count <= 3).length;
-    const red   = cells.filter(c => c.count >= 4).length;
-    const threats = STATE.competitors.filter(c => c.threat_level_to_the_commons === 'high').length;
-    document.getElementById('kpi-n-comp').textContent = STATE.competitors.length;
-    document.getElementById('kpi-green').textContent = green;
-    document.getElementById('kpi-amber').textContent = amber;
-    document.getElementById('kpi-red').textContent = red;
-    document.getElementById('kpi-threats').textContent = threats;
-    document.getElementById('comp-count-hdr').textContent = STATE.competitors.length;
-    document.getElementById('comp-count-inline').textContent = STATE.competitors.length;
-    document.getElementById('refresh-date').textContent = STATE.research_date || '2026-04-22';
-  }
-
-  async function init() {
-    try {
-      const res = await fetch('../data/whitespace-competitors.json');
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const data = await res.json();
-      STATE.competitors = data.competitors || [];
-      STATE.research_date = data.research_date || '2026-04-22';
-    } catch (e) {
-      const tbody = document.getElementById('comp-tbody'); clearNode(tbody);
-      const tr = makeEl('tr'); const td = makeEl('td', 'loading', 'Failed to load data/whitespace-competitors.json: ' + e.message);
-      td.colSpan = 7; tr.appendChild(td); tbody.appendChild(tr); return;
-    }
-    STATE.matrix = buildMatrix();
-    renderStrategyCanvas(); renderHeatmap(); renderNiches(); populateCatFilter(); renderTable(); updateKpis();
-    ['comp-search','comp-cat','comp-threat'].forEach(id => document.getElementById(id).addEventListener('input', renderTable));
-  }
-  init();
-})();
-</script>
+  <script src="../app.js"></script>
 </body>
 </html>

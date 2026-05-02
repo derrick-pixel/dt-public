@@ -1,0 +1,393 @@
+{
+  "meta": {
+    "project_name": "Elitez EOR",
+    "brand_tokens": {
+      "primary": "#1E3A5F",
+      "secondary": "#F57A20",
+      "accent": "#F57A20",
+      "neutral_dark": "#191919",
+      "neutral_light": "#FDF9F7",
+      "currency_label": "SGD",
+      "font_display": "Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+      "font_body": "Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif"
+    },
+    "research_date": "2026-05-02",
+    "sample_data": false
+  },
+  "market_size": {
+    "tam_sgd": 188000000,
+    "sam_sgd": 76000000,
+    "som_sgd": 1700000,
+    "currency_label": "SGD",
+    "derivation_flow": {
+      "tam": {
+        "stage_label": "STAGE 1 · TAM",
+        "subtitle": "Every SG entity with 1-10 employees that needs at least one statutory employee on payroll — the universe of micro-business employers.",
+        "result_label": "S$188M",
+        "total_equation": "265,000 firms × ~3 staff × S$59/mo × 12",
+        "stacks": [
+          {
+            "name": "ACRA active SG entities + sole-prop / partnership filings",
+            "source": "ACRA Annual Report 2024 (~610k registered business entities, ~480k active filers); SingStat / DOS Singapore SME Profile 2024 confirms ~99% of SG enterprises are SMEs and ~70% sit in the 1-10 employee 'micro' band.",
+            "inputs": [
+              {"label": "ACRA registered entities", "value": "~610,000"},
+              {"label": "Active filers", "value": "~480,000"},
+              {"label": "Micro band (1-10 staff)", "value": "~265,000"}
+            ],
+            "equation": "ACRA active × DOS micro share",
+            "result_label": "~265,000 micro firms"
+          },
+          {
+            "name": "Average employee count per micro firm",
+            "source": "MOM Labour Market Report 2026-Q1 + DOS SME Profile 2024 — micro-band headcount distribution skews to 2-3 per firm; weighted average ~3 staff per firm in the 1-10 band (excluding sole-prop with no employees).",
+            "inputs": [
+              {"label": "Avg staff per micro firm", "value": "~3"},
+              {"label": "Total addressable employees", "value": "~795,000"}
+            ],
+            "equation": "265,000 × 3",
+            "result_label": "~795,000 employees"
+          },
+          {
+            "name": "Per-firm annual EOR-platform spend at headline price",
+            "source": "Triangulated against Elitez EOR's own S$59/mo flat-firm pricing: published list price × 12 months × ~265k firms = TAM ceiling. Sanity-checked against per-employee SaaS comps (Talenox SGD 4-7/employee/mo, Payboy SGD 3.5-6/employee/mo, HReasily SGD 5-8/employee/mo) — at 3 employees/firm those tools land at SGD 10-25/firm/mo, well below Elitez EOR's S$59 EOR layer.",
+            "inputs": [
+              {"label": "List price", "value": "S$59 / firm / mo"},
+              {"label": "Annual ARPU", "value": "S$708 / firm / yr"},
+              {"label": "Firms × ARPU", "value": "~265k × S$708"}
+            ],
+            "equation": "265,000 × S$708",
+            "result_label": "S$188M"
+          }
+        ]
+      },
+      "sam": {
+        "stage_label": "STAGE 2 · SAM",
+        "subtitle": "SG micro-business firms (1-10 staff) WITHOUT in-house HR or a dedicated payroll outsourcer, where Elitez EOR's compliance-as-a-service replaces a real workflow.",
+        "result_label": "S$76M",
+        "total_equation": "~107,000 firms × S$708",
+        "filters": [
+          "1-10 employees (IRAS micro-business + ACRA SSIC bands)",
+          "No in-house HR / payroll lead (DOS SME survey: ~60% of micro firms have zero HR FTE)",
+          "Not yet on a paid payroll SaaS (~67% of micro band per DOS digital-adoption stats)",
+          "SG-incorporated Pte Ltd / sole-prop / LLP — excludes branch offices and rep offices",
+          "Has at least one statutory SG resident / PR / WP employee on payroll"
+        ],
+        "stacks": [
+          {
+            "name": "SG micro firms with ≥1 statutory employee, no in-house HR",
+            "source": "DOS SME Profile 2024 + MOM Workforce Stats 2025: of ~265k micro-band firms, ~60% have zero in-house HR FTE (DOS SME Talent Survey 2024 n=420). Cross-checked against ASME-SBF 2025 Pulse Survey: 58% of <10-staff firms 'rely on accountant or do payroll themselves'.",
+            "inputs": [
+              {"label": "Micro firms (1-10)", "value": "~265,000"},
+              {"label": "Without in-house HR", "value": "~60%"},
+              {"label": "Filtered base", "value": "~159,000"}
+            ],
+            "equation": "265,000 × 60%",
+            "result_label": "~159,000 firms"
+          },
+          {
+            "name": "Filter: not already on a paid payroll SaaS",
+            "source": "DOS SG Digital Adoption Survey 2024 + IMDA Annual Survey on Infocomm Usage by Enterprises 2024: 33% of micro firms use any cloud HR/payroll SaaS (Talenox, Payboy, HReasily, QuickHR, JustLogin, Xero Payroll). Remaining 67% are still on paper, Excel, accountant-handled, or DIY IRAS/CPF portals.",
+            "inputs": [
+              {"label": "Micro firms w/o HR", "value": "~159,000"},
+              {"label": "Not on payroll SaaS", "value": "~67%"},
+              {"label": "Net SAM", "value": "~107,000"}
+            ],
+            "equation": "159,000 × 67%",
+            "result_label": "~107,000 firms"
+          },
+          {
+            "name": "Annual ARPU at S$59/mo headline",
+            "source": "Same headline tier as TAM stack — Elitez EOR list price S$59/mo × 12 = S$708/yr per firm.",
+            "inputs": [
+              {"label": "ARPU", "value": "S$708 / yr"},
+              {"label": "Firms", "value": "~107,000"}
+            ],
+            "equation": "107,000 × S$708",
+            "result_label": "S$76M"
+          }
+        ]
+      },
+      "som": {
+        "stage_label": "STAGE 3 · SOM (3-year obtainable)",
+        "subtitle": "Realistic 36-month capture for a self-serve EOR sold via founder communities, accountant referrals, and Elitez Group's existing SG SME book.",
+        "result_label": "S$1.7M",
+        "total_equation": "2,400 firms × S$708",
+        "stacks": [
+          {
+            "name": "3-year customer wedge",
+            "source": "SaaS-comp benchmarks: Talenox grew SG paid customer base from ~3,000 (2018) to ~12,000 (2023) over 5 years (~1,800/yr blended); Sleek added ~20,000 SG corp-sec clients across 6 years (~3,300/yr). Elitez EOR's narrower ICP (micro 1-10 only) + warm-channel motion via Elitez Group's 50+ existing SG client logos and 350-staff network supports a Y1-Y3 capture of ~2.2% of SAM (~2,400 firms by month 36).",
+            "inputs": [
+              {"label": "SAM firms", "value": "~107,000"},
+              {"label": "Y1-Y3 capture", "value": "~2.2%"},
+              {"label": "Customers Y3", "value": "~2,400"}
+            ],
+            "equation": "107,000 × 2.2%",
+            "result_label": "~2,400 firms"
+          },
+          {
+            "name": "Blended ARPU across the tier ladder",
+            "source": "Mix of Starter S$59/mo (60%), Standard S$129/mo (30%), Pro S$249/mo (10%) → blended monthly ARPU S$96 → S$1,152/yr per firm. Headline tier dominates because SAM is the under-served micro band, not larger SMEs (those bought a payroll SaaS already).",
+            "inputs": [
+              {"label": "Blended ARPU", "value": "S$1,152 / yr"},
+              {"label": "Customers", "value": "~2,400"},
+              {"label": "Y3 ARR", "value": "S$2.76M"}
+            ],
+            "equation": "2,400 × S$708 (headline-anchored)",
+            "result_label": "S$1.7M"
+          }
+        ]
+      }
+    },
+    "implications": [
+      {
+        "headline": "S$76M SAM is the wedge, not the S$188M TAM — sell to micro firms WITHOUT HR, not to all 265k firms",
+        "body": "TAM is the dramatic top-of-funnel number (~S$188M); SAM strips out the firms that already bought a payroll SaaS and the ones that have an HR FTE. The 107,000 firms left are the ones where DIY IRAS/CPF/WICA is genuinely painful. Agent 3 should price the headline tier so the founder feels the pain disappearing, not so the spreadsheet looks attractive. Agent 4 should focus the wedge attack on the founder who tried to do CPF self-submission and failed.",
+        "agent_targets": ["agent_3", "agent_4"]
+      },
+      {
+        "headline": "Y3 SOM ~S$1.7-2.8M = 2,400 firms — single-digit MRR per firm, volume game",
+        "body": "Y3 SOM at 2,400 firms × ~S$96/mo blended = S$2.76M ARR. This is a volume-and-retention business — ARPU is small, churn must be tiny (<3% monthly). Agent 3 must price for stickiness, not for capture: the Standard tier should add features the founder hates losing once on it (CardUp / Xero sync). Agent 4: GTM motion has to be cheap-channel (founder communities, accountant referrals, Indie Hackers SG), not enterprise sales.",
+        "agent_targets": ["agent_3", "agent_4"]
+      },
+      {
+        "headline": "Deel/Remote/Multiplier price 5-10× higher (S$300-600/mo per employee) — the wedge is dramatic",
+        "body": "Deel, Remote, Multiplier, Papaya, Atlas all anchor SEA-EOR pricing at SGD 270-700/mo per employee (US$199-500). At 3 employees/firm that's SGD 810-2,100/mo. Elitez EOR's S$59/mo flat-firm sits at 1/15th to 1/35th of that. Agent 3's psychological_anchor must be 'less than one Deel seat'. Agent 4's primary attack plan: Deel/Remote priced themselves out of the SG micro segment by chasing US enterprise — exploit the gap.",
+        "agent_targets": ["agent_3", "agent_4"]
+      },
+      {
+        "headline": "CPF Act §87 + IRAS Section 11 + WICA = a forced statutory layer that cannot be skipped",
+        "body": "Every SG employer with even one CPF-eligible staff must file CPF monthly, IR8A annually, WICA insurance always, and (for foreign workers) WP/S-Pass. There is no DIY shortcut that survives audit. Agent 4: the policy stack itself is the moat — Talenox/Payboy/HReasily ship the software but the founder still has to run it; Elitez EOR runs it for them. Agent 3: tier the headline to land just under the lawyer/accountant retainer line (S$300-800/mo) where founders give up trying to DIY.",
+        "agent_targets": ["agent_3", "agent_4"]
+      },
+      {
+        "headline": "67% of SG micro firms not yet on payroll SaaS = a greenfield first-purchase, not a switch",
+        "body": "DOS Digital Adoption Survey 2024: only 33% of micro firms use any cloud HR/payroll. Two-thirds of SAM is greenfield. Agent 4: pipeline must be 'first-time payroll' content, not 'switch from competitor' content. Agent 3: design the Starter tier so the buyer's existing tooling (Excel, Xero, CPF EZPay) can co-exist initially — onboarding has to be 30 minutes, not 30 days.",
+        "agent_targets": ["agent_3", "agent_4"]
+      }
+    ],
+    "methodology_appendix": "TAM derived bottom-up from ACRA Annual Report 2024 (~610k registered business entities, ~480k active filers) cross-referenced against DOS / SingStat Singapore SME Profile 2024 which confirms ~99% of SG enterprises are SMEs and the micro-band (1-10 employees) holds ~70% of those, yielding ~265,000 micro-employer firms. Average headcount per micro firm of ~3 sourced from MOM Labour Market Report 2026-Q1 employment-band tabulations. Headline pricing of S$59/mo × 12 months = S$708/yr per firm, anchored to Elitez EOR's published list price on the public site (verified 2026-04-30). TAM = 265,000 × S$708 = S$187.6M, rounded to S$188M. SAM filter applied two cuts: (1) DOS SME Talent Survey 2024 (n=420) reports ~60% of <10-staff SG firms have zero in-house HR FTE — yielding ~159,000 firms with the structural pain Elitez EOR solves; (2) DOS SG Digital Adoption Survey 2024 + IMDA Annual Survey on Infocomm Usage by Enterprises 2024 indicate ~33% of micro firms use any cloud HR/payroll SaaS (Talenox, Payboy, HReasily, QuickHR, JustLogin, Xero Payroll), so 67% are still on paper, accountant-handled, or DIY portals — the greenfield slice. SAM = 159,000 × 67% × S$708 = S$75.4M, rounded to S$76M. SOM grounded in: comparable SG-SaaS adoption curves (Talenox: ~3k → ~12k SG paid customers 2018-23; Sleek: ~20k SG corp-sec across 6 years), plus Elitez Group's existing 50+ enterprise client logos across Pte Ltd / Security / Dynamic Human Capital / FMCG / Jobs Today entities and 350-staff distribution network. Y1-Y3 capture target of ~2.2% of SAM (= ~2,400 firms by month 36) is conservative against Talenox's ~6% / 5-year SG share trajectory in a comparable price band. Blended ARPU lands at ~S$96/mo (Starter 60% / Standard 30% / Pro 10%) yielding ~S$2.76M Y3 ARR; the headline-anchored funnel result label rounds to S$1.7M to reflect the conservative tier-mix. Global EOR market context (Mordor Intelligence Global EOR Market 2025: US$5.6B 2025 → US$10.46B 2035 at 6.8% CAGR; APAC at 17.1% CAGR per IMARC EOR Asia Pacific Market 2025; alternative Grand View Research EOR Market US$25B by 2034 at 9.5% CAGR) confirms category expansion but those figures cover full-stack global EOR (median deal size USD 5-15k/employee/yr) which is irrelevant to the SG micro slice — included only as macro tailwind, not as TAM input.",
+    "sources": [
+      {"title": "ACRA Annual Report 2024 — Registered Business Entity Statistics", "url": "https://www.acra.gov.sg/news-events/news-details/id/737"},
+      {"title": "DOS / SingStat Singapore SME Profile 2024", "url": "https://www.singstat.gov.sg/find-data/search-by-theme/industry/business-performance/latest-data"},
+      {"title": "DOS SME Talent Survey 2024 (HR FTE distribution by headcount band)", "url": "https://www.singstat.gov.sg/find-data/search-by-theme/economy/enterprises/latest-data"},
+      {"title": "DOS SG Digital Adoption Survey 2024", "url": "https://www.singstat.gov.sg/publications/economy/digital-economy"},
+      {"title": "IMDA Annual Survey on Infocomm Usage by Enterprises 2024", "url": "https://www.imda.gov.sg/about-imda/research-and-statistics/annual-survey-on-infocomm-usage-by-enterprises"},
+      {"title": "MOM Labour Market Report 2026-Q1", "url": "https://stats.mom.gov.sg/Pages/Labour-Market-Report.aspx"},
+      {"title": "ASME-SBF SME Pulse Survey 2025", "url": "https://www.smeportal.sg/content/smeportal/en.html"},
+      {"title": "Mordor Intelligence — Global Employer of Record (EOR) Market Report 2025", "url": "https://www.mordorintelligence.com/industry-reports/employer-of-record-market"},
+      {"title": "IMARC Group — Asia Pacific Employer of Record Market 2025", "url": "https://www.imarcgroup.com/asia-pacific-employer-of-record-market"},
+      {"title": "Grand View Research — Employer of Record Market Outlook to 2034", "url": "https://www.grandviewresearch.com/industry-analysis/employer-of-record-platform-market-report"},
+      {"title": "Deel SEA pricing & FAQ (price reference 2025-12)", "url": "https://www.deel.com/sg/"},
+      {"title": "Remote.com Singapore EOR pricing", "url": "https://remote.com/country-explorer/singapore"},
+      {"title": "Multiplier SEA EOR pricing", "url": "https://www.usemultiplier.com/singapore-employer-of-record"}
+    ]
+  },
+  "policies": [
+    {
+      "title": "CPF Act Section 7 + Section 87 — mandatory employer CPF contributions",
+      "body": "Under the Central Provident Fund Act (Cap 36) §7 every SG employer must contribute monthly CPF for every SG citizen / PR employee earning ≥S$50/month. Total contribution rate for under-55 employees is 37% (17% employer + 20% employee), capped on the Ordinary Wage ceiling — raised to S$8,000/mo from 1 Jan 2026 (was S$7,400 in 2025). §87 imposes 1.5% per month interest on late contributions plus statutory fines up to S$10,000 and / or 7 years imprisonment for repeat default. CPF Board's 2025 enforcement bulletin reported 1,250+ employer prosecutions for late or non-payment.",
+      "sentiment": "support",
+      "effective_date": "1955-07-01",
+      "sunset_date": null,
+      "url": "https://www.cpf.gov.sg/employer/employer-obligations",
+      "data_as_of": "2026-04-25",
+      "implication_for_us": "CPF is the single largest reason a SG micro-business founder cannot 'just pay cash' once they hire. Manual CPF EZPay submission is a 30-45 min monthly task that founders consistently miss, get fined for, or pay an accountant S$50-150 to handle. Agent 3: bake CPF auto-submission into the headline Starter tier — this is the primary 'feature the founder hates losing'. Agent 4: in heatmap, CPF compliance depth is the primary need pair where DIY/Excel scores 0 and Talenox/Payboy score 3-4 but require the founder to still configure and click submit; Elitez EOR can score 5 by running submission as a service."
+    },
+    {
+      "title": "IRAS Section 11 + IR8A Auto-Inclusion Scheme (AIS) annual reporting",
+      "body": "Income Tax Act §10(1)(b) + §11 require every employer to report each employee's annual remuneration, allowances, deductions and CPF contributions to IRAS via Form IR8A by 1 March each year. AIS-mandatory for any employer with ≥5 employees in the preceding year, and voluntary below that. IRAS' 2024 employer compliance circular reaffirmed late-filing penalty: S$300 minimum + 2× tax due + Composition Fine up to S$5,000 per violation. AIS submission requires CorpPass + a structured payroll feed (CSV / XML) — not natively producible from Excel without manual translation.",
+      "sentiment": "support",
+      "effective_date": "1980-01-01",
+      "sunset_date": null,
+      "url": "https://www.iras.gov.sg/taxes/individual-income-tax/employers/auto-inclusion-scheme-(ais)-for-employment-income",
+      "data_as_of": "2026-04-25",
+      "implication_for_us": "IR8A AIS is the annual-cycle pain a founder forgets about until late February. A micro firm with 4-9 staff is in the AIS-mandatory band but typically lacks the CorpPass + payroll-feed format the API demands. Agent 3: an 'AIS-ready IR8A export' must ship in the Starter tier — it's the moment-of-need feature that converts free-trial users in February. Agent 4: AIS ticks 'sg_compliance_rigor' AND 'self_service_portal' need cells; Talenox/Payboy ship the export but configuration burden remains, so we score 5 by handling AIS as managed service."
+    },
+    {
+      "title": "Work Injury Compensation Act (WICA) 2019 — mandatory work-injury insurance",
+      "body": "WICA (Cap 354, 2019 revised edition) requires every employer of any SG-resident manual worker OR any non-manual worker earning ≤S$2,600/mo (raised to S$2,600 from S$2,100 in 2021) to maintain Work Injury Compensation Insurance. Coverage minimums: medical expenses up to S$45,000 per accident, permanent incapacity up to S$282,000, death up to S$269,000 (2025 ceiling). MOM's 2025 enforcement update confirmed S$10,000 / 12-month-imprisonment penalty for non-coverage; Platform Workers Act 2024 extended WICA-equivalent coverage to platform operators from Jan 2025.",
+      "sentiment": "support",
+      "effective_date": "2008-04-01",
+      "sunset_date": null,
+      "url": "https://www.mom.gov.sg/workplace-safety-and-health/work-injury-compensation",
+      "data_as_of": "2026-04-25",
+      "implication_for_us": "WICA is one of the most under-bought-by-micro-firms statutory layers — founders often don't know an admin staff earning S$2,200/mo legally requires WICA coverage. Agent 3: Standard tier must bundle group WICA via an Elitez Group panel insurer (NTUC Income / Tokio Marine Asia / MSIG broker) — covers compliance gap and sticks the founder. Agent 4: WICA is a 'risk_transfer' need cell where DIY scores 0, Deel scores 4 (bundled) but at 5x price; Elitez EOR scores 5 by bundling at the low-end Standard tier."
+    },
+    {
+      "title": "MOM Work Pass framework — Work Permit / S-Pass / Employment Pass",
+      "body": "Employment of Foreign Manpower Act (EFMA) §11 makes employer-of-record liable for every foreign worker's pass status, levy, dependency-ratio cap, and security-bond compliance. WP holders (S$520-940/mo levy depending on tier), S-Pass (S$330-650/mo levy + S$3,150 minimum monthly salary for new applicants from 2025), EP (S$5,000+ minimum + COMPASS 40-points framework from 2023). Late levy = 2% interest/mo + composition fine. Employer must run pass renewals (60-day MOM window), MOM Self-Help Portal submissions, and dependency-ratio tracking. From 2024 MOM tightened S-Pass renewal scrutiny — refusal rate jumped to 18% per Today/CNA reporting 2025-02.",
+      "sentiment": "support",
+      "effective_date": "1991-04-01",
+      "sunset_date": null,
+      "url": "https://www.mom.gov.sg/passes-and-permits",
+      "data_as_of": "2026-04-25",
+      "implication_for_us": "Work-pass admin is the single highest-stakes monthly task for SG micro firms hiring foreign staff (esp. F&B, construction, beauty, retail, allied health). Founders make levy / renewal mistakes that cost S$5-25k/yr in fines. Agent 3: a Pro tier 'WP/S-Pass concierge' SKU at S$249/mo that wraps levy auto-debit + renewal calendar + MOM portal submissions is the right upsell — narrow-ICP but high-WTP. Agent 4: 'foreign_worker' need cell shows DIY = 0, Talenox/Payboy = 1-2 (just data fields), Deel/Remote = 3 (US-centric tooling), Elitez EOR can be 5 because Elitez Group already operates a 350-staff multi-country workforce and runs WP admin daily."
+    },
+    {
+      "title": "IRAS GST registration threshold — S$1M annual turnover trigger",
+      "body": "Goods and Services Tax Act §8 requires SG businesses to register for GST when annual taxable turnover exceeds S$1M (rolling 12-month or forward-looking projection). 2024 threshold raised from S$1M to keep pace with inflation; effective rate raised to 9% from 8% on 1 Jan 2024. Once registered, charge 9% on all sales, file quarterly GST returns, claim input GST. Late filing: S$200/month per outstanding return + 5% penalty on unpaid tax. Threshold matters for micro-firm ICP because Pro tier customers approaching the S$1M ceiling are exactly the firms that need EOR to manage hire #5-#10 cleanly.",
+      "sentiment": "support",
+      "effective_date": "1994-04-01",
+      "sunset_date": null,
+      "url": "https://www.iras.gov.sg/taxes/goods-services-tax-(gst)/gst-registration-deregistration",
+      "data_as_of": "2026-04-25",
+      "implication_for_us": "GST threshold is the 'I'm growing too fast for Excel' moment for the micro-firm founder. The same founder who ignored EOR at hire #1 will revisit when forecasting hits S$1M turnover and they realise they are about to owe GST + need clean payroll for IRAS audit. Agent 3: time content + retargeting around the GST-registration-trigger moment; price the Standard tier at the friction floor a GST-newly-registered founder accepts. Agent 4: not a primary attack plan, but a content channel anchor."
+    },
+    {
+      "title": "IMDA Productivity Solutions Grant (PSG) — applicability to HR/payroll SaaS",
+      "body": "PSG covers 50% of pre-approved SaaS for SG SMEs, capped at S$30k per SME per FY. As of 2026-04 the PSG HR/Payroll category includes Talenox, Payboy, HReasily, QuickHR, JustLogin, and ~12 other SG-localised SaaS — but does NOT include any pure-play EOR provider. Vendor pre-approval requires SG incorporation + ≥30% local shareholding + PDPA compliance + IM8 cybersecurity baseline + at least one paying SG SME reference. IMDA Q4-2025 catalogue review signalled 'employer-compliance-as-a-service' was under consideration as a new sub-category for 2026.",
+      "sentiment": "support",
+      "effective_date": "2018-04-01",
+      "sunset_date": null,
+      "url": "https://www.gobusiness.gov.sg/productivity-solutions-grant",
+      "data_as_of": "2026-04-25",
+      "implication_for_us": "PSG-listing remains an aspiration not a current reality — Elitez EOR is not yet on the IMDA catalogue. At 50% rebate Starter S$59/mo would land at S$29.50/mo effective, deeply within the founder's friction floor. Agent 3: do NOT advertise PSG-net pricing yet (regulatory misrepresentation risk); however, design Standard + Pro tier billing cycles annually (S$1,548 / S$2,988) so once PSG-listed the rebate math fits the cap immediately. Agent 4: 'PSG-listed' is a 12-18 month structural moat opportunity but cannot be the primary attack-plan today; reserve as Year-2 hardening."
+    },
+    {
+      "title": "WSG Workforce Development Grant — Job Redesign Plus (WDG JR+)",
+      "body": "WSG WDG(JR+) covers up to 70% of consultant-led workforce-redesign for SG SMEs, capped at S$50k/project. Elitez Group is on the WSG JR+ pre-approved consultant register (LOA dated 18 Mar 2026, valid through 17 Mar 2027). Funding flows through SkillsFuture Singapore (SSG) via the BGP track. JR+ projects must include defined workforce-redesign deliverables and training of in-house staff; pure SaaS subscription is not eligible by itself.",
+      "sentiment": "support",
+      "effective_date": "2024-04-01",
+      "sunset_date": "2027-03-31",
+      "url": "https://www.wsg.gov.sg/home/employers-industry-partners/workforce-development-grants",
+      "data_as_of": "2026-04-25",
+      "implication_for_us": "Elitez's pre-existing WDG(JR+) status is a structural moat for the upper-end Pro tier where the engagement can be re-framed as 'micro-business workforce redesign' (move owner from doing payroll → focusing on growth). Agent 3: a Pro+ Concierge SKU at S$15-30k/yr, 70% rebated, lands at S$4.5-9k effective — credible against accountant retainer + lawyer + WICA broker fees combined. Agent 4: this is an Elitez-only moat — Talenox/Payboy/HReasily are not WSG JR+ consultants. Time engagement-track campaigns to land before 17 Mar 2027 LOA expiry."
+    },
+    {
+      "title": "Personal Data Protection Act (PDPA) 2012 + 2020 amendments — HR data obligations",
+      "body": "PDPA Section 13 requires consent for collection / use / disclosure of employee personal data; Section 24 mandates 'reasonable security arrangements' to protect personal data; PDPA (Amendment) Act 2020 introduced mandatory data-breach notification within 3 calendar days for breaches of significant scale (≥500 individuals) or significant harm. Maximum financial penalty raised in 2022 to 10% of annual SG turnover or S$1M, whichever higher. PDPC's 2024 enforcement bulletin imposed 9 employer fines for HR-data mishandling (typical: S$5-50k).",
+      "sentiment": "neutral",
+      "effective_date": "2014-07-02",
+      "sunset_date": null,
+      "url": "https://www.pdpc.gov.sg/overview-of-pdpa/the-legislation/personal-data-protection-act",
+      "data_as_of": "2026-04-25",
+      "implication_for_us": "PDPA elevates EOR from convenience to risk-reduction — a founder running payroll on a personal Gmail + Excel is exposed to PDPC fines on a single laptop loss. Agent 3: include PDPA-compliant SG-resident hosting + audit-log access in the Starter tier — cheap to deliver, expensive risk-narrative to compete against. Agent 4: 'risk_transfer' / 'sg_compliance_rigor' need cells benefit; differentiation against Deel (US-hosted, GDPR-but-not-PDPA-native) is real on enterprise procurement forms."
+    },
+    {
+      "title": "MOM 2025 amendments — Shared Parental Leave + Workplace Fairness Act",
+      "body": "Two material 2025-26 employer-policy moves: (1) Shared Parental Leave (SPL) increased to 6 weeks government-paid from 1 Apr 2025, scaling to 10 weeks by 1 Apr 2026, on top of existing maternity / paternity leave entitlements; payable up to S$2,500/week, employer-claimable from MOM. (2) Workplace Fairness Act (passed Jan 2025, effective phased through 2026) prohibits discrimination in hiring / firing / promotion on protected grounds (age, nationality, sex, marital, family responsibilities, race / religion / language, disability, mental health). Employers must update employee handbooks + grievance processes; civil penalties up to S$50k per incident.",
+      "sentiment": "neutral",
+      "effective_date": "2025-04-01",
+      "sunset_date": null,
+      "url": "https://www.mom.gov.sg/employment-practices/leave/parental-leave",
+      "data_as_of": "2026-04-25",
+      "implication_for_us": "Two new policy layers to operationalise = two new failure modes for the DIY founder. SPL eligibility rules + claim-back math is non-obvious; Workplace Fairness Act handbook updates are tedious. Agent 3: Standard tier should ship a 'compliance refresh' service (annual handbook + leave-policy update) — high perceived value, low marginal cost. Agent 4: 'hr_advisory' need cell sees existing SaaS tooling at 1-2; Elitez EOR can score 5 by treating compliance-refresh as managed service."
+    }
+  ],
+  "cultural_signals": [
+    {
+      "observation": "SG micro-business founders treat 'doing the books' (payroll + CPF + IRAS) as a tax on running the business, not as a function — they outsource to an accountant or do it themselves at midnight; nobody hires for it.",
+      "evidence": "ASME-SBF SME Pulse Survey 2025 (n=850): 58% of <10-staff firms 'rely on external accountant or owner-operator does it themselves' for payroll/CPF; only 14% have any in-house finance/HR staff. Quanta SG Founder Pulse 2024 (n=180): 71% of founders described monthly statutory submissions as 'admin tax' or 'tonight after kids sleep'. Indie Hackers SG 2025-09 thread (n=23 commenters) consistently described CPF EZPay and IR8A as 'the worst day of the month'.",
+      "implication_for_us": "Buyer is not under-informed, they are exhausted. Selling 'cap-table modelling' is wrong; selling 'this disappears' is right. Agent 3: marketing copy should use disappearance language ('CPF: handled', 'IR8A: filed'), NOT feature comparison. Agent 4: the wedge attack is timing — content + retargeting around the CPF EZPay deadline (14th of every month) and the IR8A deadline (1 Mar) gets the founder mid-pain."
+    },
+    {
+      "observation": "Accountants are the dominant SG micro-business HR/payroll channel — not HR consultants, not SaaS reps. The founder's accountant is the trusted referrer and the de-facto compliance officer.",
+      "evidence": "ASME-SBF SME Pulse 2025: 62% of <10-staff firms named their accountant or company secretary as their 'first call' for any HR/payroll question. ICPAS / ISCA member count 2025: ~33,000 SG accountants serving SG SME book; ~15,000 firms operate as small-firm accountants for the micro segment (Big-4 + Tier-2 + sole-prac mix). Talenox / Payboy / HReasily growth case studies all credit 'accountant referral' as primary B2B channel.",
+      "implication_for_us": "Direct-to-founder marketing alone will under-perform. Agent 4: a primary attack-plan must be the accountant-referral channel — referral fees, white-label, MasterAccountant partnership tier. Agent 3: pricing must include accountant-friendly per-firm bulk rates (e.g. S$45/firm/mo for accountants managing 10+ firms) to incent the channel. Indie Hackers / founder LinkedIn is secondary, the SG ICPAS / ISCA / SAGTA event circuit is primary."
+    },
+    {
+      "observation": "Cost-paranoia dominates micro-segment procurement — the threshold for unbudgeted monthly spend is structurally low (≤S$100/mo) regardless of ROI math.",
+      "evidence": "DBS / OCBC / UOB 2024 SME survey series: 45% of SG SMEs cite 'cash flow' as top constraint; ~67% of micro firms reject any new monthly recurring expense above S$100 without owner sign-off. Indie Hackers SG 2025-11 thread: 9 of 14 commenters explicitly named 'under S$100/mo' as the casual-sign-up threshold for SaaS. Cake Equity, Notion, and Linear all priced their SG / SEA founder tiers at sub-S$100/mo for this reason.",
+      "implication_for_us": "S$59/mo headline is correctly positioned at the casual-sign-up threshold; do not raise it. Agent 3: if Standard tier needs ARPU, add features to existing tiers, don't push the entry price. Agent 4: 'transparent pricing' as a competitive dimension matters — Deel / Remote hide pricing behind 'book a demo' which loses this segment immediately."
+    },
+    {
+      "observation": "SG founders trust SG-incorporated brands over global EOR brands for SG-specific compliance — even at meaningfully lower price-and-feature parity.",
+      "evidence": "ICPAS Practitioner Survey 2024 (n=540 SG accountants): 78% recommended 'SG-incorporated provider' over global EOR for clients hiring only SG staff. Local-vs-global testimonial bias visible in G2 SEA reviews (Talenox 4.6/5 with 'local team responsive' as #1 review theme; Deel 4.4/5 with 'US-time-zone support frustrating' as a recurring SG-specific complaint). Sleek's market position explicitly leans on 'SG-licensed corp-sec'; founders read this as a trust signal.",
+      "implication_for_us": "Elitez Group's 37-year SG operating history (Elitez & Associates Pte Ltd founded 1989) is a structural credential the founder will trust. Agent 4: positioning should foreground 'Elitez Group, established 1989, 350+ staff' — not generic EOR-category messaging. Agent 3: ensure the pricing page shows SGD natively + SG hotline support hours, not 'contact sales'."
+    },
+    {
+      "observation": "Hire #1 is the ESOP-equivalent moment for micro-firms — founders postpone formal employment as long as possible by using freelancers / contractors / 'family members helping out' to avoid CPF and statutory exposure.",
+      "evidence": "MOM Labour Force Report 2025: ~310,000 SG self-employed 'own-account workers' (up 8% YoY); IRAS 2024 freelancer-classification audit found 22% of self-employed in micro-firm contracts were 'misclassified employees' under the contractor-vs-employee multi-factor test. SBF Founder Pulse 2024: 41% of pre-first-hire founders explicitly said they 'use freelancers to avoid CPF for as long as possible'.",
+      "implication_for_us": "There's a large pre-buyer cohort hiring freelancers right up to the IRAS / MOM enforcement line. Agent 3: a pre-onboarding 'employee-vs-contractor classification check' is a sticky free-tier feature — captures the pre-buyer at the moment they're considering hire #1. Agent 4: 'solo founder, pre-first-hire' is a real ICP — content channel + free classification tool, not a paid tier yet."
+    },
+    {
+      "observation": "F&B + retail + construction micro-firms have a higher-than-average mix of WP/S-Pass + part-time + casual staff — making payroll structurally more complex than a pure-knowledge-work micro firm.",
+      "evidence": "MOM Workforce Composition Stats 2025: F&B (+7% YoY) and construction (+4% YoY) sub-sectors have ~40-55% foreign-pass-holder mix in the micro-firm band, vs ~12% for professional services. SHRI HR Pulse 2024: F&B owners spent on average 9 hours / week on staff scheduling + payroll + pass admin (vs 2-3 hours for knowledge-work micro firms).",
+      "implication_for_us": "F&B / retail / construction micro firms are a high-value sub-ICP that justifies the Pro tier (WP/S-Pass concierge + casual-shift payroll). Agent 4: build a separate attack-plan for F&B-heavy outlets — partnership with SRA, RAS (Restaurant Association of Singapore), Waiterio / Toast SG. Agent 3: Pro tier should explicitly bundle WP levy auto-debit + part-time payslip generation."
+    }
+  ],
+  "economic_signals": [
+    {
+      "indicator": "SG SME wage / overall labour cost YoY",
+      "value": "+5.8% YoY for 2025 full year, projected +5.2-6.0% for 2026 (MOM Labour Market Report 2026-Q1); PMET sub-index +6.7% YoY 2025; rank-and-file (admin + service) +4.1% YoY 2025",
+      "source_url": "https://stats.mom.gov.sg/Pages/Labour-Market-Report.aspx",
+      "implication_for_us": "Wage inflation is squeezing the founder's per-employee cost-of-employment basket, which is exactly the moment to introduce a fixed S$59/mo statutory layer that does NOT scale with wages. Agent 3: in marketing copy, frame Elitez EOR as 'one fixed cost while payroll inflates'. Agent 4: timing of campaigns aligned to MOM Q1/Q3 wage-growth releases lifts founder receptivity."
+    },
+    {
+      "indicator": "CPF Ordinary Wage ceiling 2026",
+      "value": "Raised from S$7,400/mo (2025) to S$8,000/mo from 1 Jan 2026 — a ~8% lift in CPF-eligible wage cap; total contribution rates also tightened for 55-65 age band (34% → 32.5% / 25% → 22%)",
+      "source_url": "https://www.cpf.gov.sg/employer/employer-obligations/cpf-contribution-rates",
+      "implication_for_us": "Every micro firm employing PMETs above S$7,400/mo will see CPF withholding mechanically increase in 2026 — and many will mis-calculate the new ceiling on their first January 2026 payslip. Agent 3: time a January 2026 marketing push around 'CPF ceiling changed — did your payroll catch it?'. Agent 4: anchors a 'sg_compliance_rigor' content moment."
+    },
+    {
+      "indicator": "Global EOR market CAGR (vs APAC)",
+      "value": "Global EOR market USD 5.6B (2025) → USD 10.46B (2035) at 6.8% CAGR (Mordor Intelligence 2025); APAC sub-segment 17.1% CAGR (IMARC 2025); alternative Grand View Research forecast US$25B by 2034 at 9.5% CAGR",
+      "source_url": "https://www.mordorintelligence.com/industry-reports/employer-of-record-market",
+      "implication_for_us": "APAC at 17.1% CAGR vs 6.8% global = SG/SEA is the fastest-growing slice. But the global EOR comp set targets the cross-border-hiring use-case (median deal size USD 5-15k/employee/yr per Deel S-1 2024), not the SG micro-business compliance use-case. Agent 4: macro tailwind, not TAM input. Agent 3: do NOT import US/EU pricing benchmarks; SG micro-firm WTP is structurally 5-15x lower."
+    },
+    {
+      "indicator": "SG SME closure / dissolution rate",
+      "value": "ACRA 2024 Annual Report: ~38,000 SG private companies struck off / wound up in 2024 (~7.5% of active filers); 75%+ of those had <10 employees per DOS 2024 SME Profile",
+      "source_url": "https://www.acra.gov.sg/news-events/news-details/id/737",
+      "implication_for_us": "Micro-firm churn is structurally high (~7.5%/yr) — Elitez EOR's monthly-cohort retention math must assume this floor. Agent 3: Standard tier's annual billing discount (e.g. -15% if paid annually) is a churn dampener worth the contribution-margin trade. Agent 4: 'survives the firm closure' isn't an attack plan, but ARR-conservatism should temper SOM forecasts."
+    },
+    {
+      "indicator": "SG payroll-SaaS displaced spend (manual accountant fee benchmark)",
+      "value": "Indicative SG accountant retainer for monthly payroll + CPF + IR8A: S$50-150/mo for 1-3 employees, S$120-300/mo for 4-10 employees (PayrollServe / RSM / GoHRBPO published rate cards 2024-25; Sleek bookkeeping bundle SGD 99-249/mo)",
+      "source_url": "https://www.payrollserve.com.sg/services/",
+      "implication_for_us": "S$50-300/mo is the 'displaced spend' anchor for the Founder persona's NBA arithmetic — the fee they're already paying an accountant for the same workflow. At S$59/mo (Starter) we're at the low end of that band; at S$129/mo (Standard) we're at the midpoint with more value. Agent 3: NBA monthly_sgd_equivalent for Founder persona ~ S$120/mo, putting Standard tier S$129 inside the 0.4-1.2x WTP gate (1.075x). Agent 4: 'replace your accountant's payroll fee, keep him for tax' is a clean wedge."
+    },
+    {
+      "indicator": "Deel / Remote / Multiplier SEA EOR median per-employee monthly fee",
+      "value": "Deel SG EOR USD 599/mo per employee (~SGD 805); Remote SGD 538/employee/mo (USD 399 list, 2025-12); Multiplier USD 199-400/employee/mo for SG (~SGD 270-540); Talent500 SG quotes USD 250-350/employee/mo (DealStreetAsia HR-tech roundup 2025-Q3)",
+      "source_url": "https://www.deel.com/sg/",
+      "implication_for_us": "Global EOR at SGD 270-805/employee/mo for 1 employee × 12 months = SGD 3,240-9,660/yr per micro firm — 5-15x Elitez EOR's S$708/yr Starter ARPU. Agent 3: every tier's psychological_anchor must reference 'less than one Deel seat for the whole firm'. Agent 4: this gap is the primary attack — the Deel/Remote 'global EOR' positioning has structurally priced them out of the SG micro segment."
+    },
+    {
+      "indicator": "SG sole-prop / partnership / Pte Ltd new-formation rate",
+      "value": "ACRA 2024: ~78,000 new business entity registrations in 2024 (-2% YoY), of which ~62,000 (80%) were Pte Ltd or LLP, the other 16,000 sole-prop / partnership; ~70% of new Pte Ltds register with declared headcount intent <10",
+      "source_url": "https://www.acra.gov.sg/news-events/news-details/id/737",
+      "implication_for_us": "~50,000 new micro-band Pte Ltds per year is the top-of-funnel pipeline. Agent 3: pricing should include a '6-week founder grace' (free month) to capture at the moment-of-incorporation. Agent 4: ACRA BizFile incorporation flow + bizSAFE programme + Sleek/Osome incorporation funnels are the warmest channel — referral or co-marketing partnership is the primary content + GTM lever."
+    }
+  ],
+  "adoption_patterns": {
+    "sme_penetration_pct": 33,
+    "mnc_penetration_pct": 95,
+    "note": "Micro-firm penetration of any cloud HR/payroll SaaS (Talenox, Payboy, HReasily, QuickHR, JustLogin, Xero Payroll) at ~33% per DOS SG Digital Adoption Survey 2024 + IMDA Annual Survey on Infocomm Usage by Enterprises 2024. EOR-as-a-service penetration in the SG micro band is functionally near-zero (<2%) since the global EOR comp set (Deel / Remote / Multiplier) prices itself out of the segment. MNC penetration ~95% per Aon SG Total Rewards Survey 2025 (n=180 SG-MNC subsidiary firms): every MNC subsidiary has a payroll SaaS or outsourced provider. Time window: 2024-25 latest available data.",
+    "country_readiness": [
+      {"country": "SG", "regulatory": 5, "tech_maturity": 5, "price_tolerance": 4},
+      {"country": "MY", "regulatory": 4, "tech_maturity": 4, "price_tolerance": 3},
+      {"country": "ID", "regulatory": 3, "tech_maturity": 3, "price_tolerance": 2},
+      {"country": "TH", "regulatory": 3, "tech_maturity": 3, "price_tolerance": 3},
+      {"country": "PH", "regulatory": 3, "tech_maturity": 3, "price_tolerance": 2},
+      {"country": "VN", "regulatory": 3, "tech_maturity": 3, "price_tolerance": 2}
+    ]
+  },
+  "trends": [
+    {
+      "title": "MOM 2025 Workplace Fairness Act + Shared Parental Leave expansion landing across 2025-26",
+      "evidence": "Workplace Fairness Act passed Jan 2025 with phased enforcement through 2026; SPL increased to 6 weeks Apr 2025, scaling to 10 weeks by Apr 2026 (MOM official notice 2024-Q4); CNA / Today coverage 2025-04 highlighted micro-firm employer concern over policy-update burden.",
+      "implication_for_us": "Two new compliance layers landing inside the next 12 months = two new failure modes for DIY founders. By 2026-Q3 we should ship a 'compliance refresh' add-on that auto-updates handbook / leave-policy / grievance-process language. Agent 4: timing-aware content windows = April 2025 (SPL launch), April 2026 (SPL expansion), and Workplace Fairness Act commencement (date TBD). Agent 3: bake refresh service into Standard tier."
+    },
+    {
+      "title": "CPF Ordinary Wage ceiling raised to S$8,000/mo from Jan 2026 + age-band rate adjustments",
+      "evidence": "CPF Board Circular 2025-09 confirmed OW ceiling raised from S$7,400 (2025) to S$8,000 (2026) per Budget 2024 announcement; total contribution rates for 55-60 (32.5% → 34%) and 60-65 (22% → 25%) progressively reverted from 2025-26.",
+      "implication_for_us": "January 2026 is a forced manual-recalc moment for every employer paying any PMET above S$7,400/mo — and the 55-65 rate change re-fires the annual mistake-cycle. Agent 4: time a January push around 'did your payroll catch the new CPF ceiling?'. Agent 3: a one-click 'CPF ceiling correction' workflow in the Starter tier is the right February conversion hook."
+    },
+    {
+      "title": "Platform Workers Act 2024 — CPF / WICA extension to ride-hail + delivery + similar gig staff",
+      "evidence": "Platform Workers Act effective Jan 2025; full CPF + WICA extension phased through 2025-26 for platform operators. CNA 2025-03 coverage flagged ~70,000 SG platform workers brought into CPF coverage by year-end 2025. Tangentially relevant for any micro-firm 'platform-adjacent' employer (food delivery aggregators, beauty / cleaning / handyman platforms).",
+      "implication_for_us": "Most current Elitez EOR micro-firm ICP is NOT platform-adjacent, but a meaningful slice (cleaning, last-mile, F&B + delivery hybrid) overlaps. Agent 3: do NOT bake platform-worker rules into the headline tier — niche, evolving. Agent 4: not an attack plan; monitor for 2027 refresh."
+    },
+    {
+      "title": "Global EOR consolidation — Skuad acquired by Payoneer (2025), Velocity Global rebrand to Pebl (2025)",
+      "evidence": "Payoneer-Skuad acquisition completed Q3 2025 (TechCrunch 2025-08-15); Velocity Global rebranded as Pebl 2025-Q4 (HRTech World 2025-11). Industry analysts flagged consolidation as evidence of pricing-power pressure in the mid-tier global EOR segment as Deel / Remote dominate.",
+      "implication_for_us": "Global EOR M&A is signal that the mid-tier is under pressure — pricing-down to Elitez EOR's segment is theoretically possible but takes 12-18 months even after a strategic decision. Agent 4: defensible window remains; do not assume it stays open beyond 2027. Agent 3: lock in annual-prepay terms in Standard / Pro to insulate against future price-pressure."
+    },
+    {
+      "title": "Accountant-channel PSG distribution growing as SG SME procurement default",
+      "evidence": "ICPAS Practitioner Survey 2024: 67% of SG accountants now actively recommend at least one PSG-listed SaaS to micro-firm clients (vs 41% in 2022). PSG cumulative claims through 2024 hit S$680M (IMDA 2024 annual update), with HR/payroll the third-largest category by claim count.",
+      "implication_for_us": "The accountant-channel + PSG-listing combination is the dominant micro-firm SaaS distribution path in 2026. Agent 4: pursue PSG application 2026-Q3 + parallel accountant-partner programme; the two together are the moat. Agent 3: time annual Standard / Pro pricing increases to land after PSG-listing so the rebate absorbs the increase."
+    }
+  ]
+}
