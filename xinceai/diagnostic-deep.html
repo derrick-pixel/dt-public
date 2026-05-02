@@ -11,7 +11,13 @@
   <meta property="og:title" content="XinceAI — Full Diagnostic Report" />
   <meta property="og:description" content="Deep 18-question SME diagnostic with 3 spider charts. IMDA-benchmarked." />
   <meta property="og:image" content="https://derrick-pixel.github.io/XinceAI/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="XinceAI" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="XinceAI — Full Diagnostic Report" />
+  <meta name="twitter:description" content="Deep 18-question SME diagnostic with 3 spider charts. IMDA-benchmarked. Identifies workflow recommendations and grant eligibility." />
+  <meta name="twitter:image" content="https://derrick-pixel.github.io/XinceAI/og-image.png" />
 
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
@@ -288,6 +294,10 @@
     .rec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; margin: 12px 0 22px; }
     .rec-card { padding: 16px; background: var(--card); border: 1px solid var(--border2); border-radius: var(--radius); transition: all .15s; }
     .rec-card:hover { border-color: var(--amber); transform: translateY(-1px); }
+    .rec-card-platform { border-color: rgba(192,132,252,0.25); }
+    .rec-card-platform:hover { border-color: var(--violet); box-shadow: 0 8px 24px rgba(192,132,252,0.18); }
+    .rec-badge { display: inline-block; margin-left: 8px; padding: 2px 8px; font-family: var(--font-mono); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; color: var(--violet); background: rgba(192,132,252,0.12); border: 1px solid rgba(192,132,252,0.3); border-radius: 3px; vertical-align: middle; }
+    .rec-save-platform { color: var(--violet); }
     .rec-icon { font-size: 1.4rem; margin-bottom: 6px; }
     .rec-name { font-family: var(--font-head); font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
     .rec-desc { font-size: 0.78rem; color: var(--muted2); line-height: 1.5; }
@@ -449,6 +459,32 @@
         </select>
       </div>
       <div class="field">
+        <label for="f-industry">Industry <span class="req">*</span></label>
+        <select id="f-industry" required>
+          <option value="" disabled selected>Select...</option>
+          <option value="staffing">Staffing & Recruitment</option>
+          <option value="services">Professional Services</option>
+          <option value="fnb">F&B / Retail</option>
+          <option value="logistics">Logistics / Construction</option>
+          <option value="tech">Technology</option>
+          <option value="healthcare">Healthcare</option>
+          <option value="manufacturing">Manufacturing</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-dept">Primary department <span class="req">*</span></label>
+        <select id="f-dept" required>
+          <option value="" disabled selected>Select...</option>
+          <option value="hr">HR / People Ops</option>
+          <option value="finance">Finance / Accounts</option>
+          <option value="ops">Operations</option>
+          <option value="admin">Admin / Office</option>
+          <option value="marketing">Marketing</option>
+          <option value="sales">Sales</option>
+          <option value="cs">Customer Service</option>
+        </select>
+      </div>
+      <div class="field">
         <label for="f-revenue">Annual revenue band <span class="opt">(optional)</span></label>
         <select id="f-revenue">
           <option value="">Prefer not to say</option>
@@ -595,25 +631,9 @@
       <div id="flags-list"></div>
     </div>
 
-    <!-- Impact -->
-    <div class="impact">
-      <div style="font-family:var(--font-head);font-size:1.2rem;font-weight:600;margin-bottom:4px;">The gap you can close</div>
-      <div style="font-family:var(--font-mono);font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;">Refined annual impact estimate</div>
-      <div class="impact-stats">
-        <div>
-          <div class="impact-val" id="impact-hours">—</div>
-          <div class="impact-lbl">Hours saved / year</div>
-        </div>
-        <div>
-          <div class="impact-val" id="impact-dollars">—</div>
-          <div class="impact-lbl">Dollar value (S$)</div>
-        </div>
-      </div>
-    </div>
-
     <!-- Recommended workflows -->
     <div style="font-family:var(--font-head);font-size:1.25rem;font-weight:600;margin-bottom:4px;">Start with these workflows</div>
-    <div style="font-family:var(--font-mono);font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;">5 priorities drawn from your weakest axes across all 3 charts</div>
+    <div style="font-family:var(--font-mono);font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;">Priorities drawn from your weakest axes across all 3 charts</div>
     <div class="rec-grid" id="rec-grid"></div>
 
     <!-- Grants -->
@@ -623,14 +643,33 @@
       <div id="grants-list"></div>
     </div>
 
-    <!-- CTA -->
+    <!-- The gap you can close — sized by company × sector × dept -->
+    <div class="impact">
+      <div style="font-family:var(--font-head);font-size:1.4rem;font-weight:700;margin-bottom:4px;">The gap you can close</div>
+      <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;">Refined annual impact estimate</div>
+      <p id="impact-sub" style="font-size:0.88rem;color:var(--muted2);margin:8px 0 4px;line-height:1.6;">—</p>
+      <div class="impact-stats">
+        <div>
+          <div class="impact-val" id="impact-hours">—</div>
+          <div class="impact-lbl">Reclaimable hours / year</div>
+        </div>
+        <div>
+          <div class="impact-val" id="impact-dollars">—</div>
+          <div class="impact-lbl">Equivalent annual cost recovered</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Compelling CTA at the very end -->
     <div class="cta-row">
-      <div class="cta-head">Ready for a working demo on your data?</div>
-      <p class="cta-sub">Book a 30-min walkthrough of the workflows matched to your diagnostic. No pitch — just a working demo.</p>
+      <div class="cta-head">Close that gap — with up to 70% of the work funded.</div>
+      <p class="cta-sub">Your diagnostic shows specifically where your week is leaking. The workflows above are battle-tested at Elitez Group (350 staff, 9 cities) and eligible under the WSG WDG (JR+) grant — meaning you fund as little as 30% of an engagement that recovers <b id="cta-hours-recap">—</b> a year.</p>
+      <p class="cta-sub" style="margin-top:8px;">Book a 30-minute walkthrough — no pitch deck, just the workflows running on your kind of data. If we can't justify the engagement against your numbers, we'll tell you so.</p>
       <div class="cta-buttons">
-        <a id="cta-whatsapp" class="btn btn-fill" target="_blank" rel="noopener">▸ WhatsApp Derrick</a>
-        <button type="button" class="btn btn-ghost" id="cta-download">▸ Download as PDF</button>
-        <a href="index.html#workflows" class="btn btn-ghost">▸ Browse all workflows</a>
+        <a id="cta-whatsapp" class="btn btn-fill" target="_blank" rel="noopener">▸ WhatsApp Derrick — 30 min walkthrough</a>
+        <a href="mailto:derrick@elitez.asia?subject=XinceAI%20diagnostic%20follow-up" class="btn btn-fill">▸ Email Derrick</a>
+        <button type="button" class="btn btn-ghost" id="cta-download">▸ Download report (PDF)</button>
+        <a href="index.html#workflows" class="btn btn-ghost">▸ Browse all workflows + platforms</a>
       </div>
       <div class="cta-confirm" id="cta-confirm">
         <b>✓ Report emailed.</b> Check your inbox at <span id="cta-email">—</span> (and spam folder). You'll hear from Derrick within 1 business day.
@@ -847,7 +886,10 @@
     { min: 0,  label: 'Chaos mode',             cls: 't-1' }
   ];
 
+  // RECS = workflows + platforms. Platforms carry `platform:true` and use cost-savings framing.
+  // fitMin / fitMax bound applicable headcount where relevant (e.g. EOR is for micro-SMEs).
   const WORKFLOWS = {
+    // 9 AI workflows
     hr_contract:  { icon: '\uD83D\uDCDD', name: 'HR Contract Creation',          desc: 'Auto-generate MOM-compliant contracts from templates in seconds.',            save: 'Save ~20 hrs/mo' },
     receipt:      { icon: '\uD83E\uDDFE', name: 'Receipt Claims',                desc: 'Scan receipts, validate policy, route for approval automatically.',            save: 'Save ~25 hrs/mo' },
     doc_validate: { icon: '\uD83D\uDCE6', name: 'Doc Validation at Scale',       desc: 'Validate thousands of documents in campaigns. <1 second each.',                save: 'Save ~40 hrs/mo' },
@@ -856,37 +898,57 @@
     onboard:      { icon: '\uD83D\uDE80', name: 'Onboarding Automation',         desc: 'Orchestrate IT provisioning, document collection, training.',                  save: 'Save ~15 hrs/mo' },
     soa:          { icon: '\uD83D\uDCB0', name: 'Daily SOA Checker',             desc: 'Automated statement reconciliation against Xero. Real-time DSO.',              save: 'Save ~22 hrs/mo' },
     commission:   { icon: '\uD83D\uDCCA', name: 'Commission Verification',       desc: 'Cross-check commission claims against CRM and contracts.',                     save: 'Save ~12 hrs/mo' },
-    resume:       { icon: '\uD83D\uDCC4', name: 'AI Resume Builder',             desc: 'Transform raw CVs into job-matched, ATS-optimised resumes in seconds.',        save: 'Save ~30 hrs/mo' }
+    resume:       { icon: '\uD83D\uDCC4', name: 'AI Resume Builder',             desc: 'Transform raw CVs into job-matched, ATS-optimised resumes in seconds.',        save: 'Save ~30 hrs/mo' },
+    // 8 business platforms
+    esop:         { icon: '\uD83D\uDCC8', name: 'Elitez-ESOP Platform',          desc: 'Equity ledger, vesting, trading windows — without lawyers.',                save: '~S$2.4\u201310K / yr saved', platform: true, fitMin: 5 },
+    pulse:        { icon: '\uD83D\uDCE3', name: 'Elitez Pulse \u2014 Marketing', desc: 'SEO, content, social, ROI diagnostic, lead pipeline, proposal generator.', save: '~S$30\u201360K / yr saved', platform: true },
+    site:         { icon: '\uD83C\uDF10', name: 'DT Site Creator',               desc: 'Static and transactional sites in 48h \u2014 5 ready archetypes.',         save: '~S$12\u201345K / yr saved', platform: true },
+    csuite:       { icon: '\uD83E\uDDE0', name: 'C-Suite Intelligence Dashboard', desc: 'Gmail + Calendar + Tasks + Xero in one executive view.',                       save: '~S$7\u201310K / yr saved', platform: true },
+    eor:          { icon: '\uD83C\uDFE2', name: 'Elitez EOR',                    desc: 'CPF, WICA, IR8A and payroll for 1\u20133 staff micro-SMEs.',                save: '~S$2.5\u20139K / yr saved', platform: true, fitMax: 3 },
+    insights:     { icon: '\uD83D\uDD0D', name: 'Market Insights & Intelligence', desc: '9 AI subagents \u2014 competitor DB, market sizing, pricing strategy.',    save: '~S$15\u201355K saved / sprint', platform: true },
+    elixcraft:    { icon: '\uD83C\uDFAE', name: 'Gamified Lifecycle (ElixCraft)', desc: 'Career maps, KPI XP, preboarding quests, leave + claims.',                  save: '~S$13\u201324K / yr saved', platform: true, fitMin: 5 },
+    training:     { icon: '\uD83D\uDCDA', name: 'Staff Training Platform',       desc: 'Modular LMS with quiz engine, white-label per industry.',                       save: '~S$9.5\u201319K / yr saved', platform: true, fitMin: 5 }
   };
 
-  // Axis → candidate workflow list, ranked by fit
+  // Axis → candidate workflow + platform list, ranked by fit
   const AXIS_TO_WF = {
     'Admin & paperwork':    ['hr_contract', 'receipt', 'doc_validate'],
-    'Staff operations':     ['timesheet', 'wa_schedule', 'onboard'],
-    'Customer replies':     ['wa_schedule'],
-    'Data & reporting':     ['soa', 'commission'],
-    'Sales pipeline':       ['resume', 'commission'],
-    'Compliance & filings': ['hr_contract', 'doc_validate', 'soa'],
-    'Digital readiness':    ['soa', 'wa_schedule'],
-    'Cloud infrastructure': ['soa'],
-    'System integration':   ['soa', 'wa_schedule'],
+    'Staff operations':     ['timesheet', 'wa_schedule', 'onboard', 'elixcraft', 'training'],
+    'Customer replies':     ['wa_schedule', 'pulse'],
+    'Data & reporting':     ['soa', 'commission', 'csuite'],
+    'Sales pipeline':       ['resume', 'commission', 'pulse', 'insights', 'site'],
+    'Compliance & filings': ['hr_contract', 'doc_validate', 'soa', 'eor', 'training'],
+    'Digital readiness':    ['soa', 'wa_schedule', 'site', 'csuite'],
+    'Cloud infrastructure': ['soa', 'csuite'],
+    'System integration':   ['soa', 'wa_schedule', 'csuite'],
     'Workflow automation':  ['hr_contract', 'receipt'],
-    'AI adoption':          ['wa_schedule', 'doc_validate'],
+    'AI adoption':          ['wa_schedule', 'doc_validate', 'insights'],
     'Cybersecurity posture':['doc_validate'],
-    'Data & analytics':     ['soa', 'commission'],
-    'Lead generation':      ['resume', 'wa_schedule'],
-    'Customer retention':   ['wa_schedule'],
-    'Pricing sophistication':['commission'],
-    'Cash flow discipline': ['soa', 'commission'],
-    'Compliance & audit':   ['doc_validate', 'hr_contract'],
-    'Key-person risk':      ['onboard', 'doc_validate']
+    'Data & analytics':     ['soa', 'commission', 'csuite'],
+    'Lead generation':      ['resume', 'wa_schedule', 'pulse', 'insights', 'site'],
+    'Customer retention':   ['wa_schedule', 'elixcraft', 'esop'],
+    'Pricing sophistication':['commission', 'insights'],
+    'Cash flow discipline': ['soa', 'commission', 'csuite'],
+    'Compliance & audit':   ['doc_validate', 'hr_contract', 'eor', 'training'],
+    'Key-person risk':      ['onboard', 'doc_validate', 'esop', 'elixcraft', 'training']
   };
+
+  // Headcount-band fit: parse "1 \u2013 5" / "200+" into [lo, up] and gate platforms.
+  function fitsHeadcount(rec, headcount) {
+    if (!headcount) return true;
+    const m = String(headcount).match(/(\d+)\s*[\u2013-]\s*(\d+)|(\d+)\+/);
+    const lo = m ? parseInt(m[1] || m[3], 10) : 0;
+    const up = m && m[2] ? parseInt(m[2], 10) : 9999;
+    if (rec.fitMax != null && lo > rec.fitMax) return false;
+    if (rec.fitMin != null && up < rec.fitMin) return false;
+    return true;
+  }
 
   // ─────────────────────────────────────────────────────────────────────
   //  State
   // ─────────────────────────────────────────────────────────────────────
   const state = {
-    reg: { company:'', name:'', role:'', email:'', mobile:'', headcount:'', revenue:'', pdpa:false },
+    reg: { company:'', name:'', role:'', email:'', mobile:'', headcount:'', industry:'', dept:'', revenue:'', pdpa:false },
     ansA: [null,null,null,null,null],
     ansB: [null,null,null,null,null],
     ansC: [null,null,null,null],
@@ -909,13 +971,15 @@
     r.email     = document.getElementById('f-email').value.trim();
     r.mobile    = document.getElementById('f-mobile').value.trim();
     r.headcount = document.getElementById('f-headcount').value;
+    r.industry  = document.getElementById('f-industry').value;
+    r.dept      = document.getElementById('f-dept').value;
     r.revenue   = document.getElementById('f-revenue').value;
     r.pdpa      = document.getElementById('f-pdpa').checked;
-    const ok = r.company && r.name && r.role && /.+@.+\..+/.test(r.email) && r.headcount && r.pdpa;
+    const ok = r.company && r.name && r.role && /.+@.+\..+/.test(r.email) && r.headcount && r.industry && r.dept && r.pdpa;
     document.getElementById('gate-submit').disabled = !ok;
     document.getElementById('gate-note').textContent = ok ? '◆ Ready' : 'Fill all required fields + consent to continue';
   }
-  ['f-company','f-name','f-role','f-email','f-mobile','f-headcount','f-revenue','f-pdpa'].forEach(id => {
+  ['f-company','f-name','f-role','f-email','f-mobile','f-headcount','f-industry','f-dept','f-revenue','f-pdpa'].forEach(id => {
     const el = document.getElementById(id);
     el.addEventListener('input', updateGate);
     el.addEventListener('change', updateGate);
@@ -1308,15 +1372,71 @@
     });
   }
 
+  // Typical % of company headcount in each department (Bersin 2023, MOM 2024).
+  const DEPT_FRACTIONS = {
+    hr: 0.020, finance: 0.025, ops: 0.10, admin: 0.04,
+    marketing: 0.04, sales: 0.10, cs: 0.06,
+  };
+  // Total monthly admin hours per FTE in that department, summed from each
+  // dept's task list in the ROI calculator (kept in sync).
+  const DEPT_HRS_PER_FTE = {
+    hr: 88, finance: 90, ops: 82, admin: 100,
+    marketing: 90, sales: 99, cs: 92,
+  };
+  // Singapore SME loaded hourly cost (mid-band for the dept × industry).
+  // Keep simple: blend of MOM 2024/25 + Hays/Robert Half — mid-band SGD 30/hr.
+  const SECTOR_INTENSITY = {
+    // Multiplies the gap because labour-heavy industries leak more hours.
+    staffing: 1.05, services: 1.10, fnb: 0.95, logistics: 1.10,
+    tech: 1.15, healthcare: 1.05, manufacturing: 1.00,
+  };
+  function parseHeadcountMid(band) {
+    if (!band) return 0;
+    const map = { '1 – 5': 3, '6 – 10': 8, '11 – 25': 18, '26 – 50': 38, '51 – 100': 75, '101 – 200': 150, '200+': 250 };
+    return map[band] || 0;
+  }
+
   function renderImpact() {
-    let hoursMonth = 0;
-    state.scoresOp.forEach(s => { hoursMonth += Math.max(0, 85 - s) * 0.7; });
-    state.scoresDig.forEach(s => { hoursMonth += Math.max(0, 85 - s) * 0.35; });
-    state.scoresBiz.forEach(s => { hoursMonth += Math.max(0, 85 - s) * 0.35; });
-    const hoursYear = Math.round(hoursMonth * 12 / 10) * 10;
+    // Diagnostic gap = how much of the dept's full admin load is being lost
+    // because the SME's scores are below the SG SME peer average.
+    // Formula:
+    //   teamSize  = max(1, round(companySize × DEPT_FRACTIONS[dept]))
+    //   monthlyAdminHrs = teamSize × DEPT_HRS_PER_FTE[dept]
+    //   gapFactor = 1 - (avgScore / 85)        // 85 is "automated" threshold
+    //   sectorMul = SECTOR_INTENSITY[industry] // labour-heavy = bigger leak
+    //   monthlyGap = monthlyAdminHrs × gapFactor × sectorMul
+    //   yearlyGap  = monthlyGap × 12
+    //   dollarGap  = yearlyGap × S$30/hr loaded
+    const reg = state.reg;
+    const companySize = parseHeadcountMid(reg.headcount);
+    const dept = reg.dept || 'admin';
+    const industry = reg.industry || 'services';
+    const teamSize = Math.max(1, Math.round(companySize * (DEPT_FRACTIONS[dept] || 0.05)));
+    const monthlyAdminHrs = teamSize * (DEPT_HRS_PER_FTE[dept] || 90);
+
+    // Average score across all 17 axes (out of 100). Lower = bigger gap.
+    const allScores = [...(state.scoresOp || []), ...(state.scoresDig || []), ...(state.scoresBiz || [])];
+    const avgScore = allScores.length ? allScores.reduce((a,b) => a+b, 0) / allScores.length : 50;
+    const gapFactor = Math.max(0.10, Math.min(0.85, 1 - (avgScore / 85)));
+    const sectorMul = SECTOR_INTENSITY[industry] || 1.0;
+
+    const monthlyGap = monthlyAdminHrs * gapFactor * sectorMul;
+    const hoursYear  = Math.round(monthlyGap * 12 / 10) * 10;
     const dollarsYear = Math.round(hoursYear * 30 / 500) * 500;
-    document.getElementById('impact-hours').textContent = hoursYear.toLocaleString() + ' hrs';
+
+    document.getElementById('impact-hours').textContent   = hoursYear.toLocaleString() + ' hrs';
     document.getElementById('impact-dollars').textContent = 'S$' + dollarsYear.toLocaleString();
+
+    // Update the framing line under the title with the derivation.
+    const sub = document.getElementById('impact-sub');
+    if (sub) {
+      const sectorLabel = ({ staffing:'Staffing & Recruitment', services:'Professional Services', fnb:'F&B / Retail', logistics:'Logistics / Construction', tech:'Technology', healthcare:'Healthcare', manufacturing:'Manufacturing' })[industry] || industry;
+      const deptLabel = ({ hr:'HR / People Ops', finance:'Finance / Accounts', ops:'Operations', admin:'Admin / Office', marketing:'Marketing', sales:'Sales', cs:'Customer Service' })[dept] || dept;
+      sub.textContent = 'For your ' + reg.headcount + ' staff company in ' + sectorLabel + ', focused on ' + deptLabel + ' (~' + teamSize + ' FTE).';
+    }
+    // Recap inside the CTA copy.
+    const recap = document.getElementById('cta-hours-recap');
+    if (recap) recap.textContent = hoursYear.toLocaleString() + ' hours · S$' + dollarsYear.toLocaleString();
   }
 
   function renderRecs() {
@@ -1326,19 +1446,28 @@
       ...rankedAxes(BIZ_AXES, state.scoresBiz).slice(0, 2)
     ].sort((a, b) => a.score - b.score);
 
+    const headcount = state.reg.headcount; // e.g. "1 – 5", "26 – 50", "200+"
     const picked = [];
     weak.forEach(({ ax }) => {
-      (AXIS_TO_WF[ax] || []).forEach(id => { if (!picked.includes(id)) picked.push(id); });
+      (AXIS_TO_WF[ax] || []).forEach(id => {
+        const rec = WORKFLOWS[id];
+        if (rec && fitsHeadcount(rec, headcount) && !picked.includes(id)) picked.push(id);
+      });
     });
     const host = document.getElementById('rec-grid');
     while (host.firstChild) host.removeChild(host.firstChild);
-    picked.slice(0, 5).forEach(id => {
+    // Show up to 10 picks so platforms (now in the pool) get a chance alongside workflows.
+    picked.slice(0, 10).forEach(id => {
       const w = WORKFLOWS[id];
-      const c = document.createElement('div'); c.className = 'rec-card';
+      const c = document.createElement('div'); c.className = 'rec-card' + (w.platform ? ' rec-card-platform' : '');
       const ic = document.createElement('div'); ic.className = 'rec-icon'; ic.textContent = w.icon;
       const nm = document.createElement('div'); nm.className = 'rec-name'; nm.textContent = w.name;
+      if (w.platform) {
+        const badge = document.createElement('span'); badge.className = 'rec-badge'; badge.textContent = 'PLATFORM';
+        nm.appendChild(badge);
+      }
       const de = document.createElement('div'); de.className = 'rec-desc'; de.textContent = w.desc;
-      const sv = document.createElement('span'); sv.className = 'rec-save'; sv.textContent = w.save;
+      const sv = document.createElement('span'); sv.className = 'rec-save' + (w.platform ? ' rec-save-platform' : ''); sv.textContent = w.save;
       c.appendChild(ic); c.appendChild(nm); c.appendChild(de); c.appendChild(sv);
       host.appendChild(c);
     });

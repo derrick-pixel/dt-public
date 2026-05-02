@@ -11,7 +11,13 @@
   <meta property="og:title" content="XinceAI — Digital Readiness Diagnostic" />
   <meta property="og:description" content="Where is your SME actually leaking time? 7 questions. 2 minutes. Benchmarked against IMDA 2024/2025 SME data." />
   <meta property="og:image" content="https://derrick-pixel.github.io/XinceAI/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="XinceAI" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="XinceAI — Digital Readiness Diagnostic" />
+  <meta name="twitter:description" content="Where is your SME actually leaking time? 7 questions. 2 minutes. Benchmarked against IMDA 2024/2025 SME data." />
+  <meta name="twitter:image" content="https://derrick-pixel.github.io/XinceAI/og-image.png" />
 
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
@@ -210,6 +216,10 @@
     .rec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin-bottom: 24px; }
     .rec-card { padding: 16px; background: var(--card); border: 1px solid var(--border2); border-radius: var(--radius); transition: all .15s; }
     .rec-card:hover { border-color: var(--amber); transform: translateY(-1px); box-shadow: 0 8px 24px var(--glow-a); }
+    .rec-card-platform { border-color: rgba(192,132,252,0.25); }
+    .rec-card-platform:hover { border-color: var(--violet); box-shadow: 0 8px 24px rgba(192,132,252,0.18); }
+    .rec-badge { display: inline-block; margin-left: 8px; padding: 2px 8px; font-family: var(--font-mono); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; color: var(--violet); background: rgba(192,132,252,0.12); border: 1px solid rgba(192,132,252,0.3); border-radius: 3px; vertical-align: middle; }
+    .rec-save-platform { color: var(--violet); }
     .rec-icon { font-size: 1.4rem; margin-bottom: 6px; }
     .rec-name { font-family: var(--font-head); font-weight: 700; font-size: 1rem; margin-bottom: 6px; }
     .rec-desc { font-size: 0.8rem; color: var(--muted2); line-height: 1.5; }
@@ -768,7 +778,10 @@
     { min: 0,  label: 'Chaos mode',             cls: 't-1', desc: 'Firefighting every day. This is exactly when AI leverage is most valuable \u2014 but start by fixing one thing first.' }
   ];
 
+  // RECS = workflows + platforms. Platforms carry `platform:true` and use cost-savings framing.
+  // fitMin / fitMax bound applicable headcount where relevant (e.g. EOR is for micro-SMEs).
   const WORKFLOWS = {
+    // 9 AI workflows
     hr_contract:  { icon: '\uD83D\uDCDD', name: 'HR Contract Creation',          desc: 'Auto-generate MOM-compliant contracts from templates in seconds.',              save: 'Save ~20 hrs/mo' },
     receipt:      { icon: '\uD83E\uDDFE', name: 'Receipt Claims',                desc: 'Scan receipts, validate policy, route for approval automatically.',              save: 'Save ~25 hrs/mo' },
     doc_validate: { icon: '\uD83D\uDCE6', name: 'Doc Validation at Scale',       desc: 'Validate thousands of documents in campaigns. <1 second each.',                  save: 'Save ~40 hrs/mo' },
@@ -777,17 +790,36 @@
     onboard:      { icon: '\uD83D\uDE80', name: 'Onboarding Automation',         desc: 'Orchestrate IT provisioning, document collection, training.',                    save: 'Save ~15 hrs/mo' },
     soa:          { icon: '\uD83D\uDCB0', name: 'Daily SOA Checker',             desc: 'Automated statement reconciliation against Xero. Real-time DSO.',                save: 'Save ~22 hrs/mo' },
     commission:   { icon: '\uD83D\uDCCA', name: 'Commission Verification',       desc: 'Cross-check commission claims against CRM and contracts.',                       save: 'Save ~12 hrs/mo' },
-    resume:       { icon: '\uD83D\uDCC4', name: 'AI Resume Builder',             desc: 'Transform raw CVs into job-matched, ATS-optimised resumes in seconds.',          save: 'Save ~30 hrs/mo' }
+    resume:       { icon: '\uD83D\uDCC4', name: 'AI Resume Builder',             desc: 'Transform raw CVs into job-matched, ATS-optimised resumes in seconds.',          save: 'Save ~30 hrs/mo' },
+    // 8 business platforms
+    esop:         { icon: '\uD83D\uDCC8', name: 'Elitez-ESOP Platform',          desc: 'Equity ledger, vesting, trading windows \u2014 without lawyers.',                save: '~S$2.4\u201310K / yr saved', platform: true, fitMin: 5 },
+    pulse:        { icon: '\uD83D\uDCE3', name: 'Elitez Pulse \u2014 Marketing', desc: 'SEO, content, social, ROI diagnostic, lead pipeline, proposal generator.',       save: '~S$30\u201360K / yr saved', platform: true },
+    site:         { icon: '\uD83C\uDF10', name: 'DT Site Creator',               desc: 'Static and transactional sites in 48h \u2014 5 ready archetypes.',               save: '~S$12\u201345K / yr saved', platform: true },
+    csuite:       { icon: '\uD83E\uDDE0', name: 'C-Suite Intelligence Dashboard',desc: 'Gmail + Calendar + Tasks + Xero in one executive view.',                        save: '~S$7\u201310K / yr saved', platform: true },
+    eor:          { icon: '\uD83C\uDFE2', name: 'Elitez EOR',                    desc: 'CPF, WICA, IR8A and payroll for 1\u20133 staff micro-SMEs.',                      save: '~S$2.5\u20139K / yr saved', platform: true, fitMax: 3 },
+    insights:     { icon: '\uD83D\uDD0D', name: 'Market Insights & Intelligence',desc: '9 AI subagents \u2014 competitor DB, market sizing, pricing strategy.',          save: '~S$15\u201355K saved / sprint', platform: true },
+    elixcraft:    { icon: '\uD83C\uDFAE', name: 'Gamified Lifecycle (ElixCraft)',desc: 'Career maps, KPI XP, preboarding quests, leave + claims.',                       save: '~S$13\u201324K / yr saved', platform: true, fitMin: 5 },
+    training:     { icon: '\uD83D\uDCDA', name: 'Staff Training Platform',       desc: 'Modular LMS with quiz engine, white-label per industry.',                        save: '~S$9.5\u201319K / yr saved', platform: true, fitMin: 5 }
   };
   const AXIS_TO_WORKFLOWS = {
     'Admin & paperwork':    ['hr_contract', 'receipt', 'doc_validate'],
-    'Staff operations':     ['timesheet', 'wa_schedule', 'onboard'],
-    'Customer replies':     ['wa_schedule'],
-    'Data & reporting':     ['soa', 'commission'],
-    'Sales pipeline':       ['resume', 'commission'],
-    'Compliance & filings': ['hr_contract', 'doc_validate', 'soa'],
-    'Digital readiness':    ['soa', 'wa_schedule']
+    'Staff operations':     ['timesheet', 'wa_schedule', 'onboard', 'elixcraft', 'training'],
+    'Customer replies':     ['wa_schedule', 'pulse'],
+    'Data & reporting':     ['soa', 'commission', 'csuite'],
+    'Sales pipeline':       ['resume', 'commission', 'pulse', 'insights', 'site'],
+    'Compliance & filings': ['hr_contract', 'doc_validate', 'soa', 'eor', 'training'],
+    'Digital readiness':    ['soa', 'wa_schedule', 'site', 'csuite']
   };
+  // Headcount-band fit: parse "1 \u2013 5" / "6 \u2013 10" / "200+" into [lo, up] and gate platforms.
+  function fitsHeadcount(rec, headcount) {
+    if (!headcount) return true; // lite has no headcount captured
+    const m = String(headcount).match(/(\d+)\s*[\u2013-]\s*(\d+)|(\d+)\+/);
+    const lo = m ? parseInt(m[1] || m[3], 10) : 0;
+    const up = m && m[2] ? parseInt(m[2], 10) : 9999;
+    if (rec.fitMax != null && lo > rec.fitMax) return false;
+    if (rec.fitMin != null && up < rec.fitMin) return false;
+    return true;
+  }
 
   // ── Drilldown follow-up questions per axis ──────────────────────────
   const DRILL_QUESTIONS = {
@@ -1191,18 +1223,28 @@
     const host = document.getElementById('rec-grid');
     while (host.firstChild) host.removeChild(host.firstChild);
     const ranked = QUESTIONS.map((q, i) => ({ axis: q.axis, score: state.axisScores[i] }))
-                            .sort((a, b) => a.score - b.score).slice(0, 3);
+                            .sort((a, b) => a.score - b.score).slice(0, 4);
     const picked = [];
+    // Lite has no headcount; filter is a no-op here but keeps shape parity with deep.
+    const headcount = null;
     ranked.forEach(({ axis }) => {
-      (AXIS_TO_WORKFLOWS[axis] || []).forEach(id => { if (!picked.includes(id)) picked.push(id); });
+      (AXIS_TO_WORKFLOWS[axis] || []).forEach(id => {
+        const rec = WORKFLOWS[id];
+        if (rec && fitsHeadcount(rec, headcount) && !picked.includes(id)) picked.push(id);
+      });
     });
-    picked.slice(0, 3).forEach(id => {
+    // Show up to 6 picks so platforms get a chance alongside workflows
+    picked.slice(0, 6).forEach(id => {
       const w = WORKFLOWS[id];
-      const c = document.createElement('div'); c.className = 'rec-card';
+      const c = document.createElement('div'); c.className = 'rec-card' + (w.platform ? ' rec-card-platform' : '');
       const ic = document.createElement('div'); ic.className = 'rec-icon'; ic.textContent = w.icon;
       const nm = document.createElement('div'); nm.className = 'rec-name'; nm.textContent = w.name;
+      if (w.platform) {
+        const badge = document.createElement('span'); badge.className = 'rec-badge'; badge.textContent = 'PLATFORM';
+        nm.appendChild(badge);
+      }
       const de = document.createElement('div'); de.className = 'rec-desc'; de.textContent = w.desc;
-      const sv = document.createElement('span'); sv.className = 'rec-save'; sv.textContent = w.save;
+      const sv = document.createElement('span'); sv.className = 'rec-save' + (w.platform ? ' rec-save-platform' : ''); sv.textContent = w.save;
       c.appendChild(ic); c.appendChild(nm); c.appendChild(de); c.appendChild(sv);
       host.appendChild(c);
     });

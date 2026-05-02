@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self';" />
+  <title>XinceAI — Market &amp; Pricing Insights (Old · v1)</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="description" content="Internal market and pricing insights for XinceAI. Not for public indexing." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #140f0c;
+      --surface:  #1e1714;
+      --card:     #28201b;
+      --card-hi:  #332a24;
+      --border:   rgba(255,136,68,0.08);
+      --border2:  rgba(255,136,68,0.18);
+      --border3:  rgba(255,136,68,0.35);
+      --text:     #f5ede6;
+      --muted:    #7a6a5a;
+      --muted2:   #a89888;
+
+      --cyan:     #00e5ff;
+      --amber:    #ff8844;
+      --neon:     #00ff88;
+      --violet:   #c084fc;
+      --rose:     #ff4466;
+
+      --gradient: linear-gradient(135deg, var(--amber), var(--cyan));
+      --glow-c:   rgba(0,229,255,0.12);
+      --glow-a:   rgba(255,136,68,0.15);
+
+      --font-head: 'Rajdhani', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'Share Tech Mono', monospace;
+      --nav-h: 60px;
+      --radius: 4px;
+    }
+
+    /* ── LIGHT MODE ────────────────────────────────────────────── */
+    [data-theme="light"] {
+      --bg:       #f5f0eb;
+      --surface:  #ebe5de;
+      --card:     #ffffff;
+      --card-hi:  #f8f4f0;
+      --border:   rgba(140,90,40,0.10);
+      --border2:  rgba(140,90,40,0.18);
+      --border3:  rgba(140,90,40,0.30);
+      --text:     #1a1410;
+      --muted:    #8a7a6a;
+      --muted2:   #6a5a4a;
+
+      --amber:    #d06010;
+      --cyan:     #0088aa;
+      --neon:     #0a8a4a;
+      --violet:   #7040b0;
+      --rose:     #c82040;
+
+      --gradient: linear-gradient(135deg, var(--amber), var(--cyan));
+      --glow-c:   rgba(0,136,170,0.08);
+      --glow-a:   rgba(208,96,16,0.10);
+    }
+    [data-theme="light"] body::before {
+      background-image:
+        linear-gradient(rgba(140,90,40,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(140,90,40,0.04) 1px, transparent 1px);
+    }
+    [data-theme="light"] .admin-nav { background: rgba(245,240,235,0.88); }
+    [data-theme="light"] .admin-nav::after { background: linear-gradient(90deg, transparent, var(--amber), transparent); }
+    [data-theme="light"] .card { background: var(--card); }
+    [data-theme="light"] .card:hover { background: var(--card-hi); }
+    [data-theme="light"] .table-wrap { background: var(--card); }
+    [data-theme="light"] thead { background: var(--surface); }
+    [data-theme="light"] tr:hover td { background: rgba(140,90,40,0.03); }
+
+    /* ── THEME TOGGLE ──────────────────────────────────────────── */
+    .theme-toggle {
+      display: flex; align-items: center; gap: 0;
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 100px; overflow: hidden;
+    }
+    .theme-toggle button {
+      font-family: var(--font-mono); font-size: 0.68rem; padding: 5px 12px;
+      background: none; border: none; color: var(--muted); cursor: pointer;
+      transition: all 0.2s; letter-spacing: 0.04em;
+    }
+    .theme-toggle button.active {
+      background: var(--amber); color: var(--bg); font-weight: 700;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body); background: var(--bg); color: var(--text);
+      font-size: 16px; line-height: 1.65; overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,136,68,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,136,68,0.015) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── NAV ──────────────────────────────────────────────────── */
+    .admin-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: var(--nav-h); display: flex; align-items: center; justify-content: space-between;
+      padding: 0 clamp(16px, 3vw, 32px);
+      background: rgba(20,15,12,0.85); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .admin-nav::after {
+      content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
+      height: 1px; background: linear-gradient(90deg, transparent, var(--amber), transparent); opacity: 0.3;
+    }
+    .admin-nav-left { display: flex; align-items: center; gap: 16px; }
+    .nav-brand { display: flex; align-items: center; gap: 10px; }
+    .nav-mark {
+      width: 34px; height: 34px; border: 1.5px solid var(--amber); display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-head); font-weight: 700; font-size: 0.9rem; color: var(--amber);
+      clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+      box-shadow: 0 0 12px var(--glow-a);
+    }
+    .nav-wordmark { font-family: var(--font-head); font-weight: 700; font-size: 1.15rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    .nav-wordmark em { font-style: normal; color: var(--amber); }
+    .admin-badge {
+      font-family: var(--font-mono); font-size: 0.68rem;
+      padding: 4px 12px; border-radius: 100px;
+      background: rgba(255,136,68,0.10); border: 1px solid rgba(255,136,68,0.2);
+      color: var(--amber); letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .admin-links { display: flex; gap: 6px; }
+    .admin-links a {
+      font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted2); padding: 6px 14px;
+      border-radius: 4px; transition: all 0.15s; letter-spacing: 0.04em;
+    }
+    .admin-links a:hover { color: var(--amber); background: rgba(255,136,68,0.06); }
+    .admin-links a.active { color: var(--amber); background: rgba(255,136,68,0.10); }
+
+    /* ── LAYOUT ──────────────────────────────────────────────── */
+    .page { padding: calc(var(--nav-h) + 40px) clamp(16px, 4vw, 48px) 80px; max-width: 1280px; margin: 0 auto; }
+
+    .page-header { margin-bottom: 56px; }
+    .page-header .eyebrow {
+      font-family: var(--font-mono); font-size: 0.82rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 10px;
+    }
+    .page-header h1 {
+      font-family: var(--font-head); font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 700;
+      letter-spacing: 0.02em; line-height: 1.05; text-transform: uppercase; margin-bottom: 14px;
+    }
+    .page-header h1 .grad { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .page-header .subtitle { color: var(--muted2); font-size: 1rem; max-width: 640px; line-height: 1.6; }
+
+    .section { margin-bottom: 72px; }
+    .section-title {
+      font-family: var(--font-head); font-size: 1.6rem; font-weight: 700;
+      letter-spacing: 0.02em; text-transform: uppercase; margin-bottom: 8px;
+    }
+    .section-sub { color: var(--muted2); font-size: 0.9rem; margin-bottom: 32px; max-width: 640px; }
+
+    /* ── HUD CARD (with corner brackets) ─────────────────────── */
+    .card {
+      position: relative; background: var(--card); border: 1px solid var(--border);
+      padding: 28px; transition: all 0.25s; overflow: hidden;
+    }
+    .card::before, .card::after {
+      content: ''; position: absolute; width: 14px; height: 14px;
+      border-color: var(--border2); transition: border-color 0.25s;
+    }
+    .card::before { top: -1px; left: -1px; border-top: 1.5px solid; border-left: 1.5px solid; }
+    .card::after { bottom: -1px; right: -1px; border-bottom: 1.5px solid; border-right: 1.5px solid; }
+    .card:hover { border-color: var(--border2); background: var(--card-hi); transform: translateY(-2px); }
+    .card:hover::before, .card:hover::after { border-color: var(--amber); }
+
+    .card.highlighted {
+      border-color: var(--amber);
+      box-shadow: 0 0 40px var(--glow-a), inset 0 1px 0 rgba(255,136,68,0.2);
+    }
+    .card.highlighted::before, .card.highlighted::after { border-color: var(--amber); }
+    .card.highlighted .rec-badge {
+      position: absolute; top: 16px; right: 16px;
+      font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.1em;
+      background: var(--gradient); color: #fff; padding: 4px 12px; border-radius: 0;
+      clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+    }
+
+    .card-label {
+      font-family: var(--font-mono); font-size: 0.7rem;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+    }
+    .card h3 { font-family: var(--font-head); font-size: 1.25rem; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; margin-bottom: 10px; }
+    .card p { color: var(--muted2); font-size: 0.88rem; line-height: 1.6; }
+    .card .detail { margin-top: 18px; }
+    .card .detail-row {
+      display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px;
+      font-size: 0.84rem; color: var(--muted2);
+    }
+    .card .detail-row .icon { flex-shrink: 0; width: 16px; text-align: center; font-family: var(--font-mono); }
+    .pros .icon { color: var(--neon); }
+    .cons .icon { color: var(--rose); }
+    .segment .icon { color: var(--cyan); }
+
+    .tag {
+      display: inline-block; font-family: var(--font-mono); font-size: 0.68rem;
+      padding: 3px 10px; margin-right: 6px; margin-top: 8px;
+      background: rgba(255,136,68,0.10); color: var(--amber); border: 1px solid rgba(255,136,68,0.18);
+      clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+    }
+    .tag.cyan { background: rgba(0,229,255,0.10); color: var(--cyan); border-color: rgba(0,229,255,0.18); }
+    .tag.neon { background: rgba(0,255,136,0.10); color: var(--neon); border-color: rgba(0,255,136,0.18); }
+    .tag.amber { background: rgba(255,136,68,0.10); color: var(--amber); border-color: rgba(255,136,68,0.18); }
+    .tag.rose { background: rgba(255,68,102,0.10); color: var(--rose); border-color: rgba(255,68,102,0.18); }
+
+    /* ── GRIDS ────────────────────────────────────────────────── */
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+
+    /* ── PERSONA CARDS ─────────────────────────────────────── */
+    .persona-card { padding: 0; overflow: hidden; }
+    .persona-card::before { top: -1px; left: -1px; }
+    .persona-card::after { bottom: -1px; right: -1px; }
+    .persona-header {
+      padding: 24px 28px 16px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 16px;
+    }
+    .persona-avatar {
+      width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+      clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+    }
+    .persona-header h3 { margin-bottom: 2px; }
+    .persona-header .role { font-family: var(--font-mono); font-size: 0.76rem; color: var(--muted); }
+    .persona-body { padding: 20px 28px 28px; }
+    .persona-field { margin-bottom: 14px; }
+    .persona-field-label {
+      font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+    }
+    .persona-field-value { font-size: 0.86rem; color: var(--muted2); line-height: 1.55; }
+    .persona-field-value li { margin-left: 16px; margin-bottom: 3px; list-style: disc; }
+
+    /* ── TABLE ────────────────────────────────────────────── */
+    .table-wrap {
+      overflow-x: auto; border: 1px solid var(--border);
+      background: var(--card);
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    thead { background: var(--surface); }
+    th {
+      text-align: left; padding: 14px 18px; font-family: var(--font-mono); font-size: 0.72rem;
+      letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+      border-bottom: 1px solid var(--border2);
+    }
+    td {
+      padding: 14px 18px; border-bottom: 1px solid var(--border); color: var(--muted2);
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,136,68,0.02); }
+    td strong { color: var(--text); font-weight: 600; }
+    td .price { font-family: var(--font-mono); font-weight: 600; color: var(--neon); }
+    td .grant-price { font-family: var(--font-mono); font-weight: 600; color: var(--amber); }
+
+    /* ── ALTERNATIVES ─────────────────────────────────────── */
+    .alt-card { display: flex; flex-direction: column; }
+    .alt-type {
+      font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 3px 10px; display: inline-block;
+      margin-bottom: 12px; width: fit-content;
+      clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+    }
+    .alt-type.direct { background: rgba(255,68,102,0.12); color: var(--rose); }
+    .alt-type.diy { background: rgba(255,136,68,0.12); color: var(--amber); }
+    .alt-type.adjacent { background: rgba(0,229,255,0.12); color: var(--cyan); }
+
+    .friction-bar { margin-top: auto; padding-top: 16px; }
+    .friction-label { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); margin-bottom: 6px; }
+    .friction-track { height: 6px; background: rgba(255,136,68,0.06); overflow: hidden; }
+    .friction-fill { height: 100%; transition: width 0.6s ease; }
+
+    /* ── SCROLL REVEAL ────────────────────────────────────── */
+    .reveal {
+      opacity: 0; transform: translateY(28px); transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ───────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .admin-nav { flex-direction: column; height: auto; padding: 12px 16px; gap: 8px; }
+      .admin-nav-left { width: 100%; justify-content: space-between; }
+      .admin-links { width: 100%; justify-content: center; flex-wrap: wrap; }
+      .admin-links a { padding: 6px 10px; font-size: 0.72rem; }
+    }
+    @media (max-width: 480px) {
+      .admin-links { gap: 2px; }
+      .admin-links a { padding: 6px 8px; font-size: 0.68rem; }
+    }
+  
+  /* ── MOBILE RESPONSIVE OVERRIDES (v2) ─────────────────── */
+  @media (max-width: 768px) {
+    body { font-size: 13px; }
+    h1, .page-title, .atlas-title, .ph h1 { font-size: 1.45rem !important; line-height: 1.2 !important; }
+    h2, .art-title, .section-title, .sec-h h2 { font-size: 1.05rem !important; line-height: 1.25 !important; }
+    h3 { font-size: 0.95rem !important; }
+    .page-meta, .atlas-meta, .topbar-meta { text-align: left !important; margin-top: 6px !important; font-size: 0.7rem !important; }
+    main, .container, .container-wide, .atlas-body, .page-body, .wrap, .page { padding-left: 14px !important; padding-right: 14px !important; }
+    .page-head, .atlas-top, .admin-header { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
+
+    /* Grids collapse to single column */
+    .kpi-strip, .kpis, .summary-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; margin-bottom: 20px !important; }
+    .grid-2, .grid-3, .grid-4, .landscape-grid, .rationale-grid, .tier-strip, .top-list,
+    .attack-grid, .results-grid, .metrics-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+
+    /* All cards: tighter */
+    .kpi, .summary-card, .stat-card, .comp-card, .landscape-card, .rationale-card,
+    .tier, .model, .sent-card, .insight, .alert, .quote, .card,
+    .niche { padding: 14px 16px !important; border-radius: 10px !important; }
+    .kpi-val, .kpi .v, .summary-card .big, .stat-value { font-size: 1.35rem !important; line-height: 1.1 !important; }
+    .kpi-lbl, .kpi .l, .summary-card .sub, .stat-label { font-size: 0.6rem !important; letter-spacing: 0.06em !important; }
+
+    /* Artifact sections */
+    .artifact, section.panel, .landscape-section { padding: 18px 16px !important; margin-bottom: 14px !important; border-radius: 10px !important; }
+    .art-desc, .sec-h p { font-size: 0.82rem !important; margin-bottom: 14px !important; }
+
+    /* Strategy canvas + charts */
+    #strategy-canvas, .chart-wrap canvas, .radar-svg { height: 280px !important; max-height: 320px !important; width: 100% !important; }
+    .canvas-wrap { grid-template-columns: 1fr !important; gap: 14px !important; }
+    .canvas-legend { font-size: 0.72rem !important; }
+    .canvas-legend .leg { gap: 6px !important; }
+    .chart-wrap { padding: 14px !important; }
+
+    /* Heatmap (whitespace) */
+    .heatmap-wrap { border-radius: 6px !important; overflow-x: auto !important; }
+    .heatmap { min-width: auto !important; font-size: 0.56rem !important; }
+    .heatmap thead th { padding: 6px 3px !important; font-size: 0.5rem !important; letter-spacing: 0.02em !important; }
+    .heatmap thead th:first-child { min-width: 118px !important; text-align: left !important; }
+    .heatmap tbody th { font-size: 0.66rem !important; padding: 6px 8px !important; min-width: 118px !important; }
+    .heatmap tbody th small { font-size: 0.54rem !important; margin-top: 1px !important; }
+    .heatmap td { padding: 4px 2px !important; font-size: 0.72rem !important; }
+    .heatmap-legend { gap: 10px !important; font-size: 0.7rem !important; }
+    .heatmap-legend .dot { width: 10px !important; height: 10px !important; }
+
+    /* Attack niches (whitespace) */
+    .niche-name { font-size: 0.98rem !important; }
+    .niche-icp { font-size: 0.82rem !important; margin-bottom: 10px !important; padding-bottom: 10px !important; }
+    .niche-row { grid-template-columns: 60px 1fr !important; gap: 8px !important; font-size: 0.76rem !important; }
+    .niche-row .k { font-size: 0.58rem !important; letter-spacing: 0.05em !important; }
+
+    /* Competitor controls */
+    .comp-controls, .filter-bar { gap: 8px !important; margin-bottom: 10px !important; flex-wrap: wrap !important; }
+    .comp-search, .filter-bar input[type="search"], .filter-bar input[type="text"] { width: 100% !important; min-width: 100% !important; }
+    .comp-filter, .filter-bar select { flex: 1 1 calc(50% - 4px) !important; min-width: calc(50% - 4px) !important; }
+    .comp-count { font-size: 0.7rem !important; width: 100% !important; }
+
+    /* Generic tables: always scroll horizontally inside the card */
+    .tbl-wrap, .table-wrapper, .table-wrap, .tbl { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; }
+    table { display: block !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; font-size: 0.7rem !important; white-space: nowrap !important; }
+    table thead, table tbody, table tr { display: table !important; width: 100% !important; min-width: 640px !important; table-layout: auto !important; }
+    table thead th, .comp-table thead th { font-size: 0.55rem !important; padding: 8px !important; letter-spacing: 0.03em !important; white-space: normal !important; }
+    table tbody td, .comp-table tbody td { padding: 8px !important; white-space: normal !important; font-size: 0.76rem !important; }
+
+    /* Comp-table specifics */
+    .comp-name { font-size: 0.82rem !important; }
+    .comp-target { font-size: 0.7rem !important; }
+    .badge, .region-badge, .tier-badge { font-size: 0.56rem !important; padding: 2px 6px !important; letter-spacing: 0.02em !important; }
+
+    /* Bar-chart rows (AEVUM admin) */
+    .bar-chart { padding: 0 !important; }
+    .bar-row { grid-template-columns: 1fr !important; gap: 4px !important; padding: 8px 0 !important; }
+    .bar-row .val { text-align: left !important; }
+
+    /* Login overlay (altru/passage) */
+    .login-box { padding: 32px 24px !important; max-width: calc(100vw - 32px) !important; }
+    .login-logo { font-size: 1.5rem !important; }
+
+    /* Admin navs — wrap */
+    nav, .admin-nav, .atlas-nav, .topbar, .topbar-inner { flex-wrap: wrap !important; padding: 10px 14px !important; gap: 8px !important; }
+    .admin-nav { gap: 10px !important; }
+    .atlas-nav-links, .admin-links, .topbar-tabs { flex-wrap: wrap !important; gap: 6px !important; }
+    .atlas-nav-links a, .admin-links a, .topbar-tabs a { font-size: 0.72rem !important; padding: 5px 10px !important; }
+
+    /* SPA admin rail (EMS elitez-pulse) */
+    .admin-layout { grid-template-columns: 1fr !important; }
+    .admin-rail { position: static !important; height: auto !important; width: 100% !important; padding: 14px !important; margin-bottom: 10px !important; }
+    .admin-rail__tab, .admin-rail__link { display: inline-block !important; margin-right: 6px !important; font-size: 0.8rem !important; padding: 6px 10px !important; }
+    .admin-main { padding: 14px !important; }
+
+    /* Admin sidebar (the-commons admin) */
+    .dashboard, .admin-main, aside.sidebar { grid-template-columns: 1fr !important; }
+    aside.sidebar, .admin-sidebar { position: static !important; height: auto !important; width: 100% !important; padding: 14px !important; margin-bottom: 10px !important; }
+    .sidebar-nav { display: flex !important; flex-wrap: wrap !important; gap: 4px !important; }
+    .sidebar-nav li { display: inline-block !important; }
+    .sidebar-nav a { font-size: 0.76rem !important; padding: 6px 10px !important; }
+    .main-content { padding: 0 !important; }
+
+    /* Event hero / PayNow modal on mobile */
+    .ev-hero-wrap { height: 220px !important; }
+    .modal { padding: 20px 16px !important; max-width: calc(100vw - 24px) !important; }
+    .modal h3 { font-size: 1.05rem !important; }
+
+    /* Steps indicator (create.html) */
+    .steps { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
+    .step-connector { display: none !important; }
+
+    /* Navigation logo padding */
+    .nav-inner { padding: 10px 14px !important; }
+    .nav-inner .nav-links { display: none !important; }
+    .mobile-toggle { display: inline-flex !important; }
+
+    /* Forms */
+    .form-row { grid-template-columns: 1fr !important; gap: 12px !important; }
+    .form-group label { font-size: 0.8rem !important; }
+
+    /* Footer */
+    .footer-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+  }
+
+  @media (max-width: 420px) {
+    .kpi-strip, .kpis, .summary-grid { grid-template-columns: 1fr !important; }
+    .heatmap thead th:first-child,
+    .heatmap tbody th { min-width: 108px !important; }
+    .niche-row { grid-template-columns: 56px 1fr !important; font-size: 0.74rem !important; }
+    body { font-size: 12px; }
+    .kpi-val, .kpi .v, .summary-card .big, .stat-value { font-size: 1.2rem !important; }
+    .comp-filter, .filter-bar select { flex: 1 1 100% !important; min-width: 100% !important; }
+  }
+  /* ── END MOBILE OVERRIDES ─────────────────────────────── */
+
+  </style>
+  <!-- Favicon set -->
+  <link rel="icon" type="image/x-icon" href="../favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png" />
+  <link rel="manifest" href="../site.webmanifest" />
+  <link rel="mask-icon" href="../safari-pinned-tab.svg" color="#f59e0b" />
+  <meta name="theme-color" content="#1c1917" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<script type="application/ld+json" data-injected="schema-jsonld">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "XinceAI",
+  "url": "https://derrickteo.com/xinceai/",
+  "description": "XinceAI deploys production-ready agentic AI workflows saving 377-577 hours per month for Singapore SMEs. Up to 70% government-funded via JR+."
+}
+</script>
+<script type="application/ld+json" data-injected="schema-jsonld">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "XinceAI",
+  "url": "https://derrickteo.com/xinceai/"
+}
+</script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="admin-nav">
+  <div class="admin-nav-left">
+    <div class="theme-toggle" id="theme-toggle">
+      <button onclick="setTheme('dark')" class="active" id="btn-dark">DARK</button>
+      <button onclick="setTheme('light')" id="btn-light">LIGHT</button>
+    </div>
+    <a href="../index.html" class="nav-brand">
+      <div class="nav-mark">X</div>
+      <div class="nav-wordmark">XINCE<em>AI</em></div>
+    </a>
+    <span class="admin-badge">Admin</span>
+  </div>
+  <div class="admin-links">
+    <a href="../index.html">Public Site</a>
+    <a href="index.html">Analytics</a>
+    <a href="insights.html">Insights (v3)</a>
+    <a href="insights-v2.html">Insights (v2)</a>
+    <a href="insights-old.html" class="active">Insights (v1)</a>
+    <a href="whitespace.html">White Space</a>
+    <a href="competitor-analytics.html">Competitors</a>
+    <a href="design-audit.html">Design Audit</a>
+    <a href="report.html">Report</a>
+  </div>
+</nav>
+
+<main class="page">
+
+  <!-- HEADER -->
+  <header class="page-header reveal">
+    <div class="eyebrow">// Internal Research · v1 · ARCHIVED</div>
+    <h1>Market &amp; Pricing <span class="grad">Insights</span> · v1 (Archived)</h1>
+    <p class="subtitle">Original pricing strategy from when XinceAI was 9 workflows only. <a href="insights.html" style="color:var(--amber);text-decoration:underline;">See current (v3) here →</a></p>
+  </header>
+
+  <!-- S1: PRICING STRATEGIES -->
+  <section class="section" id="pricing">
+    <h2 class="section-title reveal">Pricing Strategies</h2>
+    <p class="section-sub reveal">Six models evaluated for AI workflow automation targeting SG SMEs. Our recommended model is highlighted.</p>
+    <div class="grid-2" id="pricing-grid"></div>
+  </section>
+
+  <!-- S2: TARGET PERSONAS -->
+  <section class="section" id="personas">
+    <h2 class="section-title reveal">Target User Segments</h2>
+    <p class="section-sub reveal">Detailed personas representing the key buyer and influencer profiles within SME organisations.</p>
+    <div class="grid-2" id="personas-grid"></div>
+  </section>
+
+  <!-- S3: WILLINGNESS TO PAY -->
+  <section class="section" id="wtp">
+    <h2 class="section-title reveal">Willingness to Pay Analysis</h2>
+    <p class="section-sub reveal">Price sensitivity by segment, competitor benchmarks, and the transformative effect of the JR+ 70% grant subsidy.</p>
+
+    <h3 class="section-title reveal" style="font-size:1.2rem; margin-top:36px; margin-bottom:22px;">Competitor Price Benchmarks</h3>
+    <div class="table-wrap reveal" id="benchmark-table-wrap"></div>
+
+    <h3 class="section-title reveal" style="font-size:1.2rem; margin-top:44px; margin-bottom:22px;">Price Sensitivity by Segment</h3>
+    <div class="grid-3" id="wtp-grid"></div>
+
+    <h3 class="section-title reveal" style="font-size:1.2rem; margin-top:44px; margin-bottom:14px;">JR+ Grant Impact</h3>
+    <p class="section-sub reveal">The WSG JR+ grant subsidises up to 70% of project cost, fundamentally shifting the value equation for SMEs.</p>
+    <div class="table-wrap reveal" id="grant-table-wrap"></div>
+  </section>
+
+  <!-- S4: NEXT BEST ALTERNATIVES -->
+  <section class="section" id="alternatives">
+    <h2 class="section-title reveal">Next Best Alternatives</h2>
+    <p class="section-sub reveal">What SMEs do if they don't choose XinceAI -- direct competitors, DIY approaches, and adjacent tools.</p>
+    <div class="grid-2" id="alt-grid"></div>
+  </section>
+
+</main>
+
+<script>
+/* ================================================================
+   DATA
+   ================================================================ */
+
+const pricingStrategies = [
+  {
+    name: 'Freemium + Upsell',
+    description: 'Offer a free basic tier (e.g. 1 workflow, limited runs) and charge for premium features, additional workflows, or higher usage.',
+    pros: ['Low barrier to entry -- easy trial', 'Builds pipeline and brand awareness', 'Viral potential via word-of-mouth'],
+    cons: ['Long conversion cycle', 'Free users consume support resources', 'Hard to monetise SMEs who stay free forever'],
+    segment: 'Micro SMEs, solopreneurs, early adopters',
+    highlighted: false
+  },
+  {
+    name: 'Tiered Subscription (Good/Better/Best)',
+    description: 'Three fixed tiers: e.g. Starter (3 workflows) S$500/mo, Growth (6 workflows) S$1,200/mo, Scale (all 9+) S$2,500/mo.',
+    pros: ['Clear value ladder', 'Predictable MRR', 'Easy for buyers to self-select'],
+    cons: ['May leave money on the table with large clients', 'Rigid -- doesn\'t account for workflow complexity', 'Requires constant tier calibration'],
+    segment: 'SMEs 20-200 headcount across industries',
+    highlighted: false
+  },
+  {
+    name: 'Pay-Per-Use / Consumption',
+    description: 'Charge per workflow execution, per document processed, or per hour saved. E.g. S$0.50 per AI-processed invoice.',
+    pros: ['Aligns cost with value delivered', 'Low commitment -- easy to start', 'Scales naturally with usage'],
+    cons: ['Unpredictable revenue', 'SMEs fear bill shock', 'Harder to forecast and budget'],
+    segment: 'Seasonal businesses, variable-volume operations',
+    highlighted: false
+  },
+  {
+    name: 'Pure Monthly Subscription',
+    description: 'Flat monthly fee (e.g. S$1,500-3,000/mo) for access to all deployed workflows with SLA support.',
+    pros: ['Simple to understand', 'Recurring revenue', 'Covers ongoing maintenance cleanly'],
+    cons: ['High monthly cost deters budget-conscious SMEs', 'No upfront commitment signals', 'Doesn\'t capture initial setup value'],
+    segment: 'Mid-market SMEs with predictable budgets',
+    highlighted: false
+  },
+  {
+    name: 'One-Time Setup + Monthly Retainer',
+    description: 'S$10,000 one-time deployment fee + S$1,000/month for maintenance, support, and continuous optimisation. Our pricing model.',
+    pros: ['Captures setup complexity fairly', 'Low ongoing cost builds trust', 'JR+ grant covers 70% of setup -- net S$3K to client', 'Clear ROI story: save 377-577 hrs/mo for S$1K/mo'],
+    cons: ['Upfront cost can be a psychological barrier', 'Requires grant education to close', 'Monthly fee must demonstrably deliver ongoing value'],
+    segment: 'SG SMEs 50-200 headcount, especially JR+ eligible companies',
+    highlighted: true
+  },
+  {
+    name: 'Enterprise Custom / Value-Based',
+    description: 'Bespoke pricing based on number of workflows, integration complexity, and projected ROI. Typically S$25K-80K projects.',
+    pros: ['Maximises revenue per client', 'Tailored to complex requirements', 'Positions as strategic partner not vendor'],
+    cons: ['Long sales cycle (3-6 months)', 'Requires senior sales capability', 'Not scalable for volume'],
+    segment: 'Large SMEs / mid-market (200+ headcount), MNCs with SG operations',
+    highlighted: false
+  }
+];
+
+const personas = [
+  {
+    emoji: '\u{1F454}',
+    name: 'James Tan',
+    title: 'CEO / Founder',
+    bgColor: 'rgba(255,136,68,0.12)',
+    demographics: 'Age 42-55, runs a 50-150 person SME in logistics, manufacturing, or professional services. 15+ years industry experience.',
+    needs: ['Reduce operational costs by 20-30%', 'Free up leadership bandwidth from admin firefighting', 'Modernise operations without hiring a CTO', 'Maintain competitive edge against larger players'],
+    painPoints: ['Staff costs keep rising (S$4-6K/head for admin roles)', 'Can\'t find or retain good operations staff', 'Knows AI is important but unsure where to start', 'Burned by past IT projects that over-promised'],
+    behavior: 'Reads Business Times, attends SME conferences. Trusts peer recommendations over cold outreach. Will Google extensively before taking a meeting.',
+    techSavviness: 'Moderate -- uses email, WhatsApp, basic cloud tools. Not hands-on with tech but understands ROI.',
+    decisionFactors: ['ROI payback period (wants < 6 months)', 'Government grant coverage', 'Proven case studies in similar industry', 'Low disruption to existing operations'],
+    budget: 'S$10K-30K for projects, prefers grant-subsidised'
+  },
+  {
+    emoji: '\u{1F5C2}\uFE0F',
+    name: 'Sarah Lim',
+    title: 'HR Manager',
+    bgColor: 'rgba(0,229,255,0.12)',
+    demographics: 'Age 30-42, manages HR for 80-200 person company. Team of 2-3 HR staff handling everything from recruitment to payroll.',
+    needs: ['Automate repetitive HR admin (leave, claims, onboarding)', 'Reduce time spent on compliance reporting', 'Better employee self-service to cut HR queries by 60%', 'Streamline recruitment pipeline'],
+    painPoints: ['Drowning in paper forms and Excel trackers', 'Spends 40% of time on admin instead of strategic HR', 'MOM reporting is manual and error-prone', 'Staff expect modern HR tech but budget is limited'],
+    behavior: 'Active on LinkedIn HR communities. Attends SHRI events. Influenced by HR tech blog posts and peer case studies. Champions solutions bottom-up to CEO.',
+    techSavviness: 'Moderate to high -- comfortable with HRIS, Google Workspace, basic automation. Wants no-code solutions.',
+    decisionFactors: ['Time saved on daily admin tasks', 'Ease of use for the whole team', 'Integration with existing payroll (Talenox, PayBoy)', 'Support quality and response time'],
+    budget: 'S$500-1,500/mo allocated for HR tools'
+  },
+  {
+    emoji: '\u{1F4CA}',
+    name: 'David Ng',
+    title: 'Finance & Ops Manager',
+    bgColor: 'rgba(0,255,136,0.12)',
+    demographics: 'Age 35-48, oversees finance and operations for SME doing S$5-30M revenue. Team of 4-8 handling AP/AR, reporting, procurement.',
+    needs: ['Automate invoice processing and matching', 'Real-time financial dashboards instead of month-end scrambles', 'Reduce manual data entry errors', 'Faster month-end close (from 10 days to 3)'],
+    painPoints: ['70% of time spent on data entry and reconciliation', 'Finance team stretched thin -- no bandwidth for analysis', 'Xero/QuickBooks have limits; ERP is too expensive', 'Audit prep is a nightmare every year'],
+    behavior: 'Methodical decision-maker. Builds detailed comparison spreadsheets. Needs to see demo with real numbers. Will pilot before committing fully.',
+    techSavviness: 'High -- proficient with Excel, accounting software, some SQL. Appreciates technical depth.',
+    decisionFactors: ['Accuracy and reliability of automation', 'Integration with Xero/QuickBooks', 'Data security and compliance', 'Measurable time savings with clear metrics'],
+    budget: 'S$8K-20K project budget if ROI is clear'
+  },
+  {
+    emoji: '\u{1F680}',
+    name: 'Michelle Wong',
+    title: 'Business Development Lead',
+    bgColor: 'rgba(192,132,252,0.12)',
+    demographics: 'Age 28-38, leads BD for B2B services firm with 30-100 staff. Manages pipeline of 50-200 prospects with a lean team of 2-4.',
+    needs: ['Automate lead qualification and CRM updates', 'Generate proposals and follow-ups faster', 'Better pipeline visibility and forecasting', 'Scale outreach without adding headcount'],
+    painPoints: ['Manually updating CRM takes 5-8 hrs/week', 'No systematic follow-up -- leads go cold', 'Boss wants 2x pipeline but won\'t hire more BD staff', 'Competitor responses are faster and more polished'],
+    behavior: 'Early adopter of sales tools. Active on LinkedIn. Comfortable experimenting with new tech. Will advocate internally if tool shows quick wins.',
+    techSavviness: 'High -- uses CRM, LinkedIn Sales Nav, email automation. Wants AI to handle the grunt work.',
+    decisionFactors: ['Speed of implementation', 'Visible pipeline impact within 30 days', 'Mobile-friendly for field work', 'Integration with existing CRM (HubSpot, Salesforce)'],
+    budget: 'S$300-800/mo for BD tools, can push for project budget if justified'
+  },
+  {
+    emoji: '\u{1F3E2}',
+    name: 'Kenneth Koh',
+    title: 'Director (IT-Light Company)',
+    bgColor: 'rgba(255,68,102,0.12)',
+    demographics: 'Age 45-58, runs an F&B chain, cleaning company, or traditional services firm with 60-200 staff. Zero IT department.',
+    needs: ['Basic digitalisation of paper-heavy processes', 'Simple workforce scheduling and attendance', 'Automate government compliance (MOM, CPF, BizFile)', 'Customer communication automation'],
+    painPoints: ['Everything runs on paper, WhatsApp, and memory', 'Staff turnover is 30-40% annually -- constant re-training', 'No one in the company understands technology', 'Tried one software before -- abandoned after 2 months'],
+    behavior: 'Relies heavily on trusted advisors (accountant, banker). Needs hand-holding through the entire process. Won\'t attend tech events but will listen to a warm referral.',
+    techSavviness: 'Low -- uses WhatsApp and basic smartphone apps. Needs extremely simple interfaces.',
+    decisionFactors: ['Trust in the service provider (face-to-face relationship)', 'Simplicity -- "can my staff use this?"', 'Full implementation support included', 'Government grant covers most of the cost'],
+    budget: 'S$5K-15K only if grant-subsidised, otherwise S$0'
+  }
+];
+
+const competitorBenchmarks = [
+  { name: 'Zapier', type: 'iPaaS', starter: 'US$29/mo', pro: 'US$73/mo', enterprise: 'Custom', notes: 'Per-task pricing adds up fast. 750 tasks on starter plan.' },
+  { name: 'Make.com', type: 'iPaaS', starter: 'US$10.59/mo', pro: 'US$18.82/mo', enterprise: 'Custom', notes: '10K ops on pro. Complex workflows drain ops quickly.' },
+  { name: 'UiPath', type: 'RPA', starter: 'US$420/mo', pro: 'US$1,380/mo', enterprise: 'Custom', notes: 'Heavy enterprise RPA. Requires dedicated dev resource.' },
+  { name: 'Power Automate', type: 'RPA/iPaaS', starter: 'US$15/user/mo', pro: 'US$40/user/mo', enterprise: 'Included in E5', notes: 'Best if already in Microsoft ecosystem.' },
+  { name: 'Automation Anywhere', type: 'RPA', starter: 'US$750/mo', pro: 'Custom', enterprise: 'Custom', notes: 'Enterprise-grade. Overkill for SMEs.' },
+  { name: 'n8n', type: 'Open Source', starter: 'Free (self-host)', pro: 'EUR20/mo', enterprise: 'EUR50/mo', notes: 'Requires technical staff to deploy and maintain.' },
+  { name: 'XinceAI', type: 'Managed AI Workflows', starter: 'S$10K + S$1K/mo', pro: 'S$3K + S$1K/mo (w/ JR+)', enterprise: 'Custom', notes: 'Fully managed. No technical staff needed. SG-focused.' }
+];
+
+const wtpSegments = [
+  {
+    segment: 'CEO / Founder (50-150 pax)',
+    sensitivity: 'Medium',
+    maxSetup: 'S$15K',
+    maxMonthly: 'S$2K',
+    withGrant: 'S$4.5K setup + S$1K/mo',
+    key: 'ROI payback < 6 months is the unlock. Grant makes it a no-brainer.',
+    color: 'var(--amber)'
+  },
+  {
+    segment: 'HR Manager',
+    sensitivity: 'High',
+    maxSetup: 'S$5K',
+    maxMonthly: 'S$800',
+    withGrant: 'S$1.5K setup + S$500/mo',
+    key: 'Limited budget authority. Needs CEO sign-off. Time-saving metrics are the pitch.',
+    color: 'var(--cyan)'
+  },
+  {
+    segment: 'Finance & Ops Manager',
+    sensitivity: 'Medium-Low',
+    maxSetup: 'S$20K',
+    maxMonthly: 'S$2.5K',
+    withGrant: 'S$6K setup + S$1K/mo',
+    key: 'Most rational buyer. Will build own ROI model. Accuracy guarantees matter.',
+    color: 'var(--neon)'
+  },
+  {
+    segment: 'BD Lead',
+    sensitivity: 'High',
+    maxSetup: 'S$5K',
+    maxMonthly: 'S$500',
+    withGrant: 'S$1.5K setup + S$500/mo',
+    key: 'Wants fast wins. Will champion if 30-day pilot shows pipeline lift.',
+    color: 'var(--violet)'
+  },
+  {
+    segment: 'IT-Light Director',
+    sensitivity: 'Very High',
+    maxSetup: 'S$8K',
+    maxMonthly: 'S$500',
+    withGrant: 'S$2.4K setup + S$500/mo',
+    key: 'Grant is essential -- without it, deal is dead. Trust and simplicity are everything.',
+    color: 'var(--rose)'
+  }
+];
+
+const grantImpact = [
+  { item: 'Setup Fee', before: 'S$10,000', after: 'S$3,000', savings: 'S$7,000 (70%)', note: 'JR+ covers consultancy fees' },
+  { item: 'Monthly Retainer', before: 'S$1,000/mo', after: 'S$1,000/mo', savings: 'S$0', note: 'Ongoing fees not covered by JR+' },
+  { item: 'Year 1 Total Cost', before: 'S$22,000', after: 'S$15,000', savings: 'S$7,000 (32%)', note: 'Setup + 12 months retainer' },
+  { item: 'Cost per Hour Saved', before: 'S$4.87/hr', after: 'S$3.32/hr', savings: '32% cheaper', note: 'Based on 377 hrs/mo saved' },
+  { item: 'Payback Period', before: '~2.5 months', after: '~1 month', savings: '60% faster', note: 'Assuming S$25/hr staff cost saved' }
+];
+
+const alternatives = [
+  {
+    name: 'Zapier + Make.com',
+    type: 'direct',
+    typeLabel: 'Direct Competitor',
+    description: 'Self-serve iPaaS platforms. User builds their own automations with drag-and-drop.',
+    cost: 'US$50-200/mo (grows with usage)',
+    strengths: ['Huge integration library (5,000+ apps)', 'Self-serve -- no vendor dependency', 'Well-known brand, lots of tutorials'],
+    weaknesses: ['Requires technical staff to set up', 'Per-task pricing gets expensive at scale', 'No AI workflow orchestration -- just triggers/actions', 'No local SG support'],
+    switchingCost: 35,
+    switchingNote: 'Low. Easy to try but hard to build complex workflows.'
+  },
+  {
+    name: 'UiPath / Automation Anywhere',
+    type: 'direct',
+    typeLabel: 'Direct Competitor',
+    description: 'Enterprise RPA platforms that automate desktop and web processes with bots.',
+    cost: 'US$420-1,380/mo per bot',
+    strengths: ['Mature enterprise platforms', 'Handle complex desktop automation', 'Strong compliance and audit trails'],
+    weaknesses: ['Way too expensive for SMEs', 'Requires dedicated RPA developer', 'Months to implement', 'Designed for Fortune 500, not 100-person SMEs'],
+    switchingCost: 20,
+    switchingNote: 'Low switching friction (most SMEs never start). High cost barrier.'
+  },
+  {
+    name: 'Hire More Admin Staff',
+    type: 'diy',
+    typeLabel: 'DIY Solution',
+    description: 'The default: throw headcount at the problem. Hire admin assistants, data entry clerks, or operations coordinators.',
+    cost: 'S$3,500-5,500/mo per head (incl. CPF, benefits)',
+    strengths: ['Familiar -- no change management needed', 'Flexible -- humans adapt to new tasks', 'No technology risk'],
+    weaknesses: ['S$50-70K/year per head fully loaded', 'Doesn\'t scale -- hire more = spend more linearly', 'Subject to turnover, MC, annual leave', '377 hours/mo of automation = 2.4 FTEs at S$140K/year'],
+    switchingCost: 60,
+    switchingNote: 'High. Emotional attachment to staff, restructuring complexity.'
+  },
+  {
+    name: 'Excel + Google Sheets + Manual Processes',
+    type: 'diy',
+    typeLabel: 'DIY Solution',
+    description: 'The status quo for most SMEs. Everything lives in spreadsheets, email, and WhatsApp.',
+    cost: 'Free (but massive hidden labour cost)',
+    strengths: ['Zero software cost', 'Everyone knows how to use it', 'Maximum flexibility'],
+    weaknesses: ['Error-prone (formula mistakes, version conflicts)', 'No audit trail or access control', 'Knowledge lives in one person\'s head', 'Doesn\'t scale past 50 staff'],
+    switchingCost: 75,
+    switchingNote: 'Very high. Decades of embedded habits and tribal knowledge.'
+  },
+  {
+    name: 'Standalone HR Software (Talenox, PayBoy, Employment Hero)',
+    type: 'adjacent',
+    typeLabel: 'Adjacent Tool',
+    description: 'Point solutions for HR functions: payroll, leave management, claims, recruitment.',
+    cost: 'S$5-15/employee/mo',
+    strengths: ['Purpose-built for SG compliance', 'Affordable per-employee pricing', 'Good UX, mobile apps'],
+    weaknesses: ['Only covers HR -- finance, ops, BD still manual', 'Limited AI/automation capability', 'Multiple tools = data silos', 'Doesn\'t address cross-functional workflows'],
+    switchingCost: 45,
+    switchingNote: 'Medium. Data migration pain, staff re-training required.'
+  },
+  {
+    name: 'Xero Add-ons + Accounting Tools',
+    type: 'adjacent',
+    typeLabel: 'Adjacent Tool',
+    description: 'Extend Xero or QuickBooks with add-ons for invoicing, expense management, and reporting.',
+    cost: 'S$30-100/mo for Xero + S$10-50/mo per add-on',
+    strengths: ['Deep integration with accounting workflow', 'Affordable and well-supported in SG', 'Accountant-approved'],
+    weaknesses: ['Finance-only -- doesn\'t touch HR, ops, BD', 'Add-on ecosystem is fragmented', 'No AI workflow capability', 'Doesn\'t reduce admin headcount'],
+    switchingCost: 50,
+    switchingNote: 'Medium. Financial data migration is sensitive and slow.'
+  },
+  {
+    name: 'Freelance Developer / IT Consultant',
+    type: 'diy',
+    typeLabel: 'DIY Solution',
+    description: 'Hire a freelancer or small IT firm to build custom automations, scripts, or integrations.',
+    cost: 'S$80-200/hr, projects typically S$5K-30K',
+    strengths: ['Fully customised to your processes', 'One-time cost (theoretically)', 'Can address unique edge cases'],
+    weaknesses: ['Dependent on one person -- bus factor risk', 'No ongoing support or SLA after handoff', 'Quality varies wildly', 'Breaks when processes change -- no one to fix it'],
+    switchingCost: 30,
+    switchingNote: 'Low to medium. Custom code is hard to hand over.'
+  }
+];
+
+/* ================================================================
+   RENDER FUNCTIONS
+   ================================================================ */
+
+function renderPricing() {
+  const grid = document.getElementById('pricing-grid');
+  grid.innerHTML = pricingStrategies.map((s, i) => `
+    <div class="card reveal ${s.highlighted ? 'highlighted' : ''}" style="transition-delay:${i * 60}ms">
+      ${s.highlighted ? '<span class="rec-badge">RECOMMENDED</span>' : ''}
+      <div class="card-label">Strategy ${i + 1}</div>
+      <h3>${s.name}</h3>
+      <p>${s.description}</p>
+      <div class="detail">
+        ${s.pros.map(p => `<div class="detail-row pros"><span class="icon">+</span><span>${p}</span></div>`).join('')}
+        ${s.cons.map(c => `<div class="detail-row cons"><span class="icon">-</span><span>${c}</span></div>`).join('')}
+        <div class="detail-row segment"><span class="icon">&#9654;</span><span><strong>Best for:</strong> ${s.segment}</span></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderPersonas() {
+  const grid = document.getElementById('personas-grid');
+  grid.innerHTML = personas.map((p, i) => `
+    <div class="card persona-card reveal" style="transition-delay:${i * 80}ms">
+      <div class="persona-header">
+        <div class="persona-avatar" style="background:${p.bgColor}">${p.emoji}</div>
+        <div>
+          <h3>${p.name}</h3>
+          <div class="role">${p.title}</div>
+        </div>
+      </div>
+      <div class="persona-body">
+        <div class="persona-field">
+          <div class="persona-field-label">Demographics</div>
+          <div class="persona-field-value">${p.demographics}</div>
+        </div>
+        <div class="persona-field">
+          <div class="persona-field-label">Key Needs</div>
+          <div class="persona-field-value"><ul>${p.needs.map(n => `<li>${n}</li>`).join('')}</ul></div>
+        </div>
+        <div class="persona-field">
+          <div class="persona-field-label">Pain Points</div>
+          <div class="persona-field-value"><ul>${p.painPoints.map(n => `<li>${n}</li>`).join('')}</ul></div>
+        </div>
+        <div class="persona-field">
+          <div class="persona-field-label">Buying Behavior</div>
+          <div class="persona-field-value">${p.behavior}</div>
+        </div>
+        <div class="persona-field">
+          <div class="persona-field-label">Tech Savviness</div>
+          <div class="persona-field-value">${p.techSavviness}</div>
+        </div>
+        <div class="persona-field">
+          <div class="persona-field-label">Decision Factors</div>
+          <div class="persona-field-value"><ul>${p.decisionFactors.map(n => `<li>${n}</li>`).join('')}</ul></div>
+        </div>
+        <div class="persona-field">
+          <div class="persona-field-label">Budget Range</div>
+          <div class="persona-field-value" style="color:var(--neon); font-family:var(--font-mono); font-weight:600;">${p.budget}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderBenchmarkTable() {
+  const wrap = document.getElementById('benchmark-table-wrap');
+  wrap.innerHTML = `<table>
+    <thead><tr>
+      <th>Platform</th><th>Type</th><th>Starter</th><th>Pro</th><th>Enterprise</th><th>Notes</th>
+    </tr></thead>
+    <tbody>${competitorBenchmarks.map((b, i) => {
+      const isXince = b.name === 'XinceAI';
+      return `<tr style="${isXince ? 'background:rgba(255,136,68,0.06)' : ''}">
+        <td><strong>${b.name}</strong></td>
+        <td>${b.type}</td>
+        <td class="${isXince ? 'grant-price' : 'price'}">${b.starter}</td>
+        <td class="${isXince ? 'grant-price' : 'price'}">${b.pro}</td>
+        <td>${b.enterprise}</td>
+        <td>${b.notes}</td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+function renderWTP() {
+  const grid = document.getElementById('wtp-grid');
+  grid.innerHTML = wtpSegments.map((s, i) => `
+    <div class="card reveal" style="transition-delay:${i * 60}ms">
+      <div class="card-label">${s.segment}</div>
+      <h3 style="margin-bottom:14px;">Price Sensitivity: <span style="color:${s.color}; font-family:var(--font-mono);">${s.sensitivity}</span></h3>
+      <div class="detail-row"><span class="icon" style="color:var(--muted);">$</span><span>Max Setup: <strong>${s.maxSetup}</strong></span></div>
+      <div class="detail-row"><span class="icon" style="color:var(--muted);">$</span><span>Max Monthly: <strong>${s.maxMonthly}</strong></span></div>
+      <div class="detail-row"><span class="icon" style="color:var(--amber);">&#9733;</span><span>With JR+ Grant: <strong style="color:var(--amber)">${s.withGrant}</strong></span></div>
+      <p style="margin-top:14px; font-size:0.84rem; color:var(--muted2); border-top:1px solid var(--border); padding-top:14px;">${s.key}</p>
+    </div>
+  `).join('');
+}
+
+function renderGrantTable() {
+  const wrap = document.getElementById('grant-table-wrap');
+  wrap.innerHTML = `<table>
+    <thead><tr>
+      <th>Item</th><th>Without Grant</th><th>With JR+ (70%)</th><th>Savings</th><th>Note</th>
+    </tr></thead>
+    <tbody>${grantImpact.map(g => `<tr>
+      <td><strong>${g.item}</strong></td>
+      <td>${g.before}</td>
+      <td class="grant-price">${g.after}</td>
+      <td style="color:var(--neon); font-family:var(--font-mono); font-weight:600;">${g.savings}</td>
+      <td>${g.note}</td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+function renderAlternatives() {
+  const grid = document.getElementById('alt-grid');
+  grid.innerHTML = alternatives.map((a, i) => {
+    const frictionColor = a.switchingCost < 40 ? 'var(--neon)' : a.switchingCost < 60 ? 'var(--amber)' : 'var(--rose)';
+    return `
+    <div class="card alt-card reveal" style="transition-delay:${i * 60}ms">
+      <span class="alt-type ${a.type}">${a.typeLabel}</span>
+      <h3>${a.name}</h3>
+      <p style="margin-bottom:10px;">${a.description}</p>
+      <div class="detail-row" style="margin-bottom:14px;"><span class="icon" style="color:var(--amber);">$</span><span><strong>Cost:</strong> ${a.cost}</span></div>
+      ${a.strengths.map(s => `<div class="detail-row pros"><span class="icon">+</span><span>${s}</span></div>`).join('')}
+      ${a.weaknesses.map(w => `<div class="detail-row cons"><span class="icon">-</span><span>${w}</span></div>`).join('')}
+      <div class="friction-bar">
+        <div class="friction-label">Switching Friction: ${a.switchingCost}% &mdash; ${a.switchingNote}</div>
+        <div class="friction-track"><div class="friction-fill" style="width:${a.switchingCost}%; background:${frictionColor};"></div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ================================================================
+   INIT
+   ================================================================ */
+
+renderPricing();
+renderPersonas();
+renderBenchmarkTable();
+renderWTP();
+renderGrantTable();
+renderAlternatives();
+
+/* Scroll reveal */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }});
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+/* Theme toggle */
+function setTheme(mode) {
+  document.documentElement.setAttribute('data-theme', mode);
+  document.getElementById('btn-dark').classList.toggle('active', mode === 'dark');
+  document.getElementById('btn-light').classList.toggle('active', mode === 'light');
+  localStorage.setItem('xince-theme', mode);
+}
+(function() { const saved = localStorage.getItem('xince-theme'); if (saved) setTheme(saved); })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self';" />
+  <title>XinceAI — Market &amp; Pricing Insights v2 (Archived · Generic 4-Tier)</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="description" content="Internal market and pricing insights v2 for XinceAI — pricing architecture, competitor benchmarks, and personas updated after the 8-platform expansion. Not for public indexing." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #140f0c;
+      --surface:  #1e1714;
+      --card:     #28201b;
+      --card-hi:  #332a24;
+      --border:   rgba(255,136,68,0.08);
+      --border2:  rgba(255,136,68,0.18);
+      --border3:  rgba(255,136,68,0.35);
+      --text:     #f5ede6;
+      --muted:    #7a6a5a;
+      --muted2:   #a89888;
+
+      --cyan:     #00e5ff;
+      --amber:    #ff8844;
+      --neon:     #00ff88;
+      --violet:   #c084fc;
+      --rose:     #ff4466;
+
+      --gradient: linear-gradient(135deg, var(--amber), var(--cyan));
+      --glow-c:   rgba(0,229,255,0.12);
+      --glow-a:   rgba(255,136,68,0.15);
+
+      --font-head: 'Rajdhani', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'Share Tech Mono', monospace;
+      --nav-h: 60px;
+      --radius: 4px;
+    }
+
+    /* ── LIGHT MODE ────────────────────────────────────────────── */
+    [data-theme="light"] {
+      --bg:       #f5f0eb;
+      --surface:  #ebe5de;
+      --card:     #ffffff;
+      --card-hi:  #f8f4f0;
+      --border:   rgba(140,90,40,0.10);
+      --border2:  rgba(140,90,40,0.18);
+      --border3:  rgba(140,90,40,0.30);
+      --text:     #1a1410;
+      --muted:    #8a7a6a;
+      --muted2:   #6a5a4a;
+
+      --amber:    #d06010;
+      --cyan:     #0088aa;
+      --neon:     #0a8a4a;
+      --violet:   #7040b0;
+      --rose:     #c82040;
+
+      --gradient: linear-gradient(135deg, var(--amber), var(--cyan));
+      --glow-c:   rgba(0,136,170,0.08);
+      --glow-a:   rgba(208,96,16,0.10);
+    }
+    [data-theme="light"] body::before {
+      background-image:
+        linear-gradient(rgba(140,90,40,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(140,90,40,0.04) 1px, transparent 1px);
+    }
+    [data-theme="light"] .admin-nav { background: rgba(245,240,235,0.88); }
+    [data-theme="light"] .admin-nav::after { background: linear-gradient(90deg, transparent, var(--amber), transparent); }
+    [data-theme="light"] .card { background: var(--card); }
+    [data-theme="light"] .card:hover { background: var(--card-hi); }
+    [data-theme="light"] .table-wrap { background: var(--card); }
+    [data-theme="light"] thead { background: var(--surface); }
+    [data-theme="light"] tr:hover td { background: rgba(140,90,40,0.03); }
+
+    /* ── THEME TOGGLE ──────────────────────────────────────────── */
+    .theme-toggle {
+      display: flex; align-items: center; gap: 0;
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 100px; overflow: hidden;
+    }
+    .theme-toggle button {
+      font-family: var(--font-mono); font-size: 0.68rem; padding: 5px 12px;
+      background: none; border: none; color: var(--muted); cursor: pointer;
+      transition: all 0.2s; letter-spacing: 0.04em;
+    }
+    .theme-toggle button.active {
+      background: var(--amber); color: var(--bg); font-weight: 700;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body); background: var(--bg); color: var(--text);
+      font-size: 16px; line-height: 1.65; overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,136,68,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,136,68,0.015) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── NAV ──────────────────────────────────────────────────── */
+    .admin-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: var(--nav-h); display: flex; align-items: center; justify-content: space-between;
+      padding: 0 clamp(16px, 3vw, 32px);
+      background: rgba(20,15,12,0.85); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .admin-nav::after {
+      content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
+      height: 1px; background: linear-gradient(90deg, transparent, var(--amber), transparent); opacity: 0.3;
+    }
+    .admin-nav-left { display: flex; align-items: center; gap: 16px; }
+    .nav-brand { display: flex; align-items: center; gap: 10px; }
+    .nav-mark {
+      width: 34px; height: 34px; border: 1.5px solid var(--amber); display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-head); font-weight: 700; font-size: 0.9rem; color: var(--amber);
+      clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+      box-shadow: 0 0 12px var(--glow-a);
+    }
+    .nav-wordmark { font-family: var(--font-head); font-weight: 700; font-size: 1.15rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    .nav-wordmark em { font-style: normal; color: var(--amber); }
+    .admin-badge {
+      font-family: var(--font-mono); font-size: 0.68rem;
+      padding: 4px 12px; border-radius: 100px;
+      background: rgba(255,136,68,0.10); border: 1px solid rgba(255,136,68,0.2);
+      color: var(--amber); letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .admin-links { display: flex; gap: 6px; }
+    .admin-links a {
+      font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted2); padding: 6px 14px;
+      border-radius: 4px; transition: all 0.15s; letter-spacing: 0.04em;
+    }
+    .admin-links a:hover { color: var(--amber); background: rgba(255,136,68,0.06); }
+    .admin-links a.active { color: var(--amber); background: rgba(255,136,68,0.10); }
+
+    /* ── LAYOUT ──────────────────────────────────────────────── */
+    .page { padding: calc(var(--nav-h) + 40px) clamp(16px, 4vw, 48px) 80px; max-width: 1280px; margin: 0 auto; }
+
+    .page-header { margin-bottom: 56px; }
+    .page-header .eyebrow {
+      font-family: var(--font-mono); font-size: 0.82rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 10px;
+    }
+    .page-header h1 {
+      font-family: var(--font-head); font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 700;
+      letter-spacing: 0.02em; line-height: 1.05; text-transform: uppercase; margin-bottom: 14px;
+    }
+    .page-header h1 .grad { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .page-header .subtitle { color: var(--muted2); font-size: 1rem; max-width: 640px; line-height: 1.6; }
+
+    .section { margin-bottom: 72px; }
+    .section-title {
+      font-family: var(--font-head); font-size: 1.6rem; font-weight: 700;
+      letter-spacing: 0.02em; text-transform: uppercase; margin-bottom: 8px;
+    }
+    .section-sub { color: var(--muted2); font-size: 0.9rem; margin-bottom: 32px; max-width: 640px; }
+
+    /* ── HUD CARD (with corner brackets) ─────────────────────── */
+    .card {
+      position: relative; background: var(--card); border: 1px solid var(--border);
+      padding: 28px; transition: all 0.25s; overflow: hidden;
+    }
+    .card::before, .card::after {
+      content: ''; position: absolute; width: 14px; height: 14px;
+      border-color: var(--border2); transition: border-color 0.25s;
+    }
+    .card::before { top: -1px; left: -1px; border-top: 1.5px solid; border-left: 1.5px solid; }
+    .card::after { bottom: -1px; right: -1px; border-bottom: 1.5px solid; border-right: 1.5px solid; }
+    .card:hover { border-color: var(--border2); background: var(--card-hi); transform: translateY(-2px); }
+    .card:hover::before, .card:hover::after { border-color: var(--amber); }
+
+    .card.highlighted {
+      border-color: var(--amber);
+      box-shadow: 0 0 40px var(--glow-a), inset 0 1px 0 rgba(255,136,68,0.2);
+    }
+    .card.highlighted::before, .card.highlighted::after { border-color: var(--amber); }
+    .card.highlighted .rec-badge {
+      position: absolute; top: 16px; right: 16px;
+      font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.1em;
+      background: var(--gradient); color: #fff; padding: 4px 12px; border-radius: 0;
+      clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+    }
+
+    .card-label {
+      font-family: var(--font-mono); font-size: 0.7rem;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+    }
+    .card h3 { font-family: var(--font-head); font-size: 1.25rem; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; margin-bottom: 10px; }
+    .card p { color: var(--muted2); font-size: 0.88rem; line-height: 1.6; }
+    .card .detail { margin-top: 18px; }
+    .card .detail-row {
+      display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px;
+      font-size: 0.84rem; color: var(--muted2);
+    }
+    .card .detail-row .icon { flex-shrink: 0; width: 16px; text-align: center; font-family: var(--font-mono); }
+    .pros .icon { color: var(--neon); }
+    .cons .icon { color: var(--rose); }
+    .segment .icon { color: var(--cyan); }
+
+    .tag {
+      display: inline-block; font-family: var(--font-mono); font-size: 0.68rem;
+      padding: 3px 10px; margin-right: 6px; margin-top: 8px;
+      background: rgba(255,136,68,0.10); color: var(--amber); border: 1px solid rgba(255,136,68,0.18);
+      clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+    }
+    .tag.cyan { background: rgba(0,229,255,0.10); color: var(--cyan); border-color: rgba(0,229,255,0.18); }
+    .tag.neon { background: rgba(0,255,136,0.10); color: var(--neon); border-color: rgba(0,255,136,0.18); }
+    .tag.amber { background: rgba(255,136,68,0.10); color: var(--amber); border-color: rgba(255,136,68,0.18); }
+    .tag.rose { background: rgba(255,68,102,0.10); color: var(--rose); border-color: rgba(255,68,102,0.18); }
+
+    /* ── GRIDS ────────────────────────────────────────────────── */
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+
+    /* ── PERSONA CARDS ─────────────────────────────────────── */
+    .persona-card { padding: 0; overflow: hidden; }
+    .persona-card::before { top: -1px; left: -1px; }
+    .persona-card::after { bottom: -1px; right: -1px; }
+    .persona-header {
+      padding: 24px 28px 16px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 16px;
+    }
+    .persona-avatar {
+      width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+      clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+    }
+    .persona-header h3 { margin-bottom: 2px; }
+    .persona-header .role { font-family: var(--font-mono); font-size: 0.76rem; color: var(--muted); }
+    .persona-body { padding: 20px 28px 28px; }
+    .persona-field { margin-bottom: 14px; }
+    .persona-field-label {
+      font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+    }
+    .persona-field-value { font-size: 0.86rem; color: var(--muted2); line-height: 1.55; }
+    .persona-field-value li { margin-left: 16px; margin-bottom: 3px; list-style: disc; }
+
+    /* ── TABLE ────────────────────────────────────────────── */
+    .table-wrap {
+      overflow-x: auto; border: 1px solid var(--border);
+      background: var(--card);
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    thead { background: var(--surface); }
+    th {
+      text-align: left; padding: 14px 18px; font-family: var(--font-mono); font-size: 0.72rem;
+      letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+      border-bottom: 1px solid var(--border2);
+    }
+    td {
+      padding: 14px 18px; border-bottom: 1px solid var(--border); color: var(--muted2);
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,136,68,0.02); }
+    td strong { color: var(--text); font-weight: 600; }
+    td .price { font-family: var(--font-mono); font-weight: 600; color: var(--neon); }
+    td .grant-price { font-family: var(--font-mono); font-weight: 600; color: var(--amber); }
+
+    /* ── ALTERNATIVES ─────────────────────────────────────── */
+    .alt-card { display: flex; flex-direction: column; }
+    .alt-type {
+      font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 3px 10px; display: inline-block;
+      margin-bottom: 12px; width: fit-content;
+      clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+    }
+    .alt-type.direct { background: rgba(255,68,102,0.12); color: var(--rose); }
+    .alt-type.diy { background: rgba(255,136,68,0.12); color: var(--amber); }
+    .alt-type.adjacent { background: rgba(0,229,255,0.12); color: var(--cyan); }
+
+    .friction-bar { margin-top: auto; padding-top: 16px; }
+    .friction-label { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); margin-bottom: 6px; }
+    .friction-track { height: 6px; background: rgba(255,136,68,0.06); overflow: hidden; }
+    .friction-fill { height: 100%; transition: width 0.6s ease; }
+
+    /* ── SCROLL REVEAL ────────────────────────────────────── */
+    .reveal {
+      opacity: 0; transform: translateY(28px); transition: opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ───────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .admin-nav { flex-direction: column; height: auto; padding: 12px 16px; gap: 8px; }
+      .admin-nav-left { width: 100%; justify-content: space-between; }
+      .admin-links { width: 100%; justify-content: center; flex-wrap: wrap; }
+      .admin-links a { padding: 6px 10px; font-size: 0.72rem; }
+    }
+    @media (max-width: 480px) {
+      .admin-links { gap: 2px; }
+      .admin-links a { padding: 6px 8px; font-size: 0.68rem; }
+    }
+  
+  /* ── MOBILE RESPONSIVE OVERRIDES (v2) ─────────────────── */
+  @media (max-width: 768px) {
+    body { font-size: 13px; }
+    h1, .page-title, .atlas-title, .ph h1 { font-size: 1.45rem !important; line-height: 1.2 !important; }
+    h2, .art-title, .section-title, .sec-h h2 { font-size: 1.05rem !important; line-height: 1.25 !important; }
+    h3 { font-size: 0.95rem !important; }
+    .page-meta, .atlas-meta, .topbar-meta { text-align: left !important; margin-top: 6px !important; font-size: 0.7rem !important; }
+    main, .container, .container-wide, .atlas-body, .page-body, .wrap, .page { padding-left: 14px !important; padding-right: 14px !important; }
+    .page-head, .atlas-top, .admin-header { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
+
+    /* Grids collapse to single column */
+    .kpi-strip, .kpis, .summary-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; margin-bottom: 20px !important; }
+    .grid-2, .grid-3, .grid-4, .landscape-grid, .rationale-grid, .tier-strip, .top-list,
+    .attack-grid, .results-grid, .metrics-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+
+    /* All cards: tighter */
+    .kpi, .summary-card, .stat-card, .comp-card, .landscape-card, .rationale-card,
+    .tier, .model, .sent-card, .insight, .alert, .quote, .card,
+    .niche { padding: 14px 16px !important; border-radius: 10px !important; }
+    .kpi-val, .kpi .v, .summary-card .big, .stat-value { font-size: 1.35rem !important; line-height: 1.1 !important; }
+    .kpi-lbl, .kpi .l, .summary-card .sub, .stat-label { font-size: 0.6rem !important; letter-spacing: 0.06em !important; }
+
+    /* Artifact sections */
+    .artifact, section.panel, .landscape-section { padding: 18px 16px !important; margin-bottom: 14px !important; border-radius: 10px !important; }
+    .art-desc, .sec-h p { font-size: 0.82rem !important; margin-bottom: 14px !important; }
+
+    /* Strategy canvas + charts */
+    #strategy-canvas, .chart-wrap canvas, .radar-svg { height: 280px !important; max-height: 320px !important; width: 100% !important; }
+    .canvas-wrap { grid-template-columns: 1fr !important; gap: 14px !important; }
+    .canvas-legend { font-size: 0.72rem !important; }
+    .canvas-legend .leg { gap: 6px !important; }
+    .chart-wrap { padding: 14px !important; }
+
+    /* Heatmap (whitespace) */
+    .heatmap-wrap { border-radius: 6px !important; overflow-x: auto !important; }
+    .heatmap { min-width: auto !important; font-size: 0.56rem !important; }
+    .heatmap thead th { padding: 6px 3px !important; font-size: 0.5rem !important; letter-spacing: 0.02em !important; }
+    .heatmap thead th:first-child { min-width: 118px !important; text-align: left !important; }
+    .heatmap tbody th { font-size: 0.66rem !important; padding: 6px 8px !important; min-width: 118px !important; }
+    .heatmap tbody th small { font-size: 0.54rem !important; margin-top: 1px !important; }
+    .heatmap td { padding: 4px 2px !important; font-size: 0.72rem !important; }
+    .heatmap-legend { gap: 10px !important; font-size: 0.7rem !important; }
+    .heatmap-legend .dot { width: 10px !important; height: 10px !important; }
+
+    /* Attack niches (whitespace) */
+    .niche-name { font-size: 0.98rem !important; }
+    .niche-icp { font-size: 0.82rem !important; margin-bottom: 10px !important; padding-bottom: 10px !important; }
+    .niche-row { grid-template-columns: 60px 1fr !important; gap: 8px !important; font-size: 0.76rem !important; }
+    .niche-row .k { font-size: 0.58rem !important; letter-spacing: 0.05em !important; }
+
+    /* Competitor controls */
+    .comp-controls, .filter-bar { gap: 8px !important; margin-bottom: 10px !important; flex-wrap: wrap !important; }
+    .comp-search, .filter-bar input[type="search"], .filter-bar input[type="text"] { width: 100% !important; min-width: 100% !important; }
+    .comp-filter, .filter-bar select { flex: 1 1 calc(50% - 4px) !important; min-width: calc(50% - 4px) !important; }
+    .comp-count { font-size: 0.7rem !important; width: 100% !important; }
+
+    /* Generic tables: always scroll horizontally inside the card */
+    .tbl-wrap, .table-wrapper, .table-wrap, .tbl { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; }
+    table { display: block !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; font-size: 0.7rem !important; white-space: nowrap !important; }
+    table thead, table tbody, table tr { display: table !important; width: 100% !important; min-width: 640px !important; table-layout: auto !important; }
+    table thead th, .comp-table thead th { font-size: 0.55rem !important; padding: 8px !important; letter-spacing: 0.03em !important; white-space: normal !important; }
+    table tbody td, .comp-table tbody td { padding: 8px !important; white-space: normal !important; font-size: 0.76rem !important; }
+
+    /* Comp-table specifics */
+    .comp-name { font-size: 0.82rem !important; }
+    .comp-target { font-size: 0.7rem !important; }
+    .badge, .region-badge, .tier-badge { font-size: 0.56rem !important; padding: 2px 6px !important; letter-spacing: 0.02em !important; }
+
+    /* Bar-chart rows (AEVUM admin) */
+    .bar-chart { padding: 0 !important; }
+    .bar-row { grid-template-columns: 1fr !important; gap: 4px !important; padding: 8px 0 !important; }
+    .bar-row .val { text-align: left !important; }
+
+    /* Login overlay (altru/passage) */
+    .login-box { padding: 32px 24px !important; max-width: calc(100vw - 32px) !important; }
+    .login-logo { font-size: 1.5rem !important; }
+
+    /* Admin navs — wrap */
+    nav, .admin-nav, .atlas-nav, .topbar, .topbar-inner { flex-wrap: wrap !important; padding: 10px 14px !important; gap: 8px !important; }
+    .admin-nav { gap: 10px !important; }
+    .atlas-nav-links, .admin-links, .topbar-tabs { flex-wrap: wrap !important; gap: 6px !important; }
+    .atlas-nav-links a, .admin-links a, .topbar-tabs a { font-size: 0.72rem !important; padding: 5px 10px !important; }
+
+    /* SPA admin rail (EMS elitez-pulse) */
+    .admin-layout { grid-template-columns: 1fr !important; }
+    .admin-rail { position: static !important; height: auto !important; width: 100% !important; padding: 14px !important; margin-bottom: 10px !important; }
+    .admin-rail__tab, .admin-rail__link { display: inline-block !important; margin-right: 6px !important; font-size: 0.8rem !important; padding: 6px 10px !important; }
+    .admin-main { padding: 14px !important; }
+
+    /* Admin sidebar (the-commons admin) */
+    .dashboard, .admin-main, aside.sidebar { grid-template-columns: 1fr !important; }
+    aside.sidebar, .admin-sidebar { position: static !important; height: auto !important; width: 100% !important; padding: 14px !important; margin-bottom: 10px !important; }
+    .sidebar-nav { display: flex !important; flex-wrap: wrap !important; gap: 4px !important; }
+    .sidebar-nav li { display: inline-block !important; }
+    .sidebar-nav a { font-size: 0.76rem !important; padding: 6px 10px !important; }
+    .main-content { padding: 0 !important; }
+
+    /* Event hero / PayNow modal on mobile */
+    .ev-hero-wrap { height: 220px !important; }
+    .modal { padding: 20px 16px !important; max-width: calc(100vw - 24px) !important; }
+    .modal h3 { font-size: 1.05rem !important; }
+
+    /* Steps indicator (create.html) */
+    .steps { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
+    .step-connector { display: none !important; }
+
+    /* Navigation logo padding */
+    .nav-inner { padding: 10px 14px !important; }
+    .nav-inner .nav-links { display: none !important; }
+    .mobile-toggle { display: inline-flex !important; }
+
+    /* Forms */
+    .form-row { grid-template-columns: 1fr !important; gap: 12px !important; }
+    .form-group label { font-size: 0.8rem !important; }
+
+    /* Footer */
+    .footer-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+  }
+
+  @media (max-width: 420px) {
+    .kpi-strip, .kpis, .summary-grid { grid-template-columns: 1fr !important; }
+    .heatmap thead th:first-child,
+    .heatmap tbody th { min-width: 108px !important; }
+    .niche-row { grid-template-columns: 56px 1fr !important; font-size: 0.74rem !important; }
+    body { font-size: 12px; }
+    .kpi-val, .kpi .v, .summary-card .big, .stat-value { font-size: 1.2rem !important; }
+    .comp-filter, .filter-bar select { flex: 1 1 100% !important; min-width: 100% !important; }
+  }
+  /* ── END MOBILE OVERRIDES ─────────────────────────────── */
+
+  </style>
+  <!-- Favicon set -->
+  <link rel="icon" type="image/x-icon" href="../favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png" />
+  <link rel="manifest" href="../site.webmanifest" />
+  <link rel="mask-icon" href="../safari-pinned-tab.svg" color="#f59e0b" />
+  <meta name="theme-color" content="#1c1917" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<script type="application/ld+json" data-injected="schema-jsonld">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "XinceAI",
+  "url": "https://derrickteo.com/xinceai/",
+  "description": "XinceAI deploys production-ready agentic AI workflows saving 377-577 hours per month for Singapore SMEs. Up to 70% government-funded via JR+."
+}
+</script>
+<script type="application/ld+json" data-injected="schema-jsonld">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "XinceAI",
+  "url": "https://derrickteo.com/xinceai/"
+}
+</script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="admin-nav">
+  <div class="admin-nav-left">
+    <div class="theme-toggle" id="theme-toggle">
+      <button onclick="setTheme('dark')" class="active" id="btn-dark">DARK</button>
+      <button onclick="setTheme('light')" id="btn-light">LIGHT</button>
+    </div>
+    <a href="../index.html" class="nav-brand">
+      <div class="nav-mark">X</div>
+      <div class="nav-wordmark">XINCE<em>AI</em></div>
+    </a>
+    <span class="admin-badge">Admin</span>
+  </div>
+  <div class="admin-links">
+    <a href="../index.html">Public Site</a>
+    <a href="index.html">Analytics</a>
+    <a href="insights.html">Insights (v3)</a>
+    <a href="insights-v2.html" class="active">Insights (v2)</a>
+    <a href="insights-old.html">Insights (v1)</a>
+    <a href="whitespace.html">White Space</a>
+    <a href="competitor-analytics.html">Competitors</a>
+    <a href="design-audit.html">Design Audit</a>
+    <a href="report.html">Report</a>
+  </div>
+</nav>
+
+<main class="page">
+
+  <!-- HEADER -->
+  <header class="page-header reveal">
+    <div class="eyebrow">// Internal Research · v2 · ARCHIVED</div>
+    <h1>Market &amp; Pricing <span class="grad">Insights</span> · v2 (Archived)</h1>
+    <p class="subtitle">Generic 4-tier hybrid architecture (Entry/Core/Growth/Premium). Superseded by v3 (outcome-led JR+ archetypes) after the WSG CFP spec re-read showed Component 3 has narrower scope (diagnostic tools + L&D systems only) and must bundle with C1/C2. <a href="insights.html" style="color:var(--amber);text-decoration:underline;">See v3 here →</a></p>
+  </header>
+
+  <!-- S1: HYBRID PRICING ARCHITECTURE -->
+  <section class="section" id="tiers">
+    <h2 class="section-title reveal">Hybrid Pricing Architecture · 4 Stack Tiers</h2>
+    <p class="section-sub reveal">v1 evaluated 6 pricing models for one product class (the 9 workflows). v2 acknowledges the 17-product portfolio has 4 distinct buyer journeys, each with its own pricing logic. Bundles compose across tiers.</p>
+    <div class="grid-2" id="tiers-grid"></div>
+  </section>
+
+  <!-- S2: PER-PLATFORM COMPETITOR BENCHMARKS -->
+  <section class="section" id="benchmarks">
+    <h2 class="section-title reveal">Per-Platform Competitor Benchmarks</h2>
+    <p class="section-sub reveal">For each of the 8 platforms (and the 9-workflow stack), the SG-relevant competitor set, indicative aggregate price, our price, and annual customer savings vs the alternative they would otherwise license. Sourced from each platform's competitor research in <code>/data</code>.</p>
+    <div class="table-wrap reveal" id="platform-benchmark-wrap"></div>
+
+    <h3 class="section-title reveal" style="font-size:1.2rem; margin-top:44px; margin-bottom:22px;">Legacy iPaaS / RPA Benchmark (workflow stack alternatives)</h3>
+    <p class="section-sub reveal" style="margin-bottom:18px;">For prospects considering DIY workflow automation rather than our managed engagement.</p>
+    <div class="table-wrap reveal" id="benchmark-table-wrap"></div>
+  </section>
+
+  <!-- S3: TARGET PERSONAS -->
+  <section class="section" id="personas">
+    <h2 class="section-title reveal">Target Personas · 5 Original + 3 New</h2>
+    <p class="section-sub reveal">Original 5 personas remain valid for the workflow-engagement story. Three new personas surface as buyers of platform-tier products: growth-stage founders (ESOP / ElixCraft), marketing directors with no in-house team (Pulse / Site / Insights), and first-time employers (EOR mass-market entry).</p>
+    <div class="grid-2" id="personas-grid"></div>
+  </section>
+
+  <!-- S4: WILLINGNESS TO PAY (BUNDLE MATH) -->
+  <section class="section" id="wtp">
+    <h2 class="section-title reveal">Willingness to Pay · By Tier</h2>
+    <p class="section-sub reveal">v1 measured WTP per persona for "the workflow engagement". v2 measures WTP per stack tier — which is the unit a prospect actually buys. The "bundle math" makes each tier feel cheap compared to the equivalent SaaS stack a customer would otherwise license.</p>
+    <div class="grid-2" id="wtp-tier-grid"></div>
+
+    <h3 class="section-title reveal" style="font-size:1.2rem; margin-top:44px; margin-bottom:14px;">JR+ Grant Impact · Across Stack Tiers</h3>
+    <p class="section-sub reveal">The WSG WDG (JR+) grant subsidises up to 70% of project cost (Component 3). For Growth-tier engagements, Component 1 + 3 dual-stack is possible — meaning the highest grant coverage of any offering.</p>
+    <div class="table-wrap reveal" id="grant-table-wrap"></div>
+  </section>
+
+  <!-- S5: STRATEGIC RECOMMENDATIONS -->
+  <section class="section" id="strategy">
+    <h2 class="section-title reveal">Strategic Recommendations · Three Shifts</h2>
+    <p class="section-sub reveal">Three top-level moves that follow from the v2 architecture. Cancers to watch: pricing single workflows, missing the bundle, ignoring the mass-market wedge.</p>
+    <div class="grid-3" id="strategy-grid"></div>
+  </section>
+
+</main>
+
+<script>
+/* ================================================================
+   DATA · v2 (9 workflows + 8 platforms)
+   ================================================================ */
+
+/* ---- Stack tiers (replaces v1 "6 pricing strategies") ---- */
+const stackTiers = [
+  {
+    name: 'Entry · Self-Serve Wedge',
+    tag: 'Mass-market entry',
+    description: 'Mass-market entry products with their own native pricing. Designed as the inbound funnel — once a relationship exists, upsell into JR+-funded Core / Growth / Premium tiers.',
+    bundle: [
+      'Free Diagnostic (lite + full)',
+      'Pulse 7-Q ROI Diagnostic',
+      'Elitez EOR — S$59/mo per employee (1–3 staff)',
+      'DT Site Creator — from S$3K + 48h delivery',
+      'Market Insights Sprint (Lite) — S$2K',
+      'Staff Training Platform — S$2K white-label setup'
+    ],
+    pricingModel: 'À la carte · fixed-price · per-product native logic',
+    indicative: 'S$59 – S$5,000',
+    nettOfGrant: 'Same — PSG (50%) where eligible; no JR+ stacking needed',
+    grantRoute: 'Productivity Solutions Grant (PSG, 50%) where applicable',
+    bestFor: 'Micro-SMEs (1–10 staff), first-time employers, founders with no marketing/web presence, prospects shopping a single category',
+    color: 'var(--cyan)',
+    highlighted: false
+  },
+  {
+    name: 'Core · Workflow Engagement',
+    tag: 'JR+ Component 3',
+    description: 'The original 9-workflow managed engagement, now bundled with the two highest-leverage analytics platforms. Replaces v1’s "S$10K + S$1K/mo" recommendation but reframes it inside a stack so prospects compare it to a SaaS stack, not a single product.',
+    bundle: [
+      '9 production AI workflows (HR · Finance · Ops · Sales)',
+      'Market Insights & Intelligence Sprint (full)',
+      'Elitez Finance Dashboard (Xero SPA)',
+      'Optional: Custom workflow build'
+    ],
+    pricingModel: 'Setup + monthly retainer · S$10K setup + S$1K/mo · grant-stacked',
+    indicative: 'S$30,000 – S$50,000',
+    nettOfGrant: '≈ S$10K – S$15K nett to client',
+    grantRoute: 'WSG WDG (JR+) Component 3 — up to 70% subsidy',
+    bestFor: 'SMEs 50–200 staff, HR-heavy or admin-heavy ops, multiple manual processes, ready to automate. Grant-assisted entry into the ecosystem.',
+    color: 'var(--amber)',
+    highlighted: true
+  },
+  {
+    name: 'Growth · Retention Stack',
+    tag: 'JR+ Component 1 + 3',
+    description: 'For SMEs scaling headcount and competing for talent without enterprise compensation budgets. ESOP gives equity ownership; ElixCraft makes career paths visible; Pulse fills the marketing gap; Training builds the L&D layer.',
+    bundle: [
+      'Elitez-ESOP Platform (event-sourced ledger, vesting, trading windows)',
+      'Gamified Employee Lifecycle (ElixCraft) — career maps + KPI XP',
+      'Pulse Marketing Retainer (Core tier)',
+      'Staff Training Platform (full deployment)'
+    ],
+    pricingModel: 'One-time setup + monthly admin (ESOP/ElixCraft) · monthly retainer (Pulse) · per-user (Training)',
+    indicative: 'S$30,000 – S$60,000',
+    nettOfGrant: '≈ S$10K – S$18K nett to client',
+    grantRoute: 'WSG WDG (JR+) Component 1 (Workforce Consultancy) + Component 3 dual-stack',
+    bestFor: 'Growth-stage SMEs (50–200 staff) struggling with retention, building a talent narrative for fundraise, or losing key staff to bigger employers.',
+    color: 'var(--violet)',
+    highlighted: false
+  },
+  {
+    name: 'Premium · Full Suite',
+    tag: 'Strategic partner',
+    description: 'Complete transformation — every workflow, every platform, plus a custom build and an executive intelligence layer. Pitched as a 12-month strategic partnership, not a vendor engagement.',
+    bundle: [
+      'All Core + Growth bundles above',
+      'C-Suite Intelligence Dashboard (Gmail + Calendar + Tasks + Xero)',
+      'Custom Workflow Build (1 high-value workflow / quarter)',
+      'Quarterly Market Insights Sprint subscription'
+    ],
+    pricingModel: 'Custom · value-based · grant-stacked · 12-month engagement',
+    indicative: 'S$80,000 – S$150,000',
+    nettOfGrant: '≈ S$24K – S$45K nett to client',
+    grantRoute: 'WSG WDG (JR+) Component 1 + 3 — up to 70% on the full engagement',
+    bestFor: 'Growth-stage SMEs wanting complete operational transformation; multi-entity groups; companies preparing for a fundraise, exit, or regional expansion.',
+    color: 'var(--neon)',
+    highlighted: false
+  }
+];
+
+/* ---- Per-platform competitor benchmarks (9 rows) ---- */
+const platformBenchmarks = [
+  { platform: 'Elitez EOR',                       category: 'HR / Compliance · per-employee',   competitors: 'Deel SGD 810 · Multiplier SGD 540 · Skuad SGD 270 / mo / emp',      aggregate: 'SGD 270–810 / mo / emp',                ourPrice: 'SGD 80 / mo / emp',                annualSave: 'S$2.5K – S$9K / yr / emp' },
+  { platform: 'Elitez-ESOP',                      category: 'HR · Equity & Retention',          competitors: 'Carta SGD 270 · Pulley SGD 135 · Vestd SGD 130–305 / mo',           aggregate: 'SGD 200–700 / mo + lawyer fees',        ourPrice: 'Bundled (Growth tier)',           annualSave: 'S$2.4K – S$10K / yr' },
+  { platform: 'Pulse Marketing',                  category: 'Sales / Marketing',                competitors: 'Mutant SGD 5–20K · Construct SGD 3–10K · 2Stallions SGD 2–8K / mo', aggregate: 'SGD 3–10K / mo retainer',               ourPrice: 'SGD 1–3K / mo (geo-arbitrage)',   annualSave: 'S$30K – S$60K / yr' },
+  { platform: 'DT Site Creator',                  category: 'Digital Infra · Web & Commerce',   competitors: 'SG agency S$5–20K + 200–500/mo · Webflow + freelancer · Shopify Plus', aggregate: 'S$5K–15K initial + S$200–500 / mo', ourPrice: 'S$3K–8K + S$200 / mo',           annualSave: 'S$12K – S$45K / yr (3-site cadence)' },
+  { platform: 'C-Suite Dashboard',                category: 'Analytics · Executive Intelligence', competitors: 'Domo S$800–2.5K · Tableau S$400–1.5K · Looker S$500–2K / mo',     aggregate: 'S$500–3K / mo',                         ourPrice: 'Bundled (Premium tier)',          annualSave: 'S$7K – S$10K / yr' },
+  { platform: 'Gamified Lifecycle (ElixCraft)',   category: 'HR · Engagement',                  competitors: 'Lattice SGD 15 · Culture Amp SGD 20 · 15Five SGD 11–20 / user / mo', aggregate: 'SGD 1.1K–2K / mo (100 staff)',        ourPrice: 'Bundled (Growth tier)',           annualSave: 'S$13K – S$24K / yr' },
+  { platform: 'Staff Training',                   category: 'HR · Learning & Development',      competitors: 'Cornerstone S$8–16/u + S$7–20K · Docebo S$33K/yr · TalentLMS S$90–520/mo', aggregate: 'S$800–1.6K / mo (100 staff)',     ourPrice: 'S$2–4K setup + S$200 / mo',       annualSave: 'S$9.5K – S$19K / yr' },
+  { platform: 'Market Insights & Intelligence',   category: 'Strategy · Analytics',             competitors: 'Frost & Sullivan S$7–35K · McKinsey S$80K+ · boutique S$20–60K',    aggregate: 'S$15K–50K / engagement',                ourPrice: 'S$2–5K / sprint',                 annualSave: 'S$15K – S$55K / sprint saved' },
+  { platform: '9 Workflow Stack (XinceAI)',       category: 'Operations · Automation',          competitors: 'Zapier US$29 · Make US$10 · UiPath US$420 · Power Automate US$15 / user / mo', aggregate: 'US$30–1,380 / mo + 1 dev FTE',  ourPrice: 'S$10K + S$1K / mo (managed)',     annualSave: 'S$60K – S$200K / yr at full scale' }
+];
+
+/* ---- Legacy iPaaS / RPA benchmark (kept narrowly for the workflow-only conversation) ---- */
+const competitorBenchmarks = [
+  { name: 'Zapier',          type: 'iPaaS',                          starter: 'US$29/mo',         pro: 'US$73/mo',         enterprise: 'Custom',           notes: 'Per-task pricing adds up fast. 750 tasks on starter plan.' },
+  { name: 'Make.com',        type: 'iPaaS',                          starter: 'US$10.59/mo',      pro: 'US$18.82/mo',      enterprise: 'Custom',           notes: '10K ops on pro. Complex workflows drain ops quickly.' },
+  { name: 'UiPath',          type: 'RPA',                            starter: 'US$420/mo',        pro: 'US$1,380/mo',      enterprise: 'Custom',           notes: 'Heavy enterprise RPA. Requires dedicated dev resource.' },
+  { name: 'Power Automate',  type: 'RPA/iPaaS',                      starter: 'US$15/user/mo',    pro: 'US$40/user/mo',    enterprise: 'Included in E5',   notes: 'Best if already in Microsoft ecosystem.' },
+  { name: 'n8n',             type: 'Open Source',                    starter: 'Free (self-host)', pro: 'EUR20/mo',         enterprise: 'EUR50/mo',         notes: 'Requires technical staff to deploy and maintain.' },
+  { name: 'XinceAI Core',    type: 'Managed AI Workflows + Insights', starter: 'S$10K + S$1K/mo', pro: 'S$3K + S$1K/mo (w/ JR+ 70%)', enterprise: 'Custom (Premium tier)', notes: 'Fully managed. No technical staff needed. SG-focused. Bundled with Market Insights + Finance Dashboard.' }
+];
+
+/* ---- Personas: 5 original + 3 new ---- */
+const personas = [
+  {
+    emoji: '\u{1F454}', name: 'James Tan', title: 'CEO / Founder', badge: 'Original',
+    bgColor: 'rgba(255,136,68,0.12)',
+    demographics: 'Age 42-55, runs a 50-150 person SME in logistics, manufacturing, or professional services. 15+ years industry experience.',
+    needs: ['Reduce operational costs by 20-30%', 'Free up leadership bandwidth from admin firefighting', 'Modernise operations without hiring a CTO', 'Maintain competitive edge against larger players'],
+    painPoints: ['Staff costs keep rising (S$4-6K/head for admin roles)', 'Can’t find or retain good operations staff', 'Knows AI is important but unsure where to start', 'Burned by past IT projects that over-promised'],
+    behavior: 'Reads Business Times, attends SME conferences. Trusts peer recommendations over cold outreach. Will Google extensively before taking a meeting.',
+    techSavviness: 'Moderate — uses email, WhatsApp, basic cloud tools. Not hands-on with tech but understands ROI.',
+    decisionFactors: ['ROI payback period (wants < 6 months)', 'Government grant coverage', 'Proven case studies in similar industry', 'Low disruption to existing operations'],
+    bestFitTier: 'Core (workflow engagement)',
+    budget: 'S$10K-30K for projects, prefers grant-subsidised'
+  },
+  {
+    emoji: '\u{1F5C2}️', name: 'Sarah Lim', title: 'HR Manager', badge: 'Original',
+    bgColor: 'rgba(0,229,255,0.12)',
+    demographics: 'Age 30-42, manages HR for 80-200 person company. Team of 2-3 HR staff handling everything from recruitment to payroll.',
+    needs: ['Automate repetitive HR admin (leave, claims, onboarding)', 'Reduce time spent on compliance reporting', 'Better employee self-service to cut HR queries by 60%', 'Streamline recruitment pipeline'],
+    painPoints: ['Drowning in paper forms and Excel trackers', 'Spends 40% of time on admin instead of strategic HR', 'MOM reporting is manual and error-prone', 'Staff expect modern HR tech but budget is limited'],
+    behavior: 'Active on LinkedIn HR communities. Attends SHRI events. Influenced by HR tech blog posts and peer case studies. Champions solutions bottom-up to CEO.',
+    techSavviness: 'Moderate to high — comfortable with HRIS, Google Workspace, basic automation. Wants no-code solutions.',
+    decisionFactors: ['Time saved on daily admin tasks', 'Ease of use for the whole team', 'Integration with existing payroll (Talenox, PayBoy)', 'Support quality and response time'],
+    bestFitTier: 'Core + Growth (HR workflows + Training)',
+    budget: 'S$500-1,500/mo allocated for HR tools'
+  },
+  {
+    emoji: '\u{1F4CA}', name: 'David Ng', title: 'Finance & Ops Manager', badge: 'Original',
+    bgColor: 'rgba(0,255,136,0.12)',
+    demographics: 'Age 35-48, oversees finance and operations for SME doing S$5-30M revenue. Team of 4-8 handling AP/AR, reporting, procurement.',
+    needs: ['Automate invoice processing and matching', 'Real-time financial dashboards instead of month-end scrambles', 'Reduce manual data entry errors', 'Faster month-end close (from 10 days to 3)'],
+    painPoints: ['70% of time spent on data entry and reconciliation', 'Finance team stretched thin — no bandwidth for analysis', 'Xero/QuickBooks have limits; ERP is too expensive', 'Audit prep is a nightmare every year'],
+    behavior: 'Methodical decision-maker. Builds detailed comparison spreadsheets. Needs to see demo with real numbers. Will pilot before committing fully.',
+    techSavviness: 'High — proficient with Excel, accounting software, some SQL. Appreciates technical depth.',
+    decisionFactors: ['Accuracy and reliability of automation', 'Integration with Xero/QuickBooks', 'Data security and compliance', 'Measurable time savings with clear metrics'],
+    bestFitTier: 'Core (Finance Dashboard + workflows)',
+    budget: 'S$8K-20K project budget if ROI is clear'
+  },
+  {
+    emoji: '\u{1F680}', name: 'Michelle Wong', title: 'Business Development Lead', badge: 'Original',
+    bgColor: 'rgba(192,132,252,0.12)',
+    demographics: 'Age 28-38, leads BD for B2B services firm with 30-100 staff. Manages pipeline of 50-200 prospects with a lean team of 2-4.',
+    needs: ['Automate lead qualification and CRM updates', 'Generate proposals and follow-ups faster', 'Better pipeline visibility and forecasting', 'Scale outreach without adding headcount'],
+    painPoints: ['Manually updating CRM takes 5-8 hrs/week', 'No systematic follow-up — leads go cold', 'Boss wants 2x pipeline but won’t hire more BD staff', 'Competitor responses are faster and more polished'],
+    behavior: 'Early adopter of sales tools. Active on LinkedIn. Comfortable experimenting with new tech. Will advocate internally if tool shows quick wins.',
+    techSavviness: 'High — uses CRM, LinkedIn Sales Nav, email automation. Wants AI to handle the grunt work.',
+    decisionFactors: ['Speed of implementation', 'Visible pipeline impact within 30 days', 'Mobile-friendly for field work', 'Integration with existing CRM (HubSpot, Salesforce)'],
+    bestFitTier: 'Entry (Pulse Diagnostic) → Core (Sales workflows)',
+    budget: 'S$300-800/mo for BD tools, can push for project budget if justified'
+  },
+  {
+    emoji: '\u{1F3E2}', name: 'Kenneth Koh', title: 'Director (IT-Light Company)', badge: 'Original',
+    bgColor: 'rgba(255,68,102,0.12)',
+    demographics: 'Age 45-58, runs an F&B chain, cleaning company, or traditional services firm with 60-200 staff. Zero IT department.',
+    needs: ['Basic digitalisation of paper-heavy processes', 'Simple workforce scheduling and attendance', 'Automate government compliance (MOM, CPF, BizFile)', 'Customer communication automation'],
+    painPoints: ['Everything runs on paper, WhatsApp, and memory', 'Staff turnover is 30-40% annually — constant re-training', 'No one in the company understands technology', 'Tried one software before — abandoned after 2 months'],
+    behavior: 'Relies heavily on trusted advisors (accountant, banker). Needs hand-holding through the entire process. Won’t attend tech events but will listen to a warm referral.',
+    techSavviness: 'Low — uses WhatsApp and basic smartphone apps. Needs extremely simple interfaces.',
+    decisionFactors: ['Trust in the service provider (face-to-face relationship)', 'Simplicity — "can my staff use this?"', 'Full implementation support included', 'Government grant covers most of the cost'],
+    bestFitTier: 'Entry (Site Creator + EOR) → Core (workflows)',
+    budget: 'S$5K-15K only if grant-subsidised, otherwise S$0'
+  },
+  {
+    emoji: '\u{1F33B}', name: 'Priya Raj', title: 'Growth-Stage Founder', badge: 'NEW',
+    bgColor: 'rgba(192,132,252,0.16)',
+    demographics: 'Age 35-48, founder/co-founder of an 80–250 staff SME. Closed Series A, prepping for Series B or strategic exit. Probably knows their CFO but hires their first dedicated People lead during this stage.',
+    needs: ['Implement ESOP without S$30K in legal fees', 'Make career paths visible enough to retain key staff who could earn 30% more elsewhere', 'Have a defensible HR / equity story for the next investor deck', 'Compete with bigger employers for senior talent without matching their cash comp'],
+    painPoints: ['Two of the last three senior hires left in <18 months', 'Term sheet from last investor flagged "key-person concentration risk"', 'Cap table is in a Google Sheet maintained by a co-founder', 'Annual review is the only career conversation; nobody knows what good looks like'],
+    behavior: 'Reads the right Substacks. Talks to peer founders (often via investor intros). Highly responsive to "what does an A-tier company look like at our stage" framing. Will pay quickly if the artefact looks credible to a VC.',
+    techSavviness: 'Moderate to high. Comfortable with Notion, Slack, Carta-equivalents. Wants the artefact, not the toolchain.',
+    decisionFactors: ['Looks like a real ESOP plan (not a Google Sheet)', 'Participants can self-serve grant statements', 'Visible career framework for the next 12-18 months', 'Bundles cleanly with the rest of the People stack'],
+    bestFitTier: 'Growth (ESOP + ElixCraft + Training)',
+    budget: 'S$30K-60K for the People stack, grant-funded'
+  },
+  {
+    emoji: '\u{1F4E3}', name: 'Nicholas Yeo', title: 'Marketing Director (No In-House Team)', badge: 'NEW',
+    bgColor: 'rgba(255,136,68,0.18)',
+    demographics: 'Age 32-45, holds marketing as a budget line at a 30–150 staff SME. Often the founder’s second hire on the commercial side, or a generalist promoted from BD. Manages 1–2 freelancers and a long list of agency invoices.',
+    needs: ['Replace 2-3 retainers with one geo-arbitrage retainer that produces more output', 'Move inbound from "ad-hoc" to a calendar', 'Stop redoing competitor research every six months from scratch', 'Have a website that actually converts and updates within a week, not 8'],
+    painPoints: ['Mutant pitched at S$8K/mo and the output is fine but the velocity is wrong', 'No content calendar — posting reactively when management asks', 'Last competitor study cost S$25K and is already 18 months stale', 'Site updates require coordinating an agency, a freelancer, and a missing password'],
+    behavior: 'Pragmatic. Will run a 60-day pilot if the proposal is concrete. Allergic to marketing jargon. Will switch to whoever ships the calendar fastest.',
+    techSavviness: 'High on marketing tools (HubSpot, GA, Meta Ads); medium on automation. Wants AI to do the brief, not the meeting.',
+    decisionFactors: ['Output velocity (calendar with dates, not promises)', 'Geo-arbitrage cost vs SG agency benchmark', 'Reusable competitor intel that updates', 'A site that the marketing team can edit'],
+    bestFitTier: 'Growth (Pulse + DT Site Creator + Market Insights)',
+    budget: 'S$3-8K/mo retainer authority; project budget for site + insights up to S$15K'
+  },
+  {
+    emoji: '\u{1F4BC}', name: 'Chen Wei', title: 'First-Time Employer / Sole Proprietor', badge: 'NEW',
+    bgColor: 'rgba(0,229,255,0.12)',
+    demographics: 'Age 28-42, runs a 1–3 person business — agency, consultancy, or e-commerce. Often a foreign founder operating in SG, or a consultant who just incorporated. Has 1–3 employees on payroll but no HR function.',
+    needs: ['Get CPF, WICA, IR8A right without becoming an HR specialist', 'Avoid MOM enforcement risk that could land a S$10K fine', 'Have a basic professional web presence', 'Look the part for clients and partners'],
+    painPoints: ['One CPF mistake costs more than the whole year of EOR fees', 'Doesn’t understand SG payroll regulations and won’t be able to learn them in time', 'Can’t afford a S$3K/mo HR consultant for 2 employees', 'Squarespace site looks cheap; agency quote was S$8K'],
+    behavior: 'Will buy on first call if pricing is transparent and the legal/compliance story is clear. Heavy weight on social proof from peer founders. Trusts S$59/mo a lot more than "contact sales".',
+    techSavviness: 'High on consumer tools, low on HR / compliance / regulatory. Wants done-for-you, not DIY.',
+    decisionFactors: ['Transparent pricing — no "contact sales"', 'MOM compliance covered end-to-end', '5-day onboarding, not 5 weeks', 'Pairs cleanly with a basic site at the same price point'],
+    bestFitTier: 'Entry (EOR + DT Site Creator)',
+    budget: 'S$59-200/mo; up to S$5K for one-time setup if site is included'
+  }
+];
+
+/* ---- WTP per stack tier (replaces v1 per-persona table) ---- */
+const wtpTiers = [
+  { tier: 'Entry',   indicative: 'S$59 – S$5,000',           competitorEquivalent: 'EOR alternatives ~S$540–810 / mo / emp · Site agencies S$5–20K · Marketing diagnostic from a consultancy ~S$1.5–3K', bundleMath: 'A 1-staff EOR + a basic site is a fraction of one DIY mistake (CPF fine ~S$5K) plus one Squarespace + freelancer cost (~S$3K).', decisionTrigger: 'Transparent price · no sales call needed · 5-day onboarding', color: 'var(--cyan)' },
+  { tier: 'Core',    indicative: 'S$30K – S$50K · S$10K-15K nett',  competitorEquivalent: 'iPaaS subs (S$50–500/mo) + 1 internal dev FTE (S$80K/yr loaded) + Frost & Sullivan-tier intelligence study (S$15–35K/yr)', bundleMath: 'Equivalent SaaS + headcount stack runs S$100K+ / yr. Our nett post-grant is S$10–15K — payback well under 6 months by the calc on the homepage.', decisionTrigger: 'ROI payback < 6 months · grant coverage · proven case study in similar industry', color: 'var(--amber)' },
+  { tier: 'Growth',  indicative: 'S$30K – S$60K · S$10K-18K nett',  competitorEquivalent: 'Carta SGD 270 + Lattice S$15/u (100 staff = S$1,500) + Mutant S$5–10K + TalentLMS S$200–500 = S$8–13K / mo', bundleMath: 'Equivalent People + Marketing + LMS stack runs S$95K–155K / yr. Our nett post-grant is S$10K–18K. Plus the artefact (ESOP + visible career framework) is a fundraise asset.', decisionTrigger: 'Term-sheet flag (key-person risk) · senior hire just left · investor asked "how do you retain"', color: 'var(--violet)' },
+  { tier: 'Premium', indicative: 'S$80K – S$150K · S$24K-45K nett', competitorEquivalent: 'McKinsey-lite engagement (S$80K+) + Domo (S$2K/mo) + everything in Core + Growth above', bundleMath: 'A McKinsey-lite engagement + 12 months of competitor stack runs S$300K+. Our nett post-grant is S$24–45K. Positioned as "a strategic partner, not a vendor".', decisionTrigger: 'Multi-entity expansion · pre-fundraise · pre-exit · regional rollout', color: 'var(--neon)' }
+];
+
+/* ---- Grant impact per tier ---- */
+const grantImpact = [
+  { item: 'Entry tier (à la carte)',                before: 'S$59 – S$5,000',  after: 'Same (PSG 50% where eligible)', savings: 'Up to 50%', note: 'PSG covers HR / Sales / Finance tools; sub S$3K / employee' },
+  { item: 'Core tier (workflow engagement)',        before: 'S$30K – S$50K',   after: 'S$10K – S$15K nett',            savings: 'Up to 70%', note: 'WSG WDG (JR+) Component 3 — workforce tech solutions' },
+  { item: 'Growth tier (retention stack)',          before: 'S$30K – S$60K',   after: 'S$10K – S$18K nett',            savings: 'Up to 70%', note: 'JR+ Component 1 (Workforce Consultancy) + 3 dual-stack' },
+  { item: 'Premium tier (full suite)',              before: 'S$80K – S$150K',  after: 'S$24K – S$45K nett',            savings: 'Up to 70%', note: 'Custom JR+ scope; 12-month engagement' },
+  { item: 'Single workflow add-on (Custom Build)',  before: 'S$15K – S$30K',   after: 'S$4.5K – S$9K nett',            savings: 'Up to 70%', note: 'Stacks on any tier above; treated as Component 3' }
+];
+
+/* ---- Strategic recommendations (3 shifts) ---- */
+const strategicShifts = [
+  {
+    n: '01',
+    name: 'Lead with mass-market wedges, not the workflow stack',
+    description: 'EOR (S$59/mo), the Free Diagnostic, and DT Site Creator are the inbound funnel. They have transparent pricing, instant value, and zero-grant-required affordability.',
+    do: ['SEO/SEM target the "first-time SG employer" intent', 'Make the 7-Q Pulse Diagnostic the universal top-of-funnel for every channel', 'Treat the lite + full diagnostics as lead-gen, not standalone products'],
+    avoid: ['Don’t lead with "9 workflows for S$10K" — too big, too vague, too far from the prospect’s wallet today'],
+    color: 'var(--cyan)'
+  },
+  {
+    n: '02',
+    name: 'Stop selling individual workflows · sell stacks',
+    description: 'Single-workflow buyers are a leaky bucket. The integrated stack is the moat. Prospects compare a S$15K nett stack against an S$80K+ SaaS alternative — that’s the conversation we want to be in.',
+    do: ['Anchor every Core+ proposal in the Stack tier (not à la carte workflows)', 'Quote the "vs competitor SaaS stack" line on every proposal', 'Use the ROI calculator as the proposal artefact — it already does this math'],
+    avoid: ['Don’t price one workflow at a time during proposal review — it lets the customer disaggregate the value', 'Don’t leave Pulse / Insights out of Core proposals — they’re multipliers'],
+    color: 'var(--amber)'
+  },
+  {
+    n: '03',
+    name: 'Make the bundle math visible everywhere',
+    description: 'Every drawer on the public site, every section of the diagnostic, every page of the proposal should show "what you’d otherwise spend". The platform impact blocks already power this on the bento — surface it consistently in sales conversations.',
+    do: ['Drop the per-platform competitor list into proposal slides verbatim', 'Cite the diagnostic’s "gap you can close" number on the contract page', 'Train sales to lead with "vs your current stack" framing, not "vs your current pain"'],
+    avoid: ['Don’t over-customise the comparison — the same 3 competitors per platform are enough to anchor', 'Don’t hide the math — prospects who can’t reconstruct it won’t defend it internally'],
+    color: 'var(--violet)'
+  }
+];
+
+/* ================================================================
+   RENDER FUNCTIONS · v2
+   ================================================================ */
+
+function renderTiers() {
+  const grid = document.getElementById('tiers-grid');
+  grid.innerHTML = stackTiers.map((t, i) => `
+    <div class="card reveal ${t.highlighted ? 'highlighted' : ''}" style="transition-delay:${i * 60}ms; border-color: ${t.color};">
+      ${t.highlighted ? '<span class="rec-badge">RECOMMENDED ANCHOR</span>' : ''}
+      <div class="card-label" style="color: ${t.color};">${t.tag}</div>
+      <h3>${t.name}</h3>
+      <p>${t.description}</p>
+      <div class="detail">
+        <div class="detail-row segment"><span class="icon">&#9881;</span><span><strong>Bundle:</strong></span></div>
+        ${t.bundle.map(b => `<div class="detail-row pros" style="margin-left:20px;"><span class="icon">+</span><span>${b}</span></div>`).join('')}
+        <div class="detail-row segment" style="margin-top:10px;"><span class="icon">&#36;</span><span><strong>Pricing model:</strong> ${t.pricingModel}</span></div>
+        <div class="detail-row segment"><span class="icon">&#36;</span><span><strong>Indicative:</strong> <span style="color:${t.color}; font-family:var(--font-mono); font-weight:600;">${t.indicative}</span></span></div>
+        <div class="detail-row segment"><span class="icon">&#10024;</span><span><strong>Nett of grant:</strong> <span style="color:var(--neon); font-family:var(--font-mono); font-weight:600;">${t.nettOfGrant}</span></span></div>
+        <div class="detail-row segment"><span class="icon">&#127979;</span><span><strong>Grant route:</strong> ${t.grantRoute}</span></div>
+        <div class="detail-row segment"><span class="icon">&#9654;</span><span><strong>Best for:</strong> ${t.bestFor}</span></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderPlatformBenchmarks() {
+  const wrap = document.getElementById('platform-benchmark-wrap');
+  wrap.innerHTML = `<table>
+    <thead><tr>
+      <th>Platform</th><th>Category</th><th>Top SG-relevant competitors</th><th>Aggregate</th><th>Our price</th><th>Annual save</th>
+    </tr></thead>
+    <tbody>${platformBenchmarks.map((p) => {
+      const isUs = p.platform.includes('XinceAI');
+      return `<tr style="${isUs ? 'background:rgba(255,136,68,0.06)' : ''}">
+        <td><strong>${p.platform}</strong></td>
+        <td style="color:var(--muted2); font-size:0.86rem;">${p.category}</td>
+        <td style="font-size:0.86rem;">${p.competitors}</td>
+        <td class="price">${p.aggregate}</td>
+        <td class="grant-price">${p.ourPrice}</td>
+        <td style="color:var(--neon); font-family:var(--font-mono); font-weight:600;">${p.annualSave}</td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+function renderPersonas() {
+  const grid = document.getElementById('personas-grid');
+  grid.innerHTML = personas.map((p, i) => `
+    <div class="card persona-card reveal" style="transition-delay:${i * 60}ms">
+      <div class="persona-header">
+        <div class="persona-avatar" style="background:${p.bgColor}">${p.emoji}</div>
+        <div>
+          <h3>${p.name} ${p.badge === 'NEW' ? '<span style="margin-left:8px; font-size:0.6rem; padding:2px 8px; background:rgba(192,132,252,0.18); color:var(--violet); font-family:var(--font-mono); letter-spacing:0.1em; border-radius:3px; border:1px solid rgba(192,132,252,0.4);">NEW</span>' : ''}</h3>
+          <div class="role">${p.title}</div>
+        </div>
+      </div>
+      <div class="persona-body">
+        <div class="persona-field"><div class="persona-field-label">Demographics</div><div class="persona-field-value">${p.demographics}</div></div>
+        <div class="persona-field"><div class="persona-field-label">Key Needs</div><div class="persona-field-value"><ul>${p.needs.map(n => `<li>${n}</li>`).join('')}</ul></div></div>
+        <div class="persona-field"><div class="persona-field-label">Pain Points</div><div class="persona-field-value"><ul>${p.painPoints.map(n => `<li>${n}</li>`).join('')}</ul></div></div>
+        <div class="persona-field"><div class="persona-field-label">Buying Behavior</div><div class="persona-field-value">${p.behavior}</div></div>
+        <div class="persona-field"><div class="persona-field-label">Tech Savviness</div><div class="persona-field-value">${p.techSavviness}</div></div>
+        <div class="persona-field"><div class="persona-field-label">Decision Factors</div><div class="persona-field-value"><ul>${p.decisionFactors.map(n => `<li>${n}</li>`).join('')}</ul></div></div>
+        <div class="persona-field"><div class="persona-field-label">Best-Fit Stack Tier</div><div class="persona-field-value" style="color:var(--amber); font-family:var(--font-mono); font-weight:600;">${p.bestFitTier}</div></div>
+        <div class="persona-field"><div class="persona-field-label">Budget Range</div><div class="persona-field-value" style="color:var(--neon); font-family:var(--font-mono); font-weight:600;">${p.budget}</div></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderBenchmarkTable() {
+  const wrap = document.getElementById('benchmark-table-wrap');
+  wrap.innerHTML = `<table>
+    <thead><tr>
+      <th>Platform</th><th>Type</th><th>Starter</th><th>Pro</th><th>Enterprise</th><th>Notes</th>
+    </tr></thead>
+    <tbody>${competitorBenchmarks.map((b) => {
+      const isXince = b.name.includes('XinceAI');
+      return `<tr style="${isXince ? 'background:rgba(255,136,68,0.06)' : ''}">
+        <td><strong>${b.name}</strong></td>
+        <td>${b.type}</td>
+        <td class="${isXince ? 'grant-price' : 'price'}">${b.starter}</td>
+        <td class="${isXince ? 'grant-price' : 'price'}">${b.pro}</td>
+        <td>${b.enterprise}</td>
+        <td>${b.notes}</td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+function renderWtpTiers() {
+  const grid = document.getElementById('wtp-tier-grid');
+  grid.innerHTML = wtpTiers.map((t, i) => `
+    <div class="card reveal" style="transition-delay:${i * 60}ms; border-left:3px solid ${t.color};">
+      <div class="card-label" style="color:${t.color};">${t.tier} Tier</div>
+      <h3 style="margin-bottom:14px;">${t.indicative}</h3>
+      <div class="detail-row segment"><span class="icon">&#9876;</span><span><strong>What they’d otherwise pay:</strong> ${t.competitorEquivalent}</span></div>
+      <div class="detail-row segment"><span class="icon">&#129518;</span><span><strong>Bundle math:</strong> ${t.bundleMath}</span></div>
+      <p style="margin-top:14px; font-size:0.84rem; color:var(--muted2); border-top:1px solid var(--border); padding-top:14px;"><strong>Decision trigger:</strong> ${t.decisionTrigger}</p>
+    </div>
+  `).join('');
+}
+
+function renderGrantTable() {
+  const wrap = document.getElementById('grant-table-wrap');
+  wrap.innerHTML = `<table>
+    <thead><tr>
+      <th>Tier</th><th>Without Grant</th><th>With JR+ (up to 70%)</th><th>Subsidy</th><th>Note</th>
+    </tr></thead>
+    <tbody>${grantImpact.map(g => `<tr>
+      <td><strong>${g.item}</strong></td>
+      <td>${g.before}</td>
+      <td class="grant-price">${g.after}</td>
+      <td style="color:var(--neon); font-family:var(--font-mono); font-weight:600;">${g.savings}</td>
+      <td>${g.note}</td>
+    </tr>`).join('')}</tbody>
+  </table>`;
+}
+
+function renderStrategy() {
+  const grid = document.getElementById('strategy-grid');
+  grid.innerHTML = strategicShifts.map((s, i) => `
+    <div class="card reveal" style="transition-delay:${i * 60}ms; border-left:3px solid ${s.color};">
+      <div class="card-label" style="color:${s.color};">SHIFT ${s.n}</div>
+      <h3>${s.name}</h3>
+      <p>${s.description}</p>
+      <div class="detail" style="margin-top:14px;">
+        ${s.do.map(d => `<div class="detail-row pros"><span class="icon">+</span><span>${d}</span></div>`).join('')}
+        ${s.avoid.map(d => `<div class="detail-row cons"><span class="icon">-</span><span>${d}</span></div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ================================================================
+   INIT
+   ================================================================ */
+
+renderTiers();
+renderPlatformBenchmarks();
+renderPersonas();
+renderBenchmarkTable();
+renderWtpTiers();
+renderGrantTable();
+renderStrategy();
+
+/* Scroll reveal */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }});
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+/* Theme toggle */
+function setTheme(mode) {
+  document.documentElement.setAttribute('data-theme', mode);
+  document.getElementById('btn-dark').classList.toggle('active', mode === 'dark');
+  document.getElementById('btn-light').classList.toggle('active', mode === 'light');
+  localStorage.setItem('xince-theme', mode);
+}
+(function() { const saved = localStorage.getItem('xince-theme'); if (saved) setTheme(saved); })();
+</script>
+
+</body>
+</html>

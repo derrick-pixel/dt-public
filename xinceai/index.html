@@ -4,18 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://images.pexels.com https://derrick-pixel.github.io data:; connect-src 'self';" />
-  <title>XinceAI — Agentic Workflows for Singapore SMEs</title>
-  <meta name="description" content="XinceAI deploys production-ready agentic AI workflows that save 377–577 hours per month for Singapore SMEs. Up to 70% government-funded via JR+ grant." />
+  <title>XinceAI — AI Workflows & Business Platforms for Singapore SMEs</title>
+  <meta name="description" content="XinceAI deploys 9 production-ready agentic AI workflows plus ESOP, marketing, website, and intelligence platforms — saving 377–577 hours per month for Singapore SMEs. Up to 70% government-funded via JR+ grant." />
 
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://derrick-pixel.github.io/XinceAI/" />
-  <meta property="og:title" content="XinceAI — Agentic Workflows for Singapore SMEs" />
-  <meta property="og:description" content="9 production-ready AI workflows. 377–577 hours saved per month. Up to 70% government-funded." />
+  <meta property="og:title" content="XinceAI — AI Workflows & Business Platforms for Singapore SMEs" />
+  <meta property="og:description" content="9 production-ready agentic AI workflows plus 8 business platforms (ESOP, marketing, website, intelligence). 377–577 hours saved per month. Up to 70% government-funded." />
   <meta property="og:image" content="https://derrick-pixel.github.io/XinceAI/og-image.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="XinceAI" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="XinceAI — Agentic Workflows for Singapore SMEs" />
+  <meta name="twitter:title" content="XinceAI — AI Workflows & Business Platforms for Singapore SMEs" />
+  <meta name="twitter:description" content="9 production-ready agentic AI workflows plus 8 business platforms (ESOP, marketing, website, intelligence). 377–577 hours saved per month. Up to 70% government-funded." />
   <meta name="twitter:image" content="https://derrick-pixel.github.io/XinceAI/og-image.png" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -309,8 +311,11 @@
 
     /* ── BENTO WORKFLOWS ──────────────────────────────────────────────────── */
     .bento { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); }
-    .bc { background: var(--card); padding: 28px; position: relative; overflow: hidden; transition: all 0.25s; }
+    .bc { background: var(--card); padding: 28px; position: relative; overflow: hidden; transition: all 0.25s; cursor: pointer; }
     .bc:hover { background: var(--card-hi); }
+    .bc:focus-visible { outline: 2px solid var(--amber); outline-offset: -2px; }
+    .bc-more { display: inline-block; font-family: var(--font-mono); font-size: 0.7rem; color: var(--amber); letter-spacing: 0.06em; margin-top: 12px; opacity: 0.7; transition: opacity 0.2s; }
+    .bc:hover .bc-more { opacity: 1; }
     .bc:hover .bc-scanline { opacity: 1; animation: scanDown 1.5s ease infinite; }
     .bc-scanline { position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--amber), transparent); opacity: 0; transition: opacity 0.3s; pointer-events: none; }
     @keyframes scanDown { 0% { top: 0; } 100% { top: 100%; } }
@@ -321,7 +326,7 @@
     .tag-fin { border-color: rgba(0,255,136,0.3);  color: var(--neon); }
     .tag-ops { border-color: rgba(255,136,68,0.3); color: var(--amber); }
     .tag-sales { border-color: rgba(0,229,255,0.3); color: var(--cyan); }
-    .bc-name { font-family: var(--font-head); font-size: 1.2rem; font-weight: 600; letter-spacing: 0.02em; margin-bottom: 8px; }
+    .bc-name { font-family: var(--font-head); font-size: 1.2rem; font-weight: 600; letter-spacing: 0.02em; margin: 0 0 8px; color: inherit; }
     .bc-desc { font-size: 0.9rem; color: var(--muted2); line-height: 1.65; margin-bottom: 16px; }
     .bc-stat { display: flex; align-items: baseline; gap: 8px; padding-top: 14px; border-top: 1px solid var(--border); }
     .bc-stat-val { font-family: var(--font-head); font-size: 1.5rem; font-weight: 700; color: var(--amber); }
@@ -341,6 +346,95 @@
     .node-active { border-color: var(--amber); color: var(--amber); box-shadow: 0 0 10px var(--glow-a); }
     @media (max-width: 1024px) { .bento { grid-template-columns: repeat(2, 1fr); } .bc.featured { grid-column: span 2; } }
     @media (max-width: 640px) { .bento { grid-template-columns: 1fr; } .bc.featured { grid-column: span 1; grid-template-columns: 1fr; } }
+
+    /* ── PLATFORM CARDS ─────────────────────────────────────────────────── */
+    .bento-section-divider { grid-column: 1 / -1; border-top: 1px solid var(--border2); padding: 28px 0 8px; text-align: center; }
+    .bento-divider-label { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--violet); }
+    .bento-divider-sub { font-size: 0.78rem; color: var(--muted); margin-top: 6px; }
+    .platform-card { border-color: rgba(192,132,252,0.22) !important; }
+    .platform-card:hover { border-color: rgba(192,132,252,0.5) !important; box-shadow: 0 0 24px rgba(192,132,252,0.12); }
+    .bc-tag-platform { background: rgba(192,132,252,0.15); color: var(--violet); border-color: rgba(192,132,252,0.3); font-size: 0.6rem; letter-spacing: 0.1em; }
+
+    /* ── DRAWER (workflow detail panel) ───────────────────────────────────── */
+    .drawer { position: fixed; inset: 0; z-index: 200; }
+    .drawer-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.55); backdrop-filter: blur(4px); opacity: 0; transition: opacity 0.24s ease; }
+    [data-theme="light"] .drawer-overlay { background: rgba(20,20,24,0.45); }
+    .drawer.open .drawer-overlay { opacity: 1; }
+    .drawer-panel { position: absolute; top: 0; right: 0; bottom: 0; width: min(560px, 100%); background: var(--bg); border-left: 1px solid var(--border); transform: translateX(100%); transition: transform 0.28s cubic-bezier(0.32,0.72,0.34,1); overflow-y: auto; padding: 32px 32px 56px; }
+    [data-theme="light"] .drawer-panel { background: var(--card); }
+    .drawer.open .drawer-panel { transform: translateX(0); }
+    .drawer-close { position: sticky; top: 0; float: right; background: transparent; border: 1px solid var(--border2); color: var(--muted2); font-size: 1.4rem; line-height: 1; width: 36px; height: 36px; cursor: pointer; transition: all 0.15s; z-index: 1; }
+    .drawer-close:hover { color: var(--amber); border-color: var(--amber); }
+    body.drawer-open { overflow: hidden; }
+
+    .dr-head { padding-right: 48px; }
+    .dr-head-top { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+    .dr-icon { font-size: 2rem; }
+    .dr-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .dr-title { font-family: var(--font-head); font-size: 1.7rem; font-weight: 700; letter-spacing: 0.01em; line-height: 1.2; margin: 0 0 12px; color: var(--text); }
+    .dr-desc { font-size: 0.95rem; color: var(--muted2); line-height: 1.65; margin-bottom: 24px; }
+
+    .dr-headline { display: flex; align-items: baseline; gap: 12px; padding: 18px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-bottom: 28px; }
+    .dr-headline-val { font-family: var(--font-head); font-size: 2.2rem; font-weight: 800; color: var(--amber); }
+    .dr-headline-lbl { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.04em; color: var(--muted); text-transform: uppercase; }
+
+    .dr-impact { background: var(--surface); border-left: 3px solid var(--neon); padding: 18px 20px; margin-bottom: 28px; }
+    .dr-impact-cost { border-left-color: var(--violet); }
+    .dr-impact-eyebrow { font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--neon); margin-bottom: 10px; }
+    .dr-impact-cost .dr-impact-eyebrow { color: var(--violet); }
+    .dr-impact-assume { font-size: 0.78rem; color: var(--muted); line-height: 1.55; margin-bottom: 10px; font-style: italic; }
+    .dr-impact-headline { font-family: var(--font-head); font-size: 1.05rem; font-weight: 700; color: var(--text); line-height: 1.4; }
+    .dr-impact-annual { font-size: 0.85rem; color: var(--muted2); margin-top: 6px; }
+    .dr-impact-comps { list-style: none; padding: 0; margin: 0 0 12px; }
+    .dr-impact-comps li { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; font-size: 0.82rem; border-bottom: 1px dashed var(--border); }
+    .dr-impact-comps li:last-child { border-bottom: none; }
+    .dr-comp-name { color: var(--muted2); }
+    .dr-comp-price { color: var(--rose); font-family: var(--font-mono); font-size: 0.78rem; }
+    .dr-impact-row { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; font-size: 0.82rem; border-top: 1px solid var(--border); }
+    .dr-impact-row-lbl { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); align-self: center; }
+    .dr-impact-row-val { color: var(--text); font-weight: 600; text-align: right; }
+    .dr-impact-us .dr-impact-row-val { color: var(--neon); }
+    .dr-impact .dr-impact-headline { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); color: var(--neon); }
+    .dr-impact-cost .dr-impact-headline { color: var(--violet); }
+
+    .dr-section-h { font-family: var(--font-mono); font-size: 0.74rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 28px 0 14px; }
+
+    .dr-steps { list-style: none; padding: 0; margin: 0; }
+    .dr-step { display: grid; grid-template-columns: 32px 1fr; gap: 14px; padding: 12px 0; border-bottom: 1px dashed var(--border); }
+    .dr-step:last-child { border-bottom: none; }
+    .dr-step-n { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 700; color: var(--amber); width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--amber); }
+    .dr-step-t { font-weight: 600; font-size: 0.95rem; color: var(--text); margin-bottom: 4px; }
+    .dr-step-d { font-size: 0.85rem; color: var(--muted2); line-height: 1.6; }
+
+    .dr-metrics { background: var(--surface); border: 1px solid var(--border); padding: 4px 0; }
+    .dr-metric-row { display: grid; grid-template-columns: 1.4fr 1fr 24px 1fr; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+    .dr-metric-row:last-child { border-bottom: none; }
+    .dr-metric-lbl { font-weight: 500; color: var(--muted2); }
+    .dr-metric-before { color: var(--rose); text-decoration: line-through; font-family: var(--font-mono); font-size: 0.78rem; }
+    .dr-metric-arrow { color: var(--muted); text-align: center; }
+    .dr-metric-after { color: var(--neon); font-weight: 700; font-family: var(--font-mono); font-size: 0.82rem; }
+
+    .dr-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .dr-chip { font-family: var(--font-mono); font-size: 0.72rem; padding: 6px 12px; border: 1px solid var(--border2); color: var(--muted2); letter-spacing: 0.02em; }
+
+    .dr-uses { list-style: none; padding: 0; margin: 0; }
+    .dr-uses li { font-size: 0.9rem; color: var(--muted2); padding: 8px 0 8px 22px; position: relative; line-height: 1.5; }
+    .dr-uses li::before { content: '▸'; position: absolute; left: 0; color: var(--amber); font-weight: 700; }
+
+    .dr-deploy { display: flex; align-items: center; gap: 12px; margin-top: 28px; padding: 14px 18px; background: var(--surface); border-left: 3px solid var(--amber); }
+    .dr-deploy-lbl { font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber); }
+    .dr-deploy-val { font-size: 0.88rem; color: var(--text); }
+
+    .dr-cta { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); }
+    .dr-cta .btn { width: 100%; }
+
+    @media (max-width: 640px) {
+      .drawer-panel { width: 100%; padding: 24px 20px 48px; }
+      .dr-title { font-size: 1.4rem; }
+      .dr-headline-val { font-size: 1.8rem; }
+      .dr-metric-row { grid-template-columns: 1fr; gap: 4px; }
+      .dr-metric-arrow { display: none; }
+    }
 
     /* ── INDUSTRY TABS ────────────────────────────────────────────────────── */
     .ind-tabs { display: flex; gap: 2px; justify-content: center; margin-bottom: 36px; flex-wrap: wrap; }
@@ -383,7 +477,28 @@
     .calc-result-card { text-align: center; padding: 20px 12px; background: var(--surface); }
     .calc-result-val { font-family: var(--font-head); font-size: 1.8rem; font-weight: 700; color: var(--amber); margin-bottom: 4px; }
     .calc-result-val.neon { color: var(--neon); }
+    .calc-result-val.violet { color: var(--violet); }
     .calc-result-label { font-family: var(--font-mono); font-size: 0.65rem; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+
+    .calc-platforms { padding: 20px 0 8px; border-top: 1px solid var(--border); margin-top: 16px; }
+    .calc-platforms-label { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); margin-bottom: 12px; letter-spacing: 0.06em; text-transform: uppercase; display: block; }
+    .calc-platforms-hint { text-transform: none; letter-spacing: 0; opacity: 0.7; font-size: 0.68rem; }
+    .calc-plat-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .calc-chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border: 1px solid var(--border2); cursor: pointer; user-select: none; transition: all 0.15s; font-size: 0.82rem; }
+    .calc-chip input { accent-color: var(--violet); margin: 0; cursor: pointer; }
+    .calc-chip:hover { border-color: var(--violet); }
+    .calc-chip.checked { border-color: var(--violet); background: rgba(192,132,252,0.08); }
+    .calc-chip-name { color: var(--text); }
+    .calc-chip-price { font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); letter-spacing: 0.02em; }
+    .calc-chip.checked .calc-chip-price { color: var(--violet); }
+
+    .calc-summary { background: var(--surface); border: 1px solid var(--border); padding: 4px 0; margin-bottom: 20px; }
+    .calc-summary-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; border-bottom: 1px solid var(--border); }
+    .calc-summary-row:last-child { border-bottom: none; }
+    .calc-summary-lbl { font-family: var(--font-mono); font-size: 0.74rem; color: var(--muted2); letter-spacing: 0.04em; text-transform: uppercase; }
+    .calc-summary-val { font-family: var(--font-head); font-size: 1.4rem; font-weight: 800; color: var(--amber); }
+    .calc-summary-grant { background: rgba(0,255,136,0.05); }
+    .calc-summary-grant .calc-summary-val { color: var(--neon); }
     .calc-breakdown { margin: 20px 0; border: 1px solid var(--border); overflow: hidden; }
     .calc-breakdown-title { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; padding: 10px 16px; background: var(--surface); border-bottom: 1px solid var(--border); }
     .calc-bk-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; padding: 8px 16px; font-family: var(--font-mono); font-size: 0.76rem; border-bottom: 1px solid var(--border); align-items: center; }
@@ -397,7 +512,7 @@
     .calc-bk-row.total .task-name { color: var(--amber); }
     .calc-cta { text-align: center; margin-top: 20px; }
     .calc-note { text-align: center; font-family: var(--font-mono); font-size: 0.68rem; color: var(--muted); margin-top: 12px; }
-    @media (max-width: 640px) { .calc-inputs { grid-template-columns: 1fr; } .calc-results-grid { grid-template-columns: repeat(2, 1fr); } .calc-box { padding: 20px; } .calc-bk-row { font-size: 0.68rem; padding: 6px 10px; } }
+    @media (max-width: 640px) { .calc-inputs { grid-template-columns: 1fr; } .calc-results-grid { grid-template-columns: repeat(2, 1fr); } .calc-box { padding: 20px; } .calc-bk-row { font-size: 0.68rem; padding: 6px 10px; } .calc-summary-row { flex-direction: column; align-items: flex-start; gap: 6px; } .calc-summary-val { font-size: 1.2rem; } }
 
     /* ── PROCESS ───────────────────────────────────────────────────────────── */
     .process { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; background: var(--border); }
@@ -605,7 +720,7 @@
       <div>
         <div class="hero-status"><span class="dot"></span> SYSTEM ONLINE — DEPLOYING ACROSS SINGAPORE</div>
         <h1>Your workforce<br><span class="grad">augmented by agents</span></h1>
-        <p class="hero-sub">XinceAI builds agentic workflows that handle the repetitive work your team shouldn't be doing — contracts, timesheets, invoices, scheduling.</p>
+        <p class="hero-sub">XinceAI builds agentic workflows and business platforms that handle the repetitive work your team shouldn't be doing — contracts, timesheets, invoices, scheduling, marketing, and more.</p>
         <div class="hero-grant">▸ UP TO 70% GOVERNMENT-FUNDED VIA JR+ GRANT (S$150K CAP)</div>
         <div class="hero-btns" style="justify-content:flex-start">
           <button class="btn btn-fill" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">▸ Book Free Assessment</button>
@@ -621,6 +736,7 @@
       <div class="hud-metric"><div class="hm-n" data-count="577">0</div><div class="hm-l">Hours saved / mo</div></div>
       <div class="hud-metric"><div class="hm-n" data-count="96" data-suffix="%">0</div><div class="hm-l">Accuracy</div></div>
       <div class="hud-metric"><div class="hm-n" data-count="9">0</div><div class="hm-l">Live workflows</div></div>
+      <div class="hud-metric"><div class="hm-n" data-count="8">0</div><div class="hm-l">Business platforms</div></div>
       <div class="hud-metric"><div class="hm-n" data-count="3" data-suffix="wk">0</div><div class="hm-l">Deploy time</div></div>
     </div>
   </div>
@@ -634,6 +750,7 @@
     <div class="trust-item">▸ BUILT FOR SG SMEs</div>
     <div class="trust-item">▸ PDPA & MAIGF</div>
     <div class="trust-item">▸ 350 STAFF TESTED</div>
+    <div class="trust-item">▸ 17 SME PRODUCTS READY</div>
   </div>
 </div>
 
@@ -649,9 +766,9 @@
 <section id="workflows">
   <div class="wrap">
     <div class="sh anim">
-      <div class="eyebrow">— Production Workflows —</div>
-      <h2>9 Agents. Battle-Tested.</h2>
-      <p>Each workflow ran internally at Elitez Group (350 staff, 9 cities) before client rollout. Real metrics. Real savings.</p>
+      <div class="eyebrow">— Production Workflows & Business Platforms —</div>
+      <h2>9 Workflows. 8 Platforms. One Ecosystem.</h2>
+      <p>All workflows ran internally at Elitez Group (350 staff, 9 cities) before client rollout. Extended platforms are deploy-ready SME products across HR, compliance, marketing, intelligence, and training.</p>
     </div>
     <div class="bento" id="bento"></div>
   </div>
@@ -683,10 +800,22 @@
       <p>Enter your company details. Savings update in real time based on Singapore salary benchmarks.</p>
     </div>
     <div class="calc-box anim">
-      <div class="calc-inputs">
+      <div class="calc-inputs" style="grid-template-columns:repeat(4,1fr)">
+        <div class="calc-field">
+          <label>Company Size</label>
+          <select id="calc-company">
+            <option value="" selected>Select…</option>
+            <option value="5">0–10 employees</option>
+            <option value="20">10–30 employees</option>
+            <option value="45">30–60 employees</option>
+            <option value="90">60–120 employees</option>
+            <option value="160">120–200 employees</option>
+            <option value="250">200+ employees</option>
+          </select>
+        </div>
         <div class="calc-field">
           <label>Industry</label>
-          <select id="calc-industry" onchange="calcROI()">
+          <select id="calc-industry">
             <option value="staffing">Staffing & Recruitment</option>
             <option value="services">Professional Services</option>
             <option value="fnb">F&B / Retail</option>
@@ -698,35 +827,57 @@
         </div>
         <div class="calc-field">
           <label>Department</label>
-          <select id="calc-dept" onchange="calcROI()">
+          <select id="calc-dept">
             <option value="hr">HR / People Ops</option>
             <option value="finance">Finance / Accounts</option>
-            <option value="ops">Operations / Admin</option>
+            <option value="ops">Operations</option>
+            <option value="admin">Admin / Office</option>
+            <option value="marketing">Marketing</option>
+            <option value="sales">Sales</option>
+            <option value="cs">Customer Service</option>
           </select>
         </div>
         <div class="calc-field">
           <label>Team Size</label>
-          <input type="number" id="calc-team" placeholder="e.g. 3" min="1" max="50" value="3" oninput="calcROI()" />
+          <input type="number" id="calc-team" placeholder="e.g. 3" min="1" max="100" value="3" />
+          <div class="calc-hint" id="calc-team-hint">Auto from company size</div>
         </div>
       </div>
-      <div class="calc-inputs" style="grid-template-columns: 1fr 1fr; margin-bottom: 0;">
+      <div class="calc-inputs" style="grid-template-columns: 1fr 1fr;">
         <div class="calc-field">
           <label>Monthly Admin Hours (est.)</label>
-          <input type="number" id="calc-hours" placeholder="e.g. 250" min="20" max="5000" oninput="calcROI()" />
-          <div class="calc-hint" id="calc-hours-hint">Suggested: —</div>
+          <input type="number" id="calc-hours" placeholder="auto" min="20" max="20000" />
+          <div class="calc-hint" id="calc-hours-hint">Auto from team × dept tasks</div>
         </div>
         <div class="calc-field">
           <label>Avg. Monthly Salary (S$)</label>
-          <input type="number" id="calc-salary" placeholder="auto" min="1500" max="15000" oninput="calcROI()" />
+          <input type="number" id="calc-salary" placeholder="auto" min="1500" max="15000" />
           <div class="calc-salary-badge" id="calc-salary-hint">Based on industry benchmark</div>
         </div>
       </div>
 
+      <div class="calc-platforms">
+        <label class="calc-platforms-label">Platforms In Scope <span class="calc-platforms-hint">— tick the platforms you'd otherwise license from a competitor</span></label>
+        <div class="calc-plat-chips" id="calc-plat-chips"></div>
+      </div>
+
       <div class="calc-results" id="calc-results">
-        <div class="calc-results-grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="calc-results-grid">
           <div class="calc-result-card"><div class="calc-result-val" id="cr-hours">—</div><div class="calc-result-label">Hours Saved / Mo</div></div>
           <div class="calc-result-card"><div class="calc-result-val neon" id="cr-cost">—</div><div class="calc-result-label">Monthly Cost Cut</div></div>
-          <div class="calc-result-card"><div class="calc-result-val" id="cr-annual">—</div><div class="calc-result-label">Annual Savings</div></div>
+          <div class="calc-result-card"><div class="calc-result-val" id="cr-annual">—</div><div class="calc-result-label">Annual Workflow Savings</div></div>
+          <div class="calc-result-card"><div class="calc-result-val violet" id="cr-platform">—</div><div class="calc-result-label">Platform Stack Avoided / Yr</div></div>
+        </div>
+
+        <div class="calc-summary" id="calc-summary">
+          <div class="calc-summary-row">
+            <span class="calc-summary-lbl">Combined annual value</span>
+            <span class="calc-summary-val" id="cr-combined">—</span>
+          </div>
+          <div class="calc-summary-row calc-summary-grant">
+            <span class="calc-summary-lbl">After up to 70% WSG JR+ grant on engagement cost</span>
+            <span class="calc-summary-val" id="cr-effective">—</span>
+          </div>
         </div>
 
         <div class="calc-breakdown" id="calc-breakdown">
@@ -831,7 +982,7 @@
   <div class="wrap">
     <div class="ft-top">
       <div class="ft-brand"><div class="nav-brand"><div class="nav-mark">X</div><span class="nav-wordmark">XINCE<em>AI</em></span></div><p>Agentic AI workflows for Singapore SMEs. A technology arm of the Elitez Group.</p></div>
-      <div class="ft-col"><h3>Solutions</h3><a href="#workflows">Workflows</a><a href="#calculator">ROI Calculator</a><a href="#grant">Funding</a></div>
+      <div class="ft-col"><h3>Solutions</h3><a href="#workflows">AI Workflows</a><a href="#workflows">ESOP Platform</a><a href="#workflows">Elitez EOR</a><a href="#workflows">Marketing (Pulse)</a><a href="#workflows">Site Creator</a><a href="#workflows">Market Intelligence</a><a href="#workflows">Employee Lifecycle</a><a href="#calculator">ROI Calculator</a><a href="#grant">Funding</a></div>
       <div class="ft-col"><h3>Company</h3><a href="https://elitez.asia" target="_blank">Elitez Group</a><a href="https://derrick-pixel.github.io/wsg_jrplus/" target="_blank">JR+ Programme</a><a href="mailto:derrick@elitez.asia">Contact</a></div>
     </div>
     <div class="ft-bottom"><p>© 2026 XINCEAI PTE LTD · SINGAPORE</p><p>A TECHNOLOGY ARM OF ELITEZ GROUP</p></div>
@@ -839,6 +990,15 @@
 </footer>
 
 <div class="toast" id="toast"></div>
+
+<!-- ── Drawer (workflow detail panel) ── -->
+<div id="drawer" class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" hidden>
+  <div class="drawer-overlay" onclick="closeDrawer()" aria-hidden="true"></div>
+  <aside class="drawer-panel" aria-label="Workflow detail">
+    <button class="drawer-close" onclick="closeDrawer()" aria-label="Close detail panel">×</button>
+    <div class="drawer-content"></div>
+  </aside>
+</div>
 
 <script>
 // ── Theme Toggle ─────────────────────────────────────────────────────────────
@@ -858,45 +1018,377 @@ function setTheme(mode) {
 const WF = [
   { icon:'💬', name:'WhatsApp Deployment Scheduler', tag:'OPS', tagCls:'tag-ops',
     desc:'Coordinate worker deployments via WhatsApp. Auto-confirm, reschedule, track attendance.',
-    val:'77 hrs', label:'reclaimed / month', before:'3.5 hrs/day', after:'20 min/day', featured:true },
+    val:'77 hrs', label:'reclaimed / month', before:'3.5 hrs/day', after:'20 min/day', featured:true,
+    detail: {
+      steps: [
+        { title:'06:30 daily roster pull', desc:'Agent pulls today\'s deployments from your sheet, CRM, or scheduling tool.' },
+        { title:'WhatsApp dispatch', desc:'Sends each worker their site, time, and uniform via WhatsApp Business API.' },
+        { title:'Confirm + escalate', desc:'Tracks confirmations live; escalates no-shows after 30 minutes to ops lead.' },
+        { title:'Auto-fill open shifts', desc:'Pulls from on-call pool, offers shifts to next eligible worker.' },
+        { title:'Daily attendance summary', desc:'Posts a single dashboard view of who\'s in, who\'s late, who\'s pending.' }
+      ],
+      integrates: ['WhatsApp Business API','Google Sheets','Internal roster DB','Slack alerts'],
+      useCases: ['Promoter agencies','Security firms','Event staffing','F&B chains with daily shifts'],
+      metrics: [
+        { label:'Response time', before:'4 hours', after:'12 minutes' },
+        { label:'Confirmed shifts', before:'60%', after:'92%' },
+        { label:'Manual exec hours', before:'3.5 hrs/day', after:'20 min/day' }
+      ],
+      deploy:'2–3 weeks · WhatsApp Business API verification + roster mapping',
+      impact: { type:'time', assumption:'1 ops exec coordinating ~50 daily deployments', monthly:'77 hours / month reclaimed', annual:'≈ S$55,000 / year at S$60/hr loaded' }
+    } },
   { icon:'📝', name:'HR Contract Creation', tag:'HR', tagCls:'tag-hr',
     desc:'Auto-generate MOM-compliant employment contracts from templates.',
-    val:'3×', label:'HR capacity', before:'30–45 min', after:'10–15 min' },
+    val:'3×', label:'HR capacity', before:'30–45 min', after:'10–15 min',
+    detail: {
+      steps: [
+        { title:'Recruiter fills offer form', desc:'Role, salary, start date, work pass type, special clauses.' },
+        { title:'Agent picks template', desc:'Selects MOM-compliant template (local / EP / S Pass / WP), language variant.' },
+        { title:'Personalises + generates PDF', desc:'Auto-fills personal data, benefits, leave, notice period.' },
+        { title:'Sign-off routing', desc:'Manager review → candidate via DocuSign / HelloSign.' },
+        { title:'Stores signed copy', desc:'Filed to HR drive, indexed by employee ID, audit-logged.' }
+      ],
+      integrates: ['Google Drive','DocuSign / HelloSign','MOM contract templates','BambooHR / HRIS'],
+      useCases: ['HR teams handling 20+ hires/month','Multi-language hires (EN/CN/MY)','Foreign worker passes (WP/SP)','Replacement & renewal contracts'],
+      metrics: [
+        { label:'Drafting time', before:'30–45 min', after:'10–15 min' },
+        { label:'Compliance errors', before:'5–10%', after:'<0.1%' },
+        { label:'HR capacity', before:'1×', after:'3×' }
+      ],
+      deploy:'2 weeks · template review + sign-off workflow',
+      impact: { type:'time', assumption:'8 hires / month for a 100-staff SG SME', monthly:'2.5–4 hours / month saved', annual:'≈ S$1,800–2,800 / year — plus avoided MOM compliance penalties' }
+    } },
   { icon:'🚀', name:'Onboarding Automation', tag:'HR', tagCls:'tag-hr',
     desc:'Orchestrate IT provisioning, document collection, training. 100% step completion.',
-    val:'4×', label:'faster onboarding', before:'2–5 hrs', after:'30 min' },
+    val:'4×', label:'faster onboarding', before:'2–5 hrs', after:'30 min',
+    detail: {
+      steps: [
+        { title:'Trigger', desc:'Signed contract or new hire in HRIS kicks off the workflow.' },
+        { title:'Provision accounts', desc:'Google Workspace, Slack, internal tools — created with right permissions.' },
+        { title:'Welcome pack + day-1 schedule', desc:'Sends welcome email with logistics, manager intro, first-day plan.' },
+        { title:'Schedule training modules', desc:'Auto-assigns courses in the Staff Training Platform; tracks completion.' },
+        { title:'Escalate blockers', desc:'Flags incomplete steps to manager and HR after threshold.' }
+      ],
+      integrates: ['Google Workspace','Slack','Staff Training Platform','BambooHR / HRIS','IT ticketing'],
+      useCases: ['SMEs hiring 5+/month','Multi-system access (sales / engineering)','Compliance-heavy industries','Distributed remote teams'],
+      metrics: [
+        { label:'Time per hire', before:'2–5 hrs', after:'30 min' },
+        { label:'Step completion', before:'60–70%', after:'100%' },
+        { label:'Time to productive', before:'2 weeks', after:'5 days' }
+      ],
+      deploy:'3 weeks · system access mapping + IT integrations',
+      impact: { type:'time', assumption:'8 hires / month for a 100-staff SG SME', monthly:'12–36 hours / month saved across HR + IT', annual:'≈ S$8,600–25,900 / year at S$60/hr loaded' }
+    } },
   { icon:'⏱️', name:'Timesheet OCR', tag:'OPS', tagCls:'tag-ops',
     desc:'Scan handwritten timesheets, extract hours, validate against schedules.',
-    val:'98%', label:'zero-touch rate', before:'10–30 min', after:'5–8 min' },
+    val:'98%', label:'zero-touch rate', before:'10–30 min', after:'5–8 min',
+    detail: {
+      steps: [
+        { title:'Field staff submit photo', desc:'Send via WhatsApp or email — no app install required.' },
+        { title:'AI OCR extraction', desc:'Reads name, dates, hours, project codes, signatures.' },
+        { title:'Validates against schedule', desc:'Cross-checks deployment record and contracted hours.' },
+        { title:'Flags anomalies', desc:'Overtime breaches, missing signatures, double bookings sent to ops.' },
+        { title:'Push to payroll', desc:'Clean structured data flows directly to Xero / payroll system.' }
+      ],
+      integrates: ['Claude Vision / Google Vision OCR','Xero','Internal payroll','WhatsApp inbox'],
+      useCases: ['Construction site timesheets','Security guards','F&B with paper logbooks','Manufacturing shift reports'],
+      metrics: [
+        { label:'Processing per timesheet', before:'10–30 min', after:'5–8 min' },
+        { label:'Zero-touch rate', before:'~0%', after:'98%' },
+        { label:'Error rate', before:'4–12%', after:'<0.5%' }
+      ],
+      deploy:'2 weeks · OCR tuning to your timesheet format',
+      impact: { type:'time', assumption:'200 timesheets / month for a labour-heavy SME', monthly:'17–73 hours / month saved', annual:'≈ S$12,000–52,000 / year at S$60/hr loaded' }
+    } },
   { icon:'📄', name:'AI Resume Builder', tag:'SALES', tagCls:'tag-sales',
     desc:'Transform raw CVs into job-matched, ATS-optimised resumes in seconds.',
-    val:'85%', label:'time reduction', before:'20–30 min', after:'3–5 min' },
+    val:'85%', label:'time reduction', before:'20–30 min', after:'3–5 min',
+    detail: {
+      steps: [
+        { title:'Upload raw CV', desc:'PDF, Word, scan — agent extracts structured data, identifies gaps.' },
+        { title:'Paste job spec', desc:'Agent compares candidate skills against role requirements.' },
+        { title:'Rewrite to match', desc:'Bullets reframed for ATS keywords, achievements quantified.' },
+        { title:'Generate client template', desc:'Output in your agency\'s branded template, ATS-clean PDF.' },
+        { title:'Bulk shortlist mode', desc:'Process 20+ candidates against same job spec in one batch.' }
+      ],
+      integrates: ['Bullhorn','Workday','Greenhouse','Gmail / Outlook','LinkedIn export'],
+      useCases: ['Recruitment agencies','Executive search','RPO providers','HR teams running mass hiring'],
+      metrics: [
+        { label:'Time per CV', before:'20–30 min', after:'3–5 min' },
+        { label:'Recruiter capacity', before:'1×', after:'5–8×' },
+        { label:'Interview callback rate', before:'baseline', after:'+10–15%' }
+      ],
+      deploy:'1 week · template branding + ATS export setup',
+      impact: { type:'time', assumption:'50 CVs / month for a recruitment agency', monthly:'14–22 hours / month saved per recruiter', annual:'≈ S$10,000–16,000 / year per recruiter — plus higher placement throughput' }
+    } },
   { icon:'💰', name:'Daily SOA Checker', tag:'FIN', tagCls:'tag-fin',
     desc:'Automated statement of account reconciliation against Xero. Real-time DSO.',
-    val:'14d', label:'DSO reduction', before:'4–6 hrs/mo', after:'<30 min' },
+    val:'14d', label:'DSO reduction', before:'4–6 hrs/mo', after:'<30 min',
+    detail: {
+      steps: [
+        { title:'07:00 daily pull', desc:'Pulls outstanding invoices from Xero each morning.' },
+        { title:'Match to bank', desc:'Reconciles against bank deposits, PayNow logs, FX statements.' },
+        { title:'Detect partials + ageing', desc:'Allocates partial payments, flags 30/60/90+ overdue.' },
+        { title:'DSO + watchlist email', desc:'Daily summary to finance lead with top exposures.' },
+        { title:'Drafts reminder emails', desc:'Pre-written reminder emails ready for review and send.' }
+      ],
+      integrates: ['Xero','Bank statement APIs (DBS / OCBC / UOB)','Gmail','Google Sheets'],
+      useCases: ['SMEs with 50+ active invoices/mo','B2B services with NET-30 terms','Multi-entity companies','Subscription / retainer businesses'],
+      metrics: [
+        { label:'Manual reconciliation', before:'4–6 hrs/month', after:'<30 min' },
+        { label:'DSO', before:'45 days', after:'31 days' },
+        { label:'Overdue catch rate', before:'60%', after:'100%' }
+      ],
+      deploy:'1–2 weeks · Xero OAuth + invoice rules mapping',
+      impact: { type:'time', assumption:'Daily reconciliation for an SME with S$500K active AR', monthly:'~5 hours / month saved + 14-day DSO compression', annual:'≈ S$3,500 / year in time saved + cash-flow value of earlier collection' }
+    } },
   { icon:'🧾', name:'Receipt Claims', tag:'FIN', tagCls:'tag-fin',
     desc:'Scan receipts, validate policy compliance, route for approval.',
-    val:'95%', label:'accuracy', before:'4–9 min', after:'1–2 min' },
+    val:'95%', label:'accuracy', before:'4–9 min', after:'1–2 min',
+    detail: {
+      steps: [
+        { title:'Snap and send', desc:'Staff send receipt photo via WhatsApp / Slack / email.' },
+        { title:'AI extracts fields', desc:'Vendor, amount, date, GST, category — auto-categorised.' },
+        { title:'Policy validation', desc:'Checks against limits, allowed categories, project budgets.' },
+        { title:'Approval routing', desc:'Manager → finance based on amount thresholds.' },
+        { title:'Post to Xero', desc:'Approved claims posted to Xero, staff notified of reimbursement.' }
+      ],
+      integrates: ['Xero','Slack','WhatsApp inbox','Expense policy rules engine'],
+      useCases: ['Distributed teams','Sales / field staff','F&B with multiple outlets','Project-based teams with budgets'],
+      metrics: [
+        { label:'Time per receipt', before:'4–9 min', after:'1–2 min' },
+        { label:'Accuracy', before:'85%', after:'95%+' },
+        { label:'Reimbursement cycle', before:'14 days', after:'3 days' }
+      ],
+      deploy:'1 week · expense policy rules + Xero integration',
+      impact: { type:'time', assumption:'75 receipts / month for a 100-staff SME', monthly:'4–9 hours / month saved across staff + finance', annual:'≈ S$2,800–6,300 / year at S$60/hr loaded' }
+    } },
   { icon:'📊', name:'Commission Verification', tag:'FIN', tagCls:'tag-fin',
     desc:'Cross-check commission claims against CRM and contracts.',
-    val:'83%', label:'fewer disputes', before:'15 hrs/mo', after:'5 hrs/mo' },
+    val:'83%', label:'fewer disputes', before:'15 hrs/mo', after:'5 hrs/mo',
+    detail: {
+      steps: [
+        { title:'Sales reps submit claims', desc:'Each claim references a placement / deal ID.' },
+        { title:'Cross-check CRM', desc:'Validates the deal exists, status, contract value.' },
+        { title:'Verify terms + guarantees', desc:'Checks fee terms, replacement guarantee period, payment receipt.' },
+        { title:'Flag disputes with evidence', desc:'Disputed claims surface to ops with full audit trail.' },
+        { title:'Route to payroll', desc:'Verified claims posted; payout cycle drops from 5–7 to 1–2 days.' }
+      ],
+      integrates: ['Bullhorn / Salesforce','Internal payroll','Contract DB','Slack'],
+      useCases: ['Recruitment agencies','Real estate brokerages','Insurance brokers','Commission-heavy sales orgs'],
+      metrics: [
+        { label:'Verification time', before:'15 hrs/month', after:'5 hrs/month' },
+        { label:'Dispute rate', before:'30%', after:'<5%' },
+        { label:'Payout cycle', before:'5–7 days', after:'1–2 days' }
+      ],
+      deploy:'2 weeks · CRM mapping + commission rules engine',
+      impact: { type:'time', assumption:'60 commission claims / month for a recruitment or sales SME', monthly:'10 hours / month saved + ~25% fewer disputes', annual:'≈ S$7,200 / year in time saved + lower dispute resolution cost' }
+    } },
   { icon:'📦', name:'Doc Validation at Scale', tag:'OPS', tagCls:'tag-ops',
     desc:'Validate thousands of documents in campaigns. <1 second each.',
-    val:'90%', label:'cost reduction', before:'S$15K', after:'<S$1K' },
+    val:'90%', label:'cost reduction', before:'S$15K', after:'<S$1K',
+    detail: {
+      steps: [
+        { title:'Bulk upload', desc:'Drop 1,000+ documents (receipts, certs, IDs) into the validation queue.' },
+        { title:'Rule-based validation', desc:'AI checks format, completeness, authenticity signals against your ruleset.' },
+        { title:'Anomaly flagging', desc:'Outliers and suspicious docs surfaced for human review only.' },
+        { title:'Per-document audit log', desc:'Each decision recorded with rationale for compliance audits.' },
+        { title:'Sortable validation report', desc:'CSV / dashboard output, filterable by status, reason, batch.' }
+      ],
+      integrates: ['Cloud storage (S3 / GCS)','Claude Vision','Audit log DB','Google Sheets export'],
+      useCases: ['Marketing campaigns with proof-of-purchase','Govt grant claim batches','Insurance claim packs','Compliance & KYC at scale'],
+      metrics: [
+        { label:'Cost per 1,000 docs', before:'S$10–15K', after:'<S$1K' },
+        { label:'Time per doc', before:'2–5 min', after:'<1 sec' },
+        { label:'Audit completeness', before:'~70%', after:'100%' }
+      ],
+      deploy:'2 weeks · ruleset definition + sample tuning',
+      impact: { type:'cost', assumption:'2 high-volume validation campaigns / year', monthly:'Per-campaign saving — not monthly', annual:'≈ S$28,000 / year saved vs S$30,000 manual baseline' }
+    } },
+  { icon:'📈', name:'Elitez-ESOP Platform', tag:'HR', tagCls:'tag-hr',
+    desc:'Full employee share option plan: ledger, vesting schedules, trading windows, document generation, committee + participant portals.',
+    val:'100%', label:'ESOP admin automated', before:'Lawyers + spreadsheets', after:'Self-serve portal', platform:true,
+    detail: {
+      steps: [
+        { title:'Event-sourced ledger', desc:'Every grant, vest, exercise, and forfeit is an immutable event with full audit trail.' },
+        { title:'Vesting schedules', desc:'Cliff + monthly + accelerator triggers; supports multiple plan types.' },
+        { title:'Trading windows', desc:'Blackout periods, open windows, board approvals — managed automatically.' },
+        { title:'Document generation', desc:'Option agreements, exercise notices, statements — all auto-generated.' },
+        { title:'Dual portals', desc:'Committee admin portal + participant self-service portal with separate access.' }
+      ],
+      integrates: ['Cap table provider','HRIS','SHA-256 auth','PDF document engine'],
+      useCases: ['Growth-stage SMEs (20+ employees)','Companies competing for talent','Founders preparing for fundraise','Multi-entity groups with cross-entity grants'],
+      metrics: [
+        { label:'Admin time', before:'Lawyers + spreadsheets', after:'Self-serve portal' },
+        { label:'Grant accuracy', before:'Manual reconciliation', after:'100% event-sourced' },
+        { label:'Participant queries', before:'Email back-and-forth', after:'Self-service portal' }
+      ],
+      deploy:'2–3 weeks · plan terms + participant onboarding',
+      impact: { type:'cost', competitors:[ {name:'Carta (Launch tier)', price:'SGD 270 / mo'}, {name:'Pulley (Standard)', price:'SGD 135+ / mo'}, {name:'Vestd (Sapling–Vine)', price:'SGD 130–305 / mo'} ], aggregate:'SGD 200–700 / month + lawyer fees per amendment', vsXince:'Bundled into engagement', annual:'≈ S$2,400–10,000 / year saved vs aggregate competitor stack' }
+    } },
+  { icon:'📣', name:'Elitez Pulse — Marketing Automation', tag:'SALES', tagCls:'tag-sales',
+    desc:'SEO, content marketing, social automation, ROI diagnostic, lead pipeline, and proposal generator. Geographic Arbitrage Engine reduces cost vs local agencies.',
+    val:'3×', label:'marketing output', before:'Manual campaigns', after:'Automated pipeline', platform:true,
+    detail: {
+      steps: [
+        { title:'7-question ROI Diagnostic', desc:'Self-qualifying lead capture — prospects receive a scored marketing gap report.' },
+        { title:'SEO content production', desc:'Content built via geo-arbitrage talent at SME-friendly cost.' },
+        { title:'Social automation', desc:'Cross-posts to LinkedIn / Meta / TikTok on a calendar.' },
+        { title:'Lead pipeline', desc:'Inbound leads tracked, scored, and routed to your sales team.' },
+        { title:'Proposal generator', desc:'PDFs auto-built from a deal record, ready for send-off.' }
+      ],
+      integrates: ['LinkedIn','Meta Ads','TikTok','Google Search Console','Email outreach platforms'],
+      useCases: ['SMEs with zero or fragmented marketing','Service businesses needing inbound leads','Recruitment agencies','B2B SaaS in growth phase'],
+      metrics: [
+        { label:'Marketing output', before:'Manual campaigns', after:'3× automated' },
+        { label:'Lead qualification', before:'Sales-call screening', after:'Self-qualified via diagnostic' },
+        { label:'Cost vs local agency', before:'Premium SG rates', after:'Geo-arbitrage delivery' }
+      ],
+      deploy:'30 days kick-off · ongoing monthly retainer',
+      impact: { type:'cost', competitors:[ {name:'Mutant Communications', price:'SGD 5K–20K / mo'}, {name:'Construct Digital', price:'SGD 3K–10K / mo'}, {name:'2Stallions / iFoundries', price:'SGD 2K–8K / mo'} ], aggregate:'SGD 3,000–10,000 / month for mid-tier SG agency retainer', vsXince:'Geo-arbitrage delivery — fraction of local agency cost', annual:'≈ S$30,000–60,000 / year saved on equivalent retainer' }
+    } },
+  { icon:'🌐', name:'DT Site Creator — Web & Commerce', tag:'OPS', tagCls:'tag-ops',
+    desc:'Rapid deployment of professional static sites and transactional commerce platforms (product catalogues, gifting, events, flash sales). Live in days, not weeks.',
+    val:'48h', label:'site launch time', before:'4–8 weeks', after:'48 hours', platform:true,
+    detail: {
+      steps: [
+        { title:'Pick an archetype', desc:'5 ready archetypes: Static, Portfolio, Discounter, Flashcart, Altru, Passage.' },
+        { title:'Brand + content intake', desc:'Logo, palette, copy — onboarded in a single session.' },
+        { title:'48-hour build', desc:'Site goes from intake to live URL in two days.' },
+        { title:'Mobile + SEO ready', desc:'Lighthouse-tuned, semantic HTML, meta tags, OG cards.' },
+        { title:'Optional commerce backend', desc:'Supabase / Stripe wiring for cart, gifting, or events.' }
+      ],
+      integrates: ['Supabase','Stripe','Cloudflare Pages','Google Analytics','Pulse for campaign microsites'],
+      useCases: ['SMEs needing a professional web presence fast','Product launch microsites','Event registration pages','F&B and gifting commerce'],
+      metrics: [
+        { label:'Site launch', before:'4–8 weeks', after:'48 hours' },
+        { label:'Cost vs agency', before:'S$5K–20K', after:'Fraction of agency cost' },
+        { label:'Maintenance', before:'Bespoke ongoing', after:'Repeatable archetypes' }
+      ],
+      deploy:'48 hours per site · per-archetype playbook',
+      impact: { type:'cost', competitors:[ {name:'SG agency build', price:'SGD 5K–20K initial + 200–500 / mo'}, {name:'Webflow / Wix Studio + freelancer', price:'SGD 25–50 / mo + 5–10K build'}, {name:'Shopify Plus + dev', price:'SGD 50–500 / mo + 5–15K setup'} ], aggregate:'SGD 5,000–15,000 initial + S$200–500 / mo per site', vsXince:'48h delivery via archetype — repeatable quality', annual:'≈ S$12,000–45,000 / year saved on a 3-site / yr cadence' }
+    } },
+  { icon:'🧠', name:'C-Suite Intelligence Dashboard', tag:'FIN', tagCls:'tag-fin',
+    desc:'Aggregates Gmail, Calendar, Tasks, and financial data into executive intelligence: unanswered priorities, team health scores, SOA alerts, and weekly signals.',
+    val:'5×', label:'leadership signal speed', before:'Manual review', after:'Real-time alerts', platform:true,
+    detail: {
+      steps: [
+        { title:'Gmail intelligence', desc:'5,000+ message analysis surfaces unanswered priorities and stuck threads.' },
+        { title:'Calendar + Tasks', desc:'Aggregates upcoming commitments, overdue tasks, blocked items.' },
+        { title:'Xero financials', desc:'Cash, AR, AP, P&L signals overlaid on operational state.' },
+        { title:'Team Pulse', desc:'Health scores from communication frequency and tone signals.' },
+        { title:'Weekly leadership digest', desc:'One Monday-morning email with the week\'s priorities + risks.' }
+      ],
+      integrates: ['Gmail','Google Calendar','Google Tasks','Xero','OAuth-based, no data leaves your tenancy'],
+      useCases: ['Founders + execs of 50–200 staff SMEs','Multi-entity groups','Owners with too many inboxes','Boards requiring monthly intelligence'],
+      metrics: [
+        { label:'Decision speed', before:'Manual review', after:'5× faster' },
+        { label:'Signal cadence', before:'Monthly reports', after:'Real-time alerts' },
+        { label:'BI cost', before:'Enterprise tooling', after:'Fraction of cost' }
+      ],
+      deploy:'1 week · OAuth connection + signal calibration',
+      impact: { type:'cost', competitors:[ {name:'Domo', price:'SGD 800–2,500 / mo'}, {name:'Tableau Cloud', price:'SGD 400–1,500 / mo'}, {name:'Looker Studio Pro + analyst', price:'SGD 500–2,000 / mo'} ], aggregate:'SGD 500–3,000 / month for enterprise BI stack', vsXince:'Bundled OAuth-based intelligence layer', annual:'≈ S$7,000–10,000 / year saved + leadership time recaptured' }
+    } },
+  { icon:'🏢', name:'Elitez EOR', tag:'HR', tagCls:'tag-hr',
+    desc:'Employer of Record for Singapore micro-businesses (1–3 staff). Handles CPF, WICA, IR8A and payroll compliance — fully managed for $59/month.',
+    val:'$59', label:'per month, full compliance', before:'DIY CPF/WICA/IR8A', after:'Fully managed EOR', platform:true,
+    detail: {
+      steps: [
+        { title:'CPF contributions', desc:'Employer + employee CPF calculated, filed, and paid each cycle.' },
+        { title:'WICA insurance', desc:'Work injury compensation insurance arranged and renewed annually.' },
+        { title:'IR8A annual filing', desc:'Year-end IR8A returns prepared and submitted on your behalf.' },
+        { title:'Monthly payroll', desc:'Salary disbursement, payslips, leave tracking — all handled.' },
+        { title:'MOM compliance hotline', desc:'Direct line to a compliance specialist when MOM rules change.' }
+      ],
+      integrates: ['CPF Board','IRAS','WICA insurer panel','Xero (read-only sync)'],
+      useCases: ['1–3 staff micro-SMEs','First-time employers','Foreign founders new to Singapore','Solopreneurs hiring their first hires'],
+      metrics: [
+        { label:'Compliance burden', before:'DIY CPF / WICA / IR8A', after:'Fully managed' },
+        { label:'Monthly cost', before:'Hours of admin', after:'$59 / employee' },
+        { label:'MOM enforcement risk', before:'Real and rising', after:'Specialist-managed' }
+      ],
+      deploy:'Live in 5 working days · onboard via simple HRIS form',
+      impact: { type:'cost', competitors:[ {name:'Deel / Remote', price:'~SGD 810 / mo per employee'}, {name:'Multiplier', price:'~SGD 540 / mo per employee'}, {name:'Skuad / RemoFirst', price:'~SGD 270 / mo per employee'} ], aggregate:'SGD 270–810 / month per employee for global EOR competitors', vsXince:'SGD 80 / month per employee', annual:'≈ S$2,500–9,000 / year saved per employee · 1–3 staff micro-SME' }
+    } },
+  { icon:'🔍', name:'Market Insights & Intelligence', tag:'OPS', tagCls:'tag-ops',
+    desc:'9 AI subagents deliver a complete competitive intelligence package: competitor database, market sizing, pricing strategy, Blue-Ocean whitespace atlas, and branded PDF report.',
+    val:'Days', label:'not weeks', before:'S$15K–50K consultant', after:'AI-powered sprint', platform:true,
+    detail: {
+      steps: [
+        { title:'Brief intake', desc:'Target market, geography, product category — captured in one form.' },
+        { title:'9 subagents run in parallel', desc:'Competitor DB, market sizing, pricing, blue-ocean atlas, regulatory scan, partner map, demand signals, website audit.' },
+        { title:'Synthesis pass', desc:'Findings cross-referenced and consolidated into one narrative.' },
+        { title:'Branded PDF report', desc:'Full-bleed PDF deliverable in your company branding.' },
+        { title:'Re-runnable', desc:'Same brief + later date = updated intelligence; reusable across launches.' }
+      ],
+      integrates: ['Public web scraping','LinkedIn / Crunchbase signals','Google Search','Branded PDF engine'],
+      useCases: ['SMEs entering a new market','Pre-launch product validation','Pricing strategy reviews','Investor / board prep'],
+      metrics: [
+        { label:'Cost', before:'S$15K–50K consultant', after:'S$2K–5K sprint' },
+        { label:'Turnaround', before:'4–8 weeks', after:'Days' },
+        { label:'Reusability', before:'Bespoke deck', after:'Re-runnable on demand' }
+      ],
+      deploy:'3–5 days from brief to delivery',
+      impact: { type:'cost', competitors:[ {name:'Boutique strategy consultant', price:'SGD 20K–60K per engagement'}, {name:'Frost & Sullivan / IDC report', price:'SGD 7K–35K per report'}, {name:'McKinsey / BCG (lite)', price:'SGD 80K+ per engagement'} ], aggregate:'SGD 15,000–50,000 per engagement for equivalent depth', vsXince:'SGD 2,000–5,000 per Sprint', annual:'≈ S$15,000–55,000 / sprint saved · ~2 sprints / yr typical' }
+    } },
+  { icon:'🎮', name:'Gamified Employee Lifecycle Platform', tag:'HR', tagCls:'tag-hr',
+    desc:'SkillsFuture & MOM-mapped career progression, KPI tracking, preboarding quests, leave management, and claims — with a gamification layer that makes growth visible and motivating.',
+    val:'100%', label:'career transparency', before:'Vague career paths', after:'Mapped + tracked', platform:true,
+    detail: {
+      steps: [
+        { title:'Career maps with real salary bands', desc:'Tracks aligned to SkillsFuture frameworks and MOM occupational data.' },
+        { title:'KPI tracking with XP', desc:'Performance against goals visualised as experience points.' },
+        { title:'Boss battle promotion gates', desc:'Promotion criteria become explicit, gameable goals — not opaque decisions.' },
+        { title:'Preboarding quest chains', desc:'Day-0 to day-30 onboarding rendered as a sequence of quests.' },
+        { title:'Leave + claims + policy QA', desc:'All HR self-service consolidated in one engaging interface.' }
+      ],
+      integrates: ['SkillsFuture frameworks','MOM occupational data','HRIS / payroll','Onboarding Automation workflow'],
+      useCases: ['SMEs competing for talent without enterprise L&D budgets','Companies with high-turnover frontline staff','Founders rebuilding HR culture','Multi-faction orgs (Engineering / Ops / Sales)'],
+      metrics: [
+        { label:'Career transparency', before:'Vague paths', after:'Mapped + tracked' },
+        { label:'Engagement signal', before:'Annual review only', after:'Live XP + quest progress' },
+        { label:'Retention impact', before:'Reactive', after:'Proactive growth visibility' }
+      ],
+      deploy:'3–4 weeks · faction setup + initial quest authoring',
+      impact: { type:'cost', competitors:[ {name:'Lattice', price:'~SGD 15 / user / mo'}, {name:'Culture Amp', price:'~SGD 20 / user / mo'}, {name:'15Five', price:'~SGD 11–20 / user / mo'} ], aggregate:'SGD 1,100–2,000 / month for a 100-staff SME on equivalent platforms', vsXince:'Bundled within engagement', annual:'≈ S$13,000–24,000 / year saved · 100 staff' }
+    } },
+  { icon:'📚', name:'Staff Training Platform', tag:'HR', tagCls:'tag-hr',
+    desc:'Modular LMS with quiz engine, instant feedback, and per-module progress tracking. White-labelable for any industry. Integrates directly with Onboarding Automation workflow.',
+    val:'16+', label:'modules, white-label', before:'PDF handbooks', after:'Trackable e-learning', platform:true,
+    detail: {
+      steps: [
+        { title:'Modular content', desc:'16+ modules ready (IT Foundations, Recruitment Skills); swap in your own content.' },
+        { title:'Quiz engine', desc:'Instant feedback, retry on wrong answers, randomised question pools.' },
+        { title:'Per-module progress', desc:'Tracks who\'s done what, who\'s stuck, who\'s passed.' },
+        { title:'Overall progress score', desc:'Single dashboard view of every employee\'s training health.' },
+        { title:'White-label per industry', desc:'Each client gets their own branded module set; Elitez seeds initial content.' }
+      ],
+      integrates: ['Onboarding Automation workflow','HRIS','Email notifications','Audit log for MOM compliance'],
+      useCases: ['SMEs with 20+ staff needing structured training','Compliance training (food hygiene, safety)','Product knowledge for sales teams','Industry-specific certification preparation'],
+      metrics: [
+        { label:'Training rigour', before:'PDF handbooks', after:'Trackable e-learning' },
+        { label:'Compliance audit trail', before:'Manual sign-off', after:'Per-module proof' },
+        { label:'Cost vs enterprise LMS', before:'Cornerstone / Docebo pricing', after:'White-labelable, SME-priced' }
+      ],
+      deploy:'2 weeks · branding + module curation',
+      impact: { type:'cost', competitors:[ {name:'Cornerstone OnDemand', price:'~SGD 8–16 / user / mo + S$7–20K setup'}, {name:'Docebo', price:'~SGD 33,000+ / year (enterprise)'}, {name:'TalentLMS (40–100 users)', price:'~SGD 90–520 / month'} ], aggregate:'SGD 800–1,600 / month for a 100-staff SME on equivalent LMS', vsXince:'Bundled within Onboarding Automation', annual:'≈ S$9,500–19,000 / year saved · 100 staff' }
+    } }
 ];
 
 function renderBento() {
   document.getElementById('bento').innerHTML = WF.map((w, i) => {
     const compare = `<div class="bc-compare"><span class="bc-before">${w.before}</span><span>→</span><span class="bc-after">${w.after}</span></div>`;
+    const cardAttrs = `role="button" tabindex="0" aria-haspopup="dialog" data-wf="${i}"`;
     if (w.featured) return `
-      <div class="bc featured anim">
+      <div class="bc featured anim" ${cardAttrs}>
         <div class="bc-scanline"></div>
         <div>
           <div class="bc-top"><span class="bc-icon">${w.icon}</span><span class="bc-tag ${w.tagCls}">${w.tag}</span></div>
-          <div class="bc-name">${w.name}</div>
+          <h3 class="bc-name">${w.name}</h3>
           <div class="bc-desc">${w.desc}</div>
           <div class="bc-stat"><span class="bc-stat-val">${w.val}</span><span class="bc-stat-label">${w.label}</span></div>
           ${compare}
+          <div class="bc-more">View detail →</div>
         </div>
         <div class="bc-visual">
           <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px">▸ AGENT FLOW</div>
@@ -905,16 +1397,57 @@ function renderBento() {
           <div class="node-row"><div class="node node-active">📊 DASHBOARD</div><div class="node-line"></div><div class="node">⚠️ ESCALATE</div></div>
         </div>
       </div>`;
-    return `
-      <div class="bc anim">
+    if (w.platform) return `
+      <div class="bc platform-card anim" ${cardAttrs}>
         <div class="bc-scanline"></div>
-        <div class="bc-top"><span class="bc-icon">${w.icon}</span><span class="bc-tag ${w.tagCls}">${w.tag}</span></div>
-        <div class="bc-name">${w.name}</div>
+        <div class="bc-top">
+          <span class="bc-icon">${w.icon}</span>
+          <span class="bc-tag ${w.tagCls}">${w.tag}</span>
+          <span class="bc-tag bc-tag-platform">PLATFORM</span>
+        </div>
+        <h3 class="bc-name">${w.name}</h3>
         <div class="bc-desc">${w.desc}</div>
         <div class="bc-stat"><span class="bc-stat-val">${w.val}</span><span class="bc-stat-label">${w.label}</span></div>
         ${compare}
+        <div class="bc-more">View detail →</div>
+      </div>`;
+    return `
+      <div class="bc anim" ${cardAttrs}>
+        <div class="bc-scanline"></div>
+        <div class="bc-top"><span class="bc-icon">${w.icon}</span><span class="bc-tag ${w.tagCls}">${w.tag}</span></div>
+        <h3 class="bc-name">${w.name}</h3>
+        <div class="bc-desc">${w.desc}</div>
+        <div class="bc-stat"><span class="bc-stat-val">${w.val}</span><span class="bc-stat-label">${w.label}</span></div>
+        ${compare}
+        <div class="bc-more">View detail →</div>
       </div>`;
   }).join('');
+  // Inject platform section divider before the first platform card
+  const bento = document.getElementById('bento');
+  const divider = document.createElement('div');
+  divider.className = 'bento-section-divider';
+  const dividerLabel = document.createElement('div');
+  dividerLabel.className = 'bento-divider-label';
+  dividerLabel.textContent = '— Extended Business Platforms —';
+  const dividerSub = document.createElement('p');
+  dividerSub.className = 'bento-divider-sub';
+  dividerSub.textContent = '8 deploy-ready platforms that extend AI workflows into your full business stack';
+  divider.appendChild(dividerLabel);
+  divider.appendChild(dividerSub);
+  const cards = bento.querySelectorAll('.bc');
+  if (cards.length >= 9) {
+    bento.insertBefore(divider, cards[9]);
+  }
+  // Wire up click + keyboard handlers on every card
+  cards.forEach(card => {
+    card.addEventListener('click', () => openDrawer(parseInt(card.dataset.wf, 10)));
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openDrawer(parseInt(card.dataset.wf, 10));
+      }
+    });
+  });
   document.querySelectorAll('.anim:not(.vis)').forEach(el => obs.observe(el));
 }
 
@@ -966,55 +1499,135 @@ function switchInd(id) {
 const SALARY_DATA = {
   // Mid-point monthly salary (SGD) by industry × department
   // Source: MOM Occupational Wage Survey 2024/25, Hays Asia 2025, Robert Half 2025
-  staffing:      { hr: 3850, finance: 3600, ops: 3300 },
-  services:      { hr: 4250, finance: 4350, ops: 3600 },
-  fnb:           { hr: 3300, finance: 3100, ops: 2800 },
-  logistics:     { hr: 3600, finance: 3400, ops: 3100 },
-  tech:          { hr: 4650, finance: 4650, ops: 3850 },
-  healthcare:    { hr: 3850, finance: 3600, ops: 3300 },
-  manufacturing: { hr: 3500, finance: 3400, ops: 3050 },
+  staffing:      { hr: 3850, finance: 3600, ops: 3300, admin: 2900, marketing: 4100, sales: 4300, cs: 2900 },
+  services:      { hr: 4250, finance: 4350, ops: 3600, admin: 3200, marketing: 4600, sales: 4500, cs: 3100 },
+  fnb:           { hr: 3300, finance: 3100, ops: 2800, admin: 2600, marketing: 3400, sales: 3300, cs: 2600 },
+  logistics:     { hr: 3600, finance: 3400, ops: 3100, admin: 2800, marketing: 3700, sales: 3600, cs: 2800 },
+  tech:          { hr: 4650, finance: 4650, ops: 3850, admin: 3400, marketing: 5300, sales: 5200, cs: 3500 },
+  healthcare:    { hr: 3850, finance: 3600, ops: 3300, admin: 3000, marketing: 4000, sales: 3900, cs: 3000 },
+  manufacturing: { hr: 3500, finance: 3400, ops: 3050, admin: 2700, marketing: 3700, sales: 3700, cs: 2700 },
 };
+
+// Typical % of company headcount per department, used to auto-derive team
+// size from the Company Size dropdown. Calibrated against Bersin 2023 HR
+// ratios + MOM 2024 occupational mix for SG SMEs. min(1, …) so even a
+// 0–10 staff firm shows ≥1 person in any picked department.
+const DEPT_FRACTIONS = {
+  hr: 0.020,        // ~1 HR per 50 staff
+  finance: 0.025,   // ~1 Finance per 40 staff
+  ops: 0.10,        // ~10% of staff in operations
+  admin: 0.04,      // ~4% in admin / office support
+  marketing: 0.04,  // ~4% in marketing
+  sales: 0.10,      // ~10% in sales
+  cs: 0.06,         // ~6% in customer service
+};
+function computeTeamFromCompany(companySize, dept) {
+  if (!companySize) return null;
+  return Math.max(1, Math.round(companySize * (DEPT_FRACTIONS[dept] || 0.05)));
+}
+
+// Platforms — monthly midpoint of competitor aggregate (SGD)
+// Sourced from each platform's `impact` block; see drawer detail per card.
+const PLATFORMS = [
+  { id:'esop',      name:'ESOP',                 monthly: 450,  scaling:'fixed',         defaultDepts:['hr'] },
+  { id:'eor',       name:'Elitez EOR',           monthly: 540,  scaling:'per-employee',  defaultDepts:['hr'] },
+  { id:'elixcraft', name:'Gamified Lifecycle',   monthly: 1550, scaling:'fixed',         defaultDepts:['hr'] },
+  { id:'training',  name:'Staff Training',       monthly: 1200, scaling:'fixed',         defaultDepts:['hr','cs'] },
+  { id:'pulse',     name:'Pulse (Marketing)',    monthly: 6500, scaling:'fixed',         defaultDepts:['marketing','sales'] },
+  { id:'site',      name:'DT Site Creator',      monthly: 800,  scaling:'fixed',         defaultDepts:['marketing','ops','admin'] },
+  { id:'csuite',    name:'C-Suite Dashboard',    monthly: 1750, scaling:'fixed',         defaultDepts:['finance','admin'] },
+  { id:'insights',  name:'Market Insights',      monthly: 2500, scaling:'fixed',         defaultDepts:['marketing','sales','ops'] },
+];
 
 // Task breakdown by department: [name, hrsPerFTE, automatable%]
 const TASKS = {
   hr: [
-    ['Timesheet processing',     20, 0.78],
-    ['Payroll prep & verification', 25, 0.68],
-    ['Leave management',          12, 0.85],
-    ['Contract / letter generation', 15, 0.82],
-    ['Scheduling & rostering',     8, 0.60],
-    ['Report compilation',         8, 0.68],
+    ['Timesheet processing',          20, 0.78],
+    ['Payroll prep & verification',   25, 0.68],
+    ['Leave management',              12, 0.85],
+    ['Contract / letter generation',  15, 0.82],
+    ['Scheduling & rostering',         8, 0.60],
+    ['Report compilation',             8, 0.68],
   ],
   finance: [
-    ['Invoice matching (AP/AR)',  28, 0.72],
-    ['Payroll prep & verification', 20, 0.68],
-    ['Expense claims processing', 20, 0.78],
-    ['Report compilation',        12, 0.68],
-    ['Reconciliation',            10, 0.60],
+    ['Invoice matching (AP/AR)',      28, 0.72],
+    ['Payroll prep & verification',   20, 0.68],
+    ['Expense claims processing',     20, 0.78],
+    ['Report compilation',            12, 0.68],
+    ['Reconciliation',                10, 0.60],
   ],
   ops: [
-    ['Scheduling & rostering',    20, 0.60],
-    ['Timesheet processing',      12, 0.78],
-    ['Expense claims processing', 12, 0.78],
-    ['Leave management',           8, 0.85],
-    ['Contract / letter generation', 8, 0.82],
-    ['Report compilation',        12, 0.68],
+    ['Scheduling & rostering',        22, 0.65],
+    ['Vendor / supplier coordination',16, 0.55],
+    ['Inventory & stock tracking',    14, 0.72],
+    ['Quality & incident reporting',  12, 0.65],
+    ['Operational dashboards',        10, 0.80],
+    ['Process documentation',          8, 0.70],
+  ],
+  admin: [
+    ['Diary & calendar management',   16, 0.75],
+    ['Document filing & archiving',   18, 0.88],
+    ['Email triage & routing',        22, 0.70],
+    ['Travel & expense booking',      14, 0.80],
+    ['Office supplies & vendor admin', 8, 0.75],
+    ['Visitor / front-desk handling', 10, 0.50],
+    ['Internal report compilation',   12, 0.78],
+  ],
+  marketing: [
+    ['Content creation & briefs',     24, 0.65],
+    ['Social media posting',          18, 0.80],
+    ['Lead enrichment & list build',  16, 0.85],
+    ['Campaign reporting',            12, 0.75],
+    ['SEO updates & meta',            10, 0.70],
+    ['Vendor / freelancer coord',     10, 0.55],
+  ],
+  sales: [
+    ['Lead qualification',            22, 0.75],
+    ['Proposal & quote writing',      25, 0.70],
+    ['CRM hygiene & updates',         18, 0.85],
+    ['Follow-up sequences',           16, 0.80],
+    ['Demo scheduling',               10, 0.65],
+    ['Commission tracking',            8, 0.75],
+  ],
+  cs: [
+    ['Ticket triage & routing',       28, 0.80],
+    ['FAQ / first-line replies',      24, 0.78],
+    ['Escalation handling',           14, 0.50],
+    ['Refund / claim processing',     12, 0.75],
+    ['Knowledge base updates',         8, 0.70],
+    ['CSAT survey ops',                6, 0.80],
   ],
 };
 
 function calcROI() {
   const industry = document.getElementById('calc-industry').value;
   const dept = document.getElementById('calc-dept').value;
-  const team = parseInt(document.getElementById('calc-team').value) || 3;
+  const company = parseInt(document.getElementById('calc-company').value) || 0;
   const tasks = TASKS[dept];
+  const teamInput = document.getElementById('calc-team');
+  const hoursInput = document.getElementById('calc-hours');
+
+  // Auto-derive team from company × dept fraction (unless user typed in team)
+  if (!teamInput._userEdited && company > 0) {
+    teamInput.value = computeTeamFromCompany(company, dept);
+  }
+  const team = parseInt(teamInput.value) || 3;
+  const teamHint = document.getElementById('calc-team-hint');
+  if (teamHint) {
+    teamHint.textContent = teamInput._userEdited
+      ? 'Manual override'
+      : (company > 0 ? 'Auto from company size (' + Math.round(company * (DEPT_FRACTIONS[dept] || 0.05) * 10) / 10 + '× ratio)' : 'Auto from company size');
+  }
 
   // Compute suggested hours
-  const suggestedHrs = tasks.reduce((s, t) => s + t[1], 0) * team;
-  document.getElementById('calc-hours-hint').textContent = 'Suggested: ~' + suggestedHrs + ' hrs (' + tasks.reduce((s,t)=>s+t[1],0) + ' hrs/person × ' + team + ')';
+  const tasksPerFTE = tasks.reduce((s, t) => s + t[1], 0);
+  const suggestedHrs = tasksPerFTE * team;
+  document.getElementById('calc-hours-hint').textContent = (hoursInput._userEdited ? 'Manual override · ' : '') + 'Auto: ~' + suggestedHrs + ' hrs (' + tasksPerFTE + ' hrs/person × ' + team + ')';
 
-  // Use user-entered hours or suggested
-  const hoursInput = document.getElementById('calc-hours');
-  if (!hoursInput.value) hoursInput.value = suggestedHrs;
+  // Auto-derive hours from team × dept tasks (unless user typed in hours)
+  if (!hoursInput._userEdited) {
+    hoursInput.value = suggestedHrs;
+  }
   const totalHrs = parseInt(hoursInput.value) || suggestedHrs;
 
   // Salary — auto-update from benchmark when industry/dept changes, user can override
@@ -1063,23 +1676,119 @@ function calcROI() {
     + '<span class="task-auto">' + avgAuto + '%</span>'
     + '<span class="task-saved">' + totalSavedHrs + '</span>';
 
-  // Results
+  // Results — workflow side
   const monthlyCost = Math.round(totalSavedHrs * hourlyRate);
   const annualSavings = monthlyCost * 12;
 
   document.getElementById('cr-hours').textContent = totalSavedHrs + ' hrs';
   document.getElementById('cr-cost').textContent = 'S$' + monthlyCost.toLocaleString();
   document.getElementById('cr-annual').textContent = 'S$' + annualSavings.toLocaleString();
+
+  // Results — platform stack avoided
+  const platformAnnual = computePlatformStack(team);
+  document.getElementById('cr-platform').textContent = platformAnnual > 0
+    ? 'S$' + platformAnnual.toLocaleString()
+    : 'S$0';
+
+  // Combined annual + after-grant punchline
+  const combined = annualSavings + platformAnnual;
+  document.getElementById('cr-combined').textContent = 'S$' + combined.toLocaleString();
+
+  // After 70% grant — the implication: SME pays 30% of an engagement that
+  // unlocks `combined` value. Show the payback as combined value vs 30%
+  // of a typical $50K engagement = $15K nett outlay.
+  const NETT_OUTLAY_REF = 15000;
+  const multiple = combined > 0 ? Math.max(1, Math.round(combined / NETT_OUTLAY_REF)) : 0;
+  document.getElementById('cr-effective').textContent = combined > 0
+    ? multiple + '× return on a S$15K nett outlay'
+    : '—';
 }
 
-// Track if user manually edited salary (so industry change doesn't overwrite)
+function computePlatformStack(team) {
+  let monthly = 0;
+  PLATFORMS.forEach(p => {
+    const cb = document.querySelector('input[data-plat="' + p.id + '"]');
+    if (!cb || !cb.checked) return;
+    if (p.scaling === 'per-employee') {
+      const cap = p.cap || 3;
+      monthly += p.monthly * Math.min(team, cap);
+    } else {
+      monthly += p.monthly;
+    }
+  });
+  return monthly * 12;
+}
+
+function renderPlatformChips() {
+  const dept = document.getElementById('calc-dept').value;
+  const wrap = document.getElementById('calc-plat-chips');
+  while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
+  PLATFORMS.forEach(p => {
+    const checked = p.defaultDepts.includes(dept);
+    const lbl = document.createElement('label');
+    lbl.className = 'calc-chip' + (checked ? ' checked' : '');
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.dataset.plat = p.id;
+    cb.checked = checked;
+    cb.addEventListener('change', () => {
+      lbl.classList.toggle('checked', cb.checked);
+      calcROI();
+    });
+    const nm = document.createElement('span');
+    nm.className = 'calc-chip-name';
+    nm.textContent = p.name;
+    const pr = document.createElement('span');
+    pr.className = 'calc-chip-price';
+    pr.textContent = p.scaling === 'per-employee'
+      ? 'S$' + p.monthly + ' / emp / mo'
+      : 'S$' + p.monthly.toLocaleString() + ' / mo';
+    lbl.appendChild(cb);
+    lbl.appendChild(nm);
+    lbl.appendChild(pr);
+    wrap.appendChild(lbl);
+  });
+}
+
+// Track manual overrides on salary / team / hours so changing the upstream
+// inputs (company / industry / dept) re-derives them automatically.
 document.addEventListener('DOMContentLoaded', () => {
-  const salaryEl = document.getElementById('calc-salary');
+  const salaryEl   = document.getElementById('calc-salary');
+  const teamEl     = document.getElementById('calc-team');
+  const hoursEl    = document.getElementById('calc-hours');
+  const companyEl  = document.getElementById('calc-company');
+  const industryEl = document.getElementById('calc-industry');
+  const deptEl     = document.getElementById('calc-dept');
+
   salaryEl._userEdited = false;
-  salaryEl.addEventListener('input', () => { salaryEl._userEdited = true; });
-  // Reset user-edited flag when industry or dept changes
-  document.getElementById('calc-industry').addEventListener('change', () => { salaryEl._userEdited = false; salaryEl.value = ''; calcROI(); });
-  document.getElementById('calc-dept').addEventListener('change', () => { salaryEl._userEdited = false; salaryEl.value = ''; calcROI(); });
+  teamEl._userEdited   = false;
+  hoursEl._userEdited  = false;
+
+  salaryEl.addEventListener('input', () => { salaryEl._userEdited = true; calcROI(); });
+  teamEl.addEventListener('input',   () => { teamEl._userEdited   = true; hoursEl._userEdited = false; hoursEl.value = ''; calcROI(); });
+  hoursEl.addEventListener('input',  () => { hoursEl._userEdited  = true; calcROI(); });
+
+  // Industry change re-derives only the salary benchmark.
+  industryEl.addEventListener('change', () => {
+    salaryEl._userEdited = false; salaryEl.value = '';
+    calcROI();
+  });
+  // Department change re-derives team (and consequently hours) + chip defaults.
+  deptEl.addEventListener('change', () => {
+    salaryEl._userEdited = false; salaryEl.value = '';
+    teamEl._userEdited   = false;
+    hoursEl._userEdited  = false; hoursEl.value = '';
+    renderPlatformChips();
+    calcROI();
+  });
+  // Company size change re-derives team + hours (master input).
+  companyEl.addEventListener('change', () => {
+    teamEl._userEdited   = false;
+    hoursEl._userEdited  = false; hoursEl.value = '';
+    calcROI();
+  });
+
+  renderPlatformChips();
   setTimeout(calcROI, 200);
 });
 
@@ -1162,6 +1871,176 @@ document.querySelectorAll('[data-count]').forEach(el => cObs.observe(el));
 
 // ── Menu ─────────────────────────────────────────────────────────────────────
 function toggleMenu() { document.getElementById('mob-menu').classList.toggle('open'); const hb = document.getElementById('hamburger'); hb.classList.toggle('open'); hb.setAttribute('aria-expanded', hb.classList.contains('open')); }
+
+// ── Drawer (workflow detail) ─────────────────────────────────────────────────
+let drawerLastFocus = null;
+function el(tag, opts, ...kids) {
+  const e = document.createElement(tag);
+  if (opts) {
+    if (opts.class) e.className = opts.class;
+    if (opts.text) e.textContent = opts.text;
+    if (opts.attrs) Object.entries(opts.attrs).forEach(([k,v]) => e.setAttribute(k,v));
+  }
+  kids.flat().filter(Boolean).forEach(c => e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c));
+  return e;
+}
+function buildDrawerContent(w) {
+  const d = w.detail || {};
+  const frag = document.createDocumentFragment();
+
+  // Header
+  const head = el('div', { class:'dr-head' });
+  const headTop = el('div', { class:'dr-head-top' });
+  headTop.appendChild(el('span', { class:'dr-icon', text: w.icon }));
+  const tags = el('div', { class:'dr-tags' });
+  tags.appendChild(el('span', { class:'bc-tag '+w.tagCls, text: w.tag }));
+  if (w.platform) tags.appendChild(el('span', { class:'bc-tag bc-tag-platform', text:'PLATFORM' }));
+  headTop.appendChild(tags);
+  head.appendChild(headTop);
+  head.appendChild(el('h2', { class:'dr-title', attrs:{ id:'drawer-title' }, text: w.name }));
+  head.appendChild(el('p', { class:'dr-desc', text: w.desc }));
+  frag.appendChild(head);
+
+  // Headline stat
+  const stat = el('div', { class:'dr-headline' });
+  stat.appendChild(el('div', { class:'dr-headline-val', text: w.val }));
+  stat.appendChild(el('div', { class:'dr-headline-lbl', text: w.label }));
+  frag.appendChild(stat);
+
+  // Impact (monthly time savings or vs-competitor cost savings)
+  if (d.impact) {
+    const imp = d.impact;
+    const card = el('div', { class:'dr-impact dr-impact-' + (imp.type || 'time') });
+    if (imp.type === 'cost') {
+      card.appendChild(el('div', { class:'dr-impact-eyebrow', text:'vs typical competitor stack' }));
+      if (imp.competitors && imp.competitors.length) {
+        const list = el('ul', { class:'dr-impact-comps' });
+        imp.competitors.forEach(c => {
+          const li = el('li');
+          li.appendChild(el('span', { class:'dr-comp-name', text: c.name }));
+          li.appendChild(el('span', { class:'dr-comp-price', text: c.price }));
+          list.appendChild(li);
+        });
+        card.appendChild(list);
+      }
+      if (imp.aggregate) {
+        const agg = el('div', { class:'dr-impact-row' });
+        agg.appendChild(el('span', { class:'dr-impact-row-lbl', text:'Aggregate' }));
+        agg.appendChild(el('span', { class:'dr-impact-row-val', text: imp.aggregate }));
+        card.appendChild(agg);
+      }
+      if (imp.vsXince) {
+        const us = el('div', { class:'dr-impact-row dr-impact-us' });
+        us.appendChild(el('span', { class:'dr-impact-row-lbl', text:'XinceAI / Elitez' }));
+        us.appendChild(el('span', { class:'dr-impact-row-val', text: imp.vsXince }));
+        card.appendChild(us);
+      }
+      if (imp.annual) card.appendChild(el('div', { class:'dr-impact-headline', text: imp.annual }));
+    } else {
+      card.appendChild(el('div', { class:'dr-impact-eyebrow', text:'Monthly company impact' }));
+      if (imp.assumption) card.appendChild(el('div', { class:'dr-impact-assume', text:'Assumption · ' + imp.assumption }));
+      if (imp.monthly) card.appendChild(el('div', { class:'dr-impact-headline', text: imp.monthly }));
+      if (imp.annual) card.appendChild(el('div', { class:'dr-impact-annual', text: imp.annual }));
+    }
+    frag.appendChild(card);
+  }
+
+  // How it works
+  if (d.steps && d.steps.length) {
+    frag.appendChild(el('h3', { class:'dr-section-h', text:'How it works' }));
+    const ol = el('ol', { class:'dr-steps' });
+    d.steps.forEach((s, idx) => {
+      const li = el('li', { class:'dr-step' });
+      li.appendChild(el('span', { class:'dr-step-n', text: String(idx+1) }));
+      const body = el('div', { class:'dr-step-body' });
+      body.appendChild(el('div', { class:'dr-step-t', text: s.title }));
+      body.appendChild(el('div', { class:'dr-step-d', text: s.desc }));
+      li.appendChild(body);
+      ol.appendChild(li);
+    });
+    frag.appendChild(ol);
+  }
+
+  // Detailed metrics table
+  if (d.metrics && d.metrics.length) {
+    frag.appendChild(el('h3', { class:'dr-section-h', text:'Before / After' }));
+    const tbl = el('div', { class:'dr-metrics' });
+    d.metrics.forEach(m => {
+      const row = el('div', { class:'dr-metric-row' });
+      row.appendChild(el('div', { class:'dr-metric-lbl', text: m.label }));
+      row.appendChild(el('div', { class:'dr-metric-before', text: m.before }));
+      row.appendChild(el('div', { class:'dr-metric-arrow', text:'→' }));
+      row.appendChild(el('div', { class:'dr-metric-after', text: m.after }));
+      tbl.appendChild(row);
+    });
+    frag.appendChild(tbl);
+  }
+
+  // Integrations
+  if (d.integrates && d.integrates.length) {
+    frag.appendChild(el('h3', { class:'dr-section-h', text:'Integrates with' }));
+    const wrap = el('div', { class:'dr-chips' });
+    d.integrates.forEach(name => wrap.appendChild(el('span', { class:'dr-chip', text: name })));
+    frag.appendChild(wrap);
+  }
+
+  // Best for
+  if (d.useCases && d.useCases.length) {
+    frag.appendChild(el('h3', { class:'dr-section-h', text:'Best for' }));
+    const ul = el('ul', { class:'dr-uses' });
+    d.useCases.forEach(u => ul.appendChild(el('li', { text: u })));
+    frag.appendChild(ul);
+  }
+
+  // Deploy timeline
+  if (d.deploy) {
+    const dep = el('div', { class:'dr-deploy' });
+    dep.appendChild(el('span', { class:'dr-deploy-lbl', text:'Deploy' }));
+    dep.appendChild(el('span', { class:'dr-deploy-val', text: d.deploy }));
+    frag.appendChild(dep);
+  }
+
+  // CTA
+  const cta = el('div', { class:'dr-cta' });
+  const ctaBtn = el('button', { class:'btn btn-fill', text:'Book a demo of this workflow' });
+  ctaBtn.addEventListener('click', () => {
+    closeDrawer();
+    document.getElementById('contact').scrollIntoView({ behavior:'smooth' });
+  });
+  cta.appendChild(ctaBtn);
+  frag.appendChild(cta);
+
+  return frag;
+}
+function openDrawer(idx) {
+  const w = WF[idx];
+  if (!w) return;
+  const drawer = document.getElementById('drawer');
+  const content = drawer.querySelector('.drawer-content');
+  while (content.firstChild) content.removeChild(content.firstChild);
+  content.appendChild(buildDrawerContent(w));
+  drawerLastFocus = document.activeElement;
+  drawer.hidden = false;
+  document.body.classList.add('drawer-open');
+  // Animate in next frame
+  requestAnimationFrame(() => drawer.classList.add('open'));
+  drawer.querySelector('.drawer-close').focus();
+}
+function closeDrawer() {
+  const drawer = document.getElementById('drawer');
+  drawer.classList.remove('open');
+  setTimeout(() => {
+    drawer.hidden = true;
+    document.body.classList.remove('drawer-open');
+    if (drawerLastFocus && drawerLastFocus.focus) drawerLastFocus.focus();
+  }, 240);
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const drawer = document.getElementById('drawer');
+    if (drawer && !drawer.hidden) closeDrawer();
+  }
+});
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 renderBento(); renderIndustries(); renderFAQ();
