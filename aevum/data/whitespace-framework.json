@@ -1,47 +1,995 @@
 {
-  "grid_size": "8x8",
-  "research_date": "2026-04-22",
-  "project": "AEVUM MRI Clinic",
-  "notes": "8x8 overview for JB-based concierge MRI serving SG + MY patients. Segments span affluence x geography x motivation. Needs mix price, technology tier, convenience, clinical depth.",
-  "canvas_dims": [
-    "Price accessibility (vs SG)",
-    "MRI scanner tech (3T+)",
-    "Whole-body package breadth",
-    "Concierge experience",
-    "Results turnaround speed",
-    "Cross-border convenience",
-    "Clinician consultation depth",
-    "Insurance / corporate linkage"
-  ],
-  "us_scores_canvas": [5, 4, 5, 5, 5, 5, 4, 3],
-  "us_scores_rationale": {
-    "Price accessibility (vs SG)": "~40% cheaper than SG — RM4.5-6.8K (~S$1.3-1.9K) vs S$4-8K in SG",
-    "MRI scanner tech (3T+)": "3T scanner with modern AI-reconstruction — matches SG mid-tier, below SG flagship 3T with contrast specialists",
-    "Whole-body package breadth": "Head-to-toe single-session scan — most SG clinics quote modular; AEVUM packages as one",
-    "Concierge experience": "Private lounge + SG-border transport + single-session flow — unmatched in JB",
-    "Results turnaround speed": "24-hour digital report vs 3-7 days industry",
-    "Cross-border convenience": "60-min drive from SG + packaged transport — much easier than flying Bangkok",
-    "Clinician consultation depth": "Follow-up tele-consult included; will need SG-registered doc partnership for SG patients",
-    "Insurance / corporate linkage": "Early — not yet in SG insurer networks; this is a known gap"
+  "meta": {
+    "project_name": "AEVUM",
+    "brand_tokens": {
+      "primary": "#0D7488",
+      "secondary": "#1A2530",
+      "accent": "#B8761F",
+      "neutral_dark": "#1A2530",
+      "neutral_light": "#F4F6F8",
+      "currency_label": "SGD"
+    },
+    "research_date": "2026-05-02",
+    "sample_data": false,
+    "our_scores_are_projections": true,
+    "our_scoring_note": "AEVUM is pre-launch (target soft-launch Q3 2026, RTS-Link-aligned full launch Q4 2026). 3 Siemens magnets + named consultant radiologists are confirmed; MSQH accreditation in pursuit, target Q4 2027. Insurer-network onboarding (AIA / Prudential MY) is a Y3 attack plan, not Y1. Scores reflect launch-state capability, not aspiration."
   },
-  "segments": [
-    { "id": "sg_exec_40plus",          "label": "SG executive 40+",              "note": "Affluent SG, preventive screening age" },
-    { "id": "sg_expat_family",         "label": "SG expat family",               "note": "Non-citizen, paying cash, budget-aware" },
-    { "id": "sg_corporate_wellness",   "label": "SG corporate wellness buyer",   "note": "HR procuring group scans" },
-    { "id": "jb_malaysian_professional","label":"JB Malaysian professional",      "note": "MY citizen, local resident, higher income" },
-    { "id": "sg_chronic_followup",     "label": "SG patient with chronic f/u",   "note": "Diabetes, cardiac, cancer survivors" },
-    { "id": "regional_health_tourist", "label": "Regional health tourist",       "note": "ID / VN / cross-SEA wealthy" },
-    { "id": "sg_senior_65plus",        "label": "SG senior 65+",                 "note": "Retiree, CPF-MediSave funded" },
-    { "id": "insurance_referral_pt",   "label": "Insurance-referral patient",    "note": "AIA, Prudential, GE-funded scan" }
-  ],
-  "needs": [
-    { "id": "under_2k_sgd",           "label": "Whole-body scan under S$2K",    "axis": "commercial" },
-    { "id": "scanner_3t_or_better",   "label": "3T or better scanner",          "axis": "technology" },
-    { "id": "wholebody_single_session","label":"Whole-body in single session",  "axis": "operational" },
-    { "id": "concierge_transport",    "label": "SG transport + lounge",         "axis": "experience" },
-    { "id": "results_24h",            "label": "Results within 24 hours",       "axis": "operational" },
-    { "id": "sg_doc_followup",        "label": "SG-registered doc follow-up",   "axis": "compliance" },
-    { "id": "insurance_claimable",    "label": "SG insurance reimbursable",     "axis": "commercial" },
-    { "id": "ai_assisted_report",     "label": "AI-assisted radiologist report","axis": "technology" }
+  "strategy_canvas": {
+    "headline_thesis": "AEVUM breaks the cluster on cross_border_proximity (no competitor is within walking distance of the RTS Link) and published_pricing_transparency (every SG and JB competitor gates pricing behind 'enquire'), at the deliberate cost of follow_up_specialist_breadth (Mt Elizabeth, Raffles, Gleneagles JB will continue to win patients who need same-roof endoscopy + cardiac specialist follow-up). The MRI-led longevity wedge is open in JB.",
+    "dimensions": [
+      {
+        "key": "cross_border_proximity",
+        "label": "Cross-border SG↔JB proximity (RTS Link)"
+      },
+      {
+        "key": "published_pricing_transparency",
+        "label": "Published pricing transparency"
+      },
+      {
+        "key": "concierge_experience_depth",
+        "label": "Concierge experience depth"
+      },
+      {
+        "key": "named_consultant_radiologist",
+        "label": "Named consultant radiologist"
+      },
+      {
+        "key": "results_turnaround_speed",
+        "label": "Results turnaround speed"
+      },
+      {
+        "key": "mri_led_longevity_framing",
+        "label": "MRI-led longevity framing"
+      },
+      {
+        "key": "follow_up_specialist_breadth",
+        "label": "Follow-up specialist breadth"
+      },
+      {
+        "key": "sg_insurer_network_linkage",
+        "label": "SG insurer-network linkage"
+      }
+    ],
+    "rubrics": {
+      "cross_border_proximity": "0 — Outside SEA. 1 — SG-only or KL-only, no cross-border story. 2 — JB / Iskandar facility but >30 min from Causeway / RTS terminus. 3 — JB facility within 30 min drive of Causeway. 4 — JB facility within 15 min drive of Causeway / Bukit Chagar. 5 — Walking distance from RTS Link Bukit Chagar terminus AND cross-border concierge transfer included.",
+      "published_pricing_transparency": "0 — 'Contact for quote'; no figures published. 1 — Tier names visible but prices behind a form. 2 — Partial price disclosure (entry tier only, top tier hidden). 3 — Top-tier prices published in foreign currency only. 4 — Full tier ladder published in local currency. 5 — Full tier ladder published in BOTH MYR and SGD-equivalent at current FX, with MAB-compliant package framing.",
+      "concierge_experience_depth": "0 — Pure hospital-utility ambience. 1 — Standalone clinic but waiting-room feel. 2 — Premium clinic with private suite, no transfer / lounge. 3 — Private suite + named host + post-scan radiologist time. 4 — Full concierge wrapper: transfer + lounge + dining + post-scan radiologist + family-friendly suite. 5 — Multi-day hospitality bundle with hotel-partner integration + family-language briefing.",
+      "named_consultant_radiologist": "0 — Anonymous radiologist roster (no named credentials). 1 — Roster mentioned but no individual bios. 2 — Bios shown but no professional credential / NSR linkage. 3 — Bios + credentials displayed; report signed by named consultant. 4 — Named consultant with searchable NSR / SMC linkage AND post-scan video walkthrough included. 5 — As 4 + multi-year named-consultant relationship (same radiologist for return scans) + named consultant accessible for 12-month follow-up.",
+      "results_turnaround_speed": "0 — >14 days. 1 — 7-14 days. 2 — 5-7 days. 3 — 3-5 days. 4 — Next-day digital report. 5 — Same-day digital report + scheduled follow-up consultation within 5 days.",
+      "mri_led_longevity_framing": "0 — No longevity framing; pure diagnostic / hospital language. 1 — Generic 'health screening' framing. 2 — 'Wellness screening' framing without longevity vocabulary. 3 — Longevity framing present but secondary to other modalities (e.g. biomarkers-led with MRI as add-on). 4 — Explicit MRI-led longevity-baseline framing throughout marketing + product. 5 — As 4 + multi-year baseline-tracking product (year-on-year scan comparison) + longevity-coach integration.",
+      "follow_up_specialist_breadth": "0 — Imaging only, no follow-up pathway. 1 — Refer to patient’s home GP. 2 — Partner GP network for follow-up. 3 — In-house GP/internist + 1-2 specialty referrals. 4 — Hospital-grade specialist depth (cardiac, endoscopy, oncology) under one roof. 5 — Full hospital-anchored follow-up with insurer-direct billing.",
+      "sg_insurer_network_linkage": "0 — Outside SG insurer network entirely; pure self-pay. 1 — Discussions ongoing with one major insurer. 2 — Single insurer network status secured but no claim flow live. 3 — One insurer claim flow live for one SKU. 4 — Two-three major insurers (AIA, Prudential, GE) network status with live claim flow. 5 — All major SG IS Plan insurers (AIA, Prudential, GE, Income, Singlife) network status across all relevant SKUs."
+    },
+    "scores": {
+      "us": {
+        "cross_border_proximity": 5,
+        "published_pricing_transparency": 5,
+        "concierge_experience_depth": 4,
+        "named_consultant_radiologist": 4,
+        "results_turnaround_speed": 5,
+        "mri_led_longevity_framing": 4,
+        "follow_up_specialist_breadth": 2,
+        "sg_insurer_network_linkage": 0
+      },
+      "mt_elizabeth_screen_excelsior": {
+        "cross_border_proximity": 1,
+        "published_pricing_transparency": 4,
+        "concierge_experience_depth": 4,
+        "named_consultant_radiologist": 3,
+        "results_turnaround_speed": 2,
+        "mri_led_longevity_framing": 1,
+        "follow_up_specialist_breadth": 5,
+        "sg_insurer_network_linkage": 5
+      },
+      "raffles_platinum": {
+        "cross_border_proximity": 1,
+        "published_pricing_transparency": 4,
+        "concierge_experience_depth": 3,
+        "named_consultant_radiologist": 2,
+        "results_turnaround_speed": 1,
+        "mri_led_longevity_framing": 1,
+        "follow_up_specialist_breadth": 5,
+        "sg_insurer_network_linkage": 5
+      },
+      "asiamedic_navigator_7": {
+        "cross_border_proximity": 1,
+        "published_pricing_transparency": 2,
+        "concierge_experience_depth": 3,
+        "named_consultant_radiologist": 3,
+        "results_turnaround_speed": 3,
+        "mri_led_longevity_framing": 2,
+        "follow_up_specialist_breadth": 3,
+        "sg_insurer_network_linkage": 3
+      },
+      "lifescan_advanced": {
+        "cross_border_proximity": 1,
+        "published_pricing_transparency": 2,
+        "concierge_experience_depth": 2,
+        "named_consultant_radiologist": 2,
+        "results_turnaround_speed": 2,
+        "mri_led_longevity_framing": 1,
+        "follow_up_specialist_breadth": 2,
+        "sg_insurer_network_linkage": 3
+      },
+      "elite_medical": {
+        "cross_border_proximity": 1,
+        "published_pricing_transparency": 2,
+        "concierge_experience_depth": 4,
+        "named_consultant_radiologist": 2,
+        "results_turnaround_speed": 3,
+        "mri_led_longevity_framing": 2,
+        "follow_up_specialist_breadth": 2,
+        "sg_insurer_network_linkage": 2
+      },
+      "iconic_medical": {
+        "cross_border_proximity": 1,
+        "published_pricing_transparency": 4,
+        "concierge_experience_depth": 2,
+        "named_consultant_radiologist": 2,
+        "results_turnaround_speed": 4,
+        "mri_led_longevity_framing": 1,
+        "follow_up_specialist_breadth": 2,
+        "sg_insurer_network_linkage": 2
+      },
+      "nuh_screening": {
+        "cross_border_proximity": 1,
+        "published_pricing_transparency": 2,
+        "concierge_experience_depth": 1,
+        "named_consultant_radiologist": 2,
+        "results_turnaround_speed": 0,
+        "mri_led_longevity_framing": 0,
+        "follow_up_specialist_breadth": 5,
+        "sg_insurer_network_linkage": 5
+      },
+      "sgh_screening": {
+        "cross_border_proximity": 1,
+        "published_pricing_transparency": 2,
+        "concierge_experience_depth": 1,
+        "named_consultant_radiologist": 2,
+        "results_turnaround_speed": 1,
+        "mri_led_longevity_framing": 0,
+        "follow_up_specialist_breadth": 5,
+        "sg_insurer_network_linkage": 5
+      },
+      "mahkota_medical": {
+        "cross_border_proximity": 2,
+        "published_pricing_transparency": 2,
+        "concierge_experience_depth": 2,
+        "named_consultant_radiologist": 2,
+        "results_turnaround_speed": 3,
+        "mri_led_longevity_framing": 0,
+        "follow_up_specialist_breadth": 3,
+        "sg_insurer_network_linkage": 1
+      },
+      "kpj_bandar_dato_onn": {
+        "cross_border_proximity": 4,
+        "published_pricing_transparency": 2,
+        "concierge_experience_depth": 1,
+        "named_consultant_radiologist": 2,
+        "results_turnaround_speed": 3,
+        "mri_led_longevity_framing": 0,
+        "follow_up_specialist_breadth": 3,
+        "sg_insurer_network_linkage": 1
+      },
+      "gleneagles_johor": {
+        "cross_border_proximity": 4,
+        "published_pricing_transparency": 2,
+        "concierge_experience_depth": 3,
+        "named_consultant_radiologist": 3,
+        "results_turnaround_speed": 3,
+        "mri_led_longevity_framing": 0,
+        "follow_up_specialist_breadth": 4,
+        "sg_insurer_network_linkage": 3
+      },
+      "sunway_medical_velocity": {
+        "cross_border_proximity": 1,
+        "published_pricing_transparency": 2,
+        "concierge_experience_depth": 4,
+        "named_consultant_radiologist": 3,
+        "results_turnaround_speed": 4,
+        "mri_led_longevity_framing": 1,
+        "follow_up_specialist_breadth": 4,
+        "sg_insurer_network_linkage": 2
+      },
+      "pantai_penang": {
+        "cross_border_proximity": 1,
+        "published_pricing_transparency": 2,
+        "concierge_experience_depth": 3,
+        "named_consultant_radiologist": 2,
+        "results_turnaround_speed": 3,
+        "mri_led_longevity_framing": 0,
+        "follow_up_specialist_breadth": 3,
+        "sg_insurer_network_linkage": 2
+      },
+      "prenuvo": {
+        "cross_border_proximity": 1,
+        "published_pricing_transparency": 5,
+        "concierge_experience_depth": 5,
+        "named_consultant_radiologist": 1,
+        "results_turnaround_speed": 1,
+        "mri_led_longevity_framing": 5,
+        "follow_up_specialist_breadth": 1,
+        "sg_insurer_network_linkage": 0
+      },
+      "ezra_function": {
+        "cross_border_proximity": 1,
+        "published_pricing_transparency": 5,
+        "concierge_experience_depth": 3,
+        "named_consultant_radiologist": 1,
+        "results_turnaround_speed": 4,
+        "mri_led_longevity_framing": 4,
+        "follow_up_specialist_breadth": 1,
+        "sg_insurer_network_linkage": 0
+      },
+      "neko_health": {
+        "cross_border_proximity": 1,
+        "published_pricing_transparency": 5,
+        "concierge_experience_depth": 5,
+        "named_consultant_radiologist": 2,
+        "results_turnaround_speed": 5,
+        "mri_led_longevity_framing": 4,
+        "follow_up_specialist_breadth": 1,
+        "sg_insurer_network_linkage": 0
+      }
+    }
+  },
+  "heatmap": {
+    "segments": [
+      {
+        "id": "sg_hnw_longevity_curious",
+        "name": "SG HNW longevity-curious",
+        "descriptor": "42-60yo SG resident, household income S$500k+, lives D9/D10/Sentosa Cove; aware of Prenuvo + Neko but unbooked; refuses to fly to US for a scan; primary segment 60-70% of revenue forecast."
+      },
+      {
+        "id": "indonesian_hnw_family_office",
+        "name": "Indonesian HNW family office",
+        "descriptor": "35-65yo, family business / banking / commodities with SG family-office structure; routes through SG private bankers; pairs medical with retail / hospitality on a 4-day SG/JB long weekend; highest-ARPU secondary segment (15-25% revenue)."
+      },
+      {
+        "id": "malaysian_affluent_pro",
+        "name": "Malaysian Affluent professional",
+        "descriptor": "35-55yo professional / SME owner / corp exec in JB / KL / Penang; RM 50k+/mo household; loyal to Gleneagles / Sunway; books via WhatsApp; high-volume Core/Comp segment (10-15% revenue)."
+      },
+      {
+        "id": "csuite_executive_program_buyer",
+        "name": "C-Suite executive program buyer",
+        "descriptor": "Corporate HR / family-office / PE-portfolio operator buying for C-suite cohort or principal family; RFP-driven, 6-12 month sales cycle; B2B Founders Programme channel (20-30% revenue once mature)."
+      },
+      {
+        "id": "sg_chronic_followup",
+        "name": "SG patient chronic follow-up",
+        "descriptor": "Diabetes / cardiac / cancer-survivor SG patient who needs annual surveillance imaging; insurer-coverage-sensitive; cares about specialist follow-up depth more than concierge."
+      },
+      {
+        "id": "regional_health_tourist",
+        "name": "Regional health tourist (BN/TH/VN)",
+        "descriptor": "Brunei / Thai / Vietnamese affluent who would otherwise fly to BKK or SG; can route through KL/JB via Senai or Changi; small but growing slice (~5% revenue)."
+      }
+    ],
+    "needs": [
+      {
+        "id": "rts_proximity_concierge",
+        "name": "RTS-Link proximity + concierge transfer",
+        "short": "rts_proximity"
+      },
+      {
+        "id": "fully_published_pricing",
+        "name": "Fully-published tier pricing (MYR + SGD)",
+        "short": "pub_pricing"
+      },
+      {
+        "id": "named_consultant_radiologist_read",
+        "name": "Named consultant radiologist read",
+        "short": "named_radio"
+      },
+      {
+        "id": "same_day_results",
+        "name": "Same-day digital results",
+        "short": "same_day"
+      },
+      {
+        "id": "mri_led_longevity_baseline",
+        "name": "MRI-led longevity baseline framing",
+        "short": "longevity"
+      },
+      {
+        "id": "specialist_followup_depth",
+        "name": "Hospital-grade specialist follow-up",
+        "short": "specialist_fu"
+      },
+      {
+        "id": "sg_insurer_reimbursable",
+        "name": "SG insurer-reimbursable scan",
+        "short": "insurer"
+      }
+    ],
+    "cells": {
+      "sg_hnw_longevity_curious:rts_proximity_concierge": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "kpj_bandar_dato_onn",
+            "name": "KPJ Bandar Dato’ Onn",
+            "score": 4,
+            "specialisation_for_cell": "JB-Causeway-adjacent (15 min from Bukit Chagar); hospital-utility, no SG concierge transfer; MRI is one SKU among many."
+          },
+          {
+            "id": "gleneagles_johor",
+            "name": "Gleneagles Hospital Johor",
+            "score": 4,
+            "specialisation_for_cell": "Medini second-link Causeway-adjacent + IHH international-patient desk; concierge is hospital amenity layer, not core."
+          },
+          {
+            "id": "mahkota_medical",
+            "name": "Mahkota Medical Centre",
+            "score": 0
+          }
+        ]
+      },
+      "sg_hnw_longevity_curious:fully_published_pricing": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "iconic_medical",
+            "name": "Iconic Medical Imaging",
+            "score": 4,
+            "specialisation_for_cell": "Per-region MRI pricing public DTC-style for SG self-pay; younger brand, no HNW concierge cachet, single-currency only."
+          },
+          {
+            "id": "prenuvo",
+            "name": "Prenuvo",
+            "score": 5,
+            "specialisation_for_cell": "Tier ladder US$999 / 2,499 / 4,499 public; global DTC pricing-transparency benchmark; USD-only, no SEA presence."
+          },
+          {
+            "id": "neko_health",
+            "name": "Neko Health",
+            "score": 5,
+            "specialisation_for_cell": "Single £400 / €595 flat price on homepage; design-language gold standard for transparent pricing; no SEA footprint."
+          },
+          {
+            "id": "ezra_function",
+            "name": "Ezra (Function Health)",
+            "score": 5,
+            "specialisation_for_cell": "Repriced to US$499 post-Function-Health acquisition (May 2025); fully published US-only; sets DTC floor incoming to SEA."
+          }
+        ]
+      },
+      "sg_hnw_longevity_curious:named_consultant_radiologist_read": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "mt_elizabeth_screen_excelsior",
+            "name": "Mt Elizabeth Screen Excelsior",
+            "score": 3,
+            "specialisation_for_cell": "Parkway Pantai roster carries SMC cred with HNW; named in report not in marketing; no post-scan video walkthrough."
+          },
+          {
+            "id": "asiamedic_navigator_7",
+            "name": "AsiaMedic Navigator 7",
+            "score": 3,
+            "specialisation_for_cell": "25+yr roster differentiates vs hospitals; bios published but credentials not searchable, no longitudinal patient tie."
+          },
+          {
+            "id": "elite_medical",
+            "name": "Elite Medical Centre",
+            "score": 0
+          }
+        ]
+      },
+      "sg_hnw_longevity_curious:same_day_results": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "neko_health",
+            "name": "Neko Health",
+            "score": 5,
+            "specialisation_for_cell": "Same-day results sets the global SLA bar; spa-clinical hybrid matches AEVUM aspiration on speed; no SEA presence."
+          },
+          {
+            "id": "iconic_medical",
+            "name": "Iconic Medical Imaging",
+            "score": 4,
+            "specialisation_for_cell": "Iconic 48-hour turnaround is best-in-class for SG standalone imaging; younger brand without HNW concierge cachet."
+          },
+          {
+            "id": "ezra_function",
+            "name": "Ezra (Function Health)",
+            "score": 4,
+            "specialisation_for_cell": "Ezra delivers <24h via Bolt AI-augmented pipeline; FDA-cleared; no in-person follow-up, refer back to home physician."
+          }
+        ]
+      },
+      "sg_hnw_longevity_curious:mri_led_longevity_baseline": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "prenuvo",
+            "name": "Prenuvo",
+            "score": 5,
+            "specialisation_for_cell": "Defined the MRI-led longevity-baseline globally; Kardashian / Robbins endorsements; Jan 2026 missed-find lawsuit drag."
+          },
+          {
+            "id": "ezra_function",
+            "name": "Ezra (Function Health)",
+            "score": 4,
+            "specialisation_for_cell": "MRI bolted onto Function Health 160+ biomarker baseline at US$365/yr + US$499; rational mid-tier longevity framing."
+          },
+          {
+            "id": "neko_health",
+            "name": "Neko Health",
+            "score": 4,
+            "specialisation_for_cell": "Longevity-baseline framing strong but skin / cardio-led NOT MRI specifically; multi-sensor scanner + bloods + ECG only."
+          }
+        ]
+      },
+      "sg_hnw_longevity_curious:specialist_followup_depth": {
+        "our_score": 2,
+        "competitors": [
+          {
+            "id": "mt_elizabeth_screen_excelsior",
+            "name": "Mt Elizabeth Screen Excelsior",
+            "score": 5,
+            "specialisation_for_cell": "Full hospital follow-up under one roof — endoscopy, cardiac, oncology, surgical; gold standard at abnormal find."
+          },
+          {
+            "id": "raffles_platinum",
+            "name": "Raffles Platinum",
+            "score": 5,
+            "specialisation_for_cell": "Full hospital concierge + corporate billing + insurance pre-auth; deep specialist network across SG regional clinics."
+          },
+          {
+            "id": "nuh_screening",
+            "name": "NUH Screening",
+            "score": 5,
+            "specialisation_for_cell": "Teaching-hospital depth + subsidised for citizens; concierge non-existent but specialist coverage unmatched in SG."
+          },
+          {
+            "id": "sgh_screening",
+            "name": "SGH Screening",
+            "score": 5,
+            "specialisation_for_cell": "SGH 200-year SingHealth cluster; deepest specialist network in SG; brochure-ware booking, public-hospital ambience."
+          }
+        ]
+      },
+      "sg_hnw_longevity_curious:sg_insurer_reimbursable": {
+        "our_score": 0,
+        "competitors": [
+          {
+            "id": "mt_elizabeth_screen_excelsior",
+            "name": "Mt Elizabeth Screen Excelsior",
+            "score": 5,
+            "specialisation_for_cell": "In-network for AIA HealthShield Gold, Prudential PRUShield, GE Supreme — IS Plan rider top-up lubricates S$11-13k spend."
+          },
+          {
+            "id": "raffles_platinum",
+            "name": "Raffles Platinum",
+            "score": 5,
+            "specialisation_for_cell": "In-network across all major SG insurers + corporate-account billing; insurance pre-auth pathway operationally mature."
+          },
+          {
+            "id": "gleneagles_johor",
+            "name": "Gleneagles Hospital Johor",
+            "score": 3,
+            "specialisation_for_cell": "Recently added to AIA / Prudential MY-network (Q1 2026); claim flow proven for IHH-network MY facilities."
+          },
+          {
+            "id": "asiamedic_navigator_7",
+            "name": "AsiaMedic Navigator 7",
+            "score": 3,
+            "specialisation_for_cell": "AsiaMedic claimable under most IS Plan riders for diagnostic imaging; selective coverage for the full screening package."
+          }
+        ]
+      },
+      "indonesian_hnw_family_office:rts_proximity_concierge": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "gleneagles_johor",
+            "name": "Gleneagles Hospital Johor",
+            "score": 4,
+            "specialisation_for_cell": "IHH international-patient destination for ID HNW already; same-network as Mt Elizabeth strengthens trust transfer."
+          },
+          {
+            "id": "kpj_bandar_dato_onn",
+            "name": "KPJ Bandar Dato’ Onn",
+            "score": 3,
+            "specialisation_for_cell": "JB-Causeway-adjacent + KPJ 28-hospital MY network; no SG concierge transfer, ID family-friendliness limited."
+          },
+          {
+            "id": "mahkota_medical",
+            "name": "Mahkota Medical Centre",
+            "score": 0
+          }
+        ]
+      },
+      "indonesian_hnw_family_office:fully_published_pricing": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "neko_health",
+            "name": "Neko Health",
+            "score": 5,
+            "specialisation_for_cell": "Transparent £400 sets benchmark; ID HNW use Neko-style brand transparency as quality proxy when comparing JB providers."
+          }
+        ]
+      },
+      "indonesian_hnw_family_office:named_consultant_radiologist_read": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "mt_elizabeth_screen_excelsior",
+            "name": "Mt Elizabeth Screen Excelsior",
+            "score": 3,
+            "specialisation_for_cell": "SMC-credentialled radiologists carry strong cred with ID HNW family-office buyers; named in report, not in marketing."
+          },
+          {
+            "id": "gleneagles_johor",
+            "name": "Gleneagles Hospital Johor",
+            "score": 3,
+            "specialisation_for_cell": "JB consultant radiologists with IHH-network credentials + bilingual handlers; no longitudinal patient-radiologist tie."
+          }
+        ]
+      },
+      "indonesian_hnw_family_office:same_day_results": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "iconic_medical",
+            "name": "Iconic Medical Imaging",
+            "score": 4,
+            "specialisation_for_cell": "48h turnaround works for ID HNW with multi-day SG/JB itinerary; not concierge-luxury enough for primary recommendation."
+          }
+        ]
+      },
+      "indonesian_hnw_family_office:mri_led_longevity_baseline": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "prenuvo",
+            "name": "Prenuvo",
+            "score": 4,
+            "specialisation_for_cell": "ID HNW awareness high (Kardashian halo); LA / Sydney trip combinable with annual visits but US travel friction grows."
+          }
+        ]
+      },
+      "indonesian_hnw_family_office:specialist_followup_depth": {
+        "our_score": 2,
+        "competitors": [
+          {
+            "id": "mt_elizabeth_screen_excelsior",
+            "name": "Mt Elizabeth Screen Excelsior",
+            "score": 5,
+            "specialisation_for_cell": "ID HNW already use Mt E as post-screening specialist destination; AEVUM cannot match same-roof depth, must partner."
+          },
+          {
+            "id": "gleneagles_johor",
+            "name": "Gleneagles Hospital Johor",
+            "score": 4,
+            "specialisation_for_cell": "JB IHH-network specialist depth + international-patient services for ID handoff; obvious partner for AEVUM follow-ups."
+          },
+          {
+            "id": "sunway_medical_velocity",
+            "name": "Sunway Medical Velocity",
+            "score": 4,
+            "specialisation_for_cell": "Sunway Velocity premium hospital + ID-HNW patient services; concierge layer above utility but KL drive/flight from JB."
+          }
+        ]
+      },
+      "indonesian_hnw_family_office:sg_insurer_reimbursable": {
+        "our_score": 0,
+        "competitors": [
+          {
+            "id": "mt_elizabeth_screen_excelsior",
+            "name": "Mt Elizabeth Screen Excelsior",
+            "score": 4,
+            "specialisation_for_cell": "ID HNW often hold SG IS Plans via SG family-office; Mt E in-network = insurer top-up halves out-of-pocket."
+          }
+        ]
+      },
+      "malaysian_affluent_pro:rts_proximity_concierge": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "kpj_bandar_dato_onn",
+            "name": "KPJ Bandar Dato’ Onn",
+            "score": 4,
+            "specialisation_for_cell": "JB-local default for MY professional within 15 min of Bukit Chagar; hospital ambience but price floor + KPJ familiarity."
+          },
+          {
+            "id": "gleneagles_johor",
+            "name": "Gleneagles Hospital Johor",
+            "score": 4,
+            "specialisation_for_cell": "Medini is premium-MY default for affluent JB pros; IHH-network concierge + closest international-patient amenities."
+          },
+          {
+            "id": "mahkota_medical",
+            "name": "Mahkota Medical Centre",
+            "score": 0
+          }
+        ]
+      },
+      "malaysian_affluent_pro:fully_published_pricing": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "iconic_medical",
+            "name": "Iconic Medical Imaging",
+            "score": 0
+          }
+        ]
+      },
+      "malaysian_affluent_pro:named_consultant_radiologist_read": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "gleneagles_johor",
+            "name": "Gleneagles Hospital Johor",
+            "score": 3,
+            "specialisation_for_cell": "JB consultant radiologists carry IHH-network cred for MY pros; bios published but not searchable, no follow-up consult."
+          },
+          {
+            "id": "sunway_medical_velocity",
+            "name": "Sunway Medical Velocity",
+            "score": 3,
+            "specialisation_for_cell": "Roster respected in KL; KL flight friction means JB MY pros consider it only for advanced cases, not routine."
+          }
+        ]
+      },
+      "malaysian_affluent_pro:same_day_results": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "sunway_medical_velocity",
+            "name": "Sunway Medical Velocity",
+            "score": 4,
+            "specialisation_for_cell": "Premium concierge delivers next-day results for KL MY affluent; AEVUM matches in JB without the 350km flight."
+          }
+        ]
+      },
+      "malaysian_affluent_pro:mri_led_longevity_baseline": {
+        "our_score": 4,
+        "competitors": []
+      },
+      "malaysian_affluent_pro:specialist_followup_depth": {
+        "our_score": 2,
+        "competitors": [
+          {
+            "id": "gleneagles_johor",
+            "name": "Gleneagles Hospital Johor",
+            "score": 4,
+            "specialisation_for_cell": "JB IHH specialist depth + international-patient services; obvious AEVUM follow-up partner for affluent JB pros."
+          },
+          {
+            "id": "kpj_bandar_dato_onn",
+            "name": "KPJ Bandar Dato’ Onn",
+            "score": 3,
+            "specialisation_for_cell": "Multi-specialty hospital with broad MY network; price-friendly specialist follow-up for the MY professional cohort."
+          },
+          {
+            "id": "sunway_medical_velocity",
+            "name": "Sunway Medical Velocity",
+            "score": 4,
+            "specialisation_for_cell": "Sunway Velocity premium hospital tier for advanced findings; KL flight friction caps usefulness as routine follow-up."
+          }
+        ]
+      },
+      "malaysian_affluent_pro:sg_insurer_reimbursable": {
+        "our_score": 0,
+        "competitors": [
+          {
+            "id": "gleneagles_johor",
+            "name": "Gleneagles Hospital Johor",
+            "score": 3,
+            "specialisation_for_cell": "Gleneagles JB AIA/Prudential MY-network status (Q1 2026) covers the MY professional with cross-border SG IS Plan riders."
+          }
+        ]
+      },
+      "csuite_executive_program_buyer:rts_proximity_concierge": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "gleneagles_johor",
+            "name": "Gleneagles Hospital Johor",
+            "score": 3,
+            "specialisation_for_cell": "JB Medini is obvious enterprise-buyer fallback if AEVUM cannot deliver; IHH-corporate-account billing already mature."
+          }
+        ]
+      },
+      "csuite_executive_program_buyer:fully_published_pricing": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "raffles_platinum",
+            "name": "Raffles Platinum",
+            "score": 4,
+            "specialisation_for_cell": "Publishes Platinum at S$11,408; corporate accounts negotiate to 50-65% of retail; public list is buyer benchmark."
+          }
+        ]
+      },
+      "csuite_executive_program_buyer:named_consultant_radiologist_read": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "mt_elizabeth_screen_excelsior",
+            "name": "Mt Elizabeth Screen Excelsior",
+            "score": 4,
+            "specialisation_for_cell": "SMC-credentialled radiologists with corporate-account history; named-radiologist reference for SG executive programs."
+          },
+          {
+            "id": "raffles_platinum",
+            "name": "Raffles Platinum",
+            "score": 3,
+            "specialisation_for_cell": "Raffles named consultant pool for Platinum tier; less surfaced in marketing than Mt E; corporate-account billing strong."
+          },
+          {
+            "id": "asiamedic_navigator_7",
+            "name": "AsiaMedic Navigator 7",
+            "score": 3,
+            "specialisation_for_cell": "AsiaMedic radiologist-led brand carries cred with PE family offices; smaller team, less corporate-account flow."
+          }
+        ]
+      },
+      "csuite_executive_program_buyer:same_day_results": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "iconic_medical",
+            "name": "Iconic Medical Imaging",
+            "score": 4,
+            "specialisation_for_cell": "Iconic 48h turnaround works for executive cohorts; younger brand without RFP-track-record for B2B procurement."
+          }
+        ]
+      },
+      "csuite_executive_program_buyer:mri_led_longevity_baseline": {
+        "our_score": 4,
+        "competitors": []
+      },
+      "csuite_executive_program_buyer:specialist_followup_depth": {
+        "our_score": 2,
+        "competitors": [
+          {
+            "id": "mt_elizabeth_screen_excelsior",
+            "name": "Mt Elizabeth Screen Excelsior",
+            "score": 5,
+            "specialisation_for_cell": "Full hospital follow-up + corporate billing + executive-comp procurement-friendly; current default for SG C-suite."
+          },
+          {
+            "id": "raffles_platinum",
+            "name": "Raffles Platinum",
+            "score": 5,
+            "specialisation_for_cell": "Raffles HealthShield enterprise + Platinum tier = one-stop executive program with corporate billing already mature."
+          }
+        ]
+      },
+      "csuite_executive_program_buyer:sg_insurer_reimbursable": {
+        "our_score": 0,
+        "competitors": [
+          {
+            "id": "mt_elizabeth_screen_excelsior",
+            "name": "Mt Elizabeth Screen Excelsior",
+            "score": 5,
+            "specialisation_for_cell": "+ IS Plan corporate riders is operationally seamless for executive comp programs; AEVUM has zero insurer linkage."
+          },
+          {
+            "id": "raffles_platinum",
+            "name": "Raffles Platinum",
+            "score": 5,
+            "specialisation_for_cell": "Raffles in-network across every major SG insurer; corporate-account billing pre-built for executive programs."
+          }
+        ]
+      },
+      "sg_chronic_followup:rts_proximity_concierge": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "gleneagles_johor",
+            "name": "Gleneagles Hospital Johor",
+            "score": 3,
+            "specialisation_for_cell": "Gleneagles JB IHH-network with chronic-care coordination via Mt E referral; obvious follow-up if AEVUM finds something."
+          }
+        ]
+      },
+      "sg_chronic_followup:fully_published_pricing": {
+        "our_score": 5,
+        "competitors": []
+      },
+      "sg_chronic_followup:named_consultant_radiologist_read": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "asiamedic_navigator_7",
+            "name": "AsiaMedic Navigator 7",
+            "score": 3,
+            "specialisation_for_cell": "AsiaMedic radiologist-led brand is well-known among SG specialists referring chronic surveillance patients."
+          },
+          {
+            "id": "mt_elizabeth_screen_excelsior",
+            "name": "Mt Elizabeth Screen Excelsior",
+            "score": 4,
+            "specialisation_for_cell": "Radiologist-specialist coordination loop is essential for chronic surveillance; same-roof depth AEVUM cannot match Y1."
+          }
+        ]
+      },
+      "sg_chronic_followup:same_day_results": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "iconic_medical",
+            "name": "Iconic Medical Imaging",
+            "score": 4,
+            "specialisation_for_cell": "Iconic fast-turnaround works for surveillance imaging; chronic-disease patients value speed for anxiety reduction."
+          }
+        ]
+      },
+      "sg_chronic_followup:mri_led_longevity_baseline": {
+        "our_score": 3,
+        "competitors": []
+      },
+      "sg_chronic_followup:specialist_followup_depth": {
+        "our_score": 1,
+        "competitors": [
+          {
+            "id": "mt_elizabeth_screen_excelsior",
+            "name": "Mt Elizabeth Screen Excelsior",
+            "score": 5,
+            "specialisation_for_cell": "Chronic-care follow-up is exactly what hospital-anchored Mt E is built for; AEVUM is a poor fit for this segment Y1."
+          },
+          {
+            "id": "nuh_screening",
+            "name": "NUH",
+            "score": 5,
+            "specialisation_for_cell": "Chronic-disease specialist depth + subsidised pricing for citizens; rational choice for SG-citizen chronic patients."
+          },
+          {
+            "id": "raffles_platinum",
+            "name": "Raffles Platinum",
+            "score": 5,
+            "specialisation_for_cell": "Raffles full hospital with insurer-network billing for chronic patients; deep specialist coverage."
+          }
+        ]
+      },
+      "sg_chronic_followup:sg_insurer_reimbursable": {
+        "our_score": 0,
+        "competitors": [
+          {
+            "id": "mt_elizabeth_screen_excelsior",
+            "name": "Mt Elizabeth Screen Excelsior",
+            "score": 5,
+            "specialisation_for_cell": "Chronic surveillance imaging is the IS Plan rider sweet-spot; Mt E + insurer billing makes the bill manageable."
+          },
+          {
+            "id": "raffles_platinum",
+            "name": "Raffles Platinum",
+            "score": 5,
+            "specialisation_for_cell": "Raffles surveillance imaging + IS Plan claim flow operationally seamless for chronic patients."
+          }
+        ]
+      },
+      "regional_health_tourist:rts_proximity_concierge": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "gleneagles_johor",
+            "name": "Gleneagles Hospital Johor",
+            "score": 3,
+            "specialisation_for_cell": "JB IHH international-patient services + Senai airport proximity + concierge transfers; proven cross-border destination."
+          },
+          {
+            "id": "mahkota_medical",
+            "name": "Mahkota Medical Centre",
+            "score": 3,
+            "specialisation_for_cell": "Established Indonesian medical-tourism pipeline (~30% intake) shows model works; Melaka 2.5h drive too far for SG."
+          },
+          {
+            "id": "sunway_medical_velocity",
+            "name": "Sunway Medical Velocity",
+            "score": 3,
+            "specialisation_for_cell": "Sunway Velocity KL premium concierge for regional tourists; KLIA proximity advantage but loses SG day-trip option."
+          }
+        ]
+      },
+      "regional_health_tourist:fully_published_pricing": {
+        "our_score": 5,
+        "competitors": []
+      },
+      "regional_health_tourist:named_consultant_radiologist_read": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "gleneagles_johor",
+            "name": "Gleneagles Hospital Johor",
+            "score": 3,
+            "specialisation_for_cell": "Gleneagles JB radiologists with IHH-network cred + multilingual handlers; named-radiologist not surfaced in marketing."
+          }
+        ]
+      },
+      "regional_health_tourist:same_day_results": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "neko_health",
+            "name": "Neko Health",
+            "score": 5,
+            "specialisation_for_cell": "Same-day results matches travel-tourist itinerary perfectly but no SEA presence; potential franchise / license play."
+          }
+        ]
+      },
+      "regional_health_tourist:mri_led_longevity_baseline": {
+        "our_score": 4,
+        "competitors": []
+      },
+      "regional_health_tourist:specialist_followup_depth": {
+        "our_score": 2,
+        "competitors": [
+          {
+            "id": "gleneagles_johor",
+            "name": "Gleneagles Hospital Johor",
+            "score": 4,
+            "specialisation_for_cell": "Gleneagles JB IHH specialist depth + international-patient services for cross-border follow-up."
+          },
+          {
+            "id": "sunway_medical_velocity",
+            "name": "Sunway Medical Velocity",
+            "score": 4,
+            "specialisation_for_cell": "Sunway Velocity premium specialist depth with international-patient services; KL location for follow-up trips."
+          }
+        ]
+      },
+      "regional_health_tourist:sg_insurer_reimbursable": {
+        "our_score": 0,
+        "competitors": []
+      }
+    }
+  },
+  "attack_plans": [
+    {
+      "rank": 1,
+      "niche_name": "RTS Link concierge MRI for SG HNW longevity-curious",
+      "icp": "42-60yo SG resident with household income S$500k+, lives D9/D10/Sentosa Cove, longevity-aware (Huberman/Attia listener), unbooked despite knowing about Prenuvo/Neko, refuses to fly for an MRI, comfortable with SG↔JB cross-border via the new RTS Link.",
+      "whitespace_segment_id": "sg_hnw_longevity_curious",
+      "tam_estimate_sgd": 25000000,
+      "tam_reasoning": "Of the ~32,000 SG addressable buyers in the SAM (Manulife Affluent 2024 + Singstat HIES 2024), ~50% are in the 42-60yo longevity-curious cohort = ~16,000. Forecast Y3 capture at ~10% = ~1,600 buyers/yr × ~S$2,640 (Comprehensive blended ARPU) + ~10% upgrade to Legacy Ultimate = ~S$25M slice TAM. Pre-RTS Link Y1 hits ~200 of these; Y2 ramps to ~700 once RTS opens; Y3 to ~1,600 at maturity.",
+      "why_gap": "No competitor occupies 'walking distance from RTS Link Bukit Chagar terminus' — that geography simply did not exist as a category before the RTS opens end-2026. Every SG hospital (Mt E, Raffles, NUH, SGH) is on the wrong side of the Causeway. Every JB hospital (KPJ BDO, Gleneagles JB) is hospital-utility framing, not concierge longevity. Every international DTC (Prenuvo, Neko, Ezra) has no SEA presence. The gap is structural and time-bound: it closes the moment a competitor opens a second walking-distance facility, but the 18-24 month build window plus PHFSA Class C licensing creates an effective head-start window through end-2027.",
+      "why_we_win": "our_score 5 on cross_border_proximity (the only walking-distance to Bukit Chagar) + our_score 5 on published_pricing_transparency + our_score 4 on named_consultant_radiologist + our_score 5 on same_day_results = the four dimensions SG HNW longevity-curious explicitly value. Combined with Elitez Group operational backing (37yr, 4 cities, 350 staff — not a startup), 3 Siemens magnets (1.5T + 3T), and S$2,640 Comprehensive lands ~78% below Mt E ceiling. The deliberate concession on follow_up_specialist_breadth (our_score 2) is mitigated by a Gleneagles JB referral protocol for any abnormal findings.",
+      "gtm": {
+        "channel": "Curated 200-name SG HNW pre-launch list seeded via DBS Treasures, OCBC Premier, UOB Privilege private bankers + AmCham SG / SBF founder-roundtable warm intros + Tatler SG / Robb Report / Business Times feature placement timed to RTS opening month + LinkedIn ads to verified SG household-income S$500k+ targets + influencer dinner-series with longevity-content creators (Peter Diamandis SEA tour Q4 2026).",
+        "pitch": "Skip the SG hospital queue. Annual longevity baseline scan, Siemens 3T MRI, named consultant radiologist, same-day results, RTS Link transfer included. S$2,640 versus Mt Elizabeth S$12,388 — and you’re back in Singapore in 3 hours.",
+        "pricing": "Comprehensive list S$2,640 (RM 8,699) — published in both MYR and SGD-equivalent. Annual baseline-tracking discount of 10% on Y2 return. RTS Link return ticket included end-2026.",
+        "content": "Five assets in first 90 days: (1) 'The S$10,000 SG hospital MRI tax — and why you don’t need to pay it' MAB-compliant blog post; (2) Tatler SG profile of AEVUM’s consultant-radiologist roster (NSR-linked); (3) RTS Link concierge transfer demo video (hero asset for opening month); (4) longevity-baseline patient-experience walkthrough video; (5) Bahasa Indonesia/Mandarin landing pages for the cross-border cohort."
+      }
+    },
+    {
+      "rank": 2,
+      "niche_name": "Multi-day longevity bundle for ID HNW family-office",
+      "icp": "35-65yo Indonesian HNW with SG family-office structure, family business / banking / commodities, SG private banker introduction (Mandiri Private, BCA Prioritas, DBS Treasures), travels with spouse + 1-2 adult children on a 4-day SG/JB long weekend, expects discretion + Bahasa Indonesia patient comms.",
+      "whitespace_segment_id": "indonesian_hnw_family_office",
+      "tam_estimate_sgd": 11000000,
+      "tam_reasoning": "MHTC Malaysia Healthcare Travel 2024 inbound ID screening pool ~50,000 / yr; AEVUM realistically captures the upper-affluent slice routing through SG private bankers ~2,500 / yr at maturity; at Legacy Ultimate ARPU S$5,300 with 30% upgrade to Legacy Platinum (S$7,420) = blended ARPU S$5,930. Y3 slice TAM = 2,500 × S$5,930 = ~S$15M; calibrated downward to ~S$11M for realistic Y3 capture (~40% of slice given throughput cap and SG-via-JB private-banker flow ramp).",
+      "why_gap": "ID HNW currently route through Mt Elizabeth Novena (S$11-13k for the principal) but Mt E is hospital-feel + busy + not multi-day-friendly. Sunway Velocity KL is more concierge but flight-friction kills it for a long-weekend trip. Gleneagles JB is the closest but hospital-utility framing without family-language briefings. No competitor offers 'multi-day discreet hospitality wrapper + Bahasa Indonesia consultant briefing + RTS Link concierge transfer' in one bundle. The gap exists because each existing player is either (a) a hospital optimising for clinical depth not hospitality, or (b) a wellness retreat with no MRI capability.",
+      "why_we_win": "our_score 5 on rts_proximity_concierge + our_score 5 on published_pricing_transparency + our_score 4 on named_consultant_radiologist (with Bahasa Indonesia briefing add-on) + our_score 5 on same_day_results + our_score 4 on mri_led_longevity_baseline. Legacy Ultimate (RM 17,499 / S$5,300) and Legacy Platinum (RM 24,499 / S$7,420) bundle multi-day hotel partner (DoubleTree JB / Renaissance JB), private-driver SG-pickup, family lounge, biomarker panel, longevity coach — exactly the discreet hospitality + clinical depth combo the segment values. Pricing 35-50% below Mt E + Echelon Health Mayfair tier with experience that meaningfully exceeds the SG hospital model on hospitality.",
+      "gtm": {
+        "channel": "Direct relationship-building with SG private bankers servicing ID family-office clients (Mandiri Private SG, BCA Prioritas, DBS Treasures, Standard Chartered Priority Private) — preferred-vendor protocol with quarterly relationship dinners. Jakarta media placement in Tempo + Forbes Indonesia + The Globe Indonesia. Closed-door briefings at the SG private-banking summit (Q2 2026) and the Indonesian Family Business Summit (Bali, Q4 2026). NO direct ad spend in Jakarta — referral only.",
+        "pitch": "A discreet long-weekend longevity baseline for the principal and the family — Siemens 3T MRI on Day 1, biomarker panel and longevity coach on Day 2, named consultant radiologist briefing in Bahasa Indonesia on Day 3, hotel partner across all three nights. S$5,300 versus Mt Elizabeth Novena S$11,000 + a more discreet experience.",
+        "pricing": "Legacy Ultimate S$5,300 (RM 17,499) standard bundle; Legacy Platinum S$7,420 (RM 24,499) with hotel partner + 12-month named-consultant follow-up + family-member upgrade pricing (30% off). Family bundle: spouse Comprehensive at 30% discount. SGD lock-rate at booking to neutralise FX.",
+        "content": "Three assets: (1) Bahasa Indonesia 'Petunjuk Kesehatan Konsultan' (Consultant Health Briefing) gated PDF for private-banker distribution; (2) discreet anonymous-principal case-study video (MAB-compliant, no testimonials, focus on facility + process); (3) family-friendly facility tour video showing private suite + lounge + spouse waiting area. Plus: a SG-private-banker referral pack with calculator showing tier-by-tier comparison vs Mt E Novena."
+      }
+    },
+    {
+      "rank": 3,
+      "niche_name": "Founders Programme — C-suite executive retainer",
+      "icp": "Corporate HR / Group HR / family-office / single-family-office / PE-portfolio-operator buying for an executive cohort or principal family of 10-50 named scans per year as part of executive comp + risk management; procurement-mediated; 6-12 month sales cycle; aligned with Elitez Group’s existing B2B sales motion.",
+      "whitespace_segment_id": "csuite_executive_program_buyer",
+      "tam_estimate_sgd": 6000000,
+      "tam_reasoning": "SG corporate executive screening market ~85,000 SG MNC executives screened annually (Aon SG 2025); ~5% are at the 'principal / C-suite' tier where annual premium screening is part of comp = ~4,250 cohort. AEVUM realistic Y3 capture ~6% of SG C-suite cohort = ~250 principals/yr × S$5,000 retainer-blended ARPU + ~10% family-office portfolio retainers (~S$50k/yr per portfolio) = ~S$6M slice TAM. Y1 ~30 principals (Elitez warm intros only); Y2 ~120 with first PE-portfolio deal; Y3 ~250 + 5 portfolio retainers.",
+      "why_gap": "Raffles HealthShield + Mt Elizabeth corporate screening own the SG enterprise space but offer COMMODITY screening (S$80-300/employee for basic; ad-hoc S$11k+ tiers for principals). No competitor offers a 'C-suite-only annual MRI baseline retainer' SKU with named-radiologist-relationship, multi-year baseline-tracking, and family-extension pricing as a structured program. PE family-offices currently piece this together themselves: Mt E for the principal + ad-hoc imaging for family + manual comms. The gap is the productised retainer structure, not the underlying scans.",
+      "why_we_win": "our_score 5 on rts_proximity_concierge + our_score 4 on published_pricing_transparency + our_score 4 on named_consultant_radiologist + our_score 5 on same_day_results, combined with Elitez Group’s existing 50-logo SG enterprise client base and B2B sales muscle. Founders Programme structure: RM 200-500k/yr retainer for n=20-40 guaranteed annual scans with named-consultant-radiologist relationship, MAB-compliant corporate-health-program framing, predictable utilisation that fills off-peak slots. The deliberate concession on follow_up_specialist_breadth (our_score 2) is solved at procurement time via a Gleneagles JB referral protocol baked into the contract.",
+      "gtm": {
+        "channel": "Direct enterprise sales through Elitez Group’s existing 50-logo client network (Pte Ltd, Security, Dynamic Human Capital, FMCG, Jobs Today, Property entities) + SBF/AmCham/SHRI corporate HR networks + targeted outreach to PE portfolio operators (Wavemaker, Vertex SEA, Jungle Ventures, Openspace, East Ventures) for portfolio-wide retainers. Closed-door briefings at the SG Family Office Forum + the SG HR Summit. RFP-ready procurement pack from Day 1.",
+        "pitch": "The premium executive health benefit your principals actually want. Annual MRI baseline at AEVUM, named-consultant-radiologist relationship, 5-min RTS Link from Singapore, results before the principal’s flight home — for less than the Mt Elizabeth retail rate, with predictable annual budget.",
+        "pricing": "Founders Programme retainer RM 200,000-500,000/yr for n=20-40 named principals (~RM 10,000-12,500 per principal blended). Family extension at 30% off list. Concierge transport SG-pickup included. Multi-year contracts at 5% discount. Capped at 30% of total facility capacity to protect concierge feel.",
+        "content": "Four assets: (1) Founders Programme procurement pack (compliance, PDPA / PDP, audit-ready invoicing, cancellation policy, SLA); (2) PE-portfolio operator briefing webinar 'Principal Health Risk Management for SEA Portfolio Cos'; (3) named-consultant-radiologist roster pack with NSR linkage; (4) RFP-ready contract template for SG corporate procurement teams. Plus: an off-the-record reference list of 3 Elitez Group enterprise clients for buyer reference calls (consent-gated)."
+      }
+    }
   ]
 }

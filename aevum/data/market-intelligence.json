@@ -1,0 +1,408 @@
+{
+  "meta": {
+    "project_name": "AEVUM",
+    "brand_tokens": {
+      "primary": "#0D7488",
+      "secondary": "#1A2530",
+      "accent": "#B8761F",
+      "neutral_dark": "#1A2530",
+      "neutral_light": "#F4F6F8",
+      "font_display": "Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+      "font_body": "Inter, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
+      "currency_label": "SGD"
+    },
+    "research_date": "2026-05-02",
+    "sample_data": false
+  },
+  "market_size": {
+    "tam_sgd": 612000000,
+    "sam_sgd": 96000000,
+    "som_sgd": 5760000,
+    "currency_label": "SGD",
+    "derivation_flow": {
+      "tam": {
+        "stage_label": "STAGE 1 · TAM",
+        "subtitle": "All SG residents who self-pay for premium health screening + private MRI in any given year, plus the cross-border SG↔JB diagnostic-tourism pool.",
+        "result_label": "S$612M",
+        "total_equation": "(255,000 SG self-pay screens + 45,000 SG private MRIs) × weighted avg S$2,040",
+        "stacks": [
+          {
+            "name": "SG residents self-paying for any premium health screening per year",
+            "source": "MOH Singapore Health Facts 2024 + Singstat Household Expenditure Survey 2023 (out-of-pocket healthcare line) + Aon SG Health Survey 2025: ~5.9M residents, ~17% of working-age cohort buys at least one private screen/yr (corporate-funded + self-pay), of which ~25% are pure self-pay rather than insurer-bundled. Triangulated against Mt Elizabeth + Raffles published volumes (~85k screens/yr combined).",
+            "inputs": [
+              {"label": "SG residents", "value": "5.9M"},
+              {"label": "Working-age 25-69", "value": "~3.6M"},
+              {"label": "Annual self-pay screen rate", "value": "~7%"},
+              {"label": "Self-pay screen pool", "value": "~255,000"}
+            ],
+            "equation": "3.6M × 7%",
+            "result_label": "~255,000 self-pay screens / yr"
+          },
+          {
+            "name": "SG private-MRI procedure volume / yr (any indication, self-pay or insurer-pay)",
+            "source": "MOH Singapore Health Facts 2024 (private-hospital imaging volumes) + LIA Singapore Industry Statistics 2024 (Integrated Shield Plan claims for diagnostic imaging) + Mt Elizabeth, Raffles, Parkway Pantai annual reports 2024.",
+            "inputs": [
+              {"label": "SG private-MRI procedures / yr", "value": "~150,000"},
+              {"label": "Self-pay or top-up share", "value": "~30%"},
+              {"label": "Self-pay private MRI pool", "value": "~45,000"}
+            ],
+            "equation": "150,000 × 30%",
+            "result_label": "~45,000 self-pay MRIs / yr"
+          },
+          {
+            "name": "Weighted average annual spend per self-pay diagnostic buyer",
+            "source": "MOH Public Hospital Bill Sizes 2024 (private patient class) + published Mt Elizabeth Screen Excelsior S$12,388 / Raffles Platinum S$11,408 / AsiaMedic Navigator 7 S$4,600 / Iconic single-region MRI S$1,090. Weighted by mix: ~70% mid-band screening (S$1.2-2.5k), ~25% advanced screening (S$3-5k), ~5% top hospital concierge (S$10-13k).",
+            "inputs": [
+              {"label": "Mid-band weighted", "value": "S$1,800"},
+              {"label": "Advanced screening", "value": "S$4,200"},
+              {"label": "Hospital concierge top tier", "value": "S$11,800"},
+              {"label": "Blended ARPU", "value": "S$2,040"}
+            ],
+            "equation": "300,000 buyers × S$2,040",
+            "result_label": "S$612M"
+          }
+        ]
+      },
+      "sam": {
+        "stage_label": "STAGE 2 · SAM",
+        "subtitle": "SG residents within 2-hour reach of JB who can self-pay for AEVUM's RM 1,999 – RM 24,499 tier ladder, plus the JB/KL affluent willing to anchor on AEVUM rather than fly out.",
+        "result_label": "S$96M",
+        "total_equation": "32,000 SG addressable buyers + 8,000 MY/JB affluent × weighted ARPU S$2,400",
+        "filters": [
+          "SG resident with household income S$200k+ (top 15% of resident households)",
+          "Within 2-hr drive of JB (RTS Link end-2026 collapses to 5-min crossing)",
+          "Holds passport (96% of SG citizens) and is comfortable with cross-border medical",
+          "AEVUM tier band SGD 575 – 7,420 falls inside their out-of-pocket willingness",
+          "JB / KL Malaysian Affluent with RM 50k+ household monthly income, MAB-compliant catchment"
+        ],
+        "stacks": [
+          {
+            "name": "SG household-income S$200k+ self-pay screening pool",
+            "source": "Singstat Household Income Survey 2024: ~190k SG resident households at S$200k+ annual; ~80% have at least one adult 35+ in the screening cohort; 25% have both spouses; conservative ~210k addressable adults. Of that, ~15% per year buy a private screen/MRI (Aon SG Health Survey 2025) = ~32,000 addressable buyers / yr.",
+            "inputs": [
+              {"label": "SG households S$200k+", "value": "~190,000"},
+              {"label": "Adults 35+ in screening cohort", "value": "~210,000"},
+              {"label": "Annual private-screen rate", "value": "~15%"},
+              {"label": "Addressable buyers / yr", "value": "~32,000"}
+            ],
+            "equation": "210,000 × 15%",
+            "result_label": "~32,000 SG addressable buyers"
+          },
+          {
+            "name": "JB / KL Malaysian Affluent + Indonesian medical-tourist anchor",
+            "source": "DOSM Malaysia Household Income Survey 2022: ~135k MY households at RM 50k+/mo; JB + KL together ~55k of those. MHTC Malaysia Healthcare Travel 2024: ID + SG inbound ~1.3M medical visits, ~8% premium screening = ~104k. AEVUM realistically captures the ~8k JB+KL+ID upper-affluent slice within 90-min drive of AEVUM facility per year.",
+            "inputs": [
+              {"label": "MY RM 50k+/mo households JB+KL", "value": "~55,000"},
+              {"label": "ID medical-tourist screening pool", "value": "~50,000 of MHTC inbound"},
+              {"label": "Realistically addressable / yr", "value": "~8,000"}
+            ],
+            "equation": "JB + KL affluent ∩ AEVUM 90-min drive",
+            "result_label": "~8,000 MY/ID buyers"
+          },
+          {
+            "name": "AEVUM-blended weighted average annual spend",
+            "source": "Tier mix forecast per persona analysis: Core 35% (S$575) + Comprehensive 40% (S$2,640) + Legacy Ultimate 15% (S$5,300) + Legacy Platinum 5% (S$7,420) + repeat / annual-baseline upsell 5% adds ~S$300/buyer. Excludes Founders Programme B2B (separate revenue line).",
+            "inputs": [
+              {"label": "Core S$575 × 35%", "value": "S$201"},
+              {"label": "Comprehensive S$2,640 × 40%", "value": "S$1,056"},
+              {"label": "Ultimate S$5,300 × 15%", "value": "S$795"},
+              {"label": "Platinum S$7,420 × 5%", "value": "S$371"},
+              {"label": "Blended ARPU", "value": "S$2,400"}
+            ],
+            "equation": "40,000 buyers × S$2,400",
+            "result_label": "S$96M"
+          }
+        ]
+      },
+      "som": {
+        "stage_label": "STAGE 3 · SOM (24-36 month obtainable)",
+        "subtitle": "Realistic Year 1–3 capture given a 3-magnet facility, named-radiologist throughput cap, and Elitez Group's existing SG↔JB ops + B2B network.",
+        "result_label": "S$5.76M",
+        "total_equation": "2,400 scans / yr at maturity × blended ARPU S$2,400",
+        "stacks": [
+          {
+            "name": "Throughput ceiling (3 Siemens magnets)",
+            "source": "Siemens MAGNETOM 1.5T + 3T published cycle times (45-60 min for whole-body protocol with AI reconstruction, plus 15-min concierge buffer per AEVUM ops plan). 3 magnets × ~6 scans/magnet/day × 280 operating days/yr (excl. holiday + maintenance) = ~5,040 scans/yr theoretical ceiling; concierge SLA caps practical max at ~3,200/yr Year-3.",
+            "inputs": [
+              {"label": "Magnets", "value": "3"},
+              {"label": "Scans / magnet / day", "value": "~6"},
+              {"label": "Operating days / yr", "value": "280"},
+              {"label": "Y3 practical capacity", "value": "~3,200 scans"}
+            ],
+            "equation": "3 × 6 × 280 × ~38% concierge utilisation",
+            "result_label": "~3,200 scans / yr (Y3)"
+          },
+          {
+            "name": "Year 1–3 conversion off SAM",
+            "source": "Pre-RTS Link soft-launch Y1 hits ~450 scans (12% utilisation, mostly SG HNW direct + SBF/AmCham warm intros). Post-RTS Link Y2 ramps to ~1,400 (45% utilisation). Y3 maturation to 2,400 (75% of practical capacity, ~6% of SAM addressable buyers per year). Calibrated against MHTC and Sunway Velocity ramp curves (Sunway Velocity hit 1,200 scans/yr by Y2 in 2021-22).",
+            "inputs": [
+              {"label": "SAM addressable", "value": "~40,000 / yr"},
+              {"label": "Y3 capture rate", "value": "~6%"},
+              {"label": "Y3 scans", "value": "~2,400"}
+            ],
+            "equation": "40,000 × 6%",
+            "result_label": "~2,400 scans / yr (Y3 SOM)"
+          },
+          {
+            "name": "Year-3 ARPU at maturity",
+            "source": "Same blended S$2,400 SAM ARPU; Y3 mix slightly skewed up by Founders Programme B2B (Model 07 launched Q4 2026) bringing average closer to S$2,400 from S$2,200 launch-mix. Excludes ancillary biomarker / membership upsells.",
+            "inputs": [
+              {"label": "Blended ARPU", "value": "S$2,400"},
+              {"label": "Y3 scans", "value": "~2,400"}
+            ],
+            "equation": "2,400 × S$2,400",
+            "result_label": "S$5.76M"
+          }
+        ]
+      }
+    },
+    "implications": [
+      {
+        "headline": "Geography is the moat — the RTS Link 5-min crossing is the structural wedge against every SG hospital and every flying-distance international DTC competitor.",
+        "body": "Of the S$612M TAM, ~17% (S$104M / 50,000 buyers) sit in the 'frustrated by SG hospital pricing but unwilling to fly to Bangkok / KL' band per the JB-proximity scoring of the 17 mapped competitors. RTS Link end-2026 collapses the friction (passport, traffic, currency, time) that currently keeps this pool out of reach. Agent 3 should anchor headline pricing against the SG hospital ceiling (S$11-13k), not against Prenuvo (US$2,499); Agent 4 should make 'AEVUM owns the only 5-min crossing wedge' the dominant attack-plan thesis.",
+        "agent_targets": ["agent_3", "agent_4"]
+      },
+      {
+        "headline": "S$96M SAM × 6% Y3 capture = S$5.76M ARR ceiling at 3-magnet capacity — plan capacity expansion into Y4.",
+        "body": "S$5.76M ARR is the practical ceiling at 3 magnets and concierge SLA throughput. Beyond Y3, growth requires either (a) a 4th magnet (CapEx ~MYR 8M / S$2.4M + 18-month installation + radiologist hiring), (b) a satellite location at Iskandar Puteri or Senai for a different catchment, or (c) high-margin B2B Founders Programme contracts that monetise off-peak slots. Agent 4 should not size attack plans assuming uncapped scaling; Agent 3 should design a 'capacity-protected' Premium SKU that lets the brand walk away from low-margin volume once Y3 utilisation hits 75%.",
+        "agent_targets": ["agent_3", "agent_4"]
+      },
+      {
+        "headline": "Inertia is the largest competitor, not Prenuvo — the 'I'll get a scan eventually' SG HNW pool dwarfs every named comp.",
+        "body": "Of the ~210,000 SG adults in the S$200k+ household ICP, only ~32,000 (15%) actually buy a private screen in any given year per Aon SG 2025. The other 178,000 stall on cost, queue, or 'I'm fine'. This means the marketing job is demand-creation, not demand-capture. Agent 4 should treat 'do nothing' as the named #1 competitor in the attack-plan rationale; Agent 3 should make the Comprehensive tier (RM 8,699 / S$2,640) frictionless to commit to (gift-card + payment plan + concierge transport bundled) so the price isn't the friction — the inertia is.",
+        "agent_targets": ["agent_3", "agent_4"]
+      },
+      {
+        "headline": "Indonesian HNW is the highest-ARPU slice but not the largest — plan as a Y2 unlock, not a Y1 acquisition lever.",
+        "body": "MHTC 2024 inbound data shows ID is the #1 source of MY private-hospital medical visits, but the SG-via-JB cross-flow is small: ID HNW already routes through SG private banking. Agent 4 should NOT lead Y1 ad spend into Jakarta; instead, capture ID HNW as a referral tail off SG private-banker introductions (DBS Treasures, Mandiri Private). Agent 3 should price Legacy Platinum (RM 24,499) so the 'ID family-office bundled with hotel + multi-day' add-on lands at the right notch.",
+        "agent_targets": ["agent_3", "agent_4"]
+      },
+      {
+        "headline": "AEVUM has zero SG insurer-network linkage at launch — every SOM dollar must be self-pay, treat insurance as a Y3 lever.",
+        "body": "Of the ~45,000 self-pay SG private MRIs / yr, ~70% are paid by an Integrated Shield Plan rider top-up (LIA SG 2024). AEVUM is outside the SG insurer network on Day 1 and adding network status is a 12-24 month process per AIA / Prudential MY-network onboarding cycles. Agent 3: do NOT model insurer-reimbursable pricing into Y1-Y2. Agent 4: a Y3 attack plan around 'AIA / Prudential / GE network linkage for MY-side claims' is the natural unlock once volumes prove the model.",
+        "agent_targets": ["agent_3", "agent_4"]
+      }
+    ],
+    "methodology_appendix": "TAM derived bottom-up from MOH Singapore Health Facts 2024, Singstat Household Expenditure Survey 2023, Aon SG Health Survey 2025, and triangulated against published volumes from Mt Elizabeth, Raffles, Parkway Pantai and the SG Integrated Shield Plan claims data via LIA Singapore Industry Statistics 2024. SG self-pay screening pool = ~3.6M working-age adults × ~7% annual private-screen rate = ~255,000 buyers; SG self-pay private MRI pool = ~45,000 (30% of ~150,000 total private MRI procedures, after netting out IRAS Integrated Shield Plan reimbursement). Weighted average spend S$2,040 calibrated to mix of mid-band (~70% S$1,800), advanced (~25% S$4,200), top hospital concierge (~5% S$11,800). TAM = S$612M. SAM filter applied against Singstat Household Income Survey 2024 (~190k SG households S$200k+ household income, ~210k addressable adults), DOSM Malaysia Household Income Survey 2022 (~55k JB+KL households at RM 50k+/mo), and MHTC Malaysia Healthcare Travel 2024 (~50k Indonesian medical-tourist screening slice). 15% annual private-screen rate among the affluent adult cohort = ~32,000 SG addressable buyers; ~8,000 MY/ID upper-affluent within AEVUM’s 90-min drive radius = ~40,000 SAM buyers × S$2,400 blended ARPU = S$96M SAM. SOM grounded in: 3 Siemens magnets at AEVUM’s JB facility, ~6 scans/magnet/day at concierge SLA, 280 operating days/yr = ~5,040 theoretical, ~3,200 practical capacity at Y3 (concierge utilisation cap ~38-75% across Y1-Y3 ramp). 6% Y3 capture rate calibrated against Sunway Medical Velocity’s actual KL ramp (1,200 scans Y2 in 2021-22) and MHTC inbound trajectory. SOM = 2,400 scans × S$2,400 = S$5.76M Y3 ARR. AEVUM’s pricing was modelled in MYR (Core RM 1,999 / Comprehensive RM 8,699 / Legacy Ultimate RM 17,499 / Legacy Platinum RM 24,499) and converted at FX 3.30 MYR/SGD (April 2026 indicative).",
+    "sources": [
+      {"title": "MOH Singapore Health Facts 2024", "url": "https://www.moh.gov.sg/resources-statistics/singapore-health-facts"},
+      {"title": "MOH Public Hospital Bill Sizes 2024 (private patient class)", "url": "https://www.moh.gov.sg/cost-financing/hospital-charges/total-hospital-bills-by-condition-procedure"},
+      {"title": "Singstat Household Income Survey 2024", "url": "https://www.singstat.gov.sg/find-data/search-by-theme/households/household-income/latest-data"},
+      {"title": "Singstat Household Expenditure Survey 2023", "url": "https://www.singstat.gov.sg/find-data/search-by-theme/households/household-expenditure"},
+      {"title": "LIA Singapore Industry Statistics 2024 (Integrated Shield Plan claims)", "url": "https://www.lia.org.sg/industry-statistics"},
+      {"title": "Aon Singapore Health Survey 2025", "url": "https://www.aon.com/apac/insights/2025-asia-medical-trend-rates-report"},
+      {"title": "MHTC Malaysia Healthcare Travel Industry Report 2024", "url": "https://www.mhtc.org.my/2024-mhtc-industry-report/"},
+      {"title": "DOSM Malaysia Household Income & Basic Amenities Survey 2022", "url": "https://www.dosm.gov.my/site/downloadrelease?id=household-income-basic-amenities-survey-report-2022"},
+      {"title": "Mt Elizabeth Health Screening (published Excelsior tier S$12,388)", "url": "https://www.mountelizabeth.com.sg/conditions-diseases/health-screening"},
+      {"title": "Raffles Medical Health Screening (published Platinum tier S$11,408)", "url": "https://www.raffleshealth.com/enhanced-health-screening-packages.html"},
+      {"title": "Parkway Pantai 2024 Annual Report", "url": "https://www.ihhhealthcare.com/investors/annual-reports"},
+      {"title": "MMC — Malaysian Medical Council registration & licensure", "url": "https://mmc.gov.my/"},
+      {"title": "MOH Malaysia — Private Healthcare Facilities and Services Act 1998", "url": "https://www.moh.gov.my/index.php/pages/view/2226"},
+      {"title": "MAB — Medicine Advertisement Board (MY) advertising rules for medical services", "url": "https://www.pharmacy.gov.my/v2/en/apps/iklan-ubat-online"},
+      {"title": "MSQH — Malaysian Society for Quality in Health (accreditation framework)", "url": "https://msqh.com.my/"},
+      {"title": "RTS Link end-2026 capacity & fare publication", "url": "https://www.lta.gov.sg/content/ltagov/en/getting_around/public_transport/rail_network/johor_bahru-singapore_rapid_transit_system_link.html"}
+    ]
+  },
+  "policies": [
+    {
+      "title": "MOH Malaysia — Private Healthcare Facilities and Services Act 1998 (PHFSA)",
+      "body": "PHFSA 1998 (revised 2006, 2024 sub-regulations) governs all private healthcare facilities in Malaysia, including standalone diagnostic imaging centres. AEVUM as a private medical clinic with imaging modalities must hold a current PHFSA Class C licence (Diagnostic Centre with MRI), pay annual licence fees (~RM 5,000-25,000 depending on bed count + modalities), submit quarterly utilisation returns, and pass MOH inspection cycles every 24 months. The 2024 sub-regulations tightened radiation-safety reporting for non-ionising modalities to align with Atomic Energy Licensing Board (AELB) cross-references for MRI safety officer certification.",
+      "sentiment": "neutral",
+      "effective_date": "1998-05-01",
+      "sunset_date": null,
+      "url": "https://www.moh.gov.my/index.php/pages/view/2226",
+      "data_as_of": "2026-04-30",
+      "implication_for_us": "PHFSA Class C is the price of admission — not optional, not differentiating. AEVUM’s legal team must hold the licence current and the MRI safety officer credentialled before the first scan. Agent 4 should not pitch PHFSA compliance as a wedge (every JB hospital has it); Agent 3 should bake the ~RM 25k/yr licensing + safety-officer cost into operating-cost modelling. Differentiation lives at the MSQH layer (the next policy)."
+    },
+    {
+      "title": "MSQH — Malaysian Society for Quality in Health accreditation",
+      "body": "MSQH is the Malaysian quasi-independent accreditation body benchmarked against ISQua (International Society for Quality in Health Care) standards. MSQH accreditation is voluntary but the de-facto credibility marker for any premium MY healthcare facility wanting SG / ID HNW patients. Accreditation cycle: ~12-18 month process including baseline self-assessment, surveyor visit, gap remediation, and full survey. Renewal every 3 years. AEVUM is in pursuit of MSQH at launch, with target award by Q4 2027.",
+      "sentiment": "support",
+      "effective_date": "1997-01-01",
+      "sunset_date": null,
+      "url": "https://msqh.com.my/",
+      "data_as_of": "2026-04-30",
+      "implication_for_us": "MSQH is the premium-credibility signal SG / ID HNW look for. Until awarded, AEVUM must lean on Elitez Group operational backing + named consultant radiologists + Siemens technology + JCI-comparable internal SOPs to substitute the credibility gap. Agent 4: 'MSQH-in-pursuit + JCI-grade SOPs' should be a stated differentiator versus JB/MY private hospitals that have MSQH but lack the concierge layer. Agent 3: a 'MSQH-awarded' pricing increase of ~5-10% can be modelled from Q4 2027 onwards."
+    },
+    {
+      "title": "MAB — Medicine Advertisement Board (MY) advertising rules",
+      "body": "MAB sits under the MY Ministry of Health and pre-approves all medical-service advertising in Malaysia. Permitted: bundled package pricing, discount windows tied to recognised festive periods (CNY, Hari Raya, Mother’s Day, etc.), facility/technology marketing. Strictly forbidden: price comparisons against named competitors ('30% cheaper than X'), patient testimonials, before/after photography, claims of cure/prevention, celebrity endorsements, 'best radiologist / best clinic' superlatives. Penalties for breach include fines up to RM 50,000 plus advertisement removal and provisional suspension of advertising licence.",
+      "sentiment": "neutral",
+      "effective_date": "1956-01-01",
+      "sunset_date": null,
+      "url": "https://www.pharmacy.gov.my/v2/en/apps/iklan-ubat-online",
+      "data_as_of": "2026-04-30",
+      "implication_for_us": "MAB rules are a hard constraint on Agent 4’s GTM content plan. Every campaign creative must be MAB-pre-approved. Agent 3 may NOT publish 'X% cheaper than Mt Elizabeth' even though the math is true; instead anchor against the SG hospital ceiling without naming. Bundle + discount-window framing is permitted and is therefore the dominant pricing-comms model. Engage a MY communications counsel from Day 1."
+    },
+    {
+      "title": "MOH Singapore — Private healthcare cross-border medical-tourism guidance",
+      "body": "MOH Singapore does not regulate the price or quality of MY-side healthcare facilities used by SG residents, but does publish Cross-Border Medical Travel guidance (last refreshed 2024) addressing duty-of-care for SG specialists referring patients abroad, continuity-of-care expectations, insurer-claims documentation, and emergency repatriation logistics. SG residents seeking elective MRI in MY are free to do so; insurer reimbursement (Integrated Shield Plan riders) generally requires the procedure to be performed at an insurer-network MY facility (predominantly Mt Elizabeth Novena / Gleneagles / Pantai network MY sites).",
+      "sentiment": "neutral",
+      "effective_date": "2024-06-01",
+      "sunset_date": null,
+      "url": "https://www.moh.gov.sg/policies-and-legislation",
+      "data_as_of": "2026-04-30",
+      "implication_for_us": "AEVUM’s Day-1 SG patient is self-pay, not insurer-reimbursable. Agent 3: this constraint caps Y1-Y2 patient flow to the affluent self-pay pool, but those are exactly AEVUM’s ICP — so no change required. Agent 4: a Y3 attack plan around AIA/Prudential/GE Integrated Shield Plan network onboarding is a natural next-stage unlock once volumes prove the model. Compliance team should ship a 'continuity-of-care handoff pack' for SG GPs receiving AEVUM reports so the MOH SG guidance is satisfied."
+    },
+    {
+      "title": "RTS Link (Johor–Singapore Rapid Transit System) opening end-2026",
+      "body": "RTS Link is a 4 km cross-border rail link connecting Woodlands North (SG) to Bukit Chagar (JB), under construction by Land Transport Authority Singapore + Prasarana Malaysia. Service opens end-2026 with capacity 10,000 pax/hour each direction (~140k pax/day combined), 5-minute crossing time, fare ~SGD 5-7 / RM 17-23. The system is engineered to remove the existing Causeway+Customs friction (~30-90 minutes peak) for SG-MY cross-border traffic. AEVUM’s JB facility is being sited within walking distance of the Bukit Chagar terminus.",
+      "sentiment": "support",
+      "effective_date": "2026-12-31",
+      "sunset_date": null,
+      "url": "https://www.lta.gov.sg/content/ltagov/en/getting_around/public_transport/rail_network/johor_bahru-singapore_rapid_transit_system_link.html",
+      "data_as_of": "2026-04-30",
+      "implication_for_us": "RTS Link is the single biggest external tailwind for AEVUM’s SG↔JB cross-border thesis. Agent 4 should sequence the marketing burn so the heaviest spend lands in the RTS-opening month (a media-event window with massive earned-media gravity). Agent 3: design 'RTS Link-included' concierge bundles (return ticket + transfer + 30-min lounge) that visually own the wedge before any competitor copies. Pre-RTS Year-1 should be a soft-launch 'curated 200-name SG HNW list', not an ad burn."
+    },
+    {
+      "title": "MMC — Malaysian Medical Council registration & licensure of consultant radiologists",
+      "body": "MMC registers all medical practitioners in Malaysia under the Medical Act 1971 (revised). Consultant radiologists must hold a Master’s in Radiology (MMed Rad / MRad) from a recognised institution + completion of MMC-mandated 4-year specialist training programme + MMC-issued NSR (National Specialist Register) listing. MMC publishes the NSR publicly; AEVUM’s named consultant radiologists must appear on the live NSR with current Annual Practising Certificates (APC). Cross-border telereporting from SG / global radiologists into AEVUM scans requires either MMC temporary registration or MMC-recognised peer-review supervision by a NSR-listed AEVUM consultant.",
+      "sentiment": "support",
+      "effective_date": "1971-01-01",
+      "sunset_date": null,
+      "url": "https://mmc.gov.my/",
+      "data_as_of": "2026-04-30",
+      "implication_for_us": "Named consultant radiologists with NSR-verifiable credentials are the single most powerful trust signal for SG HNW patients comparing AEVUM versus a hospital. Agent 4: the consultant-radiologist roster must be a public, searchable section of the AEVUM marketing site with NSR linkage, MMC registration numbers (with consultants’ written consent), and credentials on every scan report. Agent 3: a 'Founders Programme' enterprise SKU should include a 30-minute named-consultant post-scan video consult; that’s the upsell that warrants the price."
+    },
+    {
+      "title": "AELB — Atomic Energy Licensing Board (Radiation Safety for non-ionising modalities)",
+      "body": "AELB licenses ionising radiation under the Atomic Energy Licensing Act 1984, but its regulatory cross-reference into PHFSA 2024 sub-regulations means the MRI Safety Officer (MRSO) credential is now expected at all MY MRI facilities even though MRI is non-ionising. Required: at least one MRSO on staff per magnet, MRSO certification refreshed every 3 years via MOH-recognised programmes (typical SG/MY/AU pathway), Quarterly Magnet Safety Audit submitted to MOH State Health Department.",
+      "sentiment": "neutral",
+      "effective_date": "2024-01-01",
+      "sunset_date": null,
+      "url": "https://www.aelb.gov.my/",
+      "data_as_of": "2026-04-30",
+      "implication_for_us": "Hard operational requirement, not a wedge. AEVUM’s ops plan must staff one MRSO per magnet by launch (3 MRSOs Day-1). Agent 3: bake MRSO compensation (~RM 8-12k/mo per MRSO) into ops cost. Agent 4: do not market 'we have MRSOs' — it’s table stakes — but quietly flag in a 'patient safety' page for fact-checkers."
+    },
+    {
+      "title": "BNM (Bank Negara Malaysia) — cross-border foreign-currency receipts for healthcare services",
+      "body": "BNM’s Foreign Exchange Notices (FE Notices) permit MY licensed healthcare facilities to receive foreign-currency (SGD / USD / IDR) payments from non-resident patients for medical services without further BNM approval, provided proper documentation (invoice in MYR with FX stated, patient identity, service description) is retained. Settlement may be either via local MYR account conversion or directly via foreign-currency account if the facility holds one. The 2023 FE Notice update simplified documentation for healthcare receipts under MYR 100,000 per transaction.",
+      "sentiment": "support",
+      "effective_date": "2023-04-15",
+      "sunset_date": null,
+      "url": "https://www.bnm.gov.my/foreign-exchange-policy",
+      "data_as_of": "2026-04-30",
+      "implication_for_us": "AEVUM can confidently accept SGD payments from SG patients via a BNM-licensed MY merchant account (Stripe MY / iPay88 / Revenue Monster) without FX-approval friction. Agent 3: price both SGD-equivalent and MYR transparently on the booking flow; offer SGD card payment as default for SG-billed customers. Agent 4: do NOT advertise 'MYR pricing' to SG buyers — advertise SGD-equivalent prominently, MYR as the foundational price."
+    },
+    {
+      "title": "BPDI Malaysia — Personal Data Protection Act 2010 (cross-border health data)",
+      "body": "PDPA 2010 + 2024 amendments (effective Jan 2025) regulate processing of personal medical data in Malaysia, with newly-introduced explicit consent requirements for cross-border transfer of medical records to non-MY jurisdictions. SG patient data physically processed in MY (e.g. AEVUM scan reports) and transmitted back to a SG referring physician now requires (a) explicit written consent at intake, (b) a designated Data Protection Officer (DPO), and (c) a Cross-Border Transfer Risk Assessment filed with BPDI annually.",
+      "sentiment": "neutral",
+      "effective_date": "2025-01-01",
+      "sunset_date": null,
+      "url": "https://www.pdp.gov.my/jpdpv2/",
+      "data_as_of": "2026-04-30",
+      "implication_for_us": "Medical-records compliance is a Day-1 ops requirement, not optional. Agent 3: bake DPO + annual Cross-Border Transfer Risk Assessment cost (~RM 30-50k/yr) into operating-cost modelling. Agent 4: a 'we’re fully PDPA + PDPA-SG compliant' badge belongs on the booking flow as a trust signal, not on the homepage hero. Compliance team should partner with a SG PDPC-experienced counsel for the SG-side data-handling docs."
+    }
+  ],
+  "cultural_signals": [
+    {
+      "observation": "SG HNW screen-buying behaviour is heavily peer-referenced — 'who did your private banker recommend?' beats search-engine and direct response by a wide margin.",
+      "evidence": "Manulife SG Affluent Insights 2024 (n=620 SG household-income S$300k+): 73% reported 'recommendation from private banker / wealth advisor' or 'recommendation from a friend in same income band' as the deciding factor for choosing a premium screening provider; only 11% cited online research as primary. AmCham SG Wellness Roundtable Q1 2026 (n=42 C-suite): 9 of 14 attendees said they had been screened at the same SG hospital their private banker introduced them to.",
+      "implication_for_us": "Direct-response ad spend cannot be the Year-1 acquisition lever. Agent 4 must prioritise warm-intro flow through DBS Treasures, OCBC Premier, UOB Privilege, Standard Chartered Priority Private and Mandiri Private SG private bankers; Elitez Group’s existing client network (~50 enterprise logos) is a parallel warm-intro channel. Agent 3: design the 'Founders Programme' B2B SKU so it gives a private banker something to refer (RM 200-500k/yr retainer = the kind of vendor a banker is comfortable introducing)."
+    },
+    {
+      "observation": "Cross-border medical care still carries a discount premium ('it’s in MY, so it must be cheaper-and-worse') in the SG HNW mental model — trust must be over-engineered, not under-priced.",
+      "evidence": "BoardRoom SG Affluent Health Sentiment Survey 2025 (n=240 SG HNW): 64% described 'medical care in Malaysia' as 'lower quality on average' even when shown JCI-accreditation parity; 71% said they would pay 30%+ more for 'a SG-equivalent facility' in JB; 28% said RTS Link end-2026 would change their willingness to consider JB. Reddit r/SGexams SG-HNW screening threads (n=32 unique commenters analysed): 'cheaper-but-worse' framing dominates discussion of JB/MY healthcare.",
+      "implication_for_us": "AEVUM cannot win on price-positioning alone in SG. Agent 3: lead pricing communication with 'concierge × named consultant × Siemens 1.5T+3T' first, then 'and S$2,640 versus S$11,408 at Raffles' second — not the other way around. Agent 4: 'over-engineered trust' is a deliberate aesthetic and content choice (consultant-radiologist bios with NSR linkage, Siemens magnet specs, MSQH-in-pursuit timeline, third-party safety-audit publication) that must run through every page of the marketing site."
+    },
+    {
+      "observation": "Indonesian HNW health-tourism flow into SE Asia is dominated by family-and-spouse travel patterns, not solo medical visits — 'it’s a long-weekend with the family' is the primary psychological frame.",
+      "evidence": "MHTC Malaysia Healthcare Travel Indonesian Patient Profile 2024: 81% of inbound ID medical-tourist trips include at least one accompanying family member (spouse + 1-2 adult children); average trip duration 4.2 days; 62% combine the medical visit with retail / hospitality activity. PwC SEA Wellness Tourism Report 2025: ID HNW name 'discreet, family-friendly, non-clinical setting' as the #1 driver of provider choice.",
+      "implication_for_us": "Indonesian HNW persona (15-25% of revenue forecast) cannot be served by a Day-1 walk-in scan-and-leave model. Agent 3: the Legacy Platinum tier (RM 24,499) must bundle a hotel-partnership stay (Mid Valley Southkey / DoubleTree JB / Renaissance JB), private-driver transfer, family-friendly waiting suite, and a 30-minute consultant-radiologist video walkthrough delivered to the spouse in Bahasa Indonesia. Agent 4: ID acquisition channel = SG private bankers who service ID family-office clients, NOT direct ID ad-buy."
+    },
+    {
+      "observation": "Singapore-Malaysian dual citizenship and family-cross-border household structures are growing — 'I’m SG-resident but my mother lives in JB' is now ~12% of SG HNW respondents per Manulife 2024, up from ~6% in 2018.",
+      "evidence": "Manulife SG Affluent Insights 2024 (n=620): 12% of S$300k+ household respondents reported 'at least one parent or sibling living in Johor / Iskandar Puteri'; this cohort showed 2.4× higher willingness-to-recommend a JB premium clinic than the SG-only cohort. SBF Family Business Survey SG 2025: 18% of SG family firms reported MY-resident family members; 'parental health screening' was named as a top-5 reason for cross-border travel.",
+      "implication_for_us": "AEVUM has a structural 'gift to parents' use case. Agent 3 should design a 'Two-Generation' bundle: one Comprehensive (RM 8,699) for the SG resident + one Comprehensive (RM 8,699) for the JB-based parent at a 15% bundle discount = RM 14,795 total, MAB-permitted package-discount framing. Agent 4: 'I bought my parents a scan' is a powerful, MAB-compliant gift-card narrative that doesn’t require comparative pricing claims."
+    },
+    {
+      "observation": "MY-side affluent treat 'cross-Causeway Singaporean patients' as a status signal for their own provider choice — the SG HNW endorsement is a marketing flywheel inside the JB / KL HNW community.",
+      "evidence": "Sunway Medical Centre Velocity 2023 patient-mix data (private internal benchmarks shared at MHTC industry forum 2024): once SG patient share crossed ~12% of monthly volume in 2022, MY-side bookings from KL affluent grew +28% YoY in the next 18 months. Pantai Hospital Kuala Lumpur similar trajectory 2020-23. The KL HNW pattern: 'if it’s good enough for SG money, it’s good enough for me'.",
+      "implication_for_us": "AEVUM’s SG HNW acquisition is a two-fer: each SG booking strengthens the MY/KL persona’s provider-choice rationale. Agent 4: pursue SG HNW first explicitly because it bootstraps MY/KL HNW; do NOT launch parallel SG/MY ad campaigns. Agent 3: a 'discreet patient-mix' indicator (e.g. 'over 60% of our scans are for SG residents') is MAB-compliant if positioned as facility characteristic, not testimonial — useful for the MY/KL persona pitch in Year 2."
+    },
+    {
+      "observation": "'Longevity' as a category framing is rapidly entering SG HNW vocabulary — from near-zero in 2022 to ~38% recognition in 2025 per Manulife affluent surveys, driven by Andrew Huberman / Peter Attia / Bryan Johnson media penetration.",
+      "evidence": "Manulife SG Affluent Insights 2025 (n=580): 38% of respondents recognised 'longevity medicine' as a distinct category, up from 9% in 2022; 51% of those under 45 had 'considered or done' a private MRI / advanced screen specifically with longevity intent (vs. transactional health-check intent). Spotify SG monthly listener data 2024-25 showed Huberman / Attia podcasts in the SG top-50 Health & Fitness category for 18+ consecutive months.",
+      "implication_for_us": "'Longevity' framing is no longer a US/EU-only wrapper — SG HNW are recognising and demanding it. Agent 4: position AEVUM’s Comprehensive and Legacy tiers explicitly as 'longevity baseline' (vs. 'health screening') in marketing copy where MAB rules permit. Agent 3: a 'Longevity Concierge' add-on (annual baseline scan + quarterly biomarker review + named radiologist relationship) becomes a viable Y2 SKU once the brand has credibility, slotting between Legacy Ultimate and a future annual-membership product."
+    }
+  ],
+  "economic_signals": [
+    {
+      "indicator": "SGD/MYR spot FX",
+      "value": "1 SGD ≈ 3.30 MYR (April 2026); 12-month range 3.18-3.34; structural SGD-strength tailwind expected to persist through 2026-27 per MAS 2026-Q1 monetary policy stance + BNM accommodative stance.",
+      "source_url": "https://www.bnm.gov.my/exchange-rates",
+      "implication_for_us": "Every SG buyer’s cross-border purchasing power is structurally elevated by FX. AEVUM’s RM 8,699 Comprehensive tier costs S$2,636 today; if MYR weakens to 3.40, that drops to S$2,558 — SG buyers gain. Agent 3 must monitor FX quarterly and either (a) hold MYR list price steady (preferred — SG buyers absorb FX upside as a discount) or (b) raise MYR list when MYR weakens by >5% to preserve unit economics. Agent 4: a 'lock-your-SGD-rate at booking' policy is a powerful FX-neutralising commitment for nervous SG buyers."
+    },
+    {
+      "indicator": "SG household disposable income YoY (top quintile)",
+      "value": "+4.8% YoY for 2025 full year; top-quintile real disposable income +5.4% YoY 2025-Q4; per Singstat HIES 2025-Q4 tracking series",
+      "source_url": "https://www.singstat.gov.sg/find-data/search-by-theme/households/household-income/latest-data",
+      "implication_for_us": "SG affluent disposable income growth is outpacing CPI — the wallet for elective premium screening is expanding 4-5% per year. Agent 3: a 3-5% annual price escalator is justifiable; Agent 4: positioning AEVUM Comprehensive (~S$2,640) as 'the equivalent of one nice dinner per month for a year' is a calibrated psychological frame for the S$200k+ household."
+    },
+    {
+      "indicator": "SG core CPI YoY",
+      "value": "+2.4% YoY for 2026-Q1 (MAS Monetary Policy Statement April 2026); 2026 full-year forecast 1.5-2.5% — within MAS comfort band",
+      "source_url": "https://www.mas.gov.sg/monetary-policy/monetary-policy-statements",
+      "implication_for_us": "Stable inflation environment means Agent 3 doesn’t need to bake inflation premium into Year-1 pricing; the 3-5% disposable-income tailwind absorbs annual contract escalation comfortably. Agent 4: stable inflation supports the 'commit to annual screening' narrative — buyers will not feel they're locking in at a peak."
+    },
+    {
+      "indicator": "MY private healthcare spend YoY",
+      "value": "+9.2% YoY for 2024 (BNM Annual Report 2024); +7-9% projected for 2025-26 (MHTC industry outlook); driven by ID + SG inbound flows",
+      "source_url": "https://www.bnm.gov.my/publications/annual-report",
+      "implication_for_us": "MY private healthcare is a structural growth market, not a defensive one. Agent 4: there is room for AEVUM to launch as a category creator (premium concierge MRI), not a market-share grabber, in JB — rising tide. Agent 3: pricing should be set by demand-pull from SG, not by MY-domestic competition; 'JB local discount' is a wrong instinct."
+    },
+    {
+      "indicator": "Wellness & longevity sector global growth",
+      "value": "Global wellness economy USD 6.3T in 2024 (+6.8% YoY); 'Healthy Longevity' sub-sector USD 614B (+7.6% YoY) per Global Wellness Institute 2025; SEA wellness/longevity ~USD 79B (+9% YoY)",
+      "source_url": "https://globalwellnessinstitute.org/industry-research/",
+      "implication_for_us": "Category tailwind is genuine. Agent 4: AEVUM is competing for share in a fast-growing category, not a stagnant one — customer acquisition should be easier than typical SaaS CAC discussions suggest. Agent 3: premium pricing is supportable because the buyer is value-sensitive within the category, not category-curious."
+    },
+    {
+      "indicator": "RTS Link projected daily ridership",
+      "value": "Forecast 100k-140k pax/day at maturity per LTA Singapore + Prasarana joint media briefing (March 2026); 5-min crossing, fare SGD 5-7",
+      "source_url": "https://www.lta.gov.sg/content/ltagov/en/getting_around/public_transport/rail_network/johor_bahru-singapore_rapid_transit_system_link.html",
+      "implication_for_us": "RTS Link is the once-in-a-decade infrastructure event for SG-MY cross-border anything. Agent 4: build the marketing campaign timeline backwards from the RTS opening month, treat it as the launch event rather than a post-launch tailwind. Agent 3: the 'RTS Link transfer included' line on every tier is the differentiator that no SG competitor can match without their own JB facility."
+    }
+  ],
+  "adoption_patterns": {
+    "sme_penetration_pct": 7,
+    "mnc_penetration_pct": 38,
+    "note": "Note: 'SME / MNC penetration' is interpreted here as 'SG self-pay annual private-screen rate' across the relevant household-income cohorts. ~7% of broad working-age cohort buy any private screen in any given year (Aon SG Health Survey 2025); ~38% of corporate-funded executive populations (HR-procured group screening at SG MNC subsidiaries) are screened annually per Aon — representing the institutional benchmark AEVUM’s Founders Programme B2B SKU competes against. Time window: 2024-25 latest available data.",
+    "country_readiness": [
+      {"country": "SG", "regulatory": 5, "tech_maturity": 5, "price_tolerance": 5},
+      {"country": "MY", "regulatory": 4, "tech_maturity": 4, "price_tolerance": 3},
+      {"country": "ID", "regulatory": 3, "tech_maturity": 3, "price_tolerance": 4},
+      {"country": "BN", "regulatory": 4, "tech_maturity": 3, "price_tolerance": 4},
+      {"country": "TH", "regulatory": 3, "tech_maturity": 4, "price_tolerance": 3},
+      {"country": "VN", "regulatory": 2, "tech_maturity": 3, "price_tolerance": 2}
+    ]
+  },
+  "trends": [
+    {
+      "title": "Function Health × Ezra acquisition collapses the global DTC MRI floor to US$499 — SE Asia is next.",
+      "evidence": "Function Health acquired Ezra in May 2025 for an undisclosed sum, repricing Ezra’s full-body MRI from US$1,950 to US$499. Function Health raised at a US$2.5B valuation (Sep 2024 funding round). Industry coverage (Bloomberg 2025-05-22, TechCrunch 2025-05-23): 'the floor for whole-body MRI just moved from $2k to $500'. Prenuvo's response was an 'Executive Annual' US$5,000/yr membership, not a price cut.",
+      "implication_for_us": "The US$499 floor will eventually arrive in SEA — likely first via a Function Health regional partner (BKK / SG / KL) within 18-24 months. Agent 3: AEVUM’s Core tier (RM 1,999 / S$575) is already calibrated below the imported US floor when FX and travel cost are added in; it pre-empts a US-floor incursion. Agent 4: a 'why fly to LA / SF for $499' story already runs against AEVUM as a stronger value prop."
+    },
+    {
+      "title": "RTS Link end-2026 reshapes SG-MY cross-border patient flow — every SG-adjacent provider repositioning by Q2 2026.",
+      "evidence": "Industry coverage (Business Times SG 2026-02-14, The Edge MY 2026-03-22): Gleneagles Hospital Johor announced a S$15M expansion specifically targeting RTS-Link-era SG patient flow; Sunway Medical Velocity (KL) launched a 'JB-via-RTS Link' direct shuttle marketing programme; Mahkota Medical confirmed plans to open a JB satellite by Q4 2026. Gleneagles' parent IHH Healthcare’s 2025 Annual Report flagged 'cross-border SG↔JB diagnostic flow' as a top-3 strategic growth bet.",
+      "implication_for_us": "Competitor positioning is moving fast. Agent 4: AEVUM must own 'the only premium concierge MRI within walking distance of the RTS terminus' as a marketing claim by Q3 2026 (3-month lead) before Gleneagles + Mahkota mature their own programmes. Agent 3: 'walking distance from RTS' is the single strongest non-pricing differentiator and must be the hero of every RTS-era marketing creative."
+    },
+    {
+      "title": "Prenuvo missed-finding Washington Post lawsuit (Jan 2026) damages whole-body MRI brand category nationally in US — ripple to SE Asia muted but watch.",
+      "evidence": "Washington Post 2026-01-14: Sean Clifford, 37, paid US$2,500 for Prenuvo NYC scan in July 2023; report said normal; suffered catastrophic stroke 8 months later. Plaintiffs allege 'worrisome arterial stenosis in right middle cerebral artery' was missed. Prenuvo lost bid to limit damages by applying CA law; case proceeding in NY. Heavy radiology-Twitter coverage (Dr Siyab Panhwar viral thread). Yelp Redwood City: 112 reviews, mixed; complaints about sales emphasis vs clinical service.",
+      "implication_for_us": "The missed-finding risk is intrinsic to whole-body MRI screening of asymptomatic patients (USPSTF skeptical in published reviews 2024). Agent 4: AEVUM’s communications must NEVER imply 'we will catch everything' — a measured 'high-resolution, named-radiologist read with explicit follow-up pathway' framing both sells better AND limits litigation exposure. Agent 3: the Comprehensive tier should bundle a written 'limitations of screening' counsel page that the patient explicitly acknowledges — medical-legal hygiene + buyer education in one move."
+    },
+    {
+      "title": "Singapore HNW longevity-clinic landscape rapidly maturing — Chi Longevity, Morrow, RaffleSpa Wellness all opened or expanded 2024-26.",
+      "evidence": "Chi Longevity (Yixin Group, opened 2023, expanded Q3 2024) and Morrow Singapore (opened Q4 2025) are the two SG-resident longevity clinics positioning explicitly against AEVUM’s frame. Chi Longevity is non-MRI (functional-medicine biomarker model); Morrow is multi-modality but not MRI-led. RaffleSpa expanded its 'Wellness Concierge' 2026-Q1. The Edge SG 2026-03 coverage: 'longevity is the new aesthetic clinic'.",
+      "implication_for_us": "SG-side competition is building inside SG (no need for cross-border friction). Agent 4: AEVUM’s defensible position is 'imaging-led, not biomarker-led' — Chi and Morrow leave the MRI-led category open. Agent 3: a Y2 'longevity baseline' SKU that pairs AEVUM’s annual MRI with Chi-equivalent biomarker tracking (in-house or via partnership with a SG biomarker provider) closes the bracket."
+    },
+    {
+      "title": "Insurer Integrated Shield Plan riders adding 'specified diagnostic imaging abroad' coverage for select MY network partners 2026-27.",
+      "evidence": "AIA SG product update Q1 2026 (HealthShield Gold Max revisions): 'specified diagnostic imaging at IHH-network MY facilities' added to network. Prudential SG (PRUShield Premier) similar update Q4 2025 added 'select Pantai/Mt Elizabeth Novena MY-network imaging'. GE SG Supreme Health Plan watching but not yet moved. LIA SG Industry Statistics 2024 confirms claims-flow already exists for Gleneagles Penang and Pantai KL diagnostic imaging.",
+      "implication_for_us": "AEVUM is NOT IHH-network, so cannot ride this wave at launch. Agent 4: a Y2-Y3 attack plan should explicitly target AIA / Prudential network onboarding once volumes prove the model (typically requires 18-24 months of operating data). Agent 3: until network status is granted, every patient is self-pay; do not model insurer-reimbursable revenue into Y1-Y2 financials."
+    }
+  ]
+}
