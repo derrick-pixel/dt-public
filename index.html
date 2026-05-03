@@ -272,6 +272,18 @@
     .tag-gold   { background: rgba(245,158,11,.1);  color: var(--gold); }
     .tag-red    { background: rgba(248,113,113,.1); color: var(--red); }
 
+    /* ── Platform badge (auto-injected by JS based on card href) ── */
+    .pc-tag-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; align-self: flex-start; }
+    .pc-platform {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: .58rem; font-weight: 600; letter-spacing: .04em;
+      padding: 2px 7px; border-radius: 100px; text-transform: uppercase;
+      border: 1px solid var(--border); background: transparent; color: var(--muted);
+    }
+    .plat-streamlit { color: #ff4b4b; background: rgba(255,75,75,.08); border-color: rgba(255,75,75,.28); }
+    .plat-vercel    { color: var(--text);  background: rgba(127,127,127,.08); border-color: rgba(127,127,127,.25); }
+    .plat-web       { color: var(--muted); }
+
     /* ── WIP CARDS (non-clickable, with teaser image) ── */
     .wip-card { cursor: default; overflow: hidden; position: relative; }
     .wip-card::after { display: none; }
@@ -759,6 +771,28 @@
       if (e.key === 'Escape' && modal.classList.contains('open')) close();
     });
   })();
+
+  // Auto-inject platform notation badge (Web / Streamlit / Vercel) per card href.
+  document.querySelectorAll('.project-card').forEach(card => {
+    const href = card.getAttribute('href') || '';
+    let cls, label;
+    if (/\.streamlit\.app/.test(href))   { cls = 'plat-streamlit'; label = '🐍 Streamlit'; }
+    else if (/\.vercel\.app/.test(href)) { cls = 'plat-vercel';    label = '▲ Vercel';    }
+    else                                 { cls = 'plat-web';       label = '🌐 Web';      }
+    const tag = card.querySelector('.pc-tag');
+    if (!tag) return;
+    let row = tag.parentNode.classList.contains('pc-tag-row') ? tag.parentNode : null;
+    if (!row) {
+      row = document.createElement('div');
+      row.className = 'pc-tag-row';
+      tag.parentNode.insertBefore(row, tag);
+      row.appendChild(tag);
+    }
+    const pl = document.createElement('span');
+    pl.className = 'pc-platform ' + cls;
+    pl.textContent = label;
+    row.appendChild(pl);
+  });
 </script>
 
 <footer style="padding:48px 24px;text-align:center;font-size:0.85rem;opacity:0.6;border-top:1px solid var(--border,rgba(0,0,0,0.08));margin-top:64px;">
