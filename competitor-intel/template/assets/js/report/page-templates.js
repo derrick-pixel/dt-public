@@ -32,8 +32,8 @@ export function renderPages(root, sections, data) {
   for (const s of sections) s.render(root, data, ctx);
 }
 
-function page(cls = 'pdf-content') {
-  return h('div', { class: `pdf-page ${cls}` });
+function page(cls = 'pdf-content', section) {
+  return h('div', { class: `pdf-page ${cls}`, dataset: { section } });
 }
 function footer(pageNum, total, data) {
   return h('div', { class: 'pdf-footer' },
@@ -44,7 +44,7 @@ function footer(pageNum, total, data) {
 }
 
 function renderCover(root, data) {
-  const el = page('pdf-cover');
+  const el = page('pdf-cover', 'cover');
   mount(el,
     h('h1', {}, data.competitors.meta.project_name),
     h('p', { style: { fontSize: '20pt', opacity: '0.9' } }, 'Competitive intelligence & whitespace atlas'),
@@ -57,7 +57,7 @@ function renderCover(root, data) {
 }
 
 function renderTOC(root, data, ctx) {
-  const el = page('pdf-toc');
+  const el = page('pdf-toc', 'toc');
   const entries = [
     ['Executive Summary', ctx.pageIndex.exec],
     ['Competitor Landscape', ctx.pageIndex.land],
@@ -81,7 +81,7 @@ function renderExec(root, data, ctx) {
   const top3threats = data.competitors.top_five.slice(0, 3).map(t => t.competitor_id).join(' · ');
   const top3attack = data.whitespace.attack_plans.slice(0, 3).map(p => p.niche_name).join(' · ');
   const headline = data.pricing.recommended_tiers[1];
-  const el = page();
+  const el = page('pdf-content', 'exec');
   mount(el,
     h('h2', {}, 'Executive Summary'),
     h('p', { class: 'opening' }, data.whitespace.strategy_canvas.headline_thesis),
@@ -97,7 +97,7 @@ function renderExec(root, data, ctx) {
 
 function renderLandscape(root, data, ctx) {
   const c = data.competitors;
-  const p1 = page();
+  const p1 = page('pdf-content', 'landscape');
   mount(p1,
     h('h2', {}, 'Competitor Landscape'),
     h('p', { class: 'opening' }, `Across ${c.competitors.length} competitors surveyed, ${c.top_five.length} emerge as top-tier threats demanding direct response.`),
@@ -111,7 +111,7 @@ function renderLandscape(root, data, ctx) {
   root.append(p1);
 
   const top10 = [...c.competitors].sort((a, b) => b.threat_level - a.threat_level).slice(0, 10);
-  const p2 = page();
+  const p2 = page('pdf-content', 'landscape');
   mount(p2,
     h('h3', {}, 'Top 10 by threat level'),
     h('table', { class: 'appendix-table' },
@@ -130,7 +130,7 @@ function renderLandscape(root, data, ctx) {
 
 function renderMarket(root, data, ctx) {
   const m = data.market;
-  const p1 = page();
+  const p1 = page('pdf-content', 'market');
   mount(p1,
     h('h2', {}, 'Market Intelligence'),
     h('p', { class: 'opening' }, `The SG/SEA note-tool market sits at TAM S$${m.market_size.tam_sgd.toLocaleString()}, narrowing via SAM to regions where regulatory and cultural fit give us structural advantage.`),
@@ -148,7 +148,7 @@ function renderMarket(root, data, ctx) {
   );
   root.append(p1);
 
-  const p2 = page();
+  const p2 = page('pdf-content', 'market');
   mount(p2,
     h('h3', {}, 'Country readiness'),
     h('table', { class: 'appendix-table' },
@@ -172,7 +172,7 @@ function renderPricing(root, data, ctx) {
   const minP = Math.min(...prices);
   const maxP = Math.max(...prices);
   const maxWTP = Math.max(...p.personas.map(x => x.wtp_band_sgd.upper_stretch));
-  const el = page();
+  const el = page('pdf-content', 'pricing');
   mount(el,
     h('h2', {}, 'Pricing Strategy'),
     h('p', { class: 'opening' }, `Against competitor price bands of S$${minP}–S$${maxP}/mo, our personas' willingness-to-pay tops out at S$${maxWTP}/mo — pricing is a perception question, not a dollar comparison.`),
@@ -196,7 +196,7 @@ function renderWhitespace(root, data, ctx) {
   const w = data.whitespace;
   let offset = 0;
 
-  const p1 = page('pdf-fullbleed');
+  const p1 = page('pdf-fullbleed', 'ws-thesis');
   mount(p1,
     h('h2', {}, 'Whitespace Atlas'),
     h('p', { class: 'opening' }, w.strategy_canvas.headline_thesis),
@@ -214,7 +214,7 @@ function renderWhitespace(root, data, ctx) {
   root.append(p1);
   offset++;
 
-  const p2 = page();
+  const p2 = page('pdf-content', 'ws-heatmap');
   const heatmapRows = w.heatmap.segments.map(s =>
     h('tr', {},
       h('td', {}, s.name),
@@ -250,7 +250,7 @@ function renderWhitespace(root, data, ctx) {
   }
   for (let i = 0; i < entries.length; i += 6) {
     const chunk = entries.slice(i, i + 6);
-    const pp = page();
+    const pp = page('pdf-content', 'ws-cells');
     mount(pp,
       h('h3', {}, 'Cell Detail Appendix — whitespace & crowded cells'),
       h('div', { class: 'cell-appendix' }, chunk.map(({ seg, need, cell, count, band }) =>
@@ -270,7 +270,7 @@ function renderWhitespace(root, data, ctx) {
 
 function renderDesign(root, data, ctx) {
   const sorted = [...data.competitors.competitors].sort((a, b) => (b.website_design_rating ?? 0) - (a.website_design_rating ?? 0)).slice(0, 10);
-  const el = page();
+  const el = page('pdf-content', 'website');
   mount(el,
     h('h2', {}, 'Website Design Audit'),
     h('p', { class: 'opening' }, 'Top 10 competitor sites by design rating. Dimensions ≤ 6 are flagged with notes.'),
@@ -289,7 +289,7 @@ function renderAppendix(root, data, ctx) {
   const comps = data.competitors.competitors;
   for (let i = 0; i < comps.length; i += 20) {
     const chunk = comps.slice(i, i + 20);
-    const el = page();
+    const el = page('pdf-content', 'appendix');
     mount(el,
       h('h2', {}, i === 0 ? 'Appendix: Full Competitor Table' : 'Appendix (cont.)'),
       h('table', { class: 'appendix-table' },

@@ -2,6 +2,27 @@
 
 .pdf-root { font-family: var(--font-body); color: var(--neutral-dark); }
 
+/* html2canvas word-spacing collapse fix. See methodology Pitfall 4.
+   html2canvas v1.4.1 reflows text in JS and mismeasures kerning offsets,
+   so spaces inside headings ("Top 3 threats" → "Top3 threats") render
+   collapsed in the rasterised PDF. The triple defence:
+     1. font-kerning: none + text-rendering: geometricPrecision —
+        ask the browser for un-kerned glyph advances so the live layout
+        matches what html2canvas measures.
+     2. letter-spacing: 0.01em — forces html2canvas to lay out each
+        glyph independently rather than combining adjacent characters
+        into a single text run (where the space-loss bug lives).
+     3. scale: 2 in pdf-generator.js — gives 4× pixel headroom so the
+        space character has room to render even after rounding.
+   The visual cost is a barely-perceptible looseness at A4 (0.01em ≈
+   0.18px at 18pt) — readers don't notice, but it's the difference
+   between collapsed and correct word spacing in the captured raster. */
+.pdf-page, .pdf-page * {
+  font-kerning: none;
+  text-rendering: geometricPrecision;
+  letter-spacing: 0.01em;
+}
+
 .pdf-page {
   width: 210mm; height: 297mm;
   position: relative; overflow: hidden;

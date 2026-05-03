@@ -1,27 +1,318 @@
 {
-  "meta": { "project_name": "NoteFlow — SAMPLE", "research_date": "2026-04-24", "sample_data": true },
+  "meta": {
+    "project_name": "Elitez Vantage 2026 — Self Audit",
+    "brand_tokens": {
+      "primary": "#1f2937",
+      "secondary": "#b45309",
+      "accent": "#dc2626",
+      "neutral_dark": "#0c0a09",
+      "neutral_light": "#fafaf9",
+      "font_display": "Playfair Display, serif",
+      "font_body": "Inter, sans-serif"
+    },
+    "research_date": "2026-05-01",
+    "sample_data": false
+  },
   "personas": [
-    { "name": "Solo founder Sarah", "icp": "Solo F&B founder, 1-person biz, uses WhatsApp + spreadsheet today", "pains": ["Info scattered across chats", "Can't onboard VA", "No handoff when ill"], "current_workaround": "ChatGPT free + Google Sheets + WhatsApp pins", "wtp_band_sgd": { "low_anchor": 6, "expected": 15, "upper_stretch": 29 }, "nba": "Status quo (cost: 4hr/week lost to context switching ≈ S$400/mo opportunity)" },
-    { "name": "Ops manager Marcus", "icp": "Ops manager at 30-person SG SME, on Xero + Google Drive", "pains": ["SOPs in 4 tools", "New hires take 2 weeks to find things"], "current_workaround": "Confluence trial (expired) + Google Docs maze", "wtp_band_sgd": { "low_anchor": 12, "expected": 25, "upper_stretch": 45 }, "nba": "Confluence at S$35/user/mo (post-trial)" },
-    { "name": "Agency lead Aisha", "icp": "Agency lead, 15-person creative shop, client docs everywhere", "pains": ["Version control with clients", "IP risk when freelancers leave"], "current_workaround": "Notion Free + Dropbox + Miro", "wtp_band_sgd": { "low_anchor": 15, "expected": 30, "upper_stretch": 60 }, "nba": "Notion Team at US$8/user/mo (S$11)" }
+    {
+      "id": "sg_sme_founder",
+      "name": "SG SME Founder",
+      "icp": "Founder/MD of SG-incorporated SME, USD 5-30M revenue, 20-150 staff, considering a pivot or fundraise within 12 months",
+      "pains": [
+        "Strategy decisions made on gut, not data",
+        "ChatGPT outputs 'feel slop' to investors",
+        "Procurement rejects offshore CI vendors",
+        "PSG gate is opaque",
+        "Time-poor; cannot run a 9-agent pipeline themselves"
+      ],
+      "current_workaround": "ChatGPT Plus / Claude Pro plus a Google Doc; sometimes a freelancer on Upwork",
+      "wtp_band_sgd": { "low_anchor": 1500, "expected": 3000, "upper_stretch": 6000 },
+      "nba": {
+        "method": "competitor_price",
+        "summary": "ChatGPT Pro USD 200/mo seat used directly by founder, ~6-8 hrs personal time per CI artefact.",
+        "inputs": {
+          "competitor_id": "chatgpt_pro",
+          "competitor_monthly_sgd": 270
+        },
+        "monthly_sgd_equivalent": 270,
+        "confidence": 0.75
+      },
+      "whitespace_segment_ids": ["sg_sme"]
+    },
+    {
+      "id": "hk_midmarket_strategy_lead",
+      "name": "HK Mid-Market Strategy Lead",
+      "icp": "Strategy / corp-dev lead at HK mid-market firm USD 30-100M revenue, often family-business gen-2/3, with HKMA-fintech adjacency",
+      "pains": [
+        "MNC consultancies too slow and too expensive",
+        "Compliance asks for documented third-party CI",
+        "Need pan-Greater Bay angle, not US-centric data",
+        "Internal team lacks SEA depth"
+      ],
+      "current_workaround": "Bain/PwC engagement once a year + GLG/Coleman expert calls; otherwise nothing structured",
+      "wtp_band_sgd": { "low_anchor": 6000, "expected": 12000, "upper_stretch": 30000 },
+      "nba": {
+        "method": "wage",
+        "summary": "Internal strategy lead at HKD 2.4M loaded comp would otherwise spend 25 hrs/quarter producing this; opportunity cost is the equivalent.",
+        "inputs": {
+          "hourly_sgd": 200,
+          "hours_saved_per_month": 8
+        },
+        "monthly_sgd_equivalent": 1600,
+        "confidence": 0.70
+      },
+      "whitespace_segment_ids": ["hk_midmarket"]
+    },
+    {
+      "id": "inhouse_strategy_director",
+      "name": "In-house Strategy Director (Series B-C)",
+      "icp": "Strategy / BizOps director at SG/HK-based Series B-C startup (USD 20-80M ARR), reporting to CEO/founder, with 1-3 analyst reports",
+      "pains": [
+        "CEO wants quarterly competitor refresh on a process the team owns",
+        "Don't want to be hostage to a CI SaaS subscription",
+        "Hiring a senior analyst is SGD 184k+ all-in",
+        "Methodology drift across analysts",
+        "Board wants reproducible outputs"
+      ],
+      "current_workaround": "Junior analyst + Crayon trial + ad-hoc McKinsey friend favours; methodology lives in a Notion doc",
+      "wtp_band_sgd": { "low_anchor": 12000, "expected": 25000, "upper_stretch": 60000 },
+      "nba": {
+        "method": "wage",
+        "summary": "Hiring a junior analyst at SGD 8k/mo loaded; redirecting 20 hrs/mo of senior strategist time at SGD 200/hr equivalent.",
+        "inputs": {
+          "hourly_sgd": 200,
+          "hours_saved_per_month": 20
+        },
+        "monthly_sgd_equivalent": 4000,
+        "confidence": 0.75
+      },
+      "whitespace_segment_ids": ["inhouse_strategy"]
+    },
+    {
+      "id": "boutique_buyer",
+      "name": "Boutique Consulting One-Shot Buyer",
+      "icp": "Founder/board member buying a one-time CI artefact for a specific decision (fundraise, pivot, acquisition diligence) — no recurring need",
+      "pains": [
+        "F&S report is too generic, USD 15-25k",
+        "McKinsey is USD 200k+ and takes 8 weeks",
+        "ChatGPT output won't survive board scrutiny",
+        "Need delivered in 5-7 days"
+      ],
+      "current_workaround": "F&S off-the-shelf or a SG boutique like Asia Insight / Kadence at SGD 8-20k",
+      "wtp_band_sgd": { "low_anchor": 2000, "expected": 5000, "upper_stretch": 18000 },
+      "nba": {
+        "method": "competitor_price",
+        "summary": "Asia Insight one-shot SGD 8-20k project, 4-6 weeks delivery; Frost & Sullivan off-the-shelf USD 3.5-10k.",
+        "inputs": {
+          "competitor_id": "asia_insight_sg",
+          "competitor_monthly_sgd": 14000
+        },
+        "monthly_sgd_equivalent": 14000,
+        "confidence": 0.80
+      },
+      "whitespace_segment_ids": ["boutique_oneshot"]
+    },
+    {
+      "id": "diy_eng_manager",
+      "name": "Build-It-Yourself Eng Manager",
+      "icp": "Eng/AI lead at a SG/HK tech company who wants to fork the template + run it internally; values the methodology IP, not the deliverable",
+      "pains": [
+        "OSS templates are scattered, no canonical FIELD-DICTIONARY",
+        "Want methodology I can audit, not a black-box SaaS",
+        "Internal procurement easier for one-off license vs ongoing sub",
+        "Want to brand outputs internally"
+      ],
+      "current_workaround": "Forks CrewAI + LangGraph + Anthropic Agent SDK examples; spends 40 hrs writing their own field dictionary",
+      "wtp_band_sgd": { "low_anchor": 8000, "expected": 18000, "upper_stretch": 40000 },
+      "nba": {
+        "method": "tooling_stack",
+        "summary": "Engineering team's current cobbled stack: OSS frameworks + LLM tokens + freelance writer + internal time.",
+        "inputs": {
+          "tooling_lines": [
+            { "tool": "Anthropic Claude API tokens", "monthly_sgd": 500 },
+            { "tool": "Exa Research API", "monthly_sgd": 200 },
+            { "tool": "Freelance docs writer (10 hrs/mo)", "monthly_sgd": 1500 },
+            { "tool": "Internal eng time (8 hrs/mo at SGD 200/hr)", "monthly_sgd": 1600 }
+          ]
+        },
+        "monthly_sgd_equivalent": 3800,
+        "confidence": 0.70
+      },
+      "whitespace_segment_ids": ["diy_methodology_buyer"]
+    }
   ],
   "pricing_models": [
-    { "name": "Per-seat monthly", "rationale": "Industry standard; aligns with growth", "score_by_persona": { "Sarah": 2, "Marcus": 5, "Aisha": 5 } },
-    { "name": "Flat team (up to 10 seats)", "rationale": "Removes seat-counting friction for SMEs", "score_by_persona": { "Sarah": 4, "Marcus": 4, "Aisha": 3 } },
-    { "name": "Usage-based (notes written)", "rationale": "Novel; low entry for solos", "score_by_persona": { "Sarah": 5, "Marcus": 2, "Aisha": 2 } }
+    {
+      "name": "One-shot project (5-7 days)",
+      "rationale": "Matches boutique-buyer expectation and AI-sub psychology — a single decision, a single cheque. Anchor against F&S off-the-shelf (USD 3.5-10k) and Asia Insight project tier (SGD 8-20k).",
+      "score_by_persona": {
+        "SG SME Founder": 5,
+        "HK Mid-Market Strategy Lead": 4,
+        "In-house Strategy Director (Series B-C)": 3,
+        "Boutique Consulting One-Shot Buyer": 5,
+        "Build-It-Yourself Eng Manager": 2
+      }
+    },
+    {
+      "name": "Quarterly refresh retainer",
+      "rationale": "Captures the 'process license' framing — recurring methodology execution. Beats single ChatGPT Pro seat on price-per-artefact when ≥4 refreshes/yr.",
+      "score_by_persona": {
+        "SG SME Founder": 4,
+        "HK Mid-Market Strategy Lead": 5,
+        "In-house Strategy Director (Series B-C)": 5,
+        "Boutique Consulting One-Shot Buyer": 1,
+        "Build-It-Yourself Eng Manager": 2
+      }
+    },
+    {
+      "name": "Annual partnership",
+      "rationale": "For HK fintech compliance packs and inhouse-strategy directors — predictable revenue, deeper methodology customisation.",
+      "score_by_persona": {
+        "SG SME Founder": 2,
+        "HK Mid-Market Strategy Lead": 5,
+        "In-house Strategy Director (Series B-C)": 5,
+        "Boutique Consulting One-Shot Buyer": 1,
+        "Build-It-Yourself Eng Manager": 3
+      }
+    },
+    {
+      "name": "Methodology license (one-time)",
+      "rationale": "Sells the FIELD-DICTIONARY + agent specs + quality gates as IP for in-house teams to run themselves. Highest-margin revenue line; protects the moat docs.",
+      "score_by_persona": {
+        "SG SME Founder": 1,
+        "HK Mid-Market Strategy Lead": 2,
+        "In-house Strategy Director (Series B-C)": 4,
+        "Boutique Consulting One-Shot Buyer": 1,
+        "Build-It-Yourself Eng Manager": 5
+      }
+    }
   ],
   "elasticity_heuristics": [
-    { "segment": "Solo operators", "elasticity_band": "high", "evidence": "Every S$5 increase sheds 20% of cohort (prior ICO data)." },
-    { "segment": "SME ops-heavy", "elasticity_band": "medium", "evidence": "Anchored by Confluence; S$25/seat mental ceiling." },
-    { "segment": "Agencies", "elasticity_band": "low", "evidence": "Pass cost to clients; less price-sensitive." }
+    {
+      "segment": "SG SME Founder",
+      "elasticity_band": "high",
+      "evidence": "USD 200 ChatGPT Pro is the cliff. Every USD 500 increase above SGD 1,500 sheds ~25% of SG SME interest per 2025 SGTECH founder survey extrapolation. PSG halving the price is a step-function reversal."
+    },
+    {
+      "segment": "HK Mid-Market Strategy Lead",
+      "elasticity_band": "medium",
+      "evidence": "Anchored on Bain / PwC SGD 250k+ ceiling on the high end and ChatGPT Pro on the low end — a wide medium band. HK buyers are less price-sensitive than SG by ~60% on avg ticket per consultancy.asia 2025 data."
+    },
+    {
+      "segment": "In-house Strategy Director (Series B-C)",
+      "elasticity_band": "low",
+      "evidence": "Replaces hiring decisions (SGD 184k+ analyst). A USD 25k retainer for methodology execution that the team owns is functionally inelastic against an SGD 184k+ counterfactual."
+    },
+    {
+      "segment": "Boutique Consulting One-Shot Buyer",
+      "elasticity_band": "medium",
+      "evidence": "Anchored against F&S (USD 15-25k) on top and Asia Insight (SGD 8-20k) below. Will pay SGD 5k for similar shape if delivered in 5-7 days vs F&S 4-6 weeks."
+    },
+    {
+      "segment": "Build-It-Yourself Eng Manager",
+      "elasticity_band": "low",
+      "evidence": "License is one-shot capex, not opex. Internal procurement compares against engineer time (40+ hrs to roll their own); USD 18k methodology license clears at any reasonable WTP given the alternative."
+    }
   ],
   "recommended_tiers": [
-    { "name": "Solo", "price_sgd": 9, "target_persona": "Solo founder Sarah", "what_in": ["Unlimited personal workspace", "AI assist (100 msgs/mo)", "WhatsApp support"], "what_excluded": ["Team roles", "Shared workspace"], "psychological_anchor": "Less than a kopi-a-day.", "effective_price_after_psg": 9 },
-    { "name": "SME Team", "price_sgd": 19, "target_persona": "Ops manager Marcus", "what_in": ["Up to 10 seats flat", "SG data residency", "SSO", "PSG eligible"], "what_excluded": ["Enterprise audit log", "White-labelling"], "psychological_anchor": "Half the price of Confluence, with SG residency.", "effective_price_after_psg": 9.5 },
-    { "name": "Agency", "price_sgd": 45, "target_persona": "Agency lead Aisha", "what_in": ["Unlimited seats", "Client portals", "Version snapshots", "Audit log"], "what_excluded": ["On-prem deployment"], "psychological_anchor": "Billable to the client at 1x; pure margin.", "effective_price_after_psg": 45 }
+    {
+      "name": "Starter",
+      "price_sgd": 1500,
+      "target_persona": "SG SME Founder",
+      "what_in": [
+        "5-day delivery",
+        "30+ competitors with ≥60% SEA quota",
+        "TAM/SAM/SOM funnel",
+        "Strategy canvas + heatmap",
+        "1 attack plan",
+        "Editorial PDF + raw JSON"
+      ],
+      "what_excluded": [
+        "Quarterly refresh",
+        "Methodology license",
+        "Live analyst Q&A"
+      ],
+      "psychological_anchor": "Half a single ChatGPT Pro annual seat. Below the price of a senior consultant for one day.",
+      "effective_price_after_psg": 750
+    },
+    {
+      "name": "Standard",
+      "price_sgd": 4500,
+      "target_persona": "Boutique Consulting One-Shot Buyer",
+      "what_in": [
+        "7-day delivery",
+        "All Starter contents",
+        "5 attack plans (vs 1)",
+        "1 named analyst signature on PDF",
+        "30-min board-level briefing call",
+        "Single competitor deep-dive add-on"
+      ],
+      "what_excluded": [
+        "Quarterly refresh",
+        "Methodology license"
+      ],
+      "psychological_anchor": "Half of an Asia Insight project, in 1/4 the time.",
+      "effective_price_after_psg": 2250
+    },
+    {
+      "name": "Enterprise",
+      "price_sgd": 12000,
+      "target_persona": "HK Mid-Market Strategy Lead",
+      "what_in": [
+        "10-day delivery",
+        "All Standard contents",
+        "HK fintech / MAS-compliance overlay",
+        "Quarterly refresh × 4 included in Y1",
+        "Named analyst contracted for 12 months",
+        "White-label PDF"
+      ],
+      "what_excluded": [
+        "Methodology license",
+        "Bespoke industry custom rubric"
+      ],
+      "psychological_anchor": "1/20th of a Bain engagement, with a Singapore Pte Ltd accountability contract.",
+      "effective_price_after_psg": 12000
+    },
+    {
+      "name": "Annual Partner",
+      "price_sgd": 50000,
+      "target_persona": "In-house Strategy Director (Series B-C)",
+      "what_in": [
+        "Quarterly refresh × 4",
+        "Annual methodology license (in-house rerun rights)",
+        "FIELD-DICTIONARY + 9-agent specs handover",
+        "Custom rubric design (1 per quarter)",
+        "Direct Slack channel + 4 strategy calls/yr"
+      ],
+      "what_excluded": [
+        "Unlimited reruns",
+        "Custom code modification (separate SOW)"
+      ],
+      "psychological_anchor": "1/4 the cost of hiring a junior analyst, with the methodology you actually keep.",
+      "effective_price_after_psg": 50000
+    }
   ],
   "grants": [
-    { "name": "PSG", "coverage_pct": 50, "cap_sgd": 3000, "eligibility": "SG-registered SME, listed IMDA vendor", "applies_to_tiers": ["SME Team"] },
-    { "name": "EDG", "coverage_pct": 70, "cap_sgd": null, "eligibility": "Project-based; customer-led", "applies_to_tiers": [] }
+    {
+      "name": "PSG (Productivity Solutions Grant)",
+      "coverage_pct": 50,
+      "cap_sgd": 30000,
+      "eligibility": "SG-registered SME, must use IMDA pre-approved solution. Elitez Vantage submission to IMDA is the Y1 critical path.",
+      "applies_to_tiers": ["Starter", "Standard"]
+    },
+    {
+      "name": "EDG (Enterprise Development Grant)",
+      "coverage_pct": 50,
+      "cap_sgd": null,
+      "eligibility": "SG-registered SME, project-based — qualifies under 'Strategic Brand & Marketing Development' or 'Business Strategy Development' pillars. Customer-led submission.",
+      "applies_to_tiers": ["Enterprise", "Annual Partner"]
+    },
+    {
+      "name": "WSG WDG(JR+) — pre-approved Elitez consultant track",
+      "coverage_pct": 70,
+      "cap_sgd": 30000,
+      "eligibility": "Funded under Job Redesign+ when the CI engagement is part of a broader workforce/role-redesign project. Elitez Vantage delivery sits under Elitez group's pre-approved consultant LOA (valid 18 Mar 2026 - 17 Mar 2027).",
+      "applies_to_tiers": ["Enterprise", "Annual Partner"]
+    }
   ]
 }

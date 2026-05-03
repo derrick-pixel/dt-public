@@ -68,19 +68,52 @@ Phase 4 reads the live DOM. Each check is a small DOM query. The full set:
 
 **4c — Footer presence.** Every `.pdf-page` *except* `.pdf-cover` contains a `.pdf-footer` element with three children (project, page-of-total, date). A page without a footer violates §Footer.
 
-**4d — TOC ↔ reality.** The TOC page (`.pdf-toc`) lists each content section's page number in a `.page-num` element. For each TOC row, the value must equal the actual rendered page index (1-based) of the section it points to. Walk the `.pdf-page` array, build `{ sectionId → renderedPage }`, and assert the TOC's stated number matches each entry. This is the check that catches "TOC says exec is on page 3 but it actually rendered on page 9 because pages 1–3, 5–7 came out blank" — the exact Passage failure.
+**4d — TOC ↔ reality.** The TOC is keyed on the **7 canonical chapters**, not on the 11 page-templates. The Whitespace Atlas's three sub-pages (thesis / heatmap / cells) collapse into a single TOC row anchored at the start of `ws-thesis`. For each TOC `<li>`, the `.page-num` value must equal the actual rendered page index (1-based) of the anchor section. Walk the `.pdf-page` array, build `{ sectionId → first rendered page }`, and assert the TOC's stated number matches each chapter's anchor. This is the check that catches "TOC says exec is on page 3 but it actually rendered on page 9 because pages 1–3, 5–7 came out blank" — the exact Passage failure. The canonical chapter→anchor list lives in `preflight-dom.js`; do not duplicate it elsewhere.
 
 **4e — Cell Detail Appendix non-empty.** At least one page contains a `.cell-appendix` block, AND that block contains ≥ 1 `.cell-row.green` AND ≥ 1 `.cell-row.red`. Methodology §Report-structure §7c marks this as the hard precondition; the validator now enforces it at render time too. If the dataset genuinely has zero green or zero red cells, that is itself a defect worth surfacing — Agent 4 should not have written a heatmap with no decision-grade cells.
 
 **4f — Competitor appendix completeness.** The `appendix` section contains at least `Math.ceil(data.competitors.competitors.length / 20)` pages, and the `<tbody>` row counts of all `.appendix-table` blocks across those pages sum to the full competitor list length. Catches the "Appendix shows 19 records instead of 20" off-by-one Pitfall named in §Worked end-to-end example.
 
-**4g — No empty pages.** No `.pdf-page` whose body height (excluding the footer) is below 200mm of A4's 297mm. Symptom this catches: the six blank pages in the Passage casket report (1, 2, 3, 5, 6, 7). Implementation: `bodyHeightMm = (pageEl.scrollHeight - footerEl.offsetHeight) / pxPerMm; bodyHeightMm ≥ 200`. A page with too-little content is a layout bug — an overflowing prior page pushed content off-canvas, or a renderer threw and the page rendered empty.
+**4g — No empty pages.** Every non-cover `.pdf-page` must have at least 50 characters of non-footer text content. Symptom this catches: the six blank pages in the Passage casket report (1, 2, 3, 5, 6, 7) — they had no text at all. Implementation: clone the page, remove the `.pdf-footer`, normalise whitespace, count chars. We deliberately do **not** check `scrollHeight` against an A4 threshold — `.pdf-fullbleed` and `.pdf-cover` variants can legitimately render shorter than 297mm because of `height: 100%` cascades, and the false positives outweigh the marginal coverage. Text-content length is the reliable signal for "renderer produced nothing."
 
-Phase 4 is implemented in `template/assets/js/report/preflight-dom.js` and wired into `pdf-generator.js` between `renderPages()` and the rasterise loop. It is template-owned (Agent 7 territory). Per-project Agent 8 must not modify the validator; if a project genuinely needs an additional check, file a proposal.
+**4h — Folded artefacts arrived (fetch-and-inject projects only).** When a project uses the fetch-and-inject pattern (see §Fetch-and-inject for comprehensive content) to surface content from companion admin pages, every fold target must be present in the rendered DOM after fetches resolve. The check takes a list of `{ mountSelector, titleContains }` pairs and asserts each mount point has at least one descendant `.art-title` whose text contains the expected substring:
+
+```js
+const requiredFolds = [
+  { sel: '#sec-market .art-title',     contains: 'Industry Overview' },
+  { sel: '#sec-comp .art-title',       contains: 'Top-5 Threat Radar' },
+  { sel: '#sec-pricing .art-title',    contains: 'Buyer Personas' },
+  // ... one entry per folded artefact
+];
+requiredFolds.forEach(f => {
+  const titles = Array.from(document.querySelectorAll(f.sel));
+  const hit = titles.some(t => t.textContent.includes(f.contains));
+  if (!hit) v('4h', `Companion artefact missing: "${f.contains}" not folded into ${f.sel.split(' ')[0]}`);
+});
+```
+
+Catches the failure mode where a fetch silently 404s, the artefact never folds in, and the bound PDF ships with that section missing. Without this check the user only discovers the gap after sending the report to the client.
+
+**4i — Data-driven folded artefacts actually rendered (fetch-and-inject projects only).** Folding markup gets you a placeholder `<div id="comp-grid"><div class="loading">Loading…</div></div>` — but the renderer that turns it into actual cards still has to run *after* the fold. This check catches the "fold succeeded but renderer didn't" gap by looking for tell-tale unfilled placeholders:
+
+```js
+const compGrid = document.getElementById('comp-grid');
+if (compGrid && compGrid.querySelector('.loading')) {
+  v('4i', 'Full Competitor Deep-dive still shows "Loading…" — renderer did not run after fold');
+}
+const heatmapBody = document.querySelector('#heatmap tbody');
+if (heatmapBody && heatmapBody.children.length === 0) {
+  v('4i', '8×8 Heatmap body is empty — renderHeatmap did not run after fold');
+}
+```
+
+Conditional check classes (4h, 4i) only apply to fetch-and-inject projects. Projects using only the template's declarative registry skip these. The validator MUST gate them on a project flag (e.g. `if (config.foldsCompanionPages)`) — running 4h on a non-fold project would fail every time.
+
+Phase 4 is implemented in `template/assets/js/report/preflight-dom.js` and wired into `pdf-generator.js` between `renderPages()` and the rasterise loop. It is template-owned (Agent 7 territory). Per-project Agent 8 must not modify the validator; if a project genuinely needs an additional check, file a proposal. Brand-divergent projects with their own canonical structure (e.g. Passage's 10-section custom shape) ship a project-local validator that mirrors this spec but uses their own canonical section list — the discipline is the same, the section ids differ.
 
 ### Halt and report
 
-On any Phase 1–4 failure, Agent 8 writes `methodology/proposals/<date>-pre-flight-fail-<project-slug>.md` listing every violation with the responsible agent (Phase 1–3 → upstream agent that produced the bad JSON; Phase 4a/d/e/f → upstream agent if data-driven, methodology-curator if it's a registry drift; Phase 4b/c/g → report-generator), then exits without producing a PDF. The `admin/report.html` side panel surfaces the failing check name plainly — e.g. *"Phase 4d: TOC says exec on p3 but rendered on p9 — check renderTOC and the page-count pass for ws-thesis."* Re-dispatch the responsible agents to fix; re-run Agent 8.
+On any Phase 1–4 failure, Agent 8 writes `methodology/proposals/<date>-pre-flight-fail-<project-slug>.md` listing every violation with the responsible agent (Phase 1–3 → upstream agent that produced the bad JSON; Phase 4a/d/e/f → upstream agent if data-driven, methodology-curator if it's a registry drift; Phase 4b/c/g → report-generator; Phase 4h/4i → report-generator if a fold target was misnamed, network/CSP if a fetch failed, or methodology-curator if a renderer regression broke a data-driven artefact), then exits without producing a PDF. The `admin/report.html` side panel surfaces the failing check name plainly — e.g. *"Phase 4d: TOC says exec on p3 but rendered on p9 — check renderTOC and the page-count pass for ws-thesis."* Re-dispatch the responsible agents to fix; re-run Agent 8.
 
 The pre-flight is **not** the same as Agent 7 mid-flight mode. Mid-flight runs early (after Agent 6) as a courtesy; pre-flight runs late (in Agent 8) as a hard gate. They check overlapping rules, but pre-flight halts the build, mid-flight only reports.
 
@@ -129,6 +162,79 @@ Why not `pdfmake` or a headless-Chrome server pipeline? Because the template's o
 **Version pinning is non-negotiable.** `html2canvas@1.4.1` and `jspdf@2.5.1` are the pinned versions; newer majors of jsPDF have changed the UMD export shape in ways that break the JR+ deck recipe. If the template ever needs to upgrade, the upgrade is a methodology-curator (Agent 7) task — it touches every page renderer because canvas dimensions and PDF units can shift. Never auto-bump.
 
 **Where the libs live.** `/template/assets/vendor/html2canvas.min.js` and `/template/assets/vendor/jspdf.umd.min.js`. Loaded via `<script src="...">` at the top of `admin/report.html`, synchronous. No bundler, no import map — the template's whole premise is zero build step. If you find yourself adding webpack, you've misunderstood the template.
+
+## Fetch-and-inject for comprehensive content
+
+Some projects ship a bound report that needs to surface every artefact from their companion admin pages — top-N radars, segment-need heatmaps, pricing-evidence libraries, persona cards, NBA tables, etc. Two architectures are possible.
+
+**Static embed** — copy the HTML for every artefact into `report.html` and wire renderers to populate the data-driven ones. Pro: deterministic, offline-capable, no runtime fetches. Con: 2000+ lines of duplicated markup, every edit to a companion admin page must be re-copied into the report, drift between live admin and bound report is the default.
+
+**Fetch-and-inject** — at runtime, the report fetches each companion HTML, parses it with `DOMParser`, extracts `<section class="artifact">` blocks by their `art-title` text, and clones them into mount points inside the report sections. Pro: single source of truth (companion edits flow through automatically), report.html stays lean. Con: requires same-origin fetch, requires DOMParser (modern browsers only), requires a Phase 4 sub-check that verifies fold targets arrived (see §Phase 4 — 4h, 4i).
+
+**Recommended choice:** fetch-and-inject when the project has companion admin pages that author content independently. Static embed when the report is the only canonical view.
+
+### Canonical fetch-and-inject implementation
+
+```js
+async function foldCompanionArtefacts() {
+  const fetchPage = async (url) => {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`${url} HTTP ${res.status}`);
+      return new DOMParser().parseFromString(await res.text(), 'text/html');
+    } catch (e) {
+      console.warn('foldCompanionArtefacts:', e.message);
+      return null;
+    }
+  };
+
+  const findArtifactByTitle = (doc, partial) => {
+    if (!doc) return null;
+    return Array.from(doc.querySelectorAll('section.artifact'))
+      .find(a => {
+        const t = a.querySelector('.art-title');
+        return t && t.textContent.toLowerCase().includes(partial.toLowerCase());
+      }) || null;
+  };
+
+  const cloneInto = (artifact, mountSelector) => {
+    if (!artifact) return false;
+    const mount = document.querySelector(mountSelector);
+    if (!mount) return false;
+    mount.appendChild(artifact.cloneNode(true));
+    return true;
+  };
+
+  // Fetch companion pages in parallel
+  const [insightsDoc, compDoc, wsDoc] = await Promise.all([
+    fetchPage('insights.html'),
+    fetchPage('competitor-analytics.html'),
+    fetchPage('whitespace.html')
+  ]);
+
+  // Match artefacts by title text and inject into the right report section
+  cloneInto(findArtifactByTitle(insightsDoc, 'industry overview'), '#sec-market');
+  cloneInto(findArtifactByTitle(compDoc, 'top-5 threat radar'), '#sec-comp');
+  cloneInto(findArtifactByTitle(wsDoc, 'segment × need heatmap'), '#sec-whitespace');
+  // ... one cloneInto per fold target ...
+
+  // Run renderers for the data-driven artefacts whose markup just got folded in.
+  // These reuse the JSON already loaded by the parent report.
+  if (window.__reportData) {
+    renderTopFiveRadar(window.__reportData.competitors.competitors || []);
+    renderHeatmap(window.__reportData.wsCompetitors.competitors || []);
+    // ... etc ...
+  }
+}
+```
+
+**Match by title, not by index.** Title-text matching is robust to the companion page reordering its artefacts (which it might do for visual reasons that have nothing to do with the report). Index-based matching breaks silently the day someone moves "Strategic Insights" from artefact 02 to artefact 03 in the source page.
+
+**ID collision audit before fold.** Folded artefacts bring their own `id` attributes (`#radar-chart`, `#comp-grid`, `#heatmap`, `#weaknesses-list` etc.). Before integrating, grep the report for those IDs and the companion source for those IDs — if any collide, the fold will produce duplicate-ID DOM and `getElementById` will return one or the other unpredictably. Resolve by renaming on one side (cleanest: prefix companion IDs that get folded into the report).
+
+**The Phase 4 hard gate.** A fetch-and-inject project MUST add 4h (folded artefacts arrived) and 4i (data-driven renderers ran) checks. Without those, a 404 on a companion page silently ships a missing-content PDF — discoverable only when the client receives it.
+
+**Pre-fold renderers must run AFTER the fold completes.** The renderer function (`renderTopFiveRadar`, `renderHeatmap`, etc.) calls `document.getElementById('radar-chart')` — that element only exists after the markup is folded in. Sequencing: `await foldCompanionArtefacts(); → run renderers; → Phase 4 validation; → rasterise loop`. Get the order wrong and 4i flags every data-driven artefact as "still showing Loading…".
 
 ## Report structure (fixed 9-part)
 
@@ -241,6 +347,42 @@ The TOC on page 2 then shows section titles against the start-page column, not t
 - A `countPages` function that reads from a field not yet populated (e.g. `data.decisionCells` undefined if Agent 4 hasn't run). Symptom: `NaN` pages, infinite loop in render. Fix: guard every reader with a sensible default and surface the missing-input error in the side panel.
 - A countPages function that uses `>` instead of `Math.ceil` arithmetic and misses the last partial page. Symptom: last 2 competitors in the appendix are cropped. Fix: always `Math.ceil(n / perPage)`, never hand-rolled.
 
+### Runtime-measurement variant (for brand-divergent projects)
+
+The declarative `countPages` registry above works when sections have predictable, formula-driven page counts (appendix at 20 records/page, cells at 12/page). Brand-divergent projects whose sections have organic content heights — Passage's "Methodology & Sources" or "Recommendations" with arbitrary prose — can't use the declarative form. They need page numbers computed *after* the rendered DOM exists.
+
+For those projects, replace `countPages` with a runtime measurement using the same `effectiveSectionHmm()` from Pitfall 5:
+
+```js
+function computePageNumbers(sections) {
+  const PAGE_H_MM = 297;
+  let curPage = 1;
+  const start = {};
+  for (const sec of sections) {
+    start[sec.id] = curPage;
+    const eff = effectiveSectionHmm(sec);
+    const pages = eff <= PAGE_H_MM + 0.5 ? 1 : Math.ceil(eff / PAGE_H_MM);
+    curPage += pages;
+  }
+  return start;
+}
+```
+
+**Critical sequencing** — page numbers depend on the `pdf-mode` CSS being applied (different padding, different widths), so:
+
+1. Phase 4 pre-flight passes
+2. Add `body.pdf-mode` class
+3. `await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))` — let layout settle
+4. `await document.fonts.ready` — wait for brand fonts
+5. **Compute page numbers** with `effectiveSectionHmm` (now returns pdf-mode heights)
+6. **Update TOC text** with computed page numbers
+7. `await new Promise(r => requestAnimationFrame(r))` — let TOC repaint with new numbers
+8. **Now** start the rasterise loop — TOC page captures with correct numbers
+
+Get this order wrong and the TOC will show pre-pdf-mode page numbers, off by one or two from where sections actually land.
+
+**Why both effective-height-based pagination AND effective-height-based TOC computation:** they MUST use the same height function, because if the paginator drops a 5mm trailer slice (Pitfall 5) but the TOC computation counted that section as 2 pages, every subsequent TOC row is off by one. One source of truth — `effectiveSectionHmm()` — keeps them aligned.
+
 ## Design-token skinning
 
 `report.css` must use the **same CSS custom properties** as `site.css`: `--brand-primary`, `--brand-accent`, `--ink`, `--paper`, `--font-sans`, `--font-mono`, and the type-scale variables. A fresh project reskins via `project.json` → tokens → both site and PDF; the PDF is not a separate theme.
@@ -346,6 +488,164 @@ Three named failure modes. Each has a one-line fix; do not reinvent.
 
 **Fix:** **wait for `Chart.afterRender` OR `await new Promise(r => setTimeout(r, 0))` after chart init** — one event-loop tick is enough to let Chart.js paint. Belt-and-braces: wire both, in that order. A `requestAnimationFrame` wait is also valid and sometimes more reliable on slow CPUs.
 
+### 4. Word-spacing collapses in headings ("Top3 threats" instead of "Top 3 threats")
+
+**Symptom:** the on-screen preview renders headings correctly, but in the generated PDF the spaces between words inside H2/H3 (and large `<p>` text on the cover) appear eaten — `Top 3 threats` becomes `Top3 threats`, `Country readiness` becomes `Countryreadiness`, `Competitive intelligence & whitespace atlas` becomes `Competitiveintelligence&whitespaceatlas`. Hits any sufficiently large text, regardless of weight.
+
+**Cause:** html2canvas v1.4.1's default rendering path re-implements CSS text layout in JavaScript. It reads glyph advance widths but does not fully account for kerning offsets, so the space character renders at its un-kerned width while the next glyph gets pulled left by its kerning pair, partially covering the space. Bigger font sizes amplify the offset because kerning scales with font size.
+
+**Fix:** triple defence in depth. None of these alone is sufficient; together they are. Apply all three.
+
+**(a) `report.css`** — three CSS properties on `.pdf-page` and descendants:
+
+```css
+.pdf-page, .pdf-page * {
+  font-kerning: none;
+  text-rendering: geometricPrecision;
+  letter-spacing: 0.01em;
+}
+```
+
+`font-kerning: none` and `text-rendering: geometricPrecision` ask the browser for un-kerned glyph advances. `letter-spacing: 0.01em` is the real workhorse — it forces html2canvas to lay out each glyph independently rather than combining adjacent characters into a single text run (where the space-loss bug lives). At 0.01em (≈ 0.18px on 18pt text) the looseness is barely perceptible at A4 distance.
+
+**(b) `pdf-generator.js`** — capture at `scale: 2`:
+
+```js
+const canvas = await html2canvas(pg, {
+  scale: 2, useCORS: true, backgroundColor: '#ffffff',
+  width: pg.offsetWidth, height: pg.offsetHeight
+});
+```
+
+`scale: 2` gives html2canvas 4× the pixel headroom per glyph — the difference between "spaces sometimes round into adjacent characters" and "spaces always render at their measured width." File size grows ~3× but stays well under the 10 MB cap on a 30-competitor sample.
+
+**Things tried that did NOT work — do not re-attempt:**
+
+- **`foreignObjectRendering: true`** in `html2canvas()`. On paper this is the canonical fix (delegates text painting to the browser via SVG `<foreignObject>`). In practice it produced an entirely black PDF for this template — most likely because html2canvas's SVG path does not propagate CSS custom properties (`--brand-primary` etc.) from `:root` into the foreign-object scope, so backgrounds and text colours collapse to defaults. **Do not turn this on.**
+- **`font-kerning: none` alone**. It's a real CSS property that the browser respects, but html2canvas does its own layout pass that ignores the directive. Keep the rule (it's free and helps preview-PDF parity), but it is not the load-bearing fix.
+- **Replacing spaces with `&nbsp;` at render time**. Works for single-line headings but breaks line-wrapping in body paragraphs. Not worth the surgical cost.
+
+The fix is `letter-spacing: 0.01em` + `scale: 2`. Both together. Earlier methodology versions said "do not use letter-spacing 0.01em" — that was wrong, kept here as a record of what we tried and why we now believe otherwise.
+
+The rule is **selector-agnostic**: in the template the wrapping selector is `.pdf-page`, in brand-divergent projects (Passage uses `.report-page`) the same three properties apply to whichever selector wraps the captured pages. Test the kerning fix against your project's actual selector — copy-pasting the rule with the wrong selector silently does nothing and the bug returns.
+
+### 5. `offsetHeight` overcounts → blank trailer pages between sections
+
+**Symptom:** the bound PDF has a blank or near-blank A4 page wedged between two content sections — most often Executive Summary → blank → Market Intelligence, or any section whose natural content ends roughly at A4 height. The blank pages do not appear in the on-screen preview; they only emerge in the rasterised output.
+
+**Cause:** the per-section paginator uses `section.offsetHeight` to decide whether the section fits in one A4 or needs splitting. But `offsetHeight` includes `padding-bottom` (and any margin-bottom that's collapsed inside the box). A section with 280mm of natural content + 22mm bottom padding has `offsetHeight = 302mm` — 5mm over A4. The paginator splits it into a 297mm content page + a 5mm trailer slice. The trailer is pure padding whitespace, but it's still a real PDF page in the output.
+
+**Fix:** measure the **effective content height** (bottom of last non-empty descendant) and crop the rasterised canvas to that height before pagination. Two helpers do this:
+
+```js
+function effectiveSectionHmm(sec) {
+  const PX_PER_MM = 96 / 25.4;
+  const secRect = sec.getBoundingClientRect();
+  let maxBottom = secRect.top;
+  sec.querySelectorAll('*').forEach(el => {
+    const hasText = (el.textContent || '').trim().length > 0;
+    const tag = el.tagName;
+    const isVisual = tag === 'IMG' || tag === 'CANVAS' || tag === 'SVG' || tag === 'TABLE';
+    if (!hasText && !isVisual) return;
+    const r = el.getBoundingClientRect();
+    if (r.bottom > maxBottom) maxBottom = r.bottom;
+  });
+  const contentHmm = (maxBottom - secRect.top) / PX_PER_MM + 8; // 8mm visual breathing
+  return Math.min(contentHmm, sec.offsetHeight / PX_PER_MM);
+}
+```
+
+Then in the paginator:
+
+```js
+const fullCanvas = await html2canvas(sec, { scale: 2, ... });
+const effHmm = effectiveSectionHmm(sec);
+const effHpx = Math.ceil(effHmm * PX_PER_MM * SCALE);
+let canvas = fullCanvas;
+if (effHpx < fullCanvas.height) {
+  canvas = document.createElement('canvas');
+  canvas.width = fullCanvas.width;
+  canvas.height = effHpx;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(fullCanvas, 0, 0);
+}
+```
+
+**Belt-and-braces:** add a pixel-sample empty-slice detector for the multi-page path. Sample every 100th pixel in each slice; if <0.1% deviate from the background colour, drop the slice before adding it to the PDF. This catches any blank trailer the crop didn't:
+
+```js
+function sliceIsEmpty(sliceCanvas, bgHex) {
+  const ctx = sliceCanvas.getContext('2d');
+  let data;
+  try { data = ctx.getImageData(0, 0, sliceCanvas.width, sliceCanvas.height).data; }
+  catch (e) { return false; }
+  const r0 = parseInt(bgHex.slice(1, 3), 16);
+  const g0 = parseInt(bgHex.slice(3, 5), 16);
+  const b0 = parseInt(bgHex.slice(5, 7), 16);
+  let nonBg = 0, sampled = 0;
+  for (let i = 0; i < data.length; i += 400) {
+    sampled++;
+    if (Math.abs(data[i] - r0) > 8 || Math.abs(data[i + 1] - g0) > 8 || Math.abs(data[i + 2] - b0) > 8) nonBg++;
+  }
+  return sampled > 0 && (nonBg / sampled) < 0.001;
+}
+```
+
+**Counter-temptation:** do **not** force `min-height: 297mm` on every content section as a fix. It seems to "guarantee A4 sizing" but in fact makes the bug worse — every section is now exactly 297mm + padding-bottom = ~302mm, triggering the blank-trailer pattern uniformly. Reserve `min-height: 297mm` for the cover (where you want full-bleed brand background) and leave content sections content-driven.
+
+### 6. Single-canvas-and-slice is structurally incompatible with multi-section A4 reports
+
+**Symptom:** the PDF has 3-6 blank pages BEFORE the cover, blank pages between the cover and TOC, two sections sharing a single PDF page, content cut mid-element. Looks like the report has been "shuffled and dealt" onto pages.
+
+**Cause:** the report renderer captures the entire `#report-doc` (or equivalent root) as one giant canvas via `html2canvas(rootEl, ...)`, then slices the canvas into A4-tall chunks. Slice boundaries are at fixed pixel intervals (297mm worth) and have **no relationship** to where sections begin or end in the source DOM. Sections with internal padding compose into accidental whitespace bands that align with slice boundaries; you get blank pages wherever a band happens to land.
+
+**Fix:** capture **per section**, not per document. Each `.report-page` (or project-equivalent selector) gets its own `html2canvas()` call and becomes its own A4 PDF page. Sections taller than 297mm paginate vertically *within* the section's bounds. The canonical loop:
+
+```js
+for (let i = 0; i < sections.length; i++) {
+  const sec = sections[i];
+  const fullCanvas = await html2canvas(sec, { scale: 2, ... });
+  // Crop to effective height (Pitfall 5) and slice if needed
+  // Track pageEmitted to avoid double-paging when a section produces zero pages
+}
+```
+
+The Passage Casket project shipped a v1 PDF with this single-canvas bug — 16 pages, 6 of them blank, cover lands on page 4. After per-section refactor + Pitfall 5 effective-height crop, same project produces a clean cover-on-page-1 output.
+
+**Counter-temptation:** do **not** try to fix the single-canvas pattern by inserting page-break markers in HTML and hoping html2canvas honours them. It doesn't (well-known limitation). Per-section capture is the only reliable path.
+
+### 7. Browser cache silently serves old report.html during iteration
+
+**Symptom:** you edit `report.html`, hard-reload (`Cmd+Shift+R`), click Generate — and the PDF reflects code from before your edit. The output looks like the bug you just fixed. You re-edit, re-test, re-fail. Hours disappear.
+
+**Cause:** Chrome (and other browsers) cache static HTML served from `localhost:8000` more aggressively than expected. `Cmd+Shift+R` forces a network revalidation of the *root* HTML but doesn't always invalidate inlined `<script>` blocks, especially when the dev server serves with a strong ETag. The browser tab can run yesterday's JS against today's DOM and produce confusing, plausible-looking output.
+
+**Fix:** **ship a visible build marker on the admin page during iteration.** A small monospace badge near the Generate button that names the build version and the load timestamp:
+
+```html
+<div id="build-marker" style="position: fixed; top: 132px; right: 24px;
+     font-family: ui-monospace, monospace; font-size: 0.66rem;
+     color: var(--gold); background: var(--surface); padding: 4px 8px;
+     border-radius: 4px;">
+  build 2026-04-29 15:30 · per-section paginator · v2
+</div>
+```
+
+Update the timestamp string every time you make a meaningful edit. When the user reloads, the badge in the top-right tells them *at a glance* which version their browser is running. If the badge is missing or shows yesterday's timestamp, the cache is stale before they even click Generate.
+
+**Definitive cache-bypass options** (when the badge confirms cache):
+
+- **Incognito mode** (`Cmd+Shift+N`) — no persistent cache. Fastest to verify "is this my code?".
+- **`?v=<n>` query parameter** — `report.html?v=999`. Any change to the URL bypasses HTTP cache entirely.
+- **DevTools "Disable cache" checkbox** in the Network tab, with DevTools kept open during reload.
+- **DevTools right-click on reload button → "Empty Cache and Hard Reload"**.
+
+`Cmd+Shift+R` alone is insufficient. Document this in the Download UX section and call it out in the deliverable checklist.
+
+**Counter-temptation:** when a user says "trust me, it's your bug" and the symptom matches a pattern only producible by code that no longer exists in the file, the bug is almost always cache. Confirm the build marker before re-debugging.
+
 ## Worked end-to-end example: one generation pass
 
 A fully-worked example of what a single "Generate PDF" click does, from button-press to saved file. Assume a 30-competitor Lumana project, date `2026-04-23`.
@@ -416,12 +716,16 @@ Self-audit against this list before declaring Agent 8 done.
 - [ ] PDF file size < 10 MB for a 30-competitor sample project. If larger, check screenshot asset compression.
 - [ ] Filename is `<project-slug>-competitive-intelligence-<date>.pdf`.
 - [ ] Fonts render as brand fonts (not Arial fallback) — visible on cover and executive summary headings.
+- [ ] **Headings render with correct word spacing** — no `Top3 threats` / `Countryreadiness` / `Competitiveintelligence&whitespaceatlas` collapse from html2canvas kerning. `report.css` carries `font-kerning: none; text-rendering: geometricPrecision;` on `.pdf-page` and descendants per Pitfall 4.
 - [ ] Chart.js visuals appear populated, not blank.
 - [ ] No `position: fixed` anywhere in the report stylesheet.
 - [ ] `report.css` contains zero hard-coded hex values or font-family literals — only `var(--token)` references.
 - [ ] Opening paragraphs on sections 3–8 interpolate real numbers from the JSON (not placeholder text).
 - [ ] Preview in `admin/report.html` matches generated PDF, page for page.
-- [ ] **Phase 4 DOM validator passes** before rasterise — section count + canonical order (4a), full-bleed cover (4b), footer on every non-cover page (4c), TOC↔reality match (4d), Cell Detail Appendix non-empty (4e), competitor appendix complete (4f), no empty pages (4g).
+- [ ] **Phase 4 DOM validator passes** before rasterise — section count + canonical order (4a), full-bleed cover (4b), footer on every non-cover page (4c), TOC↔reality match (4d), Cell Detail Appendix non-empty (4e), competitor appendix complete (4f), no empty pages (4g). Fetch-and-inject projects: also folded artefacts arrived (4h), data-driven artefacts rendered (4i).
 - [ ] **Section registry untouched at project-time.** `template/assets/js/report/page-templates.js`, `toc.js`, `pdf-generator.js`, `preflight-dom.js` show no per-project diff; structural changes filed as Agent 7 proposals if needed.
+- [ ] **No blank trailer pages between sections.** The paginator uses `effectiveSectionHmm()` to crop the canvas to the lowest non-empty descendant + 8mm breathing, AND the multi-page path runs `sliceIsEmpty()` to drop pure-padding trailing slices. Spot-check the PDF: every section flows directly into the next.
+- [ ] **Build marker visible** on `admin/report.html` during iteration. A monospace badge near the Generate button names the build version + load timestamp (e.g. `build 2026-04-29 15:30 · v2`). When the user reloads, they can verify which version their browser is running before clicking Generate. Caches lie; the marker doesn't.
+- [ ] **TOC page numbers reflect rendered reality.** For brand-divergent projects using the runtime-measurement TOC variant, page numbers come from `effectiveSectionHmm()` — same function the paginator uses. Verify by spot-checking 3 sections (e.g. Executive Summary, Whitespace, Methodology) — TOC number matches the page where the heading actually lands.
 
 If any item fails, fix it before handing the PDF to the project owner. A stale number on the cover or a blank chart on page 5 undermines the credibility of every upstream agent's work.
