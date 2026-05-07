@@ -108,14 +108,26 @@
 .cc-faction-card.selected { border-width: 2px; box-shadow: 0 0 30px currentColor; }
 .cc-faction-card.selected[data-faction="protoss"] { border-color: var(--protoss); box-shadow: 0 0 30px rgba(255,215,0,0.3); }
 .cc-faction-card.selected[data-faction="terran"]  { border-color: var(--terran);  box-shadow: 0 0 30px rgba(74,158,255,0.3); }
-.cc-faction-card.selected[data-faction="zerg"]    { border-color: var(--zerg);    box-shadow: 0 0 30px rgba(180,79,255,0.3); }
+.cc-faction-card.selected[data-faction="zerg"]    { border-color: var(--zerg);    box-shadow: 0 0 30px rgba(255,79,94,0.3); }
 .cf-glow { position: absolute; inset: 0; opacity: 0; transition: opacity 0.3s; }
 .protoss-glow { background: radial-gradient(ellipse at top, rgba(255,215,0,0.15) 0%, transparent 70%); }
 .terran-glow  { background: radial-gradient(ellipse at top, rgba(74,158,255,0.15) 0%, transparent 70%); }
-.zerg-glow    { background: radial-gradient(ellipse at top, rgba(180,79,255,0.15) 0%, transparent 70%); }
+.zerg-glow    { background: radial-gradient(ellipse at top, rgba(255,79,94,0.15) 0%, transparent 70%); }
 .cc-faction-card:hover .cf-glow,
 .cc-faction-card.selected .cf-glow { opacity: 1; }
-.cf-icon { font-size: 2rem; position: relative; z-index: 1; }
+.cf-icon {
+  font-size: 2rem; /* fallback if no img */
+  position: relative; z-index: 1;
+  width: 72px; height: 72px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 6px;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+.cf-icon img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.cf-icon.terran-emblem  { filter: drop-shadow(0 0 14px rgba(74,158,255,0.55)); }
+.cf-icon.protoss-emblem { filter: drop-shadow(0 0 16px rgba(255,215,0,0.6));   }
+.cf-icon.zerg-emblem    { filter: drop-shadow(0 0 14px rgba(255,79,94,0.55));  }
+.cc-faction-card:hover .cf-icon { transform: scale(1.06); }
 .cf-badge {
   font-family: var(--font-ui); font-size: 0.5rem; letter-spacing: 0.3em;
   padding: 3px 8px; border-radius: 2px; width: fit-content; position: relative; z-index: 1;

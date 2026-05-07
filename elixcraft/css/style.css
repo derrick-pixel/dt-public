@@ -21,10 +21,10 @@
   --protoss-dim:   #6b5300;
   --protoss-bg:    rgba(255, 215, 0, 0.08);
 
-  /* Zerg — Purple / Magenta */
-  --zerg:          #b44fff;
-  --zerg-dim:      #4a1a70;
-  --zerg-bg:       rgba(180, 79, 255, 0.08);
+  /* Zerg — Crimson / Biomech */
+  --zerg:          #ff4f5e;
+  --zerg-dim:      #6e1a26;
+  --zerg-bg:       rgba(255, 79, 94, 0.08);
 
   /* UI */
   --text-primary:  #c8d8e8;
@@ -185,13 +185,33 @@ html, body {
 }
 .terran-bg  { background: radial-gradient(ellipse at top, rgba(74,158,255,0.2) 0%, transparent 70%); }
 .protoss-bg { background: radial-gradient(ellipse at top, rgba(255,215,0,0.2) 0%, transparent 70%); }
-.zerg-bg    { background: radial-gradient(ellipse at top, rgba(180,79,255,0.2) 0%, transparent 70%); }
+.zerg-bg    { background: radial-gradient(ellipse at top, rgba(255,79,94,0.2) 0%, transparent 70%); }
 
 .faction-emblem {
-  font-size: 2.5rem;
   position: relative;
   z-index: 1;
+  width: 96px;
+  height: 96px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem; /* fallback if no img */
+  transition: transform 0.3s ease, filter 0.3s ease;
 }
+.faction-emblem img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.faction-emblem.terran-emblem  { filter: drop-shadow(0 0 18px rgba(74,158,255,0.55)); }
+.faction-emblem.protoss-emblem { filter: drop-shadow(0 0 22px rgba(255,215,0,0.6));   }
+.faction-emblem.zerg-emblem    { filter: drop-shadow(0 0 18px rgba(255,79,94,0.55));  }
+.faction-card:hover .faction-emblem  { transform: scale(1.06); }
+.faction-card:hover .faction-emblem.terran-emblem  { filter: drop-shadow(0 0 26px rgba(74,158,255,0.85)); }
+.faction-card:hover .faction-emblem.protoss-emblem { filter: drop-shadow(0 0 32px rgba(255,215,0,0.9));   }
+.faction-card:hover .faction-emblem.zerg-emblem    { filter: drop-shadow(0 0 26px rgba(255,79,94,0.85));  }
 
 .faction-badge {
   font-family: var(--font-ui);
@@ -720,7 +740,7 @@ html, body {
 .node-protoss   { border-color: var(--protoss-dim); }
 .node-protoss:hover { border-color: var(--protoss); box-shadow: 0 0 10px rgba(255,215,0,0.2); }
 .node-zerg      { border-color: var(--zerg-dim); }
-.node-zerg:hover { border-color: var(--zerg); box-shadow: 0 0 10px rgba(180,79,255,0.2); }
+.node-zerg:hover { border-color: var(--zerg); box-shadow: 0 0 10px rgba(255,79,94,0.2); }
 .active-node    { box-shadow: 0 0 20px rgba(255,215,0,0.3); border-color: var(--protoss); }
 .node-ghost-node { border-style: dashed; opacity: 0.6; }
 .node-small { min-width: 90px; padding: 10px 12px; }

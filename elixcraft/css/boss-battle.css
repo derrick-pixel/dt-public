@@ -2,7 +2,29 @@
    BOSS BATTLE — Performance Review Arena
    ═══════════════════════════════════════════════ */
 
-.battle-screen { overflow: hidden; }
+.battle-screen { overflow: hidden; position: relative; }
+
+/* Cinematic arena backdrop — sits behind the starfield canvas + UI */
+.battle-screen::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: url("../assets/img/boss-arena.png") center/cover no-repeat;
+  filter: blur(2px) saturate(1.05);
+  opacity: 0.32;
+  pointer-events: none;
+  z-index: 0;
+}
+.battle-screen::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at center, transparent 0%, rgba(4,8,16,0.65) 65%, rgba(4,8,16,0.95) 100%),
+    linear-gradient(180deg, rgba(4,8,16,0.55) 0%, transparent 35%, transparent 65%, rgba(4,8,16,0.7) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
 
 .battle-wrapper {
   position: relative;
