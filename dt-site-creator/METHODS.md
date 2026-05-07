@@ -34,6 +34,48 @@ Append-only. Every methodology change gets a dated entry. Agent 7 (Pitfall Curat
 
 ---
 
+## v2.2.0 — 2026-04-29 — Post-construction SEO agent track (7 agents)
+
+**Why:** Construction agents (01-07) get a site to "structurally crawler-friendly" — the Week 1-5 SEO rigor track verified this works (fleet 56 → 100 on homepages, 56 → 92 on subpages). But that's just Tier 1 of the 4-tier SEO model. The next 3 tiers (Measurement, Page-level optimization, Off-page authority) need their own competencies, none of which were codified before.
+
+This commit parks 7 SEO agent definitions in a parallel track so they're activatable on demand.
+
+**Added:**
+- `methodology/seo/00-overview.md` — 4-tier SEO model, agent registry, sequencing diagram, anti-patterns
+- `methodology/seo/01-measurement-setup.md` — Tier 2: Google Search Console + GA4 + Bing Webmaster + sitemap submission + structured data validation
+- `methodology/seo/02-google-business-profile.md` — Tier 2.5: SG-focused local SEO (GBP claim, NAP consistency, directory citations, reviews)
+- `methodology/seo/03-lighthouse-audit.md` — Tier 1.5: Core Web Vitals (LCP / CLS / INP), image compression, font loading, render-blocking resource elimination
+- `methodology/seo/04-title-meta-optimizer.md` — Tier 3: data-driven `<title>` + meta description rewrites using GSC Performance data (≥14 days minimum)
+- `methodology/seo/05-internal-linking-strategist.md` — Tier 3: link-graph audit, orphan-page detection, hub-and-spoke architecture, anchor-text quality
+- `methodology/seo/06-backlink-authority.md` — Tier 4: 4-lane backlink pipeline (founder profiles / industry directories / editorial PR / partner co-marketing), competitor backlink reconnaissance
+- 6 matching invoke templates at `prompts/seo/invoke-*.md`
+
+**Sequencing rules:**
+- SEO 01 (Measurement) is always first. Without it, downstream agents (04, 05) are guessing.
+- SEO 02 (GBP) runs in parallel with 01 — only for SG service businesses.
+- SEO 03 (Lighthouse) runs at launch + after every major asset change.
+- SEO 04 + 05 require ≥14 days of GSC data; abort if invoked too early.
+- SEO 06 starts quietly within 1-2 weeks of launch; quarterly review thereafter.
+
+**Anti-patterns codified:**
+- `seo-measure-without-data` — running optimization agents (04, 05) before measurement (01) has data
+- `seo-link-buying` / `seo-pbn-private-blog-networks` / `seo-anchor-text-overoptimization` — backlink penalty risks
+- `seo-keyword-stuffing-title` — hurts CTR + ranking
+- `seo-immediate-optimization` — invoking title/meta optimizer week 1 (no data)
+- `seo-nap-inconsistent` — Name/Address/Phone differs across HTML, JSON-LD, GBP
+
+**Roadmap progress:**
+- Week 1 ✅ schema-jsonld mechanic + Agent 6 integration (v2.1.0)
+- Week 2 ✅ semantic-html-audit mechanic + Agent 7 integration (v2.1.1)
+- Week 3 ✅ fleet audit (v2.1.2)
+- Week 4 ✅ fleet fix execution — homepages 56→100 (v2.1.3)
+- Week 5 ✅ subpage polish — customer-facing 159 pages, avg 92/100 (v2.1.4)
+- Post-construction tier ✅ this entry — 7 SEO agents parked for on-demand activation
+
+**Backward compatibility:** None of these agents change construction behavior. They're additive; activated only when a human invokes them via the `prompts/seo/invoke-*.md` templates.
+
+---
+
 ## v2.1.0 — 2026-04-29 — SEO rigor track (Week 1 of 7)
 
 **Why:** 2026-Q1 audit of 6 dt-site-creator-shipped sites (Lumana, Passage, ELIX EOR, XinceAI, Elitez Pulse, Aevum MRI) found **0 of 6 had any structured data**. The single biggest under-shipped SEO win in vanilla-HTML projects is JSON-LD. Schema-rich pages outrank schema-less peers by 20–35%, and LLM-era search (ChatGPT, Claude, Perplexity citations) parses JSON-LD natively. We must close this gap systematically before more sites ship.

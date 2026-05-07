@@ -134,12 +134,28 @@ Each `prompts/invoke-*.md` is a self-contained dispatch template. The receiving 
 
 The previous monolithic `masterprompt.txt` (585 lines, dated 2026-04-09) has been retired. Old "use dt-site-creator to build me X" prompts still work — they route to Agent 1 (Brief & Archetype Router), which routes to the right archetype, which dispatches the rest of the chain.
 
+## Post-construction SEO track
+
+After the construction chain ships a site, a parallel **SEO optimization track** at `methodology/seo/` covers what construction agents can't reach:
+
+| # | Agent | Tier | Run when |
+|---|---|---|---|
+| 01 | Measurement Setup (GSC + GA4 + Bing) | 2 | Always, immediately after launch |
+| 02 | Google Business Profile | 2.5 | Once per SG service business |
+| 03 | Lighthouse / Core Web Vitals | 1.5 | At launch + after asset changes |
+| 04 | Title + Meta Optimizer | 3 | After 2-4 weeks of Search Console data |
+| 05 | Internal Linking Strategist | 3 | Quarterly per site |
+| 06 | Backlink + Authority Strategist | 4 | Long game; quarterly review |
+
+These are activated on demand via `prompts/seo/invoke-*.md` templates. Read `methodology/seo/00-overview.md` for the full sequencing rules and 4-tier model.
+
 ## See also
 
 - `masterprompt.txt` — slim orchestrator (replaces the old monolith)
 - `FIELD-DICTIONARY.md` — canonical schemas for every JSON file
 - `METHODS.md` — changelog (version-bumped, append-only)
-- `methodology/00-overview.md` — paradigm + dispatch graph (this doc, expanded)
+- `methodology/00-overview.md` — construction paradigm + dispatch graph
+- `methodology/seo/00-overview.md` — post-construction SEO track + agent registry
 - `archetypes/README.md` — decision matrix for picking an archetype
 - `archetypes/<name>/agents.md` — per-archetype dispatch order
 - `archetypes/<name>/data-contract.md` — JSON schemas the archetype produces

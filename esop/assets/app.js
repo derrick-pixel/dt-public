@@ -72,7 +72,8 @@
       { href: "portal.html", label: "Portfolio", page: "portal" },
       { href: "trading.html", label: "Trading", page: "trading" },
       { href: "admin.html", label: "Administrator", page: "admin" },
-      { href: "scheme.html", label: "Plan Rules", page: "scheme" }
+      { href: "scheme.html", label: "Plan Rules", page: "scheme" },
+      { href: "intel/index.html", label: "Market Intel", page: "intel" }
     ];
 
     const brand = el("a", { href: "index.html", class: "brand" }, [
