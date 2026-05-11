@@ -1,0 +1,358 @@
+<!--
+  Magic-Link Auth (Supabase + Resend) mechanic
+  ─────────────────────────────────────────────
+  Passwordless email sign-in gated by an email-domain allowlist enforced at the
+  Postgres layer via a "before user created" auth hook.
+
+  REQUIREMENTS
+  ────────────
+  1. A Supabase project (free tier works).
+  2. Resend account with a verified custom sender domain (SPF + DKIM).
+  3. The SQL trigger below run once against your Supabase Postgres.
+  4. Supabase Auth → SMTP Settings pointing at Resend.
+
+  HOW IT WORKS
+  ────────────
+  User enters email → signInWithOtp() sends a 6-digit code via Resend →
+  user enters code → verifyOtp() returns a session → body.authed class unlocks the app.
+
+  CRITICAL: The domain allowlist is enforced at the Postgres layer (before-user-created
+  hook), NOT in client-side JavaScript. Without the SQL trigger, signInWithOtp()
+  creates the user row when the magic link is clicked — your gated tool is silently public.
+-->
+
+<!-- Load Supabase JS from CDN (pin to v2) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
+<style>
+  /* ── Auth gate overlay ──────────────────────────────────────── */
+  #app-root { display: none; }
+  body.authed #app-root { display: block; }
+  body.authed #auth-gate { display: none; }
+
+  #auth-gate {
+    position: fixed; inset: 0; background: #f4f6f9;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Segoe UI', Arial, sans-serif; z-index: 9999;
+  }
+  #auth-gate .card {
+    background: white; border-radius: 12px; padding: 32px 36px;
+    box-shadow: 0 6px 32px rgba(0,0,0,0.10); width: 380px;
+  }
+  #auth-gate h2 {
+    margin: 0 0 6px; font-size: 22px;
+    color: var(--auth-heading, #0f172a);
+  }
+  #auth-gate p.lede {
+    color: #64748b; font-size: 13px; margin: 0 0 22px;
+  }
+  #auth-gate label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: var(--auth-heading, #0f172a); margin-bottom: 6px;
+    text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  #auth-gate input {
+    width: 100%; padding: 10px 12px;
+    border: 1px solid #d1d5db; border-radius: 6px;
+    font-size: 14px; box-sizing: border-box; outline: none;
+    transition: border-color 0.15s;
+  }
+  #auth-gate input:focus {
+    border-color: var(--auth-accent, #6366f1);
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+  }
+  #auth-gate button.primary {
+    width: 100%; padding: 11px; margin-top: 14px;
+    background: var(--auth-accent, #6366f1); color: white;
+    border: 0; border-radius: 6px; font-size: 14px;
+    font-weight: 600; cursor: pointer; transition: background 0.15s;
+  }
+  #auth-gate button.primary:hover:not(:disabled) {
+    background: var(--auth-accent-dark, #4f46e5);
+  }
+  #auth-gate button.primary:disabled { background: #9ca3af; cursor: not-allowed; }
+  #auth-gate button.linklike {
+    background: none; border: 0; color: #6b7280;
+    font-size: 12px; padding: 0; cursor: pointer;
+    text-decoration: underline; margin-top: 12px; display: block;
+  }
+  #auth-gate .otp-input {
+    letter-spacing: 8px; font-size: 20px; text-align: center;
+    font-family: 'SF Mono', Menlo, monospace;
+  }
+  #auth-gate .err  { color: #dc2626; font-size: 12px; margin-top: 10px; min-height: 16px; }
+  #auth-gate .ok   { color: #16a34a; font-size: 12px; margin-top: 10px; }
+  #auth-gate .footer-note { font-size: 11px; color: #9ca3af; margin-top: 18px; text-align: center; }
+</style>
+
+<!-- ── AUTH GATE (rendered before app-root) ──────────────────── -->
+<div id="auth-gate">
+  <div class="card">
+    <h2>Sign in</h2>
+    <p class="lede">Enter your work email. We'll send a 6-digit code.</p>
+
+    <!-- Stage 1: email input -->
+    <div id="auth-stage-email">
+      <label for="auth-email">Work email</label>
+      <input type="email" id="auth-email" autocomplete="email"
+             placeholder="you@<YOUR_ALLOWLIST_DOMAIN_1>" autofocus>
+      <button type="button" class="primary" id="auth-send-btn">Send code</button>
+      <div class="err" id="auth-err"></div>
+    </div>
+
+    <!-- Stage 2: OTP verification -->
+    <div id="auth-stage-otp" style="display:none;">
+      <label for="auth-otp">
+        6-digit code sent to <span id="auth-email-echo" style="color:var(--auth-accent,#6366f1);"></span>
+      </label>
+      <input type="text" id="auth-otp" inputmode="numeric"
+             pattern="[0-9]*" maxlength="6" class="otp-input" placeholder="••••••">
+      <button type="button" class="primary" id="auth-verify-btn">Verify &amp; sign in</button>
+      <button type="button" class="linklike" id="auth-back-btn">← Use a different email</button>
+      <div class="err" id="auth-err2"></div>
+    </div>
+
+    <div class="footer-note">Authorized domains only.</div>
+  </div>
+</div>
+
+<!-- ── YOUR APP GOES HERE ────────────────────────────────────── -->
+<div id="app-root">
+  <!-- App content is hidden until authed — body.authed class reveals it -->
+  <p>Authenticated app content here.</p>
+</div>
+
+<script>
+// ── Supabase Auth Gate ──────────────────────────────────────────────────────
+// Extracted from elitez-ai-tender-creator (proposal-generator/Elitez_Proposal_Generator.html)
+// Keys and domains below are PLACEHOLDERS — replace before deploying.
+(function () {
+  'use strict';
+
+  // ── Configure these 2 values ─────────────────────────────────────────────
+  const SUPABASE_URL      = '<YOUR_SUPABASE_URL>';      // e.g. https://abcdefgh.supabase.co
+  const SUPABASE_ANON_KEY = '<YOUR_SUPABASE_ANON_KEY>'; // Project API key → Settings → API
+
+  if (!SUPABASE_URL.startsWith('https://')) {
+    document.getElementById('auth-err').textContent =
+      'Auth not configured — replace SUPABASE_URL and SUPABASE_ANON_KEY.';
+    return;
+  }
+
+  // Initialise Supabase client (session persisted in localStorage)
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, storage: localStorage }
+  });
+  window._sb = sb; // expose for DevTools debugging
+
+  // ── Helper to unlock the app once authenticated ───────────────────────────
+  const unlock = () => document.body.classList.add('authed');
+
+  // Resume existing session on page load (no re-auth needed)
+  sb.auth.getSession().then(({ data }) => { if (data.session) unlock(); });
+
+  // React to auth state changes (handles magic-link callbacks in same tab)
+  sb.auth.onAuthStateChange((_event, session) => { if (session) unlock(); });
+
+  // ── DOM shortcuts ─────────────────────────────────────────────────────────
+  const $ = id => document.getElementById(id);
+  const els = {
+    stageEmail: $('auth-stage-email'),
+    stageOtp:   $('auth-stage-otp'),
+    email:      $('auth-email'),
+    emailEcho:  $('auth-email-echo'),
+    otp:        $('auth-otp'),
+    sendBtn:    $('auth-send-btn'),
+    verifyBtn:  $('auth-verify-btn'),
+    backBtn:    $('auth-back-btn'),
+    err:        $('auth-err'),
+    err2:       $('auth-err2'),
+  };
+
+  let pendingEmail = '';
+
+  // ── Stage 1: send OTP ─────────────────────────────────────────────────────
+  els.sendBtn.addEventListener('click', async () => {
+    const email = els.email.value.trim().toLowerCase();
+    if (!email || !email.includes('@')) {
+      els.err.textContent = 'Enter a valid email.';
+      return;
+    }
+    els.sendBtn.disabled = true;
+    els.sendBtn.textContent = 'Sending…';
+    els.err.textContent = '';
+
+    // signInWithOtp triggers the before-user-created hook on first signup.
+    // If the user's domain is not in signup_email_domains, the hook returns
+    // 403 and the error surfaces here. shouldCreateUser: true is required
+    // for new users to be enrolled; set to false for strict invite-only flows.
+    const { error } = await sb.auth.signInWithOtp({
+      email,
+      options: { shouldCreateUser: true }
+    });
+
+    els.sendBtn.disabled = false;
+    els.sendBtn.textContent = 'Send code';
+
+    if (error) {
+      // Surface domain-rejection errors in human-readable form
+      const msg = (error.message || '').toLowerCase();
+      els.err.textContent = (
+        msg.includes('restricted') || msg.includes('authorized') ||
+        msg.includes('domain')     || msg.includes('403')
+      )
+        ? 'This email domain is not authorized.'
+        : (error.message || 'Could not send code. Try again.');
+      return;
+    }
+
+    pendingEmail = email;
+    els.emailEcho.textContent = email;
+    els.stageEmail.style.display = 'none';
+    els.stageOtp.style.display   = '';
+    els.otp.focus();
+  });
+
+  // ── Stage 2: verify OTP ───────────────────────────────────────────────────
+  els.verifyBtn.addEventListener('click', async () => {
+    const token = els.otp.value.trim();
+    if (!/^\d{6}$/.test(token)) {
+      els.err2.textContent = 'Enter the 6-digit code from your email.';
+      return;
+    }
+    els.verifyBtn.disabled = true;
+    els.verifyBtn.textContent = 'Verifying…';
+    els.err2.textContent = '';
+
+    const { error } = await sb.auth.verifyOtp({ email: pendingEmail, token, type: 'email' });
+
+    els.verifyBtn.disabled = false;
+    els.verifyBtn.textContent = 'Verify & sign in';
+
+    if (error) {
+      els.err2.textContent = error.message || 'Invalid or expired code. Try again.';
+      return;
+    }
+
+    unlock(); // onAuthStateChange also fires here; defensive dual-unlock is fine
+  });
+
+  // ── Back navigation ────────────────────────────────────────────────────────
+  els.backBtn.addEventListener('click', () => {
+    els.stageEmail.style.display = '';
+    els.stageOtp.style.display   = 'none';
+    els.err.textContent  = '';
+    els.err2.textContent = '';
+    els.email.focus();
+  });
+
+  // ── Keyboard shortcuts ─────────────────────────────────────────────────────
+  els.email.addEventListener('keydown', e => { if (e.key === 'Enter') els.sendBtn.click(); });
+  els.otp.addEventListener('keydown',   e => { if (e.key === 'Enter') els.verifyBtn.click(); });
+
+  // ── Expose sign-out helper ─────────────────────────────────────────────────
+  window.authSignOut = async () => {
+    await sb.auth.signOut();
+    document.body.classList.remove('authed');
+    els.stageEmail.style.display = '';
+    els.stageOtp.style.display   = 'none';
+    els.email.value = '';
+    els.otp.value   = '';
+    els.email.focus();
+  };
+}());
+</script>
+
+<!-- ══════════════════════════════════════════════════════════════════════════
+     Supabase SQL — run once in your project
+     Dashboard → SQL Editor → paste and run.
+     ══════════════════════════════════════════════════════════════════════════ -->
+<details>
+<summary>Supabase SQL — run once in your project (click to expand)</summary>
+<pre>
+-- ── Email-domain allowlist for Supabase Auth ─────────────────────────────────
+-- Source: elitez-ai-tender-creator/supabase/migrations/20260506_email_domain_whitelist.sql
+-- Sanitized: real domain values replaced with placeholders.
+--
+-- CRITICAL: This hook is mandatory — without it, signInWithOtp() creates the
+-- user row at magic-link click time regardless of domain. App-layer checks are
+-- guidance, not enforcement. This Postgres hook is the actual gate.
+--
+-- Wire-up: Supabase Dashboard → Auth → Hooks → "Before User Created"
+--   Function: public.hook_restrict_signup_by_email_domain
+
+-- 1. Domain allowlist table
+create table if not exists public.signup_email_domains (
+  domain text primary key
+);
+
+-- 2. Add your authorized domains (replace placeholders)
+insert into public.signup_email_domains (domain) values
+  ('<YOUR_ALLOWLIST_DOMAIN_1>'),   -- e.g. 'yourcompany.com'
+  ('<YOUR_ALLOWLIST_DOMAIN_2>')    -- e.g. 'partner.com' — remove line if only one domain
+on conflict (domain) do nothing;
+
+-- 3. Hook function — rejects signups whose email domain is not in the table
+create or replace function public.hook_restrict_signup_by_email_domain(event jsonb)
+returns jsonb
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  email_domain text;
+begin
+  -- Extract domain from email, handling all event shapes Supabase may send
+  email_domain := lower(split_part(coalesce(
+    event->'user'->>'email',
+    event->'user_metadata'->>'email',
+    event->>'email'
+  ), '@', 2));
+
+  -- Reject if no email was present
+  if email_domain is null or email_domain = '' then
+    return jsonb_build_object(
+      'error', jsonb_build_object(
+        'http_code', 403,
+        'message', 'No email present on signup request.'
+      )
+    );
+  end if;
+
+  -- Allow if domain is in the allowlist
+  if exists (select 1 from public.signup_email_domains where domain = email_domain) then
+    return jsonb_build_object('decision', 'continue');
+  end if;
+
+  -- Reject all other domains
+  return jsonb_build_object(
+    'error', jsonb_build_object(
+      'http_code', 403,
+      'message', 'This site is restricted to authorized email domains.'
+    )
+  );
+end;
+$$;
+
+-- 4. Permissions — supabase_auth_admin must execute; everyone else blocked
+grant execute on function public.hook_restrict_signup_by_email_domain to supabase_auth_admin;
+revoke execute on function public.hook_restrict_signup_by_email_domain from authenticated, anon, public;
+
+grant select on table public.signup_email_domains to supabase_auth_admin;
+revoke all on table public.signup_email_domains from authenticated, anon, public;
+</pre>
+</details>
+
+<!--
+  Resend SMTP wire-up (Supabase Dashboard → Auth → SMTP Settings):
+  ─────────────────────────────────────────────────────────────────
+  Host:     smtp.resend.com
+  Port:     465
+  Username: resend
+  Password: <your Resend API key>
+  Sender:   <YOUR_RESEND_SENDER>    e.g. noreply@yourdomain.com
+
+  Before sending: verify your sender domain in Resend (SPF + DKIM DNS records).
+  Status must show "Verified" before the first real send, or emails will bounce.
+  See pitfall bba-resend-dns-unverified.
+-->

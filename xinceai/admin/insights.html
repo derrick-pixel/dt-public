@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self';" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.github.com;" />
   <meta name="robots" content="noindex, nofollow" />
   <title>XinceAI — Market &amp; Pricing Insights</title>
   <meta name="description" content="Internal market sizing (TAM/SAM/SOM) and pricing strategy for XinceAI: SG SME AI-workflow opportunity, JR+ Archetype A/B/C personas, willingness-to-pay bands, recommended tiers, and grant-stacked effective pricing." />
@@ -51,6 +51,7 @@
         <a href="index.html">Analytics</a>
         <a href="insights.html" class="active">Insights</a>
         <a href="jrplus-reframe.html">JR+ Reframe</a>
+        <a href="snef-component3-deck.html">SNEF Deck</a>
         <a href="insights-v2.html">v2</a>
         <a href="insights-old.html">v1</a>
         <a href="whitespace.html">Whitespace</a>
@@ -68,6 +69,11 @@
       <a href="report.html">Report</a>
     </nav>
   </header>
+
+<div class="last-edited-strip" role="status" aria-live="polite">
+  <strong>Page last edited:</strong> <span id="last-edited" data-edited="2026-05-02T08:28:47+08:00">checking…</span>
+</div>
+
 
   <main class="container-wide">
     <span class="eyebrow">Artefact 04 · 05</span>
@@ -262,5 +268,28 @@
       ))
     );
   </script>
+
+<script>
+/* ─── Last-edited stamp · reads bake-time data-edited attr ─── */
+(function () {
+  const el = document.getElementById('last-edited');
+  if (!el) return;
+  const iso = el.dataset.edited;
+  if (!iso) { el.textContent = '—'; return; }
+  const d = new Date(iso);
+  const fmt = d.toLocaleDateString('en-SG', { year: 'numeric', month: 'short', day: 'numeric' });
+  const ago = Math.floor((Date.now() - d.getTime()) / 86400000);
+  let suffix;
+  if (ago === 0) suffix = 'today';
+  else if (ago === 1) suffix = 'yesterday';
+  else if (ago < 14) suffix = ago + ' days ago';
+  else if (ago < 60) suffix = Math.floor(ago/7) + ' weeks ago';
+  else suffix = Math.floor(ago/30) + ' months ago';
+  el.textContent = fmt + ' · ' + suffix;
+  if (ago <= 7) el.classList.add('fresh');
+  else if (ago > 14) el.classList.add('stale');
+})();
+</script>
+
 </body>
 </html>

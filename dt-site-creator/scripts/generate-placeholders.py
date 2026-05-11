@@ -9,10 +9,27 @@ Output:
 
 Until real screenshots replace these, they give the dashboard visually
 distinguishable cards instead of 1x1 stubs.
+
+SKIP-IF-EXISTS GUARD
+--------------------
+By default this script skips any output file that already exists. This
+prevents silent overwriting of real browser screenshots that were committed
+on top of the original placeholders. Pass --force to regenerate everything.
 """
 
+import argparse
 from PIL import Image, ImageDraw, ImageFont
 from pathlib import Path
+
+parser = argparse.ArgumentParser(
+    description="Generate placeholder thumbnails (skip existing unless --force)."
+)
+parser.add_argument(
+    "--force",
+    action="store_true",
+    help="Regenerate even if file already exists (WARNING: will overwrite real screenshots).",
+)
+args = parser.parse_args()
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -23,6 +40,7 @@ ARCHETYPE_COLOR = {
     "simulator-educational":("#0a1a14", "#34d399", "#6ee7b7"),
     "game":                 ("#1a0a14", "#f87171", "#fb923c"),
     "dashboard-analytics":  ("#0f0f1a", "#818cf8", "#d2a8ff"),
+    "backend-backed-app":   ("#0d1a12", "#0ea5e9", "#38bdf8"),  # ocean-blue: API/infra feel
 }
 
 # ── Past projects ───────────────────────────────────────────
@@ -50,6 +68,10 @@ PROJECTS = [
     ("dashboard-analytics",  "wsg-jrplus",  "JR+ · WSG WDG"),
     ("dashboard-analytics",  "eco-dashboard","Eco Dashboard · KPIs"),
     ("dashboard-analytics",  "csuite",      "C-Suite · Gmail Aggregator"),
+    ("backend-backed-app",   "sp-wsg-corenet",          "WSG/SP/BCA AI Job Redesign"),
+    ("simulator-educational","elitez-lms",               "Elitez LMS · Mock Demo"),
+    ("backend-backed-app",   "elitez-ai-tender-creator", "Elitez AI Tender Creator"),
+    ("backend-backed-app",   "elitez-esop",              "Elitez ESOP · Share Options"),
 ]
 
 # ── Mechanics (for preview thumbnails) ──────────────────────
@@ -62,9 +84,13 @@ MECHANICS = [
     ("pdf-pipeline",        "PDF Pipeline",      "#f85149"),
     ("wizard-form",         "Wizard",            "#34d399"),
     ("multi-page-scaffold", "Multi-Page",        "#ffa657"),
-    ("og-social-meta",      "OG Meta",           "#79c0ff"),
-    ("og-thumbnail",        "OG Thumbnail",      "#ffa657"),
-    ("favicon",             "Favicon Set",       "#d2a8ff"),
+    ("og-social-meta",           "OG Meta",           "#79c0ff"),
+    ("og-thumbnail",             "OG Thumbnail",      "#ffa657"),
+    ("favicon",                  "Favicon Set",       "#d2a8ff"),
+    ("magic-link-auth-supabase", "Magic-Link Auth",   "#38bdf8"),
+    ("cf-zero-trust-static-admin", "CF Zero Trust",  "#818cf8"),
+    ("containerized-fastapi-fly", "Containerized FastAPI on Fly.io", "#0ea5e9"),
+    ("streamlit-cloud-analytics", "Streamlit Cloud",               "#f43f5e"),
 ]
 
 # ── Font loading (macOS fallbacks) ──────────────────────────
@@ -111,6 +137,11 @@ def hex_to_rgb(h: str) -> tuple[int, int, int]:
 
 
 def make_project_thumb(archetype: str, slug: str, title: str) -> None:
+    out = ROOT / "dashboard" / "samples" / archetype / f"{slug}.jpg"
+    if out.exists() and not args.force:
+        print(f"  skip (exists) {out.relative_to(ROOT)}")
+        return
+
     bg, accent1, accent2 = ARCHETYPE_COLOR[archetype]
     W, H = 1200, 800
     img = Image.new("RGB", (W, H), hex_to_rgb(bg))
@@ -144,13 +175,17 @@ def make_project_thumb(archetype: str, slug: str, title: str) -> None:
     foot_font = get_font(24)
     draw.text((60, H - 80), f"dt-site-creator · {slug}", fill="#8b949e", font=foot_font)
 
-    out = ROOT / "dashboard" / "samples" / archetype / f"{slug}.jpg"
     out.parent.mkdir(parents=True, exist_ok=True)
     img.save(out, "JPEG", quality=85)
     print(f"  {out.relative_to(ROOT)}")
 
 
 def make_og_image() -> None:
+    out = ROOT / "og-image.jpg"
+    if out.exists() and not args.force:
+        print(f"  skip (exists) {out.relative_to(ROOT)}")
+        return
+
     W, H = 1200, 630
     bg = hex_to_rgb("#0d1117")
     img = Image.new("RGB", (W, H), bg)
@@ -194,12 +229,16 @@ def make_og_image() -> None:
     foot_font = get_font(22)
     draw.text((72, H - 60), "derrick-pixel.github.io/dt-site-creator", fill="#8b949e", font=foot_font)
 
-    out = ROOT / "og-image.jpg"
     img.save(out, "JPEG", quality=88)
     print(f"  {out.relative_to(ROOT)}")
 
 
 def make_mechanic_preview(mech_id: str, name: str, accent_hex: str) -> None:
+    out = ROOT / "mechanics" / mech_id / "preview.jpg"
+    if out.exists() and not args.force:
+        print(f"  skip (exists) {out.relative_to(ROOT)}")
+        return
+
     W, H = 400, 300
     bg = hex_to_rgb("#1c2128")
     img = Image.new("RGB", (W, H), bg)
@@ -216,7 +255,6 @@ def make_mechanic_preview(mech_id: str, name: str, accent_hex: str) -> None:
     sub_font = get_font(18)
     draw.text((32, H // 2 + 24), f"dt-site-creator · {mech_id}", fill="#8b949e", font=sub_font)
 
-    out = ROOT / "mechanics" / mech_id / "preview.jpg"
     out.parent.mkdir(parents=True, exist_ok=True)
     img.save(out, "JPEG", quality=85)
     print(f"  {out.relative_to(ROOT)}")

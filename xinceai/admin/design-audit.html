@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://api.github.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" />
   <meta name="robots" content="noindex, nofollow" />
   <title>XinceAI — Design Audit</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -165,6 +165,21 @@
       body { font-size: 12px; }
       .kpi-val { font-size: 1.2rem; }
     }
+  
+    /* ─── LAST-EDITED STAMP (admin meta strip) ─── */
+    .last-edited-strip {
+      position: fixed; bottom: 0; top: auto; left: 0; right: 0; z-index: 99;
+      padding: 6px 24px; text-align: right;
+      font-family: var(--font-mono); font-size: 0.72rem;
+      color: var(--muted); letter-spacing: 0.05em;
+      background: rgba(20,15,12,0.35);
+      border-bottom: 1px solid var(--border);
+    }
+    [data-theme="light"] .last-edited-strip { background: rgba(245,240,235,0.6); }
+    .last-edited-strip strong { color: var(--muted2); font-weight: 500; }
+    #last-edited { color: var(--amber); font-weight: 600; }
+    #last-edited.fresh { color: var(--neon, #00ff88); }
+    #last-edited.stale { color: var(--rose, #ff4466); }
   </style>
 </head>
 <body>
@@ -186,6 +201,7 @@
     <a href="index.html">Analytics</a>
     <a href="insights.html">Insights</a>
     <a href="jrplus-reframe.html">JR+ Reframe</a>
+    <a href="snef-component3-deck.html">SNEF Deck</a>
     <a href="insights-v2.html">Insights (v2)</a>
     <a href="insights-old.html">Insights (v1)</a>
     <a href="whitespace.html">White Space</a>
@@ -194,6 +210,11 @@
     <a href="report.html">Report</a>
   </div>
 </nav>
+
+<div class="last-edited-strip" role="status" aria-live="polite">
+  <strong>Page last edited:</strong> <span id="last-edited" data-edited="2026-05-02T00:25:59+08:00">checking…</span>
+</div>
+
 
 <main class="page">
 
@@ -381,6 +402,29 @@ if (document.readyState === 'loading') {
 } else {
   init();
 }
+</script>
+
+
+<script>
+/* ─── Last-edited stamp · reads bake-time data-edited attr ─── */
+(function () {
+  const el = document.getElementById('last-edited');
+  if (!el) return;
+  const iso = el.dataset.edited;
+  if (!iso) { el.textContent = '—'; return; }
+  const d = new Date(iso);
+  const fmt = d.toLocaleDateString('en-SG', { year: 'numeric', month: 'short', day: 'numeric' });
+  const ago = Math.floor((Date.now() - d.getTime()) / 86400000);
+  let suffix;
+  if (ago === 0) suffix = 'today';
+  else if (ago === 1) suffix = 'yesterday';
+  else if (ago < 14) suffix = ago + ' days ago';
+  else if (ago < 60) suffix = Math.floor(ago/7) + ' weeks ago';
+  else suffix = Math.floor(ago/30) + ' months ago';
+  el.textContent = fmt + ' · ' + suffix;
+  if (ago <= 7) el.classList.add('fresh');
+  else if (ago > 14) el.classList.add('stale');
+})();
 </script>
 
 </body>

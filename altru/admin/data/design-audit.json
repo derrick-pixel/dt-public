@@ -1,0 +1,169 @@
+{
+  "meta": {
+    "project_name": "Altru",
+    "brand_tokens": {
+      "primary": "#C8102E",
+      "secondary": "#9B0B20",
+      "accent": "#C9973A",
+      "neutral_dark": "#2D1010",
+      "neutral_light": "#FFF8F8",
+      "font_display": "Playfair Display, Georgia, serif",
+      "font_body": "Lato, system-ui, sans-serif"
+    },
+    "research_date": "2026-05-05",
+    "sample_data": false
+  },
+
+  "self_audit": {
+    "url": "https://altru.asia",
+    "captured_at": "2026-05-05",
+    "screenshot_path": "",
+    "audit_method": "source_read_only",
+    "audit_method_notes": "Audit performed against the source files at /Users/derrickteo/codings/altru/ (index.html, couple.html, donor.html, giving-aura.html, giving-weddings.html, wedding-venues.html, angbao-guide.html, css/styles.css, js/app.js). No live browser capture or WAVE/axe run; contrast ratios are computed from declared CSS values, not measured on rendered pixels.",
+
+    "scores": {
+      "modernness": 6,
+      "attractiveness": 7,
+      "coherence": 5,
+      "ui_clarity": 5,
+      "accessibility": 5
+    },
+    "weighted_rating": 5.5,
+
+    "rubric": {
+      "modernness": {
+        "score": 6,
+        "rationale": "Typography is solid (Playfair Display + Lato, properly preconnected at index.html:20-22; clamp-based fluid sizing in styles.css:43-46). Hero gradient (styles.css:603) and 囍 glyph watermark (styles.css:610-628) are a brand-confident choice. Drops to 6 because: (a) the layout is bottled into a 900px container (styles.css:52) so the site reads as a phone-first stretch on a 1440 viewport; (b) heavy emoji-as-iconography (🧧💑✨🏛️ in nav/cards/CTAs) leans 2021-era-Notion rather than 2025-state-of-the-art; (c) gradient overuse — every primary surface is gradient-on-gradient (styles.css:177, 196, 322, 388, 603, 666, 685, 906); (d) the 'Sarah's Story' carousel (index.html:107-465) is creative but the inline <style> + emoji-character approach feels homemade rather than Linear/Stripe-tier polish.",
+        "findings": [
+          {"selector": ".container @ styles.css:52", "issue": "max-width: 900px makes the desktop hero feel cramped at 1440×900; reads as a mobile site upscaled.", "fix": "Bump container to 1100-1200px; introduce a wider .container-lg variant for marketing pages."},
+          {"selector": ".hero, .page-hero, .aura-hero, .venue-hero, .guide-hero", "issue": "Five separate hero gradients each declared inline (styles.css:603, 885, 906; wedding-venues.html:25; angbao-guide.html:24). Drift risk + heavy gradient overuse.", "fix": "Consolidate into one --hero-gradient token; reuse via .hero variants. Reduces 'gradient soup' defect."},
+          {"selector": "btn-gold, btn-primary @ styles.css:177-203", "issue": "Two competing accent CTAs (gradient red AND gradient gold) in the same hero — index.html:87-92 puts btn-gold next to btn-outline next to a third btn-outline.", "fix": "One primary CTA per hero. Demote 'I'm Getting Married' to a secondary text-link or a ghost button below the fold."},
+          {"selector": ".sarah-stage, .mood-blob, .sarah-face @ index.html:160-225", "issue": "Emoji-as-character animation feels indie-game-jam, not premium-wedding-tech. The brand voice (Playfair Display, IPC certification) is at war with 😒-emoji-shake.", "fix": "Replace Sarah character with custom illustrations (Lottie or static SVG portraits) or move the storytelling above-the-fold copy and drop the emoji theatrics."}
+        ]
+      },
+
+      "attractiveness": {
+        "score": 7,
+        "rationale": "Strong palette discipline — red (#C8102E) + gold (#C9973A) + warm neutrals + pink accent is well-constrained and culturally on-brief for SG Chinese wedding context (styles.css:2-21). Playfair Display display type + Lato body is a tasteful, bridal-magazine pairing. Hero compositions on index.html, page-hero, aura-hero all share a 囍 watermark motif (styles.css:611, 894, 942) which gives visual cohesion. Drops from a 9 because: (a) no custom photography anywhere — the site is 100% emoji + gradient + Playfair (no real wedding photos, no real charity beneficiary photos); (b) altru-logo.jpg is a 308KB JPG (2 Apr 2026) used at 2rem display — wasteful and likely soft on retina; (c) the 'Blessing Certificate' (donor.html:303-342) uses ✦ corner glyphs and gradient gold which leans kitsch rather than considered.",
+        "findings": [
+          {"selector": "altru-logo.jpg @ filesystem", "issue": "308KB JPG at root, declared width=1280 height=1280 but rendered at 2rem in styles.css:86. 65× over-served; soft on retina once compressed by JPG.", "fix": "Replace with SVG or a 64×64 PNG/WebP. Drops first-paint weight by ~300KB."},
+          {"selector": "Imagery library", "issue": "Zero photographic content across all 7 pages. 100% emoji-as-image. Wedding sites without photos read as wireframes-not-yet-skinned.", "fix": "Commission/license 6-10 photos: real SG wedding (hotel ballroom), couple holding QR, charity beneficiary, IPC certificate. Hero, How-It-Works, Trust section all need anchoring imagery."},
+          {"selector": ".cert-wrapper @ styles.css:932-1080", "issue": "Blessing Certificate combines gold border + ✦ corners + 囍 watermark + IPC seal — five decorative elements competing. Reads as a generic award-printable, not a premium digital artifact.", "fix": "Strip to two motifs (e.g. just gold border + Altru wordmark). Lean into typography rather than ornament."},
+          {"selector": ".charity-icon, .how-icon, .step-circle", "issue": "Icon style is inconsistent — emoji icons (🧧💑✨) sit next to numbered red gradient circles (styles.css:663-677) sit next to gold IPC seals.", "fix": "Pick one icon language across all marketing surfaces. Recommend custom line-icons in --red for marketing and reserve emoji for emotional moments only."}
+        ]
+      },
+
+      "coherence": {
+        "score": 5,
+        "rationale": "Hard-capped at 5 per methodology §10.1. The hero copy 'You're Going Anyway.' (index.html:81) is brand-statement-not-what-we-sell. A first-time buyer must scroll past the hero, past Sarah's 6-panel story (~24 seconds at 4s/panel auto-advance), past 'How It Works', past Tax Relief Banner, past Featured Charities to reach a clear pricing/fee disclosure (the 95/5 banner at index.html:728-738). Pricing-as-fee-structure is technically findable but the actual 'what does this cost the guest' question is the entry-level wedge of the donation amount — never stated upfront. Worse, the nav has SIX competing entry points for first-time visitors (Home, Ang Bao Guide, Venue Guide, Send a Gift, Giving Stories, I'm Getting Married — index.html:65-72), with no top-level navigation differentiating 'I am a couple' from 'I am a guest who scanned a QR' from 'I am evaluating legitimacy'. The hero CTA stack also confuses with three buttons (Send Altruistic Angbao + I'm Getting Married + Ang Bao Guide — index.html:86-94) competing for the same hero scroll.",
+        "findings": [
+          {"selector": ".hero h1 @ index.html:81", "issue": "Hero headline 'You're Going Anyway.' is a brand-statement, not a what-we-sell. A guest who lands here from a QR has no idea this is a charity-donation platform within 5 seconds.", "fix": "Replace H1 with 'Wedding red packets that also fund a charity — in the couple's name.' OR keep current line as eyebrow and put what-we-sell as H1."},
+          {"selector": ".hero-cta @ index.html:86-94", "issue": "Three competing CTAs (Send Altruistic Angbao + I'm Getting Married + Ang Bao Guide) — methodology §5.3 defect: 'Three competing CTAs in the hero with no visual hierarchy. Drops by 2.'", "fix": "One primary CTA (most-likely-intent: 'Send a Gift'). Secondary intents go in nav, not hero. Move 'Ang Bao Guide' to a 'Resources' section."},
+          {"selector": ".nav-links @ index.html:65-72", "issue": "Six nav items (Home, Ang Bao Guide, Venue Guide, Send a Gift, Giving Stories, I'm Getting Married) with no role-based grouping. Couple flow + guest flow + content marketing + brand all share one row.", "fix": "Split into role tabs: 'For Couples' / 'For Guests' / 'Resources' (drops to Ang Bao + Venue + Giving Stories) / 'Trust'. Or: persistent role-toggle in hero ('I'm a couple | I'm a guest')."},
+          {"selector": "Sarah's Story carousel @ index.html:99-156", "issue": "6-panel auto-advancing emoji carousel (4s × 6 = 24s) lives between hero and How-It-Works — buyer cannot scroll-skim past it without losing context. Also the tone (passive-aggressive humour about Sarah being 'forced' to donate) is a coherence risk for a tax-regulated charity platform.", "fix": "Move carousel below How-It-Works, set to manual advance not auto, and trim to 3 panels. Re-tone caption copy to celebrate altruism rather than mock the obligated guest."},
+          {"selector": "Pricing/fee disclosure", "issue": "'Send-a-gift' flow (donor.html step 1) jumps to amount input without ever disclosing the 95/5 split before payment. Guest only sees fee structure if they scrolled the index.html landing first.", "fix": "Add a single fee-disclosure line on donor.html step 1: '95% goes to your chosen charity. 5% platform fee charged to the charity, never to you.' Match the language at index.html:733."}
+        ]
+      },
+
+      "ui_clarity": {
+        "score": 5,
+        "rationale": "Three-intent stopwatch test (estimated, source-only): see findability_seconds. Couple-onboarding intent and guest-FAQ intent both have first-click resolution from the nav, but 'Is this legit?' / 'What charity gets my money?' is buried at index.html:686 (Trust & Transparency section, ~6th scroll), and the actual fee comparison table is at index.html:742 (~8th scroll). Mobile menu (.menu-toggle, styles.css:108-131) is a working hamburger but pops underneath sticky header due to no explicit z-index on .nav-links.open (styles.css:146) — the parent .site-header z-index:100 carries it, but the menu items have no dedicated z-index, which historically (per memory feedback_mobile_menu_zindex.md) is exactly the bug pattern that renders mobile menu items invisible. UI clarity also drops because the header itself is six-link-crowded at desktop widths, increasing cognitive load on the first click.",
+        "findability_seconds": {
+          "couple_get_started": 3,
+          "couple_get_started_path": "index.html nav → 'I'm Getting Married' button (red CTA, top-right). 1 click. Lands on couple.html which presents login/signup. Note: the same intent is also served by the hero secondary CTA at index.html:88-90.",
+          "guest_qr_scan": 6,
+          "guest_qr_scan_path": "index.html nav → 'Send a Gift'. 1 click → donor.html step 1. But: a guest who literally just scanned a QR at the wedding table goes via giving-aura.html?couple=<id>, which leads to a different CTA path altogether ('🌸 Send an Altru Gift' → donor.html). Two diverging guest entry points create flow ambiguity. The QR-scan-from-table user is not the same as a 'browsing the public site' user, and the site doesn't differentiate.",
+          "is_this_legit": 14,
+          "is_this_legit_path": "Scroll past Hero (4s) → Sarah Story (~6s skim) → How It Works (~3s) → Tax Relief Banner (~2s, mentions IPC) → Featured Charities (skim) → finally 'Built on Trust & Transparency' at index.html:686. Or: click any 250% link → exits to IRAS, doesn't answer 'is Altru itself legit'. Note: there is no 'About' or 'Trust' link in the nav, which is the ordinary user's first-click destination for legitimacy questions."
+        },
+        "findings": [
+          {"selector": ".nav-links @ index.html:65-72", "issue": "Six items, no 'About' or 'Trust' or 'How it Works' link. Legitimacy-question users must scroll-hunt, can't first-click-resolve.", "fix": "Add 'How It Works' and 'Trust' (or anchor to #trust-transparency) as nav items. Drop 'Home' (logo serves that purpose)."},
+          {"selector": ".menu-toggle / .nav-links.open @ styles.css:134-158", "issue": "Mobile menu has no explicit z-index. If any below-fold element ever uses position:fixed or z-index >100 (the .auth-panel could under specific layouts), mobile menu items risk being rendered under content. Pre-emptively fragile per known bug pattern (feedback_mobile_menu_zindex.md).", "fix": "Add z-index:199 explicitly to .nav-links.open in the mobile @media block."},
+          {"selector": "Sarah's Story auto-advance @ index.html:471 (PANEL_DURATION = 4000)", "issue": "Auto-advancing carousel keeps first-time visitors from scanning past hero. Click-to-advance is fine, but 4-second auto-advance steals reading control.", "fix": "Disable auto-advance OR pause auto-advance once any carousel control is touched. (Current code only pauses on hover at index.html:594-596 — touch-screen users never trigger.)"},
+          {"selector": "donor.html step 1-4 stepper @ donor.html:91-108", "issue": "4-step indicator is a long scroll on mobile and the 'Continue → Choose Charity' button is the only forward affordance — no breadcrumb or back-from-step-3-without-data-loss path is documented in copy. Acceptable but mid-tier.", "fix": "Add 'Save & continue later' or session persistence (already partial via localStorage) made visible to user."}
+        ]
+      },
+
+      "accessibility": {
+        "score": 5,
+        "rationale": "TOOL-RUN STATUS: blocked. WAVE/axe was not run because audit method is source-only (per audit_method_notes above). Score is conservative-from-static-analysis per methodology §5.5 paragraph on blocked tools. Contrast: --red #C8102E on white = 5.78:1 (passes AA). White on hero gradient (#3D0812 → #E5234A) = primary text ratio passes (>7:1 against the dark end), but rgba(255,255,255,0.55) eyebrow text at index.html:770 against #C8102E end of gradient = ~3.0:1 — fails AA for body text, borderline for large text. Same risk: rgba(255,255,255,0.6) at index.html:152 over the very dark Sarah Story background #0f0205 actually passes (~9:1) — OK there. Alt text: logo has alt='Altru' (good); emoji are inline text (screen readers will read them which can be either great or noisy); no <img> for content imagery (because there is none). Focus states: buttons inherit default browser focus (no custom :focus-visible defined in styles.css). 200% zoom: hero uses clamp() typography which should reflow, but the Sarah stage is height:260px fixed with font-size:4.5rem face — likely overflows at 200% zoom on mobile.",
+        "findings": [
+          {"selector": "rgba(255,255,255,0.55) eyebrow text @ index.html:770 (CTA section over red gradient)", "issue": "Eyebrow 'You've read this far. You're definitely going.' at 0.78rem with 55% white over #C8102E end of gradient is ~3.0:1 — fails AA 4.5:1 for normal text.", "fix": "Bump to rgba(255,255,255,0.85) or use solid #FBF5DC (gold-light) which gives ~7.1:1 against #C8102E."},
+          {"selector": "Focus states", "issue": "No :focus-visible styles in styles.css. Keyboard users see only browser-default focus rings, which on a styled .btn-primary gradient are barely visible.", "fix": "Add `.btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }` once globally."},
+          {"selector": ".sarah-stage @ index.html:161-171", "issue": "Fixed height:260px with font-size:4.5rem .sarah-face will overflow at 200% zoom on mobile (WCAG 1.4.10 reflow risk). Auto-advancing animation also fails WCAG 2.2.2 'pause/stop/hide' for content > 5s — there is no visible pause control (only on-hover, which is touch-inaccessible).", "fix": "Replace fixed height with min-height + overflow:visible. Add explicit pause button (▸/⏸) next to the next/prev arrows. Honour prefers-reduced-motion to disable auto-advance entirely."},
+          {"selector": "Emoji as icons across nav, hero, and trust cards", "issue": "Emoji are read aloud by screen readers verbatim ('Red gift envelope ang bao guide red gift envelope') which makes nav-by-screen-reader fatiguing. Emoji in CTAs ('🧧 Send Altruistic Angbao') compound the issue.", "fix": "Wrap decorative emoji in <span aria-hidden='true'>🧧</span>. Keep label text intact for AT users."},
+          {"selector": "WAVE/axe run", "issue": "Not run on this audit cycle. Methodology §5.5 caps scoring optimism when tools blocked.", "fix": "Re-run audit with Playwright + axe-core or WAVE browser extension; the live URL is unauthenticated (https://altru.asia) so capture is straightforward."}
+        ]
+      }
+    },
+
+    "mobile_pass": {
+      "primary_breakpoint": "680px (header) / 640px (general / styles.css:1231)",
+      "secondary_breakpoints": ["540px (angbao-guide.html:155)", "480px (angbao-guide.html:49, giving-weddings.html:302)", "600px (wedding-venues.html:858, giving-weddings.html:282)", "700px (wedding-venues.html:282)"],
+      "summary": "Mobile-readiness is the site's single biggest QA risk because >70% of SG couples and ~90% of QR-scan-at-table guests will land via a mobile browser. The site IS responsive — every page declares <meta name='viewport' content='width=device-width, initial-scale=1.0'> and styles.css collapses to a single-column .how-grid + stacked .tax-banner under 640px. But four specific mobile failures need fixing before launch.",
+      "issues": [
+        {"severity": "high", "selector": ".nav-links.open @ styles.css:134-158", "issue": "Mobile menu has no explicit z-index. Pre-emptive fragility — exact pattern that has bitten elitez/xinceai sites before (memory feedback_mobile_menu_zindex.md). If any sticky element below header gains z-index >100, menu items vanish.", "fix": "Add z-index:199 to .nav-links.open. One-line CSS fix."},
+        {"severity": "high", "selector": ".sarah-stage @ index.html:161-171", "issue": "Fixed height:260px with absolutely-positioned mood-blob (220×220), props at 2.8rem font, and a center character at 4.5rem font. On 375px-wide iPhone SE the speech bubble (white-space:nowrap, line 240) WILL overflow horizontally on longer Sarah lines like 'Table 19 let's go! 🔥' (panel 6).", "fix": "Set max-width:90% on .speech-bubble and remove white-space:nowrap. Test on 320px viewport (smallest baseline)."},
+        {"severity": "medium", "selector": ".hero-cta @ index.html:86 (display:flex; flex-wrap:wrap)", "issue": "Three buttons in hero. On 375px each button stacks full-width. .btn-lg has padding:1rem 2.2rem = ~14rem each = 70vh of hero scroll for buttons alone before any social proof.", "fix": "Reduce to 2 hero CTAs on mobile (hide third behind a 'More options' affordance, or kill 'Ang Bao Guide' from hero entirely)."},
+        {"severity": "medium", "selector": ".steps @ donor.html:91 / styles.css:414-472", "issue": "4-step indicator with .steps display:flex + overflow-x:auto gives horizontal-scroll-stepper on mobile — works mechanically but the connector lines (.step-item:not(:last-child)::after at styles.css:430) use width:80% from left:60% which on a ~80px-wide step item is 64px line — fine, but at 320px viewport with text labels 'Gift Details' wraps and breaks the layout.", "fix": "Truncate step labels on mobile (text-overflow:ellipsis) or shorten to 1-word labels: 'Gift', 'Charity', 'Info', 'Pay'."},
+        {"severity": "medium", "selector": "Sarah Story carousel touch behaviour @ index.html:594-596", "issue": "Auto-advance pauses only on `mouseenter` (line 595). Touchscreen users have no way to pause — they tap an arrow but the 4s timer keeps running and steals their next read.", "fix": "Add `touchstart` listener that calls clearTimeout(autoTimer); restart on touchend after 8s OR remove auto-advance entirely on (pointer:coarse) media query."},
+        {"severity": "low", "selector": ".tax-banner @ styles.css:682-700, mobile collapse at styles.css:1237", "issue": "On mobile the tax-banner stacks (flex-direction:column) but the giant 250% number is centered while the IPC Certified badge floats at the bottom — visual hierarchy inverts (number first, headline second on mobile only).", "fix": "Reorder DOM so headline-then-badge-then-number reads consistently on both viewports, OR use CSS order: properties at 640px breakpoint."}
+      ],
+      "verdict": "Mobile is functional but not polished. Two HIGH severity issues (menu z-index pre-emptive risk, Sarah carousel speech-bubble overflow) need fixing before any IG/TikTok/wedding-planner referral campaign goes live, because that traffic is 90% mobile."
+    },
+
+    "three_intent_findability": {
+      "intent_1_couple_get_started": {
+        "intent": "I'm a couple — how do I get started?",
+        "clicks": 1,
+        "seconds_estimated": 3,
+        "path": "index.html → click red 'I'm Getting Married' button (top-right of nav, also visible as secondary hero CTA) → couple.html",
+        "friction_notes": "First-click is good, but couple.html lands on a login screen (couple.html:79-107) before any 'create account / how it works for couples' onboarding. A fresh couple who has never used Altru hits a password prompt with no obvious 'sign up' affordance — the only visible escape is the back-arrow or the navigation. There is no public-facing 'For Couples' explainer page."
+      },
+      "intent_2_guest_qr_scan": {
+        "intent": "I'm a guest — what's this red packet QR code on the table?",
+        "clicks": "varies (0-2 depending on QR target)",
+        "seconds_estimated": 6,
+        "path": "Most likely: QR → giving-aura.html?couple=<id> → guest reads couple's name + chosen charity → click '🌸 Send an Altru Gift' (giving-aura.html:286) → donor.html step 1. Alternative: QR → index.html → 'Send a Gift' nav → donor.html.",
+        "friction_notes": "Path A (giving-aura) is the intended flow but requires the couple's QR to point at giving-aura.html?couple=<id>, not at index.html. If the couple inadvertently shares the index.html link, the guest must scroll-hunt for 'Send a Gift'. Larger issue: nowhere on the landing does it explain 'You scanned a QR at a wedding? Tap here →'. No QR-arrival affordance, no 'For Guests' tab. Guests at a noisy wedding banquet with weak hotel WiFi need ONE big primary button, not Sarah's 24-second story."
+      },
+      "intent_3_legitimacy_charity": {
+        "intent": "Is this legit / IRAS-approved? What charity does my money go to?",
+        "clicks": "0 (scroll-only) but 6 viewports of scroll on desktop",
+        "seconds_estimated": 14,
+        "path": "index.html → scroll past hero (no trust signal) → past Sarah Story (no trust signal, ~24s if auto-advance not paused) → past How It Works (mentions IRAS link in passing) → past Tax Relief Banner (1st substantive trust mention: 'IPC Certified' badge) → past Featured Charities → past Trust & Transparency section at index.html:686 (the actual answer: PDPA, Charities Act, 95/5 fee, fund-raiser code) → past 95/5 banner with fee comparison.",
+        "friction_notes": "TWO trust failures: (1) No 'About' or 'Trust' link in nav — legitimacy intent has no first-click answer. (2) The trust section is correctly populated (Gross Payment Rule, PDPA, Licensed Fund-raiser, Real-Time Transparency at index.html:692-723) but visually-styled as 4 small cards rather than a prominent 'Why Altru is safe' banner. (3) IPC charity list is at index.html:653-661 and lazy-renders from JS — no 'See all 13 charities' CTA from above the fold. (4) The IRAS '250% tax deduction' link works but exits to a long IRAS page that does not mention Altru — a guest hunting 'is this legit' opens IRAS, sees nothing about Altru, and bounces."
+      }
+    },
+
+    "findings_table": [
+      {"rank": 1, "severity": "high", "section": "Hero / index.html:81-94", "issue": "H1 ('You're Going Anyway.') is a tone-statement, not a what-we-sell. Three competing CTAs in hero. Caps Coherence at 5 by methodology §10.1.", "fix": "Replace H1 with explicit description of service. Reduce hero CTAs to 1 primary + 1 secondary. Move Ang Bao Guide to nav.", "expected_impact": "Coherence 5 → 7. Conversion lift on cold traffic; first-time guest understands the offer in <5s instead of 24s."},
+      {"rank": 2, "severity": "high", "section": "Navigation @ all pages, index.html:65-72", "issue": "6 nav items with no role-based grouping. No 'About', 'Trust', or 'How It Works' first-click destination. Couple/Guest/Browser intents share the same row.", "fix": "Restructure to: For Couples · For Guests · How It Works · Trust · Resources (sub-menu: Ang Bao + Venue + Stories). Or persistent role-toggle in hero.", "expected_impact": "UI Clarity 5 → 7. 'Is this legit?' intent drops from 14s to 4s. Couple onboarding clarity improves."},
+      {"rank": 3, "severity": "high", "section": "Mobile menu @ styles.css:134-158", "issue": "No explicit z-index on .nav-links.open. Pre-emptively fragile per known bug pattern; menu items can render invisible if any below-fold sticky/fixed element exceeds z-index 100.", "fix": "Add `z-index: 199` to .nav-links.open. One-line CSS fix.", "expected_impact": "Eliminates a class of invisible-mobile-menu bug before it ships. Critical because >70% traffic is mobile."},
+      {"rank": 4, "severity": "high", "section": "Sarah Story carousel @ index.html:99-465", "issue": "24-second auto-advancing emoji carousel between hero and How-It-Works. Tone (mocking obligated guest) is brand-risk for a regulated charity platform. Speech-bubble nowrap overflows on mobile. Auto-advance steals user reading control. WCAG 2.2.2 fail.", "fix": "Move below How-It-Works. Trim to 3 panels. Disable auto-advance OR honour prefers-reduced-motion. Re-tone to celebrate altruism rather than mock obligation. Remove white-space:nowrap from .speech-bubble.", "expected_impact": "Improves Coherence and Mobile and Accessibility simultaneously. Reduces hero-to-CTA scroll depth."},
+      {"rank": 5, "severity": "medium", "section": "Pricing/fee transparency in donor.html flow", "issue": "Donor flow (donor.html step 1) does not disclose 95/5 fee structure before payment. The fee narrative is on landing page only.", "fix": "Add one-line fee disclosure on donor.html step 1: '95% goes to charity. 5% platform fee charged to charity, never deducted from your gift.' Mirror language from index.html:733.", "expected_impact": "Trust signal at the moment of commitment. Reduces refund/dispute risk."},
+      {"rank": 6, "severity": "medium", "section": "Trust positioning @ index.html:686", "issue": "'Built on Trust & Transparency' lives at the 6th scroll on desktop. No anchor or first-click path from nav. Fee comparison table buried 8th scroll.", "fix": "Add 'Trust' nav item linking to #trust-transparency. Promote 95/5 banner to a sticky badge or a hero sub-element. Consider a 'Why Altru is safe' modal accessible from any page header.", "expected_impact": "Legitimacy intent findability 14s → 3s. Reduces guest bounce on first arrival from QR."},
+      {"rank": 7, "severity": "medium", "section": "Container width @ styles.css:52", "issue": "max-width: 900px makes 1440-viewport landings feel cramped (450px of side margin). Site reads as a phone-first stretch rather than a 2025 desktop layout.", "fix": "Bump container to 1100-1200px for marketing pages. Keep .container-sm (600px) for forms.", "expected_impact": "Modernness 6 → 7. Desktop-first wedding-planner referrals (B2B partnership leads) get a more credible first impression."},
+      {"rank": 8, "severity": "medium", "section": "Imagery library", "issue": "Zero photographic content. 100% emoji + gradient. Wedding-tech buyer expects real hotel/couple/charity-beneficiary photos.", "fix": "Commission 6-10 photos: SG hotel ballroom, couple holding QR card, charity beneficiary, IPC certificate. Place in hero + How-It-Works + Trust.", "expected_impact": "Attractiveness 7 → 9. Major lift in IG/TikTok shareability of OG cards (currently the OG image is a generic Altru graphic per index.html:12)."},
+      {"rank": 9, "severity": "medium", "section": "Accessibility focus states", "issue": "No :focus-visible CSS in styles.css. Keyboard users see only browser-default focus rings, barely visible against gradient buttons.", "fix": "Add `.btn:focus-visible, .nav-links a:focus-visible, .charity-option:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }` globally.", "expected_impact": "Closes one WCAG 2.4.7 gap. Required for any IRAS/government partnership conversation."},
+      {"rank": 10, "severity": "low", "section": "altru-logo.jpg @ filesystem (308KB)", "issue": "Logo is 308KB JPG declared at 1280×1280 but rendered at 2rem. 65× over-served, slow on mobile 4G.", "fix": "Replace with SVG (or 64×64 PNG/WebP). Drops first-paint by ~300KB.", "expected_impact": "First Contentful Paint -0.3s on 3G. Better Core Web Vitals score, helps SEO."},
+      {"rank": 11, "severity": "low", "section": "couple.html login screen @ couple.html:79-107", "issue": "First-time-couple lands on a password-only login with no visible 'sign up' or 'create your wedding page' affordance.", "fix": "Add a clearly-styled 'New here? Create your wedding page →' CTA below the login button.", "expected_impact": "Couple onboarding clarity. Eliminates 'where do I sign up' support tickets."},
+      {"rank": 12, "severity": "low", "section": "Emoji-as-iconography across nav and CTAs", "issue": "Screen readers verbalise emoji ('Red envelope I'm Getting Married'). Some emoji unmounted in aria-hidden, others not. Inconsistent.", "fix": "Wrap all decorative emoji in <span aria-hidden='true'>. Keep emoji that ARE the message (e.g. ❤️ in a wedding context) without aria-hidden.", "expected_impact": "Accessibility 5 → 6. Cleaner screen-reader experience."}
+    ],
+
+    "competitive_design_references": [
+      {"category": "wedding-tech", "name": "Zola", "url": "https://www.zola.com", "borrow": "Role-based homepage routing — Zola's nav splits clearly into 'Wedding Planning' / 'Registry' / 'Invitations' / 'For Guests' as top-level tabs. Solves Altru's #2 finding (couple-vs-guest entry-point ambiguity)."},
+      {"category": "wedding-tech", "name": "The Knot", "url": "https://www.theknot.com", "borrow": "Hero photography — every Knot landing has a real couple photo + a single dominant CTA. Solves Altru's #8 finding (zero photographic content) and #1 finding (3-CTA hero)."},
+      {"category": "charity-tech", "name": "Giving.sg", "url": "https://www.giving.sg", "borrow": "Trust-first layout — Giving.sg surfaces 'Verified by NCSS' / 'Tax-deductible' badges in a sticky band, not a 6th-scroll section. Also: the charity browse cards use real beneficiary photos. Solves Altru's #6 finding (trust positioning) and #8 (imagery)."},
+      {"category": "charity-tech", "name": "Charity: Water", "url": "https://www.charitywater.org", "borrow": "100% goes to the field — model for a single, memorable fee/transparency message ('100% Model'). Altru's '95/5' framing is fine but currently buried mid-page — Charity: Water puts theirs above the hero fold and ties it to a counter (literal $ raised). Solves Altru's #5 finding (fee transparency) and supports the broader trust narrative."}
+    ],
+
+    "design_debt_flags": [
+      {"dimension": "coherence", "our_score": 5, "top_competitor_id": "n/a (no competitor audit available in same project run)", "top_competitor_score": null, "gap": null, "note": "Self-audit only — Agent 1 has not produced competitors.json for Altru's category. Once direct competitors (e.g. Giving.sg wedding-modes, RAY of Hope, ToGather) are scored, re-flag Coherence gap. Hard cap of 5 is the binding constraint here."},
+      {"dimension": "ui_clarity", "our_score": 5, "top_competitor_id": "n/a", "top_competitor_score": null, "gap": null, "note": "Same — re-flag once competitor scores exist. 14-second legitimacy-intent findability is the single biggest UI Clarity defect."},
+      {"dimension": "accessibility", "our_score": 5, "top_competitor_id": "n/a", "top_competitor_score": null, "gap": null, "note": "WAVE/axe was not run in this audit cycle. Score is conservative-from-static-analysis. Re-run with a real browser tool before treating this score as final."}
+    ],
+
+    "notes": "Coherence (5) and UI Clarity (5) are hard-capped per methodology — pricing/fee transparency in donor flow + legitimacy-intent buried at scroll-6 + 3-CTA hero. Mobile menu has no explicit z-index (pre-emptive bug). WAVE/axe blocked by source-only audit method; re-run before launch."
+  }
+}

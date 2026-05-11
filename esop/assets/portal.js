@@ -447,28 +447,73 @@
     const errBox = el("div", { class: "alert alert--bad", style: "margin-bottom: 0.8rem; display:none;" });
     form.appendChild(errBox);
 
+    // Hide the user-supplied payment_ref input — the server allocates an
+    // EXR-YYYY-NNNNN reference and the QR uses it. The input stays in the
+    // DOM as a hidden field so the form layout doesn't shift.
+    refInput.type = "hidden";
+    refInput.value = "auto";
+
     const submitBtn = el("button", { type: "button", class: "btn btn--brass" }, ["Submit notice of exercise"]);
-    submitBtn.onclick = () => {
+    submitBtn.onclick = async () => {
       errBox.style.display = "none";
       if (!sigInput.value.trim()) { errBox.textContent = "Please type your name as a signature."; errBox.style.display = "block"; return; }
-      if (!refInput.value.trim()) { errBox.textContent = "Please enter your payment reference."; errBox.style.display = "block"; return; }
       if (!ack.checked) { errBox.textContent = "Please tick the tax acknowledgement."; errBox.style.display = "block"; return; }
-      const exercise_id = "exc_" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
-      window.ESOPStore.emit("exercise_submitted", {
-        exercise_id,
-        holder_id: h.id,
-        fy: grant.fy,
-        qty: vested,
-        exercise_price: valuation.exercise_price,
-        fmv_at_submission: valuation.fmv,
-        cost,
-        payment_ref: refInput.value.trim(),
-        payment_method: methodSelect.value,
-        signed_name: sigInput.value.trim()
-      });
-      alert("Notice of exercise submitted. Your Notice of Exercise document is available under Your documents. The Trustee will confirm receipt and register your shares.");
-      overlay.remove();
-      window.location.reload();
+      const supa = window.ESOPSupa && window.ESOPSupa.client;
+      if (!supa) {
+        errBox.textContent = "Server connection not available. Refresh and try again.";
+        errBox.style.display = "block"; return;
+      }
+      submitBtn.disabled = true; submitBtn.textContent = "Submitting…";
+      try {
+        const uen = (window.ESOP_DATA && window.ESOP_DATA.org && window.ESOP_DATA.org.uen) || "";
+        const placeholderQr = window.ESOPSGQR
+          ? window.ESOPSGQR.buildPayNowQR({ uen: uen || "201900000A", amount: cost, reference: "PENDING" })
+          : "";
+
+        const { data, error } = await supa.rpc("submit_exercise", {
+          p_grant_id: String(grant.fy),
+          p_qty: vested,
+          p_qr_payload: placeholderQr,
+          p_amount_sgd: cost,
+        });
+        if (error) throw error;
+
+        const row = Array.isArray(data) ? data[0] : data;
+        const reference = row && row.payment && row.payment.reference;
+
+        if (window.ESOPSGQR && uen && reference) {
+          const finalQr = window.ESOPSGQR.buildPayNowQR({ uen, amount: cost, reference });
+          // Direct UPDATE on public.payments is blocked by RLS; use the
+          // tightly-scoped finalize_payment_qr RPC instead.
+          const { error: qrErr } = await supa.rpc("finalize_payment_qr", {
+            p_payment_id: row.payment.id, p_qr_payload: finalQr,
+          });
+          if (qrErr) throw qrErr;
+          row.payment.qr_payload = finalQr;
+        }
+
+        // Replace the overlay contents with a success card showing the QR.
+        overlay.replaceChildren(closeBtn);
+        const card = el("div", { style: "max-width: 560px; margin: 60px auto; padding: 2rem; background: var(--paper); border: 1px solid var(--line-strong); font-family: var(--sans); color: var(--ink); text-align: center;" });
+        card.appendChild(el("h3", { style: "font-family: var(--serif); margin: 0 0 0.6rem;", text: "Notice of exercise submitted" }));
+        card.appendChild(el("p", { class: "muted", text: `Reference: ${reference || "pending"}` }));
+        card.appendChild(el("p", { style: "font-size: 1.4rem; font-weight: 600; margin: 0.4rem 0;", text: fmt.sgd(cost) }));
+        const canvas = document.createElement("canvas");
+        canvas.width = 280; canvas.height = 280;
+        card.appendChild(canvas);
+        if (window.QRCode && row && row.payment && row.payment.qr_payload) {
+          window.QRCode.toCanvas(canvas, row.payment.qr_payload, { width: 280 });
+        }
+        card.appendChild(el("p", { class: "muted tiny", text: `Pay via PayNow Corporate. The bank app pre-fills the amount and reference. Admin marks the exercise paid once funds are received.` }));
+        const ok = el("button", { class: "btn", type: "button" }, ["Done"]);
+        ok.onclick = () => { overlay.remove(); window.location.reload(); };
+        card.appendChild(ok);
+        overlay.appendChild(card);
+      } catch (e) {
+        errBox.textContent = "Submit failed: " + (e.message || e);
+        errBox.style.display = "block";
+        submitBtn.disabled = false; submitBtn.textContent = "Submit notice of exercise";
+      }
     };
     form.appendChild(submitBtn);
 

@@ -1,0 +1,34 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>SGQR test</title>  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+<h1>SGQR self-test</h1>
+<p>Open this page in a browser. The output below should end with "OK". Then
+scan the QR with UOB / DBS / OCBC / Trust mobile banking to verify the
+amount and reference pre-fill correctly.</p>
+<pre id="out"></pre>
+<canvas id="qr" width="320" height="320"></canvas>
+<script src="../assets/sgqr.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" integrity="sha384-Izc791esqyEy3BEIC42q7jbE0AaOkACziN+dyyXgYeDmpeMCLz0xA+xYN3aCd5zz" crossorigin="anonymous"></script>
+<script>
+(function () {
+  const out = document.getElementById("out");
+  function log(s) { out.textContent += s + "\n"; }
+  try {
+    const emv = ESOPSGQR.buildPayNowQR({
+      uen: "201912345A",
+      amount: 250.00,
+      reference: "EXR-2026-00001"
+    });
+    log("EMV string: " + emv);
+    if (!emv.includes("SG.PAYNOW")) throw new Error("missing payload header");
+    if (!emv.includes("EXR-2026-00001")) throw new Error("missing reference");
+    if (!/6304[0-9A-F]{4}$/.test(emv)) throw new Error("bad CRC");
+    QRCode.toCanvas(document.getElementById("qr"), emv, { width: 320 });
+    log("OK");
+  } catch (e) {
+    log("FAIL: " + e.message);
+  }
+})();
+</script>
+</body></html>

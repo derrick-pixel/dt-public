@@ -46,6 +46,17 @@ Cross-archetype reusable building blocks. Each mechanic folder has a 5-file cont
 | 20 | [schema-jsonld](./schema-jsonld/) | Schema.org JSON-LD: Organization, WebSite, BreadcrumbList, FAQPage, Product, LocalBusiness, Article, Person | Agent 6 |
 | 21 | [semantic-html-audit](./semantic-html-audit/) | Browser banner + Node CLI: heading hierarchy, landmarks, alt text, internal links, content thinness | Agent 7 |
 
+## v3 mechanics (added 2026-05-11)
+
+4 new mechanics for the backend-backed-app archetype (production-stack category):
+
+| # | ID | Summary | Core for |
+|---|---|---|---|
+| 22 | [magic-link-auth-supabase](./magic-link-auth-supabase/) | Supabase email OTP gate — 6-digit code flow, row-level security, whitelist hook | backend-backed-app, dashboard-analytics |
+| 23 | [cf-zero-trust-static-admin](./cf-zero-trust-static-admin/) | Cloudflare Zero Trust Access policy protecting static admin paths — OTP or Google OAuth | backend-backed-app |
+| 24 | [containerized-fastapi-fly](./containerized-fastapi-fly/) | FastAPI + Docker + Fly.io deploy recipe — health endpoint, CORS, secrets via fly secrets | backend-backed-app |
+| 25 | [streamlit-cloud-analytics](./streamlit-cloud-analytics/) | Streamlit Cloud analytics dashboard — light theme, st.cache_data, secrets.toml, guest rate limiter | backend-backed-app, dashboard-analytics |
+
 See `../METHODS.md` for the full v2 changelog.
 
 ## How Claude uses mechanics

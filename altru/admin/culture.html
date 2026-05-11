@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Culture Analytics — Altru</title>
+  <meta name="description" content="Internal admin: Altru cultural-anthropology lens for SG wedding-charity framing — ang bao norms by tradition, framing risks, recommended copy. Not for public indexing.">
+  <meta name="robots" content="noindex, follow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <style>
+    .signal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 18px; margin: 24px 0 32px; }
+    .signal-card { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: var(--radius-md); padding: 22px 24px; box-shadow: var(--shadow-sm); }
+    .signal-card .axis { font-family: var(--font-mono); font-size: 0.66rem; padding: 3px 10px; border-radius: 4px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: var(--accent-light); color: var(--brand-secondary); display: inline-block; margin-bottom: 10px; }
+    .signal-card .observation { font-family: var(--font-display); font-size: 1.04rem; font-weight: 600; color: var(--neutral-dark); line-height: 1.45; margin-bottom: 10px; }
+    .signal-card .evidence { font-size: 0.86rem; color: var(--muted); line-height: 1.55; padding: 10px 12px; background: var(--neutral-light); border-radius: 6px; margin-bottom: 12px; }
+    .signal-card .imp { font-size: 0.92rem; color: var(--neutral-dark); line-height: 1.55; }
+    .signal-card .imp-label { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brand-primary); display: block; margin-bottom: 4px; font-weight: 700; }
+    .signal-card .data-as-of { font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); margin-top: 12px; opacity: 0.7; }
+
+    .tradition-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 28px 32px; margin-bottom: 24px; box-shadow: var(--shadow-sm); }
+    .tradition-card h3 { font-family: var(--font-display); font-size: 1.5rem; color: var(--brand-primary); margin: 0 0 8px; }
+    .tradition-card .sub { font-size: 0.86rem; color: var(--muted); margin-bottom: 20px; }
+    .tradition-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin-top: 16px; }
+    .tradition-block { padding: 16px 18px; border-radius: 8px; background: var(--neutral-light); }
+    .tradition-block.norms { border-left: 3px solid var(--accent); }
+    .tradition-block.rituals { border-left: 3px solid var(--brand-primary); }
+    .tradition-block.risks { border-left: 3px solid var(--danger); }
+    .tradition-block.copy { border-left: 3px solid var(--success); }
+    .tradition-block.charity { border-left: 3px solid var(--brand-secondary); }
+    .tradition-block.dont { border-left: 3px solid #6B0F1A; background: #FDEEF1; }
+    .tradition-block .block-label { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--brand-secondary); font-weight: 700; margin-bottom: 8px; }
+    .tradition-block ul { padding-left: 18px; margin: 0; }
+    .tradition-block li { font-size: 0.86rem; line-height: 1.55; margin-bottom: 6px; color: var(--neutral-dark); }
+    .tradition-block .quoted-copy { background: var(--surface); padding: 8px 10px; border-radius: 4px; font-style: italic; font-family: var(--font-display); margin-bottom: 6px; font-size: 0.92rem; }
+
+    .hofstede-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 20px 0 32px; }
+    .hofstede-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+    .hofstede-card .dim { font-family: var(--font-display); font-size: 1rem; font-weight: 600; color: var(--brand-primary); margin-bottom: 8px; text-transform: capitalize; }
+    .hofstede-card .body { font-size: 0.84rem; color: var(--neutral-dark); line-height: 1.55; }
+
+    .principles-list { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 28px 32px; box-shadow: var(--shadow-sm); margin-bottom: 24px; }
+    .principle-row { padding: 18px 0; border-bottom: 1px solid var(--border); display: grid; grid-template-columns: 60px 1fr; gap: 18px; align-items: start; }
+    .principle-row:last-child { border-bottom: none; }
+    .principle-row .num { font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: var(--brand-primary); line-height: 1; }
+    .principle-row .principle { font-family: var(--font-display); font-size: 1.08rem; font-weight: 600; color: var(--neutral-dark); margin-bottom: 6px; }
+    .principle-row .why { font-size: 0.88rem; color: var(--muted); line-height: 1.55; margin-bottom: 6px; }
+    .principle-row .anti { font-size: 0.84rem; color: var(--danger); line-height: 1.55; padding: 6px 10px; background: #FDEEF1; border-radius: 4px; display: inline-block; margin-top: 6px; }
+    .principle-row .applies { font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 8px; }
+
+    .open-questions { background: var(--accent-light); border: 1px solid var(--accent); border-radius: var(--radius-md); padding: 24px 28px; margin-top: 24px; }
+    .open-questions h2 { color: var(--brand-secondary); margin-top: 0; }
+    .open-questions ol { margin: 12px 0 0 0; padding-left: 22px; }
+    .open-questions li { font-size: 0.92rem; line-height: 1.55; margin-bottom: 10px; color: var(--neutral-dark); }
+
+    .addendum-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; margin: 18px 0 32px; }
+    .addendum-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; }
+    .addendum-card .name { font-family: var(--font-display); font-size: 1rem; font-weight: 600; color: var(--brand-secondary); margin-bottom: 10px; }
+    .addendum-card .obs { font-size: 0.86rem; color: var(--neutral-dark); line-height: 1.55; margin-bottom: 10px; }
+    .addendum-card .imp { font-size: 0.84rem; color: var(--brand-primary); line-height: 1.55; }
+    .addendum-card .imp-label { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 4px; }
+
+    .pending-banner { background: var(--accent-light); border: 1px solid var(--accent); border-radius: var(--radius-sm); padding: 14px 18px; margin: 24px 0; font-size: 0.9rem; color: var(--brand-secondary); }
+  
+    /* ─── Last-edited stamp · injected ─── */
+    .last-edited-strip {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+      padding: 5px 14px; text-align: right;
+      font-family: ui-monospace, "Share Tech Mono", monospace;
+      font-size: 0.72rem; letter-spacing: 0.05em;
+      color: rgba(140,140,140,0.85);
+      background: rgba(0,0,0,0.03);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .last-edited-strip strong { color: rgba(60,60,60,0.85); font-weight: 500; }
+    #last-edited { color: #d06010; font-weight: 600; }
+    #last-edited.fresh { color: #0a8a4a; }
+    #last-edited.stale { color: #c82040; }
+  </style>
+</head>
+<body>
+  <header>
+  <nav class="admin-nav">
+    <a href="index.html">Competitors</a>
+    <a href="insights.html">Market &amp; Pricing</a>
+    <a href="whitespace.html">Whitespace Atlas</a>
+    <a href="culture.html" class="active">Culture</a>
+    <a href="design-audit.html">Design Audit</a>
+    <a href="report.html">Report</a>
+    <a href="../index.html" style="margin-left: auto;">← Back to site</a>
+  </nav>
+
+<div class="last-edited-strip" role="status" aria-live="polite">
+  <strong>Page last edited:</strong> <span id="last-edited" data-edited="2026-05-06T08:22:20+08:00">checking…</span>
+</div>
+
+  </header>
+  <main class="container-wide">
+    <span class="artefact-label">Artefact 07 · Cultural anthropology</span>
+    <h1>Culture Analytics</h1>
+    <p style="max-width:880px;line-height:1.6;color:var(--muted);font-size:0.96rem;">Cultural-anthropology lens on Altru's central product risk: ang bao is socially contracted as the guest's wedding-cost contribution. Reframing it as charity routing must be tradition-aware, evidence-grounded, and copy-tested. Below: cultural signals (with evidence), per-tradition matrix (Chinese / Malay / Indian / Christian + cross-cultural), Hofstede lens, ranked framing principles, and open research questions. Cross-link to <a href="insights.html">market &amp; pricing</a>, <a href="whitespace.html">whitespace</a>, <a href="design-audit.html">design audit</a>, <a href="report.html">printable report</a>, or the <a href="../index.html">public site</a>.</p>
+
+    <div id="pending-region"></div>
+
+    <section style="padding: 16px 0 24px;">
+      <span class="artefact-label">Cultural signals</span>
+      <h2 id="signals-title">Cultural signals</h2>
+      <p style="max-width: 820px; color: var(--muted); font-size: 0.9rem; line-height: 1.55;">Each signal cites evidence (URL + date) and ends with an <code>implication_for_us</code> — what it means for product copy, flow, or positioning.</p>
+      <div class="signal-grid" id="signal-grid"></div>
+    </section>
+
+    <section style="padding: 16px 0 24px;">
+      <span class="artefact-label">Per-tradition matrix</span>
+      <h2>Tradition-by-tradition deep dive</h2>
+      <p style="max-width: 820px; color: var(--muted); font-size: 0.9rem; line-height: 1.55;">Ang bao norms (with dollar bands), ceremony rituals, framing risks, recommended copy, charity archetypes that resonate, and hard cultural fouls — for each of the SG wedding traditions.</p>
+      <div id="traditions"></div>
+    </section>
+
+    <section style="padding: 16px 0 24px;">
+      <span class="artefact-label">Cross-cultural addendum</span>
+      <h2>Expat, cross-border, mixed-tradition</h2>
+      <div class="addendum-grid" id="addendum"></div>
+    </section>
+
+    <section style="padding: 16px 0 24px;">
+      <span class="artefact-label">Hofstede lens</span>
+      <h2>SG cultural dimensions applied</h2>
+      <p style="max-width: 820px; color: var(--muted); font-size: 0.9rem; line-height: 1.55;">Hofstede's five dimensions, applied to wedding gift mechanics. Use as a sanity check, not a primary source.</p>
+      <div class="hofstede-grid" id="hofstede-grid"></div>
+    </section>
+
+    <section style="padding: 16px 0 24px;">
+      <span class="artefact-label">Framing principles</span>
+      <h2>Ranked do / don't</h2>
+      <div class="principles-list" id="principles"></div>
+    </section>
+
+    <section style="padding: 16px 0 56px;">
+      <div class="open-questions">
+        <span class="artefact-label">Open research</span>
+        <h2 style="margin-top: 8px;">Test these post-launch</h2>
+        <ol id="open-questions"></ol>
+      </div>
+    </section>
+  </main>
+  <footer style="padding:24px 32px;border-top:1px solid var(--border);font-size:13px;color:var(--muted);max-width:1400px;margin:48px auto 0;">
+    <p>Altru — Internal admin · <a href="../index.html">Public site</a></p>
+  </footer>
+
+  <script type="module">
+    import { loadAppData } from './assets/js/app.js';
+    import { h, mount } from './assets/js/dom.js';
+
+    const data = await loadAppData();
+    const culture = data.culture;
+    const fallbackSignals = (data.market?.cultural_signals || []);
+
+    if (!culture) {
+      const banner = document.createElement('div');
+      banner.className = 'pending-banner';
+      banner.textContent = `culture-analytics.json not yet generated — falling back to ${fallbackSignals.length} signals from market-intelligence.json. Dispatch the culture-analytics agent to populate the per-tradition matrix, Hofstede lens, framing principles, and open questions.`;
+      document.getElementById('pending-region').appendChild(banner);
+    }
+
+    const signals = culture?.signals || fallbackSignals;
+    document.getElementById('signals-title').textContent = `Cultural signals — ${signals.length} entries`;
+    mount(document.getElementById('signal-grid'),
+      ...signals.map(s => h('div', { class: 'signal-card' },
+        s.axis ? h('span', { class: 'axis' }, s.axis.replace(/_/g, ' ')) : null,
+        h('div', { class: 'observation' }, s.observation || ''),
+        s.evidence ? h('div', { class: 'evidence' }, s.evidence) : null,
+        s.implication_for_us ? h('div', { class: 'imp' },
+          h('span', { class: 'imp-label' }, 'Implication'),
+          s.implication_for_us
+        ) : null,
+        s.data_as_of ? h('div', { class: 'data-as-of' }, 'Data as of: ' + s.data_as_of) : null
+      ))
+    );
+
+    const traditions = culture?.per_tradition_matrix;
+    if (traditions) {
+      const traditionsEl = document.getElementById('traditions');
+      const renderList = (cls, label, items) =>
+        Array.isArray(items) && items.length
+          ? h('div', { class: 'tradition-block ' + cls },
+              h('div', { class: 'block-label' }, label),
+              h('ul', {}, ...items.map(item => {
+                if (cls === 'copy') {
+                  return h('li', { class: 'quoted-copy' }, typeof item === 'string' ? item : (item.copy || item.text || JSON.stringify(item)));
+                }
+                if (cls === 'rituals' && item && typeof item === 'object' && item.ritual) {
+                  return h('li', {},
+                    h('strong', {}, item.ritual),
+                    item.timing ? h('div', { style: 'font-size: 0.78rem; color: var(--muted); margin-top: 2px;' }, '⏱ ' + item.timing) : null,
+                    item.altru_intercept ? h('div', { style: 'font-size: 0.82rem; margin-top: 4px;' }, '↳ ' + item.altru_intercept) : null
+                  );
+                }
+                return h('li', {}, typeof item === 'string' ? item : (item.label || item.text || JSON.stringify(item)));
+              }))
+            )
+          : null;
+
+      const renderTradition = (key, t) => h('div', { class: 'tradition-card' },
+        h('h3', {}, t.tradition_name || key.replace(/_/g, ' ')),
+        t.summary ? h('div', { class: 'sub' }, t.summary) : null,
+        h('div', { class: 'tradition-grid' },
+          t.ang_bao_norms
+            ? h('div', { class: 'tradition-block norms' },
+                h('div', { class: 'block-label' }, 'Ang bao norms'),
+                typeof t.ang_bao_norms === 'string'
+                  ? h('div', { style: 'font-size: 0.86rem; line-height: 1.55;' }, t.ang_bao_norms)
+                  : h('ul', {},
+                      ...Object.entries(t.ang_bao_norms).map(([k, v]) =>
+                        h('li', {}, h('strong', {}, k.replace(/_/g, ' ') + ': '), typeof v === 'string' ? v : JSON.stringify(v))
+                      )
+                    )
+              )
+            : null,
+          renderList('rituals', 'Ceremony rituals', t.ceremony_rituals),
+          renderList('risks', 'Framing risks', t.framing_risks),
+          renderList('copy', 'Recommended copy', t.recommended_copy),
+          renderList('charity', 'Charity archetypes that resonate', t.charity_archetypes_that_resonate),
+          renderList('dont', 'Do not do', t.do_not_do)
+        )
+      );
+
+      mount(traditionsEl,
+        ...Object.entries(traditions).map(([k, t]) => renderTradition(k, t))
+      );
+    }
+
+    const addendum = culture?.expat_cross_cultural_addendum;
+    if (addendum) {
+      const addEl = document.getElementById('addendum');
+      const labels = { expat_couples: 'Western expat couples', cross_border_sg_my: 'Cross-border SG-MY', mixed_tradition: 'Mixed-tradition weddings' };
+      mount(addEl, ...Object.entries(addendum).map(([k, v]) => h('div', { class: 'addendum-card' },
+        h('div', { class: 'name' }, labels[k] || k.replace(/_/g, ' ')),
+        v.observation ? h('div', { class: 'obs' }, v.observation) : null,
+        v.framing_implications ? h('div', { class: 'imp' },
+          h('span', { class: 'imp-label' }, 'Framing implication'),
+          v.framing_implications
+        ) : null
+      )));
+    }
+
+    const hof = culture?.hofstede_lens;
+    if (hof) {
+      mount(document.getElementById('hofstede-grid'),
+        ...Object.entries(hof).map(([dim, body]) => h('div', { class: 'hofstede-card' },
+          h('div', { class: 'dim' }, dim.replace(/_/g, ' ')),
+          h('div', { class: 'body' }, body)
+        ))
+      );
+    }
+
+    const principles = culture?.framing_principles || [];
+    mount(document.getElementById('principles'),
+      ...principles.map((p, i) => h('div', { class: 'principle-row' },
+        h('div', { class: 'num' }, String(i + 1)),
+        h('div', {},
+          h('div', { class: 'principle' }, p.principle || ''),
+          p.why ? h('div', { class: 'why' }, p.why) : null,
+          p.anti_principle ? h('div', { class: 'anti' }, '⚠ ' + p.anti_principle) : null,
+          Array.isArray(p.applies_to_traditions) && p.applies_to_traditions.length
+            ? h('div', { class: 'applies' }, 'Applies to: ' + p.applies_to_traditions.join(', '))
+            : null
+        )
+      ))
+    );
+
+    const oq = culture?.open_research_questions || [];
+    mount(document.getElementById('open-questions'),
+      ...oq.map(q => h('li', {}, typeof q === 'string' ? q : (q.question || q.text || JSON.stringify(q))))
+    );
+  </script>
+
+<script>
+(function () {
+  const el = document.getElementById('last-edited');
+  if (!el) return;
+  const iso = el.dataset.edited;
+  if (!iso) { el.textContent = '—'; return; }
+  const d = new Date(iso);
+  const fmt = d.toLocaleDateString('en-SG', { year: 'numeric', month: 'short', day: 'numeric' });
+  const ago = Math.floor((Date.now() - d.getTime()) / 86400000);
+  let suffix;
+  if (ago === 0) suffix = 'today';
+  else if (ago === 1) suffix = 'yesterday';
+  else if (ago < 14) suffix = ago + ' days ago';
+  else if (ago < 60) suffix = Math.floor(ago/7) + ' weeks ago';
+  else suffix = Math.floor(ago/30) + ' months ago';
+  el.textContent = fmt + ' · ' + suffix;
+  if (ago <= 7) el.classList.add('fresh');
+  else if (ago > 14) el.classList.add('stale');
+})();
+</script>
+
+</body>
+</html>

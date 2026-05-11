@@ -33,20 +33,31 @@ document.addEventListener('DOMContentLoaded', () => {
 /* ─── IPC Charities ────────────────────────────────────────── */
 const IPC_CHARITIES = [
   {
-    id: "spirit-of-enterprise", name: "Spirit of Enterprise", icon: "🚀",
-    desc: "Empowering entrepreneurs & local enterprises",
-    beneficiary: "Aspiring and early-stage entrepreneurs in Singapore — providing recognition, mentorship, and resources to help local businesses grow and inspire the next generation.",
-    ipcNo: "IPC000906",
-    uen: "200301515E",
-    website: "https://soe.org.sg",
-  },
-  {
     id: "singapore-cancer-society", name: "Singapore Cancer Society", icon: "🎗️",
     desc: "Cancer prevention, care & patient support",
     beneficiary: "Cancer patients and their families — providing financial assistance, transportation, counselling, home care nursing, and cancer screening programmes island-wide.",
     ipcNo: "IPC000050",
     uen: "S65SS0033F",
     website: "https://www.singaporecancersociety.org.sg",
+    status: "confirmed",
+  },
+  {
+    id: "spirit-of-enterprise", name: "Spirit of Enterprise", icon: "🚀",
+    desc: "Empowering entrepreneurs & local enterprises",
+    beneficiary: "Aspiring and early-stage entrepreneurs in Singapore — providing recognition, mentorship, and resources to help local businesses grow and inspire the next generation.",
+    ipcNo: "IPC000906",
+    uen: "200301515E",
+    website: "https://soe.org.sg",
+    status: "confirmed",
+  },
+  {
+    id: "boys-town", name: "Boys' Town", icon: "🏠",
+    desc: "Residential & community support for at-risk youth",
+    beneficiary: "Boys and young people aged 5–21 from disadvantaged backgrounds — providing residential care, family services, mental health support, and youth development programmes since 1948.",
+    ipcNo: "IPC000022",
+    uen: "S61SS0072G",
+    website: "https://www.boystown.org.sg",
+    status: "confirmed",
   },
   {
     id: "community-chest", name: "Community Chest", icon: "🤝",
@@ -55,6 +66,7 @@ const IPC_CHARITIES = [
     ipcNo: "IPC000072",
     uen: "T08GB0034K",
     website: "https://www.comchest.gov.sg",
+    status: "pending",
   },
   {
     id: "singapore-red-cross", name: "Singapore Red Cross", icon: "🏥",
@@ -63,6 +75,7 @@ const IPC_CHARITIES = [
     ipcNo: "IPC000080",
     uen: "S86CC0370E",
     website: "https://www.redcross.sg",
+    status: "pending",
   },
   {
     id: "childrens-cancer", name: "Children's Cancer Foundation", icon: "🎗️",
@@ -71,6 +84,7 @@ const IPC_CHARITIES = [
     ipcNo: "IPC000438",
     uen: "201934434R",
     website: "https://www.ccf.org.sg",
+    status: "pending",
   },
   {
     id: "spca", name: "SPCA Singapore", icon: "🐾",
@@ -79,6 +93,7 @@ const IPC_CHARITIES = [
     ipcNo: "IPC000351",
     uen: "S61SS0060B",
     website: "https://www.spca.org.sg",
+    status: "pending",
   },
   {
     id: "minds", name: "MINDS", icon: "💙",
@@ -87,6 +102,7 @@ const IPC_CHARITIES = [
     ipcNo: "IPC000367",
     uen: "202235654G",
     website: "https://www.minds.org.sg",
+    status: "pending",
   },
   {
     id: "nkf", name: "National Kidney Foundation", icon: "🫀",
@@ -95,6 +111,7 @@ const IPC_CHARITIES = [
     ipcNo: "IPC000108",
     uen: "200104750M",
     website: "https://www.nkfs.org",
+    status: "pending",
   },
   {
     id: "sg-childrens-society", name: "Singapore Children's Society", icon: "👶",
@@ -103,6 +120,7 @@ const IPC_CHARITIES = [
     ipcNo: "IPC000387",
     uen: "S62SS0057G",
     website: "https://www.childrensociety.org.sg",
+    status: "pending",
   },
   {
     id: "aware", name: "AWARE Singapore", icon: "♀️",
@@ -111,6 +129,7 @@ const IPC_CHARITIES = [
     ipcNo: "IPC000653",
     uen: "S85SS0089B",
     website: "https://www.aware.org.sg",
+    status: "pending",
   },
   {
     id: "dementia-sg", name: "Dementia Singapore", icon: "🧠",
@@ -119,6 +138,7 @@ const IPC_CHARITIES = [
     ipcNo: "IPC000440",
     uen: "202111519K",
     website: "https://dementia.org.sg",
+    status: "pending",
   },
   {
     id: "make-a-wish", name: "Make-A-Wish Foundation Singapore", icon: "⭐",
@@ -127,6 +147,7 @@ const IPC_CHARITIES = [
     ipcNo: "IPC000867",
     uen: "200201965D",
     website: "https://www.makeawish.org.sg",
+    status: "pending",
   },
   {
     id: "couple-choice",

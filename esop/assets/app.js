@@ -93,13 +93,54 @@
 
     if (s) {
       const signout = el("button", { type: "button" }, ["Sign out"]);
-      signout.addEventListener("click", () => { clearSession(); window.location.href = "index.html"; });
+      signout.addEventListener("click", async () => {
+        if (window.ESOPAuth && window.ESOPAuth.logout) {
+          await window.ESOPAuth.logout();
+        } else {
+          clearSession();
+          window.location.href = "index.html";
+        }
+      });
       const chip = el("div", { class: "session-chip" }, [
         el("span", { class: "dot" }),
         el("span", { text: s.label || s.name }),
         signout
       ]);
       slot.appendChild(chip);
+
+      // Admin/committee: show 24h failed-login count as a small badge in the topbar.
+      if ((s.kind === "admin" || s.kind === "committee") && window.ESOPSupa) {
+        const badge = el("button", {
+          type: "button",
+          class: "badge badge-warning",
+          style: "margin-left: 0.6rem; display: none;",
+          title: "Failed sign-in attempts (last 24h). Click to filter the Activity Log.",
+          text: "0",
+        });
+        slot.appendChild(badge);
+        const refreshBadge = async () => {
+          try {
+            const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
+            const { count } = await window.ESOPSupa.client
+              .from("audit_log")
+              .select("*", { count: "exact", head: true })
+              .eq("action", "login_failed")
+              .gte("at", since);
+            if (count == null || count === 0) {
+              badge.style.display = "none";
+            } else {
+              badge.textContent = "⚠ " + count + " failed sign-ins (24h)";
+              badge.style.display = "inline-block";
+            }
+          } catch (_e) { /* ignore */ }
+        };
+        badge.addEventListener("click", () => {
+          const dest = (activePage === "committee" ? "committee.html" : "admin.html") + "#activity";
+          window.location.href = dest;
+        });
+        refreshBadge();
+        setInterval(refreshBadge, 60000);
+      }
     } else {
       const dot = el("span", { class: "dot", style: "background: var(--muted);" });
       const chip = el("a", { href: "index.html", class: "session-chip", style: "text-decoration:none;" }, [

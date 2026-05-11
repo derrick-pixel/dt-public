@@ -13,7 +13,8 @@
     'transactional',
     'simulator-educational',
     'game',
-    'dashboard-analytics'
+    'dashboard-analytics',
+    'backend-backed-app'
   ];
 
   const state = {

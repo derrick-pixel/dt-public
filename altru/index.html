@@ -64,11 +64,10 @@
         <span></span><span></span><span></span>
       </button>
       <nav class="nav-links" id="mainNav">
-        <a href="index.html">Home</a>
+        <a href="donor.html">Send a Gift</a>
         <a href="angbao-guide.html">Ang Bao Guide 🧧</a>
         <a href="wedding-venues.html">Venue Guide 🏨</a>
-        <a href="donor.html">Send a Gift</a>
-        <a href="giving-weddings.html">Giving Stories ✨</a>
+        <a href="charities.html">Charities</a>
         <a href="couple.html" class="btn btn-primary btn-sm">💍 I'm Getting Married</a>
       </nav>
     </div>
@@ -76,7 +75,7 @@
 
   <main>
   <!-- ─── Hero ───────────────────────────────────────────── -->
-  <section class="hero">
+  <section class="hero hero--photo" style="--hero-image: url('images/site/hero-ang-bao.jpg');">
     <div class="container">
       <div class="hero-badge">🧧 &nbsp;For the Obligated Wedding Guest &nbsp;·&nbsp; Singapore IPC Charities</div>
       <h1>You're Going Anyway.</h1>
@@ -86,13 +85,10 @@
       </p>
       <div class="hero-cta">
         <a href="donor.html" class="btn btn-gold btn-lg">🧧 Send Altruistic Angbao</a>
-        <a href="couple.html" class="btn btn-outline btn-lg" style="color:white;border-color:rgba(255,255,255,0.5);">
-          💍 I'm Getting Married
-        </a>
-        <a href="angbao-guide.html" class="btn btn-outline btn-lg" style="color:white;border-color:rgba(255,255,255,0.5);">
-          📖 Ang Bao Guide
-        </a>
       </div>
+      <p style="margin-top:1rem;font-size:0.95rem;color:rgba(255,255,255,0.85);">
+        Getting married yourself? <a href="couple.html" style="color:white;text-decoration:underline;font-weight:700;">Open the couple dashboard →</a>
+      </p>
     </div>
   </section>
 
@@ -109,17 +105,8 @@
       <!-- ── Stage ── -->
       <div class="sarah-stage" id="sarahStage">
 
-        <!-- Mood background blob -->
-        <div class="mood-blob" id="moodBlob"></div>
-
-        <!-- Props layer -->
-        <div class="props-layer" id="propsLayer"></div>
-
-        <!-- Character -->
-        <div class="sarah-char" id="sarahChar">
-          <div class="sarah-face" id="sarahFace">😒</div>
-          <div class="sarah-label">Sarah</div>
-        </div>
+        <!-- Image (one per panel) -->
+        <img class="sarah-image" id="sarahImage" alt="" />
 
         <!-- Speech bubble -->
         <div class="speech-bubble hidden" id="speechBubble"></div>
@@ -169,6 +156,27 @@
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+
+    /* Image — one per panel, cross-faded */
+    .sarah-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 0.55s ease;
+      opacity: 0;
+      z-index: 1;
+    }
+    /* Subtle top-darken so the panel-counter stays legible on bright frames */
+    .sarah-stage::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 22%);
+      pointer-events: none;
+      z-index: 2;
     }
 
     /* Mood blob */
@@ -259,8 +267,9 @@
       top: 10px; right: 12px;
       font-size: 0.7rem;
       font-weight: 700;
-      color: rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.7);
       letter-spacing: 0.08em;
+      z-index: 3;
     }
 
     /* Caption */
@@ -387,6 +396,7 @@
   /* ── Sarah's Story ── */
   const PANELS = [
     {
+      image: 'images/sarah/sarah-1.jpg',
       face: '😒',
       faceAnim: 'sarah-shake',
       mood: '#8B1A1A',
@@ -399,6 +409,7 @@
       body: 'Sarah receives a wedding invitation from a colleague she sees maybe twice a year. <em>She has met the groom exactly once, at a work potluck in 2023.</em>',
     },
     {
+      image: 'images/sarah/sarah-2.jpg',
       face: '😬',
       faceAnim: 'sarah-wiggle',
       mood: '#7A3A00',
@@ -411,6 +422,7 @@
       body: 'She types "Congrats!! Definitely coming!!" She means <em>neither</em> of those things. But saying no would make the next department lunch very awkward.',
     },
     {
+      image: 'images/sarah/sarah-3.jpg',
       face: '😰',
       faceAnim: 'sarah-shake',
       mood: '#5A2D00',
@@ -425,6 +437,7 @@
       body: 'She has been agonising for two weeks. <em>Too little and it\'s embarrassing. Too much and it hurts.</em> For a couple whose home address she definitely doesn\'t have.',
     },
     {
+      image: 'images/sarah/sarah-4.jpg',
       face: '💡',
       faceAnim: 'sarah-pulse',
       mood: '#4A3A00',
@@ -437,6 +450,7 @@
       body: 'Sarah discovers Altru. With Altru, part of her ang bao goes to a charity — <strong>in the couple\'s name</strong>. They get a 250% tax deduction. She gets peace of mind.',
     },
     {
+      image: 'images/sarah/sarah-5.jpg',
       face: '😏',
       faceAnim: 'sarah-float',
       mood: '#1A3A1A',
@@ -450,6 +464,7 @@
       body: 'The couple <em>has</em> to accept. The charity donation goes in their name whether they planned to give or not. <strong>Sarah has technically forced two people to donate to charity.</strong>',
     },
     {
+      image: 'images/sarah/sarah-6.jpg',
       face: '😄',
       faceAnim: 'sarah-bounce',
       mood: '#0A2A3A',
@@ -480,48 +495,23 @@
 
   function showPanel(idx, dir) {
     const p = PANELS[idx];
-    const face = document.getElementById('sarahFace');
-    const blob = document.getElementById('moodBlob');
-    const props = document.getElementById('propsLayer');
+    const image = document.getElementById('sarahImage');
     const bubble = document.getElementById('speechBubble');
     const counter = document.getElementById('panelCounter');
     const captionInner = document.getElementById('captionInner');
 
-    // Character
-    face.textContent = p.face;
-    face.className = 'sarah-face ' + p.faceAnim;
-
-    // Mood blob
-    blob.style.background = p.mood;
-    blob.style.left  = p.moodPos === 'left'  ? '-40px' : p.moodPos === 'right' ? 'auto' : '50%';
-    blob.style.right = p.moodPos === 'right' ? '-40px' : 'auto';
-    blob.style.transform = p.moodPos === 'center' ? 'translateX(-50%)' : '';
-    blob.style.top = '50%';
-    blob.style.marginTop = '-110px';
-
-    // Props
-    props.innerHTML = '';
-    p.props.forEach((pr, i) => {
-      const el = document.createElement('div');
-      el.className = 'prop';
-      el.style.cssText = `
-        top:${pr.top};
-        ${pr.left ? 'left:'+pr.left : 'right:'+pr.right};
-        font-size:${pr.size};
-        animation: ${pr.enterAnim} 0.5s ${0.1 + i * 0.12}s cubic-bezier(0.34,1.56,0.64,1) both;
-        opacity:0;
-      `;
-      el.textContent = pr.isText
-        ? pr.emoji
-        : pr.emoji;
-      if (pr.isText) {
-        el.style.fontFamily = "'Playfair Display', serif";
-        el.style.fontWeight = '700';
-        el.style.color = 'rgba(255,255,255,0.4)';
-      }
-      props.appendChild(el);
-      requestAnimationFrame(() => el.classList.add('visible'));
-    });
+    // Image (preload + cross-fade)
+    if (image.getAttribute('src') !== p.image) {
+      image.style.opacity = '0';
+      const next = new Image();
+      next.onload = () => {
+        image.src = p.image;
+        requestAnimationFrame(() => { image.style.opacity = '1'; });
+      };
+      next.src = p.image;
+    } else {
+      image.style.opacity = '1';
+    }
 
     // Speech bubble
     if (p.bubble) {
@@ -683,92 +673,11 @@
     </div>
   </div>
 
-  <!-- ─── Trust & Transparency ──────────────────────────── -->
-  <section class="section" id="trust-transparency" style="background:var(--warm-white);">
-    <div class="container">
-      <div class="title-accent" style="display:block;margin:0 auto 1rem;"></div>
-      <h2 class="section-title">Built on Trust &amp; Transparency</h2>
-      <p class="section-sub lead">Altru operates under Singapore's strictest charitable and data protection standards.</p>
-
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1.25rem;margin-top:2rem;">
-
-        <div class="card" style="text-align:center;">
-          <div class="card-body">
-            <div style="font-size:2.5rem;margin-bottom:0.75rem;">🏦</div>
-            <h3 style="color:var(--red);margin-bottom:0.5rem;font-size:1.1rem;">Gross Payment Rule</h3>
-            <p style="font-size:0.88rem;">100% of your donation flows directly to the charity's account. Altru's platform fee is charged to the charity — never deducted from your gift.</p>
-          </div>
-        </div>
-
-        <div class="card" style="text-align:center;">
-          <div class="card-body">
-            <div style="font-size:2.5rem;margin-bottom:0.75rem;">🔒</div>
-            <h3 style="color:var(--red);margin-bottom:0.5rem;font-size:1.1rem;">PDPA Compliant</h3>
-            <p style="font-size:0.88rem;">Your NRIC/FIN is collected solely for IRAS tax relief filing under Singapore's Personal Data Protection Act. It is never shared or sold.</p>
-          </div>
-        </div>
-
-        <div class="card" style="text-align:center;">
-          <div class="card-body">
-            <div style="font-size:2.5rem;margin-bottom:0.75rem;">📋</div>
-            <h3 style="color:var(--red);margin-bottom:0.5rem;font-size:1.1rem;">Licensed Fund-raiser</h3>
-            <p style="font-size:0.88rem;">Altru subscribes to the Code for Commercial Fund-raisers under the Charities Act. Platform fees are held strictly under the 30% legal cap.</p>
-          </div>
-        </div>
-
-        <div class="card" style="text-align:center;">
-          <div class="card-body">
-            <div style="font-size:2.5rem;margin-bottom:0.75rem;">📊</div>
-            <h3 style="color:var(--red);margin-bottom:0.5rem;font-size:1.1rem;">Real-Time Transparency</h3>
-            <p style="font-size:0.88rem;">Couples see a live breakdown of every gift received, charity amount raised, and tax deduction value — all in their personal dashboard.</p>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- 95/5 Split Banner -->
-      <div class="tax-banner mt-4" style="background:linear-gradient(135deg,var(--red-light),var(--gold-light));">
-        <div style="font-size:2.5rem;">⚖️</div>
-        <div style="flex:1;">
-          <h3 style="margin-bottom:0.4rem;">The <a href="#fee-breakdown" style="color:inherit;text-decoration:underline dotted;cursor:pointer;">95 / 5 Rule</a></h3>
-          <p style="font-size:0.9rem;">For every dollar donated, <strong>95% goes entirely to the charity</strong>. Altru's 5% platform fee is charged to the charity — never deducted from the donation amount. This is far below the 30% cap set by Singapore's Charities Act, and well below the industry norm for commercial fund-raisers. <a href="#fee-breakdown" style="color:var(--red);font-weight:600;">See how we compare →</a></p>
-        </div>
-        <div style="text-align:center;flex-shrink:0;">
-          <div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--red);">95%</div>
-          <div style="font-size:0.78rem;color:var(--text-muted);font-weight:700;">To Charity</div>
-        </div>
-      </div>
-
-      <!-- Fee Comparison -->
-      <div id="fee-breakdown" style="margin-top:2rem;padding:1.75rem;background:white;border-radius:var(--radius);border:2px solid var(--red-light);">
-        <h3 style="color:var(--red);margin-bottom:0.5rem;font-size:1.1rem;">Why 5% Matters: The Industry Comparison</h3>
-        <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:1.25rem;">Singapore's Charities Act permits commercial fund-raisers to retain up to <strong>30%</strong> of funds raised as their fee. Many do. Altru is different by design.</p>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:1.5rem;">
-          <div style="text-align:center;padding:1rem;border-radius:var(--radius-sm);background:var(--gold-light);">
-            <div style="font-size:1.6rem;font-weight:700;color:var(--gold);">Up to 30%</div>
-            <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.25rem;">Legal cap for commercial<br>fund-raisers (Charities Act)</div>
-          </div>
-          <div style="text-align:center;padding:1rem;border-radius:var(--radius-sm);background:#fff0f0;">
-            <div style="font-size:1.6rem;font-weight:700;color:#c0392b;">20–30%</div>
-            <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.25rem;">Typical commission-based<br>fund-raiser in Singapore</div>
-          </div>
-          <div style="text-align:center;padding:1rem;border-radius:var(--radius-sm);background:#f0fff4;border:2px solid #27ae60;">
-            <div style="font-size:1.6rem;font-weight:700;color:#27ae60;">5%</div>
-            <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.25rem;font-weight:600;">Altru's flat platform fee<br>— charged to charity</div>
-          </div>
-        </div>
-        <div style="background:var(--warm-white);border-left:3px solid var(--red);padding:0.85rem 1rem;border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-size:0.84rem;color:var(--text-muted);">
-          <strong style="color:var(--text);">Why the gap?</strong> Commission-based fundraisers are incentivised to maximise their own take. Altru operates as a non-profit platform — our fee covers technology, IRAS filing support, and operations only. We have no financial incentive to raise that number. Sources: <a href="https://www.straitstimes.com/singapore/new-code-lays-down-guidelines-for-commercial-fund-raisers" target="_blank" rel="noopener" style="color:var(--red);">Straits Times</a> · <a href="https://www.charities.gov.sg" target="_blank" rel="noopener" style="color:var(--red);">Charities.gov.sg</a>
-        </div>
-      </div>
-
-    </div>
-  </section>
 
   <!-- ─── CTA ────────────────────────────────────────────── -->
   <section class="section-sm" style="background:linear-gradient(135deg,#3D0812,#C8102E);text-align:center;">
     <div class="container">
-      <p style="color:rgba(255,255,255,0.55);font-size:0.78rem;letter-spacing:0.15em;text-transform:uppercase;font-weight:700;margin-bottom:0.6rem;">You've read this far. You're definitely going.</p>
+      <p style="color:rgba(255,255,255,0.85);font-size:0.78rem;letter-spacing:0.15em;text-transform:uppercase;font-weight:700;margin-bottom:0.6rem;">You've read this far. You're definitely going.</p>
       <h2 style="color:white;margin-bottom:0.75rem;">Make That Ang Bao the Best One on the Table.</h2>
       <p style="color:rgba(255,255,255,0.75);margin-bottom:2rem;max-width:480px;margin-left:auto;margin-right:auto;">
         Same $200. Part for the couple, part for a charity they love — and a <a href="https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-reliefs-rebates-and-deductions/deductions-on-donations" target="_blank" rel="noopener" style="color:var(--gold);font-weight:700;">250% tax deduction</a> they didn't see coming.
@@ -795,7 +704,10 @@
       </p>
       <p style="margin-top:0.5rem;">
         <a href="donor.html">Send a Gift</a> &nbsp;·&nbsp;
-        <a href="couple.html">Wedding Dashboard</a>
+        <a href="couple.html">Wedding Dashboard</a> &nbsp;·&nbsp;
+        <a href="charities.html">Charities</a> &nbsp;·&nbsp;
+        <a href="charities/onboarding.html">Charity Onboarding</a> &nbsp;·&nbsp;
+        <a href="giving-aura.html">Giving Aura</a>
       </p>
     </div>
   </footer>
@@ -810,10 +722,15 @@
         const card = document.createElement('button');
         card.className = 'charity-option';
         card.style.cssText = 'width:100%;text-align:left;border:none;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;';
+        const statusBadge = c.status === 'confirmed'
+          ? '<span class="charity-status charity-status--confirmed">✓ Confirmed</span>'
+          : c.status === 'pending'
+            ? '<span class="charity-status charity-status--pending">Pending</span>'
+            : '';
         card.innerHTML = `
           <div class="charity-icon">${c.icon}</div>
           <div style="flex:1;">
-            <div class="charity-name">${c.name}</div>
+            <div class="charity-name">${c.name}${statusBadge}</div>
             <div class="charity-desc">${c.desc}</div>
           </div>
           <div style="font-size:0.75rem;color:var(--red);font-weight:700;margin-left:0.5rem;flex-shrink:0;">Info →</div>`;

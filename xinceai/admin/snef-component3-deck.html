@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>WDG(JR+) Component 3 — Service Scope · SNEF Pre-Approval Review</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta name="description" content="Elitez Pte Ltd Component 3 service-scope deck for SNEF pre-approval review. Derived from CFP spec ref WSG-ENTE-PRO-42-9-2-R1 (12 Jan 2026)." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #f5f0eb;
+    --surface:   #ebe5de;
+    --card:      #ffffff;
+    --card-hi:   #f8f4f0;
+    --border:    rgba(140,90,40,0.10);
+    --border2:   rgba(140,90,40,0.20);
+    --border3:   rgba(140,90,40,0.34);
+    --text:      #1a1410;
+    --muted:     #8a7a6a;
+    --muted2:    #5a4a3a;
+
+    --amber:     #d06010;
+    --amber-lt:  #f08828;
+    --cyan:      #0088aa;
+    --neon:      #0a8a4a;
+    --violet:    #7040b0;
+    --rose:      #c82040;
+    --gold:      #c89000;
+
+    --gradient:  linear-gradient(135deg, var(--amber), var(--cyan));
+    --glow-a:    rgba(208,96,16,0.10);
+
+    --font-head: 'Rajdhani', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'Share Tech Mono', monospace;
+    --radius: 4px;
+  }
+
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: var(--font-body); font-size: 16px; line-height: 1.55;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(140,90,40,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(140,90,40,0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  /* ─── DECK SHELL ─── */
+  .deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+  .slide {
+    position: absolute; inset: 0;
+    padding: 56px 72px 156px;
+    display: none; flex-direction: column; gap: 18px;
+    overflow: hidden;
+  }
+  .slide.active { display: flex; animation: fadeIn .35s cubic-bezier(.16,1,.3,1); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ─── SLIDE HEADER STRIP ─── */
+  .slide-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; flex-shrink: 0; }
+  .eyebrow {
+    font-family: var(--font-mono); font-size: 0.85rem;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber); margin-bottom: 6px;
+  }
+  .slide-title {
+    font-family: var(--font-head); font-weight: 700;
+    font-size: clamp(1.75rem, 2.9vw, 2.5rem);
+    letter-spacing: 0.01em; line-height: 1.12; text-transform: uppercase;
+  }
+  .slide-title .grad { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .slide-sub { color: var(--muted2); font-size: 1.05rem; max-width: 720px; margin-top: 6px; line-height: 1.55; }
+  .slide-meta { font-family: var(--font-mono); font-size: 0.85rem; color: var(--muted); text-align: right; line-height: 1.7; flex-shrink: 0; }
+  .slide-meta strong { color: var(--text); font-weight: 600; }
+
+  /* ─── BODY GRID ─── */
+  .slide-body { flex: 1; display: grid; gap: 18px; min-height: 0; align-content: start; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .grid-2-1 { grid-template-columns: 2fr 1fr; }
+
+  /* ─── CARD ─── */
+  .card {
+    position: relative; background: var(--card); border: 1px solid var(--border);
+    padding: 22px 24px; transition: border-color .2s, transform .2s;
+    overflow: hidden;
+  }
+  .card::before, .card::after {
+    content: ''; position: absolute; width: 14px; height: 14px;
+    border-color: var(--border2); transition: border-color .2s;
+  }
+  .card::before { top: -1px; left: -1px; border-top: 1.5px solid; border-left: 1.5px solid; }
+  .card::after { bottom: -1px; right: -1px; border-bottom: 1.5px solid; border-right: 1.5px solid; }
+  .card.amber { border-left: 3px solid var(--amber); }
+  .card.amber::before, .card.amber::after { border-color: var(--amber); }
+  .card.cyan  { border-left: 3px solid var(--cyan); }
+  .card.cyan::before, .card.cyan::after { border-color: var(--cyan); }
+  .card.neon  { border-left: 3px solid var(--neon); }
+  .card.neon::before, .card.neon::after { border-color: var(--neon); }
+  .card.violet { border-left: 3px solid var(--violet); }
+  .card.violet::before, .card.violet::after { border-color: var(--violet); }
+  .card.rose { border-left: 3px solid var(--rose); }
+  .card.rose::before, .card.rose::after { border-color: var(--rose); }
+  .card-label {
+    font-family: var(--font-mono); font-size: 0.78rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+  }
+  .card-label.amber { color: var(--amber); }
+  .card-label.cyan { color: var(--cyan); }
+  .card-label.neon { color: var(--neon); }
+  .card-label.violet { color: var(--violet); }
+  .card-label.rose { color: var(--rose); }
+  .card h3 {
+    font-family: var(--font-head); font-size: 1.25rem; font-weight: 600;
+    letter-spacing: 0.02em; text-transform: uppercase; margin-bottom: 8px; line-height: 1.2;
+  }
+  .card p { color: var(--muted2); font-size: 1rem; line-height: 1.65; }
+  .card p strong { color: var(--text); }
+  .card .citation {
+    display: inline-block; font-family: var(--font-mono); font-size: 0.74rem;
+    background: rgba(208,96,16,0.08); color: var(--amber);
+    padding: 2px 8px; margin-bottom: 8px; letter-spacing: 0.08em; text-transform: uppercase;
+    border: 1px solid rgba(208,96,16,0.2);
+    clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+  }
+
+  /* ─── DETAIL ROWS ─── */
+  .detail { margin-top: 14px; }
+  .detail-row {
+    display: flex; gap: 10px; align-items: flex-start;
+    margin-bottom: 6px; font-size: 0.96rem; color: var(--muted2); line-height: 1.55;
+  }
+  .detail-row .icon { flex-shrink: 0; width: 14px; text-align: center; font-family: var(--font-mono); font-weight: 600; }
+  .detail-row.pros .icon { color: var(--neon); }
+  .detail-row.cons .icon { color: var(--rose); }
+  .detail-row.seg .icon { color: var(--cyan); }
+  .detail-row strong { color: var(--text); font-weight: 600; }
+
+  /* ─── TABLE ─── */
+  .table-wrap { background: var(--card); border: 1px solid var(--border); overflow: auto; max-height: 100%; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.96rem; }
+  thead { background: var(--surface); position: sticky; top: 0; z-index: 1; }
+  th {
+    text-align: left; padding: 10px 14px; font-family: var(--font-mono); font-size: 0.78rem;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted2);
+    border-bottom: 1px solid var(--border2);
+  }
+  td {
+    padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--muted2);
+    vertical-align: top; line-height: 1.55;
+  }
+  tr:last-child td { border-bottom: none; }
+  td strong { color: var(--text); font-weight: 600; }
+
+  /* ─── TAG ─── */
+  .tag {
+    display: inline-block; font-family: var(--font-mono); font-size: 0.77rem;
+    padding: 3px 9px; margin-right: 4px;
+    background: rgba(208,96,16,0.10); color: var(--amber); border: 1px solid rgba(208,96,16,0.22);
+    letter-spacing: 0.06em;
+    clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+  }
+  .tag.cyan { background: rgba(0,136,170,0.10); color: var(--cyan); border-color: rgba(0,136,170,0.22); }
+  .tag.neon { background: rgba(10,138,74,0.12); color: var(--neon); border-color: rgba(10,138,74,0.24); }
+  .tag.violet { background: rgba(112,64,176,0.10); color: var(--violet); border-color: rgba(112,64,176,0.22); }
+  .tag.rose { background: rgba(200,32,64,0.10); color: var(--rose); border-color: rgba(200,32,64,0.22); }
+
+  .verdict {
+    font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.06em;
+    padding: 3px 9px; font-weight: 600; white-space: nowrap;
+    clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+  }
+  .v-strong { background: rgba(10,138,74,0.14); color: var(--neon); border: 1px solid rgba(10,138,74,0.28); }
+  .v-cond { background: rgba(208,96,16,0.14); color: var(--amber); border: 1px solid rgba(208,96,16,0.28); }
+  .v-reframe { background: rgba(112,64,176,0.14); color: var(--violet); border: 1px solid rgba(112,64,176,0.28); }
+  .v-out { background: rgba(200,32,64,0.10); color: var(--rose); border: 1px solid rgba(200,32,64,0.22); }
+
+  /* ─── FOOTER STRIP ─── */
+  .deck-foot {
+    position: fixed; left: 0; right: 0; bottom: 0; height: 44px;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 32px; background: rgba(245,240,235,0.92); backdrop-filter: blur(8px);
+    border-top: 1px solid var(--border); z-index: 50;
+    font-family: var(--font-mono); font-size: 0.85rem; color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+  .deck-foot-left, .deck-foot-right { display: flex; align-items: center; gap: 14px; }
+  .brand-mark {
+    width: 22px; height: 22px; border: 1.4px solid var(--amber);
+    color: var(--amber); font-family: var(--font-head); font-weight: 700; font-size: 0.82rem;
+    display: inline-flex; align-items: center; justify-content: center;
+    clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+  }
+  .deck-foot strong { color: var(--text); font-weight: 600; }
+  .nav-btn {
+    background: var(--card); border: 1px solid var(--border2); color: var(--muted2);
+    padding: 6px 12px; cursor: pointer; font-family: var(--font-mono); font-size: 0.85rem;
+    letter-spacing: 0.06em; transition: all .15s;
+  }
+  .nav-btn:hover { background: var(--amber); color: white; border-color: var(--amber); }
+  .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .nav-btn:disabled:hover { background: var(--card); color: var(--muted2); border-color: var(--border2); }
+  .slide-counter { color: var(--text); font-weight: 600; min-width: 64px; text-align: center; }
+  .print-btn {
+    background: var(--amber); color: white; border: none;
+    padding: 6px 14px; cursor: pointer; font-family: var(--font-mono); font-size: 0.82rem;
+    letter-spacing: 0.06em; font-weight: 600;
+    clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+  }
+
+  /* ─── HERO (slide 1) ─── */
+  .hero { display: flex; flex-direction: column; justify-content: center; gap: 28px; height: 100%; }
+  .hero-tag {
+    display: inline-block; font-family: var(--font-mono); font-size: 0.85rem;
+    padding: 5px 14px; background: rgba(208,96,16,0.10); color: var(--amber);
+    border: 1px solid rgba(208,96,16,0.24); letter-spacing: 0.12em; text-transform: uppercase;
+    clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);
+    align-self: flex-start;
+  }
+  .hero h1 {
+    font-family: var(--font-head); font-weight: 700; font-size: clamp(2.65rem, 5.6vw, 4.7rem);
+    line-height: 1.02; letter-spacing: 0.005em; text-transform: uppercase;
+  }
+  .hero h1 .grad { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .hero-sub { font-size: 1.22rem; color: var(--muted2); max-width: 820px; line-height: 1.65; }
+  .hero-meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 20px; }
+  .hero-meta-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-left: 3px solid var(--amber);
+    padding: 14px 16px;
+  }
+  .hero-meta-card .label {
+    font-family: var(--font-mono); font-size: 0.74rem; color: var(--muted);
+    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px;
+  }
+  .hero-meta-card .val { font-family: var(--font-head); font-size: 1.25rem; font-weight: 600; color: var(--text); line-height: 1.2; }
+
+  /* ─── ARCHETYPE CARDS (slides 5-7) ─── */
+  .archetype-hero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px; min-height: 0; }
+  .archetype-spec { background: var(--card); border: 1px solid var(--border); padding: 24px 28px; position: relative; overflow: hidden; }
+  .archetype-spec::before, .archetype-spec::after { content: ''; position: absolute; width: 16px; height: 16px; }
+  .archetype-spec.cyan::before { top: -1px; left: -1px; border-top: 2px solid var(--cyan); border-left: 2px solid var(--cyan); }
+  .archetype-spec.cyan::after { bottom: -1px; right: -1px; border-bottom: 2px solid var(--cyan); border-right: 2px solid var(--cyan); }
+  .archetype-spec.violet::before { top: -1px; left: -1px; border-top: 2px solid var(--violet); border-left: 2px solid var(--violet); }
+  .archetype-spec.violet::after { bottom: -1px; right: -1px; border-bottom: 2px solid var(--violet); border-right: 2px solid var(--violet); }
+  .archetype-spec.neon::before { top: -1px; left: -1px; border-top: 2px solid var(--neon); border-left: 2px solid var(--neon); }
+  .archetype-spec.neon::after { bottom: -1px; right: -1px; border-bottom: 2px solid var(--neon); border-right: 2px solid var(--neon); }
+  .archetype-name {
+    font-family: var(--font-head); font-size: 1.85rem; font-weight: 700; line-height: 1.15;
+    letter-spacing: 0.01em; text-transform: uppercase; margin-bottom: 8px;
+  }
+  .archetype-meta-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 14px 0 18px; }
+  .archetype-meta-cell {
+    background: var(--surface); border-left: 2px solid var(--border3);
+    padding: 10px 12px;
+  }
+  .archetype-meta-cell .label { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+  .archetype-meta-cell .val { font-family: var(--font-mono); font-weight: 600; font-size: 1.02rem; color: var(--text); }
+  .archetype-meta-cell .val.gold { color: var(--gold); }
+  .archetype-meta-cell .val.neon { color: var(--neon); }
+  .archetype-summary { font-size: 1.08rem; color: var(--muted2); line-height: 1.65; margin-bottom: 8px; }
+
+  .phase-list { display: flex; flex-direction: column; gap: 8px; }
+  .phase-row {
+    display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: flex-start;
+    padding: 10px 12px; background: var(--card-hi); border-left: 2px solid var(--amber);
+    font-size: 0.96rem; line-height: 1.55;
+  }
+  .phase-num {
+    font-family: var(--font-mono); font-size: 0.82rem; color: var(--amber); font-weight: 700;
+    background: rgba(208,96,16,0.08); padding: 2px 8px; letter-spacing: 0.06em;
+    white-space: nowrap;
+    clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+  }
+  .phase-text strong { color: var(--text); }
+
+  .archetype-side { display: flex; flex-direction: column; gap: 14px; min-height: 0; }
+  .side-card { background: var(--card); border: 1px solid var(--border); padding: 16px 18px; }
+  .side-card h4 {
+    font-family: var(--font-mono); font-size: 0.8rem; color: var(--amber);
+    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px;
+  }
+  .side-card.outcomes h4 { color: var(--neon); }
+  .side-card.outcomes { border-left: 2px solid var(--neon); }
+  .side-card.products h4 { color: var(--cyan); }
+  .side-card.products { border-left: 2px solid var(--cyan); }
+
+  /* ─── OUTCOME LADDER ─── */
+  .outcome-ladder { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+
+  /* ─── COMMITMENTS LIST (final slide) ─── */
+  .commit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .commit-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-left: 3px solid var(--neon); padding: 18px 22px;
+    position: relative; overflow: hidden;
+  }
+  .commit-card .num {
+    position: absolute; top: 14px; right: 14px;
+    font-family: var(--font-mono); font-size: 0.74rem; color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+  .commit-card h4 {
+    font-family: var(--font-head); font-size: 1.15rem; font-weight: 600;
+    letter-spacing: 0.02em; text-transform: uppercase; margin-bottom: 8px;
+  }
+  .commit-card p { font-size: 1rem; color: var(--muted2); line-height: 1.6; }
+
+  /* ─── BRAND LOGO (slides 1 & 14 hero) ─── */
+  .hero { position: relative; }
+  .brand-logo {
+    position: absolute; top: 0; right: 0;
+    height: 64px; width: auto;
+    opacity: 0.95; pointer-events: none;
+  }
+  @media (max-width: 980px) {
+    .brand-logo { position: static; height: 48px; margin-bottom: 12px; align-self: flex-start; }
+  }
+
+  /* ─── BRAND LOGO (small, bottom-right of all other slides) ─── */
+  .slide-logo {
+    position: absolute;
+    bottom: 144px; right: 72px;
+    height: 40px; width: auto;
+    opacity: 0.7;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  /* ─── PRODUCT CARDS (slide 9: Component 3 product stack) ─── */
+  .product-card {
+    padding: 13px 15px;
+    display: flex; flex-direction: column;
+  }
+  .product-card .card-label { margin-bottom: 4px; }
+  .product-card .product-name {
+    font-family: var(--font-head); font-size: 1.02rem; font-weight: 700;
+    letter-spacing: 0.01em; text-transform: uppercase;
+    line-height: 1.18; color: var(--text);
+    margin: 2px 0 0 !important;
+  }
+  .product-card .product-desc {
+    font-size: 0.85rem; color: var(--muted2); line-height: 1.45;
+    margin-top: 8px; padding-top: 7px;
+    border-top: 1px solid var(--border);
+  }
+  .summary-card { display: flex; flex-direction: column; padding: 13px 15px; }
+  .summary-card .card-label { margin-bottom: 4px; }
+  .summary-card h3 {
+    font-family: var(--font-head); font-size: 1.02rem; font-weight: 700;
+    letter-spacing: 0.01em; text-transform: uppercase;
+    line-height: 1.2; color: var(--text);
+    margin: 2px 0 0 !important;
+  }
+  .summary-card p {
+    font-size: 0.85rem; color: var(--muted2); line-height: 1.45;
+    margin-top: 8px; padding-top: 7px; border-top: 1px solid var(--border);
+  }
+
+  /* ─── SLIDE 10 (ROUTING MATRIX) · TIGHTER TABLE TO FIT 8 ROWS ─── */
+  .slide[data-slide="10"] .slide-head { margin-bottom: 0; }
+  .slide[data-slide="10"] table { font-size: 0.88rem; }
+  .slide[data-slide="10"] th { padding: 8px 12px; font-size: 0.74rem; }
+  .slide[data-slide="10"] td { padding: 7px 12px; line-height: 1.4; }
+  .slide[data-slide="10"] .archetype-tag { font-size: 0.72rem; padding: 3px 8px; }
+  .slide[data-slide="10"] .persona-budget { font-size: 0.78rem; }
+
+  /* ─── PERSONA MINI CARDS (slides 8–9) ─── */
+  .persona-mini {
+    display: flex; flex-direction: column;
+    padding: 18px 20px 14px;
+    gap: 12px;
+  }
+  .persona-head { display: flex; align-items: center; gap: 12px; }
+  .persona-avatar {
+    width: 42px; height: 42px; flex-shrink: 0;
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem;
+    border: 1px solid var(--border2);
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  }
+  .persona-mini h3 { margin-bottom: 1px; font-size: 1.15rem; line-height: 1.15; letter-spacing: 0.01em; }
+  .persona-role { font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); letter-spacing: 0.06em; line-height: 1.4; display: block; }
+  .persona-ctx { font-size: 0.92rem; color: var(--muted2); line-height: 1.55; }
+  .persona-fields { display: flex; flex-direction: column; gap: 8px; }
+  .persona-field { display: flex; flex-direction: column; gap: 2px; }
+  .field-label {
+    font-family: var(--font-mono); font-size: 0.72rem; color: var(--amber);
+    letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600;
+  }
+  .field-val { font-size: 0.9rem; color: var(--text); line-height: 1.5; }
+  .persona-foot {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 10px; margin-top: auto;
+    border-top: 1px solid var(--border);
+    gap: 8px; flex-wrap: wrap;
+  }
+  .archetype-tag {
+    font-family: var(--font-mono); font-size: 0.76rem; padding: 4px 10px;
+    letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600;
+    white-space: nowrap;
+    clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
+  }
+  .arch-a { background: rgba(0,136,170,0.14); color: var(--cyan); border: 1px solid rgba(0,136,170,0.30); }
+  .arch-ab { background: rgba(0,136,170,0.14); color: var(--cyan); border: 1px solid rgba(0,136,170,0.30); }
+  .arch-b { background: rgba(112,64,176,0.14); color: var(--violet); border: 1px solid rgba(112,64,176,0.30); }
+  .arch-bc { background: rgba(112,64,176,0.14); color: var(--violet); border: 1px solid rgba(112,64,176,0.30); }
+  .arch-c { background: rgba(10,138,74,0.16); color: var(--neon); border: 1px solid rgba(10,138,74,0.30); }
+  .arch-cond { background: rgba(208,96,16,0.14); color: var(--amber); border: 1px solid rgba(208,96,16,0.30); }
+  .arch-out { background: rgba(200,32,64,0.10); color: var(--rose); border: 1px solid rgba(200,32,64,0.26); }
+  .persona-budget {
+    font-family: var(--font-mono); font-size: 0.82rem; color: var(--neon); font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* ─── FILMSTRIP ─── */
+  .deck-filmstrip {
+    position: fixed; left: 0; right: 0; bottom: 44px;
+    height: 86px;
+    background: rgba(245,240,235,0.92); backdrop-filter: blur(8px);
+    border-top: 1px solid var(--border);
+    z-index: 49;
+    overflow-x: auto; overflow-y: hidden;
+    scroll-behavior: smooth;
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 32px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border3) transparent;
+  }
+  .deck-filmstrip::-webkit-scrollbar { height: 4px; }
+  .deck-filmstrip::-webkit-scrollbar-track { background: transparent; }
+  .deck-filmstrip::-webkit-scrollbar-thumb { background: var(--border3); border-radius: 2px; }
+  .thumb {
+    position: relative; flex: 0 0 auto;
+    width: 124px; height: 70px;
+    background: var(--card); border: 1px solid var(--border2);
+    cursor: pointer; transition: transform .18s, border-color .18s, box-shadow .18s, background .18s;
+    display: flex; flex-direction: column; justify-content: flex-start;
+    padding: 12px 11px 8px;
+    font-family: var(--font-body); text-align: left;
+    overflow: hidden;
+  }
+  .thumb::before, .thumb::after {
+    content: ''; position: absolute; width: 8px; height: 8px;
+    border-color: var(--border2); transition: border-color .18s;
+  }
+  .thumb::before { top: -1px; left: -1px; border-top: 1.2px solid; border-left: 1.2px solid; }
+  .thumb::after { bottom: -1px; right: -1px; border-bottom: 1.2px solid; border-right: 1.2px solid; }
+  .thumb .accent-stripe {
+    position: absolute; top: 0; left: 0; right: 0; height: 2.5px;
+    background: var(--border3); transition: background .18s;
+  }
+  .thumb[data-accent="cyan"] .accent-stripe { background: var(--cyan); }
+  .thumb[data-accent="violet"] .accent-stripe { background: var(--violet); }
+  .thumb[data-accent="neon"] .accent-stripe { background: var(--neon); }
+  .thumb[data-accent="amber"] .accent-stripe { background: var(--amber); }
+  .thumb[data-accent="rose"] .accent-stripe { background: var(--rose); }
+  .thumb .thumb-num {
+    font-family: var(--font-mono); font-size: 0.74rem;
+    color: var(--muted); letter-spacing: 0.1em; line-height: 1;
+  }
+  .thumb .thumb-label {
+    font-family: var(--font-head); font-weight: 600; font-size: 0.92rem;
+    color: var(--muted2); line-height: 1.18;
+    letter-spacing: 0.01em; text-transform: uppercase;
+    margin-top: 5px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .thumb:hover {
+    border-color: var(--amber);
+    transform: translateY(-2px);
+    background: var(--card-hi);
+  }
+  .thumb:hover::before, .thumb:hover::after { border-color: var(--amber); }
+  .thumb:hover .thumb-label { color: var(--text); }
+  .thumb.active {
+    border-color: var(--amber);
+    background: var(--card-hi);
+    box-shadow: 0 0 0 1px var(--amber), 0 4px 14px var(--glow-a);
+    transform: translateY(-3px);
+  }
+  .thumb.active::before, .thumb.active::after { border-color: var(--amber); }
+  .thumb.active .thumb-num { color: var(--amber); }
+  .thumb.active .thumb-label { color: var(--text); }
+
+  /* ─── PRINT ─── */
+  @media print {
+    @page { size: A4 landscape; margin: 0; }
+    html, body { overflow: visible !important; height: auto !important; }
+    body::before { display: none !important; }
+    .deck-foot { display: none !important; }
+    .deck-filmstrip { display: none !important; }
+    /* Force browser to preserve background colours/gradients */
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    /* Reposition the per-slide bottom-right logo for A4 print */
+    .slide-logo {
+      bottom: 14px !important; right: 18px !important;
+      height: 30px !important; opacity: 1 !important;
+    }
+    /* Solid-color fallback for gradient-clipped text — many PDF engines drop the gradient */
+    .grad, .slide-title .grad, .hero h1 .grad {
+      background: none !important; background-image: none !important;
+      -webkit-background-clip: initial !important; background-clip: initial !important;
+      -webkit-text-fill-color: var(--amber) !important;
+      color: var(--amber) !important;
+    }
+    .deck { width: 100% !important; height: auto !important; overflow: visible !important; }
+    .slide {
+      display: flex !important; position: relative !important; inset: auto !important;
+      page-break-after: always; break-after: page;
+      width: 100%; height: 210mm; overflow: hidden;
+      padding: 28px 36px 36px !important; gap: 14px !important;
+    }
+    .slide:last-child { page-break-after: auto; break-after: auto; }
+    .slide-title { font-size: 1.5rem !important; }
+    .hero h1 { font-size: 2.6rem !important; }
+    .hero-sub { font-size: 0.9rem !important; }
+    .card { padding: 14px 16px !important; }
+    .card h3 { font-size: 0.94rem !important; margin-bottom: 6px !important; }
+    .card p { font-size: 0.78rem !important; line-height: 1.55 !important; }
+    .detail-row { font-size: 0.74rem !important; margin-bottom: 4px !important; }
+    table { font-size: 0.7rem !important; }
+    th, td { padding: 6px 9px !important; }
+    .archetype-name { font-size: 1.2rem !important; }
+    .archetype-summary { font-size: 0.8rem !important; }
+    .phase-row { padding: 7px 10px !important; font-size: 0.74rem !important; }
+    .side-card { padding: 10px 12px !important; }
+    .side-card h4 { margin-bottom: 6px !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 1 · TITLE & CONTEXT
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide active" data-slide="1" data-accent="amber" data-thumb-label="Title &amp; Context">
+    <div class="hero">
+      <img class="brand-logo" src="https://www.elitez.asia/wp-content/uploads/2022/03/logo_on-1-1.png" alt="Elitez Group of Companies" />
+      <span class="hero-tag">Component 3 Service Scope · For SNEF Pre-Approval Review</span>
+      <h1>How Elitez Pte Ltd <br/><span class="grad">Serves WDG JR+</span></h1>
+      <p class="hero-sub">Elitez Pte Ltd is already pre-approved as a WDG(JR+) vendor. This deck states <strong>the specific scope of services we will deliver</strong>, the <strong>archetypes of project and personas of SME buyers</strong>, and the <strong>mandatory JRET / HCDT / local-employee outcomes</strong> we will produce on every funded engagement &mdash; so SNEF can vet our proposals against WSG requirements with full transparency.</p>
+      <div class="hero-meta-grid">
+        <div class="hero-meta-card">
+          <div class="label">Source</div>
+          <div class="val">WSG CFP Spec</div>
+          <div style="font-family:var(--font-mono); font-size:0.82rem; color:var(--muted); margin-top:2px;">Ref WSG-ENTE-PRO-42-9-2-R1</div>
+        </div>
+        <div class="hero-meta-card">
+          <div class="label">Pages cited</div>
+          <div class="val">p4 · p6 · p7</div>
+          <div style="font-family:var(--font-mono); font-size:0.82rem; color:var(--muted); margin-top:2px;">scope · bundling · outcomes</div>
+        </div>
+        <div class="hero-meta-card">
+          <div class="label">Engagement archetypes</div>
+          <div class="val">3 · A / B / C</div>
+          <div style="font-family:var(--font-mono); font-size:0.82rem; color:var(--muted); margin-top:2px;">5 / 8 / 14 months</div>
+        </div>
+        <div class="hero-meta-card">
+          <div class="label">Mandatory outcomes</div>
+          <div class="val">JRET · HCDT · Local</div>
+          <div style="font-family:var(--font-mono); font-size:0.82rem; color:var(--muted); margin-top:2px;">on every project</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 2 · MANDATORY OUTCOME LADDER
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide" data-slide="2" data-accent="violet" data-thumb-label="Outcome Ladder">
+    <div class="slide-head">
+      <div>
+        <div class="eyebrow">02 · Mandatory Outcomes &mdash; Our Proof Artefacts</div>
+        <h2 class="slide-title">Three Outcome Categories<br/>Produced On <span class="grad">Every Engagement</span></h2>
+        <p class="slide-sub">For SNEF&apos;s vetting purposes, every proposal we submit will produce all three artefacts. The mix-weight depends on the archetype (covered in the next slides).</p>
+      </div>
+      <div class="slide-meta"><strong>Spec basis</strong><br/>CFP p4 · mandatory deliverables</div>
+    </div>
+    <div class="slide-body outcome-ladder">
+      <div class="card cyan">
+        <span class="citation">CFP p4 · IHRP/WSG co-developed</span>
+        <div class="card-label cyan">Outcome 01</div>
+        <h3>JRET &mdash; Job Value Increase</h3>
+        <p>Structured, digital self-assessment co-developed by IHRP and WSG. Captures changes in <strong>skill complexity</strong>, <strong>decision authority</strong>, <strong>automation leverage</strong>, and <strong>value contribution</strong> on each redesigned role.</p>
+        <div class="detail">
+          <div class="detail-row seg"><span class="icon">&#9656;</span><span><strong>Required when:</strong> Component 1 is in the bundle</span></div>
+          <div class="detail-row seg"><span class="icon">&#9656;</span><span><strong>Measurement:</strong> JRET pre-baseline &middot; post-assessment 3&ndash;6 mo &middot; per-role delta</span></div>
+        </div>
+      </div>
+      <div class="card violet">
+        <span class="citation">CFP p4 · IHRP HCDT</span>
+        <div class="card-label violet">Outcome 02</div>
+        <h3>HCDT &mdash; HC Maturity Uplift</h3>
+        <p>IHRP Human Capital Diagnostic Tool. Organisation-level (not job-level). 7 dimensions: <strong>workforce planning, talent acquisition, L&amp;D, performance mgmt, career development, rewards, employee experience</strong>.</p>
+        <div class="detail">
+          <div class="detail-row seg"><span class="icon">&#9656;</span><span><strong>Required when:</strong> Component 2 is in the bundle</span></div>
+          <div class="detail-row seg"><span class="icon">&#9656;</span><span><strong>Measurement:</strong> HCDT pre-baseline &middot; post-assessment 6&ndash;12 mo &middot; uplift in target dimensions</span></div>
+        </div>
+      </div>
+      <div class="card neon">
+        <span class="citation">CFP p4 · all WDG(JR+) projects</span>
+        <div class="card-label neon">Outcome 03 · Always required</div>
+        <h3>Local Employee Benefit</h3>
+        <p>Evidence that <strong>Singaporean / PR employees</strong> received skills uplift, career progression, compensation uplift, or improved job quality from the redesign. CPF Form 90 cross-check at proposal stage.</p>
+        <div class="detail">
+          <div class="detail-row seg"><span class="icon">&#9656;</span><span><strong>Always required:</strong> regardless of archetype</span></div>
+          <div class="detail-row seg"><span class="icon">&#9656;</span><span><strong>Evidence:</strong> skills certifications &middot; promotion / role-change records &middot; compensation deltas &middot; training completion records &middot; employee testimonials</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 3 · THREE ARCHETYPES OVERVIEW
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide" data-slide="3" data-accent="amber" data-thumb-label="3 Archetypes">
+    <div class="slide-head">
+      <div>
+        <div class="eyebrow">03 · How We Serve C3 &mdash; Engagement Archetypes</div>
+        <h2 class="slide-title">Three Outcome-Led Archetypes &middot; <span class="grad">A / B / C</span></h2>
+        <p class="slide-sub">We sell <em>engagements</em>, not products. Each archetype starts with a redesigned-role outcome and delivers a defined product set as the implementation layer. C3 is always bundled with C1 or C2 (or both).</p>
+      </div>
+      <div class="slide-meta"><strong>Pricing</strong><br/>Indicative gross &middot; nett post-70% JR+</div>
+    </div>
+    <div class="slide-body grid-3">
+      <div class="card cyan">
+        <div class="card-label cyan">Archetype A &middot; C1 + C3</div>
+        <h3>Workforce Modernisation Sprint</h3>
+        <p style="font-family:var(--font-mono); font-size:0.92rem; color:var(--cyan); font-weight:600; margin:8px 0;">5 months &middot; S$30K&ndash;100K &middot; nett ~S$9&ndash;30K</p>
+        <p>Diagnose 3&ndash;5 redesignable job roles via JRET, then deploy AI-infused HR tech + workforce analytics. Outcome anchored on <strong>JRET-measured job value increase</strong>.</p>
+        <div class="detail" style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border);">
+          <div class="detail-row pros"><span class="icon">+</span><span>JRET uplift on 3&ndash;5 roles (mandatory)</span></div>
+          <div class="detail-row pros"><span class="icon">+</span><span>Documented job redesign + skill profiles</span></div>
+          <div class="detail-row pros"><span class="icon">+</span><span>Local employee skills uplift recorded</span></div>
+        </div>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border); font-size:0.92rem; color:var(--muted2);">
+          <strong>Best for:</strong> SMEs 50&ndash;150 staff, HR-heavy admin, ready for first-pass digitalisation.
+        </div>
+      </div>
+      <div class="card violet">
+        <div class="card-label violet">Archetype B &middot; C2 + C3</div>
+        <h3>Talent Retention &amp; L&amp;D Stack</h3>
+        <p style="font-family:var(--font-mono); font-size:0.92rem; color:var(--violet); font-weight:600; margin:8px 0;">8 months &middot; S$60K&ndash;120K &middot; nett ~S$18&ndash;36K</p>
+        <p>External experts deliver capability building + onsite mentoring; we deploy the L&amp;D + career-development tech stack. Outcome anchored on <strong>HCDT improvement</strong> in L&amp;D + career dimensions.</p>
+        <div class="detail" style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border);">
+          <div class="detail-row pros"><span class="icon">+</span><span>HCDT uplift on L&amp;D + career dims (mandatory)</span></div>
+          <div class="detail-row pros"><span class="icon">+</span><span>Career frameworks documented</span></div>
+          <div class="detail-row pros"><span class="icon">+</span><span>Capability transfer evidenced</span></div>
+        </div>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border); font-size:0.92rem; color:var(--muted2);">
+          <strong>Best for:</strong> Growth-stage SMEs (80&ndash;250 staff), retention pressure, fundraise narrative.
+        </div>
+      </div>
+      <div class="card neon">
+        <div class="card-label neon">Archetype C &middot; C1 + C2 + C3</div>
+        <h3>Strategic Workforce Transformation</h3>
+        <p style="font-family:var(--font-mono); font-size:0.92rem; color:var(--neon); font-weight:600; margin:8px 0;">14 months &middot; S$100K&ndash;150K &middot; nett ~S$30&ndash;45K</p>
+        <p>Triple-stack: strategy &rarr; capability building &rarr; tech deployment. Outcome anchored on <strong>JRET uplift across multiple roles</strong> + <strong>HCDT uplift across all 7 dimensions</strong> + clear local-employee benefit narrative.</p>
+        <div class="detail" style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border);">
+          <div class="detail-row pros"><span class="icon">+</span><span>JRET on 8&ndash;12 redesigned roles</span></div>
+          <div class="detail-row pros"><span class="icon">+</span><span>HCDT improvement across all 7 dims</span></div>
+          <div class="detail-row pros"><span class="icon">+</span><span>Workforce strategy + new operating model</span></div>
+        </div>
+        <div style="margin-top:12px; padding-top:10px; border-top:1px solid var(--border); font-size:0.92rem; color:var(--muted2);">
+          <strong>Best for:</strong> Mid-market SMEs (150&ndash;500 staff), comprehensive transformation, pre-fundraise / pre-exit.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 4 · ARCHETYPE A · DEEP-DIVE
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide" data-slide="4" data-accent="cyan" data-thumb-label="Archetype A">
+    <div class="slide-head">
+      <div>
+        <div class="eyebrow">04 · Archetype A &middot; Deep-Dive</div>
+        <h2 class="slide-title">Workforce <span class="grad">Modernisation Sprint</span></h2>
+        <p class="slide-sub">Component 1 + Component 3 &middot; 5 months &middot; JRET-anchored outcome on 3&ndash;5 redesigned roles.</p>
+      </div>
+      <div class="slide-meta"><strong>Indicative</strong><br/>S$30K&ndash;100K gross<br/>nett ~S$9&ndash;30K (post 70% JR+)</div>
+    </div>
+    <div class="slide-body archetype-hero">
+      <div class="archetype-spec cyan">
+        <div class="archetype-meta-row">
+          <div class="archetype-meta-cell"><div class="label">Components</div><div class="val">C1 + C3</div></div>
+          <div class="archetype-meta-cell"><div class="label">Duration</div><div class="val">5 months</div></div>
+          <div class="archetype-meta-cell"><div class="label">Nett</div><div class="val neon">~S$9&ndash;30K</div></div>
+        </div>
+        <p class="archetype-summary">Diagnose 3&ndash;5 redesignable job roles via JRET-compatible workforce assessment, then deploy AI-infused HR tech + workforce analytics to redesign those roles. Outcome anchored on <strong>JRET-measured job value increase</strong>.</p>
+        <div style="font-family:var(--font-mono); font-size:0.82rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; margin-top:14px; margin-bottom:8px;">Four phases</div>
+        <div class="phase-list">
+          <div class="phase-row"><span class="phase-num">Month 1 &middot; Diagnose</span><span class="phase-text">JRET completion + JR+ Readiness Diagnostic (Free + Full) + AI Readiness Assessment. Identify 3&ndash;5 high-leakage job roles.</span></div>
+          <div class="phase-row"><span class="phase-num">Month 2 &middot; Redesign</span><span class="phase-text">Job role redesign workshop with HR leads. Document new role definitions, skill profiles, and workflow handoffs.</span></div>
+          <div class="phase-row"><span class="phase-num">Month 3 &middot; Deploy</span><span class="phase-text">Deploy AI-Powered Employee Relations Dashboard + Employee Lifecycle Management Platform + EVP Dashboard + Workforce Analytics Platform (Team Pulse). Train HR + line managers.</span></div>
+          <div class="phase-row"><span class="phase-num">Months 4&ndash;5 &middot; Sustain &amp; Report</span><span class="phase-text">2-month buffer for sustainment, JRET post-assessment on redesigned roles, local-employee benefit evidence capture, and Completed Project Implementation Report.</span></div>
+        </div>
+      </div>
+      <div class="archetype-side">
+        <div class="side-card outcomes">
+          <h4>JRET / HCDT outcomes</h4>
+          <div class="detail-row pros"><span class="icon">+</span><span>JRET score uplift on 3&ndash;5 redesigned roles (mandatory)</span></div>
+          <div class="detail-row pros"><span class="icon">+</span><span>Documented job redesign with new skill profiles</span></div>
+          <div class="detail-row pros"><span class="icon">+</span><span>Local employees demonstrably benefit (skills uplift recorded)</span></div>
+          <div class="detail-row pros"><span class="icon">+</span><span>AI-infused HR tech in production</span></div>
+        </div>
+        <div class="side-card products">
+          <h4>Products deployed (C3)</h4>
+          <div class="detail-row seg"><span class="icon">&#9656;</span><span>JR+ Readiness Diagnostic (Free + Full)</span></div>
+          <div class="detail-row seg"><span class="icon">&#9656;</span><span>AI-Powered Employee Relations Dashboard</span></div>
+          <div class="detail-row seg"><span class="icon">&#9656;</span><span>AI-Powered Employee Lifecycle Management Platform</span></div>
+          <div class="detail-row seg"><span class="icon">&#9656;</span><span>AI-Powered EVP Dashboard</span></div>
+          <div class="detail-row seg"><span class="icon">&#9656;</span><span>Workforce Analytics Platform (Team Pulse)</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 5 · ARCHETYPE B · DEEP-DIVE
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide" data-slide="5" data-accent="violet" data-thumb-label="Archetype B">
+    <div class="slide-head">
+      <div>
+        <div class="eyebrow">05 · Archetype B &middot; Deep-Dive</div>
+        <h2 class="slide-title">Talent Retention &amp; <span class="grad">L&amp;D Stack</span></h2>
+        <p class="slide-sub">Component 2 + Component 3 &middot; 8 months &middot; HCDT-anchored outcome in L&amp;D + career-development dimensions.</p>
+      </div>
+      <div class="slide-meta"><strong>Indicative</strong><br/>S$60K&ndash;120K gross<br/>nett ~S$18&ndash;36K (post 70% JR+)</div>
+    </div>
+    <div class="slide-body archetype-hero">
+      <div class="archetype-spec violet">
+        <div class="archetype-meta-row">
+          <div class="archetype-meta-cell"><div class="label">Components</div><div class="val">C2 + C3</div></div>
+          <div class="archetype-meta-cell"><div class="label">Duration</div><div class="val">8 months</div></div>
+          <div class="archetype-meta-cell"><div class="label">Nett</div><div class="val neon">~S$18&ndash;36K</div></div>
+        </div>
+        <p class="archetype-summary">External HR experts deliver capability building + onsite mentoring to HR / line managers; we deploy the L&amp;D + career-development tech stack. Outcome anchored on <strong>HCDT improvement</strong> in career-framework + L&amp;D maturity.</p>
+        <div style="font-family:var(--font-mono); font-size:0.82rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; margin-top:14px; margin-bottom:8px;">Four phases</div>
+        <div class="phase-list">
+          <div class="phase-row"><span class="phase-num">Months 1&ndash;2 &middot; Capability 1</span><span class="phase-text">Onsite consultant runs HR / line manager workshops &middot; designs career frameworks &middot; sets KPI / skills taxonomy. <strong>Component 2 work.</strong></span></div>
+          <div class="phase-row"><span class="phase-num">Months 3&ndash;4 &middot; Tech Deploy</span><span class="phase-text">Deploy Staff Training Platform (L&amp;D) + Career Development Platform (ElixCraft) + supporting AI-Infused HR workflows. <strong>Component 3 work.</strong></span></div>
+          <div class="phase-row"><span class="phase-num">Months 5&ndash;6 &middot; Capability 2</span><span class="phase-text">Onsite reinforcement, train-the-trainer, KPI calibration, HCDT post-assessment.</span></div>
+          <div class="phase-row"><span class="phase-num">Months 7&ndash;8 &middot; Sustain &amp; Report</span><span class="phase-text">2-month buffer for sustainment, role-progression evidence capture, HCDT post-assessment validation, and Completed Project Implementation Report.</span></div>
+        </div>
+      </div>
+      <div class="archetype-side">
+        <div class="side-card outcomes">
+          <h4>JRET / HCDT outcomes</h4>
+          <div class="detail-row pros"><span class="icon">+</span><span>HCDT uplift across L&amp;D + career-development dimensions (mandatory)</span></div>
+          <div class="detail-row pros"><span class="icon">+</span><span>Career frameworks for all redesigned roles documented</span></div>
+          <div class="detail-row pros"><span class="icon">+</span><span>HR + line-manager capability transfer evidenced (workshop outputs)</span></div>
+          <div class="detail-row pros"><span class="icon">+</span><span>Trackable training + career progression in production via Career Development Platform + Staff Training Platform</span></div>
+        </div>
+        <div class="side-card products">
+          <h4>Products deployed (C3)</h4>
+          <div class="detail-row seg"><span class="icon">&#9656;</span><span>Staff Training Platform (L&amp;D system)</span></div>
+          <div class="detail-row seg"><span class="icon">&#9656;</span><span>Career Development Platform (ElixCraft, gamified lifecycle)</span></div>
+          <div class="detail-row seg"><span class="icon">&#9656;</span><span>AI-Powered Employee Lifecycle Management Platform</span></div>
+          <div class="detail-row seg"><span class="icon">&#9656;</span><span>AI-Powered Employee Relations Dashboard</span></div>
+          <div class="detail-row seg"><span class="icon">&#9656;</span><span>JR+ Readiness Diagnostic (Free + Full)</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 6 · ARCHETYPE C · DEEP-DIVE
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide" data-slide="6" data-accent="neon" data-thumb-label="Archetype C">
+    <div class="slide-head">
+      <div>
+        <div class="eyebrow">06 · Archetype C &middot; Deep-Dive</div>
+        <h2 class="slide-title">Strategic <span class="grad">Workforce Transformation</span></h2>
+        <p class="slide-sub">Component 1 + 2 + 3 &middot; 14 months &middot; JRET on 8&ndash;12 roles + HCDT across all 7 dimensions + full local-employee benefit narrative.</p>
+      </div>
+      <div class="slide-meta"><strong>Indicative</strong><br/>S$100K&ndash;150K gross<br/>nett ~S$30&ndash;45K (post 70% JR+)</div>
+    </div>
+    <div class="slide-body archetype-hero">
+      <div class="archetype-spec neon">
+        <div class="archetype-meta-row">
+          <div class="archetype-meta-cell"><div class="label">Components</div><div class="val">C1 + C2 + C3</div></div>
+          <div class="archetype-meta-cell"><div class="label">Duration</div><div class="val">14 months</div></div>
+          <div class="archetype-meta-cell"><div class="label">Nett</div><div class="val neon">~S$30&ndash;45K</div></div>
+        </div>
+        <p class="archetype-summary">Triple-stack engagement: workforce strategy &rarr; capability building &rarr; tech deployment. Outcome anchored on JRET uplift across multiple roles + HCDT improvement + clear local-employee benefit narrative. Pitched as a <strong>14-month strategic partnership</strong>.</p>
+        <div style="font-family:var(--font-mono); font-size:0.82rem; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; margin-top:14px; margin-bottom:8px;">Four phases</div>
+        <div class="phase-list">
+          <div class="phase-row"><span class="phase-num">Months 1&ndash;3 &middot; Strategy</span><span class="phase-text">JRET + HCDT baselines &middot; workforce strategy &middot; identify 8&ndash;12 redesignable roles &middot; roadmap. <strong>Component 1.</strong></span></div>
+          <div class="phase-row"><span class="phase-num">Months 4&ndash;6 &middot; Capability</span><span class="phase-text">Onsite mentoring &middot; HR upskilling &middot; change management &middot; career-framework rollout. <strong>Component 2.</strong></span></div>
+          <div class="phase-row"><span class="phase-num">Months 7&ndash;10 &middot; Tech Stack</span><span class="phase-text">Full AI-Infused HR workflow stack + Staff Training Platform + Career Development Platform (ElixCraft) + Workforce Analytics Platform (Team Pulse) + Workforce Skills Market Intelligence. <strong>Component 3.</strong></span></div>
+          <div class="phase-row"><span class="phase-num">Months 11&ndash;14 &middot; Embed &amp; Report</span><span class="phase-text">2-month buffer included. Sustainment, JRET post-assessment on redesigned roles, HCDT post-assessment, Completed Project Implementation Report.</span></div>
+        </div>
+      </div>
+      <div class="archetype-side">
+        <div class="side-card outcomes">
+          <h4>JRET / HCDT outcomes</h4>
+          <div class="detail-row pros"><span class="icon">+</span><span>JRET uplift on 8&ndash;12 redesigned roles (mandatory)</span></div>
+          <div class="detail-row pros"><span class="icon">+</span><span>HCDT improvement across all 7 IHRP dimensions</span></div>
+          <div class="detail-row pros"><span class="icon">+</span><span>Local employee skills uplift documented (Staff Training Platform completion + Career Development Platform XP progression)</span></div>
+          <div class="detail-row pros"><span class="icon">+</span><span>Workforce strategy + redesigned operating model in production</span></div>
+        </div>
+        <div class="side-card products">
+          <h4>Products deployed (C3)</h4>
+          <div class="detail-row seg"><span class="icon">&#9656;</span><span>All Archetype A products</span></div>
+          <div class="detail-row seg"><span class="icon">&#9656;</span><span>All Archetype B products</span></div>
+          <div class="detail-row seg"><span class="icon">&#9656;</span><span>Workforce Analytics Platform (Team Pulse)</span></div>
+          <div class="detail-row seg"><span class="icon">&#9656;</span><span>Workforce Skills Market Intelligence</span></div>
+          <div class="detail-row seg"><span class="icon">&#9656;</span><span>Job-Redesign Enablement Tools (custom workflow build)</span></div>
+          <div class="detail-row seg"><span class="icon">&#9656;</span><span>Career Incentive and ESOP Dashboard (conditional)</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 7 · TARGET PERSONAS · JR+ ARCHETYPE-MAPPED
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide" data-slide="7" data-accent="amber" data-thumb-label="JR+ Personas">
+    <div class="slide-head">
+      <div>
+        <div class="eyebrow">07 · Target Personas &middot; Prime JR+ Buyers</div>
+        <h2 class="slide-title">Who Buys Each <span class="grad">Archetype</span></h2>
+        <p class="slide-sub">Four prime JR+ personas mapped to the three archetypes. Each profile shows the workforce trigger that opens the conversation and the budget bracket they will commit (nett, post-grant).</p>
+      </div>
+      <div class="slide-meta"><strong>Mapping basis</strong><br/>Headcount + role-redesign trigger<br/>+ buyer-journey stage</div>
+    </div>
+    <div class="slide-body grid-4">
+
+      <div class="card cyan persona-mini">
+        <div class="persona-head">
+          <span class="persona-avatar">&#128084;</span>
+          <div>
+            <h3>James Tan</h3>
+            <span class="persona-role">CEO / Founder &middot; 50&ndash;150 staff</span>
+          </div>
+        </div>
+        <p class="persona-ctx">Logistics / manufacturing / professional services SME. 15+ yrs industry. Reads Business Times, peer-driven decisions, ROI-focused.</p>
+        <div class="persona-fields">
+          <div class="persona-field"><span class="field-label">JR+ Trigger</span><span class="field-val">Wants to reduce ops costs 20&ndash;30% without hiring a CTO; sees AI / automation as the lever.</span></div>
+          <div class="persona-field"><span class="field-label">Pain</span><span class="field-val">Staff costs rising &middot; burned by past IT projects &middot; "show me proven ROI"</span></div>
+        </div>
+        <div class="persona-foot">
+          <span class="archetype-tag arch-a">Archetype A</span>
+          <span class="persona-budget">S$9&ndash;30K nett</span>
+        </div>
+      </div>
+
+      <div class="card violet persona-mini">
+        <div class="persona-head">
+          <span class="persona-avatar">&#128194;</span>
+          <div>
+            <h3>Sarah Lim</h3>
+            <span class="persona-role">HR Manager &middot; 80&ndash;200 staff</span>
+          </div>
+        </div>
+        <p class="persona-ctx">Manages 2&ndash;3 HR staff handling everything from recruitment to payroll. Active SHRI member, comfortable with HRIS, champions tools bottom-up to CEO.</p>
+        <div class="persona-fields">
+          <div class="persona-field"><span class="field-label">JR+ Trigger</span><span class="field-val">Spends 40% on admin instead of strategic HR; wants modern HR tech but budget is tight.</span></div>
+          <div class="persona-field"><span class="field-label">Pain</span><span class="field-val">Drowning in paper forms + Excel &middot; MOM reporting manual + error-prone</span></div>
+        </div>
+        <div class="persona-foot">
+          <span class="archetype-tag arch-ab">Archetype A &rarr; B</span>
+          <span class="persona-budget">S$10&ndash;15K nett</span>
+        </div>
+      </div>
+
+      <div class="card cyan persona-mini">
+        <div class="persona-head">
+          <span class="persona-avatar">&#127970;</span>
+          <div>
+            <h3>Kenneth Koh</h3>
+            <span class="persona-role">Director &middot; 60&ndash;200 staff</span>
+          </div>
+        </div>
+        <p class="persona-ctx">F&amp;B / cleaning / traditional services firm. Zero IT department. Relies on accountant + banker for tech advice. Trusts referrals only.</p>
+        <div class="persona-fields">
+          <div class="persona-field"><span class="field-label">JR+ Trigger</span><span class="field-val">30&ndash;40% annual staff turnover; everything runs on paper + WhatsApp; needs grant-subsidised digitalisation.</span></div>
+          <div class="persona-field"><span class="field-label">Pain</span><span class="field-val">Tried software once &middot; abandoned &middot; won't trust without face-to-face hand-holding</span></div>
+        </div>
+        <div class="persona-foot">
+          <span class="archetype-tag arch-a">PSG &rarr; Archetype A</span>
+          <span class="persona-budget">S$5&ndash;15K (grant-subsidised)</span>
+        </div>
+      </div>
+
+      <div class="card neon persona-mini">
+        <div class="persona-head">
+          <span class="persona-avatar">&#127803;</span>
+          <div>
+            <h3>Priya Raj</h3>
+            <span class="persona-role">Growth-Stage Founder &middot; 80&ndash;250</span>
+          </div>
+        </div>
+        <p class="persona-ctx">Founder / co-founder. Closed Series A, prepping Series B or strategic exit. First dedicated People hire incoming. Highly responsive to "A-tier company at our stage" framing.</p>
+        <div class="persona-fields">
+          <div class="persona-field"><span class="field-label">JR+ Trigger</span><span class="field-val">2 of 3 last senior hires left in &lt;18 mo. Needs defensible HR + equity story for the next investor deck.</span></div>
+          <div class="persona-field"><span class="field-label">Pain</span><span class="field-val">Investor flagged "key-person concentration risk" &middot; cap table is in a Google Sheet</span></div>
+        </div>
+        <div class="persona-foot">
+          <span class="archetype-tag arch-bc">Archetype B &rarr; C</span>
+          <span class="persona-budget">S$18&ndash;45K nett</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 8 · OUTSIDE-JR+ PERSONAS
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide" data-slide="8" data-accent="rose" data-thumb-label="Outside-JR+ Personas">
+    <div class="slide-head">
+      <div>
+        <div class="eyebrow">08 · Personas We Don't Force Into JR+</div>
+        <h2 class="slide-title">Scope Discipline &middot;<br/><span class="grad">PSG / Self-Serve Track</span></h2>
+        <p class="slide-sub">Four personas we deliberately keep out of JR+ proposals (or bring in only conditionally). They route to the parallel PSG / self-serve track instead &mdash; preserving JR+ scope integrity for SNEF&apos;s vetting workflow.</p>
+      </div>
+      <div class="slide-meta"><strong>Routing</strong><br/>PSG (50%) or self-pay<br/>conditional JR+ on redesign trigger</div>
+    </div>
+    <div class="slide-body grid-4">
+
+      <div class="card amber persona-mini">
+        <div class="persona-head">
+          <span class="persona-avatar">&#128202;</span>
+          <div>
+            <h3>David Ng</h3>
+            <span class="persona-role">Finance &amp; Ops Manager</span>
+          </div>
+        </div>
+        <p class="persona-ctx">SME at S$5&ndash;30M revenue. Team of 4&ndash;8 handling AP / AR, reporting, procurement. Methodical buyer, builds detailed comparison spreadsheets.</p>
+        <div class="persona-fields">
+          <div class="persona-field"><span class="field-label">Routing logic</span><span class="field-val">Pure finance automation = PSG default. JR+ Archetype A only if ops-role redesign is in scope (rare).</span></div>
+          <div class="persona-field"><span class="field-label">Why not default JR+</span><span class="field-val">No redesigned role = no JRET evidence = scope creep risk for SNEF</span></div>
+        </div>
+        <div class="persona-foot">
+          <span class="archetype-tag arch-cond">Conditional A &middot; PSG default</span>
+          <span class="persona-budget">S$8&ndash;20K self-pay / PSG</span>
+        </div>
+      </div>
+
+      <div class="card rose persona-mini">
+        <div class="persona-head">
+          <span class="persona-avatar">&#128640;</span>
+          <div>
+            <h3>Michelle Wong</h3>
+            <span class="persona-role">BD Lead &middot; 30&ndash;100 staff</span>
+          </div>
+        </div>
+        <p class="persona-ctx">B2B services firm. Lean BD team of 2&ndash;4. Early adopter of sales tools. Wants to scale outreach without adding headcount.</p>
+        <div class="persona-fields">
+          <div class="persona-field"><span class="field-label">Routing logic</span><span class="field-val">CRM / sales automation = PSG-eligible. JR+ tie weak unless folded inside a larger Archetype C.</span></div>
+          <div class="persona-field"><span class="field-label">Why not JR+</span><span class="field-val">BD tools redesign workflows, not jobs &mdash; no JRET narrative</span></div>
+        </div>
+        <div class="persona-foot">
+          <span class="archetype-tag arch-out">PSG / self-serve</span>
+          <span class="persona-budget">S$300&ndash;800 / mo</span>
+        </div>
+      </div>
+
+      <div class="card rose persona-mini">
+        <div class="persona-head">
+          <span class="persona-avatar">&#128227;</span>
+          <div>
+            <h3>Nicholas Yeo</h3>
+            <span class="persona-role">Marketing Director &middot; 30&ndash;150</span>
+          </div>
+        </div>
+        <p class="persona-ctx">No in-house marketing team. Manages 1&ndash;2 freelancers + agency invoices. Pragmatic; runs 60-day pilots; allergic to marketing jargon.</p>
+        <div class="persona-fields">
+          <div class="persona-field"><span class="field-label">Routing logic</span><span class="field-val">Marketing automation = not workforce tech per CFP spec. PSG-eligible.</span></div>
+          <div class="persona-field"><span class="field-label">Why not JR+</span><span class="field-val">JR+ only if marketing-org redesign is in scope (very rare in practice)</span></div>
+        </div>
+        <div class="persona-foot">
+          <span class="archetype-tag arch-out">PSG / self-serve</span>
+          <span class="persona-budget">S$3&ndash;8K / mo retainer</span>
+        </div>
+      </div>
+
+      <div class="card rose persona-mini">
+        <div class="persona-head">
+          <span class="persona-avatar">&#128188;</span>
+          <div>
+            <h3>Chen Wei</h3>
+            <span class="persona-role">First-Time Employer &middot; 1&ndash;3 staff</span>
+          </div>
+        </div>
+        <p class="persona-ctx">Sole proprietor / agency / e-commerce. Often a foreign founder operating in SG. Has 1&ndash;3 employees on payroll, no HR function.</p>
+        <div class="persona-fields">
+          <div class="persona-field"><span class="field-label">Routing logic</span><span class="field-val">EOR + Site = transparent self-pay pricing. Outside JR+ entirely until headcount &gt; 5.</span></div>
+          <div class="persona-field"><span class="field-label">Why not JR+</span><span class="field-val">No redesignable roles &middot; no HCDT baseline &middot; ineligible</span></div>
+        </div>
+        <div class="persona-foot">
+          <span class="archetype-tag arch-out">Self-serve only</span>
+          <span class="persona-budget">S$59&ndash;200 / mo</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 9 · COMPONENT 3 PRODUCT STACK
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide" data-slide="9" data-accent="violet" data-thumb-label="C3 Product Stack">
+    <div class="slide-head">
+      <div>
+        <div class="eyebrow">09 · Component 3 Product Stack &middot; CFP p6 Aligned</div>
+        <h2 class="slide-title">Seven Component 3 <span class="grad">Products</span></h2>
+        <p class="slide-sub">Each product maps directly to one of the four Component 3 categories named in CFP spec p6. Every deployment is bundled with C1 or C2 advisory work and produces JRET / HCDT outcomes within a redesigned-role engagement.</p>
+      </div>
+      <div class="slide-meta"><strong>CFP p6 categories</strong><br/><span style="color:var(--violet); font-weight:600;">Workforce Analytics</span> &middot; <span style="color:var(--amber); font-weight:600;">Gap Analysis</span> &middot; <span style="color:var(--cyan); font-weight:600;">AI-Infused HR Tech</span> &middot; <span style="color:var(--neon); font-weight:600;">L&amp;D Systems</span></div>
+    </div>
+    <div class="slide-body grid-4">
+
+      <div class="card violet product-card">
+        <div class="card-label violet">Workforce Analytics Platform</div>
+        <h3 class="product-name">Workforce Analytics Platform (Team Pulse)</h3>
+        <p class="product-desc">Aggregates team activity, capability, and capacity signals across redesigned roles. Team-pulse scores feed HCDT employee-experience; capability dashboards inform JRET role-value monitoring.</p>
+      </div>
+
+      <div class="card violet product-card">
+        <div class="card-label violet">Workforce Analytics Platform</div>
+        <h3 class="product-name">AI-Powered EVP Dashboard</h3>
+        <p class="product-desc">Codifies the employer-value proposition per redesigned role: career trajectory, skills, market positioning, compensation. Same data drives HCDT employee-experience (internal) and HCDT talent-acquisition (external).</p>
+      </div>
+
+      <div class="card amber product-card">
+        <div class="card-label amber">Gap Analysis Tool</div>
+        <h3 class="product-name">Workforce Skills Market Intelligence</h3>
+        <p class="product-desc">Salary band benchmarking, skills-gap analysis, and talent supply mapping for redesigned roles. Pulls MOM, IHRP, and SkillsFuture data. Validates JRET pre/post deltas against market peers.</p>
+      </div>
+
+      <div class="card cyan product-card">
+        <div class="card-label cyan">AI-Infused HR Tech</div>
+        <h3 class="product-name">Job-Redesign Enablement Tools</h3>
+        <p class="product-desc">AI-infused operational tooling supporting the redesign of ops / admin roles. Automates low-value data-entry; redesigned role focuses on exception management, customer relationships, and capacity planning. JRET pre/post per role.</p>
+      </div>
+
+      <div class="card cyan product-card">
+        <div class="card-label cyan">AI-Infused HR Tech</div>
+        <h3 class="product-name">AI-Powered Employee Relations Dashboard</h3>
+        <p class="product-desc">Real-time visibility into contractual and performance state of every redesigned role. Auto-updates employment terms when roles are redesigned. Surfaces ER signals feeding HCDT employee-experience.</p>
+      </div>
+
+      <div class="card neon product-card">
+        <div class="card-label neon">L&amp;D System</div>
+        <h3 class="product-name">AI-Powered Employee Lifecycle Management Platform</h3>
+        <p class="product-desc">Orchestrates the full arc of each redesigned role: onboarding, skill-progression checkpoints, internal mobility, offboarding. Captures local-employee benefit milestones (skills certs, promotions, comp uplift).</p>
+      </div>
+
+      <div class="card neon product-card">
+        <div class="card-label neon">L&amp;D System</div>
+        <h3 class="product-name">Career Incentive and ESOP Dashboard</h3>
+        <p class="product-desc">Career-incentive dashboard aligned with the redesigned role hierarchy. Equity grants tied to new role tiers. Tangible link between JRET role-value uplift and individual reward. Archetype C only.</p>
+      </div>
+
+      <div class="card rose summary-card">
+        <div class="card-label rose">At A Glance</div>
+        <h3>Seven products. Four C3 categories. One JR+ stack.</h3>
+        <p>All seven products map to a CFP p6 Component 3 category. Every deployment bundles with C1 (Workforce Consultancy) or C2 (Capability Building); every project produces JRET / HCDT outcomes plus local-employee benefit evidence.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 10 · PERSONA ROUTING MATRIX
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide" data-slide="10" data-accent="amber" data-thumb-label="Routing Matrix">
+    <div class="slide-head">
+      <div>
+        <div class="eyebrow">10 · Persona Routing Matrix &middot; All 8 Personas</div>
+        <h2 class="slide-title">Who Goes <span class="grad">Where</span></h2>
+        <p class="slide-sub">Every persona &middot; routing decision &middot; budget bracket. SNEF can see at a glance which proposals will land in JR+ and which will not.</p>
+      </div>
+      <div class="slide-meta"><strong>Legend</strong><br/><span style="color:var(--cyan);">A</span> &middot; <span style="color:var(--violet);">B</span> &middot; <span style="color:var(--neon);">C</span> &middot; <span style="color:var(--amber);">Conditional</span> &middot; <span style="color:var(--rose);">PSG / self-serve</span></div>
+    </div>
+    <div class="slide-body" style="grid-template-rows:1fr;">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:14%">Persona</th>
+              <th style="width:18%">Title / context</th>
+              <th style="width:34%">JR+ trigger / routing rationale</th>
+              <th style="width:18%">Best-fit routing</th>
+              <th style="width:16%">Budget</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>James Tan</strong></td>
+              <td>CEO / Founder &middot; 50&ndash;150 staff</td>
+              <td>HR-heavy admin &middot; ready for first-pass digitalisation. Strong JR signal: cost-out + role uplift narrative.</td>
+              <td><span class="archetype-tag arch-a">Archetype A</span></td>
+              <td><span class="persona-budget">S$9&ndash;30K nett</span></td>
+            </tr>
+            <tr>
+              <td><strong>Sarah Lim</strong></td>
+              <td>HR Manager &middot; 80&ndash;200 staff</td>
+              <td>HR drowning in admin &middot; upgrade path into L&amp;D + retention once foundation set.</td>
+              <td><span class="archetype-tag arch-ab">A &rarr; B</span></td>
+              <td><span class="persona-budget">S$10&ndash;15K nett</span></td>
+            </tr>
+            <tr>
+              <td><strong>Kenneth Koh</strong></td>
+              <td>Director &middot; 60&ndash;200 staff</td>
+              <td>Paper / WhatsApp ops &middot; 30&ndash;40% turnover &middot; entry via PSG, then upgrade to A once trust earned.</td>
+              <td><span class="archetype-tag arch-a">PSG &rarr; A</span></td>
+              <td><span class="persona-budget">S$5&ndash;15K nett</span></td>
+            </tr>
+            <tr>
+              <td><strong>Priya Raj</strong></td>
+              <td>Growth-Stage Founder &middot; 80&ndash;250</td>
+              <td>Retention crisis + investor pressure on key-person risk. Career framework = headline.</td>
+              <td><span class="archetype-tag arch-bc">B &rarr; C</span></td>
+              <td><span class="persona-budget">S$18&ndash;45K nett</span></td>
+            </tr>
+            <tr>
+              <td><strong>David Ng</strong></td>
+              <td>Finance &amp; Ops Mgr</td>
+              <td>Finance automation = PSG default. JR+ Archetype A only if ops-role redesign is explicitly in scope.</td>
+              <td><span class="archetype-tag arch-cond">Conditional A &middot; PSG default</span></td>
+              <td><span class="persona-budget">S$8&ndash;20K self-pay / PSG</span></td>
+            </tr>
+            <tr>
+              <td><strong>Michelle Wong</strong></td>
+              <td>BD Lead &middot; 30&ndash;100 staff</td>
+              <td>BD tools redesign workflows, not jobs &mdash; no JRET narrative. PSG track preserves scope.</td>
+              <td><span class="archetype-tag arch-out">PSG / self-serve</span></td>
+              <td><span class="persona-budget">S$300&ndash;800 / mo</span></td>
+            </tr>
+            <tr>
+              <td><strong>Nicholas Yeo</strong></td>
+              <td>Marketing Director &middot; 30&ndash;150</td>
+              <td>Marketing automation = not workforce tech per CFP spec. PSG-eligible.</td>
+              <td><span class="archetype-tag arch-out">PSG / self-serve</span></td>
+              <td><span class="persona-budget">S$3&ndash;8K / mo</span></td>
+            </tr>
+            <tr>
+              <td><strong>Chen Wei</strong></td>
+              <td>First-Time Employer &middot; 1&ndash;3</td>
+              <td>No redesignable roles &middot; no HCDT baseline &middot; ineligible. Self-serve EOR + Site, upgrade post-5HC.</td>
+              <td><span class="archetype-tag arch-out">Self-serve only</span></td>
+              <td><span class="persona-budget">S$59&ndash;200 / mo</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 11 · OUTCOME × ARCHETYPE MATRIX
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide" data-slide="11" data-accent="amber" data-thumb-label="Outcome Matrix">
+    <div class="slide-head">
+      <div>
+        <div class="eyebrow">11 · Outcome × Archetype Matrix</div>
+        <h2 class="slide-title">Mandatory Deliverables<br/><span class="grad">By Archetype</span></h2>
+        <p class="slide-sub">For each archetype, this is what we commit to producing for SNEF&apos;s file at proposal time and at Completed Project Implementation Report time.</p>
+      </div>
+      <div class="slide-meta"><strong>Reference</strong><br/>CFP Spec p4 &middot; mandatory outcomes</div>
+    </div>
+    <div class="slide-body" style="grid-template-rows:1fr;">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:24%">Outcome / Deliverable</th>
+              <th style="width:25%; color:var(--cyan);">Archetype A &middot; 5 months &middot; C1+C3</th>
+              <th style="width:25%; color:var(--violet);">Archetype B &middot; 8 months &middot; C2+C3</th>
+              <th style="width:26%; color:var(--neon);">Archetype C &middot; 14 months &middot; C1+C2+C3</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>JRET &mdash; job value increase</strong></td><td><span class="tag neon">Required</span> &middot; 3&ndash;5 roles</td><td><span class="tag">Optional</span> &middot; supplementary</td><td><span class="tag neon">Required</span> &middot; 8&ndash;12 roles</td></tr>
+            <tr><td><strong>HCDT &mdash; HC maturity uplift</strong></td><td><span class="tag">Optional</span> &middot; supplementary</td><td><span class="tag neon">Required</span> &middot; L&amp;D + career dims</td><td><span class="tag neon">Required</span> &middot; all 7 dims</td></tr>
+            <tr><td><strong>Local employee benefit evidence</strong></td><td><span class="tag neon">Required</span> &middot; skills + role profile changes</td><td><span class="tag neon">Required</span> &middot; training completion + career progression</td><td><span class="tag neon">Required</span> &middot; skills + role + compensation + testimonials</td></tr>
+            <tr><td><strong>Documented job redesign artefacts</strong></td><td>New role definitions &times; 3&ndash;5</td><td>Career frameworks + L&amp;D pathways</td><td>Workforce strategy + new operating model</td></tr>
+            <tr><td><strong>Tech in production (C3)</strong></td><td>HR workflows + diagnostic dashboard</td><td>Training Platform + ElixCraft + HR workflows</td><td>Full stack + workforce analytics + skills market intel</td></tr>
+            <tr><td><strong>Capability transfer evidence (C2)</strong></td><td>&mdash;</td><td>Onsite workshop outputs &middot; HR / line-mgr upskilling certs</td><td>Multi-month onsite mentoring &middot; train-the-trainer outputs</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 12 · LOCAL EMPLOYEE BENEFIT
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide" data-slide="12" data-accent="neon" data-thumb-label="Local Benefit">
+    <div class="slide-head">
+      <div>
+        <div class="eyebrow">12 · Local Employee Benefit &middot; Evidence Ladder</div>
+        <h2 class="slide-title">How We Will Prove<br/><span class="grad">Local Employees Benefited</span></h2>
+        <p class="slide-sub">CPF Form 90 cross-check at proposal stage, then concrete evidence captured during delivery and presented at Completed Project Implementation Report. This is the <strong>always-required</strong> outcome &mdash; we treat it as table stakes.</p>
+      </div>
+      <div class="slide-meta"><strong>Source</strong><br/>CFP Spec p4 &middot; mandatory for all WDG(JR+)</div>
+    </div>
+    <div class="slide-body grid-2">
+      <div class="card neon">
+        <div class="card-label neon">Stage 01 &middot; At proposal</div>
+        <h3>Eligibility &amp; baseline</h3>
+        <div class="detail">
+          <div class="detail-row pros"><span class="icon">&#9656;</span><span><strong>CPF Form 90</strong> &mdash; cross-check Singaporean / PR headcount in target roles</span></div>
+          <div class="detail-row pros"><span class="icon">&#9656;</span><span><strong>Pre-redesign role profiles</strong> &mdash; current scope, skills, comp band per role</span></div>
+          <div class="detail-row pros"><span class="icon">&#9656;</span><span><strong>JRET baseline</strong> &mdash; current job-value reading on each redesignable role</span></div>
+          <div class="detail-row pros"><span class="icon">&#9656;</span><span><strong>HCDT baseline</strong> &mdash; current 7-dim maturity reading</span></div>
+          <div class="detail-row pros"><span class="icon">&#9656;</span><span><strong>Local-employee inventory</strong> &mdash; named affected employees with NRIC-suffix anonymisation</span></div>
+        </div>
+      </div>
+      <div class="card neon">
+        <div class="card-label neon">Stage 02 &middot; At Completed Project Report</div>
+        <h3>Concrete evidence captured</h3>
+        <div class="detail">
+          <div class="detail-row pros"><span class="icon">&#9656;</span><span><strong>Skills certifications</strong> &mdash; Training Platform completion records + SkillsFuture credits earned</span></div>
+          <div class="detail-row pros"><span class="icon">&#9656;</span><span><strong>Promotion / role-change records</strong> &mdash; HR records showing redesigned-role transitions</span></div>
+          <div class="detail-row pros"><span class="icon">&#9656;</span><span><strong>Compensation deltas</strong> &mdash; pre/post salary uplift documented per affected employee</span></div>
+          <div class="detail-row pros"><span class="icon">&#9656;</span><span><strong>Training completion records</strong> &mdash; per-module progression via Staff Training Platform</span></div>
+          <div class="detail-row pros"><span class="icon">&#9656;</span><span><strong>Employee testimonials</strong> &mdash; first-person accounts from named local employees (consent-recorded)</span></div>
+          <div class="detail-row pros"><span class="icon">&#9656;</span><span><strong>JRET post-assessment</strong> &mdash; per-role delta documented and signed off by HR + line manager</span></div>
+          <div class="detail-row pros"><span class="icon">&#9656;</span><span><strong>HCDT post-assessment</strong> &mdash; org-level dimension uplift documented</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 13 · COMMITMENTS TO SNEF
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide" data-slide="13" data-accent="neon" data-thumb-label="Commitments">
+    <div class="slide-head">
+      <div>
+        <div class="eyebrow">13 · Our Commitments to SNEF</div>
+        <h2 class="slide-title">What We Commit To On<br/><span class="grad">Every JR+ Submission</span></h2>
+        <p class="slide-sub">Six commitments that make SNEF&apos;s vetting straightforward and protect every funded project from scope-drift.</p>
+      </div>
+      <div class="slide-meta"><strong>Effective</strong><br/>Immediately on every BGP submission</div>
+    </div>
+    <div class="slide-body commit-grid">
+      <div class="commit-card">
+        <span class="num">01</span>
+        <h4>Lead with the redesigned role</h4>
+        <p>Every JR+ proposal opens with the redesigned role and the target JRET / HCDT delta &mdash; not a product list. The product set is the implementation layer, not the headline.</p>
+      </div>
+      <div class="commit-card">
+        <span class="num">02</span>
+        <h4>Component 3 product discipline</h4>
+        <p>Every BGP submission lists only the seven Component 3 products from our service stack (slide 09). PSG / self-serve products will never be bundled into JR+.</p>
+      </div>
+      <div class="commit-card">
+        <span class="num">03</span>
+        <h4>JRET / HCDT baseline + post-assessment</h4>
+        <p>Built into the diagnostic phase of every archetype. Not optional, not skippable. Pre/post deltas form the proof artefact in the Completed Project Implementation Report.</p>
+      </div>
+      <div class="commit-card">
+        <span class="num">04</span>
+        <h4>Local-employee benefit evidence ladder</h4>
+        <p>CPF Form 90 cross-check at proposal stage; concrete evidence captured during delivery (skills certs, promotion records, comp deltas, training completion, testimonials).</p>
+      </div>
+      <div class="commit-card">
+        <span class="num">05</span>
+        <h4>Bundled with C1 or C2 always</h4>
+        <p>C3 will never appear standalone in our proposals. Archetype A bundles C1; Archetype B bundles C2; Archetype C bundles all three. The advisory front-end is mandatory.</p>
+      </div>
+      <div class="commit-card">
+        <span class="num">06</span>
+        <h4>Source-of-truth deck on file</h4>
+        <p>This deck is filed with SNEF as our service-scope baseline. Any change to the archetypes or product stack is re-submitted before being applied to a new BGP proposal.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 14 · THANK YOU / CONTACT
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide" data-slide="14" data-accent="amber" data-thumb-label="Thank You">
+    <div class="hero">
+      <img class="brand-logo" src="https://www.elitez.asia/wp-content/uploads/2022/03/logo_on-1-1.png" alt="Elitez Group of Companies" />
+      <span class="hero-tag">End of Presentation &middot; Q&amp;A and Next Steps</span>
+      <h1>Thank You<br/><span class="grad">Let&apos;s Continue The Conversation</span></h1>
+      <div class="hero-meta-grid">
+        <div class="hero-meta-card">
+          <div class="label">Primary contact</div>
+          <div class="val">Derrick Teo</div>
+          <div style="font-family:var(--font-mono); font-size:0.82rem; color:var(--muted); margin-top:2px;">Director &middot; Elitez Pte Ltd</div>
+        </div>
+        <div class="hero-meta-card">
+          <div class="label">Mobile</div>
+          <div class="val">+65 9847 9776</div>
+          <div style="font-family:var(--font-mono); font-size:0.82rem; color:var(--muted); margin-top:2px;">WhatsApp / call</div>
+        </div>
+        <div class="hero-meta-card">
+          <div class="label">Email</div>
+          <div class="val">derrick@elitez.asia</div>
+          <div style="font-family:var(--font-mono); font-size:0.82rem; color:var(--muted); margin-top:2px;">Same-day response</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 15 · BACKUP · 3 BOUNDARIES
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide" data-slide="15" data-accent="amber" data-thumb-label="BACKUP · 3 Boundaries">
+    <div class="slide-head">
+      <div>
+        <div class="eyebrow">15 · BACKUP &middot; The Boundaries We Design Within</div>
+        <h2 class="slide-title">Three Constraints From <span class="grad">WSG CFP Spec</span></h2>
+        <p class="slide-sub">Component 3 has a deliberately narrow scope. Before showing what we deliver, we want SNEF to see that we understand what we will <em>not</em> attempt to fund.</p>
+      </div>
+      <div class="slide-meta"><strong>Source</strong><br/>WSG CFP Spec · 12 Jan 2026<br/>Ref WSG-ENTE-PRO-42-9-2-R1</div>
+    </div>
+    <div class="slide-body grid-3">
+      <div class="card rose">
+        <span class="citation">CFP Spec · p6</span>
+        <div class="card-label rose">Constraint 01 · Scope</div>
+        <h3>Component 3 is narrow</h3>
+        <p>Funds only <strong>workforce analytics platforms</strong>, <strong>gap analysis tools</strong>, <strong>AI-infused HR tech complementing job redesign</strong>, and <strong>L&amp;D systems for skills + career development</strong>.</p>
+        <p style="margin-top:10px;"><strong>Not in scope:</strong> generic AI automation, finance / marketing / web infra, tools without a redesign linkage. We honour this.</p>
+      </div>
+      <div class="card amber">
+        <span class="citation">CFP Spec · p7</span>
+        <div class="card-label amber">Constraint 02 · Bundling</div>
+        <h3>C3 cannot stand alone</h3>
+        <p>Component 3 must be bundled with <strong>Component 1 (Workforce Consultancy)</strong> or <strong>Component 2 (Capability Building)</strong>.</p>
+        <p style="margin-top:10px;">Every JR+ engagement we propose has an <strong>advisory / capability front-end</strong> with our tech as the <strong>implementation layer</strong>. We do not attempt to sell tech in isolation under JR+.</p>
+      </div>
+      <div class="card violet">
+        <span class="citation">CFP Spec · p4</span>
+        <div class="card-label violet">Constraint 03 · Outcome bar</div>
+        <h3>Mandatory JRET <em>or</em> HCDT outcome</h3>
+        <p>Every funded project must measurably:<br/><strong>(a)</strong> increase job value via JRET, <strong>or</strong><br/><strong>(b)</strong> improve human capital maturity via HCDT,<br/><strong>and</strong> demonstrate <strong>local employees benefited</strong> from redesigned jobs.</p>
+        <p style="margin-top:10px;">This is a <strong>job redesign grant</strong>, not a digitalisation grant. Our proposals lead with the redesigned role, not the toolset.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 16 · BACKUP · REFRAMINGS
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide" data-slide="16" data-accent="violet" data-thumb-label="BACKUP · Reframings">
+    <div class="slide-head">
+      <div>
+        <div class="eyebrow">16 · BACKUP &middot; Reframings &middot; Transparent Proposal Language</div>
+        <h2 class="slide-title">Where We Adjusted Framing<br/>To Stay <span class="grad">Inside Spec</span></h2>
+        <p class="slide-sub">Three of our products needed reframing to fit Component 3 honestly. We&apos;re showing SNEF the exact "from &rarr; to" language and the proposal copy we will use, so vetting is straightforward.</p>
+      </div>
+      <div class="slide-meta"><strong>Audit basis</strong><br/>CFP Spec p6 &middot; C3 categories</div>
+    </div>
+    <div class="slide-body grid-3">
+      <div class="card violet">
+        <div class="card-label violet">Reframe 01</div>
+        <h3>C-Suite Dashboard &rarr;<br/>Workforce Analytics</h3>
+        <p style="font-size:0.96rem; margin-bottom:10px;"><strong>From:</strong> "Gmail + Calendar + Tasks + Xero in one executive view"<br/><strong>To:</strong> "Workforce analytics platform with team-pulse health scores, capability dashboards, and capacity signals."</p>
+        <div style="background:var(--surface); padding:10px 12px; border-left:2px solid var(--violet); margin-top:10px;">
+          <div style="font-family:var(--font-mono); font-size:0.74rem; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:4px;">Proposal language</div>
+          <p style="font-size:0.92rem; font-style:italic; line-height:1.6;">"Workforce analytics platform aggregating team activity and capacity signals to inform job-redesign decisions and post-redesign monitoring. Team Pulse health scores feed HCDT employee-experience dimension."</p>
+        </div>
+        <div class="detail" style="margin-top:10px;">
+          <div class="detail-row pros"><span class="icon">+</span><span>Inputs (Gmail / Calendar / Tasks / Xero) re-pointed as <strong>workforce signals</strong></span></div>
+          <div class="detail-row cons"><span class="icon">&minus;</span><span>Will not lead with "executive intelligence" framing in JR+ proposals</span></div>
+        </div>
+      </div>
+      <div class="card violet">
+        <div class="card-label violet">Reframe 02</div>
+        <h3>Market Insights &rarr;<br/>Workforce Skills Mkt Intel</h3>
+        <p style="font-size:0.96rem; margin-bottom:10px;"><strong>From:</strong> "Competitor DB + market sizing + pricing strategy"<br/><strong>To:</strong> "Workforce skills market intelligence &mdash; salary band benchmarking, skills-gap analysis, talent supply mapping for redesigned roles."</p>
+        <div style="background:var(--surface); padding:10px 12px; border-left:2px solid var(--violet); margin-top:10px;">
+          <div style="font-family:var(--font-mono); font-size:0.74rem; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:4px;">Proposal language</div>
+          <p style="font-size:0.92rem; font-style:italic; line-height:1.6;">"Workforce skills market intelligence sprint &mdash; salary band benchmarks, skills-gap analysis, and talent supply mapping for the job roles being redesigned. Used to validate JRET pre/post deltas against market peers."</p>
+        </div>
+        <div class="detail" style="margin-top:10px;">
+          <div class="detail-row pros"><span class="icon">+</span><span>Re-points the same 9-subagent system at <strong>workforce data</strong> (MOM, IHRP, SkillsFuture, salary surveys)</span></div>
+          <div class="detail-row cons"><span class="icon">&minus;</span><span>Pricing strategy / blue-ocean sprints stay on PSG / self-serve track &mdash; never inside JR+</span></div>
+        </div>
+      </div>
+      <div class="card amber">
+        <div class="card-label amber">Conditional 03</div>
+        <h3>Ops Tools &rarr;<br/>Job-Redesign Enablement</h3>
+        <p style="font-size:0.96rem; margin-bottom:10px;"><strong>From:</strong> "Operations automation that saves 77 hrs/mo"<br/><strong>To:</strong> "Tools that redesign the ops coordinator / admin role from data-entry execution to exception management + customer relationships."</p>
+        <div style="background:var(--surface); padding:10px 12px; border-left:2px solid var(--amber); margin-top:10px;">
+          <div style="font-family:var(--font-mono); font-size:0.74rem; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:4px;">Proposal language</div>
+          <p style="font-size:0.92rem; font-style:italic; line-height:1.6;">"AI-infused operational tooling that redesigns the [Ops Coordinator / Admin / Field Ops] role by automating low-value data-entry tasks. Redesigned role focuses on exception management + customer relationships + capacity planning. Pre/post JRET on this role demonstrates value uplift."</p>
+        </div>
+        <div class="detail" style="margin-top:10px;">
+          <div class="detail-row pros"><span class="icon">+</span><span>Always tied to a <strong>specific redesigned job role</strong> with JRET pre/post evidence</span></div>
+          <div class="detail-row cons"><span class="icon">&minus;</span><span>Never bundled where SME has no plan to redesign the affected role</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 17 · BACKUP · PRODUCT FIT MAP
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide" data-slide="17" data-accent="amber" data-thumb-label="BACKUP · Product Fit Map">
+    <div class="slide-head">
+      <div>
+        <div class="eyebrow">17 · BACKUP &middot; Honest Product Fit Map</div>
+        <h2 class="slide-title">What We Will <span class="grad">Put Inside JR+ Proposals</span> &mdash; And What We Won&apos;t</h2>
+        <p class="slide-sub">Our 17-product portfolio is wider than C3 scope. SNEF should know which products we will / will not / conditionally bring into a JR+ submission &mdash; with explicit framing for each.</p>
+      </div>
+      <div class="slide-meta"><strong>Status legend</strong><br/><span style="color:var(--neon);">Strong</span> &middot; <span style="color:var(--amber);">Conditional</span> &middot; <span style="color:var(--violet);">Reframe</span> &middot; <span style="color:var(--rose);">Outside</span></div>
+    </div>
+    <div class="slide-body" style="grid-template-rows:1fr;">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:22%">Product</th>
+              <th style="width:14%">JR+ Component fit</th>
+              <th style="width:50%">Required framing in proposals</th>
+              <th style="width:14%">SNEF verdict</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Free + Full Diagnostic</strong></td><td><span class="tag neon">C1 + C3 &check;&check;</span></td><td>Workforce / digital readiness diagnostic &mdash; supplements JRET / HCDT. Already aligns to spec language.</td><td><span class="verdict v-strong">Strong fit</span></td></tr>
+            <tr><td><strong>Staff Training Platform</strong></td><td><span class="tag neon">C3 &check;&check;</span></td><td>Pure L&amp;D system &mdash; textbook spec fit. White-labelable per industry; quiz engine; per-module progress tracking.</td><td><span class="verdict v-strong">Strong fit</span></td></tr>
+            <tr><td><strong>ElixCraft (Gamified Lifecycle)</strong></td><td><span class="tag neon">C2 + C3 &check;&check;</span></td><td>Career-development tool + skills framework + onboarding quest chains. Built on SkillsFuture + MOM frameworks. Exact spec match.</td><td><span class="verdict v-strong">Strong fit</span></td></tr>
+            <tr><td><strong>HR Contract Creation</strong></td><td><span class="tag">C3 &check;</span></td><td>AI-infused HR tech complementing job redesign &mdash; automates routine drafting so HR can focus on workforce strategy.</td><td><span class="verdict v-cond">Defensible</span></td></tr>
+            <tr><td><strong>Onboarding Automation</strong></td><td><span class="tag">C3 &check;</span></td><td>AI-infused HR tech &mdash; orchestrates IT + training + compliance for new hires; integrates with Training Platform + ElixCraft.</td><td><span class="verdict v-cond">Defensible</span></td></tr>
+            <tr><td><strong>AI Resume Builder</strong></td><td><span class="tag">C3 &check;</span></td><td>AI-infused HR / talent-acquisition tech &mdash; used by HR for matching candidates to redesigned roles.</td><td><span class="verdict v-cond">Defensible</span></td></tr>
+            <tr><td><strong>Timesheet OCR</strong></td><td><span class="tag">C3 &#9888;</span></td><td>Borderline &mdash; defensible only if positioned as <em>"redesigning ops / admin roles by removing low-value data-entry work"</em> with JRET evidence on those specific roles.</td><td><span class="verdict v-cond">Conditional</span></td></tr>
+            <tr><td><strong>WhatsApp Deployment Scheduler</strong></td><td><span class="tag">C3 &#9888;</span></td><td>Same logic as Timesheet OCR. Frame around redesigning the <em>ops coordinator</em> role specifically.</td><td><span class="verdict v-cond">Conditional</span></td></tr>
+            <tr><td><strong>Doc Validation at Scale</strong></td><td><span class="tag">C3 &#9888;</span></td><td>Defensible only if it eliminates a low-value validation FTE role <em>and</em> that role is documented as redesigned.</td><td><span class="verdict v-cond">Conditional</span></td></tr>
+            <tr><td><strong>C-Suite Intelligence Dashboard</strong></td><td><span class="tag violet">C3 (reframed)</span></td><td>Reframe from <em>"exec BI"</em> to <em>"workforce analytics + Team Pulse + capability dashboard"</em>. Spec p6 explicitly mentions workforce analytics platforms.</td><td><span class="verdict v-reframe">Reframe req&apos;d</span></td></tr>
+            <tr><td><strong>Market Insights &amp; Intelligence</strong></td><td><span class="tag violet">C3 (reframed)</span></td><td>Reframe to <em>"workforce skills market intelligence"</em> &mdash; salary band benchmarking, skills-gap analysis, talent supply mapping for redesigned roles. Maps to <em>Gap Analysis Tools</em> in spec p6.</td><td><span class="verdict v-reframe">Reframe req&apos;d</span></td></tr>
+            <tr><td><strong>Daily SOA Checker</strong></td><td><span class="tag rose">Outside</span></td><td>Pure finance automation. PSG-eligible (50%) or self-pay. <strong>Will NOT be bundled into JR+ proposals.</strong></td><td><span class="verdict v-out">Outside</span></td></tr>
+            <tr><td><strong>Receipt Claims &middot; Commission Verification</strong></td><td><span class="tag rose">Outside</span></td><td>Finance / expense / sales-finance automation. PSG-eligible. <strong>Will NOT be bundled into JR+.</strong></td><td><span class="verdict v-out">Outside</span></td></tr>
+            <tr><td><strong>Elitez EOR &middot; Pulse Marketing &middot; DT Site Creator</strong></td><td><span class="tag rose">Outside</span></td><td>Payroll / marketing / web infra &mdash; not workforce tech per spec. Sold separately on the parallel track. <strong>Will NOT be bundled into JR+.</strong></td><td><span class="verdict v-out">Outside</span></td></tr>
+            <tr><td><strong>Elitez-ESOP</strong></td><td><span class="tag">Conditional &middot; C1 attach</span></td><td>Equity tool. <em>Conditional attachment</em> only inside Archetype C as "career-progression incentive aligned with redesigned role tiers". Never inside Archetype A or B.</td><td><span class="verdict v-cond">Conditional</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SLIDE 18 · BACKUP · PARALLEL TRACK
+       ════════════════════════════════════════════════════════════ -->
+  <section class="slide" data-slide="18" data-accent="rose" data-thumb-label="BACKUP · Parallel Track">
+    <div class="slide-head">
+      <div>
+        <div class="eyebrow">18 · BACKUP &middot; Parallel Track &middot; What Stays Out of JR+</div>
+        <h2 class="slide-title">PSG / Self-Serve Products<br/>We <span class="grad">Deliberately Keep Outside</span></h2>
+        <p class="slide-sub">We respect Component 3 scope by maintaining a separate commercial track for tools that don&apos;t belong inside JR+. SNEF should know what we sell separately so a JR+ proposal is never inflated with adjacent products.</p>
+      </div>
+      <div class="slide-meta"><strong>Funding</strong><br/>PSG (50%) or self-pay &middot; never inside JR+</div>
+    </div>
+    <div class="slide-body grid-3">
+      <div class="card rose">
+        <div class="card-label rose">PSG / Self-Serve</div>
+        <h3>Elitez EOR</h3>
+        <p style="font-family:var(--font-mono); font-size:0.92rem; color:var(--amber); font-weight:600;">S$59 / mo per employee</p>
+        <p style="margin-top:8px; font-size:0.96rem;">Mass-market entry product &mdash; first-time SG employer. Builds relationship; upgrade into Archetype A once headcount crosses 5+.</p>
+        <p style="margin-top:8px; font-size:0.92rem; color:var(--rose);"><strong>Why outside JR+:</strong> Payroll compliance, not workforce tech per spec.</p>
+      </div>
+      <div class="card rose">
+        <div class="card-label rose">PSG / Self-Serve</div>
+        <h3>DT Site Creator</h3>
+        <p style="font-family:var(--font-mono); font-size:0.92rem; color:var(--amber); font-weight:600;">S$3K&ndash;8K + S$200/mo</p>
+        <p style="margin-top:8px; font-size:0.96rem;">Web infrastructure wedge for marketing director / sole-proprietor entry. Once site is live, upsell into Pulse retainer.</p>
+        <p style="margin-top:8px; font-size:0.92rem; color:var(--rose);"><strong>Why outside JR+:</strong> Web infrastructure, not workforce tech.</p>
+      </div>
+      <div class="card rose">
+        <div class="card-label rose">PSG / Self-Serve</div>
+        <h3>Pulse Marketing</h3>
+        <p style="font-family:var(--font-mono); font-size:0.92rem; color:var(--amber); font-weight:600;">S$1K&ndash;3K / mo retainer</p>
+        <p style="margin-top:8px; font-size:0.96rem;">Marketing director persona. Geo-arbitrage delivery; SG agency-equivalent output at SME-friendly cost.</p>
+        <p style="margin-top:8px; font-size:0.92rem; color:var(--rose);"><strong>Why outside JR+:</strong> Marketing automation, not workforce tech.</p>
+      </div>
+      <div class="card rose">
+        <div class="card-label rose">PSG / Self-Serve</div>
+        <h3>Finance / Ops Workflows</h3>
+        <p style="font-family:var(--font-mono); font-size:0.92rem; color:var(--amber); font-weight:600;">S$3K&ndash;8K + S$300/mo</p>
+        <p style="margin-top:8px; font-size:0.96rem;">SOA Checker, Receipt Claims, Commission Verification. PSG-eligible. JR+ tie only if there&apos;s a redesigned ops role behind it.</p>
+        <p style="margin-top:8px; font-size:0.92rem; color:var(--rose);"><strong>Why outside JR+:</strong> Pure finance automation, no redesign linkage.</p>
+      </div>
+      <div class="card rose">
+        <div class="card-label rose">Self-Pay</div>
+        <h3>Market Insights Sprint (lite)</h3>
+        <p style="font-family:var(--font-mono); font-size:0.92rem; color:var(--amber); font-weight:600;">S$2K per sprint</p>
+        <p style="margin-top:8px; font-size:0.96rem;">Pricing-strategy / market-sizing version. Inside JR+ <strong>only when reframed</strong> as workforce skills market intel (slide 09).</p>
+        <p style="margin-top:8px; font-size:0.92rem; color:var(--rose);"><strong>Why outside JR+ (default):</strong> Competitive intel, not workforce.</p>
+      </div>
+      <div class="card neon">
+        <div class="card-label neon">Lead-Gen</div>
+        <h3>Free + Full Diagnostic</h3>
+        <p style="font-family:var(--font-mono); font-size:0.92rem; color:var(--amber); font-weight:600;">Free / email-gated</p>
+        <p style="margin-top:8px; font-size:0.96rem;">Routes qualified leads into the right Archetype. The JR+ Readiness Diagnostic at <span style="font-family:var(--font-mono);">jrplus/diagnostic.html</span> is the funnel.</p>
+        <p style="margin-top:8px; font-size:0.92rem; color:var(--neon);"><strong>Inside JR+ as Stage 1:</strong> baseline + qualifier, never charged.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ─── FILMSTRIP (page slider with previews) ─── -->
+<div class="deck-filmstrip" id="filmstrip" role="tablist" aria-label="Slide previews"></div>
+
+<!-- ─── DECK FOOTER ─── -->
+<div class="deck-foot">
+  <div class="deck-foot-left">
+    <span class="brand-mark">E</span>
+    <span><strong>Elitez Pte Ltd</strong> &middot; WDG(JR+) C3 Pre-Approved &middot; SNEF Scope Review</span>
+  </div>
+  <div class="deck-foot-right">
+    <button class="nav-btn" id="prev-btn" onclick="changeSlide(-1)" aria-label="Previous slide">&larr; Prev</button>
+    <span class="slide-counter"><span id="curr-slide">1</span> / <span id="total-slides">13</span></span>
+    <button class="nav-btn" id="next-btn" onclick="changeSlide(1)" aria-label="Next slide">Next &rarr;</button>
+    <button class="print-btn" onclick="window.print()" aria-label="Print to PDF">&#9113; Print PDF</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  const strip = document.getElementById('filmstrip');
+  let curr = 1;
+
+  document.getElementById('total-slides').textContent = total;
+
+  // Embed a small Elitez logo bottom-right on every slide except 1 and 14
+  // (those have the larger hero logo)
+  const LOGO_SRC = 'https://www.elitez.asia/wp-content/uploads/2022/03/logo_on-1-1.png';
+  slides.forEach(s => {
+    const num = s.dataset.slide;
+    if (num === '1' || num === '14') return;
+    const logo = document.createElement('img');
+    logo.className = 'slide-logo';
+    logo.src = LOGO_SRC;
+    logo.alt = 'Elitez';
+    s.appendChild(logo);
+  });
+
+  // Build filmstrip thumbnails from slide data attributes
+  slides.forEach(s => {
+    const num = s.dataset.slide;
+    const accent = s.dataset.accent || 'amber';
+    const label = s.dataset.thumbLabel || 'Slide ' + num;
+    const thumb = document.createElement('button');
+    thumb.className = 'thumb';
+    thumb.type = 'button';
+    thumb.dataset.accent = accent;
+    thumb.dataset.target = num;
+    thumb.setAttribute('role', 'tab');
+    thumb.setAttribute('aria-label', 'Go to slide ' + num + ': ' + label);
+
+    const stripeEl = document.createElement('span');
+    stripeEl.className = 'accent-stripe';
+
+    const numEl = document.createElement('span');
+    numEl.className = 'thumb-num';
+    numEl.textContent = String(num).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+
+    const labelEl = document.createElement('span');
+    labelEl.className = 'thumb-label';
+    labelEl.textContent = label;
+
+    thumb.appendChild(stripeEl);
+    thumb.appendChild(numEl);
+    thumb.appendChild(labelEl);
+    thumb.addEventListener('click', () => show(parseInt(num, 10)));
+    strip.appendChild(thumb);
+  });
+
+  function show(n) {
+    n = Math.max(1, Math.min(total, n));
+    slides.forEach(s => s.classList.remove('active'));
+    document.querySelector('[data-slide="' + n + '"]').classList.add('active');
+    document.getElementById('curr-slide').textContent = n;
+    document.getElementById('prev-btn').disabled = n === 1;
+    document.getElementById('next-btn').disabled = n === total;
+
+    // Sync filmstrip active thumb + auto-scroll into view
+    const thumbs = strip.querySelectorAll('.thumb');
+    thumbs.forEach(t => {
+      const isActive = parseInt(t.dataset.target, 10) === n;
+      t.classList.toggle('active', isActive);
+      if (isActive) t.setAttribute('aria-selected', 'true'); else t.removeAttribute('aria-selected');
+    });
+    const active = strip.querySelector('.thumb.active');
+    if (active) {
+      const stripRect = strip.getBoundingClientRect();
+      const thumbRect = active.getBoundingClientRect();
+      if (thumbRect.left < stripRect.left + 24 || thumbRect.right > stripRect.right - 24) {
+        active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }
+
+    curr = n;
+  }
+  window.changeSlide = function (delta) { show(curr + delta); };
+
+  document.addEventListener('keydown', function (e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); show(curr + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); show(curr - 1); }
+    else if (e.key === 'Home') { show(1); }
+    else if (e.key === 'End') { show(total); }
+    else if (e.key >= '1' && e.key <= '9') { show(parseInt(e.key, 10)); }
+  });
+
+  show(1);
+})();
+</script>
+
+</body>
+</html>

@@ -4,7 +4,7 @@
 // Sections without a data-tab attribute remain visible on every tab.
 
 (function () {
-  const TABS = ["overview", "holders", "valuations", "documents", "audit"];
+  const TABS = ["overview", "holders", "valuations", "documents", "roster", "payments", "activity", "audit"];
   const DEFAULT_TAB = "overview";
 
   function activeTab() {

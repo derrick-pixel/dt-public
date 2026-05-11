@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design Audit — Altru</title>
+  <meta name="description" content="Internal admin: Altru public-site design audit — 5-dimension rubric, mobile pass, 3-intent findability test. Not for public indexing.">
+  <meta name="robots" content="noindex, follow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <style>
+    .audit-overall { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 28px 32px; margin-bottom: 28px; box-shadow: var(--shadow-sm); display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center; }
+    .audit-overall .score { font-family: var(--font-display); font-size: 4rem; line-height: 1; color: var(--brand-primary); font-weight: 700; }
+    .audit-overall .score-label { font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+    .audit-overall .audit-meta { font-size: 0.88rem; color: var(--muted); }
+    .audit-overall .audit-meta strong { color: var(--neutral-dark); }
+
+    .dim-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin-bottom: 32px; }
+    .dim-card { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--brand-primary); border-radius: var(--radius-md); padding: 22px 24px; box-shadow: var(--shadow-sm); }
+    .dim-card .name { font-family: var(--font-display); font-size: 1.05rem; font-weight: 600; text-transform: capitalize; color: var(--neutral-dark); margin-bottom: 6px; }
+    .dim-card .score { font-family: var(--font-display); font-size: 2.2rem; font-weight: 700; color: var(--brand-primary); line-height: 1; }
+    .dim-card .score .max { color: var(--muted); font-size: 1rem; font-weight: 400; }
+    .dim-card .rationale { font-size: 0.86rem; line-height: 1.55; color: var(--muted); margin-top: 10px; }
+
+    .findings-table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); }
+    .findings-table thead { background: var(--brand-secondary); }
+    .findings-table th { color: var(--neutral-light); text-align: left; padding: 14px 16px; font-family: var(--font-display); font-size: 0.84rem; font-weight: 600; letter-spacing: 0.04em; }
+    .findings-table td { padding: 14px 16px; font-size: 0.88rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .findings-table tr:last-child td { border-bottom: none; }
+    .sev { display: inline-block; font-family: var(--font-mono); font-size: 0.66rem; padding: 3px 8px; border-radius: 4px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+    .sev.high { background: #FDEEF1; color: #9B0B20; }
+    .sev.med, .sev.medium { background: #FBF5DC; color: #8A6D1F; }
+    .sev.low { background: #E8F5EE; color: #1A6B3D; }
+
+    .mobile-section, .findability-section, .refs-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 28px 32px; margin: 28px 0; box-shadow: var(--shadow-sm); }
+    .verdict-badge { display: inline-block; padding: 6px 14px; border-radius: 100px; font-family: var(--font-mono); font-size: 0.74rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+    .verdict-badge.pass, .verdict-badge.passing { background: #E8F5EE; color: #1A6B3D; }
+    .verdict-badge.borderline, .verdict-badge.partial { background: #FBF5DC; color: #8A6D1F; }
+    .verdict-badge.fail, .verdict-badge.failing { background: #FDEEF1; color: #9B0B20; }
+
+    .intent-row { padding: 16px 0; border-bottom: 1px solid var(--border); }
+    .intent-row:last-child { border-bottom: none; }
+    .intent-row .label { font-family: var(--font-display); font-weight: 600; color: var(--neutral-dark); margin-bottom: 6px; }
+    .intent-row .seconds { font-family: var(--font-mono); font-size: 1.4rem; font-weight: 700; color: var(--brand-primary); }
+    .intent-row .seconds .unit { color: var(--muted); font-size: 0.9rem; font-weight: 400; }
+    .intent-row .notes { font-size: 0.85rem; color: var(--muted); margin-top: 6px; line-height: 1.55; }
+
+    .ref-card { padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .ref-card:last-child { border-bottom: none; }
+    .ref-card .name { font-family: var(--font-display); font-weight: 600; color: var(--neutral-dark); }
+    .ref-card .url { font-size: 0.82rem; color: var(--muted); }
+    .ref-card .lesson { font-size: 0.88rem; color: var(--neutral-dark); margin-top: 6px; line-height: 1.55; }
+  
+    /* ─── Last-edited stamp · injected ─── */
+    .last-edited-strip {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+      padding: 5px 14px; text-align: right;
+      font-family: ui-monospace, "Share Tech Mono", monospace;
+      font-size: 0.72rem; letter-spacing: 0.05em;
+      color: rgba(140,140,140,0.85);
+      background: rgba(0,0,0,0.03);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .last-edited-strip strong { color: rgba(60,60,60,0.85); font-weight: 500; }
+    #last-edited { color: #d06010; font-weight: 600; }
+    #last-edited.fresh { color: #0a8a4a; }
+    #last-edited.stale { color: #c82040; }
+  </style>
+</head>
+<body>
+  <header>
+  <nav class="admin-nav">
+    <a href="index.html">Competitors</a>
+    <a href="insights.html">Market &amp; Pricing</a>
+    <a href="whitespace.html">Whitespace Atlas</a>
+    <a href="culture.html">Culture</a>
+    <a href="design-audit.html" class="active">Design Audit</a>
+    <a href="report.html">Report</a>
+    <a href="../index.html" style="margin-left: auto;">← Back to site</a>
+  </nav>
+
+<div class="last-edited-strip" role="status" aria-live="polite">
+  <strong>Page last edited:</strong> <span id="last-edited" data-edited="2026-05-06T08:17:58+08:00">checking…</span>
+</div>
+
+  </header>
+  <main class="container-wide">
+    <span class="artefact-label">Artefact 06 · Self-audit</span>
+    <h1>Altru Public Site — Design Audit</h1>
+    <p style="max-width:880px;line-height:1.6;color:var(--muted);font-size:0.96rem;">Audit of <a href="https://altru.asia" target="_blank" rel="noopener">altru.asia</a> against a 5-dimension rubric (modernness, attractiveness, coherence, UI clarity, accessibility) plus mobile pass and 3-intent findability test. Findings are evidence-anchored — every issue cites a selector, line number, or copy line. Cross-link to <a href="index.html">competitors</a>, <a href="insights.html">market &amp; pricing</a>, <a href="whitespace.html">whitespace</a>, <a href="culture.html">culture</a>, the <a href="report.html">printable report</a>, or the <a href="../index.html">public site</a>.</p>
+
+    <div class="audit-overall" id="overall"></div>
+
+    <h2>Dimension scores</h2>
+    <div class="dim-grid" id="dim-grid"></div>
+
+    <h2>Findings (ranked)</h2>
+    <div style="overflow-x: auto;">
+      <table class="findings-table" id="findings-table"></table>
+    </div>
+
+    <section class="mobile-section">
+      <span class="artefact-label">Mobile pass</span>
+      <h2 style="margin-top: 8px;">Mobile readiness</h2>
+      <div id="mobile-body"></div>
+    </section>
+
+    <section class="findability-section">
+      <span class="artefact-label">3-intent findability</span>
+      <h2 style="margin-top: 8px;">Click-path test</h2>
+      <div id="findability-body"></div>
+    </section>
+
+    <section class="refs-section">
+      <span class="artefact-label">Competitive references</span>
+      <h2 style="margin-top: 8px;">Patterns to borrow</h2>
+      <div id="refs-body"></div>
+    </section>
+  </main>
+  <footer style="padding:24px 32px;border-top:1px solid var(--border);font-size:13px;color:var(--muted);max-width:1400px;margin:48px auto 0;">
+    <p>Altru — Internal admin · <a href="../index.html">Public site</a></p>
+  </footer>
+
+  <script type="module">
+    import { loadAppData } from './assets/js/app.js';
+    import { h, mount } from './assets/js/dom.js';
+
+    const data = await loadAppData();
+    const audit = data.designAudit?.self_audit;
+    if (!audit) {
+      const main = document.querySelector('main');
+      const err = document.createElement('p');
+      err.style.cssText = 'color: var(--danger); padding: 40px;';
+      err.textContent = 'design-audit.json self_audit block not found.';
+      main.replaceChildren(err);
+      throw new Error('No self_audit');
+    }
+
+    mount(document.getElementById('overall'),
+      h('div', {},
+        h('div', { class: 'score' }, String(audit.weighted_rating ?? '—')),
+        h('div', { class: 'score-label' }, 'Weighted rating · /10')
+      ),
+      h('div', { class: 'audit-meta' },
+        h('div', {}, h('strong', {}, 'URL: '), audit.url || '—'),
+        h('div', { style: 'margin-top: 4px;' }, h('strong', {}, 'Captured: '), audit.captured_at || '—'),
+        h('div', { style: 'margin-top: 4px;' }, h('strong', {}, 'Method: '), audit.audit_method || '—'),
+        audit.audit_method_notes ? h('div', { style: 'margin-top: 8px; font-size: 0.82rem; line-height: 1.55;' }, audit.audit_method_notes) : null
+      )
+    );
+
+    const rubric = audit.rubric || {};
+    const dimEntries = Object.entries(rubric);
+    mount(document.getElementById('dim-grid'),
+      ...dimEntries.map(([key, dim]) => h('div', { class: 'dim-card' },
+        h('div', { class: 'name' }, key.replace(/_/g, ' ')),
+        h('div', { class: 'score' }, String(dim.score ?? '—'), h('span', { class: 'max' }, '/10')),
+        h('div', { class: 'rationale' }, dim.rationale || '')
+      ))
+    );
+
+    const findings = audit.findings_table || [];
+    const fTable = document.getElementById('findings-table');
+    mount(fTable,
+      h('thead', {}, h('tr', {},
+        h('th', { style: 'width: 60px;' }, '#'),
+        h('th', { style: 'width: 80px;' }, 'Sev'),
+        h('th', { style: 'width: 200px;' }, 'Section'),
+        h('th', {}, 'Issue'),
+        h('th', {}, 'Fix'),
+        h('th', { style: 'width: 240px;' }, 'Expected impact')
+      )),
+      h('tbody', {}, ...findings.map(f => h('tr', {},
+        h('td', {}, String(f.rank ?? '—')),
+        h('td', {}, h('span', { class: 'sev ' + (f.severity || 'med') }, f.severity || 'med')),
+        h('td', { style: 'font-family: var(--font-mono); font-size: 0.78rem;' }, f.section || ''),
+        h('td', {}, f.issue || ''),
+        h('td', {}, f.fix || ''),
+        h('td', { style: 'font-size: 0.84rem; color: var(--muted);' }, f.expected_impact || '')
+      )))
+    );
+
+    const m = audit.mobile_pass || {};
+    mount(document.getElementById('mobile-body'),
+      h('div', { style: 'display: flex; gap: 24px; align-items: center; flex-wrap: wrap; margin-bottom: 16px;' },
+        m.verdict ? h('span', { class: 'verdict-badge ' + (m.verdict || '').toLowerCase().replace(/\s/g, '-') }, m.verdict) : null,
+        m.primary_breakpoint ? h('span', { style: 'font-family: var(--font-mono); font-size: 0.84rem; color: var(--muted);' }, 'Primary: ' + m.primary_breakpoint) : null
+      ),
+      m.summary ? h('p', { style: 'font-size: 0.94rem; line-height: 1.6;' }, m.summary) : null,
+      Array.isArray(m.issues) && m.issues.length
+        ? h('div', { style: 'margin-top: 16px;' },
+            h('strong', {}, 'Issues:'),
+            h('ul', { style: 'margin-top: 8px; padding-left: 20px;' },
+              ...m.issues.map(i => h('li', { style: 'font-size: 0.88rem; line-height: 1.55; margin-bottom: 6px;' }, typeof i === 'string' ? i : (i.issue || i.summary || JSON.stringify(i))))
+            )
+          )
+        : null
+    );
+
+    const fb = audit.three_intent_findability || {};
+    const intentList = Object.entries(fb).map(([k, v]) => ({ key: k, ...v }));
+    mount(document.getElementById('findability-body'),
+      ...intentList.map(intent => h('div', { class: 'intent-row' },
+        h('div', { class: 'label' }, (intent.intent_label || intent.intent || intent.key.replace(/_/g, ' ')).replace(/intent \d+\s+/i, '')),
+        h('div', { class: 'seconds' }, String(intent.seconds_to_resolve ?? intent.seconds ?? '—'), h('span', { class: 'unit' }, ' s · ' + (intent.clicks_to_resolve ?? intent.clicks ?? '—') + ' clicks')),
+        intent.path ? h('div', { class: 'notes' }, h('strong', {}, 'Path: '), Array.isArray(intent.path) ? intent.path.join(' → ') : intent.path) : null,
+        intent.notes ? h('div', { class: 'notes' }, intent.notes) : null,
+        intent.friction_notes ? h('div', { class: 'notes' }, h('strong', {}, 'Friction: '), intent.friction_notes) : null
+      ))
+    );
+
+    const refs = audit.competitive_design_references || [];
+    mount(document.getElementById('refs-body'),
+      ...refs.map(r => h('div', { class: 'ref-card' },
+        h('div', { class: 'name' }, r.name || r.site || 'Reference'),
+        r.url ? h('div', { class: 'url' }, h('a', { href: r.url, target: '_blank', rel: 'noopener' }, r.url)) : null,
+        h('div', { class: 'lesson' }, r.lesson || r.pattern || r.note || '')
+      ))
+    );
+  </script>
+
+<script>
+(function () {
+  const el = document.getElementById('last-edited');
+  if (!el) return;
+  const iso = el.dataset.edited;
+  if (!iso) { el.textContent = '—'; return; }
+  const d = new Date(iso);
+  const fmt = d.toLocaleDateString('en-SG', { year: 'numeric', month: 'short', day: 'numeric' });
+  const ago = Math.floor((Date.now() - d.getTime()) / 86400000);
+  let suffix;
+  if (ago === 0) suffix = 'today';
+  else if (ago === 1) suffix = 'yesterday';
+  else if (ago < 14) suffix = ago + ' days ago';
+  else if (ago < 60) suffix = Math.floor(ago/7) + ' weeks ago';
+  else suffix = Math.floor(ago/30) + ' months ago';
+  el.textContent = fmt + ' · ' + suffix;
+  if (ago <= 7) el.classList.add('fresh');
+  else if (ago > 14) el.classList.add('stale');
+})();
+</script>
+
+</body>
+</html>

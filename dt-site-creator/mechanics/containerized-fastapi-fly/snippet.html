@@ -1,0 +1,273 @@
+<!--
+  Containerized FastAPI on Fly.io mechanic.
+
+  Local dev: docker-compose brings up disposable service mocks that mirror prod:
+    - Postgres + pgvector   — relational data + vector embeddings (pgvector/pgvector:pg16)
+    - Redis                 — cache, queues, rate-limiting
+    - MinIO                 — S3-compatible blob storage (UI at :9001, API at :9000)
+    - MailHog               — SMTP capture (UI at :8025, SMTP at :1025)
+
+  Production: three separate Fly apps from a single backend Dockerfile:
+    - fly.backend.toml   — HTTP app (2× shared-cpu-1x, rolling deploy, /health check)
+    - fly.cron.toml      — scheduled jobs machine (count=0 at rest, wakes on cron)
+    - fly.staging.toml   — full second environment with its own DB + secrets
+
+  ⚠ Pitfalls baked into this pattern (see also bba-docker-port-collision):
+    1. PORT COLLISIONS — running two compose stacks on the same laptop fights for
+       5432, 6379, 9000, etc. Either offset ports in docker-compose.override.yml
+       or tear down the first stack before bringing up the second.
+    2. MinIO vs S3 config drift — MinIO needs endpoint_url + path-style addressing;
+       boto3/S3 clients default to AWS virtual-hosted style. Wrap in an adapter that
+       swaps endpoint_url based on ENVIRONMENT env var.
+    3. MailHog port confusion — MailHog exposes :8025 (web UI) and :1025 (SMTP).
+       Point your app's SMTP_HOST at :1025. Opening :8025 in the browser is for humans,
+       not the mail client.
+-->
+
+<!-- ── docker-compose.yml ─────────────────────────────────────────────────── -->
+<details>
+  <summary><strong>docker/docker-compose.yml</strong></summary>
+
+```yaml
+name: <your-app>
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: <your-db-name>
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d <your-db-name>"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # console UI ← ⚠ open in browser, not in S3 client
+    volumes:
+      - minio_data:/data
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    ports:
+      - "1025:1025"   # SMTP ← point your app here
+      - "8025:8025"   # web UI ← open in browser
+
+volumes:
+  pg_data:
+  minio_data:
+```
+
+</details>
+
+<!-- ── backend/Dockerfile ─────────────────────────────────────────────────── -->
+<details>
+  <summary><strong>backend/Dockerfile</strong></summary>
+
+```dockerfile
+# backend/Dockerfile
+FROM python:3.12-slim AS builder
+WORKDIR /build
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential libpango-1.0-0 libcairo2 libpq-dev curl \
+    && rm -rf /var/lib/apt/lists/*
+COPY pyproject.toml ./
+COPY app ./app
+COPY migrations ./migrations
+COPY scripts ./scripts
+COPY alembic.ini .
+RUN pip install --no-cache-dir -e .
+
+FROM python:3.12-slim AS runtime
+WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpango-1.0-0 libpangoft2-1.0-0 libcairo2 libpq5 \
+    && rm -rf /var/lib/apt/lists/*
+COPY --from=builder /usr/local/lib/python3.12 /usr/local/lib/python3.12
+COPY --from=builder /usr/local/bin /usr/local/bin
+COPY --from=builder /build /app
+ENV PYTHONUNBUFFERED=1 PORT=8080
+EXPOSE 8080
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
+```
+
+</details>
+
+<!-- ── infra/fly/fly.backend.toml ─────────────────────────────────────────── -->
+<details>
+  <summary><strong>infra/fly/fly.backend.toml</strong></summary>
+
+```toml
+# infra/fly/fly.backend.toml
+app = "<your-app>-backend-prod"
+primary_region = "sin"
+
+[build]
+  dockerfile = "../../backend/Dockerfile"
+
+[deploy]
+  release_command = "alembic upgrade head"
+  strategy = "rolling"
+
+[env]
+  ENVIRONMENT = "production"
+  PORT = "8080"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+  [[http_service.checks]]
+    method = "GET"
+    path = "/health"
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "20s"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "1gb"
+  count = 2
+```
+
+</details>
+
+<!-- ── infra/fly/fly.cron.toml ────────────────────────────────────────────── -->
+<details>
+  <summary><strong>infra/fly/fly.cron.toml</strong></summary>
+
+```toml
+# infra/fly/fly.cron.toml
+# Daily cron machine for scheduled jobs (retention, cleanup, etc.).
+# Scheduled via: flyctl machine run --schedule daily --config infra/fly/fly.cron.toml \
+#                  --app <your-app>-cron-prod \
+#                  /bin/sh -c "python -m scripts.run_hard_delete && python -m scripts.run_audit_retention && python -m scripts.run_magic_link_retention"
+app = "<your-app>-cron-prod"
+primary_region = "sin"
+
+[build]
+  dockerfile = "../../backend/Dockerfile"
+
+[env]
+  ENVIRONMENT = "production"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"
+  count = 0  # zero by default; scheduled machines wake on cron
+```
+
+</details>
+
+<!-- ── infra/fly/fly.staging.toml ─────────────────────────────────────────── -->
+<details>
+  <summary><strong>infra/fly/fly.staging.toml</strong></summary>
+
+```toml
+# infra/fly/fly.staging.toml
+app = "<your-app>-backend-staging"
+primary_region = "sin"
+
+[build]
+  dockerfile = "../../backend/Dockerfile"
+
+[deploy]
+  release_command = "alembic upgrade head"
+  strategy = "rolling"
+
+[env]
+  ENVIRONMENT = "staging"
+  PORT = "8080"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+  [[http_service.checks]]
+    method = "GET"
+    path = "/health"
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "20s"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "1gb"
+  count = 1
+```
+
+</details>
+
+<!-- ── Deploy sequence ─────────────────────────────────────────────────────── -->
+<details>
+  <summary><strong>Deploy sequence</strong></summary>
+
+```bash
+# Local dev (one terminal — all four services come up together)
+docker-compose -f docker/docker-compose.yml up
+
+# Verify services are healthy:
+#   Postgres  → localhost:5432
+#   Redis     → localhost:6379
+#   MinIO API → http://localhost:9000
+#   MinIO UI  → http://localhost:9001
+#   MailHog   → http://localhost:8025  (emails appear here)
+
+# Production deploy (each is a separate Fly app)
+fly deploy -c infra/fly/fly.backend.toml
+fly deploy -c infra/fly/fly.cron.toml
+fly deploy -c infra/fly/fly.staging.toml
+
+# First-time secrets (run once per app, not stored in toml)
+fly secrets set DATABASE_URL=<YOUR_DATABASE_URL> \
+              REDIS_URL=<YOUR_REDIS_URL> \
+              S3_BUCKET=<YOUR_S3_BUCKET> \
+              RESEND_API_KEY=<YOUR_RESEND_API_KEY> \
+  --app <your-app>-backend-prod
+```
+
+</details>
+
+<!--
+  Notes:
+  ──────
+  1. Secrets never go in fly.*.toml — use `fly secrets set` per app.
+  2. The cron app uses count=0 by default; it only spins up when the scheduled
+     machine run fires. This avoids paying for an always-on machine for background jobs.
+  3. Alembic runs as a release_command before new instances come up (rolling deploy),
+     so migrations execute before any new code starts serving traffic.
+  4. Staging uses count=1 (not 2) — single machine is fine for non-production.
+  5. The same Dockerfile builds all three apps; ENVIRONMENT env var drives behavior
+     differences (e.g. SMTP goes to Resend in prod, MailHog in local).
+-->

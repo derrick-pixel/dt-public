@@ -11,7 +11,8 @@
     'transactional',
     'simulator-educational',
     'game',
-    'dashboard-analytics'
+    'dashboard-analytics',
+    'backend-backed-app'
   ];
 
   // ── Assembly selection state (shared with assembly.html via localStorage) ──
@@ -554,7 +555,8 @@
       'transactional':          'Trans',
       'simulator-educational':  'Sim',
       'game':                   'Game',
-      'dashboard-analytics':    'Dash'
+      'dashboard-analytics':    'Dash',
+      'backend-backed-app':     'Backend'
     };
     return map[id] || id;
   }

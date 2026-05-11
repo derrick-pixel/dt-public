@@ -1,0 +1,227 @@
+<!--
+  CF Zero Trust (Static Admin Paths) mechanic — Cloudflare Access + Google OAuth.
+
+  This mechanic documents how to gate a static-site /admin path using
+  Cloudflare Zero Trust (Access). The gate runs on Cloudflare's edge before
+  any of your site assets are served — no app-level auth code, no server.
+
+  CRITICAL CAVEAT:
+  OTP delivery via CF Access is unreliable for some SG email providers.
+  Use Google OAuth IdP from day one. Do NOT start with OTP and migrate later.
+
+  Paste this page onto a CF Access-protected path and it will:
+    1. Show the signed-in user's email (via the CF Access JWT).
+    2. Provide a sign-out link.
+  The <details> blocks below are reference docs for setting up CF Access.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — CF Zero Trust Example</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --card: #1c2128;
+      --border: rgba(255, 255, 255, 0.08);
+      --border2: rgba(255, 255, 255, 0.16);
+      --text: #f0f6fc;
+      --muted: #8b949e;
+      --accent: #818cf8;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 32px 24px;
+      max-width: 720px;
+      margin-inline: auto;
+    }
+    h1 { font-size: 1.5rem; margin-bottom: 4px; }
+    h2 { font-size: 1.1rem; margin: 24px 0 8px; }
+    p, li { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
+    code, pre {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+      padding: 2px 6px;
+      font-size: 0.85rem;
+      font-family: "SF Mono", "Fira Code", monospace;
+    }
+    pre { padding: 14px; overflow-x: auto; line-height: 1.5; }
+    details {
+      background: var(--card);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 16px 0;
+    }
+    summary {
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+    summary:hover { color: var(--accent); }
+    ol, ul { padding-left: 20px; margin: 10px 0; }
+    .identity-banner {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-left: 4px solid var(--accent);
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+    }
+    a { color: var(--accent); }
+    a:hover { opacity: 0.8; }
+  </style>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+
+  <h1>Admin Panel</h1>
+  <p>You are past the Cloudflare Access gate.</p>
+
+  <!-- ── Signed-in user banner ─────────────────────────────── -->
+  <div class="identity-banner" id="cf-current-user">Checking identity…</div>
+
+  <!-- ── Config reference: Cloudflare dashboard steps ─────── -->
+  <details>
+    <summary>Cloudflare dashboard config</summary>
+    <ol>
+      <li>
+        <strong>Account/Zone setup:</strong> Ensure your domain is proxied
+        through Cloudflare DNS (orange-cloud). CF Pages deployments are
+        automatically proxied.
+      </li>
+      <li>
+        <strong>Enable Zero Trust:</strong> In the Cloudflare dashboard, go to
+        <em>Zero Trust → Access → Applications → Add an Application</em>.
+      </li>
+      <li>
+        <strong>Application type:</strong> Select <em>Self-hosted</em>.
+      </li>
+      <li>
+        <strong>Application URL pattern:</strong>
+        <code>yourdomain.com/admin/*</code> (or <code>/intel/*</code>,
+        <code>/aevum/admin/*</code>, etc.)
+      </li>
+      <li>
+        <strong>Identity provider — Google OAuth (do this first):</strong>
+        <ul>
+          <li>Go to <em>Zero Trust → Settings → Authentication → Login methods → Add new</em>.</li>
+          <li>Select <em>Google</em>.</li>
+          <li>In <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a>,
+            create an OAuth 2.0 Client ID (Web application type).</li>
+          <li>Add authorised redirect URI:
+            <code>https://&lt;your-team&gt;.cloudflareaccess.com/cdn-cgi/access/callback</code></li>
+          <li>Paste the <strong>Client ID</strong> and <strong>Client Secret</strong> into the CF form.</li>
+          <li>Save. Do <strong>NOT</strong> enable OTP as a fallback if SG email delivery is a concern
+            (see pitfall <code>bba-cf-access-otp-unreliable</code>).</li>
+        </ul>
+      </li>
+      <li>
+        <strong>Policy:</strong>
+        <ul>
+          <li>Action: <em>Allow</em></li>
+          <li>Include rule: <em>Emails ending in</em> <code>@yourdomain.com</code>
+            — or list specific email addresses.</li>
+        </ul>
+      </li>
+      <li>
+        <strong>Session duration:</strong> 24 hours is a reasonable default for
+        internal admin tooling. Reduce to 4 hours for sensitive paths.
+      </li>
+      <li>
+        <strong>Test in incognito:</strong> You should be redirected to Google,
+        then back to your admin page. The <code>CF_Authorization</code> cookie
+        will be set by Cloudflare's edge.
+      </li>
+    </ol>
+  </details>
+
+  <!-- ── Sample policy JSON export ─────────────────────────── -->
+  <details>
+    <summary>Sample policy JSON export</summary>
+    <p>
+      CF Access does not natively export policies as JSON files, but you can
+      version-control your policy shape for documentation or Terraform/API
+      migration purposes. The shape below matches the CF Access API.
+    </p>
+    <pre><code>{
+  "name": "Allow admin emails",
+  "decision": "allow",
+  "include": [
+    { "email_domain": { "domain": "yourdomain.com" } }
+  ],
+  "require": [],
+  "exclude": []
+}</code></pre>
+    <p>
+      To use the CF API directly:
+      <code>PUT /accounts/&lt;account_id&gt;/access/apps/&lt;app_id&gt;/policies/&lt;policy_id&gt;</code>
+    </p>
+    <p>
+      For a specific-emails variant:
+    </p>
+    <pre><code>{
+  "name": "Named admin list",
+  "decision": "allow",
+  "include": [
+    { "email": { "email": "admin@yourdomain.com" } },
+    { "email": { "email": "partner@external.com" } }
+  ],
+  "require": [],
+  "exclude": []
+}</code></pre>
+  </details>
+
+  <!-- ── Sign-out ────────────────────────────────────────────── -->
+  <details>
+    <summary>Sign-out</summary>
+    <p>
+      Cloudflare Access provides a built-in logout endpoint that clears the
+      <code>CF_Authorization</code> cookie and invalidates the session.
+    </p>
+    <p>
+      <a href="/cdn-cgi/access/logout">Sign out of this admin session</a>
+    </p>
+    <p>
+      You can also add a sign-out button in your admin nav:
+    </p>
+    <pre><code>&lt;a href="/cdn-cgi/access/logout"&gt;Sign out&lt;/a&gt;</code></pre>
+  </details>
+
+  <!-- ── CF Access JWT identity helper ──────────────────────── -->
+  <script>
+    /**
+     * Reads the signed-in user from the CF Access identity endpoint.
+     * Only works on pages served behind a CF Access Application.
+     * On non-CF environments (localhost dev) it will gracefully show
+     * "Not signed in".
+     */
+    async function getCurrentUser() {
+      const r = await fetch('/cdn-cgi/access/get-identity');
+      if (!r.ok) return null;
+      return r.json();
+    }
+
+    getCurrentUser().then(u => {
+      const el = document.getElementById('cf-current-user');
+      if (u && u.email) {
+        el.textContent = 'Signed in as ' + u.email;
+      } else {
+        el.textContent = 'Not signed in (or running outside CF Access)';
+      }
+    }).catch(() => {
+      document.getElementById('cf-current-user').textContent =
+        'Identity check failed (running locally?)';
+    });
+  </script>
+
+</body>
+</html>

@@ -6,7 +6,7 @@ A methodology archive + interactive dashboard for Derrick Teo's website-building
 
 ## What this is
 
-Five archetype playbooks, nine reusable mechanics, forty-plus pitfalls — compiled from 20+ past projects. Browse as a dashboard, or point Claude at it for your next project.
+Six archetype playbooks, 21 reusable mechanics, forty-plus pitfalls — compiled from 20+ past projects. Browse as a dashboard, or point Claude at it for your next project.
 
 ## Two ways to use
 
@@ -28,8 +28,8 @@ Or via any static server (`npx serve`, `live-server`, etc.).
 
 ## Structure
 
-- `archetypes/` — 5 playbook folders (static-informational, transactional, simulator-educational, game, dashboard-analytics)
-- `mechanics/` — 9 reusable Lego bricks (paynow-qr, localstorage-state, admin-auth-gate, canvas-hero, chartjs-dashboard, pdf-pipeline, wizard-form, multi-page-scaffold, og-social-meta)
+- `archetypes/` — 6 playbook folders (static-informational, transactional, simulator-educational, game, dashboard-analytics, backend-backed-app)
+- `mechanics/` — 21 reusable Lego bricks (paynow-qr, localstorage-state, admin-auth-gate, canvas-hero, chartjs-dashboard, pdf-pipeline, wizard-form, multi-page-scaffold, og-social-meta, og-thumbnail, favicon + 7 v2 mechanics + 2 v2.1 mechanics + 4 v3 mechanics)
 - `dashboard/` — the HTML dashboard (CSS, JS, data, sample gallery)
 - `pitfalls.html` — standalone pitfalls wall (filterable by archetype/severity/phase)
 - `reference/` — dark/light starter templates
@@ -42,8 +42,11 @@ Toggle **Teaching mode** in the top-right nav to show the "why" behind each step
 ## Roadmap
 
 - **v1 (shipped):** breadth — 5 archetypes present, 9 mechanics authored, pitfalls wall, dashboard deployed
-- **v1.5 (next):** depth on static-informational + transactional, card-flip animations, real past-site screenshots
-- **v2 (later):** depth on remaining 3 archetypes, Supabase/Gemini/Streamlit mechanics, trainee account save
+- **v1.5 (shipped):** depth on static-informational + transactional, card-flip animations, real past-site screenshots
+- **v2 (shipped):** 7 new mechanics (intel-consumer, palette-tryout, stitch-bridge, copy-deck, meta-tags-generator, a11y-axe-runner, mobile-test-harness); 7-agent orchestration architecture
+- **v2.1 (shipped):** SEO rigor track — schema-jsonld + semantic-html-audit mechanics
+- **v2.3 (shipped):** 6th archetype backend-backed-app; 4 production-stack mechanics (magic-link-auth-supabase, cf-zero-trust-static-admin, containerized-fastapi-fly, streamlit-cloud-analytics); Supabase + Streamlit mechanics now available
+- **v3 (next):** trainee account save, verify-scoring.py test coverage expansion
 
 ## Contribute
 

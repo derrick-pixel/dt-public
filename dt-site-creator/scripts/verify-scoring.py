@@ -6,7 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DATA = json.loads((ROOT / "dashboard" / "data" / "archetypes.json").read_text())
 
-# 5 test scenarios — each is (description, 4 answer IDs, expected top archetype)
+# 7 test scenarios — each is (description, 4 answer IDs, expected top archetype)
 TESTS = [
     ("Marketing SaaS for dentists",
      ["q1_public", "q2_no_money", "q3_content", "q4_no_data"],
@@ -23,6 +23,12 @@ TESTS = [
     ("Internal plant KPI dashboard",
      ["q1_internal", "q2_no_money", "q3_interaction", "q4_dashboard"],
      "dashboard-analytics"),
+    ("Multi-user training platform with email login and Postgres",
+     ["q1_customers", "q2_recurring", "q3_interaction", "q4_api"],
+     "backend-backed-app"),
+    ("Internal Streamlit dashboard for the ops team",
+     ["q1_internal", "q2_no_money", "q3_interaction", "q4_api"],
+     "backend-backed-app"),
 ]
 
 archetypes = DATA["archetypes"]
