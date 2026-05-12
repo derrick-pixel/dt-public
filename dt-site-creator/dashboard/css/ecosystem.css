@@ -1,0 +1,190 @@
+/* ── ecosystem.css ───────────────────────────────────────────
+   Layered architecture diagram for /ecosystem.html.
+   Scoped under .eco-* classes; inherits color vars from style.css.
+─────────────────────────────────────────────────────────────── */
+
+/* Hero band */
+.eco-hero {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 56px 24px 24px;
+  text-align: center;
+}
+.eco-hero h1 {
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+.eco-tagline {
+  color: rgba(240, 246, 252, 0.7);
+  font-size: 16px;
+  margin: 0 0 28px;
+}
+
+/* Filter pills */
+.eco-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 16px;
+}
+.eco-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--border2);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  font-family: inherit;
+}
+.eco-pill:hover { transform: translateY(-1px); border-color: var(--accent); }
+.eco-pill.active {
+  color: #0d1117;
+  background: var(--pill-color, var(--accent));
+  border-color: var(--pill-color, var(--accent));
+  font-weight: 600;
+}
+
+/* Diagram frame (relative wrapper that holds both the canvas and the absolute SVG) */
+.eco-frame {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+.eco-svg {
+  position: absolute;
+  inset: 24px;
+  width: calc(100% - 48px);
+  height: calc(100% - 48px);
+  pointer-events: none;
+  z-index: 0;
+}
+.eco-canvas {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Layer card */
+.eco-layer {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 24px;
+}
+.eco-layer-label {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.eco-layer-nodes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Node tile */
+.eco-node {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  position: relative;
+  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s, opacity 0.2s;
+  cursor: pointer;
+}
+.eco-node:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: 0 4px 12px rgba(255, 166, 87, 0.15);
+}
+.eco-node-icon { font-size: 18px; line-height: 1; }
+.eco-node-label { white-space: nowrap; }
+
+/* Candidate nodes (dashed border, lower opacity, badge) */
+.eco-node.is-candidate {
+  border-style: dashed;
+  opacity: 0.6;
+}
+.eco-node.is-candidate::after {
+  content: "Candidate";
+  position: absolute;
+  bottom: -7px;
+  right: 8px;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  background: var(--bg);
+  padding: 1px 5px;
+  border: 1px solid var(--border2);
+  border-radius: 3px;
+  opacity: 0.7;
+}
+
+/* Path-filter active state */
+.eco-canvas.has-active-path .eco-node { opacity: 0.3; }
+.eco-canvas.has-active-path .eco-node.is-on-path {
+  opacity: 1;
+  border-color: var(--path-color);
+  box-shadow: 0 0 0 2px var(--path-color), 0 4px 16px color-mix(in oklab, var(--path-color) 30%, transparent);
+}
+.eco-canvas.has-active-path .eco-node.is-on-path.is-candidate { opacity: 1; }
+
+/* Tooltip */
+.eco-tooltip {
+  position: absolute;
+  background: #0d1117;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text);
+  max-width: 280px;
+  pointer-events: none;
+  z-index: 100;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+.eco-tooltip::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 16px;
+  border: 6px solid transparent;
+  border-bottom-color: var(--border2);
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .eco-layer-nodes { gap: 10px; }
+  .eco-node { padding: 8px 12px; font-size: 13px; }
+}
+@media (max-width: 600px) {
+  .eco-frame { padding: 16px; }
+  .eco-svg { display: none; }
+  .eco-canvas { gap: 16px; }
+  .eco-layer { padding: 16px; }
+  .eco-layer-nodes { flex-direction: column; }
+  .eco-node { width: 100%; justify-content: flex-start; }
+}

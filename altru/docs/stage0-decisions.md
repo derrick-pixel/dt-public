@@ -1,6 +1,6 @@
 # Altru · Stage 0 Decisions Doc
 
-**Prepared for:** Derrick Teo, Founder · **Date:** 11 May 2026 · **Status:** Draft for sign-off
+**Prepared for:** Derrick Teo, Founder · **Date:** 11 May 2026 (last revised) · **Status:** Founder-confirmed, in execution
 
 These are the foundational decisions that gate every other piece of work on altru.asia. Until each of these is settled, downstream work (charity contract execution, tech build, marketing) risks rework.
 
@@ -8,18 +8,37 @@ These are the foundational decisions that gate every other piece of work on altr
 
 ---
 
+## 0 · Status snapshot (revised 11 May 2026)
+
+| # | Item | Status | Note |
+|---|---|---|---|
+| 1 | Pte Ltd incorporation | **✅ Done** | Altru Asia Pte Ltd registered. UEN to be filled here once available: `[UEN]`. |
+| 2 | Corporate banking | ⏳ In progress | Application being submitted; aiming for primary at DBS BusinessFirst. |
+| 3 | Payments architecture | **HitPay** (founder-chosen, overrides original Stripe Connect recommendation) | See revised Section 5 — different MAS posture; lawyer brief drafted in `/docs/payments-lawyer-brief.md`. |
+| 4 | Backend stack | Cloudflare Workers + D1 + Workers Cron | Stage 2 build. |
+| 5 | Couple auth | Passwordless magic link | Stage 2 build. |
+| 6 | DPO | **✅ Done** | Held at group level. Working email `dpo@altru.asia` → group DPO inbox via Cloudflare Email Routing. |
+| 7 | Accountant | ⏳ To engage | Brief drafted in Section 12. |
+| 8 | Transactional email | Resend or Postmark | Stage 2 build. |
+| 9 | Error tracking | Sentry (free tier) | Stage 2 build. |
+| 10 | Insurance | ⏳ To quote | PI + cyber-liability; targeting S$1–2M cover. |
+
+The remaining hot items this week: **banking (close it), payments-lawyer engagement (send the brief), insurance (request quotes), accountant (engage).** Everything else flows from those.
+
+---
+
 ## 1 · Summary — One Line Per Decision
 
-| # | Decision | Recommended | Why |
+| # | Decision | Selected | Why |
 |---|---|---|---|
-| 1 | Legal entity | **Singapore Pte Ltd** | Standard, signable, IPC partners will expect it. |
-| 2 | Incorporation route | **Sleek or Osome** (corporate services SaaS) | Fast (~1 week), all-in-one with company secretary, ~S$500–1,500/yr. |
-| 3 | Corporate banking | **DBS BusinessFirst** (primary) + **Wise Business** (operating buffer) | DBS gives the credibility a regulated counterparty wants; Wise gives speed. |
-| 4 | Payments architecture | **Stripe Connect Custom** (initial) | Holds funds up to 90 days (covers the 14-day window), licensed under MAS, refunds and payouts are API-driven. |
-| 5 | Backend stack | **Cloudflare Workers + D1 + Workers Cron** | Same vendor as today, generous free tier, edge-deployed, one bill. |
+| 1 | Legal entity | **Altru Asia Pte Ltd** (incorporated) | Standard, signable, IPC partners expect it. |
+| 2 | Incorporation route | **Done** | (Historic note: Sleek / Osome / equivalent.) |
+| 3 | Corporate banking | **DBS BusinessFirst** (primary, in application) | Credibility a regulated counterparty wants. |
+| 4 | Payments architecture | **HitPay Payment Solutions** | Singapore-native, MAS-licensed PSP, low PayNow fees (~0.8%). See Section 5 for MAS posture caveats. |
+| 5 | Backend stack | **Cloudflare Workers + D1 + Workers Cron** | Same vendor as today, generous free tier, edge-deployed. |
 | 6 | Couple auth | **Passwordless magic link** (email) | Lightest, no passwords, no Singpass integration cost. |
 | 7 | Donor auth | **No account** — single-use PayNow + idempotent reference | Lowest friction; matches wedding-guest mental model. |
-| 8 | DPO | **You** at launch, formalise later | PDPA requires the role; not the person. Document the appointment. |
+| 8 | DPO | **Group DPO** (`dpo@altru.asia` → group inbox) | Already in place; PDPA programme documented at `/docs/pdpa-programme.md`. |
 | 9 | Transactional email | **Resend** or **Postmark** | Reliable, Workers-friendly SDKs, low cost at our scale. |
 | 10 | Error tracking | **Sentry** (free tier) | Industry standard; integrates with Workers. |
 
@@ -89,40 +108,52 @@ The escrow holding (the 14-day couple-authorisation window) lives inside Stripe 
 
 ---
 
-## 5 · Decision 4 — Payments Architecture
+## 5 · Decision 4 — Payments Architecture (HitPay)
 
-This is the highest-stakes Stage 0 decision because it determines MAS regulatory posture, the refund mechanic, reconciliation work, and per-transaction economics.
+**Selected: HitPay Payment Solutions Pte Ltd as Altru's payment service provider.**
 
-### The three viable paths
+HitPay is a MAS-licensed Major Payment Institution, Singapore-native, with strong PayNow economics (~0.8% per transaction) and a clean merchant onboarding flow. The choice is sound; the **caveat** is that HitPay's standard payout cycle (T+1 / T+2) does not by itself implement a 14-day escrow window — the escrow has to live somewhere, and that "somewhere" is what determines our MAS posture.
 
-| Path | How it works | MAS posture | Per-gift cost | Effort | Holds funds? |
-|---|---|---|---|---|---|
-| **A. Stripe Connect Custom (recommended)** | Guest pays Altru's Stripe account via PayNow; funds sit in Stripe balance up to 90 days; on couple authorisation, payout to charity UEN; on non-authorisation, refund | None — Stripe SG is a Major Payment Institution licensed by MAS; you are their merchant | ~3.4% + S$0.50 (cards) / ~0.8% + S$0.50 (PayNow) | Medium — API integration, accounts for each charity | Yes, up to 90 days |
-| **B. HitPay** | Similar shape, Singapore-native, simpler UI, fewer escrow controls | None — HitPay is also MAS-licensed | ~2% PayNow | Lower than Stripe | Payout T+1 default; manual hold via merchant settings, harder to do at scale |
-| **C. Direct PayNow Corporate + own escrow bank account** | You receive PayNow into a dedicated DBS account, manually reconcile, manually trigger transfers + refunds | **You** may be a "domestic money transfer service" under MAS Payment Services Act — needs licensing or exemption | Bank fees only (close to zero variable cost) | High — manual reconciliation, refund flows, audit | Yes, indefinitely |
+### The fund-flow shape we will operate
 
-### Recommendation: Path A (Stripe Connect Custom)
+1. Guest pays via PayNow → HitPay merchant balance.
+2. HitPay pays out T+1 / T+2 → **Altru's DBS escrow account** (segregated from operating funds).
+3. The funds rest in the DBS escrow account for the remainder of the 14-day couple-authorisation window.
+4. On couple authorisation → Altru transfers the charity-portion to the charity's PayNow-UEN.
+5. On non-authorisation by day 14 → Altru triggers a full refund via HitPay's refund API back to the guest.
+6. The guest also retains a unilateral right of refund during the window.
 
-**Why:**
-1. **Removes the MAS licensing question entirely** — you're a merchant on Stripe SG, not a money-transfer service. This is the single biggest regulatory simplification available.
-2. **The 14-day escrow window fits inside Stripe's 90-day hold ceiling.** You can hold funds in your Stripe balance until the couple authorises, then trigger a payout to the charity's external bank account.
-3. **Refunds are first-class.** API-driven, full audit trail, handles chargeback flow.
-4. **Reconciliation reports are built in** — feeds the monthly remittance statement you promised charity finance teams (see /charities/escrow).
-5. **Charity UEN payouts.** Stripe Connect allows "External Account" payouts to Singapore bank accounts (or directly to UENs via PayNow when Stripe SG supports it).
+### Why this triggers an MAS posture question
 
-**The cost:** ~3.4% on cards. If most gifts are PayNow (~0.8%), the blended fee on each gift is roughly the same as your 5% platform fee. Two options:
-- Absorb it into the 5% (Altru's fee is gross; Stripe is COGS) — preserves the marketing message but compresses margin.
-- Pass it through (charity sees a 5% Altru fee + Stripe fee separately) — clearer but tells two stories.
+Because step 3 has Altru holding customer funds in its own bank account for up to 14 days, **Altru's role may meet the PSA s.2 definition of a "domestic money transfer service"** even though HitPay does the front-end processing. This is the single highest-stakes legal question to settle before launch.
 
-I lean **absorb** at launch; revisit once volume creates pricing power.
+**Mitigations on the table:**
+- The PSA's small-scale exemption likely covers Altru's first-year volume (forecast below S$3M).
+- Restructuring the flow so the charity portion is paid out directly from HitPay to the charity UEN (with the 14-day window enforced inside HitPay's refund window) would cleanly remove the question.
+- A standard PI or major PI licence is a fallback, but heavy and not justified at our scale.
 
-### What you'd switch to later (revisit at scale)
-Once volume justifies it (~S$300K+/month routed), revisit **Path C** with proper MAS licensing or a confirmed exemption letter. Cuts variable cost dramatically.
+### Action item: payments-lawyer brief is drafted
+
+A paste-ready brief asking Singapore payments counsel to settle this question — including the exemption analysis and the alternative-structure question — is at **`/docs/payments-lawyer-brief.md`**. Estimated lawyer time: ~1 hour, ~S$300–600. Send it this week.
+
+### Per-gift economics
+
+HitPay PayNow rate is ~0.8%. On a S$200 gift with 50/50 split, the platform fee position is:
+- 5% on the charity portion (S$100) = S$5 invoiced to the charity
+- HitPay fee on the gross (~S$1.60) is absorbed by Altru as COGS
+- Net Altru margin on this gift ≈ S$3.40 after PSP fee, before other operating costs
+
+This is healthier than the Stripe scenario, and the "100% to charity in gross" marketing line remains intact.
+
+### What's still uncertain
+
+- Whether HitPay supports a clean **payment-splitting** flow (one PayNow tap → fork at HitPay between charity UEN and Altru escrow) that would let us avoid the 14-day-hold-on-Altru's-books problem. This requires a conversation with HitPay sales / integration.
+- Whether the small-scale PSA exemption is a self-assessment or requires written confirmation. Lawyer brief covers this.
 
 ### What I need from you to proceed
-- Confirm "Stripe Connect Custom" as the chosen architecture, or push back.
-- Decide pass-through vs absorbed fee economics.
-- I'll spec the integration in Stage 2.
+
+- Status update on HitPay merchant application (will go in here once confirmed): `[ ] account created  [ ] under review  [ ] live`
+- Send the payments-lawyer brief this week (or assign to legal).
 
 ---
 
@@ -167,12 +198,14 @@ Once volume justifies it (~S$300K+/month routed), revisit **Path C** with proper
 
 ## 8 · Decision 7 — DPO & Compliance Roles
 
-**Recommendation: Derrick acts as DPO at launch, formalised in a one-page appointment letter signed by the company.**
+**Decided: the group-level DPO covers Altru.**
 
-- PDPA requires the *role* to be filled; it does not require a third-party DPO.
-- Set up `dpo@altru.asia` (Cloudflare Email Routing → your inbox, free).
-- Write a one-page Data Protection Policy (template available from PDPC website).
-- Reassign once Altru has > 5 employees or a dedicated compliance hire.
+- The role is filled at the parent-group level; no separate appointment is required for Altru Asia Pte Ltd at this stage.
+- Working email `dpo@altru.asia` is routed via Cloudflare Email Routing to the group DPO inbox.
+- Full programme (data inventory, retention schedule, breach runbook, contact card) is documented at **`/docs/pdpa-programme.md`**.
+- Annual review and tabletop exercise scheduled in the programme.
+
+To complete this item: confirm the group DPO's name and group-level appointment letter is on file, and update the PDPA programme's contact card with their mobile.
 
 ---
 
@@ -264,13 +297,16 @@ Special items to flag:
 
 ---
 
-## 13 · Open Questions for You to Verify
+## 13 · Open Questions — Status
 
-1. **PSA exemption**: Even with Stripe in the middle, confirm with a Singapore payments lawyer (or via MAS directly) that Altru's role as orchestrator does not by itself require a PSA licence. Estimated 1 hour of legal time, ~S$300.
-2. **IRAS receipt mechanic**: Confirm directly with IRAS that "couple is named donor; charity issues receipt to couple" is the correct posture for this wedding-giving structure. Get the answer in writing.
-3. **Cyber-liability minimum cover**: PFA cl.6.2 requires "commercially appropriate" insurance. Get the SCS-equivalent expectation in writing — typically S$1M minimum, possibly S$2M.
-4. **Nominee director**: Only relevant if you are not a Singapore resident. If you are, skip.
-5. **Pass-through vs absorbed Stripe fee**: My recommendation is absorb; you may have a stronger view on the marketing implications.
+| # | Question | Status | Artefact |
+|---|---|---|---|
+| 1 | PSA posture under HitPay-merchant pattern with Altru-held escrow | **Brief drafted, awaiting send to counsel** | `/docs/payments-lawyer-brief.md` |
+| 2 | IRAS confirmation of couple-as-named-donor receipt mechanic | **Letter drafted, awaiting send to IRAS** | `/docs/iras-clarification-letter.md` |
+| 3 | Cyber-liability minimum cover for PFA compliance | ⏳ To be quoted | (target S$1–2M, request quotes from Lockton / Howden / Tokio Marine) |
+| 4 | Nominee director | ✅ Moot (Derrick is Singapore-resident) | — |
+| 5 | Pass-through vs absorbed PSP fee | ✅ Decided: absorb at launch | (Section 5 above; preserves the "100% to charity in gross" marketing line) |
+| 6 | HitPay payment-splitting capability | ⏳ To clarify with HitPay sales | (would simplify the MAS question if available) |
 
 ---
 
