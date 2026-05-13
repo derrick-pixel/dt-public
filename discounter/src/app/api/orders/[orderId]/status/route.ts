@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { TENANT } from '@/lib/tenant'
 
 export async function GET(
   _req: NextRequest,
@@ -11,6 +12,7 @@ export async function GET(
   const { data, error } = await supabase
     .from('orders')
     .select('id, status, payment_status')
+    .eq('tenant', TENANT)
     .eq('id', orderId)
     .single()
 

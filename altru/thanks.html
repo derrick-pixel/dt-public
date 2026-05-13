@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; script-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="robots" content="noindex" />
+  <title>Thank you — Altru</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <style>
+    .thanks-hero { background:linear-gradient(135deg,#3D0812,#C8102E); color:white; padding:4rem 1.5rem 3rem; text-align:center; }
+    .thanks-hero h1 { color:white; }
+    .thanks-hero p { color:rgba(255,255,255,0.85); margin:0 auto; max-width:520px; }
+    .receipt { background:white; border-radius:var(--radius); padding:1.75rem; box-shadow:0 6px 22px rgba(0,0,0,0.06); margin:2rem auto; max-width:540px; }
+    .receipt h3 { color:var(--red); margin:0 0 0.75rem; }
+    .receipt-row { display:flex; justify-content:space-between; padding:0.5rem 0; border-bottom:1px dashed var(--red-light); font-size:0.95rem; }
+    .receipt-row:last-child { border-bottom:0; }
+    .receipt-row .label { color:var(--text-muted); }
+    .receipt-row .value { font-weight:700; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <img src="altru-logo.jpg" alt="Altru" class="logo-img" width="1280" height="1280">
+        Altru
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <section class="thanks-hero">
+      <div class="container">
+        <h1>🧧 Thank you for your gift</h1>
+        <p>Your gift is in Altru's escrow. The couple has 14 days to authorise release; if they don't, you'll be refunded automatically.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="receipt" id="receipt" style="display:none;">
+          <h3>Gift summary</h3>
+          <div class="receipt-row"><span class="label">Reference</span><span class="value" id="r-ref"></span></div>
+          <div class="receipt-row"><span class="label">Amount</span><span class="value" id="r-amount"></span></div>
+          <div class="receipt-row"><span class="label">To charity</span><span class="value" id="r-charity"></span></div>
+          <div class="receipt-row"><span class="label">To couple</span><span class="value" id="r-personal"></span></div>
+          <div class="receipt-row"><span class="label">Status</span><span class="value" id="r-state"></span></div>
+        </div>
+        <p style="text-align:center;font-size:0.9rem;color:var(--text-muted);max-width:540px;margin:0 auto 1rem;" id="emailNote">If you provided an email, a confirmation with a 14-day refund link is on its way.</p>
+        <p style="text-align:center;"><a href="index.html" class="btn btn-outline">Return home</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>囍 Altru &nbsp;|&nbsp;
+        <a href="charities.html">Charities</a> &nbsp;·&nbsp;
+        <a href="privacy.html">Privacy</a> &nbsp;·&nbsp;
+        <a href="terms.html">Terms</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    const params = new URLSearchParams(window.location.search);
+    const giftId = params.get('g') || params.get('reference');
+    if (!giftId) return;
+    fetch(`/api/gift/${encodeURIComponent(giftId)}`).then(r => r.json()).then(data => {
+      const g = data.gift;
+      if (!g) return;
+      const fmt = (cents) => 'S$' + (cents / 100).toFixed(2);
+      const charityCents = g.gift_amount_cents - g.personal_portion_cents;
+      document.getElementById('r-ref').textContent = giftId.substring(0, 8);
+      document.getElementById('r-amount').textContent = fmt(g.gift_amount_cents);
+      document.getElementById('r-charity').textContent = fmt(charityCents);
+      document.getElementById('r-personal').textContent = fmt(g.personal_portion_cents);
+      const stateLabel = g.payment_succeeded_at
+        ? 'Confirmed · awaiting couple authorisation'
+        : 'Awaiting payment confirmation';
+      document.getElementById('r-state').textContent = stateLabel;
+      document.getElementById('receipt').style.display = '';
+    }).catch(() => { /* silent */ });
+  })();
+  </script>
+</body>
+</html>

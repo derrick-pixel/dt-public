@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { formatSGD, getWeekCutoffDate } from '@/lib/utils/order'
+import { TENANT } from '@/lib/tenant'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { format } from 'date-fns'
@@ -25,6 +26,7 @@ export default async function AdminOrdersPage() {
       dormitory:dormitories(name),
       user:users(full_name, phone)
     `)
+    .eq('tenant', TENANT)
     .eq('week_cutoff', weekCutoff)
     .order('created_at', { ascending: false })
 

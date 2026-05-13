@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { formatSGD, getWeekCutoffDate } from '@/lib/utils/order'
+import { TENANT } from '@/lib/tenant'
 import { ShoppingBag, Package, DollarSign, Users } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import SeedButton from './SeedButton'
@@ -9,8 +10,8 @@ export default async function AdminDashboard() {
   const weekCutoff = getWeekCutoffDate()
 
   const [ordersRes, productsRes, usersRes] = await Promise.all([
-    supabase.from('orders').select('id, total_amount, payment_status').eq('week_cutoff', weekCutoff),
-    supabase.from('products').select('id, stock_qty').eq('is_active', true),
+    supabase.from('orders').select('id, total_amount, payment_status').eq('tenant', TENANT).eq('week_cutoff', weekCutoff),
+    supabase.from('products').select('id, stock_qty').eq('tenant', TENANT).eq('is_active', true),
     supabase.from('users').select('id').eq('role', 'customer'),
   ])
 

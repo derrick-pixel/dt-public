@@ -3,6 +3,7 @@ import QRCode from 'qrcode'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getWeekCutoffDate } from '@/lib/utils/order'
 import { buildPayNowQRString, buildPaymentRef } from '@/lib/utils/paynow'
+import { TENANT } from '@/lib/tenant'
 
 const PAYNOW_MOBILE = process.env.PAYNOW_MOBILE ?? '83638499'
 
@@ -62,6 +63,7 @@ export async function POST(req: NextRequest) {
     const { data: products, error: prodError } = await supabase
       .from('products')
       .select('id, name, sale_price, stock_qty, is_active')
+      .eq('tenant', TENANT)
       .in('id', productIds)
 
     if (prodError || !products) {
@@ -126,6 +128,7 @@ export async function POST(req: NextRequest) {
     const { data: order, error: orderError } = await supabase
       .from('orders')
       .insert({
+        tenant: TENANT,
         user_id: userId,
         dormitory_id: dormitoryId,
         total_amount: verifiedTotalAmount,
@@ -163,7 +166,7 @@ export async function POST(req: NextRequest) {
       })
       if (stockError) {
         // Stock was depleted between validation and decrement — cancel the order
-        await supabase.from('orders').update({ status: 'cancelled' }).eq('id', order.id)
+        await supabase.from('orders').update({ status: 'cancelled' }).eq('id', order.id).eq('tenant', TENANT)
         return NextResponse.json(
           { error: `Insufficient stock. Please refresh and try again.` },
           { status: 409 }

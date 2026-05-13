@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { createClient } from '@/lib/supabase/client'
 import { calcDiscountPct } from '@/lib/utils/order'
+import { TENANT } from '@/lib/tenant'
 import { toast } from 'sonner'
 import { Category } from '@/lib/types'
 
@@ -78,6 +79,7 @@ export default function NewProductPage() {
       }
 
       const { error } = await supabase.from('products').insert({
+        tenant: TENANT,
         name: form.name,
         description: form.description || null,
         category: form.category,

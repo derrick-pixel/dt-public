@@ -8,6 +8,7 @@ import ProductCard from '@/components/products/ProductCard'
 import CategoryFilter from '@/components/products/CategoryFilter'
 import { createClient } from '@/lib/supabase/client'
 import { Product, Category } from '@/lib/types'
+import { TENANT } from '@/lib/tenant'
 
 export default function StorePage() {
   const [products, setProducts] = useState<Product[]>([])
@@ -21,6 +22,7 @@ export default function StorePage() {
     supabase
       .from('products')
       .select('*')
+      .eq('tenant', TENANT)
       .eq('is_active', true)
       .gt('stock_qty', 0)
       .order('discount_pct', { ascending: false })

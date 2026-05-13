@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { TENANT } from '@/lib/tenant'
 
 export async function POST(req: NextRequest) {
   try {
@@ -28,6 +29,7 @@ export async function POST(req: NextRequest) {
         dormitory:dormitories(name),
         order_items(quantity, unit_price, product:products(name))
       `)
+      .eq('tenant', TENANT)
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
 

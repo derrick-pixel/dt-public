@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
+import { TENANT } from '@/lib/tenant'
 
 export default function MarkPaidButton({ orderId }: { orderId: string }) {
   const [loading, setLoading] = useState(false)
@@ -18,6 +19,7 @@ export default function MarkPaidButton({ orderId }: { orderId: string }) {
         .from('orders')
         .update({ payment_status: 'paid', status: 'paid' })
         .eq('id', orderId)
+        .eq('tenant', TENANT)
 
       if (error) throw error
       toast.success('Order marked as paid')

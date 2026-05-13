@@ -1,12 +1,15 @@
 // Elitez ESOP — Annual Trading Window (Clause 8 / 2026 Info Rule).
 // Holders: see current window, submit bid/ask, view history.
 // Admin: open/close windows, toggle ROFR, run clearing, inspect trades.
-(function () {
+(async function () {
   const { renderTopbar, renderFooter, requireSession, el } = window.ESOPApp;
   const C = window.ESOPCalc;
   const Store = window.ESOPStore;
   const Committee = window.ESOPCommittee;
   const { fmt } = C;
+
+  if (window.ESOPAuth && window.ESOPAuth.ready) await window.ESOPAuth.ready();
+  if (window.ESOPStore && window.ESOPStore.init) await window.ESOPStore.init();
 
   renderTopbar("trading");
   const session = requireSession();

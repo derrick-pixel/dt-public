@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { formatSGD, expiryLabel, expiryUrgency } from '@/lib/utils/order'
+import { TENANT } from '@/lib/tenant'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
@@ -11,6 +12,7 @@ export default async function AdminProductsPage() {
   const { data: products } = await supabase
     .from('products')
     .select('*')
+    .eq('tenant', TENANT)
     .order('created_at', { ascending: false })
 
   const urgencyStyle = {

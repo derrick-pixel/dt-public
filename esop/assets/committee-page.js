@@ -1,5 +1,5 @@
 // Committee dashboard page controller.
-(function () {
+(async function () {
   const { renderTopbar, renderFooter, requireSession, el } = window.ESOPApp;
   const C = window.ESOPCalc;
   const D = window.ESOP_DATA;
@@ -7,6 +7,9 @@
   const Committee = window.ESOPCommittee;
   const Auth = window.ESOPAuth;
   const { fmt } = C;
+
+  if (window.ESOPAuth && window.ESOPAuth.ready) await window.ESOPAuth.ready();
+  if (window.ESOPStore && window.ESOPStore.init) await window.ESOPStore.init();
 
   // Governance lives under the unified Administrator console — show the main
   // nav with "Administrator" active, then the sub-tab strip with Governance.

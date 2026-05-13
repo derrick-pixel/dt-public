@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { formatSGD, getWeekCutoffDate } from '@/lib/utils/order'
+import { TENANT } from '@/lib/tenant'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 
@@ -34,6 +35,7 @@ export default async function DeliveryPage() {
       user:users(full_name, phone),
       order_items(quantity, unit_price, product:products(name))
     `)
+    .eq('tenant', TENANT)
     .eq('week_cutoff', weekCutoff)
     .eq('payment_status', 'paid')
 

@@ -1,9 +1,12 @@
 // Employee portal — personalised view for a specific holder.
-(function () {
+(async function () {
   const { renderTopbar, renderFooter, requireSession, el } = window.ESOPApp;
   const C = window.ESOPCalc;
   const D = window.ESOP_DATA;
   const { fmt } = C;
+
+  if (window.ESOPAuth && window.ESOPAuth.ready) await window.ESOPAuth.ready();
+  if (window.ESOPStore && window.ESOPStore.init) await window.ESOPStore.init();
 
   renderTopbar("portal");
   const session = requireSession();

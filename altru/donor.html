@@ -176,7 +176,21 @@
             </div>
           </div>
 
-          <button class="btn btn-primary btn-full" onclick="goStep(2)">
+          <!-- Charities Act disclosure (required for commercial fund-raisers) -->
+          <div style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;padding:0.85rem 1rem;margin-bottom:1rem;font-size:0.82rem;line-height:1.5;color:#78350F;">
+            <strong>Disclosure (Charities Act 1994):</strong> Altru Asia Pte Ltd is a <strong>commercial fund-raiser</strong> registered under the Singapore Charities Act. The charity amount is paid in full and directly to your chosen IPC charity. Altru charges the charity a separate 5% platform fee — this is <strong>not</strong> deducted from your donation.
+          </div>
+
+          <!-- PDPA consent checkbox (required before collecting personal data in Step 3) -->
+          <div style="background:#F0FDF4;border:1px solid #86EFAC;border-radius:8px;padding:0.85rem 1rem;margin-bottom:1rem;">
+            <label style="display:flex;gap:0.6rem;align-items:flex-start;cursor:pointer;font-size:0.88rem;line-height:1.5;color:#166534;">
+              <input type="checkbox" id="donorPdpaConsent" style="margin-top:3px;flex-shrink:0;accent-color:#16A34A;" />
+              <span>I consent to Altru collecting my name, email and mobile for gift processing, and agree to the <a href="privacy.html" target="_blank" style="color:#166534;font-weight:700;">Privacy Policy</a> and <a href="terms.html" target="_blank" style="color:#166534;font-weight:700;">Terms of Service</a>.</span>
+            </label>
+            <div id="err-pdpa" style="display:none;color:#DC2626;font-size:0.82rem;margin-top:0.4rem;padding-left:1.4rem;">Please accept the privacy policy and terms to continue.</div>
+          </div>
+
+          <button class="btn btn-primary btn-full" onclick="goStep2WithConsent()">
             Continue → Choose Charity
           </button>
         </div>
@@ -188,7 +202,7 @@
           <h2 class="h-card" style="margin:0;color:var(--red);font-size:clamp(1.15rem,2.5vw,1.4rem);">🏛️ Step 2 — Choose an IPC Charity</h2>
         </div>
         <div class="card-body">
-          <p class="mb-3">All charities below are IPC-registered. Donations qualify for <a href="https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-reliefs-rebates-and-deductions/deductions-on-donations" target="_blank" rel="noopener" style="color:var(--red);font-weight:700;">250% tax deduction</a> in Singapore.</p>
+          <p class="mb-3">All charities below are IPC-registered in Singapore. Donations are paid <strong>directly and in full</strong> to the charity. Altru's 5% fee is charged separately to the charity. Donations qualify for <a href="https://www.iras.gov.sg/taxes/individual-income-tax/basics-of-individual-income-tax/tax-reliefs-rebates-and-deductions/deductions-on-donations" target="_blank" rel="noopener" style="color:var(--red);font-weight:700;">250% IRAS tax deduction</a>.</p>
           <div class="charity-grid" id="charityList"></div>
           <div class="form-error mt-2" id="err-charity" style="display:none;">Please select a charity.</div>
           <div style="display:flex;gap:1rem;margin-top:1.5rem;">
@@ -226,8 +240,8 @@
             </div>
           </div>
 
-          <div class="alert alert-warning">
-            🔒 Your personal information is used only for gift tracking and tax receipt purposes. It is never shared publicly.
+          <div class="alert alert-warning" style="font-size:0.85rem;">
+            🔒 Your name and email are used only for gift tracking and to send you a receipt. Your data is processed under our <a href="privacy.html" target="_blank" style="color:inherit;font-weight:700;">Privacy Policy</a>. You may request deletion at any time at <a href="privacy.html#dsr" target="_blank" style="color:inherit;font-weight:700;">altru.asia/privacy</a>.
           </div>
 
           <div style="display:flex;gap:1rem;margin-top:1.5rem;">
@@ -526,6 +540,19 @@
       if (el) el.style.display = show ? 'block' : 'none';
     }
     function val(id) { return (document.getElementById(id)?.value || '').trim(); }
+
+    /* ── PDPA consent gate for Step 1 → Step 2 ── */
+    function goStep2WithConsent() {
+      const consent = document.getElementById('donorPdpaConsent');
+      const errEl   = document.getElementById('err-pdpa');
+      if (!consent.checked) {
+        errEl.style.display = 'block';
+        consent.closest('div').style.borderColor = '#FCA5A5';
+        return;
+      }
+      errEl.style.display = 'none';
+      goStep(2);
+    }
 
     /* ── Step Navigation ── */
     function goStep(n) {

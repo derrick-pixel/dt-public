@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import ProductCard from '@/components/products/ProductCard'
 import { createClient } from '@/lib/supabase/client'
 import { Product } from '@/lib/types'
+import { TENANT } from '@/lib/tenant'
 
 /**
  * Hidden page at /out-of-stock. Not linked from navigation. Shows legacy SKUs
@@ -23,6 +24,7 @@ export default function OutOfStockPage() {
     supabase
       .from('products')
       .select('*')
+      .eq('tenant', TENANT)
       .eq('is_active', true)
       .eq('stock_qty', 0)
       .order('name', { ascending: true })

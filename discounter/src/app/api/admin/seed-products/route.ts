@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
+import { TENANT } from '@/lib/tenant'
 
 // Seed data — must stay in lock-step with supabase/seed.sql.
 //
@@ -201,15 +202,15 @@ export async function POST() {
 
   const supabase = createAdminClient()
 
-  // Check if already seeded
-  const { count } = await supabase.from('products').select('*', { count: 'exact', head: true })
+  // Check if already seeded (scoped to this tenant)
+  const { count } = await supabase.from('products').select('*', { count: 'exact', head: true }).eq('tenant', TENANT)
   if ((count ?? 0) > 0) {
     return NextResponse.json({ error: 'Products already seeded. Delete existing products first.' }, { status: 409 })
   }
 
   const { error, data } = await supabase
     .from('products')
-    .insert(SEED_PRODUCTS.map((p) => ({ ...p, is_active: true })))
+    .insert(SEED_PRODUCTS.map((p) => ({ ...p, is_active: true, tenant: TENANT })))
     .select('id')
 
   if (error) {
