@@ -256,6 +256,54 @@
       .trim();
   }
 
+  // ── Auth-gated prompt reveal ──────────────────────────────
+  // Shows a summary + "Reveal" button when user is not signed in.
+  // Called by rerender() whenever state changes (archetype, mechanics, description).
+  function renderPromptPlaceholder() {
+    const promptEl = document.getElementById('assembled-prompt');
+    const contextEl = document.getElementById('context-pack');
+
+    if (!state.archetypeId) {
+      promptEl.textContent = 'Pick an archetype to generate the prompt…';
+      contextEl.textContent = '—';
+      return;
+    }
+
+    const arch = archetypes.find(a => a.id === state.archetypeId);
+    if (!arch) return;
+
+    const mechCount = state.mechanicIds.length;
+    const descPreview = state.projectDescription
+      ? state.projectDescription.trim().slice(0, 80) + (state.projectDescription.length > 80 ? '…' : '')
+      : '(no description yet)';
+
+    // Build the placeholder node
+    const placeholder = document.createElement('div');
+    placeholder.className = 'assembled-prompt-gate';
+
+    const summary = document.createElement('p');
+    summary.className = 'assembled-prompt-gate__summary';
+    summary.textContent =
+      'Archetype: ' + arch.name + ' · ' +
+      mechCount + ' mechanic' + (mechCount !== 1 ? 's' : '') + ' selected · ' +
+      'Project: ' + descPreview;
+    placeholder.appendChild(summary);
+
+    const revealBtn = document.createElement('button');
+    revealBtn.className = 'btn-primary';
+    revealBtn.type = 'button';
+    revealBtn.textContent = 'Reveal full prompt (sign in)';
+    revealBtn.addEventListener('click', function() {
+      window.dtsAuth.requireAuthThen(function() {
+        renderAssembledPrompt();
+      });
+    });
+    placeholder.appendChild(revealBtn);
+
+    promptEl.replaceChildren(placeholder);
+    contextEl.textContent = '—';
+  }
+
   async function renderAssembledPrompt() {
     const promptEl = document.getElementById('assembled-prompt');
     const contextEl = document.getElementById('context-pack');
@@ -404,10 +452,16 @@
   }
 
   // ── Re-render everything on state change ──────────────────
+  // Full prompt is NOT auto-rendered — only a summary + auth gate is shown.
+  // renderAssembledPrompt() is called explicitly after auth succeeds.
   async function rerender() {
     renderSelectedArchetype();
     renderSelectedMechanics();
-    await renderAssembledPrompt();
+    if (window.dtsAuth && window.dtsAuth.isSignedIn()) {
+      await renderAssembledPrompt();
+    } else {
+      renderPromptPlaceholder();
+    }
   }
 
   // ── Wire inputs ───────────────────────────────────────────

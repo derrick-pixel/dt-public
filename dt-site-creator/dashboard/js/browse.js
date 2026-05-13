@@ -459,9 +459,11 @@
     readmeLink.textContent = 'Full README →';
     readmeLink.addEventListener('click', (ev) => {
       ev.preventDefault();
-      openDocModal({
-        title: mechanic.name + ' — README',
-        path: 'mechanics/' + mechanic.id + '/README.md'
+      window.dtsAuth.requireAuthThen(function() {
+        openDocModal({
+          title: mechanic.name + ' — README',
+          path: 'mechanics/' + mechanic.id + '/README.md'
+        });
       });
     });
     actions.appendChild(readmeLink);
@@ -489,14 +491,18 @@
     }
 
     toggleBtn.addEventListener('click', async () => {
-      await loadSnippetOnce();
-      card.classList.toggle('expanded');
-      toggleBtn.textContent = card.classList.contains('expanded') ? 'Hide snippet ▴' : 'Show snippet ▾';
+      window.dtsAuth.requireAuthThen(async function() {
+        await loadSnippetOnce();
+        card.classList.toggle('expanded');
+        toggleBtn.textContent = card.classList.contains('expanded') ? 'Hide snippet ▴' : 'Show snippet ▾';
+      });
     });
 
     copyBtn.addEventListener('click', async () => {
-      const body = await loadSnippetOnce();
-      copyToClipboard(body, 'Copied snippet for ' + mechanic.name + ' ✓');
+      window.dtsAuth.requireAuthThen(async function() {
+        const body = await loadSnippetOnce();
+        copyToClipboard(body, 'Copied snippet for ' + mechanic.name + ' ✓');
+      });
     });
 
     return card;
