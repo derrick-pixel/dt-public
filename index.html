@@ -489,7 +489,7 @@
       display: flex; flex-direction: column;
       background: var(--card);
       border: 1px solid var(--border);
-      border-left: 2px solid var(--stark);   /* thin Stark-red trim */
+      border-left: 1.6px solid var(--stark); /* thin Stark-red trim (20% thinner than 2px) */
       border-radius: 8px;
       padding: 10px;
       position: relative; overflow: hidden;
@@ -530,7 +530,7 @@
     .project-card::before {
       content: ''; position: absolute; inset: 0;
       border-radius: 8px;
-      padding: 1.5px;
+      padding: 2px;          /* racing neon thickness (30% thicker than 1.5px) */
       background: conic-gradient(
         from var(--rl-angle),
         transparent 0deg,
@@ -555,9 +555,38 @@
     @keyframes card-race {
       to { --rl-angle: 360deg; }
     }
+
+    /* Racing neon on the intel pill too — synced to the card's hover */
+    .pc-platform.plat-intel { position: relative; }
+    .pc-platform.plat-intel::before {
+      content: ''; position: absolute; inset: 0;
+      border-radius: 100px;     /* match pill shape */
+      padding: 1.6px;
+      background: conic-gradient(
+        from var(--rl-angle),
+        transparent 0deg,
+        transparent 250deg,
+        var(--accent) 290deg,
+        var(--accent2) 320deg,
+        var(--accent) 350deg,
+        transparent 360deg
+      );
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s ease;
+      animation: card-race 2.4s linear infinite;
+    }
+    .project-card:hover .plat-intel::before { opacity: 1; }
+
     /* Fallback for browsers without @property (Firefox <128 etc) */
     @supports not (background: conic-gradient(from var(--rl-angle), red, blue)) {
-      .project-card::before {
+      .project-card::before,
+      .pc-platform.plat-intel::before {
         background: conic-gradient(from 0deg, transparent 0deg 250deg, var(--accent) 290deg, var(--accent2) 320deg, var(--accent) 350deg, transparent 360deg);
         animation: card-race-spin 2.4s linear infinite;
       }
