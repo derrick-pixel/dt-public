@@ -4,15 +4,20 @@ import { audit } from './audit';
 
 // Legal gift-state transitions. Empty array = terminal state.
 // Refer to /docs/transactions-and-accounts.md §5 for the diagram.
+// pending_claim → (pre-claim) couple never claims: whole-gift refund.
+// pending      → (post-claim) couple's binary call: authorised or declined.
+// declined     → charity portion refunded to the guest; personal portion
+//                still owed to the couple, disbursed then state → released.
 const TRANSITIONS: Record<GiftState, GiftState[]> = {
   pending_claim: ['pending', 'auto_refunded', 'refunded', 'failed', 'disputed'],
-  pending:       ['authorised', 'auto_refunded', 'refunded', 'disputed'],
+  pending:       ['authorised', 'declined', 'disputed'],
   authorised:    ['released', 'disputed'],
+  declined:      ['released', 'disputed'],
   released:      [],
   auto_refunded: [],
   refunded:      [],
   failed:        [],
-  disputed:      ['pending', 'authorised', 'refunded', 'auto_refunded'],
+  disputed:      ['pending', 'authorised', 'declined', 'refunded', 'auto_refunded'],
 };
 
 export interface TransitionResult {

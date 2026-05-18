@@ -284,8 +284,18 @@ This page explains how your Employee Share Option Plan works at Elitez. It is a 
 <script src="assets/supa.js"></script>
 <script src="assets/auth.js"></script>
 <script src="assets/app.js"></script>
+<script src="assets/tutorial.js"></script>
 <script>
-(function(){
+(async function () {
+  if (window.ESOPAuth && window.ESOPAuth.ready) await window.ESOPAuth.ready();
+  // Plan Rules contain Clause-15-confidential material. Bounce
+  // unauthenticated visitors back to the sign-in page.
+  const s = window.ESOPApp.readSession();
+  if (!s) {
+    const p = new URLSearchParams({ return: "scheme.html", required: "auth" });
+    location.href = "index.html?" + p.toString();
+    return;
+  }
   window.ESOPApp.renderTopbar("scheme");
   window.ESOPApp.renderFooter();
 })();

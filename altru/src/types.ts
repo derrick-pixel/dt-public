@@ -20,6 +20,9 @@ export interface Env {
   SANCTIONS_LIST_URL: string;    // MAS-published designated-persons list endpoint
   OPERATOR_NOTIFY_EMAIL: string; // Where compliance alerts and AI task reviews go
 
+  // Observability — optional. When unset, errors fall back to console.error.
+  SENTRY_DSN: string;
+
   // Public env vars
   ENV: 'prod' | 'staging' | 'dev';
   PUBLIC_BASE_URL: string;
@@ -37,6 +40,7 @@ export type GiftState =
   | 'pending_claim'
   | 'pending'
   | 'authorised'
+  | 'declined'
   | 'released'
   | 'auto_refunded'
   | 'refunded'

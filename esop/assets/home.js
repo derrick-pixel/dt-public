@@ -14,16 +14,17 @@
   const pool = C.poolUsage();
   const milestone = (() => {
     const grants = [];
-    D.holders.forEach(h => h.grants.forEach(g => { if (g.grant_date) grants.push(g); }));
+    (C.holders() || []).forEach(h => h.grants.forEach(g => { if (g.grant_date) grants.push(g); }));
     const dates = grants.map(g => C.vestingFor(g.grant_date).exercise_date).sort();
     return dates[0];
   })();
 
+  // Public landing — sensitive metrics redacted. Real figures live behind login (Portal / Committee / Admin).
   const facts = [
-    { label: "Fair Market Value", value: fmt.sgd(v.fmv, 4), unit: "/share", sub: `${v.fy} · EBITDA × ${v.multiple}` },
-    { label: "Exercise Price", value: fmt.sgd(v.exercise_price, 4), unit: "/share", sub: "90% discount to FMV" },
-    { label: "Authorised Pool", value: fmt.num(pool.authorised), unit: "shares", sub: `${fmt.pct(pool.used_pct)} allocated (incl. FY2025 draft)` },
-    { label: "Nearest Exercise", value: fmt.date(milestone), unit: "", sub: `${D.grants_history.find(g => g.fy === "FY2022")?.total.toLocaleString()} FY2022 options` }
+    { label: "Fair Market Value", value: "•••••", unit: "/share", sub: "Sign in to view" },
+    { label: "Exercise Price", value: "•••••", unit: "/share", sub: "Sign in to view" },
+    { label: "Authorised Pool", value: "•••••", unit: "shares", sub: "Sign in to view" },
+    { label: "Nearest Exercise", value: "•••••", unit: "", sub: "Sign in to view" }
   ];
   const kf = document.getElementById("keyfacts");
   facts.forEach(f => {
@@ -70,16 +71,79 @@
         signInBtn.disabled = false; signInBtn.textContent = "Sign in";
         return;
       }
-      const dest = returnTo
-        || (res.session.kind === "holder" ? "portal.html"
-          : res.session.kind === "admin" ? "admin.html"
-          : "committee.html");
-      location.href = dest;
+      // Dual-capability accounts get a view picker before redirect.
+      const profile = Auth.getProfile && Auth.getProfile();
+      if (Auth.hasDualCapability && Auth.hasDualCapability(profile)) {
+        showViewPicker(profile);
+        return;
+      }
+      redirectByRole(res.session, returnTo);
     } catch (e) {
       errBox.textContent = "Unexpected error: " + e.message;
       errBox.style.display = "block";
       signInBtn.disabled = false; signInBtn.textContent = "Sign in";
     }
+  }
+
+  function redirectByRole(session, ret) {
+    const dest = ret
+      || (session.kind === "holder" ? "portal.html"
+        : session.kind === "admin" ? "admin.html"
+        : "committee.html");
+    location.href = dest;
+  }
+
+  function showViewPicker(profile) {
+    const overlay = el("div", { class: "view-picker-overlay" });
+    const card = el("div", { class: "view-picker__card" });
+    card.appendChild(el("div", { class: "view-picker__welcome", text: "Welcome back, " + (profile.full_name || profile.email).split(" ")[0] + "." }));
+    card.appendChild(el("h3", { class: "view-picker__title", text: "How do you want to sign in today?" }));
+    card.appendChild(el("p", { class: "view-picker__sub", text: "Your account has access to both views. Pick one — you can switch from the topbar at any time." }));
+
+    const choices = el("div", { class: "view-picker__choices" });
+
+    const holderBtn = el("button", { type: "button", class: "view-picker__choice" });
+    holderBtn.appendChild(el("div", { class: "view-picker__choice-icon", text: "👤" }));
+    holderBtn.appendChild(el("div", { class: "view-picker__choice-title", text: "Holder" }));
+    holderBtn.appendChild(el("div", { class: "view-picker__choice-body", text: "Your personal grants, vesting, value, exercise window." }));
+    holderBtn.addEventListener("click", () => {
+      Auth.setActiveView("holder");
+      setTimeout(() => { location.href = returnTo || "portal.html"; }, 50);
+    });
+
+    const staffBtn = el("button", { type: "button", class: "view-picker__choice" });
+    staffBtn.appendChild(el("div", { class: "view-picker__choice-icon", text: profile.role === "committee" ? "⚖️" : "🛠️" }));
+    staffBtn.appendChild(el("div", { class: "view-picker__choice-title", text: profile.role === "committee" ? "Committee" : "Administrator" }));
+    staffBtn.appendChild(el("div", { class: "view-picker__choice-body", text: profile.role === "committee" ? "Resolutions, governance, plan administration." : "Cap table, allocations, valuations, plan admin." }));
+    staffBtn.addEventListener("click", () => {
+      Auth.setActiveView("staff");
+      const dest = profile.role === "committee" ? "committee.html" : "admin.html";
+      setTimeout(() => { location.href = returnTo || dest; }, 50);
+    });
+
+    choices.appendChild(holderBtn);
+    choices.appendChild(staffBtn);
+    card.appendChild(choices);
+
+    // HLDR-P1 fix: give the picker an escape hatch. If the user closes the
+    // tab mid-picker, their session was alive but no active_view was set,
+    // and they'd default to profile.role forever. A "Sign out" button lets
+    // them bail cleanly.
+    const signOutBtn = el("button", { type: "button", class: "view-picker__signout", text: "Sign out instead" });
+    signOutBtn.addEventListener("click", async () => {
+      try {
+        if (Auth.clearActiveView) Auth.clearActiveView();
+        if (Auth.logout) await Auth.logout();
+      } catch {}
+      overlay.remove();
+      // Stay on index.html so the login form remains visible.
+    });
+    card.appendChild(el("div", { style: "text-align:center; margin-top: 0.8rem;" }, [signOutBtn]));
+
+    card.appendChild(el("p", { class: "view-picker__hint muted tiny", text: "You can switch via \"Switch view\" in the topbar." }));
+
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
   }
 
   forgotLink.addEventListener("click", async (e) => {
@@ -102,10 +166,24 @@
   ]);
   form.addEventListener("submit", (e) => { e.preventDefault(); attemptLogin(); });
 
+  const guideLink = el("a", {
+    href: "onboarding-guide.pdf",
+    target: "_blank",
+    rel: "noopener",
+    class: "guide-link"
+  }, [
+    el("span", { class: "guide-link__icon", text: "📖" }),
+    el("span", { class: "guide-link__body" }, [
+      el("span", { class: "guide-link__title", text: "New here? Read the holder guide" }),
+      el("span", { class: "guide-link__sub", text: "2-page PDF · signing in · what you'll see · exercise flow" })
+    ])
+  ]);
+
   const loginBox = el("div", { class: "login-box" }, [
     el("h3", { text: "Sign in" }),
     el("p", { class: "sub", text: "Confidential — Clause 15 of the Plan." }),
-    form
+    form,
+    guideLink
   ]);
   slot.appendChild(loginBox);
 

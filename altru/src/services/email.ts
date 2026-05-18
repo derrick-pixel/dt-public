@@ -246,6 +246,68 @@ export function renderIrasReceiptRequestEmail(opts: {
   };
 }
 
+// ── Charity portion declined (to donor) ──────────────────────────────────
+export function renderCharityDeclinedEmail(opts: {
+  guestName: string;
+  charityRefundCents: number;
+}): { subject: string; html: string; text: string } {
+  const amount = fmt(opts.charityRefundCents);
+
+  const text =
+    `Hi ${opts.guestName},\n\n` +
+    `The couple has kept your personal gift but chose not to forward the charity portion. ` +
+    `The charity portion of S$${amount} has been refunded to you and will appear in your account within 3-5 business days.\n\n` +
+    `Questions? Email support@altru.asia.\n\n— Altru`;
+
+  const html = wrap(
+    `<h2 style="color:${PRIMARY};">Charity portion refunded</h2>` +
+    `<p>Hi ${escapeHtml(opts.guestName)},</p>` +
+    `<p>The couple has kept your personal gift but chose not to forward the charity portion. The charity portion of <strong>S$${amount}</strong> has been refunded to you.</p>` +
+    `<p>It will appear in your account within <strong>3–5 business days</strong>.</p>` +
+    `<p style="font-size:0.85rem;color:#8A5C5C;">Questions? Email <a href="mailto:support@altru.asia">support@altru.asia</a></p>`
+  );
+
+  return { subject: 'The charity portion of your Altru gift has been refunded', html, text };
+}
+
+// ── Monthly platform-fee invoice (to charity finance team) ────────────────
+export function renderCharityInvoiceEmail(opts: {
+  charityName: string;
+  periodMonth: string;     // YYYY-MM
+  giftCount: number;
+  grossCents: number;
+  feeCents: number;
+  portalUrl: string;
+}): { subject: string; html: string; text: string } {
+  const gross = fmt(opts.grossCents);
+  const fee = fmt(opts.feeCents);
+
+  const text =
+    `Dear ${opts.charityName} Finance Team,\n\n` +
+    `Altru platform fee invoice — ${opts.periodMonth}\n\n` +
+    `During ${opts.periodMonth}, ${opts.giftCount} wedding gift(s) routed donations to your charity through Altru.\n\n` +
+    `Gross donations received: S$${gross}\n` +
+    `Altru platform fee (5%):  S$${fee}\n\n` +
+    `Donations are paid to you in full and gross — this fee is invoiced separately and is never deducted from any donation.\n\n` +
+    `View your statement and disbursement history:\n${opts.portalUrl}\n\n` +
+    `Our finance team will follow up with settlement details for the S$${fee} fee.\n\n` +
+    `Issued by Altru Asia Pte Ltd — commercial fund-raiser under the Charities Act 1994.\n— Altru`;
+
+  const html = wrap(
+    `<h2 style="color:${PRIMARY};">Platform Fee Invoice — ${escapeHtml(opts.periodMonth)}</h2>` +
+    `<p>Dear ${escapeHtml(opts.charityName)} Finance Team,</p>` +
+    `<p>During <strong>${escapeHtml(opts.periodMonth)}</strong>, <strong>${opts.giftCount}</strong> wedding gift(s) routed donations to your charity through Altru.</p>` +
+    `<table style="width:100%;border-collapse:collapse;margin:1.25rem 0;">` +
+      `<tr><td style="padding:0.5rem 0.75rem;background:#F9FAFB;">Gross donations received</td><td style="padding:0.5rem 0.75rem;text-align:right;font-weight:700;">S$${gross}</td></tr>` +
+      `<tr><td style="padding:0.5rem 0.75rem;background:#FEF3C7;">Altru platform fee (5%)</td><td style="padding:0.5rem 0.75rem;text-align:right;font-weight:700;">S$${fee}</td></tr>` +
+    `</table>` +
+    `<p style="font-size:0.85rem;color:#8A5C5C;">Donations are paid to you in full and gross. This 5% fee is invoiced separately and is never deducted from a donation.</p>` +
+    `<p><a href="${escapeAttr(opts.portalUrl)}" style="display:inline-block;background:${PRIMARY};color:white;padding:0.75rem 1.4rem;border-radius:8px;text-decoration:none;font-weight:700;">View your Altru statement →</a></p>`
+  );
+
+  return { subject: `Altru platform fee invoice — ${opts.charityName} — ${opts.periodMonth}`, html, text };
+}
+
 // ── Shared HTML wrapper ────────────────────────────────────────────────────
 function wrap(content: string): string {
   return (

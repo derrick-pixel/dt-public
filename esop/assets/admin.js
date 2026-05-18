@@ -20,8 +20,17 @@
   // Aggregate across holders
   const agg = aggregateAll();
 
+  // Tag a section with its data-tab BEFORE appending. Eliminates the
+  // order-dependent race between admin.js and admin-workflow.js — both
+  // were appending sections concurrently and the post-hoc tagging by
+  // index assumed a fixed DOM order. Now each section is tagged inline.
+  function tag(section, tab) {
+    section.setAttribute("data-tab", tab);
+    return section;
+  }
+
   // --- Hero
-  root.appendChild(el("section", { class: "hero" }, [
+  root.appendChild(tag(el("section", { class: "hero" }, [
     el("div", null, [
       el("div", { class: "micro", text: "Committee · Trustee" }),
       el("h1", { style: "margin-top:1rem;", text: "Administrator." }),
@@ -39,10 +48,10 @@
       el("div", { class: "kv" }, [ el("div", { class: "k", text: "ESOP pool committed" }), el("div", { class: "v", text: fmt.num(pool.issued + pool.drafted) + " (" + fmt.pct(pool.used_pct) + ")" }) ]),
       el("div", { class: "kv" }, [ el("div", { class: "k", text: "ESOP pool free" }), el("div", { class: "v", text: fmt.num(pool.remaining) }) ])
     ])
-  ]));
+  ]), "overview"));
 
   // --- Stat bar
-  root.appendChild(el("section", { class: "block" }, [
+  root.appendChild(tag(el("section", { class: "block" }, [
     el("header", null, [ el("h2", { text: "Portfolio at today's FMV" }) ]),
     el("div", { class: "grid grid-4" }, [
       statCard("Options outstanding (active)", fmt.num(agg.totalActive), `${fmt.num(agg.totalDraft)} further in FY2025 draft`),
@@ -50,67 +59,32 @@
       statAccent("Aggregate holder value at FMV", fmt.sgd(agg.totalActive * fmv), `Exercise cost would total ${fmt.sgd(agg.totalActive * ex)}`),
       statCard("Upcoming taxable perquisite (FY22 wave)", fmt.sgd(agg.fy22Shares * 0.9 * fmv), `${fmt.num(agg.fy22Shares)} options window Jul 2027`)
     ])
-  ]));
+  ]), "overview"));
 
   // --- Pool utilisation
-  root.appendChild(el("section", { class: "block" }, [
+  root.appendChild(tag(el("section", { class: "block" }, [
     el("header", null, [ el("h2", { text: "Pool utilisation" }), el("a", { href: "scheme.html#pool", text: "Clause 6 →" }) ]),
     buildPoolPanel()
-  ]));
+  ]), "overview"));
 
   // --- Holders table
-  root.appendChild(el("section", { class: "block" }, [
+  root.appendChild(tag(el("section", { class: "block" }, [
     el("header", null, [
       el("h2", { text: "Option Holders" }),
-      el("div", { class: "micro", text: `${C.holders().length} active · ${D.leavers.length} pending leaver determination` })
+      el("div", { class: "micro", text: `${C.holders().length} active · ${C.leavers().length} pending leaver determination` })
     ]),
     el("div", { class: "panel panel--flush" }, [ buildHoldersTable() ])
-  ]));
+  ]), "holders"));
 
-  // --- Valuation history chart + KPMG benchmark
-  root.appendChild(buildValuationBlock());
-
-  // --- Grants by FY stacked
-  root.appendChild(buildGrantsByFy());
-
-  // --- Allocation distribution (FY2025 draft)
-  root.appendChild(buildAllocationBlock());
-
-  // --- Dept / entity breakdown
-  root.appendChild(buildDeptBreakdown());
-
-  // --- Annual calendar
-  root.appendChild(buildCalendarBlock());
-
-  // --- Special dividend ledger
-  root.appendChild(buildDividendLedger());
-
-  // --- Leavers pending
-  root.appendChild(buildLeaversBlock());
-
-  // --- Data quality issues
-  root.appendChild(buildDataQualityBlock());
-
-  // Tag each section with the sub-tab it belongs to, in render order.
-  // admin-tabs.js reads data-tab and shows only matching sections.
-  const ADMIN_SECTION_TABS = [
-    "overview",    // hero
-    "overview",    // stat bar (Portfolio at today's FMV)
-    "overview",    // pool utilisation
-    "holders",     // holders table
-    "valuations",  // valuation trail + KPMG
-    "holders",     // grants by FY chart
-    "holders",     // allocation distribution
-    "overview",    // department breakdown
-    "overview",    // plan calendar
-    "valuations",  // special dividend ledger
-    "holders",     // leavers pending
-    "audit"        // data quality
-  ];
-  const adminSections = root.querySelectorAll("section.hero, section.block");
-  adminSections.forEach((s, i) => {
-    if (ADMIN_SECTION_TABS[i]) s.setAttribute("data-tab", ADMIN_SECTION_TABS[i]);
-  });
+  root.appendChild(tag(buildValuationBlock(), "valuations"));
+  root.appendChild(tag(buildGrantsByFy(), "holders"));
+  root.appendChild(tag(buildAllocationBlock(), "holders"));
+  root.appendChild(tag(buildDeptBreakdown(), "overview"));
+  root.appendChild(tag(buildCalendarBlock(), "overview"));
+  root.appendChild(tag(buildDividendLedger(), "valuations"));
+  const leavers = buildLeaversBlock();
+  if (leavers && leavers.tagName === "SECTION") root.appendChild(tag(leavers, "holders"));
+  root.appendChild(tag(buildDataQualityBlock(), "audit"));
 
   // Render sub-tab strip. Active tab comes from URL hash (admin-tabs.js
   // handles re-filtering on change).
@@ -268,7 +242,7 @@
     wrap.appendChild(canvas); chartPanel.appendChild(wrap);
 
     // KPMG benchmark panel
-    const bench = D.kpmg_benchmark;
+    const bench = (D.kpmg_benchmark || null);
     const benchPanel = el("div", { class: "panel" }, [
       el("div", { class: "micro", text: "KPMG independent benchmark · Mar 2024" }),
       el("h3", { style: "margin-top:0.4rem;", text: "Internal vs independent" }),
@@ -462,7 +436,7 @@
     const section = el("section", { class: "block" }, [
       el("header", null, [ el("h2", { text: "Special dividend ledger" }) ])
     ]);
-    const div = D.special_dividends[0];
+    const div = C.specialDividends()[0];
     const panel = el("div", { class: "panel" }, [
       el("div", { class: "row-between" }, [
         el("div", null, [
@@ -500,13 +474,13 @@
   }
 
   function buildLeaversBlock() {
-    if (!D.leavers.length) return el("div");
+    if (!C.leavers().length) return el("div");
     const section = el("section", { class: "block" }, [
       el("header", null, [ el("h2", { text: "Leavers · determinations outstanding" }) ]),
       el("div", { class: "panel" }, [
         el("p", { class: "muted", text: "The Committee needs to determine Good vs Bad Leaver treatment for each to close the file (even where options have already forfeited in practice)." }),
         el("div", { class: "rule" }),
-        ...D.leavers.map(l => el("div", { class: "kv" }, [
+        ...C.leavers().map(l => el("div", { class: "kv" }, [
           el("div", { class: "k", text: l.name }),
           el("div", { class: "v", text: l.note })
         ]))
@@ -519,6 +493,51 @@
     const section = el("section", { class: "block" }, [
       el("header", null, [ el("h2", { text: "Data-quality issues" }), el("div", { class: "micro", text: `${D.data_quality.length} open` }) ])
     ]);
+
+    // Hash-chain integrity check — runs server-side via verify_chain RPC
+    // (migration 0019). Surfaces the result inline so admins notice without
+    // needing scheduled email alerts (DATA-P1: cron alternative).
+    const chainPanel = el("div", { class: "panel", style: "margin-bottom: 1rem; border-left: 4px solid var(--muted);" });
+    const chainStatus = el("div", { class: "row-between", style: "align-items:center;" }, [
+      el("div", null, [
+        el("div", { class: "micro", text: "Hash-chain integrity" }),
+        el("div", { id: "chain-status-label", class: "serif", style: "font-size:1.1rem; margin-top:0.2rem;", text: "Not yet verified this session" })
+      ]),
+      el("button", { id: "chain-verify-btn", type: "button", class: "btn btn--ghost", style: "padding:0.5rem 1rem; font-size:0.78rem;", text: "Run chain verify" })
+    ]);
+    chainPanel.appendChild(chainStatus);
+    section.appendChild(chainPanel);
+    // Wire after DOM insert so getElementById works.
+    setTimeout(() => {
+      const label = document.getElementById("chain-status-label");
+      const btn = document.getElementById("chain-verify-btn");
+      if (!btn || !label) return;
+      btn.onclick = async () => {
+        const supa = window.ESOPSupa && window.ESOPSupa.client;
+        if (!supa) { label.textContent = "Supabase client not available"; return; }
+        btn.disabled = true; btn.textContent = "Verifying…";
+        try {
+          const { data, error } = await supa.rpc("verify_chain");
+          if (error) throw error;
+          const broken = Array.isArray(data) && data.length > 0 ? data[0] : null;
+          if (broken) {
+            label.style.color = "var(--bad)";
+            label.textContent = `❌ Chain broken at seq ${broken.broken_at_seq} (${broken.broken_at_id})`;
+            chainPanel.style.borderLeftColor = "var(--bad)";
+          } else {
+            label.style.color = "var(--good)";
+            label.textContent = "✅ Chain intact — every event re-hashes to its stored hash";
+            chainPanel.style.borderLeftColor = "var(--good)";
+          }
+        } catch (e) {
+          label.style.color = "var(--bad)";
+          label.textContent = "Verify failed: " + (e.message || e);
+        } finally {
+          btn.disabled = false; btn.textContent = "Run chain verify";
+        }
+      };
+    }, 0);
+
     const high = D.data_quality.filter(d => d.sev === "high").length;
     const med = D.data_quality.filter(d => d.sev === "medium").length;
     const low = D.data_quality.filter(d => d.sev === "low").length;

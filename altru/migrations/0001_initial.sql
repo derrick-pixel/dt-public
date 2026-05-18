@@ -21,7 +21,9 @@ CREATE TABLE IF NOT EXISTS couples (
   wedding_id           TEXT    NOT NULL REFERENCES weddings(id) ON DELETE CASCADE,
   display_name         TEXT    NOT NULL,
   role                 TEXT    NOT NULL CHECK (role IN ('partner1','partner2')),
-  email                TEXT    NOT NULL,
+  -- email is NULL for a guest-created (Path B) couple until they claim the
+  -- page and supply their own address. Path A couples always have an email.
+  email                TEXT,
   mobile               TEXT    NOT NULL,
   email_verified_at    INTEGER,
   mobile_verified_at   INTEGER,
@@ -69,8 +71,8 @@ CREATE TABLE IF NOT EXISTS gifts (
   charity_portions_json    TEXT    NOT NULL,
   state                    TEXT    NOT NULL
                            CHECK (state IN ('pending_claim','pending','authorised',
-                                            'released','auto_refunded','refunded',
-                                            'failed','disputed')),
+                                            'declined','released','auto_refunded',
+                                            'refunded','failed','disputed')),
   state_changed_at         INTEGER NOT NULL,
   payment_ref              TEXT,
   payment_succeeded_at     INTEGER,

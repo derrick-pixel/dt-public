@@ -26,11 +26,43 @@
     return data;
   }
 
+  // Dual-role users (admin or committee who also hold options) can flip
+  // between "Holder" and "Admin/Committee" views per session. The choice
+  // lives in sessionStorage so it survives navigation but resets on a
+  // fresh browser session — keeping the picker prominent on sign-in.
+  const VIEW_KEY = "esop_active_view";
+
+  function hasDualCapability(profile) {
+    if (!profile) return false;
+    return !!profile.holder_id && (profile.role === "admin" || profile.role === "committee");
+  }
+
+  function readActiveView() {
+    try { return sessionStorage.getItem(VIEW_KEY); } catch { return null; }
+  }
+  function writeActiveView(v) {
+    try {
+      if (v) sessionStorage.setItem(VIEW_KEY, v);
+      else sessionStorage.removeItem(VIEW_KEY);
+    } catch {}
+  }
+
   function buildSession(authSession, profile) {
     if (!authSession || !profile) return null;
+    let effectiveKind = profile.role;
+    if (hasDualCapability(profile)) {
+      const chosen = readActiveView();
+      if (chosen === "holder" || chosen === "staff") {
+        effectiveKind = chosen === "holder" ? "holder" : profile.role;
+      }
+    }
     return {
-      kind: profile.role,
-      id: profile.holder_id || profile.id,
+      kind: effectiveKind,
+      profile_role: profile.role,           // unchanged underlying role
+      dual_capable: hasDualCapability(profile),
+      active_view: readActiveView() || null,
+      id: effectiveKind === "holder" ? (profile.holder_id || profile.id) : profile.id,
+      holder_id: profile.holder_id || null,
       name: profile.full_name,
       email: profile.email,
       label: profile.full_name,
@@ -151,6 +183,22 @@
 
   function committeeSubjectId(memberId) { return "member:" + memberId; }
 
+  // Re-build the session whenever the active view changes so the topbar
+  // and any subsequent requireSession() call see the right "kind".
+  function setActiveView(view) {
+    writeActiveView(view);
+    if (cachedProfile) {
+      // Reconstruct without a fresh network roundtrip — auth session is unchanged.
+      supa.auth.getSession().then(({ data }) => {
+        if (data && data.session && cachedProfile) {
+          cachedSession = buildSession(data.session, cachedProfile);
+        }
+      });
+    }
+  }
+  function clearActiveView() { setActiveView(null); }
+  function getProfile() { return cachedProfile; }
+
   window.ESOPAuth = {
     DISABLE_LEGACY_ADMIN: true,
     readSession, writeSession, clearSession,
@@ -160,6 +208,7 @@
     changePassword, requestPasswordReset,
     adminResetHolderPassword, resetCommitteeMemberPassword,
     requireSession, ready,
-    committeeSubjectId
+    committeeSubjectId,
+    hasDualCapability, setActiveView, clearActiveView, getProfile
   };
 })();

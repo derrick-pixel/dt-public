@@ -181,7 +181,7 @@ fi
 # Step 6: deploy Edge Functions
 # ─────────────────────────────────────────────────────────────────────────────
 step "Step 6/8  Deploy Edge Functions"
-supabase secrets set ESOP_SITE_URL="https://esop.derrickteo.com" \
+supabase secrets set ESOP_SITE_URL="https://esop.elitez.com.sg" \
   --project-ref "$PROJECT_REF" 2>&1 | tail -3
 supabase functions deploy admin-invite --no-verify-jwt --project-ref "$PROJECT_REF" 2>&1 | tail -5
 supabase functions deploy verify-chain --project-ref "$PROJECT_REF" 2>&1 | tail -5
@@ -193,8 +193,8 @@ ok "Edge Functions deployed"
 step "Step 7/8  Configure Supabase Auth redirect URLs"
 AUTH_BODY=$(jq -n \
   '{
-    site_url: "https://esop.derrickteo.com",
-    uri_allow_list: "https://esop.derrickteo.com,https://esop.elitez.com.sg,https://esop.derrickteo.com/set-password.html,https://esop.derrickteo.com/reset-password.html,http://localhost:8000"
+    site_url: "https://esop.elitez.com.sg",
+    uri_allow_list: "https://esop.elitez.com.sg,https://esop.elitez.com.sg/set-password.html,https://esop.elitez.com.sg/reset-password.html,https://esop.derrickteo.com,http://localhost:8000"
   }')
 mgmt PATCH "/v1/projects/${PROJECT_REF}/config/auth" "$AUTH_BODY" >/dev/null
 ok "Auth URL configuration updated"

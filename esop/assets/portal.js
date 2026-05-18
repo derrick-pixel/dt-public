@@ -15,12 +15,33 @@
   // Read holder from live (store-overlaid) state so admin-approved drafts,
   // allocation changes and new valuations are reflected immediately.
   const liveHolders = C.holders();
-  const holder = session.kind === "admin"
-    ? liveHolders[0]
-    : liveHolders.find(h => h.id === session.id);
+  const holder = liveHolders.find(h => String(h.id) === String(session.id));
 
   if (!holder) {
-    document.getElementById("content").appendChild(el("div", { class: "alert alert--bad", text: "Could not locate your holder record. Contact HR." }));
+    // Admin / committee without a holder grant landed on portal.html — show
+    // an explicit empty state rather than leaking some other holder's data.
+    // (Bug fixed 2026-05-16: previously fell back to liveHolders[0].)
+    const isStaff = session.kind === "admin" || session.kind === "committee";
+    const c = document.getElementById("content");
+    if (isStaff) {
+      c.appendChild(el("section", { class: "block" }, [
+        el("header", null, [el("h2", { text: "Portfolio" })]),
+        el("div", { class: "panel" }, [
+          el("p", null, [
+            "This page shows an individual option holder's portfolio. You're signed in as ",
+            el("strong", { text: session.label || session.email }),
+            " — an " + session.kind + " without a personal option grant."
+          ]),
+          el("p", { class: "muted", text: "If you need cap-table / allocation views, go to the Administrator console. If you'd like to view a specific holder's portfolio for support, open their record from the Roster tab there." }),
+          el("a", { href: "admin.html", class: "btn btn--brass", style: "margin-top: 0.5rem;" }, [
+            session.kind === "admin" ? "Open Administrator console" : "Open Committee console"
+          ])
+        ])
+      ]));
+      renderFooter();
+      return;
+    }
+    c.appendChild(el("div", { class: "alert alert--bad", text: "Could not locate your holder record. Contact HR." }));
     renderFooter();
     return;
   }
@@ -268,7 +289,9 @@
       any = true;
       const v = C.activeValuation();
       const existing = C.exerciseForGrant(h, ex.grant.fy);
-      if (existing) return; // already submitted — handled below
+      // Holder 32 (Jonathan Tan) is the smoke-test account — always allow
+      // re-submission so we can re-run the QR/payment flow without DB resets.
+      if (existing && Number(h.id) !== 32) return;
       const b = el("div", {
         style: "padding: 1.2rem 1.6rem; margin-bottom: 0.8rem; background: var(--accent); color: var(--paper); border-left: 4px solid var(--ink); display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;"
       });
@@ -284,11 +307,25 @@
       section.appendChild(b);
     });
 
-    // Pending submitted exercises (awaiting Trustee)
+    // Pending submitted exercises (awaiting Trustee). If we have the QR
+    // payload stored on the payment row, expose a "Show PayNow QR" button
+    // so a holder who refreshed before paying can pull it back up without
+    // re-entering details (HLDR-P1 fix).
     C.exercisesForHolder(h).filter(x => x.status === "submitted").forEach(x => {
       any = true;
       const b = el("div", { class: "alert", style: "margin-bottom: 0.8rem;" });
-      b.textContent = `Your exercise notice for ${x.fy} (${fmt.num(x.qty)} options, ${fmt.sgd(x.cost)}) is awaiting Trustee confirmation of payment. Submitted ${new Date(x.submitted_at).toLocaleString("en-SG", { dateStyle: "medium", timeStyle: "short" })}.`;
+      b.appendChild(el("div", { text: `Your exercise notice for ${x.fy} (${fmt.num(x.qty)} options, ${fmt.sgd(x.cost)}) is awaiting Trustee confirmation of payment. Submitted ${new Date(x.submitted_at).toLocaleString("en-SG", { dateStyle: "medium", timeStyle: "short" })}.` }));
+      if (x.qr_payload) {
+        const showBtn = el("button", { type: "button", class: "btn btn--ghost", style: "margin-top: 0.6rem; padding: 0.35rem 0.8rem; font-size:0.78rem;" }, ["Show PayNow QR"]);
+        showBtn.addEventListener("click", () => showPaynowQrModal({
+          payload: x.qr_payload,
+          amount: x.cost,
+          reference: x.reference || "",
+          uen: (D.org && D.org.uen) || "201010223H",
+          holder_name: h.name
+        }));
+        b.appendChild(showBtn);
+      }
       section.appendChild(b);
     });
 
@@ -296,11 +333,79 @@
     C.upcomingExerciseGrants(h).forEach(up => {
       any = true;
       const b = el("div", { class: "alert", style: "margin-bottom: 0.8rem; border-left-color: var(--warn); background: rgba(182,90,31,0.08);" });
-      b.textContent = `Your ${up.grant.fy} exercise window opens in ${up.window.days_to_open} days (${fmt.date(up.window.opens_at)}). You'll have 14 days to decide.`;
+      b.textContent = `Your ${up.grant.fy} exercise window opens in ${up.window.days_to_open} days (${fmt.date(up.window.opens_at)}). You'll have ${D.exercise.window_days} days to decide.`;
       section.appendChild(b);
     });
 
     return any ? section : null;
+  }
+
+  // Shared overlay helpers — Esc closes the topmost overlay, click-outside
+  // closes (already wired on most overlays), and the close button + Esc
+  // both call the same destroy function. P1: focus trap is left for a
+  // future round; for now Esc + click-outside fixes the worst friction.
+  function bindOverlayDismissal(overlay) {
+    const onKey = (e) => {
+      if (e.key === "Escape") {
+        overlay.remove();
+        document.removeEventListener("keydown", onKey);
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    // Wrap remove() so listener is cleaned up regardless of caller path
+    const origRemove = overlay.remove.bind(overlay);
+    overlay.remove = function () {
+      document.removeEventListener("keydown", onKey);
+      origRemove();
+    };
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
+  }
+
+  // Shared PayNow QR modal — used both by the new exercise submission flow
+  // and the "Show PayNow QR" button on pending exercises (after refresh).
+  async function showPaynowQrModal({ payload, amount, reference, uen }) {
+    const overlay = document.createElement("div");
+    overlay.setAttribute("style", "position:fixed; inset:0; background: rgba(14,38,64,0.82); z-index: 500; overflow:auto; padding: 36px 20px;");
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
+
+    const closeBtn = document.createElement("button");
+    closeBtn.textContent = "Close ×";
+    closeBtn.setAttribute("style", "position: absolute; top: 16px; right: 24px; background: transparent; border: 1px solid #F5EFDC; color: #F5EFDC; padding: 8px 14px; font-family: 'Inter', sans-serif; letter-spacing: 0.14em; text-transform: uppercase; font-size: 11px; cursor: pointer;");
+    closeBtn.onclick = () => overlay.remove();
+    overlay.appendChild(closeBtn);
+
+    const card = el("div", { style: "max-width: 560px; margin: 60px auto; padding: 2rem; background: var(--paper); border: 1px solid var(--line-strong); font-family: var(--sans); color: var(--ink); text-align: center;" });
+    card.appendChild(el("h3", { style: "font-family: var(--serif); margin: 0 0 0.6rem;", text: "PayNow QR" }));
+    card.appendChild(el("div", { class: "muted tiny", style: "margin-bottom:0.3rem;", text: `PayNow Corporate · UEN ${uen}` }));
+    card.appendChild(el("div", { class: "muted", style: "margin-bottom:0.2rem;", text: `Reference: ${reference}` }));
+    card.appendChild(el("div", { style: "font-size: 1.6rem; font-weight: 600; margin: 0.2rem 0 1rem;", text: fmt.sgd(amount) }));
+
+    const qrSlot = el("div", { style: "min-height: 280px; display:flex; align-items:center; justify-content:center;" });
+    card.appendChild(qrSlot);
+    if (window.QRCode && payload) {
+      try {
+        const dataUrl = await window.QRCode.toDataURL(payload, { width: 280, margin: 2 });
+        const img = document.createElement("img");
+        img.src = dataUrl; img.alt = "PayNow QR";
+        img.style.width = "280px"; img.style.height = "280px";
+        qrSlot.appendChild(img);
+      } catch (qerr) {
+        qrSlot.appendChild(el("div", { class: "alert alert--bad", style: "text-align:left;", text: "Could not draw QR image: " + (qerr.message || qerr) }));
+      }
+    }
+
+    const payloadBox = el("details", { style: "margin: 1rem 0 0.5rem; text-align:left;" }, [
+      el("summary", { class: "muted tiny", text: "Show raw EMV payload" }),
+      el("code", { style: "display:block; word-break:break-all; font-size:0.7rem; padding:0.5rem; background:rgba(0,0,0,0.04);", text: payload || "(empty)" })
+    ]);
+    card.appendChild(payloadBox);
+    card.appendChild(el("p", { class: "muted tiny", style: "margin-top:0.6rem;", text: "Pay via PayNow Corporate. Cancel without paying if you've already settled this exercise." }));
+    const ok = el("button", { class: "btn", type: "button" }, ["Done"]);
+    ok.onclick = () => overlay.remove();
+    card.appendChild(ok);
+    overlay.appendChild(card);
+    bindOverlayDismissal(overlay);
+  document.body.appendChild(overlay);
   }
 
   // =========================================================
@@ -359,28 +464,41 @@
     form.appendChild(errBox);
 
     const submitBtn = el("button", { type: "button", class: "btn btn--brass" }, ["Submit acceptance"]);
-    submitBtn.onclick = () => {
+    submitBtn.onclick = async () => {
       errBox.style.display = "none";
       if (!sigInput.value.trim()) { errBox.textContent = "Please type your name as a signature."; errBox.style.display = "block"; return; }
       if (!refInput.value.trim()) { errBox.textContent = "Please enter the S$1 payment reference."; errBox.style.display = "block"; return; }
       if (!ack1.checked || !ack2.checked) { errBox.textContent = "Please tick both acknowledgement boxes."; errBox.style.display = "block"; return; }
-      window.ESOPStore.emit("grant_accepted", {
-        holder_id: h.id,
-        fy: grant.fy,
-        signed_name: sigInput.value.trim(),
-        payment_ref: refInput.value.trim(),
-        payment_method: methodSelect.value,
-        plan_acknowledged: true,
-        terms_accepted: true
-      });
-      alert("Offer accepted. Your Acceptance Form is now available under Your documents.");
-      overlay.remove();
-      window.location.reload();
+      // HLDR-P0-2 fix: disable + await so a double-click can't fire two RPCs.
+      // The server-side _can_emit allow-list now includes grant_accepted
+      // (migration 0017) so this RPC succeeds for holders.
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Submitting…";
+      try {
+        await window.ESOPStore.emit("grant_accepted", {
+          holder_id: h.id,
+          fy: grant.fy,
+          signed_name: sigInput.value.trim(),
+          payment_ref: refInput.value.trim(),
+          payment_method: methodSelect.value,
+          plan_acknowledged: true,
+          terms_accepted: true
+        });
+        alert("Offer accepted. Your Acceptance Form is now available under Your documents.");
+        overlay.remove();
+        window.location.reload();
+      } catch (e) {
+        errBox.textContent = "Acceptance failed: " + (e.message || e);
+        errBox.style.display = "block";
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit acceptance";
+      }
     };
     form.appendChild(submitBtn);
 
     overlay.appendChild(form);
-    document.body.appendChild(overlay);
+    bindOverlayDismissal(overlay);
+  document.body.appendChild(overlay);
   }
 
   // =========================================================
@@ -433,8 +551,8 @@
 
     const sigInput = el("input", { type: "text", placeholder: "Type your full legal name", value: h.name });
     const methodSelect = el("select");
-    methodSelect.appendChild(el("option", { value: "paynow", text: "PayNow · +65 9663 9634 (Lin Rongjie)" }));
-    methodSelect.appendChild(el("option", { value: "cheque", text: "Cheque / cashier's order to EGPL" }));
+    methodSelect.appendChild(el("option", { value: "paynow", text: "PayNow · UEN 201010223H (Elitez Group Pte Ltd)" }));
+    methodSelect.appendChild(el("option", { value: "cheque", text: "Cheque / cashier's order to Elitez Group Pte Ltd" }));
     const refInput = el("input", { type: "text", placeholder: `e.g. NEX-${h.id}-${grant.fy}` });
     const ack = el("input", { type: "checkbox", id: "ack-tax" });
 
@@ -469,45 +587,71 @@
       submitBtn.disabled = true; submitBtn.textContent = "Submitting…";
       try {
         const uen = (window.ESOP_DATA && window.ESOP_DATA.org && window.ESOP_DATA.org.uen) || "";
-        const placeholderQr = window.ESOPSGQR
-          ? window.ESOPSGQR.buildPayNowQR({ uen: uen || "201900000A", amount: cost, reference: "PENDING" })
+        // PayNow remark format: first 6 letters of holder name + last 3 digits
+        // of NRIC. Falls back to zero-padded holder_id if IC isn't on file.
+        const letters = (holder.name || "")
+          .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^A-Za-z]/g, "")
+          .toUpperCase().slice(0, 6);
+        const icDigits = (holder.ic || "").replace(/\D/g, "");
+        const suffix = icDigits.length >= 3
+          ? icDigits.slice(-3)
+          : String(holder.id).padStart(3, "0");
+        const reference = letters + suffix;
+
+        const finalQr = window.ESOPSGQR && uen
+          ? window.ESOPSGQR.buildPayNowQR({ uen, amount: cost, reference })
           : "";
 
         const { data, error } = await supa.rpc("submit_exercise", {
           p_grant_id: String(grant.fy),
           p_qty: vested,
-          p_qr_payload: placeholderQr,
+          p_qr_payload: finalQr,
           p_amount_sgd: cost,
+          p_reference: reference,
         });
         if (error) throw error;
 
         const row = Array.isArray(data) ? data[0] : data;
-        const reference = row && row.payment && row.payment.reference;
-
-        if (window.ESOPSGQR && uen && reference) {
-          const finalQr = window.ESOPSGQR.buildPayNowQR({ uen, amount: cost, reference });
-          // Direct UPDATE on public.payments is blocked by RLS; use the
-          // tightly-scoped finalize_payment_qr RPC instead.
-          const { error: qrErr } = await supa.rpc("finalize_payment_qr", {
-            p_payment_id: row.payment.id, p_qr_payload: finalQr,
-          });
-          if (qrErr) throw qrErr;
-          row.payment.qr_payload = finalQr;
-        }
+        if (row && row.payment) row.payment.qr_payload = finalQr;
 
         // Replace the overlay contents with a success card showing the QR.
         overlay.replaceChildren(closeBtn);
         const card = el("div", { style: "max-width: 560px; margin: 60px auto; padding: 2rem; background: var(--paper); border: 1px solid var(--line-strong); font-family: var(--sans); color: var(--ink); text-align: center;" });
         card.appendChild(el("h3", { style: "font-family: var(--serif); margin: 0 0 0.6rem;", text: "Notice of exercise submitted" }));
-        card.appendChild(el("p", { class: "muted", text: `Reference: ${reference || "pending"}` }));
-        card.appendChild(el("p", { style: "font-size: 1.4rem; font-weight: 600; margin: 0.4rem 0;", text: fmt.sgd(cost) }));
-        const canvas = document.createElement("canvas");
-        canvas.width = 280; canvas.height = 280;
-        card.appendChild(canvas);
-        if (window.QRCode && row && row.payment && row.payment.qr_payload) {
-          window.QRCode.toCanvas(canvas, row.payment.qr_payload, { width: 280 });
+        card.appendChild(el("div", { class: "muted tiny", style: "margin-bottom:0.3rem;", text: `PayNow Corporate · UEN ${uen}` }));
+        card.appendChild(el("div", { class: "muted", style: "margin-bottom:0.2rem;", text: `Reference: ${reference}` }));
+        card.appendChild(el("div", { style: "font-size: 1.6rem; font-weight: 600; margin: 0.2rem 0 1rem;", text: fmt.sgd(cost) }));
+
+        const qrSlot = el("div", { style: "min-height: 280px; display:flex; align-items:center; justify-content:center;" });
+        card.appendChild(qrSlot);
+
+        const payload = (row && row.payment && row.payment.qr_payload) || finalQr;
+        if (window.QRCode && payload) {
+          try {
+            const dataUrl = await window.QRCode.toDataURL(payload, { width: 280, margin: 2 });
+            const img = document.createElement("img");
+            img.src = dataUrl;
+            img.alt = "PayNow QR";
+            img.style.width = "280px"; img.style.height = "280px";
+            qrSlot.appendChild(img);
+          } catch (qerr) {
+            qrSlot.appendChild(el("div", { class: "alert alert--bad", style: "width:100%; text-align:left; font-size:0.85rem;",
+              text: "Could not draw QR image: " + (qerr.message || qerr) }));
+          }
+        } else {
+          qrSlot.appendChild(el("div", { class: "alert alert--warn", style: "width:100%;",
+            text: !window.QRCode ? "QR library failed to load; raw payload below." : "No payload returned from server." }));
         }
-        card.appendChild(el("p", { class: "muted tiny", text: `Pay via PayNow Corporate. The bank app pre-fills the amount and reference. Admin marks the exercise paid once funds are received.` }));
+
+        // Always show the raw EMV payload as a fallback — useful for debugging
+        // and lets the holder manually screenshot/text if scanning fails.
+        const payloadBox = el("details", { style: "margin: 1rem 0 0.5rem; text-align:left;" }, [
+          el("summary", { class: "muted tiny", text: "Show raw EMV payload" }),
+          el("code", { style: "display:block; word-break:break-all; font-size:0.7rem; padding:0.5rem; background:rgba(0,0,0,0.04);", text: payload || "(empty)" })
+        ]);
+        card.appendChild(payloadBox);
+        card.appendChild(el("p", { class: "muted tiny", style: "margin-top:0.6rem;", text: "Pay via PayNow Corporate. The bank app pre-fills the amount and reference. Admin marks the exercise paid once funds are received." }));
         const ok = el("button", { class: "btn", type: "button" }, ["Done"]);
         ok.onclick = () => { overlay.remove(); window.location.reload(); };
         card.appendChild(ok);
@@ -521,7 +665,8 @@
     form.appendChild(submitBtn);
 
     overlay.appendChild(form);
-    document.body.appendChild(overlay);
+    bindOverlayDismissal(overlay);
+  document.body.appendChild(overlay);
   }
 
   function buildPasswordSection() {
@@ -530,7 +675,7 @@
       el("header", null, [ el("h2", { text: "Change your password" }) ])
     ]);
     const oldPw = el("input", { type: "password", placeholder: "Current password" });
-    const newPw = el("input", { type: "password", placeholder: "New password (min 6)" });
+    const newPw = el("input", { type: "password", placeholder: "New password (min 12)", minlength: "12" });
     const btn = el("button", { type: "button", class: "btn" }, ["Update password"]);
     const msg = el("div", { class: "alert", style: "margin-top:0.8rem; display:none;" });
     btn.onclick = async () => {
@@ -538,7 +683,7 @@
       const res = await window.ESOPAuth.changePassword(session.id, oldPw.value, newPw.value);
       if (!res.ok) {
         msg.className = "alert alert--bad";
-        msg.textContent = res.reason === "bad_old_password" ? "Current password is incorrect." : res.reason === "weak_password" ? "New password must be at least 6 characters." : "Failed: " + res.reason;
+        msg.textContent = res.reason === "bad_old_password" ? "Current password is incorrect." : res.reason === "weak_password" ? "New password must be at least 12 characters." : "Failed: " + res.reason;
       } else {
         msg.className = "alert";
         msg.textContent = "Password updated.";
@@ -668,7 +813,7 @@
         td(isDraft ? "—" : fmt.date(g.grant_date)),
         td(fmt.num(g.qty), true),
         td(isDraft ? "—" : `${fmt.num(proj.vested_shares)} (${fmt.pct(v.vested_pct)})`, true),
-        td(isDraft ? "—" : `${fmt.short(v.exercise_date)} · 14 days`),
+        td(isDraft ? "—" : `${fmt.short(v.exercise_date)} · ${D.exercise.window_days} days`),
         td(isDraft ? "—" : fmt.sgd(proj.exercise_cost), true),
         td(isDraft ? "—" : fmt.sgd(proj.gross_value), true),
         td(null, false, badge(isDraft ? "Draft" : v.cliff_passed ? "Vesting" : "In cliff", isDraft ? "draft" : "active"))
@@ -855,7 +1000,7 @@
       el("header", null, [ el("h2", { text: "Dividend history (special)" }), el("a", { href: "scheme.html#dividends", text: "Clause 8 →" }) ])
     ]);
 
-    const div = D.special_dividends[0];
+    const div = C.specialDividends()[0];
     const activeGranted = holder.grants.filter(g => g.status !== "draft").reduce((s, g) => s + g.qty, 0);
     const yourShare = div.per_share * activeGranted;
 
@@ -933,7 +1078,7 @@
       ["What's taxed and when?", "At exercise, 90% of FMV × shares exercised is SG employment income. Future gains are generally capital gains for Singapore tax residents — not taxed. Talk to a tax advisor."],
       ["Can I vote?", "No. Series A Preference Shares carry economic rights — dividends and exit proceeds — but no voting rights."],
       ["What if I die?", "For exercised shares: your estate receives MAX(FMV, your original cost per share). For vested options: treated as Good Leaver under Committee discretion."],
-      ["Who do I ask?", "HR routes questions to the Committee. For exercise payments, PayNow +65 96639634 (Lin Rongjie) with the last 4 digits of your NRIC in remarks."]
+      ["Who do I ask?", "HR routes questions to the Committee. For exercise payments, PayNow to UEN 201010223H (Elitez Group Pte Ltd) — the QR generated at exercise pre-fills the correct amount and remark."]
     ];
     const section = el("section", { class: "block" }, [
       el("header", null, [ el("h2", { text: "Quick answers" }), el("a", { href: "scheme.html", text: "Full plan rules →" }) ]),
@@ -948,5 +1093,11 @@
       }))
     ]);
     return section;
+  }
+
+  // First-time visitors see the welcome tour. Subsequent visits skip it
+  // unless they click the "?" help icon in the topbar or the footer link.
+  if (window.ESOPTutorial && window.ESOPTutorial.maybeAutoLaunch) {
+    window.ESOPTutorial.maybeAutoLaunch();
   }
 })();

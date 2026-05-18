@@ -41,6 +41,7 @@
       const s = window.ESOPStore.state();
       return {
         holders: s.holders,
+        leavers: s.leavers,
         valuation_history: s.valuation_history,
         grants_history: s.grants_history,
         special_dividends: s.special_dividends
@@ -48,6 +49,7 @@
     }
     return {
       holders: D.holders,
+      leavers: D.leavers,
       valuation_history: D.valuation_history,
       grants_history: D.grants_history,
       special_dividends: D.special_dividends
@@ -81,10 +83,21 @@
     }
   };
 
-  // Active FMV record
+  // Active FMV record. Returns a sentinel placeholder when no valuation
+  // is active AND history is empty — so the rest of the page renders
+  // S$0 placeholders rather than crashing on .fmv of undefined.
   function activeValuation() {
-    const hist = live().valuation_history;
-    return hist.find(v => v.active) || hist[hist.length - 1];
+    const hist = live().valuation_history || [];
+    const active = hist.find(v => v.active);
+    if (active) return active;
+    if (hist.length === 0) {
+      console.warn("activeValuation: no valuations recorded; returning placeholder.");
+      return { fy: "—", fmv: 0, exercise_price: 0, placeholder: true };
+    }
+    // Fall back to the last fy by name order — but warn so admin notices.
+    const sorted = hist.slice().sort((a, b) => String(a.fy).localeCompare(String(b.fy)));
+    console.warn("activeValuation: no valuation flagged active; using latest:", sorted[sorted.length - 1].fy);
+    return sorted[sorted.length - 1];
   }
 
   function currentFMV() { return activeValuation().fmv; }
@@ -251,18 +264,23 @@
     return upcoming[0] || null;
   }
 
-  // Pool usage
+  // Pool usage. Clamps `remaining` at 0 and surfaces an `overdrawn`
+  // flag if issued+drafted > authorised — so admin UI can render an
+  // explicit alert instead of silently showing negative bars.
   function poolUsage() {
-    const holders = live().holders;
-    const issued = holders.reduce((sum, h) => sum + h.grants.reduce((s, g) => s + (g.status !== "draft" ? g.qty : 0), 0), 0);
-    const drafted = holders.reduce((sum, h) => sum + h.grants.reduce((s, g) => s + (g.status === "draft" ? g.qty : 0), 0), 0);
-    const authorised = D.pool.authorised;
+    const holders = live().holders || [];
+    const issued = holders.reduce((sum, h) => sum + (h.grants || []).reduce((s, g) => s + (g.status !== "draft" ? (g.qty || 0) : 0), 0), 0);
+    const drafted = holders.reduce((sum, h) => sum + (h.grants || []).reduce((s, g) => s + (g.status === "draft" ? (g.qty || 0) : 0), 0), 0);
+    const authorised = (D.pool && D.pool.authorised) || 0;
+    const consumed = issued + drafted;
     return {
       authorised,
       issued,
       drafted,
-      remaining: authorised - issued - drafted,
-      used_pct: (issued + drafted) / authorised
+      remaining: Math.max(0, authorised - consumed),
+      remaining_signed: authorised - consumed,
+      used_pct: authorised > 0 ? consumed / authorised : 0,
+      overdrawn: authorised > 0 && consumed > authorised
     };
   }
 
@@ -296,6 +314,8 @@
   // Current holder list (live state overlaid on seed)
   function holders() { return live().holders; }
   function valuationHistory() { return live().valuation_history; }
+  function leavers() { return live().leavers || []; }
+  function specialDividends() { return live().special_dividends || []; }
 
   // --- Workflow helpers ---------------------------------------------
 
@@ -390,7 +410,7 @@
     vestingFor, projectGrant, summarizeHolder,
     leaverScenarios, nextExerciseMilestone,
     poolUsage, fyTotals, allocationDistribution,
-    holders, valuationHistory, live,
+    holders, valuationHistory, leavers, specialDividends, live,
     daysBetween, addMonths,
     pendingAcceptances, hasAcceptedGrant,
     exerciseWindowStatus, exercisableGrants, upcomingExerciseGrants,

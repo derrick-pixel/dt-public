@@ -65,10 +65,13 @@ mkdir -p dist
 # Copy public-facing top-level files + asset/intel/tests dirs.
 rsync -a \
   --include='*.html' \
+  --include='*.pdf' \
   --include='*.png' \
   --include='*.svg' \
   --include='*.ico' \
   --include='*.webmanifest' \
+  --include='_headers' \
+  --include='_redirects' \
   --include='og-image.*' \
   --include='favicon*' \
   --include='android-chrome-*' \

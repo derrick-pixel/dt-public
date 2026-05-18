@@ -15,8 +15,19 @@
   // nav with "Administrator" active, then the sub-tab strip with Governance.
   renderTopbar("admin");
   if (window.ESOPApp.renderSubTabs) window.ESOPApp.renderSubTabs("governance");
-  const session = requireSession("committee");
+  // Both admins and committee members can view governance. requireSession
+  // with no specific kind just checks "any signed-in user"; we gate
+  // role-sensitive actions inside the page via Committee.act() which
+  // checks committee membership server-side.
+  const session = requireSession();
   if (!session) return;
+  if (session.kind !== "admin" && session.kind !== "committee") {
+    // Anyone else (a pure holder) shouldn't see governance. Bounce them
+    // back to portal — the requireSession call already handled missing
+    // sessions; this only fires for authenticated non-staff.
+    location.href = "portal.html";
+    return;
+  }
 
   if (window.ESOPApp.maybeShowConfidentialityReminder) window.ESOPApp.maybeShowConfidentialityReminder();
 
@@ -98,19 +109,64 @@
     const header = el("header", null, [
       el("h2", { text: "Awaiting your vote" })
     ]);
-    // Batch-vote controls appear only when there are >=2 resolutions waiting.
-    // Votes still run through Committee.vote one at a time, but alerts are
-    // suppressed and a single summary is shown at the end.
     if (myPending.length >= 2) {
       header.appendChild(buildBatchVoteControls(myPending, me));
     }
     const section = el("section", { class: "block" }, [header]);
     if (!myPending.length) {
-      section.appendChild(el("div", { class: "panel", style: "text-align:center; padding:2rem 1rem; font-style:italic; color: var(--muted);", text: "Nothing to vote on right now." }));
+      section.appendChild(buildEmptyStateExplainer());
       return section;
     }
     myPending.forEach(r => section.appendChild(buildResolutionCard(r, me, true)));
     return section;
+  }
+
+  function buildEmptyStateExplainer() {
+    const panel = el("div", { class: "panel", style: "padding: 1.6rem 1.8rem;" });
+
+    panel.appendChild(el("p", { class: "lede", style: "font-size:1.05rem; margin:0 0 0.8rem; font-style:italic; color: var(--ink-soft);",
+      text: "You're all caught up — no resolutions awaiting your vote." }));
+
+    panel.appendChild(el("p", { style: "color: var(--muted); font-size:0.92rem; margin-bottom: 1.2rem; line-height:1.6;" }, [
+      "This page is where the ESOP Committee (3 Majors + 2 Senior employees per Clause 5.2) reviews and votes on every action that changes holders' rights. ",
+      "Resolutions show up here automatically when an admin proposes a covered action; once enough Members vote yes, the action executes."
+    ]));
+
+    panel.appendChild(el("h3", { class: "micro", style: "margin-bottom: 0.8rem;", text: "What gets routed here" }));
+
+    const grid = el("div", { class: "grid grid-2", style: "gap: 1.2rem; margin-bottom: 1.2rem;" });
+
+    const bucket = (title, items) => {
+      const col = el("div");
+      col.appendChild(el("div", { style: "font-family: var(--serif); font-style: italic; font-size: 1rem; margin-bottom: 0.4rem; color: var(--ink);", text: title }));
+      const ul = el("ul", { style: "margin:0; padding-left: 1.1rem; font-size: 0.85rem; color: var(--ink-soft); line-height: 1.7;" });
+      items.forEach(i => ul.appendChild(el("li", { text: i })));
+      col.appendChild(ul);
+      return col;
+    };
+
+    grid.appendChild(bucket("Holder-affecting (vote required)", [
+      "Grant approvals / rejections — every new option issuance",
+      "Allocation commits — FY draft becomes a real grant",
+      "Valuation activations — annual FMV that exercise prices peg to",
+      "Leaver determinations — Good Leaver vs Bad Leaver",
+      "Trading window open / close (annual Jan 16-31)",
+      "Special dividend declarations"
+    ]));
+
+    grid.appendChild(bucket("Plan-level (heavier thresholds)", [
+      "Roster appointments — adding a Senior employee committee seat",
+      "Threshold rule amendments (requires 3 / 3 Majors)",
+      "State reset / import (emergency only · 3 / 3 Majors)"
+    ]));
+
+    panel.appendChild(grid);
+
+    panel.appendChild(el("p", { class: "muted tiny", style: "margin: 1rem 0 0; padding-top: 0.8rem; border-top: 1px solid var(--line);" }, [
+      "Operational actions that don't need a vote — confirming payment receipt on an exercise, issuing a document, resetting a holder's password, generating bulk annual statements — happen straight from the Administrator console without proposing a resolution. Per Clause 10.11, payment confirmation is a single-Trustee duty."
+    ]));
+
+    return panel;
   }
 
   function buildBatchVoteControls(resolutions, me) {
@@ -295,7 +351,7 @@
 
   function holderName(id) {
     if (id == null) return "—";
-    const h = D.holders.find(x => x.id === id);
+    const h = C.holders().find(x => x.id === id);
     return h ? h.name : ("holder#" + id);
   }
 
@@ -320,7 +376,7 @@
     const email = el("input", { type: "email", placeholder: "email@elitez.asia" });
     const holderLink = el("select");
     holderLink.appendChild(el("option", { value: "", text: "(not an ESOP holder)" }));
-    D.holders.forEach(h => holderLink.appendChild(el("option", { value: String(h.id), text: h.name })));
+    C.holders().forEach(h => holderLink.appendChild(el("option", { value: String(h.id), text: h.name })));
     const seatSel = el("select");
     vacantSeats().forEach(s => seatSel.appendChild(el("option", { value: String(s), text: `Seat ${s}` })));
     if (!vacantSeats().length) seatSel.appendChild(el("option", { value: "", text: "No vacant seats" }));

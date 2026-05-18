@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ElitezShelf — Design Variants Gallery</title>
+<meta name="description" content="Five distinct design directions for the ElitezShelf marketing site." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0e0e0d;
+    --panel:#1a1917;
+    --paper:#f6f1e7;
+    --ink:#0e0c08;
+    --rule:#2a2722;
+    --teal:#22cc8a;
+    --gold:#c9a04d;
+    --vermilion:#c8392a;
+    --signal:#ff5c11;
+    --magenta:#ff37b1;
+  }
+  html,body{background:var(--bg);color:var(--paper);font-family:"Fraunces",serif;line-height:1.5;font-size:16px}
+  .mono{font-family:"JetBrains Mono",monospace}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--gold);color:var(--ink)}
+
+  .wrap{max-width:1320px;margin:0 auto;padding:48px 32px}
+
+  header.top{padding:48px 0 24px;border-bottom:1px solid var(--rule)}
+  .meta{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);display:flex;gap:18px;align-items:center;margin-bottom:24px}
+  .meta::before{content:"";width:32px;height:1px;background:var(--gold)}
+  h1{font-family:"Fraunces",serif;font-weight:500;font-size:clamp(48px,7vw,96px);line-height:0.98;letter-spacing:-0.025em;margin-bottom:24px;max-width:18ch}
+  h1 em{font-style:italic;color:var(--gold)}
+  p.deck{font-size:18px;color:rgba(246,241,231,0.7);max-width:62ch;line-height:1.55}
+  p.deck strong{color:var(--paper)}
+
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:32px;padding:48px 0}
+  .grid > a{display:block;background:var(--panel);border:1px solid var(--rule);overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s;position:relative}
+  .grid > a:hover{transform:translateY(-4px);border-color:var(--gold);box-shadow:0 24px 50px -20px rgba(0,0,0,.7)}
+  .grid > a iframe{width:100%;aspect-ratio:16/10;border:0;display:block;background:var(--bg);transform-origin:top left;transform:scale(0.5);width:200%;height:200%;pointer-events:none;border-bottom:1px solid var(--rule)}
+  .frame-shell{aspect-ratio:16/10;overflow:hidden;position:relative;background:var(--bg)}
+  .frame-shell::after{content:"OPEN ↗";position:absolute;top:14px;right:14px;background:rgba(14,14,13,.85);color:var(--paper);padding:6px 12px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;border:1px solid var(--rule);backdrop-filter:blur(4px);transition:background .2s,color .2s}
+  .grid > a:hover .frame-shell::after{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+
+  .meta-row{padding:24px 28px;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:start;border-top:1px solid var(--rule)}
+  .num-tag{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:0.22em;color:var(--gold);text-transform:uppercase;writing-mode:vertical-rl;transform:rotate(180deg);padding-top:4px}
+  .body-block{}
+  .body-block .name{font-family:"Fraunces",serif;font-weight:500;font-size:24px;line-height:1.15;letter-spacing:-0.015em;color:var(--paper);margin-bottom:6px}
+  .body-block .name em{font-style:italic;color:var(--gold)}
+  .body-block .tag{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(246,241,231,0.5);margin-bottom:14px;display:flex;flex-wrap:wrap;gap:14px}
+  .body-block .tag span{display:inline-flex;align-items:center;gap:6px}
+  .body-block .tag .dot{width:8px;height:8px;border-radius:50%;background:var(--gold)}
+  .body-block .desc{font-size:14px;color:rgba(246,241,231,0.72);line-height:1.55;max-width:46ch}
+  .body-block .swatches{margin-top:14px;display:flex;gap:6px}
+  .body-block .swatches span{width:18px;height:18px;border-radius:4px;border:1px solid rgba(246,241,231,0.18)}
+  .open-arrow{font-family:"JetBrains Mono",monospace;font-size:18px;color:rgba(246,241,231,0.4);transition:color .2s,transform .2s}
+  .grid > a:hover .open-arrow{color:var(--gold);transform:translateX(4px)}
+
+  /* Per-card accent stripe at top */
+  .grid > a::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;z-index:2}
+  .v1::before{background:var(--vermilion)}
+  .v2::before{background:var(--signal)}
+  .v3::before{background:#ff8a4a}
+  .v4::before{background:var(--gold)}
+  .v5::before{background:var(--teal)}
+
+  /* Featured = current */
+  .featured{padding:48px 0 0}
+  .featured h2{font-family:"Fraunces",serif;font-weight:400;font-style:italic;font-size:22px;color:rgba(246,241,231,0.65);margin-bottom:24px;letter-spacing:-0.01em}
+  .featured-card{background:var(--panel);border:1px solid var(--rule);padding:24px 28px;display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center}
+  .featured-card .name{font-family:"Fraunces",serif;font-size:22px;font-weight:500;color:var(--paper)}
+  .featured-card .name em{font-style:italic;color:var(--gold)}
+  .featured-card .desc{font-size:13px;color:rgba(246,241,231,0.65)}
+  .featured-card .pill{font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;padding:8px 14px;border:1px solid var(--rule);color:var(--paper)}
+  .featured-card a{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);padding:10px 18px;border:1px solid var(--gold)}
+  .featured-card a:hover{background:var(--gold);color:var(--ink)}
+
+  footer{padding:48px 32px 80px;text-align:center;color:rgba(246,241,231,0.4);font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;border-top:1px solid var(--rule);margin-top:48px}
+
+  @media(max-width:980px){
+    .grid{grid-template-columns:1fr}
+    .meta-row{grid-template-columns:1fr}
+    .num-tag{writing-mode:initial;transform:none}
+    .featured-card{grid-template-columns:1fr;gap:14px}
+    h1{font-size:42px}
+  }
+</style>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <p class="meta">Five directions · pick a flavour</p>
+    <h1>The same product, in <em>five distinct flavours.</em></h1>
+    <p class="deck">Each variant tells the ElitezShelf story end-to-end — hero, asymmetry, capabilities, closing CTA — but commits to a different aesthetic POV. Click any tile to open the full landing page. Variants are standalone HTML so you can A/B them without disturbing the live build.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="featured">
+    <h2>Currently shipping at /</h2>
+    <div class="featured-card">
+      <span class="pill">v0 · Bloomberg × Linear</span>
+      <div>
+        <div class="name">Field intelligence, <em>weaponised.</em></div>
+        <div class="desc">Dark-mode shelf-tag teal · Geist Sans/Mono · the Bloomberg-terminal-meets-Linear aesthetic the brief asked for. The default the rest of the comparisons land against.</div>
+      </div>
+      <a href="../">Open live →</a>
+    </div>
+  </section>
+
+  <section class="grid">
+
+    <a href="v1-editorial.html" class="v1">
+      <div class="frame-shell">
+        <iframe src="v1-editorial.html" loading="lazy" title="Editorial · Vol. 01 No. 01"></iframe>
+      </div>
+      <div class="meta-row">
+        <span class="num-tag">№ 01</span>
+        <div class="body-block">
+          <div class="name">Editorial — <em>Vol. 01 No. 01</em></div>
+          <div class="tag">
+            <span><span class="dot" style="background:#c8392a"></span>Bloomberg Businessweek</span>
+            <span>Fraunces · Source Serif · JetBrains Mono</span>
+          </div>
+          <p class="desc">Print masthead. Vermilion accent on cream paper. Drop caps, pull quotes, two-column body, fig captions, vol/no issue strip. Reads as a serious financial-intelligence dispatch.</p>
+          <div class="swatches">
+            <span style="background:#f6f1e7"></span>
+            <span style="background:#0e0c08"></span>
+            <span style="background:#c8392a"></span>
+            <span style="background:#1f3856"></span>
+            <span style="background:#a17a2b"></span>
+          </div>
+        </div>
+        <span class="open-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="v2-industrial.html" class="v2">
+      <div class="frame-shell">
+        <iframe src="v2-industrial.html" loading="lazy" title="Industrial Spec Sheet"></iframe>
+      </div>
+      <div class="meta-row">
+        <span class="num-tag">№ 02</span>
+        <div class="body-block">
+          <div class="name">Industrial — <em>Spec Sheet R02</em></div>
+          <div class="tag">
+            <span><span class="dot" style="background:#ff4f00"></span>Brutalist engineering</span>
+            <span>Archivo Black · Space Mono</span>
+          </div>
+          <p class="desc">Concrete grey + signal orange + hazard yellow. Engineering-drawing blueprint hero, hazard-tape rules, drop-shadow brutalist cards, factory-floor measurement plates.</p>
+          <div class="swatches">
+            <span style="background:#d8d4cc"></span>
+            <span style="background:#1a1a1a"></span>
+            <span style="background:#ff4f00"></span>
+            <span style="background:#ffd400"></span>
+            <span style="background:#0e1f2c"></span>
+          </div>
+        </div>
+        <span class="open-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="v3-tropical.html" class="v3">
+      <div class="frame-shell">
+        <iframe src="v3-tropical.html" loading="lazy" title="Tropical Hawker Modernist"></iframe>
+      </div>
+      <div class="meta-row">
+        <span class="num-tag">№ 03</span>
+        <div class="body-block">
+          <div class="name">Tropical — <em>Hawker Modernist</em></div>
+          <div class="tag">
+            <span><span class="dot" style="background:#ff8a4a"></span>Warm Singaporean</span>
+            <span>Hahmlet · DM Sans · DM Mono</span>
+          </div>
+          <p class="desc">Cream + Tiger-bottle teal + papaya orange + kueh pink. Peranakan-tile section dividers. Tilted cards, hand-drawn underlines, organic blob backgrounds. Local-first warmth.</p>
+          <div class="swatches">
+            <span style="background:#fdf3e0"></span>
+            <span style="background:#0d4540"></span>
+            <span style="background:#ff8a4a"></span>
+            <span style="background:#f8c4c4"></span>
+            <span style="background:#d3eed5"></span>
+          </div>
+        </div>
+        <span class="open-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="v4-luxury.html" class="v4">
+      <div class="frame-shell">
+        <iframe src="v4-luxury.html" loading="lazy" title="Maison Refined Edition"></iframe>
+      </div>
+      <div class="meta-row">
+        <span class="num-tag">№ 04</span>
+        <div class="body-block">
+          <div class="name">Maison — <em>Refined Edition</em></div>
+          <div class="tag">
+            <span><span class="dot" style="background:#c9a04d"></span>Black &amp; gold luxury</span>
+            <span>Playfair Display · Cormorant · EB Garamond</span>
+          </div>
+          <p class="desc">Ink black, antique cream, gold-leaf accent. Italic display serif at scale. Roman numerals, ornamental rules, generous whitespace. The dispatch for a CMO who reads <em>The Economist</em>.</p>
+          <div class="swatches">
+            <span style="background:#0a0a09"></span>
+            <span style="background:#efe8d8"></span>
+            <span style="background:#c9a04d"></span>
+            <span style="background:#3a5755"></span>
+            <span style="background:#cabea1"></span>
+          </div>
+        </div>
+        <span class="open-arrow">→</span>
+      </div>
+    </a>
+
+    <a href="v5-terminal.html" class="v5" style="grid-column:1 / -1">
+      <div class="frame-shell" style="aspect-ratio:21/10">
+        <iframe src="v5-terminal.html" loading="lazy" title="Phosphor Terminal"></iframe>
+      </div>
+      <div class="meta-row">
+        <span class="num-tag">№ 05</span>
+        <div class="body-block">
+          <div class="name">Phosphor — <em>Terminal Edition</em></div>
+          <div class="tag">
+            <span><span class="dot" style="background:#22ff7c"></span>CRT data-density</span>
+            <span>Bebas Neue · IBM Plex Mono</span>
+          </div>
+          <p class="desc">Pure black, phosphor green, amber, magenta alerts. CRT scanline overlay, dual scrolling tickers, 8-column KPI strip, dense data table for capabilities, OOS heatmap. Bloomberg-terminal-as-marketing-site. Maximalist; assumes a buyer who lives at a trading desk.</p>
+          <div class="swatches">
+            <span style="background:#000"></span>
+            <span style="background:#22ff7c"></span>
+            <span style="background:#ffaa00"></span>
+            <span style="background:#ff37b1"></span>
+            <span style="background:#0a120c"></span>
+          </div>
+        </div>
+        <span class="open-arrow">→</span>
+      </div>
+    </a>
+
+  </section>
+</div>
+
+<footer>
+  06 May 2026 · five variants · standalone HTML · single source of truth at /codings/elitezshelf-frontage/public/designs
+</footer>
+
+</body>
+</html>

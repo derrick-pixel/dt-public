@@ -8,6 +8,9 @@ import { sendSms } from '../services/sms';
 import { sendEmail } from '../services/email';
 
 const FOURTEEN_DAYS_SECONDS = 14 * 86400;
+// Path B: a guest-created wedding has 90 days to be claimed by the couple.
+// If it is never claimed, the held gift is auto-refunded to the guest.
+const CLAIM_WINDOW_SECONDS = 90 * 86400;
 
 interface GiftRow {
   id: string;
@@ -88,20 +91,24 @@ async function handleCompleted(
     return ok();
   }
   const now = nowSeconds();
+  // A held (Path B) gift runs on the 90-day claim clock; an ordinary pending
+  // gift runs on the 14-day couple-authorisation clock.
+  const window = gift.state === 'pending_claim' ? CLAIM_WINDOW_SECONDS : FOURTEEN_DAYS_SECONDS;
   await env.DB.prepare(
     `UPDATE gifts SET payment_succeeded_at = ?, scheduled_auto_refund_at = ? WHERE id = ?`
   )
-    .bind(now, now + FOURTEEN_DAYS_SECONDS, gift.id)
+    .bind(now, now + window, gift.id)
     .run();
   await audit(env, {
     actorType: 'system',
     eventType: 'hitpay.webhook.completed',
     entityType: 'gift',
     entityId: gift.id,
-    payload: { payment_id: paymentId, payment_succeeded_at: now },
+    payload: { payment_id: paymentId, payment_succeeded_at: now, gift_state: gift.state },
   });
 
-  // Notify couple (Path A only this week; Path B claim flow lands in Week 5)
+  // Notify the couple — an authorisation prompt (Path A) or a claim
+  // invitation carrying a magic link (Path B).
   ctx.waitUntil(notifyCouple(env, gift));
   if (gift.guest_email) ctx.waitUntil(notifyGuest(env, gift));
   return ok();
@@ -157,10 +164,25 @@ async function notifyCouple(env: Env, gift: GiftRow): Promise<void> {
     const charityCents = gift.gift_amount_cents - gift.personal_portion_cents;
     const charity = (charityCents / 100).toFixed(2);
 
+    // Path B — the couple has not claimed their page and has no email on file.
+    // Text the claim link to the mobile the attendee supplied, as a backstop
+    // to the link the attendee forwards themselves.
+    if (gift.state === 'pending_claim') {
+      const token = await hmacSha256Hex(env.SESSION_HMAC_SECRET, `wedding-claim:${gift.wedding_id}`);
+      const claimUrl = `${env.PUBLIC_BASE_URL}/claim.html?w=${gift.wedding_id}&t=${token}`;
+      await sendSms(
+        env,
+        couple.mobile,
+        `${gift.guest_name} sent you a S$${total} wedding gift via Altru. Claim your page to receive it: ${claimUrl}`
+      ).catch((e) => console.error('Claim SMS to couple failed', e));
+      return;
+    }
+
+    // Path A — the couple already has an active dashboard.
     await sendSms(
       env,
       couple.mobile,
-      `${gift.guest_name} sent a S$${total} gift via Altru. Sign in to authorise within 14 days: ${env.PUBLIC_BASE_URL}/couple.html`
+      `${gift.guest_name} sent a S$${total} gift via Altru. Sign in to authorise within 14 days: ${env.PUBLIC_BASE_URL}/dashboard.html`
     ).catch((e) => console.error('SMS to couple failed', e));
 
     await sendEmail(env, {
@@ -173,7 +195,7 @@ async function notifyCouple(env: Env, gift: GiftRow): Promise<void> {
         `  · Your portion:    S$${personal}\n\n` +
         (gift.message_to_couple ? `Message from ${gift.guest_name}: "${gift.message_to_couple}"\n\n` : '') +
         `Sign in to your dashboard to authorise release within 14 days:\n` +
-        `${env.PUBLIC_BASE_URL}/couple.html\n\n` +
+        `${env.PUBLIC_BASE_URL}/dashboard.html\n\n` +
         `If you don't authorise within 14 days, the guest is automatically refunded in full.\n\n— Altru`,
       html:
         `<p>Hi ${escapeHtml(couple.display_name)},</p>` +
@@ -182,7 +204,7 @@ async function notifyCouple(env: Env, gift: GiftRow): Promise<void> {
         (gift.message_to_couple
           ? `<p style="background:#FFF8F8;padding:0.85rem 1rem;border-left:3px solid #C8102E;border-radius:0 8px 8px 0;font-style:italic;">"${escapeHtml(gift.message_to_couple)}"</p>`
           : '') +
-        `<p><a href="${env.PUBLIC_BASE_URL}/couple.html" style="display:inline-block;background:#C8102E;color:white;padding:0.85rem 1.6rem;border-radius:8px;text-decoration:none;font-weight:700;">Open dashboard →</a></p>` +
+        `<p><a href="${env.PUBLIC_BASE_URL}/dashboard.html" style="display:inline-block;background:#C8102E;color:white;padding:0.85rem 1.6rem;border-radius:8px;text-decoration:none;font-weight:700;">Open dashboard →</a></p>` +
         `<p style="font-size:0.85rem;color:#8A5C5C;">If you don't authorise within 14 days, the guest is automatically refunded in full.</p>` +
         `<p>— Altru</p>`,
     }).catch((e) => console.error('Email to couple failed', e));

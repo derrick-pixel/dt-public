@@ -6,6 +6,7 @@ import { hmacSha256Hex } from '../lib/hmac';
 import { constantTimeEqual } from '../lib/sha256';
 import { createPaymentRequest, refundPayment } from '../services/hitpay';
 import { transitionGiftState } from '../services/state';
+import { screenEntity } from '../services/sanctions';
 import { audit } from '../services/audit';
 
 interface CharityPortionIn {
@@ -77,16 +78,19 @@ export async function postCreateGift(
     return jsonError(400, 'empty_gift');
   }
 
-  // Validate wedding is accepting gifts (Path A only this week)
+  // Validate wedding is accepting gifts. An active wedding takes gifts in
+  // 'pending'; a guest-created wedding the couple has not yet claimed takes
+  // gifts in 'pending_claim' until the couple claims it (Path B).
   const wedding = await env.DB.prepare(
     `SELECT id, slug, status FROM weddings WHERE id = ?`
   )
     .bind(weddingId)
     .first<{ id: string; slug: string; status: string }>();
   if (!wedding) return jsonError(404, 'wedding_not_found');
-  if (wedding.status !== 'active') {
+  if (wedding.status !== 'active' && wedding.status !== 'pending_couple_claim') {
     return jsonError(400, 'wedding_not_accepting_gifts', `Wedding status is ${wedding.status}`);
   }
+  const giftState = wedding.status === 'pending_couple_claim' ? 'pending_claim' : 'pending';
 
   // Validate every charity portion targets a charity selected for this wedding
   if (portions.length > 0) {
@@ -107,15 +111,27 @@ export async function postCreateGift(
     return jsonError(400, 'no_charity_selected');
   }
 
-  // Insert gift row in 'pending' (Path A). Path B's pending_claim ships in Week 5.
+  // Insert gift row — 'pending' for an active wedding, 'pending_claim' for a
+  // guest-created wedding awaiting the couple's claim.
   const giftId = generateId();
   const now = nowSeconds();
+
+  // Large gifts: screen the donor against the MAS sanctions list. A confirmed
+  // match blocks the gift; a partial match is recorded for operator review.
+  const largeThreshold = parseInt(env.LARGE_GIFT_THRESHOLD_CENTS ?? '50000', 10);
+  if (total >= largeThreshold) {
+    const screen = await screenEntity(env, 'donor', giftId, name);
+    if (screen.result === 'fail') {
+      return jsonError(403, 'sanctions_block', 'This gift cannot be processed. Please contact support@altru.asia.');
+    }
+  }
+
   await env.DB.prepare(
     `INSERT INTO gifts
      (id, wedding_id, guest_name, guest_mobile, guest_email, gift_amount_cents,
       personal_portion_cents, charity_portions_json, state, state_changed_at,
       scheduled_auto_refund_at, message_to_couple, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?)`
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   )
     .bind(
       giftId,
@@ -126,6 +142,7 @@ export async function postCreateGift(
       total,
       personal,
       JSON.stringify(portions),
+      giftState,
       now,
       now + INITIAL_AUTO_REFUND_BUFFER_SECONDS,
       body.message ?? null,
@@ -199,14 +216,29 @@ export async function getGiftPublic(
   const gift = await env.DB.prepare(
     `SELECT g.id, g.state, g.gift_amount_cents, g.personal_portion_cents,
             g.charity_portions_json, g.payment_succeeded_at,
-            g.scheduled_auto_refund_at, g.guest_name, w.slug AS wedding_slug
+            g.scheduled_auto_refund_at, g.guest_name, g.wedding_id,
+            w.slug AS wedding_slug, w.status AS wedding_status
      FROM gifts g JOIN weddings w ON w.id = g.wedding_id
      WHERE g.id = ?`
   )
     .bind(giftId)
-    .first();
+    .first<{
+      id: string;
+      state: string;
+      wedding_id: string;
+      wedding_slug: string;
+      wedding_status: string;
+    }>();
   if (!gift) return jsonError(404, 'not_found');
-  return jsonResponse({ gift });
+
+  // For a gift to an unclaimed wedding, hand the attendee the claim link so
+  // they can forward it to the couple.
+  let claimUrl: string | null = null;
+  if (gift.state === 'pending_claim') {
+    const token = await hmacSha256Hex(env.SESSION_HMAC_SECRET, `wedding-claim:${gift.wedding_id}`);
+    claimUrl = `${env.PUBLIC_BASE_URL}/claim.html?w=${gift.wedding_id}&t=${token}`;
+  }
+  return jsonResponse({ gift, claim_url: claimUrl });
 }
 
 export async function getRefundLink(
@@ -237,7 +269,15 @@ export async function getRefundLink(
     }>();
   if (!gift) return htmlError('Gift not found.');
 
-  if (gift.state !== 'pending' && gift.state !== 'pending_claim') {
+  // A donor can self-cancel only before the couple claims the page. Once the
+  // wedding is claimed, the gift is the couple's decision (approve/decline).
+  if (gift.state === 'pending') {
+    return htmlError(
+      'The couple has claimed their page and this gift is now theirs to decide on. ' +
+        'It can no longer be cancelled here — email support@altru.asia if you need help.'
+    );
+  }
+  if (gift.state !== 'pending_claim') {
     return htmlSuccess(`This gift is in state '${gift.state}' — nothing to refund.`);
   }
   if (!gift.payment_succeeded_at || !gift.payment_ref) {

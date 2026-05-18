@@ -231,6 +231,63 @@ export async function postBreachAssessment(req: Request, env: Env): Promise<Resp
   return ok({ task_id: result.taskId, status: 'awaiting_review' });
 }
 
+// ── Admin: GET /api/admin/dsr ─────────────────────────────────────────────
+export async function getDsrList(req: Request, env: Env): Promise<Response> {
+  const url = new URL(req.url);
+  const status = url.searchParams.get('status');
+  const rows = status
+    ? await env.DB.prepare(
+        `SELECT id, ts, subject_type, contact_email, request_type, status, deadline_at, created_at
+         FROM data_subject_requests WHERE status = ? ORDER BY deadline_at ASC LIMIT 200`
+      )
+        .bind(status)
+        .all()
+    : await env.DB.prepare(
+        `SELECT id, ts, subject_type, contact_email, request_type, status, deadline_at, created_at
+         FROM data_subject_requests ORDER BY deadline_at ASC LIMIT 200`
+      ).all();
+  return ok({ requests: rows.results });
+}
+
+// ── Admin: POST /api/admin/dsr/:id/complete ───────────────────────────────
+export async function completeDsr(req: Request, env: Env): Promise<Response> {
+  const id = new URL(req.url).pathname.split('/').at(-2) ?? '';
+  if (!id) return err(400, 'missing_id');
+
+  let body: { notes?: string } = {};
+  try { body = (await req.json()) as { notes?: string }; } catch { /* notes optional */ }
+
+  await env.DB.prepare(`UPDATE data_subject_requests SET status = 'completed' WHERE id = ?`)
+    .bind(id)
+    .run();
+  await audit(env, {
+    actorType: 'operator',
+    eventType: 'compliance.dsr.completed',
+    entityType: 'data_subject_request',
+    entityId: id,
+    payload: { notes: body.notes },
+  });
+  return ok({ ok: true });
+}
+
+// ── Admin: GET /api/admin/sanctions ───────────────────────────────────────
+export async function getSanctionsChecks(req: Request, env: Env): Promise<Response> {
+  const url = new URL(req.url);
+  const result = url.searchParams.get('result');
+  const rows = result
+    ? await env.DB.prepare(
+        `SELECT id, entity_type, entity_id, name_checked, list_version, result, checked_at, payload_json
+         FROM sanctions_checks WHERE result = ? ORDER BY checked_at DESC LIMIT 200`
+      )
+        .bind(result)
+        .all()
+    : await env.DB.prepare(
+        `SELECT id, entity_type, entity_id, name_checked, list_version, result, checked_at, payload_json
+         FROM sanctions_checks ORDER BY checked_at DESC LIMIT 200`
+      ).all();
+  return ok({ checks: rows.results });
+}
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 function ok(body: unknown): Response {
   return new Response(JSON.stringify(body), {

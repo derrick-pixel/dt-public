@@ -21,7 +21,29 @@
   let meta = loadMeta();
   let initialised = false;
   let initPromise = null;
+  // Holder identity (name, dept, ic, ...) is no longer shipped in data.json
+  // — it's fetched from public.holders_directory after auth. RLS scopes the
+  // visible rows: holders see only themselves; admin/committee see all.
+  let holdersDirectory = [];
   const subscribers = new Set();
+
+  async function loadHoldersDirectory() {
+    if (!window.ESOPSupa || !window.ESOPSupa.client) return [];
+    try {
+      const { data, error } = await window.ESOPSupa.client
+        .from("holders_directory")
+        .select("*")
+        .order("id");
+      if (error) {
+        console.warn("ESOPStore: holders_directory fetch failed:", error.message);
+        return [];
+      }
+      return data || [];
+    } catch (e) {
+      console.warn("ESOPStore: holders_directory fetch threw:", e);
+      return [];
+    }
+  }
 
   async function init() {
     if (initialised) return;
@@ -33,10 +55,16 @@
     }
     initPromise = (async () => {
       try {
-        events = await window.ESOPSupa.syncAll();
+        const [eventsResult, directoryResult] = await Promise.all([
+          window.ESOPSupa.syncAll().catch((e) => { console.error("syncAll failed:", e); return []; }),
+          loadHoldersDirectory()
+        ]);
+        events = eventsResult;
+        holdersDirectory = directoryResult;
       } catch (e) {
-        console.error("ESOPStore.init: syncAll failed:", e);
+        console.error("ESOPStore.init failed:", e);
         events = [];
+        holdersDirectory = [];
       }
       window.ESOPSupa.subscribe((ev) => {
         if (!ev || events.some((x) => x.id === ev.id)) return;
@@ -70,11 +98,31 @@
   // --- Derived state (unchanged from pre-Supabase implementation) ---------
   function state() {
     const D = window.ESOP_DATA || { holders: [], valuation_history: [], grants_history: [], special_dividends: [] };
+    // Seed holders from holders_directory (Supabase, RLS-scoped) instead of
+    // data.json. Each directory row gets an empty grants[] array, populated
+    // by replaying grant_approved events below.
+    const directorySeed = (holdersDirectory && holdersDirectory.length)
+      ? holdersDirectory.filter((h) => h.status === "active").map((h) => ({
+          id: h.id,
+          name: h.name,
+          dept: h.dept,
+          title: h.title,
+          nat: h.nat,
+          ic: h.ic,
+          email: h.email,
+          grants: [],
+          status: h.status
+        }))
+      : (D.holders || []);
+    const leaversSeed = (holdersDirectory && holdersDirectory.length)
+      ? holdersDirectory.filter((h) => h.status === "leaver").map((h) => ({ id: h.id, name: h.name, note: h.notes }))
+      : (D.leavers || []);
     const s = structuredClone({
-      holders: D.holders,
-      valuation_history: D.valuation_history,
-      grants_history: D.grants_history,
-      special_dividends: D.special_dividends
+      holders: directorySeed,
+      leavers: leaversSeed,
+      valuation_history: D.valuation_history || [],
+      grants_history: D.grants_history || [],
+      special_dividends: D.special_dividends || []
     });
     const passwords = {};
     const scenarios = {};
@@ -107,13 +155,18 @@
         case "login": login_log.push({ ...ev.payload, at: ev.at }); break;
         case "grant_approved": {
           const h = s.holders.find((x) => x.id == ev.payload.holder_id);
-          const g = h && h.grants.find((x) => x.fy === ev.payload.fy);
-          if (g) {
-            g.status = "active";
-            g.grant_date = ev.payload.grant_date;
-            g.letter_date = ev.payload.letter_date || ev.payload.grant_date;
-            if (ev.payload.qty != null) g.qty = ev.payload.qty;
+          if (!h) break;
+          let g = h.grants.find((x) => x.fy === ev.payload.fy);
+          if (!g) {
+            // Pre-seeded data.json used to carry draft entries; now grants
+            // are derived purely from events. Create the row if absent.
+            g = { fy: ev.payload.fy, status: "active", qty: 0 };
+            h.grants.push(g);
           }
+          g.status = "active";
+          g.grant_date = ev.payload.grant_date;
+          g.letter_date = ev.payload.letter_date || ev.payload.grant_date;
+          if (ev.payload.qty != null) g.qty = ev.payload.qty;
           break;
         }
         case "grant_rejected": {
@@ -123,8 +176,14 @@
         }
         case "allocation_changed": {
           const h = s.holders.find((x) => x.id == ev.payload.holder_id);
-          const g = h && h.grants.find((x) => x.fy === ev.payload.fy);
-          if (g) g.qty = ev.payload.qty;
+          if (!h) break;
+          let g = h.grants.find((x) => x.fy === ev.payload.fy);
+          if (!g) {
+            g = { fy: ev.payload.fy, qty: 0, status: ev.payload.status || "draft", grant_date: null };
+            h.grants.push(g);
+          }
+          g.qty = ev.payload.qty;
+          if (ev.payload.status) g.status = ev.payload.status;
           break;
         }
         case "scenario_saved":

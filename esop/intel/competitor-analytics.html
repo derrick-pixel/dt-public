@@ -480,6 +480,23 @@
 </script>
 </head>
 <body class="admin-page">
+<script>
+// Auth gate — Market Intel is Clause-15 confidential.
+(function () {
+  try {
+    var keys = Object.keys(localStorage).filter(function (k) {
+      return k.indexOf('sb-') === 0 && k.indexOf('-auth-token') > 0;
+    });
+    for (var i = 0; i < keys.length; i++) {
+      var raw = localStorage.getItem(keys[i]);
+      if (!raw) continue;
+      var tok = JSON.parse(raw);
+      if (tok && tok.access_token) return;
+    }
+  } catch (e) {}
+  location.href = '../index.html?return=intel/&required=auth';
+})();
+</script>
   <nav class="elitez-nav">
     <a href="../index.html" class="brand" aria-label="Elitez ESOP — home">
       <span>Elitez ESOP</span>
@@ -1180,5 +1197,7 @@
 })();
 </script>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="assets/js/auth-gate.js"></script>
 </body>
 </html>

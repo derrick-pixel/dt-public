@@ -47,7 +47,7 @@
         Altru
       </a>
       <nav class="nav-links">
-        <a href="couple.html" class="active">Dashboard</a>
+        <a href="dashboard.html" class="active">Dashboard</a>
       </nav>
     </div>
   </header>
@@ -137,7 +137,8 @@
         <div class="ob-summary" id="summary" style="display:none;">
           <h3>🎉 You're set up</h3>
           <p style="font-size:0.95rem;">Your wedding page is live at <strong><span id="wedding-url"></span></strong>. Share this with your guests on save-the-dates, ang-bao envelopes, or your wedding website.</p>
-          <a href="couple.html" class="btn btn-gold btn-sm">Open dashboard →</a>
+          <p id="claim-line" style="display:none;font-size:0.95rem;font-weight:700;color:#1d6f43;"></p>
+          <a href="dashboard.html" class="btn btn-gold btn-sm">Open dashboard →</a>
         </div>
       </div>
     </section>
@@ -146,7 +147,7 @@
   <footer class="site-footer">
     <div class="container">
       <p>囍 Altru &nbsp;|&nbsp;
-        <a href="couple.html">Dashboard</a> &nbsp;·&nbsp;
+        <a href="dashboard.html">Dashboard</a> &nbsp;·&nbsp;
         <a href="privacy.html">Privacy</a> &nbsp;·&nbsp;
         <a href="terms.html">Terms</a>
       </p>
@@ -167,12 +168,13 @@
     let charities = [];
     let selectedCharityIds = new Set();
     let state = null;
+    let claimInfo = null;
 
     async function api(method, path, body) {
       const opts = { method, headers: {}, credentials: 'same-origin' };
       if (body !== undefined) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
       const res = await fetch(path, opts);
-      if (res.status === 401) { window.location.href = '/couple.html'; return null; }
+      if (res.status === 401) { window.location.href = '/dashboard.html'; return null; }
       const text = await res.text();
       let parsed; try { parsed = JSON.parse(text); } catch { parsed = { raw: text }; }
       return { status: res.status, body: parsed };
@@ -189,7 +191,21 @@
         state.charities.forEach(c => selectedCharityIds.add(c.id));
       }
       await loadCharities();
-      if (state.onboarding_complete) showSummary();
+      if (state.onboarding_complete) {
+        await maybeClaim();
+        showSummary();
+      }
+    }
+
+    // Path B: once onboarding is complete, claim the wedding the couple was
+    // invited to. This activates the wedding and releases any held gifts.
+    async function maybeClaim() {
+      if (!state || !state.wedding || state.wedding.status !== 'pending_couple_claim') return;
+      const r = await api('POST', '/api/couple/claim', {});
+      if (r && r.status === 200 && (r.body.claimed || r.body.already_claimed)) {
+        state.wedding.status = 'active';
+        claimInfo = r.body;
+      }
     }
 
     function renderStepStatus() {
@@ -240,6 +256,13 @@
       const slug = state?.wedding?.slug;
       if (!slug) return;
       $('wedding-url').textContent = `altru.asia/wedding/${slug}`;
+      if (claimInfo && claimInfo.claimed) {
+        const n = claimInfo.gifts_activated || 0;
+        $('claim-line').textContent = n > 0
+          ? `Your page is now claimed — ${n} gift${n === 1 ? '' : 's'} ${n === 1 ? 'is' : 'are'} waiting in your dashboard for authorisation.`
+          : 'Your page is now claimed and live.';
+        $('claim-line').style.display = '';
+      }
       $('summary').style.display = '';
     }
 

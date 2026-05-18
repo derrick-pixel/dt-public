@@ -6,6 +6,19 @@
   const D = window.ESOP_DATA;
   const { fmt } = window.ESOPCalc;
 
+  // SEC-P2 fix: render IC as a masked string in every document. Even
+  // when the underlying data is already an XXXXX-prefixed token, never
+  // show more than the last 4 + check letter so a downloaded / leaked
+  // PDF carries no useful identifier. If holder.ic is empty/unknown,
+  // render an em-dash.
+  function maskIc(ic) {
+    if (!ic || typeof ic !== "string") return "—";
+    const trimmed = ic.replace(/\s+/g, "");
+    if (trimmed.length <= 5) return "•••••";
+    // Keep last 5 chars (e.g. "267F" or "1234A"); mask the rest.
+    return "•••••" + trimmed.slice(-5);
+  }
+
   const baseStyles = `
     .doc-sheet { background: #fff; color: #0E2640; font-family: "Fraunces", Georgia, serif; padding: 48px 56px; max-width: 780px; margin: 0 auto; box-shadow: 0 10px 40px rgba(14,38,64,0.14); border: 1px solid #e6d9bf; }
     .doc-sheet header { border-bottom: 2px solid #EE6A1F; padding-bottom: 14px; margin-bottom: 28px; display: flex; justify-content: space-between; align-items: center; }
@@ -94,7 +107,7 @@
       header(refNo),
       elt("h1", null, "Letter of Offer — Employee Share Option"),
       elt("p", null, `Date: ${fmt.date(letterDate)}`),
-      elt("p", null, `To: `, elt("strong", null, holder.name), ` (${holder.ic}) — ${holder.title}, ${holder.dept}`),
+      elt("p", null, `To: `, elt("strong", null, holder.name), ` (${maskIc(holder.ic)}) — ${holder.title}, ${holder.dept}`),
       elt("p", null, `Dear ${holder.name.split(/[,\s]/)[0]},`),
       elt("p", null,
         "On behalf of ", elt("strong", null, D.org.legal_name), ", and pursuant to ",
@@ -110,12 +123,13 @@
         dlPair("Exercise price", fmt.sgd(ex, 4) + " per share (10% of grant-date FMV)"),
         dlPair("Vesting", "12-month cliff at 20%; remaining 80% monthly over 48 months"),
         dlPair("Fully vested", fmt.date(shift(grantDate, 60))),
-        dlPair("Exercise window", `14 days from ${fmt.date(shift(grantDate, 60))} (or earlier on Exit Notice)`)
+        dlPair("Exercise window", `${(window.ESOP_DATA && window.ESOP_DATA.exercise && window.ESOP_DATA.exercise.window_days) || 14} days from ${fmt.date(shift(grantDate, 60))} (or earlier on Exit Notice)`)
       ),
       elt("h2", null, "Acceptance"),
       elt("p", null,
         "To accept this offer, please sign the Acceptance Form and remit ", elt("strong", null, "S$1"),
-        " by PayNow to +65 9663 9634 (Lin Rongjie) with the last 4 digits of your NRIC in the reference. ",
+        " by PayNow to ", elt("strong", null, "UEN 201010223H (Elitez Group Pte Ltd)"),
+        ". Use the QR generated in your portal — it pre-fills the amount and reference. ",
         "Your acceptance confirms you have read the Plan, agree to be bound by its terms, and understand that the information in this letter is ",
         elt("strong", null, "confidential"), " under Clause 15."
       ),
@@ -126,10 +140,29 @@
         " (Trustee). Dividends, exit proceeds and the annual trading window are available to you as beneficial owner."),
       elt("p", null, "Taxation: the spread between FMV and Exercise Price at exercise is treated by IRAS as employment income. Elitez will issue Appendix 8B at the relevant tax year."),
       elt("div", { class: "stamp" }, "Issued under The Elitez Employee Share Option Plan — counter-signed by two Major Shareholders as required under Clause 7.3."),
-      elt("div", { class: "sig" },
-        elt("div", null, elt("div", { class: "lbl" }, "For and on behalf of Elitez Group Pte. Ltd."), elt("div", null, "Teo Wen Shan, Derrick · CEO")),
-        elt("div", null, elt("div", { class: "lbl" }, "Acknowledged and accepted"), elt("div", null, holder.name))
-      ),
+      (function () {
+        // HLDR-P0-6 fix: only pre-fill the holder's name in the "Acknowledged
+        // and accepted" block if they've actually accepted. Otherwise show
+        // an empty signature line so the LOO never looks counter-signed
+        // before acceptance.
+        let accepted = false;
+        try {
+          const s = window.ESOPStore && window.ESOPStore.state ? window.ESOPStore.state() : null;
+          if (s && s.acceptances) {
+            const key = String(holder.id) + "::" + grant.fy;
+            accepted = (s.acceptances[key] || {}).status === "accepted";
+          }
+        } catch {}
+        return elt("div", { class: "sig" },
+          elt("div", null, elt("div", { class: "lbl" }, "For and on behalf of Elitez Group Pte. Ltd."), elt("div", null, "Teo Wen Shan, Derrick · CEO")),
+          elt("div", null,
+            elt("div", { class: "lbl" }, "Acknowledged and accepted"),
+            accepted
+              ? elt("div", null, holder.name)
+              : elt("div", { style: "color:#9aa4ad; font-style:italic;" }, "— pending holder signature —")
+          )
+        );
+      })(),
       docFooter()
     );
   }
@@ -153,7 +186,7 @@
       elt("h2", null, "Your exercise window"),
       elt("dl", null,
         dlPair("Window opens", fmt.date(sum.vesting.exercise_date)),
-        dlPair("Window closes", fmt.date(deadline) + " (14 days)"),
+        dlPair("Window closes", fmt.date(deadline) + ` (${(window.ESOP_DATA && window.ESOP_DATA.exercise && window.ESOP_DATA.exercise.window_days) || 14} days)`),
         dlPair("Options vested", fmt.num(vested) + " of " + fmt.num(grant.qty) + " granted")
       ),
       elt("h2", null, "Cost and value"),
@@ -168,7 +201,7 @@
         )
       ),
       elt("h2", null, "How to exercise"),
-      elt("p", null, "Remit by PayNow to ", elt("strong", null, "+65 9663 9634 (Lin Rongjie)"), " with ", elt("strong", null, `LOO-${holder.id}-${grant.fy}`), " in the reference. Cheque or cashier's order to Elitez Group Pte. Ltd. also accepted. Payment must clear by the window close date or the Option lapses (Clause 10.6)."),
+      elt("p", null, "Remit by PayNow to ", elt("strong", null, "UEN 201010223H (Elitez Group Pte Ltd)"), ". Use the QR generated in your portal at exercise — it pre-fills the amount and the reference for you. Cheque or cashier's order to Elitez Group Pte Ltd also accepted. Payment must clear by the window close date or the Option lapses (Clause 10.6)."),
       elt("p", null, "Upon successful payment, your Series A Preference Shares will be registered to the Trustee for your beneficial ownership within 10 Business Days (Clause 10.11)."),
       elt("div", { class: "stamp" }, "This is a whole-not-partial exercise. If you do not wish to exercise, you may decline by written reply before the window closes — your Options will then lapse."),
       elt("div", { class: "sig" },
@@ -346,7 +379,7 @@
       header(refNo),
       elt("h1", null, "Acceptance Form — Elitez ESOP"),
       elt("p", null, `Date of acceptance: ${fmt.date((acceptance.accepted_at || "").slice(0, 10))}`),
-      elt("p", null, `By: `, elt("strong", null, holder.name), ` (${holder.ic}) — ${holder.title}, ${holder.dept}`),
+      elt("p", null, `By: `, elt("strong", null, holder.name), ` (${maskIc(holder.ic)}) — ${holder.title}, ${holder.dept}`),
       elt("h2", null, "Declaration"),
       elt("p", null,
         "I, ", elt("strong", null, holder.name),
@@ -409,7 +442,7 @@
       header(refNo),
       elt("h1", null, "Notice of Exercise"),
       elt("p", null, `Submitted: ${fmt.date((exercise.submitted_at || "").slice(0, 10))}`),
-      elt("p", null, `By: `, elt("strong", null, holder.name), ` (${holder.ic}) — ${holder.title}, ${holder.dept}`),
+      elt("p", null, `By: `, elt("strong", null, holder.name), ` (${maskIc(holder.ic)}) — ${holder.title}, ${holder.dept}`),
       elt("p", null,
         "Pursuant to Clause 10 of The Elitez Employee Share Option Plan, I hereby give formal notice of my intent to exercise the vested Options from my ",
         elt("strong", null, grant.fy + " grant"),
@@ -473,7 +506,7 @@
       elt("h2", null, "Employee"),
       elt("dl", null,
         dlPair("Name", holder.name),
-        dlPair("Identification number", holder.ic),
+        dlPair("Identification number", maskIc(holder.ic)),
         dlPair("Nationality", holder.nat),
         dlPair("Employer", "Elitez Group Pte. Ltd."),
         dlPair("Position", holder.title + ", " + holder.dept)
@@ -540,7 +573,7 @@
       header(refNo),
       elt("h1", null, "Beneficial Ownership Statement"),
       elt("p", null, `Issued: ${fmt.date(new Date().toISOString().slice(0, 10))}`),
-      elt("p", null, `In respect of: `, elt("strong", null, holder.name), ` (${holder.ic})`),
+      elt("p", null, `In respect of: `, elt("strong", null, holder.name), ` (${maskIc(holder.ic)})`),
       elt("p", null,
         "This confirms that the holder is the ", elt("strong", null, "beneficial owner"),
         " of ", elt("strong", null, fmt.num(beneficial.total_shares || 0) + " Series A Preference Shares"),
@@ -630,7 +663,7 @@
       header(refNo),
       elt("h1", null, "Annual Statement — FY" + year),
       elt("p", null, `As at: ${fmt.date(asOf)}`),
-      elt("p", null, `For: `, elt("strong", null, holder.name), ` (${holder.ic}) — ${holder.title}, ${holder.dept}`),
+      elt("p", null, `For: `, elt("strong", null, holder.name), ` (${maskIc(holder.ic)}) — ${holder.title}, ${holder.dept}`),
       elt("h2", null, "Summary of your position"),
       elt("table", { class: "fig" },
         elt("tbody", null,

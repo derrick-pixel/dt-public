@@ -67,14 +67,28 @@
 
   function renderTopbar(activePage) {
     const s = session();
-    const navLinks = [
-      { href: "index.html", label: "Home", page: "home" },
-      { href: "portal.html", label: "Portfolio", page: "portal" },
-      { href: "trading.html", label: "Trading", page: "trading" },
-      { href: "admin.html", label: "Administrator", page: "admin" },
-      { href: "scheme.html", label: "Plan Rules", page: "scheme" },
-      { href: "intel/index.html", label: "Market Intel", page: "intel" }
+    // Nav visibility is gated by auth state:
+    //   - Home is always public
+    //   - Portfolio / Trading / Plan Rules / Market Intel: any signed-in user
+    //   - Administrator: admins and committee only
+    // Anyone clicking a private link before signing in would just bounce to
+    // the login page anyway, so hiding the links avoids leaking the platform's
+    // structure to drive-by visitors and keeps the landing nav minimal.
+    const allLinks = [
+      { href: "index.html",       label: "Home",          page: "home",    needs: "public" },
+      { href: "portal.html",      label: "Portfolio",     page: "portal",  needs: "holder" },
+      { href: "trading.html",     label: "Trading",       page: "trading", needs: "holder" },
+      { href: "admin.html",       label: "Administrator", page: "admin",   needs: "admin" },
+      { href: "scheme.html",      label: "Plan Rules",    page: "scheme",  needs: "auth" },
+      { href: "intel/index.html", label: "Market Intel",  page: "intel",   needs: "auth" }
     ];
+    const navLinks = allLinks.filter(l => {
+      if (l.needs === "public") return true;
+      if (!s) return false;
+      if (l.needs === "admin")  return s.kind === "admin" || s.kind === "committee";
+      if (l.needs === "holder") return s.kind === "holder";
+      return true; // l.needs === "auth"
+    });
 
     const brand = el("a", { href: "index.html", class: "brand" }, [
       el("img", { class: "wordmark", src: "assets/brand/elitez-wordmark.png", alt: "Elitez" }),
@@ -91,6 +105,24 @@
     const bar = el("header", { class: "topbar" }, [brand, nav, slot]);
     document.body.prepend(bar);
 
+    // Help / welcome tour button — always visible (no auth required) so a
+    // confused user can re-open the walkthrough any time without hunting
+    // through the footer.
+    const helpBtn = el("button", {
+      type: "button",
+      class: "topbar-help",
+      title: "Take the welcome tour",
+      "aria-label": "Take the welcome tour"
+    }, ["?"]);
+    helpBtn.addEventListener("click", () => {
+      if (window.ESOPTutorial && window.ESOPTutorial.open) {
+        window.ESOPTutorial.open();
+      } else {
+        window.open("onboarding-guide.pdf", "_blank");
+      }
+    });
+    slot.appendChild(helpBtn);
+
     if (s) {
       const signout = el("button", { type: "button" }, ["Sign out"]);
       signout.addEventListener("click", async () => {
@@ -101,11 +133,31 @@
           window.location.href = "index.html";
         }
       });
-      const chip = el("div", { class: "session-chip" }, [
+      const chipChildren = [
         el("span", { class: "dot" }),
-        el("span", { text: s.label || s.name }),
-        signout
-      ]);
+        el("span", { text: s.label || s.name })
+      ];
+      // Show which view a dual-capable user is currently in, with a quick
+      // toggle to flip to the other view.
+      if (s.dual_capable) {
+        const otherView = s.kind === "holder" ? "staff" : "holder";
+        const otherLabel = otherView === "holder" ? "Switch to Holder" :
+          (s.profile_role === "committee" ? "Switch to Committee" : "Switch to Admin");
+        const switcher = el("button", { type: "button", class: "view-switcher", text: otherLabel });
+        switcher.addEventListener("click", () => {
+          if (window.ESOPAuth && window.ESOPAuth.setActiveView) {
+            window.ESOPAuth.setActiveView(otherView);
+            setTimeout(() => {
+              location.href = otherView === "holder" ? "portal.html"
+                : s.profile_role === "committee" ? "committee.html" : "admin.html";
+            }, 50);
+          }
+        });
+        chipChildren.push(el("span", { class: "view-tag", text: s.kind === "holder" ? "Holder view" : (s.profile_role === "committee" ? "Committee view" : "Admin view") }));
+        chipChildren.push(switcher);
+      }
+      chipChildren.push(signout);
+      const chip = el("div", { class: "session-chip" }, chipChildren);
       slot.appendChild(chip);
 
       // Admin/committee: show 24h failed-login count as a small badge in the topbar.
@@ -157,7 +209,17 @@
       el("span", { class: "muted", text: "Demo build · data as of 23 Apr 2026." })
     ]);
     const right = el("div", { class: "confidential", text: "Confidential under Clause 15 of the Plan. Your Letter of Offer and the Plan document are the legally binding instruments. This platform summarises, it does not replace them." });
-    const f = el("footer", { class: "site" }, [left, right]);
+
+    // Tour re-trigger — visible on every page that renders the footer.
+    const tourLink = el("button", { type: "button", class: "tour-trigger", text: "Take the welcome tour" });
+    tourLink.addEventListener("click", () => {
+      if (window.ESOPTutorial && window.ESOPTutorial.open) window.ESOPTutorial.open();
+    });
+    const guidePdf = el("a", { href: "onboarding-guide.pdf", target: "_blank", rel: "noopener", class: "tour-trigger", style: "margin-left: 1rem; text-decoration: underline;", text: "Download the holder guide (PDF)" });
+    const helpRow = el("div", { class: "muted tiny", style: "margin-top: 0.6rem;" }, [tourLink, guidePdf]);
+
+    const leftStack = el("div", null, [left, helpRow]);
+    const f = el("footer", { class: "site" }, [leftStack, right]);
     document.body.appendChild(f);
   }
 

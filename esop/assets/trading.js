@@ -17,7 +17,7 @@
 
   const isAdmin = session.kind === "admin" || session.kind === "committee";
   const isCommittee = session.kind === "committee";
-  const holder = !isAdmin ? C.holders().find(h => h.id === session.id) : null;
+  const holder = !isAdmin ? C.holders().find(h => String(h.id) === String(session.id)) : null;
 
   function gatedAction(actionType, payload, label) {
     if (!isCommittee) {
@@ -156,20 +156,53 @@
     const submitBtn = el("button", { type: "button", class: "btn btn--brass" }, ["Submit order"]);
     const err = el("div", { class: "alert alert--bad", style: "margin-top:0.8rem; display:none;" });
 
-    submitBtn.onclick = () => {
+    submitBtn.onclick = async () => {
       err.style.display = "none";
       if (!orderingHolderId) { err.textContent = "Pick a holder first."; err.style.display = "block"; return; }
       const qty = Number(qtyInput.value);
       const price = Number(priceInput.value);
       if (!qty || qty < 1) { err.textContent = "Quantity must be ≥ 1."; err.style.display = "block"; return; }
       if (!price || price <= 0) { err.textContent = "Price must be positive."; err.style.display = "block"; return; }
-      Store.emit("order_placed", {
-        side: sideSelect.value,
-        holder_id: orderingHolderId,
-        qty, price,
-        window: currentWindow.name
-      });
-      alert(`Order submitted: ${sideSelect.value.toUpperCase()} ${qty} @ ${fmt.sgd(price, 4)} in ${currentWindow.name}.`);
+
+      // HLDR-P0-3 fix: gate trading to once-exercised holders. A SELL order
+      // must be within the holder's beneficial-ownership balance. A BUY
+      // order from a holder who has never exercised is allowed (they can
+      // still build a position) but admins can override for any side.
+      const state = Store.state();
+      const beneficial = (state.beneficial || {})[orderingHolderId];
+      const ownedShares = beneficial ? (beneficial.total_shares || 0) : 0;
+      if (!isAdmin && sideSelect.value === "sell") {
+        if (ownedShares <= 0) {
+          err.textContent = "You don't have any exercised shares yet. Sell orders require an existing beneficial-ownership balance.";
+          err.style.display = "block";
+          return;
+        }
+        if (qty > ownedShares) {
+          err.textContent = `You only hold ${ownedShares.toLocaleString()} shares — cannot sell ${qty.toLocaleString()}.`;
+          err.style.display = "block";
+          return;
+        }
+      }
+
+      // HLDR-P0-2 fix: disable button during async submit to prevent
+      // double-emission on a slow network.
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Submitting…";
+      try {
+        await Store.emit("order_placed", {
+          side: sideSelect.value,
+          holder_id: orderingHolderId,
+          qty, price,
+          window: currentWindow.name
+        });
+        alert(`Order submitted: ${sideSelect.value.toUpperCase()} ${qty} @ ${fmt.sgd(price, 4)} in ${currentWindow.name}.`);
+      } catch (e) {
+        err.textContent = "Order failed: " + (e.message || e);
+        err.style.display = "block";
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit order";
+      }
     };
 
     const panel = el("div", { class: "panel" }, [

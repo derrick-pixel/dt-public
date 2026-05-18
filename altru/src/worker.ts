@@ -1,6 +1,9 @@
 import type { Env } from './types';
 import { route } from './router';
 import { dispatchComplianceCron } from './cron/compliance';
+import { runAutoRefund } from './cron/auto-refund';
+import { runDisbursement } from './cron/disbursement';
+import { runMonthlyInvoices } from './cron/invoices';
 
 export default {
   async fetch(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
@@ -34,9 +37,21 @@ export default {
     // Compliance cron jobs (sanctions, AI review, invoices, retention, DSR)
     await dispatchComplianceCron(event.cron, env, ctx);
 
-    // TODO Week 4: auto-refund tick → import { runAutoRefund } from './cron/auto-refund'
-    // TODO Week 6: disbursement run → import { runDisbursement } from './cron/disbursement'
-    // TODO Week 6: invoice generation → handled inside compliance.ts monthly job
+    // Hourly auto-refund tick — escrow gifts past their 14-day window.
+    if (event.cron === '0 * * * *') {
+      ctx.waitUntil(runAutoRefund(env));
+    }
+
+    // Daily disbursement run — authorised gifts → queued payouts.
+    if (event.cron === '0 1 * * *') {
+      ctx.waitUntil(runDisbursement(env));
+    }
+
+    // Monthly invoice run — 5% platform fee billed to charities.
+    if (event.cron === '0 2 1 * *') {
+      ctx.waitUntil(runMonthlyInvoices(env));
+    }
+
     // TODO Week 7: HitPay reconciliation → import { runReconciliation } from './cron/reconciliation'
   },
 };

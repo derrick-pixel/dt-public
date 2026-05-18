@@ -468,6 +468,311 @@ table.data tr.total td {
 .login-box p.sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 1.3rem; }
 .login-box .btn { width: 100%; text-align: center; }
 
+.guide-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.2rem;
+  padding: 0.75rem 0.9rem;
+  background: rgba(238, 106, 31, 0.08);
+  border-left: 2px solid var(--accent);
+  text-decoration: none;
+  color: var(--ink);
+  transition: background 0.15s ease;
+}
+.guide-link:hover { background: rgba(238, 106, 31, 0.14); }
+.guide-link__icon { font-size: 1.3rem; flex: 0 0 auto; }
+.guide-link__body { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+.guide-link__title { font-family: var(--serif); font-size: 0.95rem; font-weight: 500; color: var(--ink); }
+.guide-link__sub { font-size: 0.75rem; color: var(--muted); }
+
+/* --- Welcome tour modal ----------------------------------------- */
+.tutorial-overlay {
+  position: fixed; inset: 0;
+  background: rgba(14, 38, 64, 0.78);
+  z-index: 600;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px 20px;
+  animation: tutorial-fade-in 0.2s ease;
+}
+@keyframes tutorial-fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+.tutorial__card {
+  background: var(--paper);
+  border: 1px solid var(--line-strong);
+  border-top: 4px solid var(--accent);
+  max-width: 540px;
+  width: 100%;
+  padding: 2rem 2.2rem 1.6rem;
+  font-family: var(--sans);
+  color: var(--ink);
+  box-shadow: 0 12px 40px rgba(14, 38, 64, 0.35);
+}
+
+.tutorial__dots {
+  display: flex; gap: 6px;
+  margin-bottom: 1.2rem;
+  justify-content: center;
+}
+.tutorial__dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--line-strong);
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.tutorial__dot.is-active { background: var(--accent); transform: scale(1.25); }
+
+.tutorial__icon {
+  font-size: 2.6rem;
+  line-height: 1;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+.tutorial__step-label {
+  text-align: center;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+.tutorial__title {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 0.8rem;
+  color: var(--ink);
+}
+.tutorial__body {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.tutorial__controls {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 1rem;
+}
+.tutorial__controls-right { display: flex; gap: 0.6rem; }
+.tutorial__btn {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.6rem 1.2rem;
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.tutorial__btn:hover { background: rgba(14, 38, 64, 0.05); }
+.tutorial__btn--brass {
+  background: var(--accent);
+  color: var(--paper);
+  border-color: var(--accent);
+}
+.tutorial__btn--brass:hover { background: var(--accent-hover); }
+.tutorial__btn--ghost { color: var(--muted); border-color: var(--line); }
+
+.tutorial__pdf {
+  display: block;
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-decoration: none;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--line);
+}
+.tutorial__pdf:hover { color: var(--accent); }
+
+.tour-trigger {
+  background: none; border: none; cursor: pointer;
+  font: inherit; color: var(--muted);
+  padding: 0; text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.tour-trigger:hover { color: var(--accent); }
+
+.topbar-help {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-style: italic;
+  line-height: 1;
+  cursor: pointer;
+  margin-right: 0.6rem;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.topbar-help:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(238, 106, 31, 0.06);
+}
+
+/* --- Role-view picker (shown after login for dual-capable accounts) -- */
+.view-picker-overlay {
+  position: fixed; inset: 0;
+  background: rgba(14, 38, 64, 0.82);
+  z-index: 700;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px 20px;
+}
+.view-picker__card {
+  background: var(--paper);
+  border: 1px solid var(--line-strong);
+  border-top: 4px solid var(--accent);
+  max-width: 600px;
+  width: 100%;
+  padding: 2rem 2.4rem 1.5rem;
+  font-family: var(--sans);
+  color: var(--ink);
+  box-shadow: 0 12px 40px rgba(14, 38, 64, 0.4);
+}
+.view-picker__welcome {
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+.view-picker__title {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+}
+.view-picker__sub {
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin-bottom: 1.6rem;
+}
+.view-picker__choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+.view-picker__choice {
+  text-align: left;
+  background: var(--panel);
+  border: 1px solid var(--line-strong);
+  padding: 1.4rem 1.3rem 1.2rem;
+  cursor: pointer;
+  font-family: var(--sans);
+  color: var(--ink);
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+.view-picker__choice:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(14, 38, 64, 0.12);
+}
+.view-picker__choice-icon { font-size: 1.7rem; margin-bottom: 0.5rem; }
+.view-picker__choice-title {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+}
+.view-picker__choice-body {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.view-picker__hint { text-align: center; }
+
+/* --- View switcher in the topbar session chip -------------------------- */
+.view-tag {
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid rgba(238, 106, 31, 0.4);
+  padding: 0.18rem 0.5rem;
+  border-radius: 0.15rem;
+  margin: 0 0.4rem;
+}
+.view-switcher {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.6rem;
+  margin-right: 0.4rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.view-switcher:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.view-picker__signout {
+  background: none; border: none; cursor: pointer;
+  font-family: var(--sans); font-size: 0.78rem; color: var(--muted);
+  text-decoration: underline; text-underline-offset: 3px;
+  padding: 0.4rem 0.8rem;
+}
+.view-picker__signout:hover { color: var(--bad); }
+
+/* --- Mobile (<=600px): collapse modal grids, scale QR ---------------- */
+@media (max-width: 600px) {
+  /* QR popup: don't overflow a 375px viewport. Image already scales via
+     width:100% on the slot, but the inline 280px width on the <img> needs
+     a cap. */
+  .acceptance-flow img,
+  .exercise-flow img,
+  [class*="qr-slot"] img {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Acceptance / exercise modal grids collapse to single column */
+  .grid.grid-2,
+  .grid.grid-3 {
+    grid-template-columns: 1fr !important;
+  }
+  /* View-picker choices: stack instead of side-by-side */
+  .view-picker__choices {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Tutorial card padding tightens on small screens */
+  .tutorial__card,
+  .view-picker__card {
+    padding: 1.4rem 1.1rem 1rem !important;
+  }
+  /* Acceptance / exercise form padding */
+  .login-box {
+    padding: 1.2rem 1.2rem 1rem;
+  }
+
+  /* Tour buttons stack vertically rather than wrap mid-row */
+  .tutorial__controls {
+    flex-direction: column-reverse;
+    gap: 0.6rem;
+    align-items: stretch !important;
+  }
+  .tutorial__controls-right {
+    width: 100%; justify-content: space-between !important;
+  }
+}
+
 /* --- Scenario cards (leavers) -------------------------------- */
 .scenario {
   padding: 1.5rem 1.5rem;

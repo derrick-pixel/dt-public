@@ -45,6 +45,26 @@
   <meta name="robots" content="noindex, nofollow">
 </head>
 <body class="admin-page">
+<script>
+// Auth gate — Market Intel is Clause-15 confidential. Synchronously
+// check for a Supabase session in localStorage; redirect to sign-in
+// if absent. Keeps drive-by visitors out without pulling the full
+// app shell into this page's design system.
+(function () {
+  try {
+    var keys = Object.keys(localStorage).filter(function (k) {
+      return k.indexOf('sb-') === 0 && k.indexOf('-auth-token') > 0;
+    });
+    for (var i = 0; i < keys.length; i++) {
+      var raw = localStorage.getItem(keys[i]);
+      if (!raw) continue;
+      var tok = JSON.parse(raw);
+      if (tok && tok.access_token) return; // authenticated, allow render
+    }
+  } catch (e) { /* fall through to redirect */ }
+  location.href = '../index.html?return=intel/&required=auth';
+})();
+</script>
   <header>
   <nav class="elitez-nav">
     <a href="../index.html" class="brand" aria-label="Elitez ESOP — home">
@@ -226,5 +246,7 @@
 })();
 </script>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="assets/js/auth-gate.js"></script>
 </body>
 </html>

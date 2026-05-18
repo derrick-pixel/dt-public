@@ -48,56 +48,66 @@
       buildStateControls()
     ])
   ]);
-  // Insert just after the hero (first block)
-  root.appendChild(ribbon);
-  root.appendChild(buildExerciseQueue());
-  root.appendChild(buildHolderOnboardingSection());
-  root.appendChild(buildDraftsSection());
-  root.appendChild(buildValuationSection());
-  root.appendChild(buildScenarioSection());
-  root.appendChild(buildDocIssuanceSection());
-  root.appendChild(buildBulkDocsSection());
-  root.appendChild(buildLeaverSection());
-  root.appendChild(buildPasswordSection());
-  root.appendChild(buildAuditSection());
+  // Tag each section at append time. Previously this file used a separate
+  // querySelectorAll + index-based tagging that raced with admin.js — if
+  // admin-workflow's appends interleaved with admin.js's, the post-hoc
+  // index lookup mis-tagged every section. Inline tagging is order-safe.
+  function tag(node, tabName) {
+    if (node && node.setAttribute) node.setAttribute("data-tab", tabName);
+    return node;
+  }
 
-  // Tag the workflow sections (all sections appended by admin-workflow.js
-  // are not yet tagged — admin.js already tagged its own). In render order:
-  //   exercise queue · drafts · valuation form · scenarios · doc issuance ·
-  //   bulk docs · leaver determinations · password mgmt · audit log.
-  // The workflow-ribbon stays untagged so state controls are always visible.
-  const WORKFLOW_TABS = [
-    "documents",   // exercise queue
-    "holders",     // drafts approval
-    "valuations",  // valuation form
-    "holders",     // allocation scenarios
-    "documents",   // doc issuance (single)
-    "documents",   // bulk docs console
-    "holders",     // leaver determinations
-    "audit",       // password management
-    "audit"        // audit log
-  ];
-  const untagged = Array.from(root.querySelectorAll("section.block, section.hero"))
-    .filter(s => !s.hasAttribute("data-tab") && s.id !== "workflow-ribbon");
-  untagged.forEach((s, i) => {
-    if (WORKFLOW_TABS[i]) s.setAttribute("data-tab", WORKFLOW_TABS[i]);
-  });
+  root.appendChild(ribbon);  // workflow-ribbon stays untagged: always visible
+  root.appendChild(tag(buildExerciseQueue(),           "documents"));
+  root.appendChild(tag(buildHolderOnboardingSection(), "holders"));
+  root.appendChild(tag(buildDraftsSection(),           "holders"));
+  root.appendChild(tag(buildValuationSection(),        "valuations"));
+  root.appendChild(tag(buildScenarioSection(),         "holders"));
+  root.appendChild(tag(buildDocIssuanceSection(),      "documents"));
+  root.appendChild(tag(buildBulkDocsSection(),         "documents"));
+  root.appendChild(tag(buildLeaverSection(),           "holders"));
+  root.appendChild(tag(buildPasswordSection(),         "audit"));
+  root.appendChild(tag(buildAuditSection(),            "audit"));
 
-  // Re-render the whole page after events that change rendered state.
-  // Skip events that are purely informational (document previews, login log)
-  // so opening a PDF preview doesn't blow the page out from under the user.
-  let rerendering = false;
+  // Previously: blunt window.location.reload() on every stateful event,
+  // which wiped in-progress admin form state (valuation entry, allocation
+  // edits, batch-approve dates). New behaviour: surface a dismissible
+  // "Updates available" banner; the admin chooses when to reload. The
+  // safe-to-skip events still trigger nothing.
   const NON_STATEFUL = new Set([
     "document_issued",
     "login",
     "scenario_saved",
-    "statements_bulk_issued"
+    "statements_bulk_issued",
+    "document_viewed"
   ]);
+  let refreshBanner = null;
+  function showRefreshBanner(evType) {
+    if (refreshBanner) return;
+    refreshBanner = document.createElement("div");
+    refreshBanner.setAttribute("style", "position:fixed; bottom:20px; right:20px; background: var(--ink); color: var(--paper); padding: 0.9rem 1.2rem; border-left: 4px solid var(--accent); box-shadow: 0 8px 24px rgba(14,38,64,0.3); z-index: 400; font-family: var(--sans); font-size: 0.85rem; max-width: 360px;");
+    const msg = document.createElement("div");
+    msg.textContent = `New activity (${evType}). Refresh to see the latest.`;
+    msg.style.marginBottom = "0.6rem";
+    refreshBanner.appendChild(msg);
+    const row = document.createElement("div");
+    row.setAttribute("style", "display:flex; gap:0.5rem;");
+    const refresh = document.createElement("button");
+    refresh.textContent = "Refresh now";
+    refresh.setAttribute("style", "background: var(--accent); color: var(--paper); border: none; padding: 0.4rem 0.8rem; font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; cursor:pointer;");
+    refresh.onclick = () => window.location.reload();
+    const dismiss = document.createElement("button");
+    dismiss.textContent = "Later";
+    dismiss.setAttribute("style", "background: transparent; color: var(--paper); border: 1px solid rgba(245,239,220,0.4); padding: 0.4rem 0.8rem; font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; cursor:pointer;");
+    dismiss.onclick = () => { refreshBanner.remove(); refreshBanner = null; };
+    row.appendChild(refresh); row.appendChild(dismiss);
+    refreshBanner.appendChild(row);
+    document.body.appendChild(refreshBanner);
+  }
   Store.subscribe((ev) => {
-    if (rerendering || !ev) return;
+    if (!ev) return;
     if (NON_STATEFUL.has(ev.type)) return;
-    rerendering = true;
-    setTimeout(() => window.location.reload(), 150);
+    showRefreshBanner(ev.type);
   });
 
   // =====================================================================
@@ -674,12 +684,22 @@
     ]);
     const state = Store.state();
     const panel = el("div", { class: "panel" });
-    D.leavers.forEach(l => {
+    C.leavers().forEach(l => {
       const goodBtn = el("button", { type: "button", class: "btn btn--ghost", style: "padding:0.3rem 0.8rem; font-size:0.72rem; border-color: var(--good); color: var(--good);" }, ["Good Leaver"]);
       const badBtn = el("button", { type: "button", class: "btn btn--ghost", style: "padding:0.3rem 0.8rem; font-size:0.72rem; border-color: var(--bad); color: var(--bad); margin-left:0.4rem;" }, ["Bad Leaver"]);
-      goodBtn.onclick = () => gatedAction("leaver_determination", { holder_id: l.name, type: "good", as_of: D.meta.as_of, note: "Committee determination" }, `Good Leaver · ${l.name}`);
-      badBtn.onclick = () => gatedAction("leaver_determination", { holder_id: l.name, type: "bad", as_of: D.meta.as_of, note: "Committee determination" }, `Bad Leaver · ${l.name}`);
-      const current = state.leaver_determinations[l.name];
+      // ADM-P0-3 fix: payload.holder_id must be the numeric id from the
+      // directory, not the holder name. Recusal logic + state keying both
+      // rely on the numeric id matching profiles.holder_id.
+      const hid = l.id != null ? String(l.id) : null;
+      if (!hid) {
+        // Defensive: legacy data without id — skip the buttons and warn.
+        panel.appendChild(el("div", { class: "alert alert--warn", style: "margin-bottom:0.5rem;",
+          text: `Leaver "${l.name}" has no holder id — re-seed via holders_directory before determining.` }));
+        return;
+      }
+      goodBtn.onclick = () => gatedAction("leaver_determination", { holder_id: hid, name: l.name, type: "good", as_of: D.meta.as_of, note: "Committee determination" }, `Good Leaver · ${l.name}`);
+      badBtn.onclick = () => gatedAction("leaver_determination", { holder_id: hid, name: l.name, type: "bad", as_of: D.meta.as_of, note: "Committee determination" }, `Bad Leaver · ${l.name}`);
+      const current = state.leaver_determinations[hid];
       const row = el("div", { class: "kv" }, [
         el("div", { class: "k" }, [
           el("span", null, [l.name]),
@@ -875,28 +895,55 @@
           Docs.present(Docs.noticeOfExercise(h, g, x, C.activeValuation()), { title: "Notice of Exercise", holder: h, docType: "notice_of_exercise", fy: x.fy });
         };
         const confirmBtn = el("button", { type: "button", class: "btn", style: "padding: 0.3rem 0.8rem; font-size:0.72rem; background: var(--good); border-color: var(--good);" }, ["Confirm payment"]);
-        confirmBtn.onclick = () => {
+        confirmBtn.onclick = async () => {
           if (!confirm(`Confirm receipt of ${fmt.sgd(x.cost)} from ${h.name} for ${x.fy}?\nThis registers ${fmt.num(x.qty)} shares to the beneficial ownership register.`)) return;
-          const res = Committee.act("confirm_exercise", {
-            exercise_id: x.id,
-            confirmed_by: me ? me.id : "legacy",
-            confirmed_by_name: me ? me.name : "Legacy admin"
-          });
-          if (res.error) { alert("Failed: " + res.error); return; }
-          // Issue Appendix 8B as part of the confirmation
-          if (g && res.status === "executed") {
-            const confirmedEx = Store.state().exercises.find(e => e.id === x.id);
-            Store.emit("document_issued", { doc_type: "appendix_8b", holder_id: h.id, fy: x.fy, auto: true });
-            setTimeout(() => {
-              Docs.present(Docs.appendix8B(h, g, confirmedEx), { title: "Appendix 8B — auto-issued", holder: h, docType: "appendix_8b", fy: x.fy });
-            }, 100);
+          // ADM-P0-2 fix: route through the server-side confirm_payment RPC
+          // (the same one the Pending Payments tab uses) so payments.status,
+          // events, and audit log all advance atomically. Previously we
+          // emitted a client-side exercise_confirmed event that left the
+          // payment row stuck on "pending" — two surfaces, contradictory state.
+          confirmBtn.disabled = true; confirmBtn.textContent = "Confirming…";
+          try {
+            // Look up the payment row that matches this exercise event.
+            const supa = window.ESOPSupa && window.ESOPSupa.client;
+            if (!supa) throw new Error("Supabase client unavailable");
+            const { data: pay, error: payErr } = await supa.from("payments")
+              .select("id, status")
+              .eq("exercise_event_id", x.event_id || x.id)
+              .maybeSingle();
+            if (payErr) throw payErr;
+            if (!pay) { alert("No matching payment row — was this exercise submitted before the new schema?"); confirmBtn.disabled = false; confirmBtn.textContent = "Confirm payment"; return; }
+            const notes = prompt("Confirmation notes (bank txn id, time received, etc.):", "") ?? "";
+            const { error: rpcErr } = await supa.rpc("confirm_payment", { p_payment_id: pay.id, p_notes: (notes || "").trim() });
+            if (rpcErr) throw rpcErr;
+            // Auto-issue Appendix 8B as a courtesy
+            if (g) {
+              const confirmedEx = Store.state().exercises.find(e => e.id === x.id);
+              Store.emit("document_issued", { doc_type: "appendix_8b", holder_id: h.id, fy: x.fy, auto: true });
+              setTimeout(() => {
+                Docs.present(Docs.appendix8B(h, g, confirmedEx), { title: "Appendix 8B — auto-issued", holder: h, docType: "appendix_8b", fy: x.fy });
+              }, 100);
+            }
+          } catch (e) {
+            alert("Failed: " + (e.message || e));
+            confirmBtn.disabled = false; confirmBtn.textContent = "Confirm payment";
           }
         };
         const rejectBtn = el("button", { type: "button", class: "btn btn--ghost", style: "padding: 0.3rem 0.7rem; font-size:0.72rem; border-color: var(--bad); color: var(--bad); margin-left:0.4rem;" }, ["Reject"]);
-        rejectBtn.onclick = () => {
+        rejectBtn.onclick = async () => {
           const reason = prompt("Reason for rejecting this exercise?");
-          if (!reason) return;
-          Committee.act("reject_exercise", { exercise_id: x.id, reason });
+          if (!reason || !reason.trim()) return;
+          try {
+            const supa = window.ESOPSupa && window.ESOPSupa.client;
+            if (!supa) throw new Error("Supabase client unavailable");
+            const { data: pay } = await supa.from("payments")
+              .select("id").eq("exercise_event_id", x.event_id || x.id).maybeSingle();
+            if (!pay) { alert("No matching payment row."); return; }
+            const { error } = await supa.rpc("cancel_payment", { p_payment_id: pay.id, p_reason: reason.trim() });
+            if (error) throw error;
+          } catch (e) {
+            alert("Reject failed: " + (e.message || e));
+          }
         };
         tbody.appendChild(el("tr", null, [
           td(new Date(x.submitted_at).toLocaleString("en-SG", { dateStyle: "short", timeStyle: "short" })),
@@ -1058,7 +1105,7 @@
 
     // --- Special dividend letters (Adept Academy) ---
     const sdivBtn = mkBulkBtn("Special dividend letters (Adept)", async (holders, progress) => {
-      const dividend = D.special_dividends[0];
+      const dividend = C.specialDividends()[0];
       if (!dividend) { alert("No special dividend recorded."); return; }
       let i = 0;
       await Docs.bulkPdf(holders, (h) => { progress(i++); return Docs.specialDividendLetter(h, dividend); }, "Elitez-ESOP_SpecialDividend_Adept_" + new Date().toISOString().slice(0, 10) + ".pdf");

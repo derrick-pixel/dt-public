@@ -1,10 +1,13 @@
 import type { Env } from '../types';
 import { readSessionCookie, getCoupleFromSession, requestMagicLink } from '../services/auth';
-import { sendEmail, renderMagicLinkEmail } from '../services/email';
+import { sendEmail, renderMagicLinkEmail, renderCharityDeclinedEmail } from '../services/email';
 import { sendSms } from '../services/sms';
 import { issueOtp, verifyOtp } from '../services/otp';
+import { refundPayment } from '../services/hitpay';
 import { encrypt } from '../services/encryption';
 import { audit } from '../services/audit';
+import { transitionGiftState } from '../services/state';
+import { screenEntity } from '../services/sanctions';
 import { isValidEmail, isValidMobile, isValidNRIC } from '../lib/validation';
 import { generateId } from '../lib/id';
 import { nowSeconds } from '../lib/time';
@@ -82,10 +85,10 @@ export async function getMe(req: Request, env: Env): Promise<Response> {
     nric_set: !!a.coupleRow.nric_consented_at,
     charity_selected: charities.length > 0,
   };
+  // NRIC is collected later (only to approve a charity release), so it is not
+  // part of onboarding completeness — verified mobile + a charity is enough.
   const onboardingComplete =
-    onboarding.email_verified &&
     onboarding.mobile_verified &&
-    onboarding.nric_set &&
     onboarding.charity_selected;
 
   return json(200, {
@@ -348,6 +351,379 @@ export async function getCharityList(_req: Request, env: Env): Promise<Response>
     ).all()
   ).results;
   return json(200, { charities: rows });
+}
+
+// ── GET /api/couple/gifts ─────────────────────────────────────────────────
+// All gifts for the couple's wedding. The dashboard groups them client-side
+// into actionable (pending + paid), settled, refunded, and failed.
+export async function getCoupleGifts(req: Request, env: Env): Promise<Response> {
+  const a = await authed(req, env);
+  if (!a) return json(401, { error: { code: 'unauthorised' } });
+
+  const rows = (
+    await env.DB.prepare(
+      `SELECT id, guest_name, guest_email, gift_amount_cents, personal_portion_cents,
+              charity_portions_json, state, payment_succeeded_at,
+              scheduled_auto_refund_at, message_to_couple, refund_ref, created_at
+       FROM gifts WHERE wedding_id = ? ORDER BY created_at DESC`
+    )
+      .bind(a.coupleRow.wedding_id)
+      .all()
+  ).results;
+
+  const threshold = parseInt(env.LARGE_GIFT_THRESHOLD_CENTS ?? '50000', 10);
+  return json(200, { gifts: rows, large_gift_threshold_cents: threshold });
+}
+
+// ── POST /api/couple/gifts/authorise/otp ──────────────────────────────────
+// Issues a step-up OTP to the couple's verified mobile, used to confirm
+// authorisation of a large gift (>= LARGE_GIFT_THRESHOLD_CENTS).
+export async function postAuthoriseOtp(
+  req: Request,
+  env: Env,
+  ctx: ExecutionContext
+): Promise<Response> {
+  const a = await authed(req, env);
+  if (!a) return json(401, { error: { code: 'unauthorised' } });
+  if (!a.coupleRow.mobile_verified_at) {
+    return json(403, { error: { code: 'mobile_not_verified', message: 'Verify your mobile first.' } });
+  }
+
+  const { code } = await issueOtp(env, 'authorise_action', 'couple', a.coupleId);
+  ctx.waitUntil(
+    sendSms(env, a.coupleRow.mobile, `Your Altru authorisation code is ${code}. Expires in 10 minutes.`)
+  );
+  ctx.waitUntil(
+    audit(env, {
+      actorType: 'couple',
+      actorRef: a.coupleId,
+      eventType: 'auth.authorise_otp.requested',
+      entityType: 'couple',
+      entityId: a.coupleId,
+    })
+  );
+  return json(200, { ok: true });
+}
+
+// ── POST /api/couple/gifts/authorise ──────────────────────────────────────
+// Couple releases one or more pending gifts. Each gift transitions
+// pending → authorised. A step-up OTP is required when any selected gift is
+// at or above LARGE_GIFT_THRESHOLD_CENTS.
+export async function postAuthoriseGifts(req: Request, env: Env): Promise<Response> {
+  const a = await authed(req, env);
+  if (!a) return json(401, { error: { code: 'unauthorised' } });
+  if (!a.coupleRow.nric_consented_at) {
+    return json(403, {
+      error: {
+        code: 'onboarding_incomplete',
+        message: 'Add your NRIC before authorising — the donation receipt is issued in your name.',
+      },
+    });
+  }
+
+  let body: { gift_ids?: string[]; otp?: string };
+  try {
+    body = (await req.json()) as { gift_ids?: string[]; otp?: string };
+  } catch {
+    return json(400, { error: { code: 'invalid_json' } });
+  }
+  const ids = Array.isArray(body.gift_ids)
+    ? body.gift_ids.filter((x): x is string => typeof x === 'string')
+    : [];
+  if (ids.length === 0) {
+    return json(400, { error: { code: 'no_gifts', message: 'Select at least one gift.' } });
+  }
+  if (ids.length > 100) {
+    return json(400, { error: { code: 'too_many', message: 'Authorise at most 100 gifts at once.' } });
+  }
+
+  const placeholders = ids.map(() => '?').join(',');
+  const rows = (
+    await env.DB.prepare(
+      `SELECT id, state, gift_amount_cents, payment_succeeded_at
+       FROM gifts WHERE wedding_id = ? AND id IN (${placeholders})`
+    )
+      .bind(a.coupleRow.wedding_id, ...ids)
+      .all<{ id: string; state: string; gift_amount_cents: number; payment_succeeded_at: number | null }>()
+  ).results;
+  const byId = new Map(rows.map((r) => [r.id, r]));
+
+  const eligible = rows.filter((r) => r.state === 'pending' && r.payment_succeeded_at);
+  if (eligible.length === 0) {
+    return json(400, {
+      error: { code: 'nothing_to_authorise', message: 'None of the selected gifts can be authorised.' },
+    });
+  }
+
+  const threshold = parseInt(env.LARGE_GIFT_THRESHOLD_CENTS ?? '50000', 10);
+  const needsOtp = eligible.some((r) => r.gift_amount_cents >= threshold);
+  if (needsOtp) {
+    const otp = (body.otp ?? '').trim();
+    if (!otp) {
+      return json(403, {
+        error: { code: 'otp_required', message: 'A verification code is required to authorise a large gift.' },
+      });
+    }
+    if (!/^\d{6}$/.test(otp)) return json(400, { error: { code: 'invalid_otp_format' } });
+    const ok = await verifyOtp(env, 'authorise_action', 'couple', a.coupleId, otp);
+    if (!ok) return json(400, { error: { code: 'invalid_otp', message: 'Invalid or expired code.' } });
+  }
+
+  const authorised: string[] = [];
+  const skipped: { id: string; reason: string }[] = [];
+  for (const id of ids) {
+    const r = byId.get(id);
+    if (!r) {
+      skipped.push({ id, reason: 'not_found' });
+      continue;
+    }
+    if (r.state !== 'pending' || !r.payment_succeeded_at) {
+      skipped.push({ id, reason: `not_authorisable_${r.state}` });
+      continue;
+    }
+    const t = await transitionGiftState(
+      env,
+      id,
+      'authorised',
+      { type: 'couple', ref: a.coupleId },
+      { method: 'couple_dashboard', step_up_otp: needsOtp }
+    );
+    if (t.ok) authorised.push(id);
+    else skipped.push({ id, reason: t.reason ?? 'transition_failed' });
+  }
+
+  return json(200, { authorised, skipped });
+}
+
+// ── POST /api/couple/gifts/decline ────────────────────────────────────────
+// Couple declines the charity donation on one or more gifts. The charity
+// portion is refunded to the guest; the personal portion still goes to the
+// couple (queued by the daily disbursement run). No NRIC or OTP — declining
+// returns money rather than releasing it to a new party.
+export async function postDeclineGifts(
+  req: Request,
+  env: Env,
+  ctx: ExecutionContext
+): Promise<Response> {
+  const a = await authed(req, env);
+  if (!a) return json(401, { error: { code: 'unauthorised' } });
+
+  let body: { gift_ids?: string[] };
+  try {
+    body = (await req.json()) as { gift_ids?: string[] };
+  } catch {
+    return json(400, { error: { code: 'invalid_json' } });
+  }
+  const ids = Array.isArray(body.gift_ids)
+    ? body.gift_ids.filter((x): x is string => typeof x === 'string')
+    : [];
+  if (ids.length === 0) return json(400, { error: { code: 'no_gifts', message: 'Select at least one gift.' } });
+  if (ids.length > 100) return json(400, { error: { code: 'too_many', message: 'Decline at most 100 gifts at once.' } });
+
+  const placeholders = ids.map(() => '?').join(',');
+  const rows = (
+    await env.DB.prepare(
+      `SELECT id, state, gift_amount_cents, personal_portion_cents, payment_ref,
+              payment_succeeded_at, guest_name, guest_email
+       FROM gifts WHERE wedding_id = ? AND id IN (${placeholders})`
+    )
+      .bind(a.coupleRow.wedding_id, ...ids)
+      .all<{
+        id: string;
+        state: string;
+        gift_amount_cents: number;
+        personal_portion_cents: number;
+        payment_ref: string | null;
+        payment_succeeded_at: number | null;
+        guest_name: string;
+        guest_email: string | null;
+      }>()
+  ).results;
+  const byId = new Map(rows.map((r) => [r.id, r]));
+
+  const declined: string[] = [];
+  const skipped: { id: string; reason: string }[] = [];
+  for (const id of ids) {
+    const r = byId.get(id);
+    if (!r) {
+      skipped.push({ id, reason: 'not_found' });
+      continue;
+    }
+    if (r.state !== 'pending' || !r.payment_succeeded_at) {
+      skipped.push({ id, reason: `not_declinable_${r.state}` });
+      continue;
+    }
+    const charityCents = r.gift_amount_cents - r.personal_portion_cents;
+    try {
+      if (charityCents > 0 && r.payment_ref) {
+        const refund = await refundPayment(env, r.payment_ref, (charityCents / 100).toFixed(2));
+        await env.DB.prepare(`UPDATE gifts SET refund_ref = COALESCE(refund_ref, ?) WHERE id = ?`)
+          .bind(refund.id, id)
+          .run();
+      }
+    } catch (e) {
+      console.error('decline refund failed', e);
+      skipped.push({ id, reason: 'refund_failed' });
+      continue;
+    }
+    const t = await transitionGiftState(
+      env,
+      id,
+      'declined',
+      { type: 'couple', ref: a.coupleId },
+      { method: 'couple_decline', charity_refund_cents: charityCents }
+    );
+    if (!t.ok) {
+      skipped.push({ id, reason: t.reason ?? 'transition_failed' });
+      continue;
+    }
+    declined.push(id);
+    if (r.guest_email && charityCents > 0) {
+      const tmpl = renderCharityDeclinedEmail({ guestName: r.guest_name, charityRefundCents: charityCents });
+      ctx.waitUntil(
+        sendEmail(env, { to: r.guest_email, subject: tmpl.subject, html: tmpl.html, text: tmpl.text }).catch(() => {})
+      );
+    }
+  }
+
+  return json(200, { declined, skipped });
+}
+
+// ── GET /api/couple/audit ─────────────────────────────────────────────────
+// Recent audit-log entries for the couple's wedding and its gifts.
+export async function getCoupleAudit(req: Request, env: Env): Promise<Response> {
+  const a = await authed(req, env);
+  if (!a) return json(401, { error: { code: 'unauthorised' } });
+
+  const giftIds = (
+    await env.DB.prepare(`SELECT id FROM gifts WHERE wedding_id = ?`)
+      .bind(a.coupleRow.wedding_id)
+      .all<{ id: string }>()
+  ).results.map((r) => r.id);
+
+  let events;
+  if (giftIds.length > 0) {
+    const ph = giftIds.map(() => '?').join(',');
+    events = await env.DB.prepare(
+      `SELECT ts, actor_type, event_type, entity_type, entity_id, payload_json
+       FROM audit_log
+       WHERE (entity_type = 'wedding' AND entity_id = ?)
+          OR (entity_type = 'gift' AND entity_id IN (${ph}))
+       ORDER BY ts DESC LIMIT 60`
+    )
+      .bind(a.coupleRow.wedding_id, ...giftIds)
+      .all();
+  } else {
+    events = await env.DB.prepare(
+      `SELECT ts, actor_type, event_type, entity_type, entity_id, payload_json
+       FROM audit_log
+       WHERE entity_type = 'wedding' AND entity_id = ?
+       ORDER BY ts DESC LIMIT 60`
+    )
+      .bind(a.coupleRow.wedding_id)
+      .all();
+  }
+
+  return json(200, { events: events.results });
+}
+
+// ── POST /api/couple/claim ────────────────────────────────────────────────
+// Path B: the couple claims a wedding a guest set up on their behalf. Once
+// onboarding is complete the wedding becomes active and every held gift
+// (pending_claim) is released into the normal 14-day authorisation flow.
+export async function postClaimWedding(req: Request, env: Env): Promise<Response> {
+  const a = await authed(req, env);
+  if (!a) return json(401, { error: { code: 'unauthorised' } });
+
+  const wedding = await env.DB.prepare(`SELECT id, status FROM weddings WHERE id = ?`)
+    .bind(a.coupleRow.wedding_id)
+    .first<{ id: string; status: string }>();
+  if (!wedding) return json(404, { error: { code: 'wedding_not_found' } });
+  if (wedding.status === 'active') {
+    return json(200, { already_claimed: true, gifts_activated: 0 });
+  }
+  if (wedding.status !== 'pending_couple_claim') {
+    return json(400, { error: { code: 'not_claimable', message: `Wedding is ${wedding.status}.` } });
+  }
+
+  // Onboarding gate — verified mobile + a charity chosen. NRIC is not needed
+  // to claim; it is required later only when approving a charity release.
+  if (!a.coupleRow.mobile_verified_at) {
+    return json(403, {
+      error: { code: 'onboarding_incomplete', message: 'Verify your mobile before claiming.' },
+    });
+  }
+  const charityCount = await env.DB.prepare(
+    `SELECT COUNT(*) AS c FROM wedding_charities WHERE wedding_id = ? AND removed_at IS NULL`
+  )
+    .bind(wedding.id)
+    .first<{ c: number }>();
+  if ((charityCount?.c ?? 0) === 0) {
+    return json(403, {
+      error: { code: 'onboarding_incomplete', message: 'Select at least one charity before claiming.' },
+    });
+  }
+
+  // Sanctions re-check at the point of activation.
+  const sanctions = await screenEntity(env, 'couple', a.coupleId, a.coupleRow.display_name);
+  if (sanctions.result !== 'pass') {
+    await env.DB.prepare(`UPDATE weddings SET status = 'disputed' WHERE id = ?`)
+      .bind(wedding.id)
+      .run();
+    await audit(env, {
+      actorType: 'system',
+      eventType: 'wedding.claim.sanctions_review',
+      entityType: 'wedding',
+      entityId: wedding.id,
+      payload: { matches: sanctions.matches, list_version: sanctions.listVersion },
+    });
+    return json(403, {
+      error: { code: 'under_review', message: 'Your claim needs a manual review. Our team will be in touch.' },
+    });
+  }
+
+  const now = nowSeconds();
+  await env.DB.prepare(`UPDATE weddings SET status = 'active', claimed_at = ? WHERE id = ?`)
+    .bind(now, wedding.id)
+    .run();
+
+  const held = (
+    await env.DB.prepare(
+      `SELECT id, payment_succeeded_at FROM gifts WHERE wedding_id = ? AND state = 'pending_claim'`
+    )
+      .bind(wedding.id)
+      .all<{ id: string; payment_succeeded_at: number | null }>()
+  ).results;
+
+  let activated = 0;
+  for (const g of held) {
+    const t = await transitionGiftState(
+      env,
+      g.id,
+      'pending',
+      { type: 'couple', ref: a.coupleId },
+      { method: 'wedding_claim' }
+    );
+    if (!t.ok) continue;
+    activated++;
+    // A paid gift's 14-day authorisation clock starts at the claim moment.
+    if (g.payment_succeeded_at) {
+      await env.DB.prepare(`UPDATE gifts SET scheduled_auto_refund_at = ? WHERE id = ?`)
+        .bind(now + 14 * 86400, g.id)
+        .run();
+    }
+  }
+
+  await audit(env, {
+    actorType: 'couple',
+    actorRef: a.coupleId,
+    eventType: 'wedding.claimed',
+    entityType: 'wedding',
+    entityId: wedding.id,
+    payload: { gifts_activated: activated },
+  });
+
+  return json(200, { claimed: true, gifts_activated: activated });
 }
 
 function json(status: number, body: unknown): Response {

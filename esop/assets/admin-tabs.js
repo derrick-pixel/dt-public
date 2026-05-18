@@ -1,7 +1,17 @@
 // Elitez ESOP — admin console sub-tab filter.
-// Runs AFTER admin.js and admin-workflow.js so that every section has been
-// appended. Reads the URL hash and shows only sections whose data-tab matches.
-// Sections without a data-tab attribute remain visible on every tab.
+// Reads the URL hash and shows only sections whose data-tab attribute
+// matches. Sections without a data-tab attribute remain visible on every
+// tab (e.g. the workflow ribbon at the top).
+//
+// Race conditions to handle:
+//   1. Some admin modules (admin-roster, admin-payments, activity-log)
+//      attach sections in async init() functions that finish AFTER this
+//      script runs.
+//   2. admin.js appends sections FIRST then sets their data-tab attribute
+//      via setAttribute() afterwards, so a node may appear in the DOM
+//      momentarily without the tag.
+// Both are covered by watching both childList and data-tab attribute
+// changes, plus a couple of defensive setTimeouts.
 
 (function () {
   const TABS = ["overview", "holders", "valuations", "documents", "roster", "payments", "activity", "audit"];
@@ -16,20 +26,40 @@
     const tab = activeTab();
     document.querySelectorAll("[data-tab]").forEach(node => {
       const t = node.getAttribute("data-tab");
-      // A section can be tagged for multiple tabs via comma separation.
       const tags = t.split(",").map(x => x.trim());
       node.style.display = tags.includes(tab) ? "" : "none";
     });
-    // Update the sub-tab strip active state
     document.querySelectorAll(".subtabs a[data-subtab]").forEach(a => {
       a.classList.toggle("active", a.getAttribute("data-subtab") === tab);
     });
-    // Scroll to top when switching tabs so users don't land mid-section
+  }
+
+  function filterAndScroll() {
+    filter();
     window.scrollTo({ top: 0, behavior: "instant" });
   }
 
-  window.addEventListener("hashchange", filter);
-  // Run filter once on load. Sections are already appended by the time
-  // this script executes because it is the last <script> in admin.html.
+  window.addEventListener("hashchange", filterAndScroll);
+
+  // Coalesce bursts of mutations into a single rAF-paced filter pass.
+  let pending = false;
+  function scheduleFilter() {
+    if (pending) return;
+    pending = true;
+    requestAnimationFrame(() => { pending = false; filter(); });
+  }
+
+  const observer = new MutationObserver(() => scheduleFilter());
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["data-tab"],
+  });
+
   filter();
+  setTimeout(filter, 500);
+  setTimeout(filter, 1500);
+
+  window.ESOPAdminTabs = { refresh: filter };
 })();

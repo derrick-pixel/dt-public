@@ -23,6 +23,12 @@
     .receipt-row:last-child { border-bottom:0; }
     .receipt-row .label { color:var(--text-muted); }
     .receipt-row .value { font-weight:700; }
+    .claimbox { background:#FFFBEB; border:1px solid #FDE68A; border-radius:var(--radius); padding:1.5rem; max-width:540px; margin:1.5rem auto; }
+    .claimbox h3 { color:#92400E; margin:0 0 0.5rem; }
+    .claimbox p { color:#78350F; font-size:0.92rem; margin:0.5rem 0; }
+    .linkrow { display:flex; gap:0.4rem; margin:0.4rem 0; }
+    .linkrow input { flex:1; padding:0.5rem; border:1px solid var(--red-light); border-radius:6px; font-size:0.82rem; }
+    .linkrow button { background:var(--red); color:#fff; border:0; border-radius:6px; padding:0 0.9rem; font-weight:700; cursor:pointer; }
   </style>
 </head>
 <body>
@@ -53,6 +59,19 @@
           <div class="receipt-row"><span class="label">To charity</span><span class="value" id="r-charity"></span></div>
           <div class="receipt-row"><span class="label">To couple</span><span class="value" id="r-personal"></span></div>
           <div class="receipt-row"><span class="label">Status</span><span class="value" id="r-state"></span></div>
+        </div>
+        <div class="claimbox" id="claimBox" style="display:none;">
+          <h3>One more step — tell the couple</h3>
+          <p>This couple hasn't set up their Altru page yet. Send them this link so they can claim your gift (we've also texted it to them):</p>
+          <div class="linkrow">
+            <input type="text" id="claimLink" readonly>
+            <button type="button" id="copyClaim">Copy</button>
+          </div>
+          <p>Inviting other guests? Share the couple's gift page so everyone gives to the same place:</p>
+          <div class="linkrow">
+            <input type="text" id="giftLink" readonly>
+            <button type="button" id="copyGift">Copy</button>
+          </div>
         </div>
         <p style="text-align:center;font-size:0.9rem;color:var(--text-muted);max-width:540px;margin:0 auto 1rem;" id="emailNote">If you provided an email, a confirmation with a 14-day refund link is on its way.</p>
         <p style="text-align:center;"><a href="index.html" class="btn btn-outline">Return home</a></p>
@@ -89,6 +108,24 @@
         : 'Awaiting payment confirmation';
       document.getElementById('r-state').textContent = stateLabel;
       document.getElementById('receipt').style.display = '';
+
+      if (g.state === 'pending_claim' && data.claim_url) {
+        const claimEl = document.getElementById('claimLink');
+        const giftEl = document.getElementById('giftLink');
+        claimEl.value = data.claim_url;
+        giftEl.value = window.location.origin + '/wedding.html?s=' + encodeURIComponent(g.wedding_slug);
+        document.getElementById('claimBox').style.display = '';
+        const wireCopy = (inputEl, btn) => {
+          btn.addEventListener('click', () => {
+            inputEl.select();
+            if (navigator.clipboard) navigator.clipboard.writeText(inputEl.value).catch(() => {});
+            btn.textContent = 'Copied';
+            setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+          });
+        };
+        wireCopy(claimEl, document.getElementById('copyClaim'));
+        wireCopy(giftEl, document.getElementById('copyGift'));
+      }
     }).catch(() => { /* silent */ });
   })();
   </script>

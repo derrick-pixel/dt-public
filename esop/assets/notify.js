@@ -26,7 +26,7 @@
           ``,
           `Your Letter of Offer for the ${grant.fy} grant (${(grant.qty || 0).toLocaleString()} options) is awaiting your acceptance.`,
           ``,
-          `Sign in at https://esop.derrickteo.com to review the terms, sign the Acceptance Form, and remit the S$1 acceptance consideration.`,
+          `Sign in at https://esop.elitez.com.sg to review the terms, sign the Acceptance Form, and remit the S$1 acceptance consideration.`,
           ``,
           `Current FMV: S$${v.fmv.toFixed(4)} per share.`,
           ``,
@@ -45,7 +45,7 @@
           ``,
           `Your ${grant.fy} options have reached the 5-year mark. The exercise window is open and closes in ${days_to_close} days.`,
           ``,
-          `Vested options eligible: see your portfolio at https://esop.derrickteo.com`,
+          `Vested options eligible: see your portfolio at https://esop.elitez.com.sg`,
           ``,
           `Exercise price: S$${v.exercise_price.toFixed(4)} per share (10% of current FMV S$${v.fmv.toFixed(4)}).`,
           ``,
@@ -65,7 +65,7 @@
           ``,
           `${resolution.proposer_name} has proposed a Committee resolution for your vote.`,
           ``,
-          `Sign in at https://esop.derrickteo.com to review and vote.`,
+          `Sign in at https://esop.elitez.com.sg to review and vote.`,
           ``,
           `Threshold: ${t.total_needed} approvals (incl. ${t.majors_needed} Majors).`,
           `Expires: ${(resolution.expires_at || "").slice(0, 10)}.`,
@@ -81,7 +81,7 @@
         body: [
           `Dear ${holder.name.split(/[,\s]/)[0]},`,
           ``,
-          `Your annual ESOP statement for FY${year} is now available. Sign in at https://esop.derrickteo.com → Your documents → Annual statement to view and download.`,
+          `Your annual ESOP statement for FY${year} is now available. Sign in at https://esop.elitez.com.sg → Your documents → Annual statement to view and download.`,
           ``,
           `It summarises your grants, vested options, current FMV value, dividends, and any exercises in the period.`,
           ``,
@@ -119,7 +119,9 @@
     const banner = document.createElement("div");
     banner.style.cssText = "font-size:0.74rem; margin-bottom: 0.6rem; text-transform: uppercase; letter-spacing: 0.14em; font-weight:600;";
     banner.style.color = NOTIFY_URL ? "var(--good)" : "var(--warn)";
-    banner.textContent = NOTIFY_URL ? "Live · will be sent on confirm" : "Dry run · no NOTIFY_URL configured";
+    banner.textContent = NOTIFY_URL
+      ? "Live · will be sent on confirm"
+      : "⚠️ DRY RUN — no email will be sent. Copy the body below into your email client.";
     card.appendChild(banner);
 
     const eyebrow = document.createElement("div");

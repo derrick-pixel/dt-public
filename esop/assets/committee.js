@@ -35,6 +35,7 @@
     // Operational (single-member) — do not route through resolution
     issue_document:        { total_needed: 1, majors_needed: 0, label: "Issue document" },
     reset_holder_password: { total_needed: 1, majors_needed: 1, label: "Reset holder password" },
+    holder_added:          { total_needed: 1, majors_needed: 0, label: "Onboard new holder" },
     // Exercise workflow — Trustee-confirmed receipt of payment is operational (Clause 10.11)
     confirm_exercise:      { total_needed: 1, majors_needed: 0, label: "Confirm exercise receipt" },
     reject_exercise:       { total_needed: 1, majors_needed: 0, label: "Reject exercise" },
@@ -226,6 +227,7 @@
     state_import: (p, ctx) => Store().emit("state_import_authorised", { ...p, ...ctx }),
     issue_document: (p, ctx) => Store().emit("document_issued", { ...p, ...ctx }),
     reset_holder_password: (p, ctx) => Store().emit("password_set", { ...p, reset_by_admin: true, ...ctx }),
+    holder_added: (p, ctx) => Store().emit("holder_added", { ...p, ...ctx }),
     confirm_exercise: (p, ctx) => Store().emit("exercise_confirmed", { ...p, ...ctx }),
     reject_exercise: (p, ctx) => Store().emit("exercise_rejected", { ...p, ...ctx }),
     bulk_statements: (p, ctx) => Store().emit("statements_bulk_issued", { ...p, ...ctx })
