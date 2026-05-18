@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design Audit — Lumana</title>
+  <meta name="description" content="Internal admin: Lumana design audit — competitor visual benchmarking and design system reference. Not for public distribution." />
+  <link rel="stylesheet" href="assets/css/site.css">
+  <script src="assets/js/gate.js"></script>
+<script type="application/ld+json" data-injected="schema-jsonld">
+  {
+    "@context": "https://schema.org",
+    "@type": "MedicalBusiness",
+    "name": "Lumana",
+    "url": "https://derrick-pixel.github.io/Lumana/",
+    "description": "Lumana is the ambient sensing, real-time workflow, and automatic documentation system for residential aged care. No cameras. No wearables. Dignity-preserving by design.",
+    "logo": "https://derrick-pixel.github.io/Lumana/og-image.jpg",
+    "image": "https://derrick-pixel.github.io/Lumana/og-image.jpg",
+    "areaServed": ["Australia", "Hong Kong", "Singapore"],
+    "founder": {
+      "@type": "Person",
+      "name": "Phuong Nguyen",
+      "jobTitle": "Commercial & Partnerships",
+      "worksFor": "Lumana"
+    },
+    "sameAs": []
+  }
+  </script>
+<script type="application/ld+json" data-injected="schema-jsonld">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Lumana",
+    "url": "https://derrick-pixel.github.io/Lumana/",
+    "description": "Ambient monitoring and workflow software for residential aged care."
+  }
+  </script>
+<style>
+    /* ─── Last-edited stamp · injected ─── */
+    .last-edited-strip {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+      padding: 5px 14px; text-align: right;
+      font-family: ui-monospace, "Share Tech Mono", monospace;
+      font-size: 0.72rem; letter-spacing: 0.05em;
+      color: rgba(140,140,140,0.85);
+      background: rgba(0,0,0,0.03);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .last-edited-strip strong { color: rgba(60,60,60,0.85); font-weight: 500; }
+    #last-edited { color: #d06010; font-weight: 600; }
+    #last-edited.fresh { color: #0a8a4a; }
+    #last-edited.stale { color: #c82040; }
+</style>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+  <div class="sample-data-banner" hidden>SAMPLE DATA — swap /data before shipping</div>
+  <div id="nav-mount"></div>
+
+  
+<div class="last-edited-strip" role="status" aria-live="polite">
+  <strong>Page last edited:</strong> <span id="last-edited" data-edited="2026-04-29T15:52:53+08:00">checking…</span>
+</div>
+
+<main class="container-wide">
+    <span class="kicker">Artefact 04 · Website design audit</span>
+    <h1>Website Design Audit</h1>
+    <p class="muted" id="meta-line"></p>
+    <p class="muted">
+      10 competitors fully audited across 5 dimensions — modernness, attractiveness, coherence,
+      UI clarity, accessibility — weighted-averaged to a 1–10 score. Each card surfaces what
+      Lumana should <em>steal</em> and what we should <em>reject</em>.
+    </p>
+    <div id="gallery" class="audit-grid"></div>
+  </main>
+
+  <script type="module">
+    import { loadAppData, mountSampleBanner, renderAdminNav } from './assets/js/app.js';
+    import { renderAuditGallery } from './assets/js/viz/design-audit.js';
+    import { mount } from './assets/js/dom.js';
+
+    const { competitors } = await loadAppData();
+    mountSampleBanner();
+    mount(document.getElementById('nav-mount'), renderAdminNav('design'));
+
+    const audited = competitors.competitors.filter(c => c.website_design_rating != null);
+    document.getElementById('meta-line').textContent =
+      `${competitors.meta.project_name} · ${audited.length} of ${competitors.competitors.length} competitors fully audited`;
+
+    renderAuditGallery({
+      container: document.getElementById('gallery'),
+      competitors: audited,
+    });
+  </script>
+
+<script>
+(function () {
+  const el = document.getElementById('last-edited');
+  if (!el) return;
+  const iso = el.dataset.edited;
+  if (!iso) { el.textContent = '—'; return; }
+  const d = new Date(iso);
+  const fmt = d.toLocaleDateString('en-SG', { year: 'numeric', month: 'short', day: 'numeric' });
+  const ago = Math.floor((Date.now() - d.getTime()) / 86400000);
+  let suffix;
+  if (ago === 0) suffix = 'today';
+  else if (ago === 1) suffix = 'yesterday';
+  else if (ago < 14) suffix = ago + ' days ago';
+  else if (ago < 60) suffix = Math.floor(ago/7) + ' weeks ago';
+  else suffix = Math.floor(ago/30) + ' months ago';
+  el.textContent = fmt + ' · ' + suffix;
+  if (ago <= 7) el.classList.add('fresh');
+  else if (ago > 14) el.classList.add('stale');
+})();
+</script>
+
+</body>
+</html>

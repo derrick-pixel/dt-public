@@ -1,0 +1,460 @@
+{
+  "meta": {
+    "project_name": "Lumana — Aged Care Ambient Monitoring",
+    "research_date": "2026-04-27",
+    "sample_data": false,
+    "brand_tokens": {
+      "primary": "#0D6B5C",
+      "secondary": "#08564A",
+      "accent": "#C8860A",
+      "neutral_dark": "#0F2420",
+      "neutral_light": "#FBF8F2",
+      "font_display": "'Noto Serif', Georgia, serif",
+      "font_body": "'Manrope', system-ui, -apple-system, sans-serif"
+    },
+    "currency_note": "Primary currency AUD. SGD (1 SGD ≈ 1.13 AUD as of 2026-04-27) and HKD (1 HKD ≈ 0.20 AUD as of 2026-04-27) figures reported alongside where AU-comparable. AU bed counts anchor the build; HK + SG are reported in their native currencies and converted to AUD only for the consolidated TAM/SAM/SOM totals.",
+    "handoff_to_agent_3": "Three pricing-relevant signals to bake into tier design: (1) AN-ACC base lifted to A$295.64/resident/day from 2025-10-01 — operators have headroom to absorb A$85/bed/month if Lumana is positioned as care-minutes-relief, not luxury. (2) HK private RCHEs operate on EBPS HK$11k/bed/month subsidy — HKD pricing must clear under 6% of subsidy or it triggers manual board approval. (3) SG nursing-home capacity is doubling 20k → 31k beds by 2030 (MOH); the new-build cohort is the highest-WTP wedge because Capex-funded fit-out budgets absorb monitoring as a build-line, not opex. Country-readiness flags: AU = 5/5/4 (premium-pricing viable), HK = 4/4/3 (price-compressed but fast-decision), SG = 5/5/4 (grant-dependent), JP = 5/5/4 (high tolerance, language wall), KR = 4/4/3 (challenger Vayyar/XK already wired in)."
+  },
+  "market_size": {
+    "tam_sgd": 528000000,
+    "sam_sgd": 198000000,
+    "som_sgd": 18500000,
+    "currency_label": "AUD",
+    "derivation_flow": {
+      "tam": {
+        "stage_label": "STAGE 1 · TAM",
+        "subtitle": "All operational aged-care beds across the four-country footprint at addressable ARPU.",
+        "result_label": "A$528M",
+        "total_equation": "228 + 41 + 16 + 84 + ~159 (APAC operational residual)",
+        "stacks": [
+          {
+            "name": "Australia residential places",
+            "source": "AIHW GEN Aged Care Data, 30 Jun 2024",
+            "inputs": [
+              { "label": "Operational beds", "value": "223,691" },
+              { "label": "ARPU (full list)", "value": "A$85 / mo" },
+              { "label": "Months", "value": "12" }
+            ],
+            "equation": "223,691 × A$85 × 12",
+            "result_label": "A$228M"
+          },
+          {
+            "name": "Hong Kong RCHE places",
+            "source": "HK SWD 2024 — capped by EBPS HK$11k subsidy economics",
+            "inputs": [
+              { "label": "RCHE places", "value": "~76,000" },
+              { "label": "ARPU (HKD 280)", "value": "A$45 / mo" },
+              { "label": "Months", "value": "12" }
+            ],
+            "equation": "76,000 × A$45 × 12",
+            "result_label": "A$41M"
+          },
+          {
+            "name": "Singapore nursing-home beds",
+            "source": "MOH SG 2024 (trending to 31k by 2030); MOH-grant-aligned ARPU",
+            "inputs": [
+              { "label": "Nursing-home beds", "value": "~22,000" },
+              { "label": "ARPU (SGD 68)", "value": "A$60 / mo" },
+              { "label": "Months", "value": "12" }
+            ],
+            "equation": "22,000 × A$60 × 12",
+            "result_label": "A$16M"
+          },
+          {
+            "name": "APAC shoulder via partner channels (JP + KR)",
+            "source": "OECD Health Statistics 2024 — JP ~960k, KR ~205k institutional LTC; partner-channel reach",
+            "inputs": [
+              { "label": "JP + KR LTC places", "value": "~1.165M" },
+              { "label": "Addressable subset", "value": "10%" },
+              { "label": "ARPU", "value": "A$70 / mo" },
+              { "label": "Months", "value": "12" }
+            ],
+            "equation": "1.165M × 10% × A$70 × 12",
+            "result_label": "A$84M (residual reachable)"
+          }
+        ]
+      },
+      "sam": {
+        "stage_label": "STAGE 2 · SAM",
+        "subtitle": "Filtered to the operator subset that has scale, regulator pressure, and direct procurement authority.",
+        "result_label": "A$198M",
+        "total_equation": "60% × AU + 35% × HK + 80% × SG (weighted)",
+        "filters": [
+          "> 60-bed scale (single-site mom-and-pop operators excluded)",
+          "On Strengthened Quality Standards / SIRS-equivalent regulator pressure curve",
+          "Procures software directly (no managed-aged-care GPOs in the path)"
+        ],
+        "stacks": [
+          {
+            "name": "AU SAM",
+            "source": "Australian Ageing Agenda 2025 — Top-100 providers run 44.7% of places + mid-tier consolidators",
+            "inputs": [
+              { "label": "AU TAM", "value": "A$228M" },
+              { "label": "SAM share", "value": "~60%" }
+            ],
+            "equation": "60% × A$228M",
+            "result_label": "≈ A$137M"
+          },
+          {
+            "name": "HK SAM",
+            "source": "CBRE HK — EBPS-participating private + contract homes",
+            "inputs": [
+              { "label": "HK TAM", "value": "A$41M" },
+              { "label": "SAM share", "value": "~35%" }
+            ],
+            "equation": "35% × A$41M",
+            "result_label": "≈ A$14M"
+          },
+          {
+            "name": "SG SAM",
+            "source": "Concentrated incumbents — NTUC Health, ECON, St Luke's, Allium, Ren Ci",
+            "inputs": [
+              { "label": "SG TAM", "value": "A$16M" },
+              { "label": "SAM share", "value": "~80%" }
+            ],
+            "equation": "80% × A$16M",
+            "result_label": "≈ A$13M"
+          },
+          {
+            "name": "APAC shoulder reachable via partners",
+            "source": "Distribution-partner pre-qualified subset; ~40% of TAM shoulder",
+            "inputs": [
+              { "label": "APAC shoulder TAM", "value": "A$84M" },
+              { "label": "Reachable via partners", "value": "~40%" }
+            ],
+            "equation": "40% × A$84M",
+            "result_label": "≈ A$34M"
+          }
+        ]
+      },
+      "som": {
+        "stage_label": "STAGE 3 · SOM (3-year cumulative ARR)",
+        "subtitle": "Pre-pilot stage, GNVC 2026 launch. Bottom-up from a single AU pilot.",
+        "result_label": "A$18.5M",
+        "total_equation": "Y1 1.07 + Y2 ramp + Y3 10.0 run-rate ≈ 18.5 cumulative",
+        "stacks": [
+          {
+            "name": "Year 1 — AU pilot wedge",
+            "source": "12 sites × 1,500 beds × 70% ramp; GNVC 2026 launch cohort",
+            "inputs": [
+              { "label": "Pilot sites", "value": "12" },
+              { "label": "Beds in pilot", "value": "1,500" },
+              { "label": "ARPU", "value": "A$85 / mo" },
+              { "label": "Months", "value": "12" },
+              { "label": "Ramp factor", "value": "70%" }
+            ],
+            "equation": "1,500 × A$85 × 12 × 70%",
+            "result_label": "≈ A$1.07M ARR"
+          },
+          {
+            "name": "Year 2 — AU expansion + HK pilot",
+            "source": "AU pilot graduates to 4,500 beds; HK distribution partner secures first 400 beds",
+            "inputs": [
+              { "label": "AU beds", "value": "4,500" },
+              { "label": "HK beds", "value": "400" },
+              { "label": "Blended ARPU", "value": "~A$80 / mo" }
+            ],
+            "equation": "(4,500 + 400) × A$80 × 12",
+            "result_label": "≈ A$4.7M ARR"
+          },
+          {
+            "name": "Year 3 — full footprint run-rate",
+            "source": "8,000 AU beds + 800 HK beds + 600 SG beds; cumulative figure compounds Y1+Y2+Y3",
+            "inputs": [
+              { "label": "AU beds", "value": "8,000" },
+              { "label": "HK beds", "value": "800" },
+              { "label": "SG beds", "value": "600" },
+              { "label": "Blended ARPU", "value": "~A$78 / mo" }
+            ],
+            "equation": "9,400 beds × A$78 × 12",
+            "result_label": "≈ A$10M ARR run-rate (A$18.5M cumulative across Y1-Y3)"
+          }
+        ]
+      }
+    },
+    "implications": [
+      {
+        "headline": "Series A justified without dominance",
+        "body": "SAM A$198M means Lumana does NOT need to win all of AU residential. Capturing 5% of AU + 2% of HK + 5% of SG over 5 years ≈ A$11M ARR — already justifies Series A on its own.",
+        "agent_targets": ["agent_3"]
+      },
+      {
+        "headline": "A$85 list defensible only as full bundle",
+        "body": "The A$85/bed/month list price is defensible against the A$8-25 incumbent compliance-software band only if Lumana sells the full ambient-monitoring + workflow + auto-doc bundle. Seat-licensed software at this price loses to incumbents on the procurement matrix every time.",
+        "agent_targets": ["agent_3", "agent_4"]
+      },
+      {
+        "headline": "AN-ACC pricing hurdle: under 1% of operator revenue",
+        "body": "AN-ACC base is A$295.64/resident/day (2025-10-01). Lumana at A$85/mo = A$2.83/bed/day = under 1% of revenue. Agent 3's pitch must lead with this ratio so the buyer's CFO does not scuttle the deal at procurement review.",
+        "agent_targets": ["agent_3"]
+      },
+      {
+        "headline": "HK EBPS pricing hurdle: HKD 280-400/mo cap",
+        "body": "HK EBPS subsidy is HK$11,000/bed/month. To clear operator P&L without a manual board approval, HKD pricing must land at HKD 280-400 (under 6% of subsidy). Agent 3's HKD tier is therefore not a discount of the AUD list — it is a structural sub-tier with constrained scope.",
+        "agent_targets": ["agent_3"]
+      },
+      {
+        "headline": "AU pilot is the only realistic Y1 wedge",
+        "body": "SOM math: pilot-first wedge in AU (12 sites by GNVC 2026) is the only realistic Y1. HK + SG are Y2-3 expansions tied to local distribution partners, not direct sales. Agent 4's attack plans should treat HK and SG as channel plays, not direct GTM.",
+        "agent_targets": ["agent_4"]
+      }
+    ],
+    "methodology_appendix": "All three figures expressed in AUD (the project's primary currency) despite the schema field being named *_sgd — preserved for template compatibility. TAM (A$528M/yr) = AU 223,691 operational residential places (AIHW Gen, 30 Jun 2024) + HK ~76,000 RCHE places (SWD, 2024) + SG ~22,000 nursing-home beds (MOH, 2024 trending to 31k by 2030), each multiplied by addressable ambient-monitoring + workflow + auto-doc software ARPU. ARPU anchored at A$85/bed/month list (Lumana pricing thesis), discounted by market: AU full A$85, HK A$45 (HKD 280, capped by EBPS economics), SG A$60 (SGD 68, MOH-grant-aligned). Annualised: AU 223,691 × A$85 × 12 = A$228M; HK 76,000 × A$45 × 12 = A$41M; SG 22,000 × A$60 × 12 = A$16M. Plus APAC-broad shoulder (JP ~960k institutional long-term-care places per OECD Health Statistics 2024, KR ~205k per OECD; addressable subset @ 10% × A$70 ARPU × 12) adds A$84M residual reachable through partner channels = TAM A$528M. SAM (A$198M) = filtered to the operator subset that (a) has > 60-bed scale, (b) is on a Strengthened Quality Standards / SIRS-equivalent regulator pressure curve, and (c) procures software directly. AU SAM ≈ 60% of TAM (Top-100 providers run 44.7% of places per Australian Ageing Agenda 2025; +mid-tier consolidators); HK SAM ≈ 35% (the EBPS-participating private + contract homes); SG SAM ≈ 80% (concentrated NTUC Health, ECON, St Luke's, Allium, Ren Ci). SOM (A$18.5M, 3-year cumulative ARR ramp) = pre-pilot stage, GNVC 2026 launch. Bottom-up: 1 AU pilot (12 sites, 1,500 beds × A$85 × 12 × 70% ramp ≈ A$1.07M ARR Y1) → 8,000 AU beds + 800 HK beds + 600 SG beds by Y3 ≈ A$10M ARR run-rate, A$18.5M cumulative.",
+    "sources": [
+      {
+        "title": "AIHW GEN Aged Care Data — providers, services and places (30 Jun 2024)",
+        "url": "https://www.gen-agedcaredata.gov.au/topics/providers,-services-and-places-in-aged-care"
+      },
+      {
+        "title": "Hong Kong SWD — Annual Service Provision and Statistics for Residential Care",
+        "url": "https://www.swd.gov.hk/en/pubsvc/elderly/elderly_info/elderly_ah_sps/elderlysps/rcse/index.html"
+      },
+      {
+        "title": "Singapore MOH — Bed capacity for nursing, step-down and long-term care facilities",
+        "url": "https://www.moh.gov.sg/newsroom/bed-capacity-requirements-for-land-sites-release-for-nursing-step-down-and-long-term-care-facilities"
+      },
+      {
+        "title": "MOH SG — Number of Licensed Nursing Home Beds Needed for Next Five Years (20k → 31k by 2030)",
+        "url": "https://www.moh.gov.sg/newsroom/number-of-licensed-nursing-home-beds-needed-for-next-five-years/"
+      },
+      {
+        "title": "IMARC — Australia Aged Care Industry, Reform & Digital Health Trends (2025-2033 forecast)",
+        "url": "https://www.imarcgroup.com/insight/australia-aged-care-industry-elderly-care-reform-digital-health-integration-trends-growth-drivers"
+      },
+      {
+        "title": "Statura Care — Best Aged Care Compliance Software in Australia 2026 (per-bed/month benchmarks A$8-25)",
+        "url": "https://statura.care/blog/best-aged-care-compliance-software-australia"
+      },
+      {
+        "title": "Australian Ageing Agenda — sector consolidation (Top providers run 44.7% of places, FY24)",
+        "url": "https://www.australianageingagenda.com.au/executive/ongoing-market-consolidation-for-sector/"
+      },
+      {
+        "title": "CBRE Hong Kong — Investing in Residential Care Homes for the Elderly (EBPS economics)",
+        "url": "https://www.cbre.com.hk/insights/articles/hong-kong-investing-in-residential-care-homes-for-elderly"
+      }
+    ]
+  },
+  "policies": [
+    {
+      "title": "Aged Care Act 2024 (Cth) — commenced 1 November 2025",
+      "body": "Replaces the Aged Care Act 1997. Rights-based framework, person-centred care, new Strengthened Quality Standards (Standard 5: Clinical Care, expanded restrictive-practices regulation), and Statement of Rights enforceable against providers. Commenced 1 Nov 2025 after a deferral from 1 Jul 2025. Provider obligations include enhanced incident reporting, mandatory care-minute compliance for 3+ stars, and demonstrable evidence of restraint-reduction practice.",
+      "sentiment": "support",
+      "effective_date": "2025-11-01",
+      "url": "https://www.health.gov.au/our-work/aged-care-act/about?language=en",
+      "data_as_of": "2026-04-27",
+      "implication_for_us": "Every Australian residential aged care provider is now legally required to evidence restraint-reduction and clinical-care practice. Lumana's ambient-monitoring + auto-documentation directly produces that evidence (timestamped non-restraint interventions, fall-prevention logs, behavioural-support audit trails). Agent 4 should make 'Aged Care Act 2024 evidence-of-compliance' a primary attack vector; Agent 3 should anchor the ROI pitch on 'avoid 1 SIRS notification = avoid 40-80 hours of investigation cost', not on labour replacement."
+    },
+    {
+      "title": "Strengthened Aged Care Quality Standards (Standard 5: Clinical Care) — effective 1 November 2025",
+      "body": "Standard 5 explicitly requires evidence-based clinical care including falls prevention, deterioration recognition, pressure-injury prevention, and restrictive-practices governance. Standards are 'more detailed and measurable' than 2019 predecessors; auditors evaluate documented care delivery, not policy intent. Care-minute compliance (RN minutes + total care minutes) flows into Star Ratings from 1 Oct 2025.",
+      "sentiment": "support",
+      "effective_date": "2025-11-01",
+      "url": "https://www.agedcarequality.gov.au/providers/quality-standards/strengthened-aged-care-quality-standards",
+      "data_as_of": "2026-04-27",
+      "implication_for_us": "Standards are *measurable*, meaning auditors will demand timestamped digital evidence not nurse-narrative. Lumana's auto-documentation closes this gap natively — restraint events, fall risk-stratification, and intervention logs become audit-ready by-product. Agent 4: 'Standard-5-ready out of the box' is a wedge against incumbents that bolt on documentation as an after-the-fact module. Agent 3: tier the offering so 'Standard 5 evidence pack' is the included floor, not an add-on."
+    },
+    {
+      "title": "Serious Incident Response Scheme (SIRS) — extended to all registered providers from 1 Nov 2025",
+      "body": "Mandatory reporting for unexplained absences, neglect, abuse, restraint outside an authorised behaviour-support plan, and unexpected deaths. Use of restraint NOT authorised under a behaviour-support plan, NOT used as last resort, or WITHOUT informed consent is itself a reportable incident. Penalties include civil penalties under the Aged Care Act 2024 and Star Ratings impact.",
+      "sentiment": "support",
+      "effective_date": "2021-04-01",
+      "sunset_date": null,
+      "url": "https://www.agedcarequality.gov.au/providers/serious-incident-response-scheme",
+      "data_as_of": "2026-04-27",
+      "implication_for_us": "Each SIRS Priority 1 notification consumes ~40-80 hours of investigation, root-cause analysis, and regulator response — at PMET wage of A$55-75/hr that is A$2,200-6,000 of soft cost per incident, plus reputational and Star-Rating exposure. Lumana's sensor-derived evidence (radar pre-fall pattern, no-touch night-check verification) reduces both the rate AND the investigation cost. Agent 3 should frame ROI as 'avoid 4 SIRS notifications/yr at a 100-bed home = A$10-24k saved'; Agent 4 should price-anchor against the cost of a single Priority 1 incident, not against the cost of a junior nurse."
+    },
+    {
+      "title": "AN-ACC subsidy uplift to A$295.64/resident/day (1 October 2025)",
+      "body": "Australian National Aged Care Classification base price rose 5.6% to A$295.64/resident/day from 1 Oct 2025 (was A$280.01). Hotelling supplement also rose to A$22.15 PRPD (from A$15.60). Care minutes for each AN-ACC class were re-aligned with the variable funding change.",
+      "sentiment": "support",
+      "effective_date": "2025-10-01",
+      "url": "https://www.health.gov.au/our-work/AN-ACC/residential-aged-care-funding-updates",
+      "data_as_of": "2026-04-27",
+      "implication_for_us": "AN-ACC headroom of A$295.64/day means Lumana at A$85/bed/month = A$2.83/bed/day = 0.96% of variable revenue. Operators can absorb without re-pricing residents. Agent 3's pricing pitch line: 'less than 1 percent of your AN-ACC base buys you the documentation engine that protects 100 percent of it'. Agent 4: position against the operator's natural inclination to redirect AN-ACC uplift to wages — Lumana augments wages, doesn't compete with them."
+    },
+    {
+      "title": "HK Innovation & Technology Fund for Application in Elderly & Rehabilitation Care (I&T Fund) — HK$1B endowment, ongoing",
+      "body": "Hong Kong Government Labour and Welfare Bureau funds NGO and contract residential-care home procurement of approved gerontech, including monitoring, fall-detection, and care-workflow tools. HK$1B fund launched Dec 2018; HK$37M+ disbursed across 210+ applicants for ~870 devices (per LCQ20, 2024). Ongoing application window; SWD pre-approves devices on a published catalogue.",
+      "sentiment": "support",
+      "effective_date": "2018-12-01",
+      "sunset_date": null,
+      "url": "https://www.swd.gov.hk/en/pubsvc/rehab/cat_fundtrustfinaid/itfund/",
+      "data_as_of": "2026-04-27",
+      "implication_for_us": "HK private RCHEs can claim I&T Fund subsidy against approved monitoring solutions — Lumana must apply for SWD catalogue listing before HK go-to-market. Catalogue listing is the entry ticket; without it the EBPS-economics-constrained operator (HK$11k/bed/month subsidy ceiling) cannot afford Lumana. Agent 4 should treat HK distribution via SWD catalogue + Jockey Club Charities Trust 'age at home' partnership as Wave 2 (Y2). Agent 3 should price an HKD SKU at HKD 280-400/bed/month to net under HKD 200 post-subsidy."
+    },
+    {
+      "title": "HK Residential Care Homes (Elderly Persons) Amendment Ordinance 2023 — phased staffing & space requirements from 16 June 2024",
+      "body": "Tightens staffing ratios (medium/low care levels: 1:30 carer:resident for 11 daily hours), space-per-resident minimums, registration of home managers and health workers, plus stricter fitness-and-properness checks. Phased implementation through 2026; full compliance triggers operator margin pressure that pushes adoption of labour-augmenting tech.",
+      "sentiment": "support",
+      "effective_date": "2024-06-16",
+      "url": "https://www.swd.gov.hk/en/pubsvc/lr/rche/rche_orcopref/",
+      "data_as_of": "2026-04-27",
+      "implication_for_us": "HK operators face a labour-cost squeeze through 2026 from the new staffing minimums, exactly as the I&T Fund signals 'use technology to relieve pressure'. Lumana lands as a *substitute* for marginal staffing in night-cycle monitoring (where the 1:30 ratio is hardest to meet). Agent 3: HK SKU should bundle 'night-shift augmentation' explicitly. Agent 4: HK GTM pitch is 'get to compliant 1:30 staffing with 20% less night agency spend'."
+    },
+    {
+      "title": "Singapore Age Well SG — A$3.5B (S$3.5B) commitment over 10 years; Community Care Digital Transformation Plan (CCDTP) S$18M",
+      "body": "Whole-of-government MOH-led programme launched Nov 2023 covering housing, transport, active ageing, and care services. CCDTP funds Community Care Organisations (CCOs) to adopt approved digital solutions (including monitoring, EMR, care-workflow). Productivity & Digitalisation Grant (PDG) replaced the Healthcare Productivity Fund Sep 2022 with similar coverage envelope.",
+      "sentiment": "support",
+      "effective_date": "2023-11-01",
+      "url": "https://www.aic.sg/partners/community-care-digital-transformation-plan/",
+      "data_as_of": "2026-04-27",
+      "implication_for_us": "SG buyers expect grant-aligned vendor pricing — every meaningful CCO procurement runs through CCDTP/PDG approval. Lumana must apply for AIC pre-approval before SG launch and price the SG SKU so post-grant effective ARPU lands at S$30-50/bed/month. Agent 3: SG SKU list at S$68/bed/month, post-PDG ~S$34. Agent 4: SG GTM is concentrated channel sale to NTUC Health, ECON, Allium, St Luke's, Ren Ci — six conversations cover ~60% of the addressable bed count."
+    },
+    {
+      "title": "Singapore Personal Data Protection Act (PDPA) — sensitive personal data + DNC + healthcare residency expectation",
+      "body": "PDPA imposes consent, purpose-limitation, and breach-notification obligations (72-hour notification). Healthcare and aged-care personal data is treated as sensitive. MOH explicitly prefers SG-resident data hosting for community-care systems funded under CCDTP/PDG. Cross-border transfer requires comparable protection and contractual safeguards.",
+      "sentiment": "support",
+      "effective_date": "2014-07-02",
+      "url": "https://www.pdpc.gov.sg/Overview-of-PDPA/The-Legislation/Personal-Data-Protection-Act",
+      "data_as_of": "2026-04-27",
+      "implication_for_us": "Lumana must offer SG-resident data hosting (AWS ap-southeast-1 or equivalent) for any SG sale; non-resident hosting is a procurement disqualifier with grant-funded operators. Agent 4: 'SG-resident data, no overseas SaaS routing' is a wedge against US incumbents (SafelyYou, CarePredict) that have no APAC region. Agent 3: factor data-residency premium (~10%) into SG pricing vs the AU baseline."
+    }
+  ],
+  "cultural_signals": [
+    {
+      "observation": "Australian aged-care operators trust peer references and clinical-evidence studies above vendor demos; the Royal Commission scarred the buying side toward 'show me a published RCT, not a brochure'.",
+      "evidence": "SafelyYou's AU traction relies heavily on its JAMDA-published fall-reduction RCT (n=434 residents across 10 facilities, 40% fall reduction, 2022). Australian Ageing Agenda 2025 sector consolidation report repeatedly references buyer demand for 'demonstrated outcomes', not features. Royal Commission Final Report (Recommendation 38) explicitly mandates evidence-based care, embedded in Strengthened Standard 5.",
+      "implication_for_us": "Lumana's GNVC 2026 launch must include at least one peer-reviewed or AIHW-data-linked outcome paper from the pilot cohort by end-Y1, OR a credentialled clinical advisory board (gerontologist + aged-care DON) named on the homepage. Agent 5 should score competitor sites on 'evidence above the fold'. Agent 4: clinical-evidence partnership (e.g., with ARIIA — Aged Care Research & Industry Innovation Australia) is a wedge that capital-rich incumbents cannot replicate without a 12-month publication cycle."
+    },
+    {
+      "observation": "Hong Kong RCHE buyers (especially private operators) make purchase decisions in a single boardroom conversation; the operator-owner is the buyer, the user, and the regulator-facing accountable party.",
+      "evidence": "Of HK's 819 licensed RCHEs, ~75% are private (CBRE HK 2024 industry overview). Private operators average 50-150 beds, family-owned, second-generation. Procurement cycles are weeks, not months — but the same compactness means churn risk if the boardroom shifts. SCMP 2025 fall-detection coverage of HKBN gerontech showed 4-6 week pilot-to-rollout cycles for tech adopted by private operators.",
+      "implication_for_us": "HK GTM is fundamentally relationship sales, not enterprise sales. Agent 4 should plan for a Hong Kong distributor/MD hire who can make 6-8 owner conversations/month, not a salesforce-led funnel. Agent 3: HK SKU should include a 90-day no-cost-cancel clause to absorb churn-on-board-change risk; pricing should not require multi-year commit."
+    },
+    {
+      "observation": "Singapore community-care buyers expect bilingual (English + at least one of Mandarin/Malay/Tamil) caregiver UX out of the box; English-only mobile UX fails the AIC fitness-for-purpose check for nursing-home rollout.",
+      "evidence": "MOH/AIC procurement guidance for CCDTP-approved tools explicitly references multilingual interface requirements. NTUC Health, ECON, and St Luke's all run multilingual nursing workforces (~40-60% of frontline care staff are Mandarin-primary or Bahasa-primary, per industry workforce reports). Synapxe's Age Well SG technology procurement screens for multilingual support.",
+      "implication_for_us": "Lumana's caregiver-facing app must launch with Mandarin and Malay localisation before SG GTM is feasible — this is a Y1 product investment, not a Y2 nice-to-have. Agent 4 should not start SG conversations until localisation is committed. Agent 3 can position the multilingual UX as a SG-only premium that justifies the 10-15% data-residency premium without further negotiation."
+    },
+    {
+      "observation": "Australian DONs (Directors of Nursing) are the technical decision-influencers but the CEO/COO is the budget-holder; deals require dual-track conversations and break when the DON champion changes mid-cycle.",
+      "evidence": "PCS, Leecare, AutumnCare and Person Centred Software case studies consistently surface 'DON-champion + CEO sign-off' dual-buyer model. Aged Care Workforce Strategy 2024 (Ageing Australia) reports 22% annual turnover among aged-care DONs and senior clinicians. Sector consolidation (Opal/BlueCross 2024) means CEO turnover is also elevated through 2026.",
+      "implication_for_us": "Lumana sales motion needs a DON enablement playbook AND a CEO-level ROI pack — the same content does not work for both. Agent 4: pilot site selection must lock both buyers contractually, not just verbally; verbal-only commitments evaporate on a DON departure. Agent 3: pricing must justify itself to the CFO without the DON in the room (so ROI math has to be airtight on paper, not just clinically intuitive)."
+    },
+    {
+      "observation": "Australian aged-care families and resident advocates are vocally privacy-protective post-Royal-Commission; camera-based monitoring carries reputational risk that radar/mmWave does not.",
+      "evidence": "Royal Commission Final Report flagged surveillance-vs-dignity tension explicitly. Nobi's AU success (lamp form-factor, no camera) and SafelyYou's careful 'privacy-passing AI' messaging both reflect this. Aged Care Quality Bulletins 2024-25 carry recurring restraint-vs-monitoring guidance. Public submissions to the Aged Care Act 2024 consultation included multiple advocate concerns about 'always-on cameras'.",
+      "implication_for_us": "Lumana's modality choice (radar/mmWave + ambient sensing, not always-on RGB camera) is a structural cultural fit. Agent 5 should make 'no cameras in private spaces' explicit on the homepage hero. Agent 4: position competitors with RGB camera coverage (SafelyYou, Oxehealth, Kepler Vision, Konica Minolta HitomeQ) as carrying a residual reputational tail in AU even where the AI is privacy-preserving. Agent 3: do not price-discount this; it is a deal-qualifier, not a feature."
+    },
+    {
+      "observation": "Japanese and Korean aged-care operators have a 5-7 year head start on ambient-monitoring acceptance; the cultural barrier is solved, the language and integration barrier is not.",
+      "evidence": "Konica Minolta HitomeQ Care Support reports ~80% fall-reduction at facilities of installation; ~30% adoption of monitoring/communication devices across Japan (PMC 2024 review). Fujitsu mmWave trials (MobiHealthNews 2024) and XK300 (Xandar Kardian) Korean nursing-home rollouts show ambient monitoring is normalised. But every system runs in Japanese/Korean UX with Japanese/Korean integrations (e.g., Care Director EMR, MEDIS).",
+      "implication_for_us": "JP/KR are NOT addressable for Lumana in the GNVC-2026 horizon — the language + integration debt is multi-quarter work. Agent 4 should treat JP/KR as Y3+ partner/licensing plays, not direct sales. Agent 3 should explicitly EXCLUDE JP/KR from the SOM denominator. The cultural lesson Lumana imports from JP/KR: ambient monitoring works at scale; the marketing job in AU/HK/SG is not 'will this work?' but 'why hasn't your operator already done this?'"
+    }
+  ],
+  "economic_signals": [
+    {
+      "indicator": "Australia AN-ACC base subsidy per resident per day",
+      "value": "A$295.64/resident/day from 2025-10-01 (5.6% YoY increase from A$280.01); plus hotelling supplement A$22.15 PRPD",
+      "source_url": "https://www.health.gov.au/our-work/AN-ACC/residential-aged-care-funding-updates",
+      "implication_for_us": "Operators have ~A$8,800/resident/month in subsidy revenue. Lumana at A$85/bed/month = under 1% of revenue. Pricing pressure is low; the binding constraint is *not* affordability but trust + Star-Rating attribution. Agent 3: tier pricing can support A$85 list without grant subsidy, unlike SG/HK. Agent 4: build the case on Star-Rating defence + SIRS reduction, not on AN-ACC arithmetic."
+    },
+    {
+      "indicator": "Australia residential aged-care workforce shortage projection",
+      "value": "110,000 FTE shortfall by 2030; 17,500 FTE nurses specifically by 2035 (Department of Health & Aged Care, CEDA, Ageing Australia)",
+      "source_url": "https://www.sbs.com.au/news/article/australias-aged-care-workforce-shortage-could-reach-110-000-in-next-decade-new-report-warns/7sljyuk9e",
+      "implication_for_us": "The structural shortage is the single biggest demand driver for Lumana. Agent 4: 'Replace the impossible night agency RN' is the dominant attack plan. Agent 3: ROI math should show 0.4 FTE saved at A$95k loaded cost = A$38k/year/site, vs A$85 × 100 beds × 12 = A$102k/year — net positive even after Lumana cost; tier pricing can sustain this even with conservative FTE assumptions."
+    },
+    {
+      "indicator": "Falls rate in Australian residential aged care",
+      "value": "7.14 falls per 1,000 resident days (crude); 2.65 injurious falls per 1,000 resident days; 0.70 falls/1,000 RD requiring hospitalisation (n=25 facilities, 3.9M resident days, 2019-2021 BMJ Open)",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11370130/",
+      "implication_for_us": "A 100-bed home averages ~26 hospitalising falls/year; AIHW estimates the per-fall hospital cost at A$5-15k. Lumana's pre-fall radar detection (proven 30-40% reduction in published gerontech literature) saves ~A$50-150k/site/year in avoided hospital transfers — funded by the public hospital, not the home, but a powerful Star-Rating + family-trust argument. Agent 3: include the avoidable-hospitalisation calc in the ROI deck even though the operator does not bank the savings; it is the political + reputational ROI that closes the deal."
+    },
+    {
+      "indicator": "Hong Kong elderly population (65+) growth rate",
+      "value": "4.0% annual growth in 65+ population from 2021-2030; 65+ share rising from 21.4% (2023) to ~30% by 2033 (HK C&SD population projections 2022-2046)",
+      "source_url": "https://www.censtatd.gov.hk/en/press_release_detail.html?id=5368",
+      "implication_for_us": "HK aged-care demand is growing faster than the workforce can scale; gerontech adoption is government policy, not operator preference. Agent 4: HK GTM should lean on the Elderly Commission's published gerontech endorsement as a procurement-cycle accelerator. Agent 3: demand inelasticity in HK is rising — pricing power increases each year through 2030 as operator capacity tightens."
+    },
+    {
+      "indicator": "Singapore nursing-home bed expansion plan",
+      "value": "+10,600 nursing-home beds by 2030 (from 20,000 today to 31,000); 4,300 beds added in 2024 alone (MOH 2024-2025 announcements)",
+      "source_url": "https://www.moh.gov.sg/newsroom/expanding-healthcare-capacity-and-transforming-the-healthcare-workforce/",
+      "implication_for_us": "SG's 11,000-bed expansion is the single largest greenfield wedge in APAC residential aged care 2025-2030. New-build operators have capex-funded fit-out budgets that absorb monitoring as build-line items, not opex — much higher WTP than retrofit operators. Agent 3 should design a 'new-build SKU' with full hardware bundled at S$95-110/bed/month. Agent 4: target the 10 most-active SG nursing-home developers (NTUC Health, Allium, ECON, St Luke's, Ren Ci, etc.) before 2026-Q4 build-cycle decisions."
+    },
+    {
+      "indicator": "Singapore citizens aged 65+ share of population",
+      "value": "23.9% by 2030 (≈ 1 in 4 citizens), up from 19.9% in 2024 (Singapore National Population & Talent Division)",
+      "source_url": "https://www.population.gov.sg/our-population/population-trends/longevity/",
+      "implication_for_us": "SG's silver-tsunami timing aligns precisely with Lumana's GNVC 2026 launch + 5-year ramp. The Age Well SG S$3.5B envelope is allocated; operators are spending now. Agent 4: SG go-to-market window is 2026-2028; after that, Tier-1 operators will have locked into incumbent EMR + monitoring stacks (Person Centred Software, Leecare via their SG presence)."
+    },
+    {
+      "indicator": "AU aged-care provider consolidation rate",
+      "value": "21 providers exited in FY24 (-3.2%); top providers now hold 44.7% of all places (Australian Ageing Agenda, 2024-2025)",
+      "source_url": "https://www.australianageingagenda.com.au/executive/ongoing-market-consolidation-for-sector/",
+      "implication_for_us": "AU buying power is concentrating into ~20 enterprise accounts that control ~50% of beds. Agent 4: enterprise-direct sales motion (Opal, Bupa, Regis, Estia, Catholic Healthcare, ACH, Uniting, Anglicare) is the right Y2-3 motion; pilot-cohort sales (smaller mid-tier operators) is the right Y1 GNVC motion. Agent 3: enterprise pricing must include volume-tiered ARPU (A$85 list dropping to A$60-65 above 5,000 beds) to clear procurement."
+    }
+  ],
+  "adoption_patterns": {
+    "sme_penetration_pct": 8,
+    "mnc_penetration_pct": 22,
+    "note": "Penetration here = share of residential aged care BEDS (not operators) using ANY ambient-monitoring + workflow + auto-doc tool. SME definition = aged-care operator with < 500 beds (typical of HK private RCHEs, SG smaller community-care org, AU mid-tier). MNC = enterprise residential operator with > 500 beds (Opal, Bupa, Regis in AU; Tunstall managed-services in HK; NTUC Health in SG). Methodology: Konica Minolta HitomeQ ~30% Japanese facility-level penetration (PMC 2024) is the global ceiling; AU/HK/SG sit at 15-25% of that level for true ambient sensing (excluding nurse-call pads). Triangulated against Austco Tacera installed base (12k+ AU bedrooms with nurse-call, ~5% have any ambient overlay), Nobi AU distributor pipeline (~1k beds active), and SafelyYou + Oxehealth zero-AU-deployments. APAC-broad context: JP ~30% facility penetration (HitomeQ benchmark), KR ~15% (XK + Vayyar). The 8% SME / 22% MNC figures reflect AU+HK+SG primary geography only.",
+    "country_readiness": [
+      {
+        "country": "Australia",
+        "regulatory": 5,
+        "tech_maturity": 5,
+        "price_tolerance": 4
+      },
+      {
+        "country": "Hong Kong",
+        "regulatory": 4,
+        "tech_maturity": 4,
+        "price_tolerance": 3
+      },
+      {
+        "country": "Singapore",
+        "regulatory": 5,
+        "tech_maturity": 5,
+        "price_tolerance": 4
+      },
+      {
+        "country": "Japan",
+        "regulatory": 5,
+        "tech_maturity": 5,
+        "price_tolerance": 4
+      },
+      {
+        "country": "South Korea",
+        "regulatory": 4,
+        "tech_maturity": 5,
+        "price_tolerance": 3
+      },
+      {
+        "country": "New Zealand",
+        "regulatory": 4,
+        "tech_maturity": 4,
+        "price_tolerance": 3
+      }
+    ]
+  },
+  "trends": [
+    {
+      "title": "Restraint-reduction policy converging across AU/HK/SG creates synchronous procurement window 2026-2028",
+      "evidence": "AU Aged Care Act 2024 + SIRS extension (1 Nov 2025) explicitly classify unauthorised restraint as reportable. HK RCHE Amendment Ordinance (16 Jun 2024) phased staffing rules reduce permissible restraint substitution. SG MOH's Strengthened Care Standards (under CCDTP 2024 update) parallel-track AU's. All three regulators landed within an 18-month window — the first time in 20 years.",
+      "implication_for_us": "By Q4 2026, every Tier-1 AU operator and every CCDTP-funded SG operator will have a board-mandated 'reduce restraint, evidence the reduction' programme; procurement will follow within 6-9 months. Lumana must close 6-8 AU pilot sites by Q3 2026 to be credible in those Q4 enterprise procurements. Agent 4 should sequence GTM around that deadline; Agent 3 should pre-build the 'Standard 5 evidence pack' SKU before launch."
+    },
+    {
+      "title": "AN-ACC funding uplift cycles unlock A$60-100/bed/month software headroom in AU",
+      "evidence": "AN-ACC base rose 5.6% (A$280.01 → A$295.64) on 1 Oct 2025 with hotelling supplement +42% (A$15.60 → A$22.15). KPMG Aged Care Market Analysis 2024 projects 4-6% annual AN-ACC uplift through 2028 to clear care-minute mandate compliance. Operators historically allocate 8-12% of new subsidy uplift to non-wage opex (technology, consumables, contractors).",
+      "implication_for_us": "If 10% of the next two AN-ACC uplifts (~A$15-20/bed/day cumulative) is operator-discretionary, that is A$45-60/bed/month new opex headroom — Lumana's A$85 list price is squarely inside the funding-uplift window. Agent 3 should time pricing announcements to the Oct-Nov AN-ACC announcement cycle each year. Agent 4 should brief enterprise CFOs in Sep-Oct 2026 ahead of the 2026-Oct uplift."
+    },
+    {
+      "title": "Camera-based monitoring incumbents (SafelyYou, Oxehealth, Kepler Vision, Konica Minolta HitomeQ) face structural privacy headwinds in AU residential aged care",
+      "evidence": "Royal Commission discussion of surveillance-vs-dignity (2021), continuing public-advocacy submissions through Aged Care Act 2024 consultation, and Nobi's AU traction (lamp form-factor, no camera, AU distributor signed) all point to a sustained AU bias toward non-camera modalities. SafelyYou + Oxehealth have zero published AU residential deployments despite USD 50M+ of US/UK installed bases.",
+      "implication_for_us": "Lumana's radar/mmWave + ambient sensing modality is a structural moat in AU for at least 24-36 months. Agent 5 should score competitor websites on 'camera footprint disclosure' as a design-trust dimension. Agent 4: 'cameras in private space' should be a strategy-canvas axis where Lumana scores 5 and four of the top global incumbents score 1-2. Agent 3: do NOT discount the privacy-modality differentiator; it is a category-of-one position, not a feature."
+    },
+    {
+      "title": "Care-home OS / EMR consolidation (Person Centred Software, Leecare, AutumnCare) creates integration-as-distribution opportunity",
+      "evidence": "Person Centred Software (mCare) acquired into Hg Capital portfolio 2023; AutumnCare and Leecare are Australian-owned but actively pursuing integrations. Aged Care Industry Information Technology Council (ACIITC) 2024 roadmap explicitly calls for 'open clinical data exchange'. Heidi Health (clinical AI scribe) raised AUD 27M Series A 2024 betting on this integration thesis.",
+      "implication_for_us": "Lumana should NOT compete with PCS/Leecare/AutumnCare; integrate. Agent 4: top attack-plan #2 (after the SIRS-reduction wedge) should be 'native PCS + Leecare + AutumnCare integrations as the ambient-sensing layer their roadmaps cannot ship in 18 months'. Agent 3: the integration partner's installed base becomes a distribution channel — pricing should leave room for a 15-20% partner referral fee on integrated bundles, by Q3 2026."
+    },
+    {
+      "title": "Sensor-derived auto-documentation crossing the regulator-acceptance threshold in AU + HK",
+      "evidence": "Aged Care Quality and Safety Commission has begun referencing 'digital evidence packs' as acceptable in 2024-25 audit guidance; HK SWD I&T Fund catalogue now includes 'digital care record' devices alongside hardware. Heidi Health's clinical AI scribe acceptance among AU GPs and the upstream AHPRA AI-scribe guidance both signal a regulator posture that auto-documentation is acceptable when paired with clinician review.",
+      "implication_for_us": "Auto-doc is no longer experimental for regulators; it is becoming expected. Lumana's 'caregiver workflow + auto-documentation' value layer is timed correctly — late enough that regulators accept, early enough that incumbents (Austco, Tunstall, PCS) cannot ship parity in one budget cycle. Agent 4: within 12-18 months, auto-doc will be table stakes; the differentiator window for 'sensor-derived evidence directly into the care record' is roughly 2026-2027. Agent 3: price the auto-doc layer as core, never as add-on, before the trend commoditises it."
+    }
+  ]
+}

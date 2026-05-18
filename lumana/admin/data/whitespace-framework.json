@@ -1,0 +1,671 @@
+{
+  "meta": {
+    "project_name": "Lumana — Aged Care Ambient Monitoring",
+    "research_date": "2026-04-27",
+    "sample_data": false,
+    "brand_tokens": {
+      "primary": "#0D6B5C",
+      "secondary": "#08564A",
+      "accent": "#C8860A",
+      "neutral_dark": "#0F2420",
+      "neutral_light": "#FBF8F2",
+      "font_display": "'Noto Serif', Georgia, serif",
+      "font_body": "'Manrope', system-ui, -apple-system, sans-serif"
+    },
+    "our_scores_are_projections": true,
+    "projection_note": "Lumana is pre-launch (GNVC 2026 target). 'us' scores reflect MVP-scope capability with the AU pilot cohort plus committed roadmap items (HK Cantonese UX, SG multilingual UX, AIC + SWD catalogue listings) — NOT shipped revenue. Re-score after first 12 AU pilot conversions in Q3 2026.",
+    "handoff_to_agent_6": "Render the radar from strategy_canvas.scores using one bold line for 'us' and one line per of the 5 named competitors. Heatmap colour bands derived render-time from cells[].competitors[].score using the count-of-competitors-≥3 rubric (green 0-1 = WHITESPACE · ATTACK, amber 2-3 = CONTESTED · CHOOSE WISELY, red 4+ = CROWDED · AVOID). Do NOT re-derive verdicts in JSON. Cell detail panel must surface every specialisation_for_cell verbatim — they are pair-specific by construction.",
+    "handoff_to_agent_8": "Inline cell appendix should cover every green 0-1 cell (the attack-eligible whitespace) and every red 4+ cell (the crowded fights to avoid). Most green cells cluster around auto_documentation × non-AU-incumbent segments, restraint_evidence × every-segment, and grant_aligned_pricing × HK/SG segments. The red cluster is pre_fall_detection × au_listed_chain (where Vayyar/Eevi/Nobi/SafelyYou/Austco all touch the cell)."
+  },
+  "strategy_canvas": {
+    "headline_thesis": "Lumana breaks the AU/HK/SG cluster on three axes — auto-documentation depth (sensor-derived events into the care record, not staff-typed notes), restraint-reduction evidence posture (Standard 5 audit pack as default, not add-on), and privacy modality (radar/mmWave with no cameras in private spaces) — and deliberately concedes integration breadth (we ship one bundled product configuration, not a modular feature catalogue) and global geographic reach (AU primary, HK + SG secondary, JP/KR are partner-only Y3+).",
+    "dimensions": [
+      {
+        "key": "ambient_sensing_modality",
+        "label": "Ambient sensing modality (no-camera)"
+      },
+      {
+        "key": "auto_documentation_depth",
+        "label": "Auto-documentation depth (sensor → care record)"
+      },
+      {
+        "key": "caregiver_workflow",
+        "label": "Caregiver workflow (mobile-first, multilingual)"
+      },
+      {
+        "key": "restraint_evidence_posture",
+        "label": "Restraint-reduction / Standard 5 evidence posture"
+      },
+      {
+        "key": "au_regulator_fit",
+        "label": "AU regulator fit (Aged Care Act 2024 + SIRS)"
+      },
+      {
+        "key": "apac_localisation",
+        "label": "APAC localisation (HK Cantonese, SG multilingual, data residency)"
+      },
+      {
+        "key": "ehr_integration_depth",
+        "label": "EHR integration depth (PCS / Leecare / AutumnCare)"
+      },
+      {
+        "key": "clinical_evidence",
+        "label": "Clinical evidence (peer-reviewed RCT, deployment scale)"
+      }
+    ],
+    "rubrics": {
+      "ambient_sensing_modality": "0 — Camera-only, RGB stored, no privacy framing. 1 — Camera with on-device blur/no-replay only. 2 — Wearable PERS or pad sensor (no ambient). 3 — Single-modality ambient (radar OR thermal OR mmWave) wall-plate or lamp. 4 — Multi-modality ambient (radar + presence + ADL inference) with no camera in private spaces. 5 — Multi-modality ambient + clinically-validated radar/mmWave + explicit no-camera-in-private-space architecture documented for AU regulator.",
+      "auto_documentation_depth": "0 — No documentation; alerting only. 1 — Manual nurse note triggered by alert. 2 — Alert metadata logged (time, location) but no clinical narrative. 3 — Structured event log auto-generated (fall, bed-exit, vital reading) requiring nurse confirmation. 4 — Sensor-derived events automatically populate the resident care record with clinician-review workflow. 5 — Full auto-documentation engine: timestamped non-restraint interventions, behavioural-support audit trail, Standard 5 evidence pack generated monthly without nurse data entry.",
+      "caregiver_workflow": "0 — No mobile UX; desktop-only operator dashboard. 1 — Mobile read-only alerts to a single device. 2 — Mobile alerts + acknowledge workflow, English-only. 3 — Mobile workflow with shift-handover + task assignment, English-only. 4 — Multilingual mobile UX (≥2 of EN/ZH/MS/TA/Cantonese) with shift handover, escalation, family loop. 5 — Full multilingual caregiver workflow + family portal + clinician-and-PCA role-tailored UI shipped as default.",
+      "restraint_evidence_posture": "0 — No restraint-related capability. 1 — Manual restraint-event flag in EHR. 2 — Pad/sensor logs that COULD evidence non-restraint but require manual reconciliation. 3 — Reportable restraint event auto-tagged from sensor data with manual review workflow. 4 — Standard 5 evidence pack generated as a feature, with restraint-event dashboard. 5 — Standard 5 + SIRS evidence pack as the included floor of the product, with civil-penalty-defensible audit trail and behavioural-support plan integration.",
+      "au_regulator_fit": "0 — No AU presence. 1 — AU sales contact only. 2 — AU pricing page + AU support hours. 3 — AU data residency + AU clinical CSM + AN-ACC awareness in product. 4 — AN-ACC + Strengthened Quality Standards-aligned product narrative + named AU clinical advisor. 5 — Aged Care Act 2024 + SIRS + Strengthened Standard 5 evidence built into the product as default outputs, with AU residential aged care references published.",
+      "apac_localisation": "0 — No APAC presence. 1 — Sells into APAC via global site, English only. 2 — APAC distributor or one regional sales hire. 3 — Localised UX for one of HK/SG/JP/KR (language + data residency) AND one local-currency SKU. 4 — Two of the above + grant catalogue listing (SWD I&T Fund, AIC CCDTP, or equivalent) AND multilingual caregiver UX. 5 — Full APAC posture: AU + HK Cantonese + SG multilingual + AWS ap-southeast-1 hosting + AIC + SWD catalogue listings + named APAC clinical CSM.",
+      "ehr_integration_depth": "0 — No EHR integration. 1 — Manual CSV export. 2 — One generic FHIR or HL7 push. 3 — One named-EHR (PCS OR Leecare OR AutumnCare) integration shipped. 4 — Two of PCS/Leecare/AutumnCare integrations shipped, structured event push (not just alerts). 5 — Three+ named-EHR integrations (PCS + Leecare + AutumnCare + Epicor iQX) shipped, bidirectional structured event push.",
+      "clinical_evidence": "0 — No clinical evidence. 1 — Vendor whitepaper, no third-party data. 2 — Customer testimonial / case study. 3 — Published case study with quantitative outcome (e.g., fall reduction %) at single site. 4 — Multi-site quantitative outcome study OR a peer-reviewed publication in a clinical journal. 5 — Peer-reviewed RCT in a major journal (JAMDA, BMJ, Age & Ageing) with named clinical advisory board AND regulatory clearance (FDA 510(k) / TGA / CE-MDR)."
+    },
+    "scores": {
+      "us": {
+        "ambient_sensing_modality": 5,
+        "auto_documentation_depth": 5,
+        "caregiver_workflow": 4,
+        "restraint_evidence_posture": 5,
+        "au_regulator_fit": 4,
+        "apac_localisation": 4,
+        "ehr_integration_depth": 3,
+        "clinical_evidence": 2
+      },
+      "diy_do_nothing": {
+        "ambient_sensing_modality": 0,
+        "auto_documentation_depth": 0,
+        "caregiver_workflow": 0,
+        "restraint_evidence_posture": 0,
+        "au_regulator_fit": 1,
+        "apac_localisation": 2,
+        "ehr_integration_depth": 0,
+        "clinical_evidence": 0
+      },
+      "nobi": {
+        "ambient_sensing_modality": 4,
+        "auto_documentation_depth": 1,
+        "caregiver_workflow": 3,
+        "restraint_evidence_posture": 1,
+        "au_regulator_fit": 3,
+        "apac_localisation": 2,
+        "ehr_integration_depth": 3,
+        "clinical_evidence": 3
+      },
+      "austco_tacera": {
+        "ambient_sensing_modality": 1,
+        "auto_documentation_depth": 1,
+        "caregiver_workflow": 2,
+        "restraint_evidence_posture": 1,
+        "au_regulator_fit": 4,
+        "apac_localisation": 3,
+        "ehr_integration_depth": 4,
+        "clinical_evidence": 2
+      },
+      "safelyyou": {
+        "ambient_sensing_modality": 1,
+        "auto_documentation_depth": 3,
+        "caregiver_workflow": 3,
+        "restraint_evidence_posture": 2,
+        "au_regulator_fit": 1,
+        "apac_localisation": 0,
+        "ehr_integration_depth": 4,
+        "clinical_evidence": 5
+      },
+      "vayyar_care": {
+        "ambient_sensing_modality": 4,
+        "auto_documentation_depth": 0,
+        "caregiver_workflow": 0,
+        "restraint_evidence_posture": 0,
+        "au_regulator_fit": 1,
+        "apac_localisation": 1,
+        "ehr_integration_depth": 1,
+        "clinical_evidence": 3
+      },
+      "eevi": {
+        "ambient_sensing_modality": 3,
+        "auto_documentation_depth": 1,
+        "caregiver_workflow": 2,
+        "restraint_evidence_posture": 1,
+        "au_regulator_fit": 3,
+        "apac_localisation": 3,
+        "ehr_integration_depth": 2,
+        "clinical_evidence": 1
+      }
+    }
+  },
+  "heatmap": {
+    "segments": [
+      {
+        "id": "au_listed_chain",
+        "name": "AU Listed / PE-Backed Chain",
+        "descriptor": "ASX-listed or PE-backed AU residential aged-care chain (800–3,500 beds; Opal, Regis, Estia/Bain, Bupa, Catholic Healthcare). CFO + GM Clinical buyer. Margin-pressured post-AN-ACC; Star-Rating accountable."
+      },
+      {
+        "id": "au_nfp_mission",
+        "name": "AU Mission-Driven NFP / Religious",
+        "descriptor": "AU not-for-profit or church-affiliated operator (200–600 beds; Uniting, Anglicare, BaptistCare, Catholic Healthcare, Helping Hand, Whiddon). CEO + Director of Mission buyer. Board-gated; dignity narrative required alongside ROI."
+      },
+      {
+        "id": "au_rural_single",
+        "name": "AU Rural / Single-Site Operator",
+        "descriptor": "AU regional/rural single- or two-site owner-operator (60–120 beds; coastal NSW, regional VIC/SA/WA, Aboriginal community-controlled). DON + owner buyer. Cannot recruit clinical staff at any price; peer-reference led."
+      },
+      {
+        "id": "hk_private_rche",
+        "name": "HK Private RCHE Owner-Operator",
+        "descriptor": "HK private Residential Care Home for the Elderly (50–150 beds; ~75% of HK's 819 RCHEs). Family-owned, 2nd-gen. EBPS-subsidised at HKD 11k/bed/month; pricing must clear 6% of subsidy."
+      },
+      {
+        "id": "sg_ccdtp_operator",
+        "name": "SG CCDTP-Funded Nursing Home",
+        "descriptor": "SG MOH-licensed nursing-home operator (300–700 beds; NTUC Health, ECON, Allium, St Luke's, Ren Ci, SAS, THK). COO + IT lead + clinical lead committee buyer. PDG/CCDTP pre-approval is procurement gate."
+      },
+      {
+        "id": "sg_new_build",
+        "name": "SG New-Build Greenfield Operator",
+        "descriptor": "SG nursing-home developer building into the MOH 20k → 31k bed expansion to 2030. Capex-funded fit-out budgets absorb monitoring as build line. Highest-WTP wedge in Lumana TAM."
+      }
+    ],
+    "needs": [
+      {
+        "id": "pre_fall_detection",
+        "name": "Real-time pre-fall + fall detection (ambient sensing)",
+        "short": "pre-fall"
+      },
+      {
+        "id": "auto_documentation",
+        "name": "Sensor-derived auto-documentation into the resident care record",
+        "short": "auto-doc"
+      },
+      {
+        "id": "restraint_evidence",
+        "name": "Strengthened Standard 5 / restraint-reduction evidence pack",
+        "short": "std5-evidence"
+      },
+      {
+        "id": "care_minute_attribution",
+        "name": "Care-minute compliance attribution + Star Rating defence",
+        "short": "care-mins"
+      },
+      {
+        "id": "night_shift_augment",
+        "name": "Night-shift augmentation (replace agency RN/PCA hours)",
+        "short": "night-aug"
+      },
+      {
+        "id": "privacy_modality",
+        "name": "No-camera privacy-preserving sensing in private spaces",
+        "short": "no-camera"
+      },
+      {
+        "id": "grant_aligned_pricing",
+        "name": "Grant-aligned pricing posture (PDG / CCDTP / I&T Fund)",
+        "short": "grant-fit"
+      }
+    ],
+    "cells": {
+      "au_listed_chain:pre_fall_detection": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "nobi",
+            "name": "Nobi Smart Lamps",
+            "score": 4,
+            "specialisation_for_cell": "Welldercare AU distributor signed; lamp form-factor pre-positioned for chain CFO families-and-board camera anxiety."
+          },
+          {
+            "id": "austco_tacera",
+            "name": "Austco Tacera",
+            "score": 3,
+            "specialisation_for_cell": "Already wired into Opal/Bupa/Regis bedrooms via Tacera nurse-call; pad-sensor fall layer default but 52% false-positive."
+          },
+          {
+            "id": "vayyar_care",
+            "name": "Vayyar Care",
+            "score": 3,
+            "specialisation_for_cell": "Component supplier behind Eevi + K4Connect; chain CFOs read 'Vayyar inside' as a known radar engine via integrators."
+          },
+          {
+            "id": "eevi",
+            "name": "Eevi",
+            "score": 3,
+            "specialisation_for_cell": "Brisbane HQ; only AU-incorporated radar at scale; 2024–25 partner case studies cite chain-pilot fall reduction."
+          },
+          {
+            "id": "safelyyou",
+            "name": "SafelyYou (Halo)",
+            "score": 3,
+            "specialisation_for_cell": "JAMDA RCT (40% fall reduction) is the chain-CFO board-pack number; no AU deployments but RCT anchors RFP shortlists."
+          }
+        ]
+      },
+      "au_listed_chain:auto_documentation": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "safelyyou",
+            "name": "SafelyYou (Halo)",
+            "score": 3,
+            "specialisation_for_cell": "Confirmed-fall events flow to EHR via Aware eCall + Halo; event-level only, not Standard-5-grade audit pack."
+          }
+        ]
+      },
+      "au_listed_chain:restraint_evidence": {
+        "our_score": 5,
+        "competitors": []
+      },
+      "au_listed_chain:care_minute_attribution": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "austco_tacera",
+            "name": "Austco Tacera",
+            "score": 3,
+            "specialisation_for_cell": "Tacera reporting feeds shift call-bell response data into care-minute summaries chain regional GMs cite at QBRs."
+          }
+        ]
+      },
+      "au_listed_chain:night_shift_augment": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "diy_do_nothing",
+            "name": "DIY: Do Nothing + Hire Agency Staff",
+            "score": 4,
+            "specialisation_for_cell": "Default chain-CFO play: agency RN at A$95–180k loaded; failing structurally at 110k FTE shortfall by 2030."
+          },
+          {
+            "id": "nobi",
+            "name": "Nobi Smart Lamps",
+            "score": 3,
+            "specialisation_for_cell": "Lamp two-way voice + edge-AI fall detection lets one PCA cover more rooms at night; pitched as 'corridor eyes'."
+          }
+        ]
+      },
+      "au_listed_chain:privacy_modality": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "nobi",
+            "name": "Nobi Smart Lamps",
+            "score": 4,
+            "specialisation_for_cell": "Belgian lamp form-factor avoids camera-in-bedroom optics that derail chain board approvals post-Royal Commission."
+          },
+          {
+            "id": "vayyar_care",
+            "name": "Vayyar Care",
+            "score": 4,
+            "specialisation_for_cell": "4D radar with no imagery; chain CIOs cite 'Vayyar inside' as the privacy-cleared baseline for spec sheets."
+          },
+          {
+            "id": "eevi",
+            "name": "Eevi",
+            "score": 3,
+            "specialisation_for_cell": "AU integrator markets Vayyar radar as 'no camera, no wearable' to chain procurement — beats Austco pad legacy."
+          }
+        ]
+      },
+      "au_listed_chain:grant_aligned_pricing": {
+        "our_score": 1,
+        "competitors": []
+      },
+      "au_nfp_mission:pre_fall_detection": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "nobi",
+            "name": "Nobi Smart Lamps",
+            "score": 4,
+            "specialisation_for_cell": "Lamp dignity narrative passes mission-committee approval where cameras fail; AU distributor offers NFP pilot kits."
+          },
+          {
+            "id": "austco_tacera",
+            "name": "Austco Tacera",
+            "score": 3,
+            "specialisation_for_cell": "Existing pad + nurse-call at Uniting/Anglicare; mission-CEOs default to it because capex is already amortised."
+          }
+        ]
+      },
+      "au_nfp_mission:auto_documentation": {
+        "our_score": 5,
+        "competitors": []
+      },
+      "au_nfp_mission:restraint_evidence": {
+        "our_score": 5,
+        "competitors": []
+      },
+      "au_nfp_mission:care_minute_attribution": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "austco_tacera",
+            "name": "Austco Tacera",
+            "score": 3,
+            "specialisation_for_cell": "Pad-event timestamps used by NFP DONs to manually evidence response times into Star Rating care-minute logs."
+          }
+        ]
+      },
+      "au_nfp_mission:night_shift_augment": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "diy_do_nothing",
+            "name": "DIY: Do Nothing + Hire Agency Staff",
+            "score": 4,
+            "specialisation_for_cell": "NFP boards absorb agency cost as mission spend (no resident displacement); 22% DON turnover means CEO covers rota."
+          },
+          {
+            "id": "nobi",
+            "name": "Nobi Smart Lamps",
+            "score": 3,
+            "specialisation_for_cell": "Belgian lamp two-way voice marketed to NFPs as 'chaplain-acceptable check-in' for nights without disturbing residents."
+          }
+        ]
+      },
+      "au_nfp_mission:privacy_modality": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "nobi",
+            "name": "Nobi Smart Lamps",
+            "score": 5,
+            "specialisation_for_cell": "Mission committees endorse the lamp; Nobi's EU dignity-positioning translates 1:1 to AU religious-board talking points."
+          },
+          {
+            "id": "vayyar_care",
+            "name": "Vayyar Care",
+            "score": 3,
+            "specialisation_for_cell": "Radar component pitched to NFP IT as 'no imagery exists at any point' — but NFPs need a finished product, not a SDK."
+          }
+        ]
+      },
+      "au_nfp_mission:grant_aligned_pricing": {
+        "our_score": 1,
+        "competitors": []
+      },
+      "au_rural_single:pre_fall_detection": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "diy_do_nothing",
+            "name": "DIY: Do Nothing + Hire Agency Staff",
+            "score": 3,
+            "specialisation_for_cell": "Rural owners run pads + paper notes; agency RN at 2.4× metro rates substitutes for any pre-fall sensing capability."
+          },
+          {
+            "id": "eevi",
+            "name": "Eevi",
+            "score": 3,
+            "specialisation_for_cell": "Brisbane + AU-only sales bandwidth gives Eevi the peer-reference reach into regional QLD/NSW that overseas vendors lack."
+          }
+        ]
+      },
+      "au_rural_single:auto_documentation": {
+        "our_score": 5,
+        "competitors": []
+      },
+      "au_rural_single:restraint_evidence": {
+        "our_score": 5,
+        "competitors": []
+      },
+      "au_rural_single:care_minute_attribution": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "autumn_care",
+            "name": "AutumnCare",
+            "score": 3,
+            "specialisation_for_cell": "Rural DONs use AutumnCare AN-ACC module to manually reconcile care minutes into Star Rating — AU-vendor-trusted."
+          }
+        ]
+      },
+      "au_rural_single:night_shift_augment": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "diy_do_nothing",
+            "name": "DIY: Do Nothing + Hire Agency Staff",
+            "score": 5,
+            "specialisation_for_cell": "Rural operators fly in agency RNs at A$160–200k loaded; 21 AU providers exited FY24 — this NBA is structurally bankrupt."
+          }
+        ]
+      },
+      "au_rural_single:privacy_modality": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "nobi",
+            "name": "Nobi Smart Lamps",
+            "score": 3,
+            "specialisation_for_cell": "Lamp form-factor is privacy-neutral for rural buyers but ~EUR 1.5k/lamp capex prices Nobi out of single-site rural P&L."
+          }
+        ]
+      },
+      "au_rural_single:grant_aligned_pricing": {
+        "our_score": 1,
+        "competitors": []
+      },
+      "hk_private_rche:pre_fall_detection": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "hkbn_gerontech",
+            "name": "HKBN Gerontech Safety Bell",
+            "score": 3,
+            "specialisation_for_cell": "HKBN telco-bundled fall pendant at HKD 99–199/bed/mo — only HK-localised consumer-priced fall product RCHE owners know."
+          },
+          {
+            "id": "guardforce_smart_care",
+            "name": "Guardforce Smart Care",
+            "score": 3,
+            "specialisation_for_cell": "Bracelet + 24/7 HK monitoring centre bundled with security service contracts — sells through HK property-owner trust."
+          }
+        ]
+      },
+      "hk_private_rche:auto_documentation": {
+        "our_score": 4,
+        "competitors": []
+      },
+      "hk_private_rche:restraint_evidence": {
+        "our_score": 4,
+        "competitors": []
+      },
+      "hk_private_rche:care_minute_attribution": {
+        "our_score": 3,
+        "competitors": []
+      },
+      "hk_private_rche:night_shift_augment": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "diy_do_nothing",
+            "name": "DIY: Do Nothing + Hire Agency Staff",
+            "score": 5,
+            "specialisation_for_cell": "HK manpower agencies supply HKD 28k/mo substitute carers — the binding NBA against the new 1:30 staffing rule (2023)."
+          },
+          {
+            "id": "guardforce_smart_care",
+            "name": "Guardforce Smart Care",
+            "score": 3,
+            "specialisation_for_cell": "Anti-wandering bracelet + Cantonese 24/7 centre pitched to HK RCHE owners as 'one less night carer' on med/low wings."
+          }
+        ]
+      },
+      "hk_private_rche:privacy_modality": {
+        "our_score": 5,
+        "competitors": []
+      },
+      "hk_private_rche:grant_aligned_pricing": {
+        "our_score": 4,
+        "competitors": []
+      },
+      "sg_ccdtp_operator:pre_fall_detection": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "pulsesync_sg",
+            "name": "PulseSync (SG eldercare innovation)",
+            "score": 3,
+            "specialisation_for_cell": "SG-built sensor-aggregation layer; runs over the operator's third-party hardware with AIC-aligned reporting bundled."
+          }
+        ]
+      },
+      "sg_ccdtp_operator:auto_documentation": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "werkdone_sg",
+            "name": "WerkDone Elder Care Management",
+            "score": 3,
+            "specialisation_for_cell": "SG-incorporated; mobile-first carer UX with MOH report templates pre-built into the workflow at SGD 8–25/bed/mo."
+          },
+          {
+            "id": "pulsesync_sg",
+            "name": "PulseSync (SG eldercare innovation)",
+            "score": 3,
+            "specialisation_for_cell": "Care-plan workflow with PDPA + SG data residency; documents staff-entered events, no sensor-derived population."
+          }
+        ]
+      },
+      "sg_ccdtp_operator:restraint_evidence": {
+        "our_score": 4,
+        "competitors": []
+      },
+      "sg_ccdtp_operator:care_minute_attribution": {
+        "our_score": 3,
+        "competitors": [
+          {
+            "id": "werkdone_sg",
+            "name": "WerkDone Elder Care Management",
+            "score": 3,
+            "specialisation_for_cell": "SG MOH report module rolls activity data into staffing-evidence used by NTUC Health / St Luke's compliance leads."
+          }
+        ]
+      },
+      "sg_ccdtp_operator:night_shift_augment": {
+        "our_score": 4,
+        "competitors": [
+          {
+            "id": "diy_do_nothing",
+            "name": "DIY: Do Nothing + Hire Agency Staff",
+            "score": 4,
+            "specialisation_for_cell": "SG agency carer at SGD 4,200/mo per substitute is the default; MOH 20k → 31k expansion makes it unsustainable by 2030."
+          }
+        ]
+      },
+      "sg_ccdtp_operator:privacy_modality": {
+        "our_score": 5,
+        "competitors": []
+      },
+      "sg_ccdtp_operator:grant_aligned_pricing": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "werkdone_sg",
+            "name": "WerkDone Elder Care Management",
+            "score": 4,
+            "specialisation_for_cell": "On AIC CCDTP catalogue tracks; SGD 8–25/bed/mo list designed to clear PDG 50% co-funding without operator-side appeal."
+          },
+          {
+            "id": "pulsesync_sg",
+            "name": "PulseSync (SG eldercare innovation)",
+            "score": 3,
+            "specialisation_for_cell": "Aligned to AIC + MOH expectations; bundles implementation into a PDG-eligible engagement for SG nursing-home buyers."
+          }
+        ]
+      },
+      "sg_new_build:pre_fall_detection": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "vayyar_care",
+            "name": "Vayyar Care",
+            "score": 3,
+            "specialisation_for_cell": "Greenfield SG specifiers list 'Vayyar-inside' radar so M&E engineers know wall-plate cut-out dimensions at design phase."
+          }
+        ]
+      },
+      "sg_new_build:auto_documentation": {
+        "our_score": 5,
+        "competitors": []
+      },
+      "sg_new_build:restraint_evidence": {
+        "our_score": 5,
+        "competitors": []
+      },
+      "sg_new_build:care_minute_attribution": {
+        "our_score": 4,
+        "competitors": []
+      },
+      "sg_new_build:night_shift_augment": {
+        "our_score": 5,
+        "competitors": [
+          {
+            "id": "diy_do_nothing",
+            "name": "DIY: Do Nothing + Hire Agency Staff",
+            "score": 4,
+            "specialisation_for_cell": "Greenfield SG operators model 1:5 night staffing; at MOH expansion pace there aren't enough carers to staff the homes."
+          }
+        ]
+      },
+      "sg_new_build:privacy_modality": {
+        "our_score": 5,
+        "competitors": []
+      },
+      "sg_new_build:grant_aligned_pricing": {
+        "our_score": 3,
+        "competitors": []
+      }
+    }
+  },
+  "attack_plans": [
+    {
+      "rank": 1,
+      "niche_name": "Standard 5 Evidence Pack — AU NFP Mission-Driven Wedge",
+      "icp": "CEO + Director of Mission at AU NFP / religious residential aged-care operators (200–600 beds; Uniting, Anglicare, BaptistCare, Catholic Healthcare, Helping Hand SA, Whiddon) whose boards have committed publicly to 'zero unauthorised restraint' under the Aged Care Act 2024 and need timestamped digital evidence the auditor will accept — not nurse narrative.",
+      "tam_estimate_sgd": 28000000,
+      "tam_reasoning": "Per AIHW 30-Jun-2024 places data and Australian Ageing Agenda 2025 sector consolidation, AU NFP / religious operators control roughly 30% of 223,691 places ≈ 67,100 beds across ~80 multi-site organisations. Of these, roughly 40% (≈ 27,000 beds) sit in the 200–600-bed band that has board-mandated restraint-reduction commitments and a governance structure that procures within a 9–12 month cycle. At Lumana Core list of A$85/bed/mo × 12 = A$1,020/bed/yr, addressable annual TAM = 27,000 × 1,020 ≈ A$27.5M (rounded A$28M). This is a 5-year addressable revenue figure assuming Lumana captures the segment at parity ARPU; SOM is roughly 15% of TAM (≈ A$4M ARR) inside the 36-month horizon.",
+      "why_gap": "No competitor scores ≥3 on the (au_nfp_mission × restraint_evidence) cell. Pad incumbents (Austco, Tunstall) cannot evidence non-restraint without manual reconciliation; camera-based vendors (SafelyYou, Oxehealth, Kepler Vision) trigger automatic mission-committee veto on dignity grounds; care-home OS suites (PCS, AutumnCare, Leecare) record the nurse narrative but cannot generate the audit pack from primary data. The structural gap is that no one ships sensor-derived restraint-event evidence as a default product output — Lumana does (rubric score 5).",
+      "why_we_win": "Lumana scores 5 on restraint_evidence_posture (Standard 5 audit pack as default) AND 5 on ambient_sensing_modality (no-camera radar), the exact two axes mission boards filter on. Defensibility: 12+ months for any incumbent to ship sensor-derived restraint evidence parity (sensors are 60% of unit cost; software-only PCS/Leecare cannot replicate without hardware build-out). Compatible with Pricing Agent 3's Lumana Core tier at A$85/bed/mo — NFP wtp_band brackets A$60–95 cleanly.",
+      "gtm": {
+        "channel": "Catholic Health Australia (CHA) and Aged & Community Care Providers Association (ACCPA) Mission-Lead working-group sponsorship + 'Standard 5 in 90 days' webinar series co-hosted with ARIIA (Aged Care Research & Industry Innovation Australia) + targeted DON-and-CEO LinkedIn ads to named NFP operators.",
+          "pitch": "Replace your six-page restraint policy with a one-click monthly evidence pack the auditor accepts on first submission — and prove dignity to your board with the same data.",
+          "pricing": "Lumana Core at A$85/bed/mo (per pricing-strategy.json recommended_tiers) — full bundle, no Standard-5 add-on, no discount. NFP wtp_band low-anchor A$60 / expected A$80 / upper-stretch A$95 brackets the list price. From month 13, optional Outcomes Hybrid: A$60 base + A$25 KPI-contingent on documented restraint-reduction percentage.",
+          "content": "(1) ARIIA-co-published whitepaper 'Standard 5 evidence in residential aged care: what auditors actually accept', (2) 30-min on-demand webinar 'From restraint policy to restraint evidence — how 3 NFPs closed the audit gap in 90 days', (3) printed mission-committee briefing pack co-branded with two pilot NFPs, (4) restraint-event redacted dashboard demo video, (5) signed clinical advisory board page (gerontologist + DON + chaplain) on the homepage."
+      }
+    },
+    {
+      "rank": 2,
+      "niche_name": "I&T-Fund-Listed Cantonese Ambient SKU for HK Private RCHEs",
+      "icp": "Owner or General Manager of a HK private RCHE (50–150 beds) whose night-cycle 1:30 carer:resident requirement under the 2023 Amendment Ordinance pushes labour cost above sustainable EBPS economics in 2026 — and who needs an SWD I&T Fund-listed solution under the HKD 660/bed/mo (6% of EBPS) ceiling that triggers manual board procurement.",
+      "tam_estimate_sgd": 6800000,
+      "tam_reasoning": "HK has ~819 licensed RCHEs (CBRE HK 2024); ~75% are private (≈ 614 homes) averaging 80–100 beds = ~55,000 private RCHE beds. Filter to I&T-Fund-eligible bed base in medium/low-care wings where ambient sensing genuinely substitutes for staffing minutes (~50% of beds) = ~28,000 addressable beds. At Lumana HK Subsidised list of HKD 320/bed/mo (= A$64/bed/mo) × 12 = HKD 3,840/yr/bed (= A$768/yr/bed), full-capture annual TAM = 28,000 × 768 ≈ A$21.5M. Discount to realistic 5-year catalogue-listing capture (~30% given competitor entry by HKBN + Guardforce + Tunstall HK) = A$6.8M. Per pricing-strategy.json sensitivity input lever 4: HK adds ~A$0.8M ARR per 1,000 beds.",
+      "why_gap": "The (hk_private_rche × grant_aligned_pricing) cell is empty (zero competitors scoring ≥3) — and so are the adjacent (hk_private_rche × auto_documentation), (hk_private_rche × restraint_evidence) and (hk_private_rche × privacy_modality) cells. The structural reason: HKBN is consumer-shaped and not on the SWD aged-care gerontech procurement track; Guardforce is a security-service contract play that bundles a bracelet, not an SWD-listed clinical device; Tunstall HK is PERS-pendant DNA. Nobody has combined (i) SWD I&T Fund catalogue listing, (ii) Cantonese caregiver UX, and (iii) ambient sensing into one HKD-denominated SKU sized for the EBPS subsidy ceiling.",
+      "why_we_win": "Lumana scores 4 on apac_localisation (Cantonese UX + AWS APAC residency on roadmap), 5 on ambient_sensing_modality, 4 on auto_documentation_depth and 4 on restraint_evidence_posture — the four axes a HK private-RCHE owner-operator filters on once price clears the EBPS ceiling. Pricing-strategy.json ships the HK Subsidised tier (HKD 320 list, HKD 96 effective post-I&T) under the HKD 660/bed/mo (6%-of-EBPS) manual-approval threshold. The 90-day no-cost-cancel clause defuses the boardroom-change churn risk per CBRE HK 2024. Defensibility: SWD catalogue listing takes 4–8 weeks of vendor-side regulatory work no competitor has done in this category.",
+      "gtm": {
+        "channel": "HK Jockey Club Charities Trust 'Age at Home' partner programme + Hong Kong Council of Social Service (HKCSS) RCHE-operator briefings + direct boardroom sales by HK-based MD doing 6–8 owner conversations/month + named-account follow-up via SCMP gerontech editorial referrals.",
+        "pitch": "Cantonese caregiver app, no cameras, on the SWD I&T Fund list — buys the 1:30 staffing rule and a Standard-5-equivalent audit pack for under HKD 96 per bed per month after subsidy.",
+        "pricing": "Lumana HK Subsidised tier at HKD 320/bed/mo list / HKD 96 post-I&T-Fund (A$64 / A$19 effective). 12-month term with 90-day no-cost-cancel clause. Per pricing-strategy.json: positioned under the HKD 660/bed/mo ceiling that triggers manual board approval (6% of EBPS subsidy).",
+        "content": "(1) Cantonese product video walkthrough hosted on HKBN YouTube partner channel, (2) SWD I&T Fund eligibility checker tool on the Lumana HK landing page, (3) 1-page boardroom decision brief (ZH + EN) pre-formatted for owner-operator sign-off, (4) HKD-denominated TCO calculator that lines Lumana up against contract-manpower agency wages and HKBN/Guardforce alternatives, (5) signed Cantonese-speaking AU/HK clinical CSM bio on the HK site."
+      }
+    },
+    {
+      "rank": 3,
+      "niche_name": "SG New-Build Capex-Funded Greenfield SKU",
+      "icp": "Capex programme director or Chief Innovation Officer at a SG nursing-home developer building into the MOH 20k → 31k bed expansion (NTUC Health, Allium, ECON, St Luke's, Ren Ci, Salvation Army Peacehaven, SAS, THK), making fit-out vendor decisions in the 2026-Q4 build-cycle window with capex-funded budgets that absorb monitoring as a build line, not opex.",
+      "tam_estimate_sgd": 11200000,
+      "tam_reasoning": "MOH-published nursing-home expansion: +10,600 beds by 2030 (from 20,000 to 31,000); 4,300 beds added in 2024 alone. New-build cohort to 2030 = 11,000 beds across ~10 most-active SG nursing-home developers. At Lumana New-Build list of A$110/bed/mo × 12 = A$1,320/bed/yr, addressable annual TAM at full capture = 11,000 × 1,320 ≈ A$14.5M. Discount to realistic 5-year addressable share (~75% capture given limited competitor ability to sell into a build-line procurement) = A$11.2M. Per pricing-strategy.json sensitivity input lever 1: every A$10/bed/mo movement in ARPU = A$1.4M Y5 ARR.",
+      "why_gap": "The (sg_new_build × auto_documentation), (sg_new_build × restraint_evidence), (sg_new_build × privacy_modality) cells are all green (zero competitors scoring ≥3). The structural reason: SG new-build procurement runs through M&E/architectural specifiers who design from the wall outwards; existing SG aged-care vendors (WerkDone, PulseSync) sell into operating CCDTP-funded retrofits, not greenfield. Vayyar gets specified by spec sheet but not as a finished workflow product. No competitor has a multilingual caregiver UX + PDPA SG-resident + ambient sensing combination ready to be specified into a build-line item.",
+      "why_we_win": "Lumana scores 5 on auto_documentation_depth, 5 on restraint_evidence_posture, 5 on ambient_sensing_modality, AND 4 on apac_localisation (multilingual EN + ZH + MS UX + AWS ap-southeast-1 SG-resident hosting) — the four axes new-build specifiers price into fit-out tenders. Pricing-strategy.json ships the New-Build SKU at A$110/bed/mo (SGD 124 list) over a 36-month term, anchored above the SG CCDTP retrofit SKU because new-build operators have higher payment capacity and capex-funded fit-out budgets that absorb monitoring as build-line, not opex. Defensibility: greenfield specifier relationships compound — being on the AECOM / Beca / Surbana Jurong M&E spec template buys 3–5 years of pipeline before any competitor can dislodge.",
+      "gtm": {
+        "channel": "Synapxe Age Well SG technology partner programme + AIC nursing-home operator innovation roundtables + direct relationship sales into the named 10 most-active SG developers via founder + clinical lead pairing + M&E consultancy spec-template embedding (AECOM, Beca, Surbana Jurong) before 2026-Q4 build-cycle decisions.",
+        "pitch": "Specify Lumana into the build before the foundations go down — multilingual ambient monitoring at A$110/bed/mo over 36 months versus a S$300k+ per-bed fit-out cost is one decimal place on the spreadsheet, but a structural defence against the MOH staffing crunch when the home opens.",
+        "pricing": "Lumana New-Build at A$110/bed/mo (SGD 124 list) over 36-month term. Hardware bundled into capex line; opex software at A$60/bed/mo blended over the term. Pre-listed on AIC CCDTP catalogue (vendor-side approval pre-completed). EDG-eligible when sold as a 36-month transformation engagement (per pricing-strategy.json grants).",
+        "content": "(1) M&E specifier reference design pack (sensor placement, gateway power, network bandwidth, BMS integration spec) co-branded with one named SG architecture firm, (2) capex line-item template for tender response (A$110 × beds × 36 months pre-formatted), (3) PDPA + Synapxe NEHR integration whitepaper, (4) Mandarin + Malay caregiver UX video tour, (5) AIC CCDTP catalogue listing letter on the SG landing page once approved."
+      }
+    }
+  ]
+}

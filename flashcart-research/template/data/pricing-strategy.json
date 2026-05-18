@@ -1,0 +1,328 @@
+{
+  "meta": {
+    "project_name": "Flashcart 2026",
+    "brand_tokens": {
+      "primary": "#dc2626",
+      "secondary": "#facc15",
+      "accent": "#fbbf24",
+      "neutral_dark": "#111827",
+      "neutral_light": "#fef9c3",
+      "font_display": "Inter Tight, sans-serif",
+      "font_body": "Inter, sans-serif"
+    },
+    "research_date": "2026-05-01",
+    "sample_data": false
+  },
+  "personas": [
+    {
+      "id": "hr_engagement_lead_mnc",
+      "name": "HR Engagement Lead (MNC)",
+      "icp": "HR Engagement / EX leader at SG-based MNC of 500-5,000 staff; runs annual D&D + town hall + family day; KPI = attendance and post-event NPS, not vendor revenue",
+      "pains": [
+        "Repeating the same goodie-bag formula every year with no measurable engagement uplift",
+        "Procurement-heavy vendor selection eats 6+ weeks pre-event",
+        "MNC HQ pressure to demonstrate ROI on engagement events",
+        "Lucky-draw budget feels arbitrary and rarely lands in employees' top recall"
+      ],
+      "current_workaround": "Books Pico/Bray Leino Splash for production, Giftano for vouchers, photo booth from Vivid Snaps; assembles a la carte each year",
+      "wtp_band_sgd": { "low_anchor": 500, "expected": 1000, "upper_stretch": 2000 },
+      "nba": {
+        "method": "tooling_stack",
+        "summary": "Current annual stack: Pico AV (S$30k) + Giftano vouchers (S$10k) + Vivid Snaps booth (S$3k) + lucky draw inventory (S$5k); flashcart replaces inventory + booth lines.",
+        "inputs": {
+          "tooling_lines": [
+            { "tool": "Pico/INX/Bray Leino Splash AV+production", "monthly_sgd": 2500 },
+            { "tool": "Giftano vouchers / HoneySpree hampers", "monthly_sgd": 833 },
+            { "tool": "Vivid Snaps photo booth", "monthly_sgd": 250 },
+            { "tool": "Lucky-draw inventory", "monthly_sgd": 416 }
+          ]
+        },
+        "monthly_sgd_equivalent": 1000,
+        "confidence": 0.7
+      },
+      "whitespace_segment_ids": ["mnc_hr"],
+      "implications": [
+        {
+          "headline": "Anchor MNC pricing on attendance + NPS, not revenue share",
+          "body": "Persona is judged on attendance and post-event NPS, not on vendor revenue. Annual Engagement Partner contract should report attendance-uplift metrics in the deck, never a GMV split.",
+          "agent_targets": ["agent_4", "agent_8"]
+        }
+      ]
+    },
+    {
+      "id": "ex_culture_manager_sme",
+      "name": "EX / Culture Manager (mid-size SME)",
+      "icp": "EX/Culture/People Ops manager at 100-500 headcount SG SME; runs quarterly micro-activations and one annual D&D; budget owner for culture-building cadence",
+      "pains": [
+        "Balancing quarterly activation cadence against fixed annual engagement budget",
+        "Hybrid-work attendance dropping for in-person events; needs experiential pull",
+        "No internal team to build curated supplier lists for each quarterly slot",
+        "Has to justify each quarterly spend against revenue-team budget pressure"
+      ],
+      "current_workaround": "Knoxx or Bon Events for quarterly activations; HoneySpree hampers for ad-hoc gifting; HR team does ad-hoc supplier sourcing",
+      "wtp_band_sgd": { "low_anchor": 500, "expected": 833, "upper_stretch": 1500 },
+      "nba": {
+        "method": "competitor_price",
+        "summary": "Quarterly Bon Events package + ad-hoc HoneySpree hamper run averages S$2-3k/qtr per activation slot; flashcart Quarterly Activation Package directly replaces this slot.",
+        "inputs": {
+          "competitor_id": "bon_events",
+          "competitor_monthly_sgd": 833
+        },
+        "monthly_sgd_equivalent": 833,
+        "confidence": 0.65
+      },
+      "whitespace_segment_ids": ["sme_hr"],
+      "implications": [
+        {
+          "headline": "Quarterly cadence pricing is the right structural unit for SME",
+          "body": "Persona budgets in quarters, not years. Lead with quarterly activation package pricing and avoid annual contracts that look like a procurement project.",
+          "agent_targets": ["agent_4"]
+        }
+      ]
+    },
+    {
+      "id": "office_manager_small_sme",
+      "name": "Office Manager (small SG SME)",
+      "icp": "Office Manager / EA-to-CEO / generalist admin at 30-100 headcount SG SME; runs the office, sources the cake, and handles the once-a-year Christmas lunch and lucky draw",
+      "pains": [
+        "Wears 8 hats and engagement events are 5% of the job, not the priority",
+        "Lacks vendor relationships beyond the FairPrice + delivery florist defaults",
+        "Wants a one-call solution that handles the whole office event end-to-end",
+        "Tight budget where every line item is scrutinised by the founder/MD"
+      ],
+      "current_workaround": "FairPrice gift cards + cake delivery + a few lucky-draw items from Lazada; sometimes Funworks for a half-day team-build",
+      "wtp_band_sgd": { "low_anchor": 0, "expected": 120, "upper_stretch": 250 },
+      "nba": {
+        "method": "wage",
+        "summary": "Office Manager spends ~5 hrs/qtr coordinating engagement events at S$30/hr loaded rate = S$150/qtr in time cost; plus S$2k materials. Time saving is the WTP driver.",
+        "inputs": {
+          "hourly_sgd": 30,
+          "hours_saved_per_month": 4
+        },
+        "monthly_sgd_equivalent": 120,
+        "confidence": 0.55
+      },
+      "whitespace_segment_ids": ["sme_hr"],
+      "implications": [
+        {
+          "headline": "Persona is too price-sensitive for the upper tier; treat as Single Event entry-point",
+          "body": "Single Event tier (free to host with rev-share) is the only economically viable entry; do not push Annual Engagement Partner here. Volume-seed the SME segment to build social proof.",
+          "agent_targets": ["agent_4"]
+        }
+      ]
+    },
+    {
+      "id": "brand_marketing_sponsor",
+      "name": "Brand Marketing Manager (sponsor side)",
+      "icp": "Brand/Trade Marketing Manager at FMCG / wellness / lifestyle brand; budget owner for sampling and trade-marketing activation; wants employee-channel access at MNCs without booking individual office pop-ups",
+      "pains": [
+        "Office-pop-up sales cycles are slow, with each MNC requiring its own approval flow",
+        "Sampling spend is hard to attribute to ROI vs digital ad spend",
+        "Trade marketing teams are scaling back free-sampling slots; need higher-intent eyeballs",
+        "Existing mall pop-ups (Wellness Week SG type) charge S$200-475/table with low conversion intent"
+      ],
+      "current_workaround": "Ad-hoc Wellness Week SG / mall pop-ups at S$200-475/table; sampling agencies like 4R Activation; or skip sampling and go digital-only",
+      "wtp_band_sgd": { "low_anchor": 1500, "expected": 4000, "upper_stretch": 7000 },
+      "nba": {
+        "method": "competitor_price",
+        "summary": "Mall pop-up table at SG MNC offices runs S$300-475 per table per day per office, with low conversion intent. Flashcart aggregates 5-15 captive employee audiences per month, vastly more efficient.",
+        "inputs": {
+          "competitor_id": "fourr_activation",
+          "competitor_monthly_sgd": 4000
+        },
+        "monthly_sgd_equivalent": 4000,
+        "confidence": 0.6
+      },
+      "whitespace_segment_ids": ["brand_sponsor"],
+      "implications": [
+        {
+          "headline": "Brand-sponsor side is the GMV-engine, not HR side",
+          "body": "Persona controls the SKU-supply economics. If brand sponsors fund the inventory, HR side can be hosted free, inverting the SGD 200-475/table fair-organiser default. This is the operating wedge.",
+          "agent_targets": ["agent_4", "agent_8"]
+        }
+      ]
+    },
+    {
+      "id": "diy_hr_skips_flashcart",
+      "name": "DIY HR (skip-flashcart)",
+      "icp": "HR teams across MNC and SME who default to 'do what we did last year' — lucky draw + Giftano vouchers + photo booth — and don't perceive a need to switch to onsite-curated commerce",
+      "pains": [
+        "Risk-averse with vendor switching; 'last year worked, why change?'",
+        "No measurable benchmark to compare alternatives against",
+        "Procurement friction makes adding a new vendor expensive",
+        "Founder/CFO scrutiny on any new line item without a proven uplift case"
+      ],
+      "current_workaround": "Lucky draw + Giftano vouchers + photo booth assembled internally; status-quo pattern repeated each year",
+      "wtp_band_sgd": { "low_anchor": 0, "expected": 0, "upper_stretch": 200 },
+      "nba": {
+        "method": "wage",
+        "summary": "Status-quo NBA: switching cost dominates price. Persona perceives no time saving (DIY pattern is already routine) so monthly_sgd_equivalent is 0; deviation is intentional — price is not the lever, social proof is.",
+        "inputs": {
+          "hourly_sgd": 45,
+          "hours_saved_per_month": 0
+        },
+        "monthly_sgd_equivalent": 0,
+        "confidence": 0.85
+      },
+      "whitespace_segment_ids": ["mnc_hr", "sme_hr"],
+      "implications": [
+        {
+          "headline": "Win-loss line: prove attendance/sales lift on first event or lose the deal",
+          "body": "Persona is the largest competitor by mass. First flashcart event must produce a measurable uplift case study or the relationship dies. Year-1 sales motion must include free-pilot offer for credible MNC logos.",
+          "agent_targets": ["agent_4", "agent_8"]
+        }
+      ]
+    }
+  ],
+  "pricing_models": [
+    {
+      "name": "Free-to-host with brand-funded rev-share",
+      "rationale": "Inverts the SGD 200-475/table fair-organiser default; HR pays nothing, supplier brand funds the slot, flashcart takes margin on GMV. Lowest buyer friction, scales on slot count.",
+      "score_by_persona": {
+        "HR Engagement Lead (MNC)": 4,
+        "EX / Culture Manager (mid-size SME)": 5,
+        "Office Manager (small SG SME)": 5,
+        "Brand Marketing Manager (sponsor side)": 4,
+        "DIY HR (skip-flashcart)": 3
+      }
+    },
+    {
+      "name": "Flat per-event activation fee",
+      "rationale": "Familiar procurement shape — looks like a Bon Events / Funworks line item. Easier for procurement to approve; loses the 'free to host' wedge though.",
+      "score_by_persona": {
+        "HR Engagement Lead (MNC)": 4,
+        "EX / Culture Manager (mid-size SME)": 4,
+        "Office Manager (small SG SME)": 2,
+        "Brand Marketing Manager (sponsor side)": 2,
+        "DIY HR (skip-flashcart)": 2
+      }
+    },
+    {
+      "name": "Subscription / annual engagement-partner contract",
+      "rationale": "Recurring revenue that locks in MNC budget for the year; bundles quarterly activations + annual D&D goodie replacement + lucky-draw curation.",
+      "score_by_persona": {
+        "HR Engagement Lead (MNC)": 5,
+        "EX / Culture Manager (mid-size SME)": 3,
+        "Office Manager (small SG SME)": 1,
+        "Brand Marketing Manager (sponsor side)": 2,
+        "DIY HR (skip-flashcart)": 1
+      }
+    },
+    {
+      "name": "Hybrid: annual base + per-event GMV rev-share",
+      "rationale": "Covers operating cost predictably (the base) while preserving upside as activation cadence and basket size grow (the share). Most defensible commercial shape long-term.",
+      "score_by_persona": {
+        "HR Engagement Lead (MNC)": 5,
+        "EX / Culture Manager (mid-size SME)": 4,
+        "Office Manager (small SG SME)": 2,
+        "Brand Marketing Manager (sponsor side)": 4,
+        "DIY HR (skip-flashcart)": 2
+      }
+    }
+  ],
+  "elasticity_heuristics": [
+    {
+      "segment": "HR Engagement Lead (MNC)",
+      "elasticity_band": "low",
+      "evidence": "MNC engagement-spend envelope is S$50-150k/yr per company; Annual Engagement Partner at S$12k is sub-15% of envelope, so price is not the binding constraint. Internal stakeholder approval is."
+    },
+    {
+      "segment": "EX / Culture Manager (mid-size SME)",
+      "elasticity_band": "medium",
+      "evidence": "Quarterly cadence anchored at S$2-3k/qtr by Bon Events / Knoxx benchmarks; every S$1k increase above S$2.5k sheds materially more deals."
+    },
+    {
+      "segment": "Office Manager (small SG SME)",
+      "elasticity_band": "high",
+      "evidence": "Tight budgets, founder/MD scrutiny on each line item; only the free-to-host tier converts at scale. Anything above S$1k/event materially shrinks the pool."
+    },
+    {
+      "segment": "Brand Marketing Manager (sponsor side)",
+      "elasticity_band": "low",
+      "evidence": "Sampling/trade-marketing budgets are healthy; brand sponsors compare vs S$300-475/mall-table benchmark and accept S$2-4k for a curated MNC employee audience as efficient ROAS."
+    },
+    {
+      "segment": "DIY HR (skip-flashcart)",
+      "elasticity_band": "high",
+      "evidence": "Switching cost dominates price; persona will only switch on demonstrated uplift not on price. Free first event is the conversion lever, not discount."
+    }
+  ],
+  "recommended_tiers": [
+    {
+      "name": "Single Event",
+      "price_sgd": 0,
+      "target_persona": "Office Manager (small SG SME)",
+      "what_in": [
+        "One flashcart pop-up at host's office or D&D",
+        "Curated 30-50 SKU drop catalogue",
+        "PayNow QR mobile checkout",
+        "Brand-funded inventory (no host inventory commitment)",
+        "Post-event GMV + attendance report"
+      ],
+      "what_excluded": [
+        "Custom branding / co-marketing",
+        "Recurring quarterly slot guarantee",
+        "Brand-sponsor curation rights",
+        "Engagement-uplift consulting"
+      ],
+      "psychological_anchor": "Free to host. The brand sponsor pays. You bring the people, we bring the catalogue.",
+      "effective_price_after_psg": 0
+    },
+    {
+      "name": "Quarterly Activation Package",
+      "price_sgd": 2500,
+      "target_persona": "EX / Culture Manager (mid-size SME)",
+      "what_in": [
+        "Four pop-ups per year (one per quarter)",
+        "Curated 50-80 SKU drop per event with seasonal rotation",
+        "PayNow QR + on-event analytics dashboard",
+        "Brand-sponsor co-marketing within 1 dedicated brand per quarter",
+        "Wellness-fair tier WHG-claimable structure"
+      ],
+      "what_excluded": [
+        "Annual D&D goodie replacement (separate tier)",
+        "Custom MNC HQ-level reporting",
+        "Brand-sponsor exclusive access rights"
+      ],
+      "psychological_anchor": "S$2,500 per quarter — less than one Bon Events package, four times a year.",
+      "effective_price_after_psg": 1250
+    },
+    {
+      "name": "Annual Engagement Partner",
+      "price_sgd": 12000,
+      "target_persona": "HR Engagement Lead (MNC)",
+      "what_in": [
+        "12 activation slots/yr (monthly + annual D&D + family day)",
+        "Annual D&D goodie-bag replacement service",
+        "Lucky-draw prize-pool curation",
+        "Curated 100+ SKU drop catalogue per quarter",
+        "Quarterly attendance + NPS + GMV reporting deck",
+        "Dedicated activation manager + MNC HR concierge",
+        "PayNow QR + Stripe terminal fallback for international staff"
+      ],
+      "what_excluded": [
+        "Brand-sponsor exclusivity rights (sold separately to brand sponsors)",
+        "Off-premises destination events (Sentosa, JB, etc.)",
+        "Multi-country MNC roll-out (Year-2 product)"
+      ],
+      "psychological_anchor": "Less than 15% of your annual engagement-events envelope. Replaces 4 vendor lines with one partner.",
+      "effective_price_after_psg": 12000
+    }
+  ],
+  "grants": [
+    {
+      "name": "PSG (Productivity Solutions Grant)",
+      "coverage_pct": 50,
+      "cap_sgd": 30000,
+      "eligibility": "SG-registered SME (under 200 staff or under S$100M turnover), pre-approved IMDA solution; flashcart not currently PSG-listed but pathway exists for the SaaS-side admin tooling",
+      "applies_to_tiers": []
+    },
+    {
+      "name": "Workplace Health Grant (HPB)",
+      "coverage_pct": 50,
+      "cap_sgd": 15000,
+      "eligibility": "SG SMEs running structured workplace wellness activities (onsite health screening, mental wellness, structured wellness fairs); claimable on the wellness-fair line of the activation",
+      "applies_to_tiers": ["Quarterly Activation Package"]
+    }
+  ]
+}

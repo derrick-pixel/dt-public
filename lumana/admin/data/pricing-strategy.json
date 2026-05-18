@@ -1,0 +1,629 @@
+{
+  "meta": {
+    "project_name": "Lumana — Aged Care Ambient Monitoring",
+    "research_date": "2026-04-27",
+    "sample_data": false,
+    "brand_tokens": {
+      "primary": "#0D6B5C",
+      "secondary": "#08564A",
+      "accent": "#C8860A",
+      "neutral_dark": "#0F2420",
+      "neutral_light": "#FBF8F2",
+      "font_display": "'Noto Serif', Georgia, serif",
+      "font_body": "'Manrope', system-ui, -apple-system, sans-serif"
+    },
+    "currency_note": "All wtp_band_sgd and price_sgd fields hold AUD values (the project's primary currency); the field name is preserved for template compatibility. Per-tier price_aud, price_hkd, price_sgd_local are supplied where the tier sells into HK or SG and need a native-currency anchor. FX as of 2026-04-27: 1 SGD ≈ 1.13 AUD; 1 HKD ≈ 0.20 AUD; 1 USD ≈ 1.55 AUD.",
+    "pricing_thesis": "Lumana enters AU at A$85/bed/month bundled (sensors + caregiver workflow + auto-documentation), defends that anchor against the A$8–25/bed/mo AU compliance-software band by selling the full ambient-monitoring bundle (not a docs-only SKU), and ships native-currency SKUs for HK (HKD 320 list, ~HKD 96 post-I&T-Fund subsidy logic) and SG (SGD 68 list, ~SGD 34 post-PDG/CCDTP grant). The A$85 anchor sits at <1% of the AN-ACC base of A$295.64/resident/day (5.6% uplift, 1 Oct 2025) — operators can absorb without re-pricing residents, so the binding constraint is trust, not affordability. Tier ladder is persona-led (large for-profit chain, mission-driven NFP, rural single-site, HK RCHE owner-operator, SG nursing-home operator) and is anchored against NBA cost (agency RN at A$180k/yr, 52% false-alarm pad sensors, A$500k+ DIY build) — never against AU compliance-software list prices. Trajectory: 24 months at A$85 to harvest pilot evidence, then a A$95 raise on new logos in Y3 once peer-reviewed outcome data exists.",
+    "handoff_to_agent_4": {
+      "tier_summary": [
+        "Lumana Pilot — A$85/bed/mo (single-site, 90-day paid pilot pro-rated; targets Family-Run Single Facility, Rural AU)",
+        "Lumana Core — A$85/bed/mo (24-mo all-in bundle; targets Listed Private-Pay Chain CFO + NFP CEO)",
+        "Lumana New-Build — A$110/bed/mo (capex-funded greenfield SKU; targets SG New-Build Nursing-Home Operator)",
+        "Lumana Enterprise — A$72/bed/mo blended (volume discount > 5,000 beds; targets Listed Private-Pay Chain at portfolio scale)",
+        "Lumana HK Subsidised — HKD 320/bed/mo list (≈ A$64), targets HK RCHE post-I&T-Fund + EBPS economics",
+        "Lumana SG CCDTP — SGD 68/bed/mo list, ≈ SGD 34 post-PDG (≈ A$38 effective); targets SG Nursing-Home Operator"
+      ],
+      "persona_to_tier_map": [
+        "Listed Private-Pay Chain CFO → Core (Y1) → Enterprise (Y3 portfolio rollout)",
+        "Mission-Driven NFP CEO → Core (Y1) → Outcomes Hybrid (Y2-3 once 12 mo data exists)",
+        "Rural Single-Site Operator → Pilot (Y1) → Core (Y2)",
+        "HK RCHE Owner-Operator → HK Subsidised (90-day no-cost-cancel clause)",
+        "SG Nursing-Home Operator → SG CCDTP (existing) and New-Build (greenfield)"
+      ],
+      "grant_coverage": "PSG/PDG (SG) applies to SG CCDTP tier; I&T Fund + EBPS economics shape HK Subsidised tier; AU has no equivalent monthly-software grant — funding source is operator opex out of AN-ACC headroom.",
+      "elasticity_summary": "Listed Chain CFO = low (regulator-driven demand + AN-ACC headroom). NFP CEO = medium (mission-led but board-gated). Rural Single-Site = high (peer-led, price-sensitive). HK RCHE = high (EBPS ceiling = HKD 11k/bed/mo binds). SG Operator = medium (grant-tethered; PDG pre-approval is the gatekeeper, not list price)."
+    }
+  },
+  "personas": [
+    {
+      "name": "Listed Private-Pay Chain CFO",
+      "icp": "CFO or GM Clinical at an ASX-listed or PE-backed AU residential aged-care chain (800–3,500 beds; e.g. Opal HealthCare, Regis, Estia/Bain, Bupa Aged Care, Catholic Healthcare) audited quarterly on care-minutes and operating under activist-investor or PE margin pressure to defend EBITDA without further wage cuts after the 1 Oct 2025 AN-ACC uplift.",
+      "pains": [
+        "Care-minute compliance audits (RN minutes + total care minutes) flow into Star Ratings from 1 Oct 2025 — every facility below threshold drags the corporate Star Rating average and consumes the regional GM's calendar",
+        "SIRS Priority-1 notifications (40–80 hr investigation each) are unbudgeted; one event per quarter per portfolio = A$200k+ of soft cost annually",
+        "Activist investors and PE limited partners ask for 'evidence of restraint reduction' line items in board packs since the Aged Care Act 2024 commenced 1 Nov 2025 — there is no current data layer that produces this",
+        "Agency RN spend is up 38% YoY on average (Aged Care Workforce Strategy 2024) and there is no realistic hire-our-way-out plan with a 110k FTE shortfall by 2030"
+      ],
+      "current_workaround": "Person Centred Software mCare or Leecare Platinum6 for care records (A$10–22/bed/mo), Austco Tacera nurse-call hardware (capex amortised), agency RN spend filling the gap (A$95–180k loaded per FTE), and a manual SIRS-investigation team built from regional clinical leads. No ambient sensing layer; no auto-documentation.",
+      "wtp_band_sgd": {
+        "low_anchor": 70,
+        "expected": 100,
+        "upper_stretch": 130
+      },
+      "wtp_band_native": {
+        "currency": "AUD",
+        "low_anchor": 70,
+        "expected": 100,
+        "upper_stretch": 130
+      },
+      "nba": "Hire 0.4 additional RN FTE/100-bed home at fully-loaded A$95k = A$38k/yr/site (A$31.67/bed/mo) + retain Person Centred Software at A$15/bed/mo + absorb 4 SIRS investigations/yr at A$3k each (A$1k/bed/yr ≈ A$0.83/bed/mo). Status-quo cost ≈ A$47/bed/mo BEFORE counting the unmodelled cost of 1 sentinel event per portfolio per year (A$500k–$2M reputational + Star-Rating exposure). NBA floor: A$47/bed/mo measurable + uncapped tail-risk. Source: AIHW workforce data; admin-legacy.html NBA table; Royal Commission cost frameworks.",
+      "psg_eligible": false,
+      "regions": ["AU"]
+    },
+    {
+      "name": "Mission-Driven NFP / Religious Operator",
+      "icp": "CEO or Director of Mission at an AU not-for-profit or church-affiliated residential operator (200–600 beds; e.g. Uniting Care, Anglicare, BaptistCare, Catholic Healthcare, Helping Hand SA, Whiddon) where board governance includes a religious or mission committee and procurement requires both ROI evidence AND a dignity/restraint-reduction narrative the board can publish in its annual report.",
+      "pains": [
+        "Board-mandated 'zero unauthorised restraint' commitments post-Aged Care Act 2024 — no current way to evidence compliance without nurse narratives that auditors discount",
+        "Staff burnout + vocational-care turnover at 22%/yr (Aged Care Workforce Strategy 2024); chaplains and DONs explicitly cite 'documentation overload' as the #1 cited reason in exit interviews",
+        "Mission committee resists camera-based monitoring on dignity grounds; current vendors that solve fall-detection use RGB cameras (SafelyYou, Oxehealth) and trigger board-level objection",
+        "Capital allocation runs through a 9–12 month board cycle; cannot procure on a sales-quarter timeline"
+      ],
+      "current_workaround": "AutumnCare or Leecare for documentation (A$12–18/bed/mo), pad sensors + nurse-call (Austco/Inovonics), volunteer-led behavioural-support programs that produce paper records, and a chaplaincy-led restraint-reduction policy that exists but is not measurably evidenced in audit packs.",
+      "wtp_band_sgd": {
+        "low_anchor": 60,
+        "expected": 80,
+        "upper_stretch": 95
+      },
+      "wtp_band_native": {
+        "currency": "AUD",
+        "low_anchor": 60,
+        "expected": 80,
+        "upper_stretch": 95
+      },
+      "nba": "Status quo: 0.6 FTE PCA equivalent absorbed into night-cycle observation rounds at A$70k loaded = A$42k/yr/100-bed home (A$35/bed/mo) + AutumnCare A$15/bed/mo + estimated 6 unauthorised-restraint events/yr that, post-Aged Care Act 2024, expose the board to civil penalty and Star-Rating impact (modelled at A$5k/event soft cost = A$2.5/bed/mo). NBA floor: A$52/bed/mo with rising tail-risk. Source: Aged Care Workforce Strategy 2024 turnover data; Royal Commission Final Report Recommendation 38; ARIIA practice-improvement bulletins 2024.",
+      "psg_eligible": false,
+      "regions": ["AU"]
+    },
+    {
+      "name": "Rural / Single-Site AU Operator",
+      "icp": "Owner-operator or DON at a single-site or two-site AU regional/rural residential operator (60–120 beds total; e.g. Coastal NSW family-owned facilities, regional VIC/SA/WA owner-operators, Aboriginal community-controlled aged care). Cannot recruit clinical staff at any price; second-generation owner makes the buying decision personally; uses peer-references (Uniting/Helping Hand alum networks) over RFPs.",
+      "pains": [
+        "Cannot recruit RNs at the regional wage cap; agency cost is 2.4× metro and the ACFI-to-AN-ACC transition has eroded the cross-subsidy",
+        "Single SIRS Priority-1 notification can consume a week of the owner-operator's calendar and threaten the facility's operating licence",
+        "Standard 5 evidence pack expectations land on a single DON who is also covering nursing rosters; documentation backlog grows by ~6 hr/week per DON",
+        "Cannot afford a CIO or even a part-time IT lead; vendor must onboard with zero in-house technical owner"
+      ],
+      "current_workaround": "Excel rosters, paper-based progress notes (still common in rural sites), nurse-call with pad sensors (52% false-alarm rate per admin-legacy.html NBA table), agency RNs flown in at A$160–200k loaded, and a single iPad shared between night-shift PCAs for incident logging. Many sites have no clinical software at all.",
+      "wtp_band_sgd": {
+        "low_anchor": 45,
+        "expected": 65,
+        "upper_stretch": 85
+      },
+      "wtp_band_native": {
+        "currency": "AUD",
+        "low_anchor": 45,
+        "expected": 65,
+        "upper_stretch": 85
+      },
+      "nba": "Continue agency RN reliance at A$180k/yr per added FTE (A$150/bed/mo for a 100-bed home) OR exit residential-care operation entirely (21 AU providers exited in FY24, -3.2%, per Australian Ageing Agenda 2025). NBA floor: A$150/bed/mo, with a structural exit-the-market alternative if costs cannot be controlled. Source: AIHW provider exit data; admin-legacy.html NBA table; SBS aged-care workforce coverage 2024.",
+      "psg_eligible": false,
+      "regions": ["AU"]
+    },
+    {
+      "name": "HK RCHE Owner-Operator",
+      "icp": "Owner or General Manager of a Hong Kong private Residential Care Home for the Elderly (50–150 beds; representative of ~75% of HK's 819 licensed RCHEs per CBRE HK 2024). Family-owned, second-generation, decision-maker is the boardroom in one person, EBPS-subsidised at HKD ~11,000/resident/month with margin pressure from the 16 Jun 2024 Amendment Ordinance staffing minimums.",
+      "pains": [
+        "Phased 1:30 carer:resident staffing requirements (medium/low care, 11 daily hours) under the 2023 Amendment Ordinance push night-cycle labour cost above sustainable EBPS economics by 2026",
+        "Cannot exceed ~6% of EBPS subsidy on any single non-staff contract without manual board/owner approval — pricing above HKD 660/bed/mo triggers full procurement review",
+        "I&T Fund subsidy (up to HK$1B endowment) requires SWD catalogue listing — un-listed vendors are unaffordable regardless of value",
+        "Boardroom is also the user; if the owner doesn't understand the workflow in one demo, the deal is dead"
+      ],
+      "current_workaround": "Pad sensors + manual night rounds (1 PCA per 30 residents under the new minimum), HKBN Gerontech Safety Bell at HKD 99–199/bed/mo for emergency call (limited fall coverage), and overflow night-shift agency from contract-manpower agencies at HKD 28k/month per substitute carer. No ambient sensing; no auto-documentation; care records still on paper at ~40% of private RCHEs.",
+      "wtp_band_sgd": {
+        "low_anchor": 200,
+        "expected": 320,
+        "upper_stretch": 500
+      },
+      "wtp_band_native": {
+        "currency": "HKD",
+        "low_anchor": 200,
+        "expected": 320,
+        "upper_stretch": 500
+      },
+      "nba": "Continue night-shift contract carer at HKD 28,000/month per substitute (≈ HKD 280/bed/mo for a 100-bed home with 1 night substitute) + HKBN Safety Bell at HKD 150/bed/mo + ~HKD 80/bed/mo of paper-record consumables and overtime. NBA floor: HKD 510/bed/mo (≈ A$102/bed/mo) measurable, with a structural inability to meet the new 1:30 staffing rule. Source: SCMP gerontech coverage 2025; CBRE HK 2024 industry overview; SWD I&T Fund LCQ20 2024 disbursement data; HK Labour Department contract-manpower wage benchmarks.",
+      "psg_eligible": false,
+      "itf_eligible": true,
+      "regions": ["HK"]
+    },
+    {
+      "name": "SG Nursing-Home Operator (CCDTP-Funded)",
+      "icp": "COO or Innovation Director at a Singapore nursing-home operator running 300–700 beds (NTUC Health, Allium, ECON, St Luke's, Ren Ci, Salvation Army Peacehaven, Society for the Aged Sick, Thye Hua Kwan). MOH-licensed under HCSA 2020, CCDTP-eligible, decision is committee-driven (COO + IT lead + clinical lead + AIC liaison), expects PDG/CCDTP pre-approval as a procurement prerequisite.",
+      "pains": [
+        "MOH's 20k → 31k bed expansion (MOH 2024) creates a 3-year hiring crunch that no operator can solve through recruitment alone",
+        "Multilingual caregiver UX (Mandarin + Malay) is a procurement gate — English-only fails AIC fitness-for-purpose review",
+        "PDG pre-approval cycle is 2–4 months; un-listed vendors are non-starters even at zero price",
+        "PDPA + healthcare data residency: cross-border-routed SaaS is disqualified on procurement; AWS ap-southeast-1 hosting is mandatory"
+      ],
+      "current_workaround": "Internal EMR (Synapxe NEHR-integrated) + WerkDone or PulseSync for care management (SGD 8–60/bed/mo), manual rounding with a paper-or-tablet checklist, agency staff supplementation (SGD 4,200/month per substitute carer), and Synapxe's Age Well SG procurement consultations to surface CCDTP-pre-approved tools. Ambient-sensing penetration is sub-5% of beds.",
+      "wtp_band_sgd": {
+        "low_anchor": 50,
+        "expected": 68,
+        "upper_stretch": 95
+      },
+      "wtp_band_native": {
+        "currency": "SGD",
+        "low_anchor": 50,
+        "expected": 68,
+        "upper_stretch": 95
+      },
+      "nba": "Add 1 night-shift agency carer (SGD 4,200/mo) per 50 beds (SGD 84/bed/mo) + WerkDone/PulseSync at SGD 30/bed/mo + manual paper rounding overhead estimated at 0.2 FTE care-coordinator at SGD 3,500/mo loaded (SGD 14/bed/mo for a 50-bed wing). NBA floor: SGD 128/bed/mo (≈ A$144/bed/mo) measurable. Source: Singapore Salary Guide 2025 (Adecco) — agency carer benchmark; admin-legacy.html SG persona; AIC CCDTP solution catalogue procurement guidance.",
+      "psg_eligible": true,
+      "ccdtp_eligible": true,
+      "regions": ["SG"]
+    }
+  ],
+  "pricing_models": [
+    {
+      "name": "Bundled per-bed/month subscription (sensors + workflow + auto-doc, all-in)",
+      "rationale": "Stays in opex (no capex approval chain), one invoice / one renewal, matches AN-ACC + AIC + EBPS budgeting structures, grant-compatible in HK + SG without restructuring, and lets Lumana defend the A$85 anchor against compliance-software-only incumbents (A$8–25/bed/mo) by selling the full bundle. Ships hardware as a service so operator never owns 5-yr depreciation risk.",
+      "score_by_persona": {
+        "Listed Private-Pay Chain CFO": 5,
+        "Mission-Driven NFP / Religious Operator": 5,
+        "Rural / Single-Site AU Operator": 4,
+        "HK RCHE Owner-Operator": 4,
+        "SG Nursing-Home Operator (CCDTP-Funded)": 5
+      }
+    },
+    {
+      "name": "Per-resident/month (acuity-weighted)",
+      "rationale": "Aligns price to AN-ACC class economics — high-acuity residents generate higher subsidy AND consume more care minutes, so per-resident-mo with an acuity multiplier captures more value at the top end. Operationally heavy: requires monthly acuity reconciliation that creates billing disputes and CFO friction. Better as an enterprise contract clause than a default model.",
+      "score_by_persona": {
+        "Listed Private-Pay Chain CFO": 3,
+        "Mission-Driven NFP / Religious Operator": 2,
+        "Rural / Single-Site AU Operator": 2,
+        "HK RCHE Owner-Operator": 2,
+        "SG Nursing-Home Operator (CCDTP-Funded)": 3
+      }
+    },
+    {
+      "name": "Per-incident / per-alert (pay-per-use)",
+      "rationale": "Zero upfront friction; scales naturally with facility acuity. Fatal flaws: (a) creates the perverse incentive 'we profit from more alerts', (b) clinical governance objections, (c) impossible to forecast ARR for investors, (d) operators cannot budget for it. Would only work as an outcomes-confirmation-fee on top of a base subscription, not as the model.",
+      "score_by_persona": {
+        "Listed Private-Pay Chain CFO": 1,
+        "Mission-Driven NFP / Religious Operator": 1,
+        "Rural / Single-Site AU Operator": 2,
+        "HK RCHE Owner-Operator": 2,
+        "SG Nursing-Home Operator (CCDTP-Funded)": 1
+      }
+    },
+    {
+      "name": "Hybrid: base subscription + outcomes-contingent uplift",
+      "rationale": "A$60 base + A$25 contingent on hitting agreed fall-reduction or care-minute KPIs. Strong NFP / mission-driven appeal because it shifts evidence-of-value risk to Lumana. Requires 12 mo of clinical baseline data to underwrite responsibly — hence Y2-Y3 model, not Y1. Capped at <30% of contracts to protect ARR predictability for investors.",
+      "score_by_persona": {
+        "Listed Private-Pay Chain CFO": 3,
+        "Mission-Driven NFP / Religious Operator": 5,
+        "Rural / Single-Site AU Operator": 3,
+        "HK RCHE Owner-Operator": 3,
+        "SG Nursing-Home Operator (CCDTP-Funded)": 3
+      }
+    },
+    {
+      "name": "Modular tiers (Core / Pro / Enterprise feature gating)",
+      "rationale": "A$55 / A$85 / A$120 classic SaaS feature tiering — e.g. fall only / fall + vitals / fall + vitals + workflow. Rejected because workflow + auto-documentation IS the value (the entire compliance argument falls apart without auto-doc) — a Core tier without it would underdeliver and damage clinical reputation, while operators self-select into Core and leave the ROI on the table. Sales cycle doubles during tier negotiation. Lumana ships one product configuration on purpose.",
+      "score_by_persona": {
+        "Listed Private-Pay Chain CFO": 2,
+        "Mission-Driven NFP / Religious Operator": 2,
+        "Rural / Single-Site AU Operator": 3,
+        "HK RCHE Owner-Operator": 3,
+        "SG Nursing-Home Operator (CCDTP-Funded)": 2
+      }
+    },
+    {
+      "name": "Pure outcome-based (insurance / shared-risk)",
+      "rationale": "Liability insurer pays Lumana; operator perceives zero direct cost. Structurally aligned and a powerful Y4+ distribution layer when 3+ years of claims data exist. Today: AU/HK/SG aged-care liability insurers are not digital enough to clear the underwriting cycle, and the model makes Lumana a sub-vendor to a slower counterparty. Park as a future option, do not anchor pricing on it.",
+      "score_by_persona": {
+        "Listed Private-Pay Chain CFO": 2,
+        "Mission-Driven NFP / Religious Operator": 3,
+        "Rural / Single-Site AU Operator": 2,
+        "HK RCHE Owner-Operator": 1,
+        "SG Nursing-Home Operator (CCDTP-Funded)": 2
+      }
+    },
+    {
+      "name": "Partner-bundled with EHR (PCS / Leecare / AutumnCare resold)",
+      "rationale": "Lumana embedded as the ambient-sensing layer inside Person Centred Software, Leecare or AutumnCare, charged at A$15/bed/mo wholesale, integrator marks up. Pros: instant distribution to 12,000+ AU bedrooms already wired into PCS/Leecare. Cons: integrator owns the customer relationship, Lumana commoditises into a sensor SKU, brand and pricing power evaporate. Acceptable as a Y3+ co-sell / referral-fee structure (15–20%), never as the primary model.",
+      "score_by_persona": {
+        "Listed Private-Pay Chain CFO": 3,
+        "Mission-Driven NFP / Religious Operator": 3,
+        "Rural / Single-Site AU Operator": 4,
+        "HK RCHE Owner-Operator": 2,
+        "SG Nursing-Home Operator (CCDTP-Funded)": 2
+      }
+    },
+    {
+      "name": "Government-co-funded (PDG/CCDTP in SG; I&T Fund in HK)",
+      "rationale": "SG SKU listed at SGD 68/bed/mo with PDG/CCDTP co-funding bringing operator-effective price to ~SGD 34. HK SKU listed at HKD 320/bed/mo with I&T Fund subsidy capped at 70% of approved-device cost. Operationally: vendor-side application takes 2–4 months for SG PDG approval and SWD catalogue listing — must be a Y1 build-out task, not a sales-time afterthought. The list-vs-effective-price wedge is the marketing line that closes deals in both markets.",
+      "score_by_persona": {
+        "Listed Private-Pay Chain CFO": 2,
+        "Mission-Driven NFP / Religious Operator": 2,
+        "Rural / Single-Site AU Operator": 1,
+        "HK RCHE Owner-Operator": 5,
+        "SG Nursing-Home Operator (CCDTP-Funded)": 5
+      }
+    }
+  ],
+  "elasticity_heuristics": [
+    {
+      "segment": "Listed Private-Pay Chain CFO (AU enterprise)",
+      "elasticity_band": "low",
+      "evidence": "Three signals make low defensible here: (1) AN-ACC base at A$295.64/resident/day from 1 Oct 2025 (Department of Health) means A$85/bed/mo = 0.96% of variable revenue — price is not the binding constraint; (2) the Aged Care Act 2024 (1 Nov 2025) makes Strengthened Standard 5 evidence a compliance prerequisite, not a discretionary spend, and unauthorised restraint is a SIRS-reportable event with civil penalties — buyers cannot defer; (3) sector consolidation puts 44.7% of AU places in the top providers (Australian Ageing Agenda 2025) and these enterprises are not price-sensitive at the per-bed-mo level; they are RFP-rigour-sensitive. A 10% list increase would not move enterprise-direct pipeline conversion in this cohort."
+    },
+    {
+      "segment": "Mission-Driven NFP / Religious Operator",
+      "elasticity_band": "medium",
+      "evidence": "Default medium: NFP boards approve based on mission alignment + ROI, not list price alone. PCS/Leecare market shares show NFPs adopt clinical software at A$10–22/bed/mo without bargaining hard, but won't adopt above ~A$100/bed/mo without a board-level dignity narrative. Aged Care Workforce Strategy 2024 documents 22% annual DON turnover — the champion-departure risk is the elasticity multiplier, not list price. Source: AutumnCare/Leecare/PCS published-list pricing; admin-legacy.html persona analysis."
+    },
+    {
+      "segment": "Rural / Single-Site AU Operator",
+      "elasticity_band": "high",
+      "evidence": "21 AU providers exited in FY24 (-3.2%, Australian Ageing Agenda 2025) — the rural cohort is the most fragile. Owner-operators in this segment treat any new opex line above ~A$70/bed/mo as a margin event. Peer-referral cohorts (Helping Hand SA, regional NSW) tell of pricing-driven churn within 90 days when introductory rates expire. Pricing above A$85/bed/mo without grant-equivalent or peer reference drops conversion materially in this segment."
+    },
+    {
+      "segment": "HK RCHE Owner-Operator",
+      "elasticity_band": "high",
+      "evidence": "EBPS subsidy is HKD ~11,000/resident/month. Any single non-staff contract above ~6% of subsidy (HKD 660/bed/mo) triggers manual board approval at private RCHEs (CBRE HK 2024 industry overview). HKBN Gerontech Safety Bell prices at HKD 99–199/bed/mo and competes on the same procurement lines. SCMP 2025 fall-detection coverage shows operators churning between vendors on price within 4–6 weeks of a board change. Pricing above HKD 400/bed/mo collapses the addressable pool to the top ~10% of HK private RCHEs."
+    },
+    {
+      "segment": "SG Nursing-Home Operator (CCDTP-Funded)",
+      "elasticity_band": "medium",
+      "evidence": "PDG/CCDTP co-funding decouples list price from effective price; the binding constraint is AIC pre-approval listing, not list price. WerkDone publishes SGD 8–25/bed/mo, PulseSync sits at SGD 30–60/bed/mo bundled — the addressable list-price band is SGD 50–95 with grant subsidy delivering effective ~SGD 34. Demand is policy-driven (S$3.5B Age Well SG envelope; CCDTP S$18M) rather than price-driven, so medium not high. Source: AIC CCDTP solution catalogue; MOH Age Well SG announcements 2023–2024."
+    }
+  ],
+  "recommended_tiers": [
+    {
+      "name": "Lumana Pilot",
+      "price_sgd": 85,
+      "price_aud": 85,
+      "price_hkd": null,
+      "price_sgd_local": null,
+      "currency": "AUD",
+      "term_months": 3,
+      "target_persona": "Rural / Single-Site AU Operator",
+      "what_in": [
+        "Single-site, full-facility deployment (sensors, gateway, caregiver app, auto-doc engine)",
+        "90-day paid pilot with weekly clinical review by Lumana clinical lead",
+        "Standard 5 evidence pack and SIRS-incident reduction baseline report at day 90",
+        "Founder + clinical-lead onsite for installation and 2 follow-up visits",
+        "Hardware on loan (no capex; full refurb cost waived if non-conversion)"
+      ],
+      "what_excluded": [
+        "Multi-site portfolio analytics (upgrade to Core)",
+        "Custom Standard 5 / SIRS dashboards for board reporting (upgrade to Core)",
+        "Outcomes-contingent pricing structure (Y2 option from Core)"
+      ],
+      "psychological_anchor": "One paid pilot, one signed contract — A$85/bed/mo for 90 days proves the case to the owner-operator personally, with no capex approval needed.",
+      "effective_price_after_psg": 85,
+      "recommended": false,
+      "rationale": "Pilot SKU is the wedge for the Rural/Single-Site segment and the proof-cycle that funds peer-referral expansion. Priced at the same A$85 as Core to send the 'this is real' signal that healthcare procurement requires (free pilots fail in this category — admin-legacy.html documents the rejection)."
+    },
+    {
+      "name": "Lumana Core",
+      "price_sgd": 85,
+      "price_aud": 85,
+      "price_hkd": null,
+      "price_sgd_local": null,
+      "currency": "AUD",
+      "term_months": 24,
+      "target_persona": "Listed Private-Pay Chain CFO",
+      "what_in": [
+        "Full ambient-monitoring + caregiver workflow + auto-documentation bundle (all sensors, gateway, app, auto-doc engine)",
+        "Multi-site portfolio dashboard with Star-Rating impact attribution and care-minute compliance roll-up",
+        "Standard 5 evidence pack auto-generated per facility per month; SIRS-investigation evidence export on demand",
+        "Native integration with Person Centred Software, Leecare Platinum6 and AutumnCare (push of structured events into the EHR)",
+        "Dedicated AU-based clinical CSM with monthly review",
+        "Hardware-as-a-service: refresh on 5-yr cycle at zero capex to operator"
+      ],
+      "what_excluded": [
+        "Volume discount below A$85 list (upgrade to Enterprise above 5,000 beds)",
+        "New-build capex-funded fit-out bundle (use New-Build SKU)",
+        "Outcomes-contingent KPI uplift (separate Hybrid contract addendum, available from month 13)"
+      ],
+      "psychological_anchor": "Less than 1% of your AN-ACC base buys you the documentation engine that protects 100% of it — A$2.83/bed/day vs A$295.64 base subsidy.",
+      "effective_price_after_psg": 85,
+      "recommended": true,
+      "rationale": "The anchor SKU. A$85/bed/mo is the AU thesis — defensible against the A$8–25 compliance-software band only because it sells the full ambient-monitoring bundle (sensors are 60% of unit cost, software-only competitors cannot replicate without 12+ months of hardware build-out). Targets the Listed Chain CFO persona where elasticity is low (regulatory-driven demand) and serves the NFP CEO persona at the same price (their wtp_band of A$60–95 brackets A$85 cleanly)."
+    },
+    {
+      "name": "Lumana New-Build",
+      "price_sgd": 110,
+      "price_aud": 110,
+      "price_hkd": null,
+      "price_sgd_local": 124,
+      "currency": "AUD",
+      "term_months": 36,
+      "target_persona": "SG Nursing-Home Operator (CCDTP-Funded)",
+      "what_in": [
+        "Greenfield fit-out SKU: full hardware bundled into capex line, opex software at A$60/bed/mo (A$110 blended over 36 months)",
+        "Multilingual caregiver UX (English + Mandarin + Malay) for SG; Cantonese for HK new-build",
+        "Architectural sensor-placement consult during build phase (Lumana clinical + ops engineer)",
+        "PDPA-compliant SG data residency (AWS ap-southeast-1) and SOC 2 Type II audit trail",
+        "Pre-listed on AIC CCDTP catalogue (vendor-side approval pre-completed)"
+      ],
+      "what_excluded": [
+        "Retrofit deployment (use SG CCDTP SKU instead)",
+        "PDG co-funding eligibility (CCDTP applies to operating community-care, not greenfield capex)",
+        "Hardware refresh in years 1–5 (capex-funded, refresh at year 6+)"
+      ],
+      "psychological_anchor": "Build it in for the cost of a single fit-out line item — A$110/bed/mo over 36 months against a S$300k+ per-bed capital cost.",
+      "effective_price_after_psg": 110,
+      "recommended": true,
+      "rationale": "The 11,000-bed SG MOH expansion (20k → 31k beds by 2030) is the highest-WTP wedge in the entire Lumana TAM because new-build operators have capex-funded fit-out budgets that absorb monitoring as a build line. SGD 124 list = A$110, anchored above the SG CCDTP SKU (SGD 68) because new-build operators have higher payment capacity AND don't depend on PDG co-funding."
+    },
+    {
+      "name": "Lumana Enterprise (Portfolio)",
+      "price_sgd": 72,
+      "price_aud": 72,
+      "price_hkd": null,
+      "price_sgd_local": null,
+      "currency": "AUD",
+      "term_months": 36,
+      "target_persona": "Listed Private-Pay Chain CFO",
+      "what_in": [
+        "All Lumana Core inclusions across portfolio (>5,000 beds)",
+        "Volume discount: blended A$72/bed/mo (A$85 list less 15% portfolio rebate)",
+        "Dedicated portfolio Account Director + clinical Customer Success team (2 FTE for >10,000 beds)",
+        "Quarterly board-pack telemetry: Star-Rating attribution, SIRS-event reduction, restraint-event evidence",
+        "Custom EHR integrations (PCS/Leecare/AutumnCare/Epicor iQX) and IT-security review path"
+      ],
+      "what_excluded": [
+        "Below-floor discount (no negotiation below A$65/bed/mo without CEO approval)",
+        "White-label or unbranded deployment (Lumana brand stays on caregiver app)",
+        "Pilot pricing structure (enterprise commit replaces the pilot wedge)"
+      ],
+      "psychological_anchor": "Enterprise rate at A$72/bed/mo: 14× return on a single SIRS Priority-1 investigation avoided per portfolio per year; defensible to your audit committee in one slide.",
+      "effective_price_after_psg": 72,
+      "recommended": false,
+      "rationale": "Volume tier for portfolio-scale buyers — Opal, Bupa, Regis, Estia, Catholic Healthcare, ACH, Uniting, Anglicare. 15% rebate from list captures 8 enterprise accounts that control ~50% of AU beds (Australian Ageing Agenda 2025). Floor at A$65/bed/mo protects unit economics."
+    },
+    {
+      "name": "Lumana HK Subsidised",
+      "price_sgd": 64,
+      "price_aud": 64,
+      "price_hkd": 320,
+      "price_sgd_local": null,
+      "currency": "HKD",
+      "term_months": 12,
+      "target_persona": "HK RCHE Owner-Operator",
+      "what_in": [
+        "Full Lumana Core bundle priced for HK private RCHEs at HKD 320/bed/mo list",
+        "I&T Fund pre-approved listing (vendor-side SWD application complete) — operator subsidy up to 70% of approved-device cost",
+        "Cantonese caregiver UX + Cantonese-speaking AU/HK clinical CSM for first 90 days",
+        "90-day no-cost-cancel clause to absorb HK boardroom-change risk (cultural-signal driven; CBRE HK 2024)",
+        "Night-shift augmentation pack mapped to the 1:30 carer:resident staffing requirement"
+      ],
+      "what_excluded": [
+        "EBPS direct claim (vendor cannot claim against operator subsidy; operator handles)",
+        "Multi-RCHE portfolio analytics (most HK RCHEs are single-site; not in this SKU)",
+        "AU/SG-style 24-month commit (HK SKU is annual to fit boardroom risk)"
+      ],
+      "psychological_anchor": "HKD 320/bed/mo = under 3% of your EBPS subsidy, fits inside one boardroom decision, and meets the 1:30 staffing rule without one more agency carer.",
+      "effective_price_after_psg": 64,
+      "effective_price_after_itf_native_hkd": 96,
+      "recommended": true,
+      "rationale": "HK SKU sits below the HKD 660/bed/mo ceiling that triggers manual board approval (6% of EBPS subsidy). I&T Fund subsidy logic brings effective HKD spend down to ~HKD 96/bed/mo for catalogue-approved devices. 12-month term and no-cost-cancel clause are both deliberate cultural-signal accommodations, not pricing weakness."
+    },
+    {
+      "name": "Lumana SG CCDTP",
+      "price_sgd": 38,
+      "price_aud": 38,
+      "price_hkd": null,
+      "price_sgd_local": 68,
+      "currency": "SGD",
+      "term_months": 24,
+      "target_persona": "SG Nursing-Home Operator (CCDTP-Funded)",
+      "what_in": [
+        "Full Lumana Core bundle priced for SG nursing homes at SGD 68/bed/mo list",
+        "AIC CCDTP pre-approved listing (vendor-side application complete) — operator pays SGD ~34 effective post-grant",
+        "Multilingual caregiver UX (English + Mandarin + Malay; Tamil on roadmap)",
+        "PDPA + Synapxe NEHR-integration ready; AWS ap-southeast-1 SG-resident hosting; SOC 2 Type II",
+        "Dedicated SG-based clinical CSM (Mandarin- or Malay-speaking) with quarterly review"
+      ],
+      "what_excluded": [
+        "Greenfield new-build fit-out (use New-Build SKU)",
+        "Below-grant-eligible-price negotiation (CCDTP listing locks list price for 24 months)",
+        "Cross-border data routing (PDPA hard-block)"
+      ],
+      "psychological_anchor": "List SGD 68 / pay SGD 34 — CCDTP-co-funded, multilingual, SG-resident. Less than the agency carer's daily rate, per bed, per month.",
+      "effective_price_after_psg": 19,
+      "effective_price_after_grant_native_sgd": 34,
+      "recommended": true,
+      "rationale": "SG SKU is structured around CCDTP-funded reality, not list price. SGD 68 list × 50% PDG/CCDTP grant = SGD 34 operator-effective (≈ A$38 in AUD, ≈ A$19 effective). Multilingual UX and PDPA/Synapxe-readiness are non-negotiable procurement gates per cultural-signal evidence — bundled, never an upsell. Recommended because SG is the highest-policy-tailwind market in the Lumana SAM."
+    }
+  ],
+  "grants": [
+    {
+      "name": "PSG (Productivity Solutions Grant) — SG",
+      "coverage_pct": 50,
+      "cap_sgd": 30000,
+      "eligibility": "SG-registered, ≥30% local shareholding, ≤SGD 100M revenue or ≤200 staff; subscription must be on IMDA PSG pre-approved listing with ≥12-month term. Aged-care nursing homes generally qualify if procurement is via the operating entity, not the holding entity.",
+      "applies_to_tiers": ["Lumana SG CCDTP"]
+    },
+    {
+      "name": "CCDTP (Community Care Digital Transformation Plan) / PDG (Productivity & Digitalisation Grant) — SG",
+      "coverage_pct": 50,
+      "cap_sgd": null,
+      "eligibility": "MOH-licensed Community Care Organisations (CCOs) including nursing homes; AIC pre-approved digital solution catalogue listing required. Co-funding up to 50% of qualifying digital adoption cost over the S$18M CCDTP envelope (Age Well SG 2023). Operator-side application via AIC.",
+      "applies_to_tiers": ["Lumana SG CCDTP"]
+    },
+    {
+      "name": "I&T Fund for Application in Elderly & Rehabilitation Care — HK",
+      "coverage_pct": 70,
+      "cap_sgd": null,
+      "eligibility": "HK NGO or contract RCHE; SWD pre-approved gerontech catalogue listing required (vendor-side, 4–8 week approval). HK$1B endowment fund (LWB, ongoing); ~HK$37M+ disbursed to date across 210+ applicants. Private RCHEs eligible with operator-side application.",
+      "applies_to_tiers": ["Lumana HK Subsidised"]
+    },
+    {
+      "name": "EDG (Enterprise Development Grant) — SG",
+      "coverage_pct": 70,
+      "cap_sgd": null,
+      "eligibility": "SG-registered, ≥30% local shareholding, viable financials, project applied via Business Grants Portal before start. Bundles SaaS subscription with implementation + training + transformation deliverables. Most relevant for Lumana New-Build (SG) when sold as a 36-month transformation engagement.",
+      "applies_to_tiers": ["Lumana New-Build"]
+    },
+    {
+      "name": "AN-ACC operator opex headroom — AU (NOT a grant; explicit non-grant note)",
+      "coverage_pct": 0,
+      "cap_sgd": null,
+      "eligibility": "Australia has no equivalent monthly-software grant for residential aged care. Funding source is operator opex out of AN-ACC headroom (A$295.64/resident/day base from 1 Oct 2025). Lumana at A$85/bed/mo = 0.96% of variable revenue. Recorded here for completeness: AU pricing must clear without grant subsidy.",
+      "applies_to_tiers": []
+    }
+  ],
+  "pricing_trajectory": {
+    "horizon_12_months": {
+      "headline": "Hold A$85/bed/mo on AU; ship HK Subsidised (HKD 320) and SG CCDTP (SGD 68) by end Q3 2026; do NOT discount the bundle.",
+      "phases": [
+        {
+          "phase": "Q2-Q3 2026 — GNVC launch + 12 AU pilot sites",
+          "actions": [
+            "Hold A$85 list — no discount, no free pilots; pilot is paid at A$85 for 90 days, pro-rated",
+            "Sign 12 AU pilot sites (~1,500 beds) targeting Listed Private-Pay Chain CFO + Mission-Driven NFP",
+            "Submit AIC CCDTP catalogue listing application (SG) and SWD I&T Fund catalogue listing (HK) — these gate Q4 SG/HK launch"
+          ]
+        },
+        {
+          "phase": "Q4 2026 — convert pilots; HK + SG launch",
+          "actions": [
+            "Convert ≥80% of pilots to 24-month Core contracts at A$85",
+            "Launch HK Subsidised (HKD 320 list) once SWD listing confirmed; sign 4 HK private RCHEs (~400 beds)",
+            "Launch SG CCDTP (SGD 68 list) once AIC listing confirmed; sign 2 SG nursing homes (~600 beds)",
+            "Brief enterprise CFOs (Opal, Bupa, Regis, Estia, Catholic Healthcare, ACH, Uniting, Anglicare) on Y2 enterprise rollout pricing — do NOT discount yet"
+          ]
+        },
+        {
+          "phase": "Q1 2027 — first AN-ACC uplift cycle as a Lumana customer",
+          "actions": [
+            "Time AN-ACC re-anchoring brief to Oct-Nov 2026 uplift announcement (CFOs reallocate uplift budget in Q1)",
+            "Publish first 12-month outcomes dashboard from pilot cohort (fall reduction, SIRS notifications avoided, care-minute compliance) — feeds Y2 pricing case"
+          ]
+        }
+      ]
+    },
+    "horizon_36_months": {
+      "headline": "Y2: launch Outcomes Hybrid for NFPs (cap 30% of contracts). Y3: raise list to A$95 on new logos; grandfather existing at A$85; launch Enterprise at blended A$72/bed/mo for portfolio buyers. Y3+: hospital transitional ward SKU at A$180/bed/mo as a separate sales motion.",
+      "phases": [
+        {
+          "phase": "Y2 (2027) — Outcomes Hybrid + scale AU enterprise",
+          "actions": [
+            "Launch Outcomes Hybrid (A$60 base + A$25 KPI-contingent) for NFP segment once 10+ facilities have 12 mo data + 1 peer-reviewed publication",
+            "Sign 3 AU enterprise accounts at Lumana Core list (no discount until 5,000+ beds confirmed); pipeline 8,000 AU beds total",
+            "HK pipeline to 800 beds (4–6 RCHE owner relationships); SG pipeline to 600 beds via AIC catalogue funnel"
+          ]
+        },
+        {
+          "phase": "Y3 (2028) — A$95 raise + Enterprise tier + EHR partner co-sell",
+          "actions": [
+            "Raise list price to A$95/bed/mo on new AU logos; grandfather existing contracts at A$85 through renewal cycle",
+            "Activate Enterprise tier (A$72 blended) for >5,000-bed portfolio buyers; floor at A$65 with CEO sign-off",
+            "Launch PCS / Leecare / AutumnCare partner referral programme (15–20% partner fee on qualifying integrations); use as distribution layer, not primary motion"
+          ]
+        },
+        {
+          "phase": "Y3+ (2028-2029) — hospital ward expansion + insurance optionality",
+          "actions": [
+            "Spin up Hospital Transitional Ward SKU at A$180/bed/mo (separate sales motion targeting hospital DON + IT)",
+            "Begin AU insurance-partner conversations (premium-integrated structure) — only after 3 yr of claims-ready clinical data exists",
+            "Hard line: Lumana never becomes a component SKU; white-label only via complementary integrators (nurse-call), never to direct competitors"
+          ]
+        }
+      ]
+    }
+  },
+  "sensitivity_analysis": {
+    "headline": "Price per bed is the dominant Y5 ARR swing factor — every A$10 movement in average ARPU shifts Y5 revenue by ~A$1.4M at the base 160-facility build-out. Module attach rate is a secondary lever (auto-doc + workflow attached vs sensors-only changes Y5 ARR by ~30%). Bed expansion (5,000 → 10,000 enterprise beds) is the third — but only matters once the price anchor has held for 24 months.",
+    "scenarios": [
+      {
+        "name": "Conservative — price floors at A$60/bed/mo",
+        "assumptions": "Pilot conversion drops to 25%; enterprise rebate normalises to A$60 blended; HK SKU pressured to HKD 240; SG SKU pressured to SGD 50.",
+        "y5_revenue_aud": 6700000,
+        "y5_ebitda_aud": 1500000,
+        "y5_active_facilities": 128,
+        "break_even_year": 5,
+        "trigger_signals": "Enterprise pipeline (Opal/Bupa/Regis) signals < A$70 in Y2 RFP responses; OR pilot-to-contract conversion stalls below 60%."
+      },
+      {
+        "name": "Base — A$85 holds with 3% annual churn",
+        "assumptions": "A$85 list holds; 80% pilot-to-contract; HK at HKD 320 list (HKD 96 effective); SG at SGD 68 (SGD 34 effective); 24-month renewal at parity.",
+        "y5_revenue_aud": 11900000,
+        "y5_ebitda_aud": 6500000,
+        "y5_active_facilities": 160,
+        "break_even_year": 3,
+        "trigger_signals": "Default scenario; reset annually against Q3 enterprise pipeline + pilot-cohort outcomes data."
+      },
+      {
+        "name": "Optimistic — pricing clears A$100/bed/mo on new logos in Y3",
+        "assumptions": "A$95 raise on new logos in Y3 holds; enterprise blended at A$80; SG New-Build clears A$110 list; HK uptake accelerates post-EBPS reform 2027.",
+        "y5_revenue_aud": 16800000,
+        "y5_ebitda_aud": 11100000,
+        "y5_active_facilities": 192,
+        "break_even_year": 3,
+        "trigger_signals": "Y2 peer-reviewed clinical publication lands; OR 2 AU enterprise accounts sign at Core list within 12 mo of pilot completion."
+      }
+    ],
+    "input_levers_ranked_by_y5_arr_impact": [
+      {
+        "lever": "Price per bed (list ARPU)",
+        "y5_arr_swing_aud_per_unit": 1400000,
+        "unit": "per A$10/bed/mo movement in blended ARPU",
+        "evidence": "Per admin-legacy.html sensitivity panel — A$60 floor → A$6.7M; A$85 base → A$11.9M; A$100 ceiling → A$16.8M Y5 revenue. Linear-ish at 160-facility build-out."
+      },
+      {
+        "lever": "Module attach rate (auto-doc + workflow)",
+        "y5_arr_swing_aud_per_unit": 3500000,
+        "unit": "sensors-only vs full bundle (binary; ~30% Y5 ARR delta)",
+        "evidence": "Sensors-only competitor benchmarks (Vayyar Care, Xandar Kardian, Cherish) sell at USD 25–40/bed/mo equivalent. Full bundle (auto-doc + workflow) is what defends A$85; losing attach rate collapses Lumana into the commoditised radar-component band."
+      },
+      {
+        "lever": "Bed-count expansion (enterprise wins)",
+        "y5_arr_swing_aud_per_unit": 1000000,
+        "unit": "per +1,000 enterprise beds added in Y3-Y4 at A$72 blended",
+        "evidence": "8 AU enterprise accounts control ~50% of beds (Australian Ageing Agenda 2025). Each 1,000-bed enterprise win = A$72 × 1,000 × 12 = A$0.86M ARR; rounded to A$1M with attach upsides."
+      },
+      {
+        "lever": "HK + SG attach to AU base",
+        "y5_arr_swing_aud_per_unit": 800000,
+        "unit": "per 1,000 HK or SG beds added by Y5",
+        "evidence": "HK at HKD 320 × 1,000 × 12 / 5 (FX) = A$768k; SG at SGD 68 × 1,000 × 12 / 0.88 = A$927k. Average ≈ A$0.8M per 1,000 beds."
+      },
+      {
+        "lever": "Pilot-to-contract conversion rate",
+        "y5_arr_swing_aud_per_unit": 600000,
+        "unit": "per 10pp change in conversion (target 80%)",
+        "evidence": "12 pilot sites × 1,500 beds × A$85 × 12 = A$1.53M pilot ARR; each 10pp conversion movement = A$153k Y1 ARR compounding to ~A$600k by Y5 with renewal economics."
+      },
+      {
+        "lever": "Churn rate (annual)",
+        "y5_arr_swing_aud_per_unit": 400000,
+        "unit": "per 1pp change above the 3% base assumption",
+        "evidence": "At 160 facilities × A$102k ARR/facility = A$16.3M revenue base; each 1pp churn = A$163k/yr lost compounding ~2.5× over the 5-yr horizon."
+      }
+    ]
+  },
+  "final_recommendation": "Lumana should enter at A$85/bed/month bundled in AU, ship HKD 320 in HK and SGD 68 in SG (effective ≈ SGD 34 post-PDG/CCDTP), and refuse every invitation to discount, unbundle, or capex-ify the offering through Y2. The A$85 anchor is structurally defensible because (a) it sits at <1% of the AN-ACC base of A$295.64/resident/day, so operators can absorb it without re-pricing residents, (b) the A$8–25/bed/mo AU compliance-software band cannot match because Lumana sells the full ambient-monitoring + workflow + auto-doc bundle (sensors are 60% of unit cost, software-only competitors need 12+ months to ship parity), and (c) the Aged Care Act 2024 commenced 1 Nov 2025 with Strengthened Standard 5, SIRS extension, and care-minute mandate making evidence-of-compliance a non-discretionary spend. Trajectory: hold A$85 for 24 months while harvesting pilot evidence, launch the Outcomes Hybrid for NFPs in Y2 (capped at 30% of contracts to protect ARR predictability), then raise to A$95 on new logos in Y3 with existing customers grandfathered. HK and SG launch in parallel with vendor-side I&T Fund + AIC CCDTP catalogue applications (4–8 wk approval — must be done as a Y1 build task, not a sales-time afterthought). The single biggest risk is anchoring drift — A$85 is not a negotiating opener, it is the price; any sales-team-driven discount below A$80 in Y1 contaminates the entire Y3 enterprise roadmap.",
+  "top_risks_and_mitigations": [
+    {
+      "rank": 1,
+      "risk": "Pricing anchor drift — early sales-driven discounts (A$70 'just for this pilot') destroy the A$85 reference price the entire Y3 enterprise tier depends on",
+      "mitigation": "Founder-led sales for first 12 months with no quota and no commission structure; published 'no discount below A$80 without CEO approval' policy; pilot is paid at A$85 pro-rated to send the 'this is real' signal. Codify in the sales playbook: discounting is a CEO decision, not a sales decision."
+    },
+    {
+      "rank": 2,
+      "risk": "Module-bundle erosion — operators (or partners like PCS/Leecare) push for a sensors-only or auto-doc-only SKU, which would collapse Lumana into the commoditised radar component band (Vayyar/Xandar Kardian USD 25–40/bed/mo) and destroy the workflow-derived gross margin",
+      "mitigation": "One product configuration; one price; reject every modular RFP requirement explicitly in sales response (with the specific 'workflow + auto-doc IS the value' line). Reject the 'tiered features' model formally in the pricing-models section so it is on record. If a partner channel demands a stripped SKU in Y3, structure as a referral-fee co-sell (15–20%), not a wholesale SKU."
+    },
+    {
+      "rank": 3,
+      "risk": "Grant-listing slippage — failure to land on AIC CCDTP catalogue (SG) or SWD I&T Fund catalogue (HK) by Q4 2026 delays HK + SG launch by a full grant cycle, costs ~A$1.5M of Y2 ARR, and lets Tunstall/PCS regional incumbents lock the operator base",
+      "mitigation": "Treat catalogue applications as Y1 product investments, not sales-time tasks; assign a dedicated regulatory/PM owner; submit AIC application by end Q2 2026 and SWD by end Q2 2026 (4–8 wk approval cycles). Build operator-side application support into the sales motion so individual operators can claim their portion within 30 days of contract signature."
+    }
+  ]
+}

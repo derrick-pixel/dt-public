@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Whitespace Atlas — Lumana</title>
+  <meta name="description" content="Internal admin: Lumana whitespace atlas — competitive positioning. Not for public distribution." />
+  <link rel="stylesheet" href="assets/css/site.css">
+  <script src="assets/js/gate.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="assets/vendor/chart.umd.js" defer></script>
+<script type="application/ld+json" data-injected="schema-jsonld">
+  {
+    "@context": "https://schema.org",
+    "@type": "MedicalBusiness",
+    "name": "Lumana",
+    "url": "https://derrick-pixel.github.io/Lumana/",
+    "description": "Lumana is the ambient sensing, real-time workflow, and automatic documentation system for residential aged care. No cameras. No wearables. Dignity-preserving by design.",
+    "logo": "https://derrick-pixel.github.io/Lumana/og-image.jpg",
+    "image": "https://derrick-pixel.github.io/Lumana/og-image.jpg",
+    "areaServed": ["Australia", "Hong Kong", "Singapore"],
+    "founder": {
+      "@type": "Person",
+      "name": "Phuong Nguyen",
+      "jobTitle": "Commercial & Partnerships",
+      "worksFor": "Lumana"
+    },
+    "sameAs": []
+  }
+  </script>
+<script type="application/ld+json" data-injected="schema-jsonld">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Lumana",
+    "url": "https://derrick-pixel.github.io/Lumana/",
+    "description": "Ambient monitoring and workflow software for residential aged care."
+  }
+  </script>
+<style>
+    /* ─── Last-edited stamp · injected ─── */
+    .last-edited-strip {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+      padding: 5px 14px; text-align: right;
+      font-family: ui-monospace, "Share Tech Mono", monospace;
+      font-size: 0.72rem; letter-spacing: 0.05em;
+      color: rgba(140,140,140,0.85);
+      background: rgba(0,0,0,0.03);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .last-edited-strip strong { color: rgba(60,60,60,0.85); font-weight: 500; }
+    #last-edited { color: #d06010; font-weight: 600; }
+    #last-edited.fresh { color: #0a8a4a; }
+    #last-edited.stale { color: #c82040; }
+</style>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+  <div class="sample-data-banner" hidden>SAMPLE DATA — swap /data before shipping</div>
+  <div id="nav-mount"></div>
+
+  <main class="container-wide">
+    <header class="page-head">
+      <div class="page-head-l">
+        <span class="page-tag">Artefact 03 · Whitespace Atlas</span>
+        <h1 class="page-title">Where the heatmap says <em>green</em>, the attack plans say <em>how</em>.</h1>
+        <p class="page-subtitle" id="thesis-sub"></p>
+      </div>
+      <div class="page-meta-r" id="page-meta-r"></div>
+    </header>
+
+<div class="last-edited-strip" role="status" aria-live="polite">
+  <strong>Page last edited:</strong> <span id="last-edited" data-edited="2026-04-29T15:52:53+08:00">checking…</span>
+</div>
+
+
+    <div class="kpi-strip" id="atlas-kpis"></div>
+
+    <section class="section radar-container">
+      <div class="artefact-label">Artefact 03A · Strategy canvas</div>
+      <h2 style="margin-top: 4px;">Where Lumana diverges from the cluster</h2>
+      <p class="radar-thesis" id="thesis"></p>
+      <div style="height: 540px;"><canvas id="radar-canvas"></canvas></div>
+      <p class="muted" id="proj-note" style="margin-top: 12px; font-size: 13px;"></p>
+    </section>
+
+    <section class="section">
+      <div class="artefact-label">Artefact 03B · Segment × Need heatmap</div>
+      <h2 id="heatmap-title" style="margin-top: 4px;">Segment × Need heatmap</h2>
+      <p class="muted">
+        Each cell counts competitors at score ≥ 3 (a buyer would actually consider them for that pair).
+        Click — or tap — any cell for the full specialisation breakdown.
+      </p>
+      <div id="heatmap"></div>
+      <div class="legend">
+        <span><span class="legend-swatch" style="background:#DFF2E5;"></span><strong>Green 0–1</strong> · whitespace · attack</span>
+        <span><span class="legend-swatch" style="background:#FFE9C2;"></span><strong>Amber 2–3</strong> · contested · choose wisely</span>
+        <span><span class="legend-swatch" style="background:#F2B7A4;"></span><strong>Red 4+</strong> · crowded · avoid</span>
+      </div>
+      <div id="cell-detail" class="cell-detail"></div>
+    </section>
+
+    <hr class="section-divider">
+
+    <section class="section">
+      <div class="section-headline">
+        <div>
+          <div class="artefact-label">Artefact 03C · Attack plans</div>
+          <h2 style="margin-top: 4px;">The plays</h2>
+        </div>
+      </div>
+      <p class="section-lede">Each play below maps to a green cell in the atlas above — an under-served segment × need pair where Lumana can win first.</p>
+      <div class="attack-grid" id="attack-plans"></div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { loadAppData, mountSampleBanner, renderAdminNav } from './assets/js/app.js';
+    import { renderRadar } from './assets/js/viz/radar.js';
+    import { renderHeatmap, renderCellDetail, cellCount, cellBand } from './assets/js/viz/heatmap.js';
+    import { h, mount } from './assets/js/dom.js';
+
+    const { competitors, whitespace } = await loadAppData();
+    mountSampleBanner();
+    mount(document.getElementById('nav-mount'), renderAdminNav('whitespace'));
+
+    // ── Editorial header meta
+    mount(document.getElementById('page-meta-r'),
+      h('strong', {}, whitespace.meta.project_name),
+      h('br'),
+      `${whitespace.meta.research_date} · ${competitors.competitors.length} competitors`,
+    );
+
+    document.getElementById('thesis').textContent = whitespace.strategy_canvas.headline_thesis;
+    document.getElementById('thesis-sub').textContent = whitespace.strategy_canvas.headline_thesis;
+    if (whitespace.our_scores_are_projections) {
+      document.getElementById('proj-note').textContent =
+        `Note: ${whitespace.projection_note || 'Lumana scores are MVP projections, not shipped revenue.'}`;
+    }
+
+    // ── KPI strip: green / amber / red cells, attack plays, total TAM
+    const cellsArr = Object.values(whitespace.heatmap.cells || {});
+    const counts = cellsArr.map(cellCount);
+    const greenCells = counts.filter(n => n <= 1).length;
+    const amberCells = counts.filter(n => n >= 2 && n <= 3).length;
+    const redCells   = counts.filter(n => n >= 4).length;
+    const playsN     = (whitespace.attack_plans || []).length;
+    const totalTam   = (whitespace.attack_plans || []).reduce((s, p) => s + (p.tam_estimate_sgd || 0), 0);
+    const fmtTamM    = (n) => `A$${(n / 1_000_000).toFixed(0)}M`;
+
+    mount(document.getElementById('atlas-kpis'),
+      h('div', { class: 'kpi' },
+        h('div', { class: 'kpi-val green' }, String(greenCells)),
+        h('span', { class: 'kpi-lbl' }, 'Green cells · attack'),
+        h('span', { class: 'kpi-sub' }, '≤ 1 competitor at score ≥3'),
+      ),
+      h('div', { class: 'kpi' },
+        h('div', { class: 'kpi-val amber' }, String(amberCells)),
+        h('span', { class: 'kpi-lbl' }, 'Amber cells · contested'),
+        h('span', { class: 'kpi-sub' }, '2–3 credible competitors'),
+      ),
+      h('div', { class: 'kpi' },
+        h('div', { class: 'kpi-val red' }, String(redCells)),
+        h('span', { class: 'kpi-lbl' }, 'Red cells · avoid'),
+        h('span', { class: 'kpi-sub' }, '4+ credible competitors'),
+      ),
+      h('div', { class: 'kpi' },
+        h('div', { class: 'kpi-val' }, String(playsN)),
+        h('span', { class: 'kpi-lbl' }, 'Attack plays drafted'),
+        h('span', { class: 'kpi-sub' }, 'one per priority green cluster'),
+      ),
+      h('div', { class: 'kpi' },
+        h('div', { class: 'kpi-val' }, fmtTamM(totalTam)),
+        h('span', { class: 'kpi-lbl' }, 'Combined attack-plan TAM'),
+        h('span', { class: 'kpi-sub' }, 'AUD / year, addressable'),
+      ),
+    );
+
+    const competitorNames = Object.fromEntries(competitors.competitors.map(c => [c.id, c.name]));
+    competitorNames.diy_do_nothing = competitorNames.diy_do_nothing || 'DIY · Do nothing';
+
+    renderRadar({
+      canvas: document.getElementById('radar-canvas'),
+      dimensions: whitespace.strategy_canvas.dimensions,
+      scores: whitespace.strategy_canvas.scores,
+      competitorNames,
+      max: 5,
+    });
+
+    document.getElementById('heatmap-title').textContent =
+      `Segment × Need heatmap — ${whitespace.heatmap.segments.length} × ${whitespace.heatmap.needs.length}`;
+    const panel = document.getElementById('cell-detail');
+
+    renderCellDetail(panel, null);
+
+    renderHeatmap({
+      container: document.getElementById('heatmap'),
+      segments: whitespace.heatmap.segments,
+      needs: whitespace.heatmap.needs,
+      cells: whitespace.heatmap.cells,
+      onCellClick: detail => {
+        renderCellDetail(panel, detail);
+        if (detail) panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      },
+    });
+
+    // ── Attack plans: editorial .niche cards
+    const fmtTam = (n) => `A$${(n / 1_000_000).toFixed(1)}M`;
+    const niceRank = (r) => `Niche ${String(r).padStart(2, '0')}`;
+
+    mount(document.getElementById('attack-plans'), ...whitespace.attack_plans.map(p =>
+      h('article', { class: 'niche' },
+        h('div', { class: 'niche-rank' }, niceRank(p.rank)),
+        h('div', { class: 'niche-name' }, p.niche_name),
+        h('div', { class: 'niche-icp' }, p.icp),
+        h('div', { class: 'niche-row' },
+          h('div', { class: 'k' }, 'TAM'),
+          h('div', { class: 'v' },
+            h('span', { class: 'tam-num' }, fmtTam(p.tam_estimate_sgd)),
+            ' · ', p.tam_reasoning,
+          ),
+        ),
+        h('div', { class: 'niche-row' },
+          h('div', { class: 'k' }, 'Why gap'),
+          h('div', { class: 'v' }, p.why_gap),
+        ),
+        h('div', { class: 'niche-row' },
+          h('div', { class: 'k' }, 'Why we win'),
+          h('div', { class: 'v' }, p.why_we_win),
+        ),
+        h('div', { class: 'niche-row' },
+          h('div', { class: 'k' }, 'Channel'),
+          h('div', { class: 'v' }, p.gtm.channel),
+        ),
+        h('div', { class: 'niche-row' },
+          h('div', { class: 'k' }, 'Pitch'),
+          h('div', { class: 'v' }, p.gtm.pitch),
+        ),
+        h('div', { class: 'niche-row' },
+          h('div', { class: 'k' }, 'Pricing'),
+          h('div', { class: 'v' }, p.gtm.pricing),
+        ),
+        h('div', { class: 'niche-row' },
+          h('div', { class: 'k' }, 'Content'),
+          h('div', { class: 'v' }, p.gtm.content),
+        ),
+      )
+    ));
+  </script>
+
+<script>
+(function () {
+  const el = document.getElementById('last-edited');
+  if (!el) return;
+  const iso = el.dataset.edited;
+  if (!iso) { el.textContent = '—'; return; }
+  const d = new Date(iso);
+  const fmt = d.toLocaleDateString('en-SG', { year: 'numeric', month: 'short', day: 'numeric' });
+  const ago = Math.floor((Date.now() - d.getTime()) / 86400000);
+  let suffix;
+  if (ago === 0) suffix = 'today';
+  else if (ago === 1) suffix = 'yesterday';
+  else if (ago < 14) suffix = ago + ' days ago';
+  else if (ago < 60) suffix = Math.floor(ago/7) + ' weeks ago';
+  else suffix = Math.floor(ago/30) + ' months ago';
+  el.textContent = fmt + ' · ' + suffix;
+  if (ago <= 7) el.classList.add('fresh');
+  else if (ago > 14) el.classList.add('stale');
+})();
+</script>
+
+</body>
+</html>

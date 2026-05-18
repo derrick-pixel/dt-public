@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report — Lumana</title>
+  <meta name="description" content="Internal admin: Lumana market intelligence report — research synthesis. Not for public distribution." />
+  <link rel="stylesheet" href="assets/css/site.css">
+  <script src="assets/js/gate.js"></script>
+  <link rel="stylesheet" href="assets/css/report.css">
+  <script src="assets/vendor/chart.umd.js" defer></script>
+  <script src="assets/vendor/html2canvas.min.js" defer></script>
+  <script src="assets/vendor/jspdf.umd.min.js" defer></script>
+  <style>
+    .report-shell {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: var(--space-5);
+      align-items: start;
+    }
+    .report-side {
+      position: sticky; top: var(--space-4);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-5);
+      box-shadow: var(--shadow-sm);
+    }
+    .report-side h2 { font-size: 18px; margin: 0 0 var(--space-2); }
+    .report-side .meta-line { font-family: var(--font-mono); font-size: 12px; color: var(--muted); margin-bottom: var(--space-4); }
+    .report-side .stats { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); margin-bottom: var(--space-4); }
+    .report-side .stat-cell { background: var(--card-soft); border-radius: var(--radius-sm); padding: var(--space-3); }
+    .report-side .stat-cell .lbl { font-family: var(--font-mono); font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .report-side .stat-cell .val { font-family: var(--font-display); font-size: 22px; color: var(--brand-secondary); font-weight: 600; line-height: 1; margin-top: 2px; }
+    .download-btn {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--brand-primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-body);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .download-btn:hover:not(:disabled) { background: var(--brand-secondary); }
+    .download-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .download-btn .btn-sub {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.85;
+      margin-top: 2px;
+    }
+    .progress-row {
+      margin-top: var(--space-4);
+      padding: var(--space-3);
+      background: var(--card-soft);
+      border-radius: var(--radius-sm);
+    }
+    .progress-row[hidden] { display: none; }
+    .progress-row progress {
+      width: 100%;
+      height: 8px;
+      appearance: none;
+      border: none;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-row progress::-webkit-progress-bar { background: var(--border); border-radius: 4px; }
+    .progress-row progress::-webkit-progress-value { background: var(--brand-primary); border-radius: 4px; }
+    .progress-row progress::-moz-progress-bar { background: var(--brand-primary); }
+    .progress-row .progress-label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--brand-secondary);
+      margin-top: 6px;
+    }
+    .report-side .last-gen {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: var(--space-2);
+    }
+    .report-side .err {
+      background: #FBE6DE; border-left: 3px solid var(--danger);
+      padding: var(--space-3); border-radius: var(--radius-sm);
+      font-size: 12px; color: var(--danger);
+      margin-top: var(--space-3);
+    }
+    .report-side .help {
+      font-size: 12px; color: var(--muted); line-height: 1.45;
+      margin-top: var(--space-4);
+      padding-top: var(--space-3);
+      border-top: 1px dashed var(--border);
+    }
+    .pdf-root {
+      background: var(--card-soft);
+      padding: var(--space-4);
+      border-radius: var(--radius-md);
+    }
+    @media (max-width: 1100px) {
+      .report-shell { grid-template-columns: 1fr; }
+      .report-side { position: relative; top: auto; }
+    }
+  
+    /* ─── Last-edited stamp · injected ─── */
+    .last-edited-strip {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+      padding: 5px 14px; text-align: right;
+      font-family: ui-monospace, "Share Tech Mono", monospace;
+      font-size: 0.72rem; letter-spacing: 0.05em;
+      color: rgba(140,140,140,0.85);
+      background: rgba(0,0,0,0.03);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .last-edited-strip strong { color: rgba(60,60,60,0.85); font-weight: 500; }
+    #last-edited { color: #d06010; font-weight: 600; }
+    #last-edited.fresh { color: #0a8a4a; }
+    #last-edited.stale { color: #c82040; }
+  </style>
+<script type="application/ld+json" data-injected="schema-jsonld">
+  {
+    "@context": "https://schema.org",
+    "@type": "MedicalBusiness",
+    "name": "Lumana",
+    "url": "https://derrick-pixel.github.io/Lumana/",
+    "description": "Lumana is the ambient sensing, real-time workflow, and automatic documentation system for residential aged care. No cameras. No wearables. Dignity-preserving by design.",
+    "logo": "https://derrick-pixel.github.io/Lumana/og-image.jpg",
+    "image": "https://derrick-pixel.github.io/Lumana/og-image.jpg",
+    "areaServed": ["Australia", "Hong Kong", "Singapore"],
+    "founder": {
+      "@type": "Person",
+      "name": "Phuong Nguyen",
+      "jobTitle": "Commercial & Partnerships",
+      "worksFor": "Lumana"
+    },
+    "sameAs": []
+  }
+  </script>
+<script type="application/ld+json" data-injected="schema-jsonld">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Lumana",
+    "url": "https://derrick-pixel.github.io/Lumana/",
+    "description": "Ambient monitoring and workflow software for residential aged care."
+  }
+  </script>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+  <div class="sample-data-banner" hidden>SAMPLE DATA — swap /data before shipping</div>
+  <div id="nav-mount"></div>
+
+  
+<div class="last-edited-strip" role="status" aria-live="polite">
+  <strong>Page last edited:</strong> <span id="last-edited" data-edited="2026-04-29T15:52:53+08:00">checking…</span>
+</div>
+
+<main class="container-wide">
+    <div style="margin-bottom: var(--space-5);">
+      <span class="kicker">Artefact 05 · Report</span>
+      <h1 style="margin: 0;">Compiled report — preview & download</h1>
+      <p class="muted" id="meta-line" style="margin-top: 4px;"></p>
+    </div>
+
+    <div class="report-shell">
+      <aside class="report-side">
+        <h2>Generate PDF</h2>
+        <div class="meta-line" id="side-meta">Loading…</div>
+
+        <div class="stats">
+          <div class="stat-cell"><div class="lbl">Pages</div><div class="val" id="stat-pages">—</div></div>
+          <div class="stat-cell"><div class="lbl">Sections</div><div class="val" id="stat-sections">—</div></div>
+          <div class="stat-cell"><div class="lbl">Competitors</div><div class="val" id="stat-comps">—</div></div>
+          <div class="stat-cell"><div class="lbl">Attack plans</div><div class="val" id="stat-attacks">—</div></div>
+        </div>
+
+        <button id="download-btn" class="download-btn" type="button" disabled>
+          Loading project data…
+          <span class="btn-sub" id="btn-sub">html2canvas + jsPDF</span>
+        </button>
+
+        <div id="progress-row" class="progress-row" hidden>
+          <progress id="progress-bar" max="100" value="0"></progress>
+          <span id="progress-text" class="progress-label">Preparing…</span>
+        </div>
+
+        <div id="last-gen" class="last-gen" hidden></div>
+        <div id="err-box" class="err" hidden></div>
+
+        <p class="help">
+          The PDF is generated client-side from the same DOM you see at right.
+          Brand tokens (teal, cream, accents) drive every accent — no hard-coded colours.
+          Filename uses the project slug plus the research date.
+        </p>
+      </aside>
+
+      <div id="pdf-root" class="pdf-root"></div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { loadAppData, mountSampleBanner, renderAdminNav } from './assets/js/app.js';
+    import { buildSections, renderPages } from './assets/js/report/page-templates.js';
+    import { generatePDF } from './assets/js/report/pdf-generator.js';
+    import { mount } from './assets/js/dom.js';
+
+    const btn = document.getElementById('download-btn');
+    const btnSub = document.getElementById('btn-sub');
+    const progRow = document.getElementById('progress-row');
+    const progBar = document.getElementById('progress-bar');
+    const progText = document.getElementById('progress-text');
+    const errBox = document.getElementById('err-box');
+    const lastGen = document.getElementById('last-gen');
+
+    function setError(msg) {
+      errBox.textContent = msg;
+      errBox.hidden = false;
+    }
+
+    try {
+      const data = await loadAppData();
+      mountSampleBanner();
+      mount(document.getElementById('nav-mount'), renderAdminNav('report'));
+
+      const meta = data.competitors.meta;
+      document.getElementById('meta-line').textContent =
+        `${meta.project_name} · research_date ${meta.research_date}`;
+      document.getElementById('side-meta').textContent =
+        `${meta.project_name} · ${meta.research_date}`;
+
+      const root = document.getElementById('pdf-root');
+      const sections = buildSections(data);
+      renderPages(root, sections, data);
+
+      const pageCount = root.querySelectorAll('.pdf-page').length;
+      document.getElementById('stat-pages').textContent = String(pageCount);
+      document.getElementById('stat-sections').textContent = String(sections.length - 2); // exclude cover + TOC
+      document.getElementById('stat-comps').textContent = String(data.competitors.competitors.length);
+      document.getElementById('stat-attacks').textContent = String((data.whitespace.attack_plans || []).length);
+
+      // Filename per brief: Lumana-CompetitorIntel-<research_date>.pdf
+      const projShort = (meta.project_name.split('—')[0] || meta.project_name).trim().replace(/\s+/g, '-');
+      const filename = `${projShort}-CompetitorIntel-${meta.research_date}.pdf`;
+      btnSub.textContent = filename;
+
+      btn.disabled = false;
+      btn.firstChild.textContent = 'Download PDF';
+
+      btn.addEventListener('click', async () => {
+        errBox.hidden = true;
+        btn.disabled = true;
+        btn.firstChild.textContent = 'Generating…';
+        progRow.hidden = false;
+        progBar.value = 0;
+        progText.textContent = 'Preparing pages…';
+        try {
+          await generatePDF({
+            root,
+            filename,
+            onProgress: (done, total) => {
+              const pct = Math.round((done / total) * 100);
+              progBar.value = pct;
+              progText.textContent = `Rendering page ${done} of ${total}`;
+              btn.firstChild.textContent = `Generating… (${done}/${total})`;
+            },
+          });
+          const t = new Date();
+          const hh = String(t.getHours()).padStart(2, '0');
+          const mm = String(t.getMinutes()).padStart(2, '0');
+          lastGen.textContent = `Last generated ${hh}:${mm}`;
+          lastGen.hidden = false;
+        } catch (err) {
+          console.error('PDF generation failed:', err);
+          setError(`Generation failed: ${err.message || err}`);
+        } finally {
+          btn.disabled = false;
+          btn.firstChild.textContent = 'Download PDF';
+          progRow.hidden = true;
+        }
+      });
+    } catch (err) {
+      console.error('Report bootstrap failed:', err);
+      setError(`Bootstrap failed: ${err.message || err}`);
+    }
+  </script>
+
+<script>
+(function () {
+  const el = document.getElementById('last-edited');
+  if (!el) return;
+  const iso = el.dataset.edited;
+  if (!iso) { el.textContent = '—'; return; }
+  const d = new Date(iso);
+  const fmt = d.toLocaleDateString('en-SG', { year: 'numeric', month: 'short', day: 'numeric' });
+  const ago = Math.floor((Date.now() - d.getTime()) / 86400000);
+  let suffix;
+  if (ago === 0) suffix = 'today';
+  else if (ago === 1) suffix = 'yesterday';
+  else if (ago < 14) suffix = ago + ' days ago';
+  else if (ago < 60) suffix = Math.floor(ago/7) + ' weeks ago';
+  else suffix = Math.floor(ago/30) + ' months ago';
+  el.textContent = fmt + ' · ' + suffix;
+  if (ago <= 7) el.classList.add('fresh');
+  else if (ago > 14) el.classList.add('stale');
+})();
+</script>
+
+</body>
+</html>

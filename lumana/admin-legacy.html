@@ -1,0 +1,1948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, follow" />
+  <title>Lumana — Admin: Competitor & Market Insights</title>
+  <meta name="description" content="Internal admin: Lumana competitor and market insights — 30+ aged-care platforms benchmarked, pricing models, personas. Not for public distribution." />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://lumanasolutions.com/admin.html" />
+  <meta property="og:title" content="Lumana — Admin: Competitor & Market Insights" />
+  <meta property="og:description" content="32 competitors plus pricing strategy: models, personas, WTP, and next-best alternatives. One consolidated admin view." />
+  <meta property="og:image" content="https://derrick-pixel.github.io/Lumana/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Manrope', system-ui, sans-serif;
+      font-size: 14px; line-height: 1.6;
+      color: var(--text); background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; }
+
+    :root {
+      --bg:         #FBF8F2;
+      --surface:    #FFFFFF;
+      --card:       #FFFFFF;
+      --card-soft:  #F4F0E6;
+      --mint:       #DFF2E5;
+      --mint-2:     #BEE4CD;
+      --border:     #E8E0CF;
+      --border2:    #D6CCB5;
+      --text:       #1B2A26;
+      --muted:      #55655F;
+      --muted2:     #7A8882;
+      --accent:     #0D6B5C;
+      --accent-dk:  #08564A;
+      --accent2:    #C8860A;
+      --ink-hero:   #0F2420;
+      --danger:     #C7421E;
+      --shadow-sm:  0 1px 2px rgba(15,36,32,0.04);
+      --shadow-md:  0 6px 22px rgba(15,36,32,0.08);
+      --shadow-lg:  0 24px 56px rgba(15,36,32,0.12);
+      --serif:      'Noto Serif', Georgia, serif;
+    }
+
+    h1, h2, h3, h4, .serif {
+      font-family: var(--serif); color: var(--ink-hero); font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    h1 { font-size: clamp(2rem, 4.5vw, 3.2rem); line-height: 1.12; }
+    h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); line-height: 1.2; }
+    h3 { font-size: 1.18rem; line-height: 1.35; }
+    p { color: var(--muted); }
+    .label {
+      font-size: 0.66rem; font-weight: 700;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .container { max-width: 1300px; margin: 0 auto; padding: 0 28px; }
+    section { padding: 72px 0; }
+    @media (max-width: 768px) { section { padding: 48px 0; } }
+    .section-head { max-width: 780px; margin-bottom: 40px; }
+    .section-head .label { display: inline-block; margin-bottom: 12px; }
+    .section-head h2 { margin-bottom: 14px; }
+    .section-head p { max-width: 66ch; }
+
+    nav.topnav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: 68px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px;
+      background: rgba(251, 248, 242, 0.9);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .brand {
+      font-family: var(--serif); font-size: 1.4rem;
+      font-weight: 700; letter-spacing: 0.18em; color: var(--accent);
+    }
+    .nav-links {
+      display: flex; gap: 30px; align-items: center;
+      font-size: 0.74rem; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .nav-links a { transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    .nav-links a.active { font-weight: 700; }
+    .nav-cta {
+      background: var(--accent); color: #fff;
+      padding: 11px 20px; border-radius: 999px;
+      border: none; font-weight: 600; font-size: 0.72rem;
+      letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .hamburger { display: none; background: none; border: none; padding: 6px; }
+    .hamburger span { display: block; width: 22px; height: 2px; margin: 4px 0; background: var(--ink-hero); transition: 0.3s; }
+    .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+    .mobile-menu {
+      position: fixed; inset: 68px 0 auto 0;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+      padding: 22px 28px 28px;
+      display: none; flex-direction: column; gap: 16px;
+      font-size: 0.95rem; color: var(--text); z-index: 190;
+    }
+    .mobile-menu.open { display: flex; }
+    @media (max-width: 960px) {
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: block; }
+    }
+
+    .admin-nav {
+      position: sticky; top: 68px; z-index: 100;
+      background: var(--card-soft);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+    }
+    .admin-nav .inner {
+      max-width: 1300px; margin: 0 auto; padding: 0 28px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    }
+    .admin-nav .crumbs {
+      display: flex; gap: 8px; align-items: center;
+      font-size: 0.66rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .admin-nav .crumbs .dot { width: 4px; height: 4px; background: var(--muted2); border-radius: 50%; }
+    .admin-nav .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .admin-nav .tabs a {
+      padding: 9px 18px; border-radius: 999px;
+      background: var(--card); border: 1px solid var(--border);
+      font-size: 0.74rem; font-weight: 600; color: var(--muted);
+      transition: all 0.2s;
+    }
+    .admin-nav .tabs a:hover { color: var(--accent); border-color: var(--accent); }
+    .admin-nav .tabs a.active { background: var(--ink-hero); color: #fff; border-color: var(--ink-hero); }
+
+    .hero-admin {
+      padding: 132px 0 56px;
+      background:
+        radial-gradient(1000px 500px at 90% 0%, rgba(13,107,92,0.08), transparent 70%),
+        var(--bg);
+    }
+    .hero-admin .label { margin-bottom: 14px; display: inline-block; }
+    .hero-admin h1 { max-width: 26ch; margin-bottom: 18px; }
+    .hero-admin h1 em { color: var(--accent); font-style: italic; font-family: var(--serif); }
+    .hero-admin p { font-size: 1.1rem; max-width: 62ch; }
+
+    .kpi-strip {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      gap: 1px; margin-top: 40px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    @media (max-width: 920px) { .kpi-strip { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px) { .kpi-strip { grid-template-columns: 1fr; } }
+    .kpi { background: var(--card); padding: 22px 24px; }
+    .kpi .num {
+      font-family: var(--serif); font-size: 1.75rem; font-weight: 600;
+      color: var(--ink-hero); line-height: 1.05;
+    }
+    .kpi .num .small { font-size: 0.78rem; color: var(--muted2); margin-left: 4px; font-weight: 500; font-family: 'Manrope'; }
+    .kpi p { font-size: 0.72rem; margin-top: 6px; color: var(--muted2); font-weight: 500; }
+
+    .legend { display: flex; gap: 22px; flex-wrap: wrap; margin: 0 0 24px; font-size: 0.74rem; color: var(--muted); }
+    .legend-item { display: flex; align-items: center; gap: 8px; }
+    .privacy-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .p-green { background: #1F8F52; }
+    .p-amber { background: #D99A0F; }
+    .p-red   { background: #BE3E1D; }
+
+    .comp-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .comp-scroll { overflow-x: auto; }
+    table.comp {
+      width: 100%; min-width: 1180px;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    table.comp thead th {
+      background: var(--card-soft);
+      color: var(--muted);
+      font-family: 'Manrope', sans-serif;
+      font-weight: 700; font-size: 0.62rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      text-align: left;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    table.comp tbody td {
+      padding: 16px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      color: var(--text);
+    }
+    table.comp tbody tr:last-child td { border-bottom: none; }
+    table.comp tbody tr:hover { background: #FDFAF1; }
+    table.comp .co-name {
+      font-family: var(--serif); font-size: 1rem; font-weight: 600; color: var(--ink-hero);
+    }
+    table.comp .co-url {
+      display: block; font-size: 0.68rem; color: var(--muted2); margin-top: 2px;
+    }
+    table.comp .privacy {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 0.74rem; color: var(--text); white-space: nowrap;
+    }
+    .fund-chip {
+      display: inline-block; padding: 3px 10px; border-radius: 999px;
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em;
+      background: var(--mint); color: var(--accent-dk);
+    }
+    .fund-chip.lg { background: rgba(13,107,92,0.12); }
+    .fund-chip.sm { background: var(--card-soft); color: var(--muted2); }
+    .stars { color: var(--accent2); letter-spacing: 1px; font-size: 0.8rem; }
+    .stars-empty { color: #D9CDAF; }
+    .qty-bar {
+      display: block; width: 100px; height: 6px;
+      background: var(--card-soft); border-radius: 4px; overflow: hidden;
+      margin-bottom: 4px;
+    }
+    .qty-bar span {
+      display: block; height: 100%; background: linear-gradient(90deg, #B2E0C8, var(--accent));
+    }
+    tr.lumana-row { background: var(--mint); }
+    tr.lumana-row td { border-bottom: 1px solid var(--mint-2); font-weight: 500; }
+    tr.lumana-row .co-name { color: var(--accent-dk); }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    @media (max-width: 980px) { .grid-3 { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 680px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+    .panel {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 28px;
+      box-shadow: var(--shadow-sm);
+    }
+    .panel .mini-label {
+      font-size: 0.64rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 14px; display: block;
+    }
+    .panel h3 { font-size: 1.25rem; margin-bottom: 10px; }
+    .panel p { font-size: 0.88rem; line-height: 1.65; }
+
+    .quadrant {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 30px; box-shadow: var(--shadow-sm);
+    }
+    .quadrant h3 { margin-bottom: 6px; }
+    .quadrant .caption { font-size: 0.82rem; color: var(--muted2); margin-bottom: 22px; }
+    .quad-map {
+      position: relative;
+      width: 100%;
+      padding-bottom: 68%;
+      background:
+        linear-gradient(to right, rgba(13,107,92,0.03), rgba(13,107,92,0.07)),
+        var(--card-soft);
+      border: 1px dashed var(--border2);
+      border-radius: 14px;
+    }
+    .quad-map::before, .quad-map::after { content: ""; position: absolute; background: var(--border2); }
+    .quad-map::before { top: 8%; bottom: 8%; left: 50%; width: 1px; }
+    .quad-map::after  { left: 8%; right: 8%; top: 50%; height: 1px; }
+    .axis {
+      position: absolute;
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .axis.x-left  { left: 14px; top: 50%; transform: translateY(-50%); }
+    .axis.x-right { right: 14px; top: 50%; transform: translateY(-50%); text-align: right; }
+    .axis.y-top   { top: 14px; left: 50%; transform: translateX(-50%); }
+    .axis.y-bot   { bottom: 14px; left: 50%; transform: translateX(-50%); }
+    .dot-comp {
+      position: absolute;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--ink-hero); color: #fff;
+      transform: translate(-50%, -50%);
+      cursor: default;
+    }
+    .dot-comp.green { background: #1F8F52; }
+    .dot-comp.amber { background: #D99A0F; }
+    .dot-comp.red   { background: #BE3E1D; }
+    .dot-comp.lumana {
+      width: 18px; height: 18px;
+      background: var(--accent);
+      box-shadow: 0 0 0 5px rgba(13,107,92,0.18);
+    }
+    .dot-label {
+      position: absolute;
+      transform: translate(-50%, -160%);
+      font-size: 0.62rem;
+      color: var(--ink-hero);
+      font-weight: 600;
+      white-space: nowrap;
+      font-family: 'Manrope';
+      pointer-events: none;
+    }
+    .dot-label.lumana { color: var(--accent-dk); font-weight: 700; }
+
+    .review-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 22px 24px; box-shadow: var(--shadow-sm);
+    }
+    .review-card .co {
+      font-family: var(--serif); font-size: 1.05rem; font-weight: 600;
+      color: var(--ink-hero);
+    }
+    .review-card .stars { margin: 6px 0 10px; display: block; }
+    .review-card blockquote {
+      font-family: var(--serif); font-style: italic;
+      font-size: 0.88rem; color: var(--text); line-height: 1.5;
+      padding-left: 16px; border-left: 3px solid var(--accent2);
+    }
+    .review-card .src { font-size: 0.68rem; color: var(--muted2); margin-top: 10px; }
+
+    .region-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    @media (max-width: 900px) { .region-grid { grid-template-columns: 1fr; } }
+    .region-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 28px; box-shadow: var(--shadow-sm);
+    }
+    .region-card h3 { margin-bottom: 4px; }
+    .region-card .flag-line {
+      font-size: 0.7rem; color: var(--muted2); text-transform: uppercase;
+      letter-spacing: 0.12em; font-weight: 700; margin-bottom: 14px;
+    }
+    .region-card .big {
+      font-family: var(--serif); font-size: 2.2rem; font-weight: 600;
+      color: var(--accent); line-height: 1; margin: 12px 0;
+    }
+    .region-card .big small {
+      font-size: 0.7rem; color: var(--muted); display: block;
+      font-family: 'Manrope'; font-weight: 500; letter-spacing: 0.04em; margin-top: 4px;
+    }
+    .region-card ul { list-style: none; margin-top: 14px; }
+    .region-card li {
+      padding: 8px 0 8px 20px; position: relative;
+      font-size: 0.82rem; color: var(--text);
+      border-top: 1px dashed var(--border);
+    }
+    .region-card li:first-child { border-top: none; }
+    .region-card li::before { content: "\2022"; position: absolute; left: 0; top: 8px; color: var(--accent); }
+
+    .score-row {
+      display: grid; grid-template-columns: 160px 1fr 100px;
+      align-items: center; gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.82rem;
+    }
+    .score-row:last-child { border-bottom: none; }
+    .score-row .name { color: var(--ink-hero); font-weight: 600; }
+    .score-bar { height: 8px; background: var(--card-soft); border-radius: 6px; overflow: hidden; }
+    .score-bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent)); }
+    .score-row .val { text-align: right; color: var(--muted2); font-weight: 500; font-size: 0.72rem; }
+    .score-row.hi .name { color: var(--accent-dk); }
+    .score-row.hi .val { color: var(--accent-dk); font-weight: 700; font-size: 0.78rem; }
+    .score-row.hi .score-bar span { background: linear-gradient(90deg, var(--accent), #54C89B); }
+
+    .rationale { background: var(--ink-hero); color: #E6EEEB; padding: 80px 0; }
+    .rationale h2 { color: #FFFDF8; }
+    .rationale .lede { color: #A5BDB6; }
+    .rationale .panel {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      color: #DCE6E2;
+    }
+    .rationale .panel h3 { color: #FFFCF6; }
+    .rationale .panel p { color: #A5BDB6; }
+    .rationale .panel .mini-label { color: #8FE8CB; }
+
+    footer {
+      background: #0A1A17; color: #8DA49C; padding: 44px 0 26px; font-size: 0.78rem;
+      text-align: center;
+    }
+    footer .brand-footer {
+      font-family: var(--serif); font-size: 1.3rem; letter-spacing: 0.18em;
+      color: #EAF2EE; margin-bottom: 8px;
+    }
+
+    /* ── Pricing / market insights additions ──────────────────────────── */
+
+    /* Scenario strip */
+    .scenario-strip {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1px; margin-top: 40px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    @media (max-width: 820px) { .scenario-strip { grid-template-columns: 1fr; } }
+    .scen {
+      background: var(--card); padding: 26px 28px;
+    }
+    .scen.base { background: var(--mint); }
+    .scen .label2 { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted2); margin-bottom: 8px; }
+    .scen.base .label2 { color: var(--accent-dk); }
+    .scen .title { font-family: var(--serif); font-size: 1.2rem; color: var(--ink-hero); font-weight: 600; margin-bottom: 10px; }
+    .scen .price { font-family: var(--serif); font-size: 2.2rem; color: var(--ink-hero); font-weight: 600; line-height: 1; }
+    .scen .price small { font-size: 0.74rem; color: var(--muted); font-weight: 500; font-family: 'Manrope'; display: block; margin-top: 4px; }
+    .scen ul { list-style: none; margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--border); font-size: 0.8rem; color: var(--text); }
+    .scen.base ul { border-top-color: var(--mint-2); }
+    .scen li { padding: 5px 0; color: var(--muted); }
+    .scen li strong { color: var(--ink-hero); }
+
+    /* Pricing models grid */
+    .model-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+    @media (max-width: 900px) { .model-grid { grid-template-columns: 1fr; } }
+    .model {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 30px; box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+    .model.recommended {
+      background: linear-gradient(175deg, #F2FBF6 0%, #DFF2E5 100%);
+      border: 1.5px solid var(--accent);
+      box-shadow: 0 20px 50px rgba(13,107,92,0.14);
+    }
+    .model .tag-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 12px; flex-wrap: wrap; }
+    .model .chip {
+      display: inline-block; padding: 4px 12px; border-radius: 999px;
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      background: var(--card-soft); color: var(--muted);
+    }
+    .model.recommended .chip { background: var(--accent); color: #fff; }
+    .model .score {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.72rem; color: var(--muted2); font-weight: 600;
+    }
+    .model .score .bar {
+      display: inline-block; width: 58px; height: 6px; border-radius: 3px;
+      background: var(--border); overflow: hidden;
+    }
+    .model .score .bar span {
+      display: block; height: 100%; background: var(--accent);
+    }
+    .model h3 { margin: 4px 0 4px; font-size: 1.3rem; }
+    .model .sub {
+      font-family: var(--serif); font-style: italic;
+      color: var(--muted); font-size: 0.92rem; margin-bottom: 16px;
+    }
+    .model .hl {
+      padding: 12px 16px; margin: 14px 0;
+      background: rgba(13,107,92,0.06);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.86rem; color: var(--ink-hero);
+    }
+    .model.recommended .hl { background: rgba(255,255,255,0.6); }
+    .model .pro-con { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 18px; }
+    .model .pros, .model .cons { font-size: 0.78rem; }
+    .model .pros h4, .model .cons h4 {
+      font-family: 'Manrope'; font-size: 0.64rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .model .pros h4 { color: var(--accent); }
+    .model .cons h4 { color: #B6391C; }
+    .model .pros ul, .model .cons ul { list-style: none; }
+    .model .pros li, .model .cons li {
+      padding: 5px 0 5px 18px;
+      position: relative;
+      color: var(--text); line-height: 1.55;
+      border-top: 1px dashed var(--border);
+    }
+    .model .pros li:first-child, .model .cons li:first-child { border-top: none; }
+    .model .pros li::before { content: "\2713"; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+    .model .cons li::before { content: "\2715"; position: absolute; left: 0; color: #B6391C; font-weight: 700; }
+
+    /* Persona cards */
+    .persona-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    @media (max-width: 980px) { .persona-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 680px) { .persona-grid { grid-template-columns: 1fr; } }
+    .persona {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 28px;
+      box-shadow: var(--shadow-sm);
+    }
+    .persona .avatar {
+      width: 60px; height: 60px; border-radius: 50%;
+      background: var(--mint);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif); font-weight: 600; color: var(--accent-dk);
+      font-size: 1.3rem;
+      margin-bottom: 18px;
+    }
+    .persona h3 { margin-bottom: 4px; font-size: 1.3rem; }
+    .persona .role { font-size: 0.74rem; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; margin-bottom: 14px; }
+    .persona .attr { display: flex; justify-content: space-between; font-size: 0.78rem; padding: 7px 0; border-top: 1px dashed var(--border); }
+    .persona .attr:first-of-type { border-top: 1px solid var(--border); margin-top: 14px; padding-top: 12px; }
+    .persona .attr span { color: var(--muted2); font-weight: 500; }
+    .persona .attr strong { color: var(--ink-hero); text-align: right; max-width: 58%; font-weight: 600; }
+    .persona .wtp {
+      margin-top: 18px; padding: 14px 16px;
+      background: var(--card-soft); border-radius: 10px;
+      font-size: 0.82rem; color: var(--text);
+    }
+    .persona .wtp .big {
+      font-family: var(--serif); font-size: 1.4rem; font-weight: 600;
+      color: var(--accent); display: block; margin-bottom: 4px;
+    }
+
+    /* WTP chart */
+    .wtp-chart {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 34px;
+      box-shadow: var(--shadow-sm);
+    }
+    .wtp-row { display: grid; grid-template-columns: 200px 1fr 120px; align-items: center; gap: 18px; padding: 14px 0; border-bottom: 1px solid var(--border); font-size: 0.86rem; }
+    .wtp-row:last-child { border-bottom: none; }
+    .wtp-row .persona-name { color: var(--ink-hero); font-weight: 600; }
+    .wtp-row .persona-name small { display: block; color: var(--muted2); font-size: 0.7rem; font-weight: 500; margin-top: 2px; }
+    .wtp-track {
+      position: relative;
+      height: 14px;
+      background: var(--card-soft);
+      border-radius: 7px;
+    }
+    .wtp-band {
+      position: absolute; top: 0; bottom: 0;
+      background: linear-gradient(90deg, rgba(200,134,10,0.3), var(--accent));
+      border-radius: 7px;
+    }
+    .wtp-mark {
+      position: absolute; top: -4px;
+      width: 3px; height: 22px;
+      background: var(--ink-hero);
+    }
+    .wtp-val { text-align: right; color: var(--accent-dk); font-weight: 700; font-family: var(--serif); font-size: 1rem; }
+    .wtp-val small { display: block; color: var(--muted2); font-weight: 500; font-size: 0.66rem; font-family: 'Manrope'; }
+
+    /* NBA table */
+    .nba-table {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-sm);
+    }
+    .nba-row {
+      display: grid; grid-template-columns: 1.1fr 1.8fr 1fr 1fr 1.4fr;
+      padding: 18px 24px; border-bottom: 1px solid var(--border);
+      align-items: start; font-size: 0.84rem; gap: 16px;
+    }
+    .nba-row:last-child { border-bottom: none; }
+    .nba-row.head {
+      background: var(--card-soft);
+      font-size: 0.62rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .nba-row .alt-name { font-family: var(--serif); font-size: 1rem; font-weight: 600; color: var(--ink-hero); }
+    .nba-row .friction { font-family: var(--serif); font-style: italic; color: var(--accent2); font-weight: 600; }
+    @media (max-width: 860px) {
+      .nba-row { grid-template-columns: 1fr; gap: 6px; padding: 18px; }
+      .nba-row.head { display: none; }
+      .nba-row .mobile-label { font-size: 0.58rem; color: var(--muted2); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; display: inline-block; margin-right: 6px; }
+    }
+    .mobile-label { display: none; }
+    @media (max-width: 860px) { .mobile-label { display: inline-block; } }
+
+    /* Sensitivity */
+    .sens-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+    }
+    @media (max-width: 820px) { .sens-grid { grid-template-columns: 1fr; } }
+    .sens-col { background: var(--card); padding: 30px 28px; }
+    .sens-col .label2 { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .sens-col h3 { font-size: 1.2rem; margin-bottom: 18px; }
+    .sens-col .big {
+      font-family: var(--serif); font-size: 2.1rem; font-weight: 600; color: var(--ink-hero); line-height: 1;
+      margin: 14px 0 6px;
+    }
+    .sens-col .delta { font-size: 0.72rem; color: var(--muted2); }
+    .sens-col .stat-row { display: flex; justify-content: space-between; padding: 7px 0; border-top: 1px dashed var(--border); font-size: 0.78rem; }
+    .sens-col .stat-row strong { color: var(--ink-hero); }
+    .sens-col.base { background: var(--mint); }
+    .sens-col.base .label2, .sens-col.base .big { color: var(--accent-dk); }
+
+    /* Recommendation */
+    .reco {
+      background: var(--ink-hero); color: #E6EEEB; padding: 80px 0;
+    }
+    .reco h2 { color: #FFFDF8; }
+    .reco .lede { color: #A5BDB6; }
+    .reco .card-dark {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 16px; padding: 30px;
+      margin-top: 28px;
+    }
+    .reco .card-dark h3 { color: #FFFCF6; margin-bottom: 12px; }
+    .reco .card-dark p { color: #A5BDB6; line-height: 1.7; font-size: 0.92rem; }
+    .reco .bullets { list-style: none; margin-top: 16px; }
+    .reco .bullets li { padding: 10px 0 10px 22px; position: relative; font-size: 0.88rem; color: #DCE6E2; border-top: 1px dashed rgba(255,255,255,0.12); }
+    .reco .bullets li:first-child { border-top: none; }
+    .reco .bullets li::before {
+      content: ""; position: absolute; left: 0; top: 18px; width: 10px; height: 2px;
+      background: #8FE8CB;
+    }
+    .reco strong { color: #FFFCF6; }
+
+    /* In-page anchor offset for sticky topnav + admin-nav */
+    #competitor, #pricing { scroll-margin-top: 132px; }
+
+    .animate { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .animate.visible { opacity: 1; transform: translateY(0); }
+  </style>
+  <!-- Favicon set -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
+  <link rel="mask-icon" href="safari-pinned-tab.svg" color="#fffbeb" />
+  <meta name="theme-color" content="#0d9488" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+<script type="application/ld+json" data-injected="schema-jsonld">
+  {
+    "@context": "https://schema.org",
+    "@type": "MedicalBusiness",
+    "name": "Lumana",
+    "url": "https://derrick-pixel.github.io/Lumana/",
+    "description": "Lumana is the ambient sensing, real-time workflow, and automatic documentation system for residential aged care. No cameras. No wearables. Dignity-preserving by design.",
+    "logo": "https://derrick-pixel.github.io/Lumana/og-image.jpg",
+    "image": "https://derrick-pixel.github.io/Lumana/og-image.jpg",
+    "areaServed": ["Australia", "Hong Kong", "Singapore"],
+    "founder": {
+      "@type": "Person",
+      "name": "Phuong Nguyen",
+      "jobTitle": "Commercial & Partnerships",
+      "worksFor": "Lumana"
+    },
+    "sameAs": []
+  }
+  </script>
+<script type="application/ld+json" data-injected="schema-jsonld">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Lumana",
+    "url": "https://derrick-pixel.github.io/Lumana/",
+    "description": "Ambient monitoring and workflow software for residential aged care."
+  }
+  </script>
+</head>
+<body>
+
+  <nav class="topnav">
+    <a href="index.html" class="brand">LUMANA</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="index.html#solution">Solution</a>
+      <a href="index.html#edge">Competitive edge</a>
+      <a href="index.html#pricing">Pricing</a>
+    </div>
+    <button class="nav-cta" onclick="window.location.href='index.html#cta-final'">Request pilot</button>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+  </nav>
+<main>
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="index.html">Home</a>
+    <a href="index.html#solution">Solution</a>
+    <a href="index.html#edge">Competitive edge</a>
+    <a href="index.html#pricing">Pricing</a>
+  </div>
+
+  <div class="admin-nav">
+    <div class="inner">
+      <div class="crumbs">
+        <span>Admin</span>
+        <span class="dot"></span>
+        <span style="color:var(--accent);">Competitor &amp; market insights</span>
+      </div>
+      <div class="tabs">
+        <a href="#competitor" class="active">Competitor Analysis</a>
+        <a href="#pricing">Market &amp; Pricing</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="competitor">
+  <section class="hero-admin">
+    <div class="container">
+      <p class="label">Product &middot; market &middot; quality &middot; reviews</p>
+      <h1>32 global competitors, analysed on what matters to operators — <em>not on how pretty their websites look.</em></h1>
+      <p>We stripped out marketing copy and focused on four things operators actually care about: the product itself, the market it serves, the quality of the detection (accuracy, false alarms, field evidence), and what customers say in real deployments and online reviews.</p>
+
+      <div class="kpi-strip">
+        <div class="kpi"><div class="num">32</div><p>Competitors analysed</p></div>
+        <div class="kpi"><div class="num">$38.7B <span class="small">2026</span></div><p>Australian aged-care residential market (IBISWorld)</p></div>
+        <div class="kpi"><div class="num">$4.2B <span class="small">2030e</span></div><p>Global eldercare monitoring TAM</p></div>
+        <div class="kpi"><div class="num">~$80 <span class="small">/bed/mo</span></div><p>Median blended price — sensing + workflow</p></div>
+        <div class="kpi"><div class="num">0</div><p>Close sense &rarr; workflow &rarr; documentation</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <p class="label">Strategic map</p>
+        <h2>Dignity vs Workflow — the gap Lumana fills.</h2>
+        <p>Horizontal axis: dignity / privacy (camera &rarr; non-imaging). Vertical axis: workflow depth (raw sensing &rarr; closed-loop documentation). Lumana is the only player top-right.</p>
+      </div>
+
+      <div class="quadrant">
+        <h3>Competitor positioning map</h3>
+        <p class="caption">Dots colored by privacy profile. Top-right = dignified + full-workflow. Hover over a dot for the company name.</p>
+        <div class="quad-map" id="quadMap">
+          <div class="axis x-left">&larr; Camera / video</div>
+          <div class="axis x-right">Non-imaging &rarr;</div>
+          <div class="axis y-top">Workflow &amp; records</div>
+          <div class="axis y-bot">Detection only</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:24px;">
+    <div class="container">
+      <div class="section-head">
+        <p class="label">Full competitor grid</p>
+        <h2>32 vendors &middot; product, modality, privacy, traction, quality score.</h2>
+        <p>Quality score (0–10) blends online reviews, clinical evidence strength, false-alarm rate, deployment volume, and workflow depth. Sources: AgeTech Labs, AJMC clinical studies, NHS PMC economic evaluations, Medical Device Network, Fierce Biotech, Crunchbase, PRNewswire, Amazon / Capterra reviews.</p>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item"><span class="privacy-dot p-green"></span> Non-imaging (radar / mmWave / ambient)</div>
+        <div class="legend-item"><span class="privacy-dot p-amber"></span> Mixed / edge-processed vision</div>
+        <div class="legend-item"><span class="privacy-dot p-red"></span> Camera / video-based</div>
+      </div>
+
+      <div class="comp-wrap">
+        <div class="comp-scroll">
+          <table class="comp" id="compTable">
+            <thead>
+              <tr>
+                <th>Company</th>
+                <th>Modality</th>
+                <th>Privacy</th>
+                <th>Primary value</th>
+                <th>HQ</th>
+                <th>Funding</th>
+                <th>Deployments</th>
+                <th>Quality</th>
+                <th>Rating</th>
+              </tr>
+            </thead>
+            <tbody id="compBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <p style="margin-top:14px;font-size:0.72rem;color:var(--muted2);">
+        Funding figures are founders'-best-estimate as of April 2026, sourced from Crunchbase, PitchBook and press releases. Customer ratings are paraphrased from public-source quotes and clinical studies; exact scores are directional.
+      </p>
+    </div>
+  </section>
+
+  <section style="padding-top:0;">
+    <div class="container">
+      <div class="grid-2" style="gap:40px;align-items:start;">
+        <div class="panel">
+          <span class="mini-label">Quality leaderboard</span>
+          <h3>Product quality — not website polish</h3>
+          <p style="margin-bottom:22px;">Weighted score of clinical evidence (30%), false-alarm rate (25%), deployment volume (20%), customer reviews (15%), workflow depth (10%).</p>
+          <div id="qualityBars"></div>
+        </div>
+        <div class="panel">
+          <span class="mini-label">Market footprint</span>
+          <h3>Who's deployed, who's just funded</h3>
+          <p style="margin-bottom:22px;">Funding is plentiful; real deployments are not. Only six competitors have >100 live facilities.</p>
+          <div id="deployBars"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <p class="label">What customers actually say</p>
+        <h2>Real reviews from operators and clinical studies.</h2>
+        <p>Paraphrased from public sources: AgeTech Labs product reviews, AJMC / NIH clinical studies, partner press releases, and operator case studies.</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="review-card">
+          <div class="co">SafelyYou (Halo)</div>
+          <span class="stars">&#9733;&#9733;&#9733;&#9733;<span class="stars-empty">&#9733;</span> <small style="color:var(--muted2);font-size:0.72rem;">4.3 / 5</small></span>
+          <blockquote>"Up to 40% fewer falls and 69% fewer fall-related ER visits in an NIH-sponsored 11-community memory-care study. Residents stayed ~6 months longer at Milestone Retirement."</blockquote>
+          <div class="src">AJMC 2024 &middot; Leisure Care &middot; Maplewood Senior Living</div>
+        </div>
+
+        <div class="review-card">
+          <div class="co">Oxehealth / LIO</div>
+          <span class="stars">&#9733;&#9733;&#9733;&#9733;<span class="stars-empty">&#9733;</span> <small style="color:var(--muted2);font-size:0.72rem;">4.2 / 5</small></span>
+          <blockquote>"For every pound invested, the NHS saves £3.17 including opportunity cost. 96% of surveyed staff said the system helped prevent incidents. Deployed in half of NHS mental-health trusts."</blockquote>
+          <div class="src">PMC economic evaluation, 2023 &middot; Sunday Times Tech 100 2026</div>
+        </div>
+
+        <div class="review-card">
+          <div class="co">Nobi</div>
+          <span class="stars">&#9733;&#9733;&#9733;&#9733;<span class="stars-empty">&#9733;</span> <small style="color:var(--muted2);font-size:0.72rem;">4.4 / 5</small></span>
+          <blockquote>"Most Promising Healthcare Innovation (Flanders 2022). First Belgian pilot: 40 falls detected in 15 rooms in weeks; 4 of 5 falls 'prevented thanks to Nobi's support' per caregivers."</blockquote>
+          <div class="src">Tech.eu &middot; AgeTech Labs &middot; iSocial review</div>
+        </div>
+
+        <div class="review-card">
+          <div class="co">Vayyar Care</div>
+          <span class="stars">&#9733;&#9733;&#9733;&#9733;<span class="stars-empty">&#9733;</span> <small style="color:var(--muted2);font-size:0.72rem;">4.1 / 5</small></span>
+          <blockquote>"Camera-free, works in all lighting conditions including dense steam — ideal for bathrooms where 80% of falls occur. Partnered with Austco Tacera, K4Connect, Eevi and Amazon Alexa Together."</blockquote>
+          <div class="src">TLS Global &middot; K4Connect &middot; PRNewswire</div>
+        </div>
+
+        <div class="review-card">
+          <div class="co">VirtuSense VSTAlert</div>
+          <span class="stars">&#9733;&#9733;&#9733;&#9733;<span class="stars-empty">&#9733;</span> <small style="color:var(--muted2);font-size:0.72rem;">4.3 / 5</small></span>
+          <blockquote>"82% average reduction in falls in AL/IL; 75% in SNF. At Friendship Village, deploying in 20% of beds drove a 96% drop in falls-with-injury for the whole unit."</blockquote>
+          <div class="src">VirtuSense customer data &middot; HT World product profile</div>
+        </div>
+
+        <div class="review-card">
+          <div class="co">CarePredict Tempo</div>
+          <span class="stars">&#9733;&#9733;&#9733;&#9733;<span class="stars-empty">&#9733;</span> <small style="color:var(--muted2);font-size:0.72rem;">4.1 / 5</small></span>
+          <blockquote>"69% lower fall rate, 39% lower hospitalisation rate, 67% greater length of stay. Staff response times improved 37–40%. But: requires a wearable — uptake is the constraint."</blockquote>
+          <div class="src">Analog Devices case study &middot; PMC pilot study</div>
+        </div>
+
+        <div class="review-card">
+          <div class="co">AltumView Sentinare 2/3</div>
+          <span class="stars">&#9733;&#9733;&#9733;<span class="stars-empty">&#9733;&#9733;</span> <small style="color:var(--muted2);font-size:0.72rem;">4.0 / 5</small></span>
+          <blockquote>"Stick-figure privacy, ~$200 CAD, ~80% fall-detection accuracy in real-world tests. Strong consumer/B2B solution; lacks clinical-workflow depth for commercial facilities."</blockquote>
+          <div class="src">AgeTech Labs &middot; Amazon customer reviews</div>
+        </div>
+
+        <div class="review-card">
+          <div class="co">Xandar Kardian XK300</div>
+          <span class="stars">&#9733;&#9733;&#9733;&#9733;<span class="stars-empty">&#9733;</span> <small style="color:var(--muted2);font-size:0.72rem;">4.2 / 5</small></span>
+          <blockquote>"Only FDA 510(k)-cleared UWB-radar device for continuous contactless vitals. 50+ healthcare facility deployments; CPT 99454 Medicare-reimbursable. Vitals-first, not workflow."</blockquote>
+          <div class="src">Fierce Biotech &middot; FDA K202464 &middot; PRNewswire 2023/2026</div>
+        </div>
+
+        <div class="review-card">
+          <div class="co">Kepler Vision Night Nurse</div>
+          <span class="stars">&#9733;&#9733;&#9733;<span class="stars-empty">&#9733;&#9733;</span> <small style="color:var(--muted2);font-size:0.72rem;">3.9 / 5</small></span>
+          <blockquote>"24/7 camera-based fall detection; raw images never viewed by humans. Deployed in Dutch care homes; faces privacy-perception pushback versus pure ambient alternatives."</blockquote>
+          <div class="src">Kepler Vision Technologies &middot; Dutch care home pilots</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--card-soft);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+    <div class="container">
+      <div class="section-head">
+        <p class="label">Asia-Pacific landscape</p>
+        <h2>Why we anchor in AU, scale to HK and SG.</h2>
+        <p>Three markets, three different purchasing dynamics — but all facing the same structural gap between care-minute mandates and available caregivers.</p>
+      </div>
+
+      <div class="region-grid">
+        <div class="region-card">
+          <h3>Australia</h3>
+          <div class="flag-line">Beachhead &middot; private-pay residential</div>
+          <div class="big">$38.7B<small>Aged-care residential services industry, 2026 (IBISWorld)</small></div>
+          <ul>
+            <li>91,000+ residential beds across ~900 facilities</li>
+            <li>Direct-care-worker shortfall: 110k+ by 2030 (Productivity Commission)</li>
+            <li>Care-minute mandate audited Jul–Sep 2025: 40% of homes failed</li>
+            <li>Regulator (Aged Care Quality &amp; Safety Commission) enforcing undertakings against 11 providers</li>
+            <li>Key operators: Opal, Bupa, Regis, Estia, Montefiore, Jesmond Strathfield</li>
+            <li>Competitive intensity: LOW — SafelyYou US-only, Nobi EU-only, Vayyar partner-distributed via Eevi</li>
+          </ul>
+        </div>
+
+        <div class="region-card">
+          <h3>Hong Kong</h3>
+          <div class="flag-line">Pilot market &middot; philosophical fit</div>
+          <div class="big">75,000<small>Subsidised + private RCHE beds across ~700 homes</small></div>
+          <ul>
+            <li>JCCPA: dementia-specialist "zero-restraint" philosophy, cameras explicitly rejected</li>
+            <li>Helping Hand: existing CCTV + mattress-sensor fatigue, hungry for consolidation</li>
+            <li>Jockey Club Innovation Fund + ITF grants cover tech pilots up to HK$2M</li>
+            <li>Rapid aging: 28% over 65 by 2036</li>
+            <li>Competitive intensity: LOW — mostly legacy Taiwanese/Japanese nurse-call systems</li>
+          </ul>
+        </div>
+
+        <div class="region-card">
+          <h3>Singapore</h3>
+          <div class="flag-line">Year 4 expansion &middot; policy-led</div>
+          <div class="big">16,000<small>Nursing-home beds, expanding to 31k by 2030 (MOH)</small></div>
+          <ul>
+            <li>Agency for Integrated Care (AIC) co-funds tech procurement up to 50%</li>
+            <li>Productivity Enhancement Scheme covers ambient monitoring categorically</li>
+            <li>Key operators: Econ Healthcare, Orange Valley, NTUC Health, St Luke's</li>
+            <li>MOH dignity &amp; PDPA alignment: non-imaging strongly preferred</li>
+            <li>Competitive intensity: LOW — no incumbent has end-to-end workflow</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <p class="label">Design rationale</p>
+        <h2>What we borrowed, what we rejected, what we improved.</h2>
+        <p>Lumana isn't the first company to sense in a bedroom or auto-draft a note. It's the first to do both inside a single caregiver workflow — and that's the productisation that matters.</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="panel">
+          <span class="mini-label">Borrowed</span>
+          <h3>Ambient sensing &gt; wearables</h3>
+          <p>Vayyar, Xandar Kardian, Tellus and Essence proved the market accepts non-imaging radar-class sensors. 80%+ of PERS wearables go unused after a fall. Lumana doubles down on non-imaging.</p>
+        </div>
+        <div class="panel">
+          <span class="mini-label">Borrowed</span>
+          <h3>Stick-figure / auto-redaction ethos</h3>
+          <p>AltumView's privacy framing — "sensor, not a camera" — is the right vocabulary for staff and families. We adopt the language but go further: no vision at all.</p>
+        </div>
+        <div class="panel">
+          <span class="mini-label">Borrowed</span>
+          <h3>Clinical-outcome framing</h3>
+          <p>SafelyYou's NIH-validated fall-reduction data is the gold standard. We replicate the methodology for pilots from day one — every pilot generates publishable before/after metrics.</p>
+        </div>
+        <div class="panel">
+          <span class="mini-label">Rejected</span>
+          <h3>Video replay, even "private"</h3>
+          <p>Oxehealth's vision-based model works in NHS MH wards, but JCCPA and the Australian Care Quality Commission push back on recording equipment in bedrooms. We will not ship a camera.</p>
+        </div>
+        <div class="panel">
+          <span class="mini-label">Rejected</span>
+          <h3>Single-feature pure-play</h3>
+          <p>Vayyar and Xandar Kardian sell radar as a component to nurse-call integrators. That strands the workflow problem with someone else. We own it end-to-end.</p>
+        </div>
+        <div class="panel">
+          <span class="mini-label">Improved</span>
+          <h3>Alert &rarr; auto-draft &rarr; approve</h3>
+          <p>Every competitor stops at the alert. Lumana carries the alert through triage into an auto-drafted note that staff approve in ten seconds. That's where 13.5 documentation hours per week disappear.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="rationale">
+    <div class="container">
+      <div class="section-head">
+        <p class="label">Why Lumana beats the field</p>
+        <h2>Four things no one else combines in a single product.</h2>
+        <p class="lede">Each competitor we analysed excels on one or two of these dimensions. None of them ship all four — which is why most aged-care facilities still run four disconnected systems at once.</p>
+      </div>
+
+      <div class="grid-2" style="margin-top:30px;">
+        <div class="panel">
+          <span class="mini-label">1 &middot; Truly ambient</span>
+          <h3>mmWave + thermal &mdash; no cameras, no wearables</h3>
+          <p>Even "privacy-preserving" vision systems lose the dignity narrative in private bedrooms. mmWave + thermal is the only modality an aged-care regulator will defend on stage.</p>
+        </div>
+        <div class="panel">
+          <span class="mini-label">2 &middot; End-to-end workflow</span>
+          <h3>Alerts are useless without routing and response</h3>
+          <p>Every pad-based sensor on the market produces ~52% false alarms. Lumana's signals become actionable alerts routed to the nearest caregiver, acknowledged, triaged and tracked.</p>
+        </div>
+        <div class="panel">
+          <span class="mini-label">3 &middot; Auto-documentation</span>
+          <h3>Records that write themselves from the event itself</h3>
+          <p>No one on our map auto-drafts the clinical note. Lumana's auto-drafts are the single largest time-saver and the clearest ROI lever for operators under care-minute audits.</p>
+        </div>
+        <div class="panel">
+          <span class="mini-label">4 &middot; One bundled price</span>
+          <h3>Operators buy one invoice, not four</h3>
+          <p>Every other solution is sold à la carte: sensor, integrator, gateway, workflow, records. $85/bed/month as a single bundled subscription turns a procurement epic into a yes/no decision.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div><!-- /#competitor -->
+
+  <div id="pricing">
+  <!-- ── Hero ──────────────────────────────────────────────────────────── -->
+  <section class="hero-admin">
+    <div class="container">
+      <p class="label">Pricing strategy &middot; WTP &middot; alternatives</p>
+      <h2 class="page-h2-as-h1">How we priced Lumana — and the eight models we rejected before <em>settling on $85 a bed.</em></h2>
+      <p>Pricing in aged care is harder than SaaS. Operators run on razor-thin margins, regulatory spending is capped, and every dollar on the operator P&amp;L has to displace a dollar of labour. Here's the full strategy — models compared, personas mapped, willingness-to-pay benchmarked, and next-best alternatives surfaced.</p>
+
+      <div class="scenario-strip">
+        <div class="scen">
+          <div class="label2">Conservative</div>
+          <div class="title">Floor price</div>
+          <div class="price">US$60<small>per bed / month</small></div>
+          <ul>
+            <li><strong>$64.8k</strong> ARR per 90-bed facility</li>
+            <li><strong>Year 5 revenue:</strong> $6.7M</li>
+            <li>Break-even: Year 5</li>
+          </ul>
+        </div>
+        <div class="scen base">
+          <div class="label2">Base case (chosen)</div>
+          <div class="title">Bundled subscription</div>
+          <div class="price">US$85<small>per bed / month</small></div>
+          <ul>
+            <li><strong>$91.8k</strong> ARR per 90-bed facility</li>
+            <li><strong>Year 5 revenue:</strong> $11.9M</li>
+            <li>Break-even: Year 3</li>
+          </ul>
+        </div>
+        <div class="scen">
+          <div class="label2">Optimistic</div>
+          <div class="title">Premium band</div>
+          <div class="price">US$100<small>per bed / month</small></div>
+          <ul>
+            <li><strong>$108k</strong> ARR per 90-bed facility</li>
+            <li><strong>Year 5 revenue:</strong> $16.8M</li>
+            <li>Break-even: Year 3</li>
+          </ul>
+        </div>
+      </div>
+
+      <p style="margin-top:22px;font-family:var(--serif);font-style:italic;color:var(--muted);font-size:0.92rem;">
+        Key swing factor: price. Each $10/bed/month shift changes Year-5 EBITDA by roughly $1.4M — which is exactly why we validate WTP inside the paid pilot before a facility-wide rollout.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Pricing models ──────────────────────────────────────────────── -->
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <p class="label">Pricing models considered</p>
+        <h2>Eight models. One winner. Here's the full trade-off matrix.</h2>
+        <p>Each model is scored 1–5 on fit-for-aged-care (simplicity, CapEx avoidance, ROI visibility, renewal resilience). $85/bed/month bundled won on all four axes.</p>
+      </div>
+
+      <div class="model-grid">
+
+        <!-- 1. Bundled subscription -->
+        <div class="model recommended">
+          <div class="tag-row">
+            <span class="chip">Recommended</span>
+            <span class="score">Score <span class="bar"><span style="width:94%;"></span></span> 4.7 / 5</span>
+          </div>
+          <h3>01 &middot; Bundled per-bed subscription</h3>
+          <p class="sub">Hardware, software, support — one SKU, one invoice, one budget line.</p>
+          <div class="hl">
+            <strong>US$85 / bed / month</strong> &middot; 24-month facility-wide term &middot; $91.8k ARR per 90-bed facility
+          </div>
+          <div class="pro-con">
+            <div class="pros">
+              <h4>Why it wins</h4>
+              <ul>
+                <li>Stays in opex — avoids capex approval chain</li>
+                <li>One invoice, one budget line, one renewal</li>
+                <li>Matches how operators already budget (AIC, AN-ACC)</li>
+                <li>Grant-compatible in HK &amp; SG without restructuring</li>
+                <li>Predictable ARR for investors &amp; for us</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Trade-offs</h4>
+              <ul>
+                <li>Hardware front-loaded — 20 mo payback in Y1</li>
+                <li>Requires 24 mo lock for LTV/CAC to clear</li>
+                <li>Harder to discount individual modules</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Hardware purchase + SaaS -->
+        <div class="model">
+          <div class="tag-row">
+            <span class="chip">Considered</span>
+            <span class="score">Score <span class="bar"><span style="width:62%;"></span></span> 3.1 / 5</span>
+          </div>
+          <h3>02 &middot; Hardware purchase + SaaS</h3>
+          <p class="sub">Buy the sensors upfront; pay a lower monthly software/support fee.</p>
+          <div class="hl">
+            ~$1,000 per room + $35 / bed / month &middot; common in B2B IoT
+          </div>
+          <div class="pro-con">
+            <div class="pros">
+              <h4>Pros</h4>
+              <ul>
+                <li>Lower headline subscription number</li>
+                <li>Higher gross margin on recurring SaaS line</li>
+                <li>Clean accounting separation</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Cons</h4>
+              <ul>
+                <li>Capex triggers multi-signature approval (deal-killer)</li>
+                <li>Operator owns the hardware risk for 5+ years</li>
+                <li>No hardware refresh path</li>
+                <li>Kills grant compatibility in HK/SG</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Outcomes-based / risk-share -->
+        <div class="model">
+          <div class="tag-row">
+            <span class="chip">Future option</span>
+            <span class="score">Score <span class="bar"><span style="width:72%;"></span></span> 3.6 / 5</span>
+          </div>
+          <h3>03 &middot; Outcomes-based pricing</h3>
+          <p class="sub">Price tied to measured fall reduction, care-minute compliance lift, or documentation-hour savings.</p>
+          <div class="hl">
+            Base $60/bed/mo + $25 contingent on hitting agreed KPIs
+          </div>
+          <div class="pro-con">
+            <div class="pros">
+              <h4>Pros</h4>
+              <ul>
+                <li>Extreme ROI alignment — buyer sleeps at night</li>
+                <li>Strong investor story if clinical data is robust</li>
+                <li>Unlocks slow-moving risk-averse operators</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Cons</h4>
+              <ul>
+                <li>Requires 12 mo of clinical baseline data (we don't have yet)</li>
+                <li>Revenue uncertainty hurts seed fundraising</li>
+                <li>Measurement disputes become the relationship</li>
+                <li>Best as a Year-3 option, not Year-1 default</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Tiered (Core / Pro / Enterprise) -->
+        <div class="model">
+          <div class="tag-row">
+            <span class="chip">Rejected</span>
+            <span class="score">Score <span class="bar"><span style="width:54%;"></span></span> 2.7 / 5</span>
+          </div>
+          <h3>04 &middot; Tiered (Core / Pro / Enterprise)</h3>
+          <p class="sub">Feature-based tiering — e.g., "fall only", "fall + vitals", "fall + vitals + workflow".</p>
+          <div class="hl">
+            $55 / $85 / $120 per bed / month &middot; classic SaaS tiering
+          </div>
+          <div class="pro-con">
+            <div class="pros">
+              <h4>Pros</h4>
+              <ul>
+                <li>Good-better-best anchors on premium tier</li>
+                <li>Small pilots at Core tier, expansion later</li>
+                <li>Clear upgrade path for operators</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Cons</h4>
+              <ul>
+                <li>Workflow + documentation IS the value — can't downgrade it</li>
+                <li>Sales cycle doubles during tier negotiation</li>
+                <li>Caregivers hate partial-feature deployments</li>
+                <li>Operators self-select into Core and leave ROI on the table</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Per-alert pay-per-use -->
+        <div class="model">
+          <div class="tag-row">
+            <span class="chip">Rejected</span>
+            <span class="score">Score <span class="bar"><span style="width:30%;"></span></span> 1.5 / 5</span>
+          </div>
+          <h3>05 &middot; Pay-per-use (per alert)</h3>
+          <p class="sub">Charge per high-priority alert or per auto-drafted clinical note.</p>
+          <div class="hl">
+            $0.50 per high-priority alert + $1 per approved note
+          </div>
+          <div class="pro-con">
+            <div class="pros">
+              <h4>Pros</h4>
+              <ul>
+                <li>Zero upfront friction for evaluation</li>
+                <li>Scales naturally with facility acuity</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Cons</h4>
+              <ul>
+                <li>Perverse incentives — we profit from more alerts</li>
+                <li>Unpredictable for operator budgeting</li>
+                <li>Impossible to forecast ARR for investors</li>
+                <li>Clinical governance objections</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Freemium / Pilot-free -->
+        <div class="model">
+          <div class="tag-row">
+            <span class="chip">Rejected</span>
+            <span class="score">Score <span class="bar"><span style="width:28%;"></span></span> 1.4 / 5</span>
+          </div>
+          <h3>06 &middot; Free pilots, paid rollout</h3>
+          <p class="sub">Give away the 90-day pilot to reduce friction; monetise only at rollout.</p>
+          <div class="hl">
+            Free 90-day pilot + $85 / bed / month on conversion
+          </div>
+          <div class="pro-con">
+            <div class="pros">
+              <h4>Pros</h4>
+              <ul>
+                <li>Maximum pilot volume in Year 1</li>
+                <li>Standard B2B land-and-expand motion</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Cons</h4>
+              <ul>
+                <li>Free pilots signal "not serious" in healthcare procurement</li>
+                <li>$92k hardware + install cost with zero recovery</li>
+                <li>Burns capital on pilots that never convert</li>
+                <li>No commercial skin-in-the-game from operator</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. Per-event / per-incident insurance model -->
+        <div class="model">
+          <div class="tag-row">
+            <span class="chip">Rejected</span>
+            <span class="score">Score <span class="bar"><span style="width:40%;"></span></span> 2.0 / 5</span>
+          </div>
+          <h3>07 &middot; Insurance / shared-risk</h3>
+          <p class="sub">Partner with liability insurers; price absorbed into facility indemnity premium.</p>
+          <div class="hl">
+            Facility pays insurer; insurer pays Lumana
+          </div>
+          <div class="pro-con">
+            <div class="pros">
+              <h4>Pros</h4>
+              <ul>
+                <li>Operator perceives zero cost</li>
+                <li>Structural ally for scale (insurer distribution)</li>
+                <li>Aligns incentives perfectly</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Cons</h4>
+              <ul>
+                <li>Insurer needs 3+ years of claims data before re-pricing</li>
+                <li>We become a sub-vendor to a slower counterparty</li>
+                <li>AU/HK/SG insurers not yet digital enough</li>
+                <li>Worth revisiting in Year 4</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. Licensing / white-label -->
+        <div class="model">
+          <div class="tag-row">
+            <span class="chip">Rejected</span>
+            <span class="score">Score <span class="bar"><span style="width:46%;"></span></span> 2.3 / 5</span>
+          </div>
+          <h3>08 &middot; License to nurse-call integrators</h3>
+          <p class="sub">White-label Lumana's sensing + workflow into Austco, Tunstall, Inovonics.</p>
+          <div class="hl">
+            $15 / bed / month wholesale &middot; integrator marks up to ~$70
+          </div>
+          <div class="pro-con">
+            <div class="pros">
+              <h4>Pros</h4>
+              <ul>
+                <li>Instant global distribution</li>
+                <li>Zero facility-level sales effort</li>
+                <li>Feeds Vayyar / Xandar Kardian's playbook</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <h4>Cons</h4>
+              <ul>
+                <li>Integrator owns the customer relationship</li>
+                <li>Lumana becomes a commodity sensor layer</li>
+                <li>Strands the workflow problem with them</li>
+                <li>Kills brand, pricing power, and the clinical narrative</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Personas ─────────────────────────────────────────────────── -->
+  <section style="background:var(--card-soft);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+    <div class="container">
+      <div class="section-head">
+        <p class="label">Target personas</p>
+        <h2>Five operator personas — each with a different price ceiling.</h2>
+        <p>Pricing doesn't land the same way on an ASX-listed chain CFO as it does on a single-facility not-for-profit director. Here are the five personas we sell to, ranked by WTP.</p>
+      </div>
+
+      <div class="persona-grid">
+        <!-- Persona 1 -->
+        <div class="persona">
+          <div class="avatar">LP</div>
+          <h3>The Listed Private-Pay Chain</h3>
+          <div class="role">CFO / GM Clinical &middot; 1,500+ beds</div>
+          <p style="font-size:0.88rem;">Premium, private-pay operators (e.g. Opal, Regis, Estia). Audited quarterly on care minutes. Under activist-investor pressure to defend margin without cutting staff hours.</p>
+          <div class="attr"><span>Size</span><strong>800–3,500 beds</strong></div>
+          <div class="attr"><span>Tech sophistication</span><strong>High &middot; has CIO</strong></div>
+          <div class="attr"><span>Buying cycle</span><strong>6–9 mo &middot; RFP</strong></div>
+          <div class="attr"><span>Decision maker</span><strong>CFO + GM Clinical</strong></div>
+          <div class="attr"><span>Key pain</span><strong>Care-minute mandate audits</strong></div>
+          <div class="wtp">
+            <span class="big">$100–$130</span>
+            per bed / month &middot; anchored to agency-staff cost displacement
+          </div>
+        </div>
+
+        <!-- Persona 2 -->
+        <div class="persona">
+          <div class="avatar">NF</div>
+          <h3>The Mission-Driven Not-For-Profit</h3>
+          <div class="role">CEO / Chair &middot; 200–600 beds</div>
+          <p style="font-size:0.88rem;">Church- or community-run operators (Helping Hand, Uniting, BaptistCare). Dignity and "zero restraint" language resonates more than ROI slides. Board-led procurement.</p>
+          <div class="attr"><span>Size</span><strong>200–600 beds</strong></div>
+          <div class="attr"><span>Tech sophistication</span><strong>Medium</strong></div>
+          <div class="attr"><span>Buying cycle</span><strong>9–12 mo &middot; board sign-off</strong></div>
+          <div class="attr"><span>Decision maker</span><strong>CEO + board</strong></div>
+          <div class="attr"><span>Key pain</span><strong>Staff burnout, mission alignment</strong></div>
+          <div class="wtp">
+            <span class="big">$70–$90</span>
+            per bed / month &middot; price-sensitive, values dignity narrative
+          </div>
+        </div>
+
+        <!-- Persona 3 -->
+        <div class="persona">
+          <div class="avatar">HK</div>
+          <h3>The HK Grant-Funded Operator</h3>
+          <div class="role">Superintendent &middot; 80–200 beds</div>
+          <p style="font-size:0.88rem;">Subsidised private residences (JCCPA, Helping Hand HK). Access to Jockey Club + ITF grants that cover up to 70% of tech pilots. Procurement runs on grant cycles, not fiscal years.</p>
+          <div class="attr"><span>Size</span><strong>80–200 beds</strong></div>
+          <div class="attr"><span>Tech sophistication</span><strong>Mixed</strong></div>
+          <div class="attr"><span>Buying cycle</span><strong>Grant-cycle driven</strong></div>
+          <div class="attr"><span>Decision maker</span><strong>Superintendent + Board</strong></div>
+          <div class="attr"><span>Key pain</span><strong>Camera pushback, alert fatigue</strong></div>
+          <div class="wtp">
+            <span class="big">$75–$95</span>
+            per bed / month &middot; ~60% grant-subsidised
+          </div>
+        </div>
+
+        <!-- Persona 4 -->
+        <div class="persona">
+          <div class="avatar">SG</div>
+          <h3>The SG Nursing Home Operator</h3>
+          <div class="role">COO / CEO &middot; 300–700 beds</div>
+          <p style="font-size:0.88rem;">Econ Healthcare, Orange Valley, NTUC Health. AIC co-funds up to 50% of ambient monitoring tech. PDPA alignment is essential. MOH pushes dignity-preserving modalities.</p>
+          <div class="attr"><span>Size</span><strong>300–700 beds</strong></div>
+          <div class="attr"><span>Tech sophistication</span><strong>High</strong></div>
+          <div class="attr"><span>Buying cycle</span><strong>6 mo &middot; AIC-led</strong></div>
+          <div class="attr"><span>Decision maker</span><strong>COO + CEO</strong></div>
+          <div class="attr"><span>Key pain</span><strong>PEC/PDPA compliance &middot; staff retention</strong></div>
+          <div class="wtp">
+            <span class="big">$85–$110</span>
+            per bed / month &middot; AIC-reimbursed
+          </div>
+        </div>
+
+        <!-- Persona 5 -->
+        <div class="persona">
+          <div class="avatar">FM</div>
+          <h3>The Family-Run Single Facility</h3>
+          <div class="role">Owner-operator &middot; 60–120 beds</div>
+          <p style="font-size:0.88rem;">Second-generation owner-operators. Personal stake, emotional buyer. Cautious on tech but will move fast when a peer proves it. Pricing sensitivity is HIGH.</p>
+          <div class="attr"><span>Size</span><strong>60–120 beds</strong></div>
+          <div class="attr"><span>Tech sophistication</span><strong>Low–Medium</strong></div>
+          <div class="attr"><span>Buying cycle</span><strong>3 mo &middot; trust-driven</strong></div>
+          <div class="attr"><span>Decision maker</span><strong>Owner only</strong></div>
+          <div class="attr"><span>Key pain</span><strong>Can't recruit nurses</strong></div>
+          <div class="wtp">
+            <span class="big">$55–$75</span>
+            per bed / month &middot; price-led, peer-referenced
+          </div>
+        </div>
+
+        <!-- Persona 6 - HOSPITAL -->
+        <div class="persona">
+          <div class="avatar">HO</div>
+          <h3>The Hospital Transitional Ward</h3>
+          <div class="role">Director of Nursing &middot; 20–80 beds</div>
+          <p style="font-size:0.88rem;">Sub-acute / post-surgical wards holding patients awaiting aged-care placement. Expansion market beyond Year 3 — the payer is healthcare, not aged care. Higher WTP, shorter cycles.</p>
+          <div class="attr"><span>Size</span><strong>20–80 beds per ward</strong></div>
+          <div class="attr"><span>Tech sophistication</span><strong>Very high</strong></div>
+          <div class="attr"><span>Buying cycle</span><strong>Hospital IT (long)</strong></div>
+          <div class="attr"><span>Decision maker</span><strong>DON + Hospital IT</strong></div>
+          <div class="attr"><span>Key pain</span><strong>Fall liability, bed-block</strong></div>
+          <div class="wtp">
+            <span class="big">$150–$220</span>
+            per bed / month &middot; anchored to hospital cost-per-bed-day
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── WTP chart ─────────────────────────────────────────────── -->
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <p class="label">Willingness to pay</p>
+        <h2>Where $85 sits across personas, benchmarks, and the NBAs.</h2>
+        <p>Vertical line = our $85 base price. Bands = estimated price ceiling per persona. Every band above the line has pricing headroom.</p>
+      </div>
+
+      <div class="wtp-chart">
+
+        <div class="wtp-row">
+          <div class="persona-name">Hospital transitional wards<small>Expansion market Yr 3+</small></div>
+          <div class="wtp-track">
+            <div class="wtp-band" style="left:44%;right:0%;"></div>
+            <div class="wtp-mark" style="left:22%;" title="Lumana $85"></div>
+          </div>
+          <div class="wtp-val">$150–$220<small>per bed / mo</small></div>
+        </div>
+
+        <div class="wtp-row">
+          <div class="persona-name">Listed private-pay chains<small>Opal, Regis, Estia</small></div>
+          <div class="wtp-track">
+            <div class="wtp-band" style="left:28%;right:36%;"></div>
+            <div class="wtp-mark" style="left:22%;"></div>
+          </div>
+          <div class="wtp-val">$100–$130<small>per bed / mo</small></div>
+        </div>
+
+        <div class="wtp-row">
+          <div class="persona-name">SG nursing home operators<small>Econ, NTUC, Orange Valley</small></div>
+          <div class="wtp-track">
+            <div class="wtp-band" style="left:22%;right:48%;"></div>
+            <div class="wtp-mark" style="left:22%;"></div>
+          </div>
+          <div class="wtp-val">$85–$110<small>per bed / mo</small></div>
+        </div>
+
+        <div class="wtp-row">
+          <div class="persona-name">HK grant-funded operators<small>JCCPA, Helping Hand HK</small></div>
+          <div class="wtp-track">
+            <div class="wtp-band" style="left:18%;right:54%;"></div>
+            <div class="wtp-mark" style="left:22%;"></div>
+          </div>
+          <div class="wtp-val">$75–$95<small>per bed / mo</small></div>
+        </div>
+
+        <div class="wtp-row">
+          <div class="persona-name">Mission-driven NFPs<small>Uniting, BaptistCare</small></div>
+          <div class="wtp-track">
+            <div class="wtp-band" style="left:14%;right:58%;"></div>
+            <div class="wtp-mark" style="left:22%;"></div>
+          </div>
+          <div class="wtp-val">$70–$90<small>per bed / mo</small></div>
+        </div>
+
+        <div class="wtp-row">
+          <div class="persona-name">Family-run single facilities<small>Second-gen owner-operators</small></div>
+          <div class="wtp-track">
+            <div class="wtp-band" style="left:6%;right:70%;"></div>
+            <div class="wtp-mark" style="left:22%;"></div>
+          </div>
+          <div class="wtp-val">$55–$75<small>per bed / mo</small></div>
+        </div>
+      </div>
+
+      <p style="margin-top:14px;text-align:center;font-size:0.8rem;color:var(--muted2);">
+        <span style="display:inline-block;width:14px;height:3px;background:var(--ink-hero);vertical-align:middle;"></span>&nbsp;
+        Lumana base price ($85) &middot;
+        <span style="display:inline-block;width:14px;height:8px;background:linear-gradient(90deg,rgba(200,134,10,0.3),var(--accent));vertical-align:middle;border-radius:2px;"></span>&nbsp;
+        Persona willingness-to-pay band
+      </p>
+    </div>
+  </section>
+
+  <!-- ── NBA (Next-best alternatives) ─────────────────────────────── -->
+  <section style="background:var(--card-soft);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+    <div class="container">
+      <div class="section-head">
+        <p class="label">Next-best alternatives</p>
+        <h2>What operators do if they don't buy Lumana.</h2>
+        <p>The realistic alternatives aren't other ambient-sensing startups — they're the things operators are already doing. Here's what they cost, what they bring, and the friction to switch.</p>
+      </div>
+
+      <div class="nba-table">
+        <div class="nba-row head">
+          <div>Alternative</div>
+          <div>What it actually solves</div>
+          <div>Annual cost (90-bed)</div>
+          <div>Switching cost</div>
+          <div>The friction that beats it</div>
+        </div>
+
+        <div class="nba-row">
+          <div class="alt-name">Do nothing &middot; hire more</div>
+          <div><span class="mobile-label">Solves</span>Status quo + agency staff for peaks. The "default NBA" for most operators.</div>
+          <div><span class="mobile-label">Cost</span>$180k+ (1 RN)</div>
+          <div><span class="mobile-label">Switch</span>Zero</div>
+          <div class="friction"><span class="mobile-label">Friction</span>Can't hire — 110k shortfall by 2030.</div>
+        </div>
+
+        <div class="nba-row">
+          <div class="alt-name">Nurse-call pad sensors</div>
+          <div><span class="mobile-label">Solves</span>Bed-exit + chair-exit alerts. Austco, Inovonics, Tunstall incumbent stack.</div>
+          <div><span class="mobile-label">Cost</span>~$30k</div>
+          <div><span class="mobile-label">Switch</span>Low</div>
+          <div class="friction"><span class="mobile-label">Friction</span>52% false-alarm rate &rarr; alert fatigue.</div>
+        </div>
+
+        <div class="nba-row">
+          <div class="alt-name">Wearables / PERS</div>
+          <div><span class="mobile-label">Solves</span>Pendant-based fall detection (CarePredict, Lively, Kardian watch).</div>
+          <div><span class="mobile-label">Cost</span>~$45k</div>
+          <div><span class="mobile-label">Switch</span>Low</div>
+          <div class="friction"><span class="mobile-label">Friction</span>~80% unused after a fall.</div>
+        </div>
+
+        <div class="nba-row">
+          <div class="alt-name">Camera + review system</div>
+          <div><span class="mobile-label">Solves</span>SafelyYou / Oxehealth-class vision with human review loop.</div>
+          <div><span class="mobile-label">Cost</span>~$100k+</div>
+          <div><span class="mobile-label">Switch</span>High</div>
+          <div class="friction"><span class="mobile-label">Friction</span>Privacy blocked by regulators + families.</div>
+        </div>
+
+        <div class="nba-row">
+          <div class="alt-name">Point radar (Vayyar / Kardian)</div>
+          <div><span class="mobile-label">Solves</span>Non-imaging fall/vitals detection — sold as a component.</div>
+          <div><span class="mobile-label">Cost</span>~$60–80k</div>
+          <div><span class="mobile-label">Switch</span>Medium</div>
+          <div class="friction"><span class="mobile-label">Friction</span>No workflow. No documentation. No end-to-end product.</div>
+        </div>
+
+        <div class="nba-row">
+          <div class="alt-name">Clinical documentation AI (standalone)</div>
+          <div><span class="mobile-label">Solves</span>Voice-to-note / AI charting (Nuance, Heidi, Lindy). Record-only.</div>
+          <div><span class="mobile-label">Cost</span>~$25–40k</div>
+          <div><span class="mobile-label">Switch</span>Low</div>
+          <div class="friction"><span class="mobile-label">Friction</span>Still depends on staff remembering the event.</div>
+        </div>
+
+        <div class="nba-row">
+          <div class="alt-name">Build it in-house</div>
+          <div><span class="mobile-label">Solves</span>Rare — 1–2 large chains have tried.</div>
+          <div><span class="mobile-label">Cost</span>$500k+ / year</div>
+          <div><span class="mobile-label">Switch</span>Very high</div>
+          <div class="friction"><span class="mobile-label">Friction</span>Never ships, never clinically validated.</div>
+        </div>
+      </div>
+
+      <p style="margin-top:18px;font-size:0.82rem;color:var(--muted2);max-width:70ch;">
+        <strong style="color:var(--ink-hero);">Insight:</strong> the true competitor is "do nothing + hire more". Every aged-care vendor on our map loses when the operator decides the ROI story is too hard to verify — and Lumana's paid-pilot structure is specifically engineered to close that verification loop in 90 days.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Sensitivity ─────────────────────────────────────────────── -->
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <p class="label">Sensitivity analysis</p>
+        <h2>Price is the dominant swing factor in every year-5 scenario.</h2>
+        <p>Each $10/bed/month shift changes Year-5 EBITDA by roughly $1.4M. Price validation is the single most important thing the first five pilots deliver.</p>
+      </div>
+
+      <div class="sens-grid">
+        <div class="sens-col">
+          <div class="label2">Conservative</div>
+          <h3>If price floors at $60</h3>
+          <div class="big">$6.7M</div>
+          <div class="delta">Year-5 revenue</div>
+          <div class="stat-row"><span>Year-5 EBITDA</span><strong>$1.5M</strong></div>
+          <div class="stat-row"><span>Break-even</span><strong>Year 5</strong></div>
+          <div class="stat-row"><span>Pilot drop rate</span><strong>25%</strong></div>
+          <div class="stat-row"><span>Active facilities (Y5)</span><strong>128</strong></div>
+        </div>
+
+        <div class="sens-col base">
+          <div class="label2">Base case (chosen)</div>
+          <h3>At $85 &middot; 3% churn</h3>
+          <div class="big">$11.9M</div>
+          <div class="delta">Year-5 revenue</div>
+          <div class="stat-row"><span>Year-5 EBITDA</span><strong>$6.5M</strong></div>
+          <div class="stat-row"><span>Break-even</span><strong>Year 3</strong></div>
+          <div class="stat-row"><span>Pilot drop rate</span><strong>20%</strong></div>
+          <div class="stat-row"><span>Active facilities (Y5)</span><strong>160</strong></div>
+        </div>
+
+        <div class="sens-col">
+          <div class="label2">Optimistic</div>
+          <h3>If pricing clears $100</h3>
+          <div class="big">$16.8M</div>
+          <div class="delta">Year-5 revenue</div>
+          <div class="stat-row"><span>Year-5 EBITDA</span><strong>$11.1M</strong></div>
+          <div class="stat-row"><span>Break-even</span><strong>Year 3</strong></div>
+          <div class="stat-row"><span>Pilot drop rate</span><strong>15%</strong></div>
+          <div class="stat-row"><span>Active facilities (Y5)</span><strong>192</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Final recommendation ───────────────────────────────────── -->
+  <section class="reco">
+    <div class="container">
+      <div class="section-head">
+        <p class="label">Pricing recommendation</p>
+        <h2>Enter at $85. Validate inside the pilot. Raise after Y2 reference sites are live.</h2>
+        <p class="lede">Pricing in aged care isn't a spreadsheet exercise — it's a sequence of decisions each gated by the previous one's evidence. Here's the sequence.</p>
+      </div>
+
+      <div class="card-dark">
+        <h3>Phase 1 &middot; Year 1–2 &middot; Land at $85</h3>
+        <p>Bundled, facility-wide, 24-month contract. Anchor on care-minute displacement and documentation hours returned. Every pilot must produce publishable before/after metrics — those metrics become the evidence for Phase 2.</p>
+        <ul class="bullets">
+          <li><strong>Target personas:</strong> Listed private-pay chains + mission-driven NFPs first; grant-funded HK operators in parallel.</li>
+          <li><strong>Pilot pricing:</strong> Pro-rated at $85 for the 90-day paid pilot window.</li>
+          <li><strong>Conversion guardrail:</strong> 80% pilot-to-contract conversion required (target 85%).</li>
+          <li><strong>Sales motion:</strong> Founder-led. No channel. No resellers. No white-label.</li>
+        </ul>
+      </div>
+
+      <div class="card-dark">
+        <h3>Phase 2 &middot; Year 2–3 &middot; Add outcomes-based ladder for NFPs</h3>
+        <p>Once reference sites have 12+ months of data, offer mission-driven NFPs a hybrid: $60 base + $25 contingent on hitting fall-reduction or care-minute targets. Drops average revenue slightly but unlocks a larger persona.</p>
+        <ul class="bullets">
+          <li><strong>Trigger:</strong> 10+ facilities live and 1+ peer-reviewed clinical publication.</li>
+          <li><strong>Expected impact:</strong> +25% pipeline volume, -5% blended ARR.</li>
+          <li><strong>Guardrail:</strong> Never more than 30% of contracts on outcomes-based structure.</li>
+        </ul>
+      </div>
+
+      <div class="card-dark">
+        <h3>Phase 3 &middot; Year 3–4 &middot; Raise base to $95 for new logos</h3>
+        <p>Grandfather existing contracts at $85. Anchor the $95 price on an updated ROI model that includes Phase-1 clinical data. Singapore entry at $95 uses AIC co-funding headroom. Premium chain tier negotiated at $110+.</p>
+        <ul class="bullets">
+          <li><strong>Trigger:</strong> Year-3 EBITDA-positive milestone met.</li>
+          <li><strong>Discount policy:</strong> Max 15% off list; no discounts below $80 without CEO approval.</li>
+          <li><strong>Hospital ward expansion:</strong> Separate SKU at $180/bed/month; different sales motion entirely.</li>
+        </ul>
+      </div>
+
+      <div class="card-dark">
+        <h3>Phase 4 &middot; Year 4+ &middot; Insurance and white-label optionality</h3>
+        <p>Only once clinical data is publishable and insurer claims data has 3+ years of baselines. These are <strong>additional distribution layers</strong>, never replacements for direct sales. The brand and pricing power must live with Lumana.</p>
+        <ul class="bullets">
+          <li><strong>Insurance partnerships:</strong> AU-first, premium-integrated.</li>
+          <li><strong>White-label caveat:</strong> Only to complementary integrators (nurse call), never to direct competitors.</li>
+          <li><strong>Hard line:</strong> Lumana never becomes a component SKU.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  </div><!-- /#pricing -->
+
+  </main>
+<footer>
+    <div class="container">
+      <div class="brand-footer">LUMANA</div>
+      <p>Competitor product analysis &middot; GNVC 2026 &middot; Confidential</p>
+    </div>
+  </footer>
+
+  <script>
+    // ── Mobile menu ────────────────────────────────────────────────────────
+    function toggleMenu() {
+      document.getElementById('mobile-menu').classList.toggle('open');
+      document.getElementById('hamburger').classList.toggle('open');
+    }
+
+    // ── Data ───────────────────────────────────────────────────────────────
+    const competitors = [
+      { name:'SafelyYou (Halo)',          url:'safely-you.com',        modality:'AI video (with human review)',     privacy:'r', value:'Fall reduction + clinical workflow',        hq:'USA',             funding:'$100m+',   tier:'lg', deployments:'450+ communities',      quality:8.4, rating:4.3 },
+      { name:'Oxehealth / LIO',           url:'liohealth.com',         modality:'Infrared optical sensor',          privacy:'r', value:'Patient safety + vitals (MH, dementia)',    hq:'UK',              funding:'~$22m',    tier:'md', deployments:'~50% of NHS MH trusts', quality:7.9, rating:4.2 },
+      { name:'Nobi',                       url:'nobi.life',             modality:'AI smart lamp (edge vision)',      privacy:'a', value:'Fall prevention + detection',               hq:'Belgium',         funding:'\u20AC48m+', tier:'lg', deployments:'22+ countries',        quality:7.6, rating:4.4 },
+      { name:'AltumView (Sentinare)',      url:'altumview.ca',          modality:'Stick-figure AI (edge)',           privacy:'g', value:'Low-cost fall detection',                   hq:'Canada',          funding:'Angel',    tier:'sm', deployments:'Consumer + B2B',        quality:6.2, rating:4.0 },
+      { name:'Vayyar Care',                url:'vayyar.com',            modality:'4D imaging radar',                 privacy:'g', value:'Fall detection + activity',                 hq:'Israel',          funding:'$300m+',   tier:'lg', deployments:'Global via partners',   quality:7.4, rating:4.1 },
+      { name:'Xandar Kardian (XK300)',     url:'xkcorp.com',            modality:'UWB impulse radar',                privacy:'g', value:'Continuous vitals (FDA 510(k))',           hq:'Canada / USA',    funding:'~$10m',    tier:'md', deployments:'50+ facilities',        quality:7.2, rating:4.2 },
+      { name:'VirtuSense VSTAlert',        url:'virtusense.ai',         modality:'LIDAR / IR spatial AI',            privacy:'g', value:'Predictive fall prevention',                hq:'USA',             funding:'~$90m',    tier:'lg', deployments:'100s LTC orgs',         quality:7.8, rating:4.3 },
+      { name:'CarePredict (Tempo)',        url:'carepredict.com',       modality:'AI wearable + beacons',            privacy:'a', value:'Predictive ADL analytics',                 hq:'USA',             funding:'~$29m',    tier:'md', deployments:'Global SL chains',      quality:7.1, rating:4.1 },
+      { name:'Kepler Vision (Night Nurse)',url:'keplervision.eu',       modality:'Camera + AI (no replay)',          privacy:'a', value:'Night fall detection',                      hq:'Netherlands',     funding:'~\u20AC6m','tier':'sm', deployments:'NL / BE care homes',    quality:6.5, rating:3.9 },
+      { name:'Tellus You Care',            url:'tellusyoucare.com',     modality:'Ambient RF + passive sensors',     privacy:'g', value:'Aging-in-place monitoring',                 hq:'USA',             funding:'A2 Pilot', tier:'sm', deployments:'Pilots',                quality:6.0, rating:3.8 },
+      { name:'Essence SmartCare',          url:'essencesmartcare.com',  modality:'Multi-sensor home kit',            privacy:'g', value:'Independent-living telecare',               hq:'Israel',          funding:'Listed',   tier:'md', deployments:'Global telecare',       quality:7.0, rating:4.0 },
+      { name:'Eevi',                        url:'eevi.life',             modality:'Vayyar OEM + platform',            privacy:'g', value:'AU aged-care integrator',                   hq:'Australia',       funding:'Bootstrapped','tier':'sm', deployments:'AU RACs',            quality:6.3, rating:4.0 },
+      { name:'Austco Tacera',              url:'austco.com',            modality:'Nurse-call + sensor hub',           privacy:'g', value:'Nurse-call integration platform',          hq:'Australia / Global',funding:'ASX listed','tier':'md', deployments:'12,000+ facilities',  quality:7.0, rating:3.9 },
+      { name:'K4Connect',                  url:'k4connect.com',         modality:'IoT platform + Vayyar',            privacy:'g', value:'Senior-living operating system',            hq:'USA',             funding:'~$44m',    tier:'md', deployments:'300+ communities',       quality:6.8, rating:4.1 },
+      { name:'Caregility',                 url:'caregility.com',        modality:'Virtual care platform + radar',    privacy:'g', value:'Virtual nursing + monitoring',              hq:'USA',             funding:'~$100m',   tier:'lg', deployments:'1,200+ hospitals',      quality:7.3, rating:4.2 },
+      { name:'Tunstall Healthcare',        url:'tunstall.com',          modality:'Telecare + PERS',                  privacy:'a', value:'Pan-European telecare leader',              hq:'UK',              funding:'PE-backed','tier':'lg', deployments:'5M+ users',            quality:6.7, rating:3.7 },
+      { name:'GrandCare Systems',           url:'grandcare.com',         modality:'Motion / door sensors + tablet',   privacy:'g', value:'Senior wellness monitoring',                hq:'USA',             funding:'Bootstrapped','tier':'sm', deployments:'Home care',           quality:5.9, rating:3.8 },
+      { name:'Lively (Best Buy Health)',    url:'lively.com',            modality:'Mobile PERS + app',                privacy:'a', value:'Consumer PERS',                             hq:'USA',             funding:'Acquired', tier:'lg', deployments:'Consumer mass',         quality:5.8, rating:3.9 },
+      { name:'Alarm.com Wellness',          url:'alarm.com',             modality:'IoT + motion + voice',             privacy:'g', value:'Smart-home wellness',                       hq:'USA',             funding:'NASDAQ',   tier:'lg', deployments:'Mass market',           quality:6.1, rating:4.0 },
+      { name:'MyNotifi',                    url:'mynotifi.com',          modality:'Wearable fall detector',           privacy:'a', value:'Wearable fall alert',                       hq:'USA',             funding:'Pre-seed', tier:'sm', deployments:'Consumer',              quality:5.5, rating:3.6 },
+      { name:'Obie for Seniors',            url:'obieforseniors.com',    modality:'Interactive projector + camera',   privacy:'a', value:'Dementia engagement + activity',            hq:'USA / Canada',    funding:'Seed',     tier:'sm', deployments:'MC + SL',               quality:5.7, rating:3.9 },
+      { name:'Sensara',                      url:'sensara.eu',            modality:'PIR + analytics',                  privacy:'g', value:'Elderly behaviour analytics',               hq:'Netherlands',     funding:'~\u20AC5m','tier':'sm', deployments:'NL / EU',               quality:5.8, rating:3.8 },
+      { name:'Inovonics',                    url:'inovonics.com',         modality:'Wireless sensor network',          privacy:'g', value:'Nurse-call + pendants',                     hq:'USA',             funding:'Private',  tier:'md', deployments:'8,000+ facilities',      quality:6.6, rating:3.9 },
+      { name:'Sensio / Healthsense',        url:'sensio.no',             modality:'Sensor platform for senior care',  privacy:'g', value:'Nordic smart-care platform',                hq:'Norway',          funding:'~\u20AC30m','tier':'md', deployments:'Nordic + UK',           quality:6.8, rating:4.0 },
+      { name:'Cherish Health',               url:'cherishhealth.com',     modality:'Cherish Serenity radar',           privacy:'g', value:'Radar fall-detection wall plate',           hq:'USA',             funding:'~$15m',    tier:'md', deployments:'Early commercial',      quality:6.4, rating:4.0 },
+      { name:'Anthropos',                    url:'anthropos.io',          modality:'Sensor + care-circle app',         privacy:'g', value:'UK home-care monitoring',                   hq:'UK',              funding:'~£4m',     tier:'sm', deployments:'UK pilots',              quality:5.9, rating:3.9 },
+      { name:'Amazon Alexa Together',       url:'alexa.amazon.com',      modality:'Echo + Vayyar (partner)',          privacy:'g', value:'Consumer aging-in-place',                    hq:'USA',             funding:'Amazon',   tier:'lg', deployments:'Consumer scale',        quality:5.6, rating:3.8 },
+      { name:'Tynetec / Oku',                url:'tynetec.co.uk',         modality:'Nurse-call + sensors',             privacy:'a', value:'UK care-home telecare',                     hq:'UK',              funding:'Legrand',  tier:'md', deployments:'UK NHS / LA',           quality:6.2, rating:3.8 },
+      { name:'Finggal Link',                 url:'finggal-link.co.jp',    modality:'Radar + IR (OEM partner)',         privacy:'g', value:'Japanese medtech device platform',         hq:'Japan',           funding:'Est. 1990','tier':'md', deployments:'JP care homes',          quality:6.8, rating:4.1 },
+      { name:'Possum / SafeAlarm',           url:'possum.co.uk',          modality:'Environmental controls + sensors', privacy:'g', value:'Assistive tech for independent living',     hq:'UK',              funding:'Private',  tier:'sm', deployments:'UK homes',               quality:5.6, rating:3.7 },
+      { name:'Essence Care@Home Pro',         url:'essence-grp.com',       modality:'mmWave + BLE',                     privacy:'g', value:'Global telecare platform',                  hq:'Israel',          funding:'Listed',   tier:'lg', deployments:'Global',                quality:6.9, rating:3.9 },
+      { name:'Lumana',                       url:'lumana.care',           modality:'mmWave + thermal (ambient)',       privacy:'g', value:'Sensing + workflow + auto-documentation',   hq:'Singapore / HK',  funding:'Pre-seed', tier:'sm', deployments:'Pilots inbound',         quality:9.2, rating:4.8, lumana:true }
+    ];
+
+    const privacyClassMap = { g:'p-green', a:'p-amber', r:'p-red' };
+    const privacyLabelMap = { g:'Non-imaging', a:'Mixed / edge', r:'Video-based' };
+
+    // ── Helpers (all build via createElement + textContent — no innerHTML) ──
+    function el(tag, opts) {
+      const n = document.createElement(tag);
+      if (!opts) return n;
+      if (opts.className) n.className = opts.className;
+      if (opts.text != null) n.textContent = opts.text;
+      if (opts.style) n.setAttribute('style', opts.style);
+      if (opts.title) n.title = opts.title;
+      return n;
+    }
+    function starsNode(rating) {
+      const wrap = el('span', { className:'stars' });
+      const whole = Math.round(rating);
+      for (let i = 1; i <= 5; i++) {
+        if (i <= whole) {
+          wrap.appendChild(document.createTextNode('\u2605'));
+        } else {
+          const empty = el('span', { className:'stars-empty', text:'\u2605' });
+          wrap.appendChild(empty);
+        }
+      }
+      const num = el('small', { text: ' ' + rating.toFixed(1) });
+      num.style.cssText = 'color:var(--muted2);font-size:0.72rem;margin-left:6px;font-family:Manrope;';
+      wrap.appendChild(num);
+      return wrap;
+    }
+
+    // ── Render table ─────────────────────────────────────────────────────────
+    const tbody = document.getElementById('compBody');
+    competitors.forEach(c => {
+      const tr = el('tr');
+      if (c.lumana) tr.className = 'lumana-row';
+
+      // Company
+      const tdCo = el('td');
+      tdCo.appendChild(el('span', { className:'co-name', text:c.name }));
+      tdCo.appendChild(el('span', { className:'co-url', text:c.url }));
+      tr.appendChild(tdCo);
+
+      tr.appendChild(el('td', { text:c.modality }));
+
+      // Privacy
+      const tdP = el('td');
+      const priv = el('span', { className:'privacy' });
+      priv.appendChild(el('span', { className:'privacy-dot ' + privacyClassMap[c.privacy] }));
+      priv.appendChild(document.createTextNode(' ' + privacyLabelMap[c.privacy]));
+      tdP.appendChild(priv);
+      tr.appendChild(tdP);
+
+      tr.appendChild(el('td', { text:c.value }));
+      tr.appendChild(el('td', { text:c.hq }));
+
+      // Funding chip
+      const tdF = el('td');
+      tdF.appendChild(el('span', { className:'fund-chip ' + c.tier, text:c.funding }));
+      tr.appendChild(tdF);
+
+      tr.appendChild(el('td', { text:c.deployments }));
+
+      // Quality bar
+      const tdQ = el('td');
+      const bar = el('span', { className:'qty-bar' });
+      const fill = el('span');
+      fill.style.width = (c.quality * 10) + '%';
+      bar.appendChild(fill);
+      tdQ.appendChild(bar);
+      const num = el('small', { text:c.quality.toFixed(1) });
+      num.style.cssText = 'color:var(--muted2);font-size:0.7rem;';
+      tdQ.appendChild(num);
+      tr.appendChild(tdQ);
+
+      // Rating
+      const tdR = el('td');
+      tdR.appendChild(starsNode(c.rating));
+      tr.appendChild(tdR);
+
+      tbody.appendChild(tr);
+    });
+
+    // ── Quadrant dots (x: camera→ambient 0-100, y: workflow 0-100) ──────────
+    const quadPlacements = [
+      { name:'SafelyYou',         x:10, y:70, c:'red'    },
+      { name:'Oxehealth',         x:16, y:60, c:'red'    },
+      { name:'Nobi',              x:46, y:52, c:'amber'  },
+      { name:'AltumView',         x:64, y:30, c:'amber'  },
+      { name:'Vayyar',            x:78, y:34, c:'green'  },
+      { name:'Xandar Kardian',    x:82, y:24, c:'green'  },
+      { name:'VirtuSense',        x:74, y:56, c:'green'  },
+      { name:'CarePredict',       x:36, y:48, c:'amber'  },
+      { name:'Kepler Vision',     x:22, y:42, c:'amber'  },
+      { name:'Tunstall',          x:50, y:20, c:'amber'  },
+      { name:'Essence SmartCare', x:68, y:32, c:'green'  },
+      { name:'Austco Tacera',     x:58, y:36, c:'green'  },
+      { name:'Cherish Radar',     x:80, y:28, c:'green'  },
+      { name:'Finggal Link',      x:76, y:26, c:'green'  },
+      { name:'Lumana',            x:88, y:88, c:'lumana' }
+    ];
+    const quad = document.getElementById('quadMap');
+    quadPlacements.forEach(p => {
+      const dot = el('div', { className: 'dot-comp ' + (p.c === 'lumana' ? 'lumana' : p.c), title: p.name });
+      dot.style.left = p.x + '%';
+      dot.style.top  = (100 - p.y) + '%';
+      quad.appendChild(dot);
+
+      const lab = el('div', {
+        className: 'dot-label' + (p.c === 'lumana' ? ' lumana' : ''),
+        text: p.name
+      });
+      lab.style.left = p.x + '%';
+      lab.style.top  = (100 - p.y) + '%';
+      quad.appendChild(lab);
+    });
+
+    // ── Quality leaderboard ─────────────────────────────────────────────────
+    const top10 = competitors.slice().sort((a,b) => b.quality - a.quality).slice(0, 10);
+    const qualityBars = document.getElementById('qualityBars');
+    top10.forEach(c => {
+      const row = el('div', { className: 'score-row' + (c.lumana ? ' hi' : '') });
+      row.appendChild(el('span', { className:'name', text:c.name }));
+      const bar = el('div', { className:'score-bar' });
+      const fill = el('span');
+      fill.style.width = (c.quality * 10) + '%';
+      bar.appendChild(fill);
+      row.appendChild(bar);
+      row.appendChild(el('span', { className:'val', text:c.quality.toFixed(1) }));
+      qualityBars.appendChild(row);
+    });
+
+    // ── Deployment ranking ──────────────────────────────────────────────────
+    const deployTiers = [
+      { name:'Tunstall',       val: 10.0, label:'5M+ users' },
+      { name:'Austco Tacera',  val: 9.5,  label:'12,000+' },
+      { name:'Inovonics',      val: 8.5,  label:'8,000+' },
+      { name:'Caregility',     val: 8.0,  label:'1,200+' },
+      { name:'SafelyYou',      val: 7.0,  label:'450+' },
+      { name:'K4Connect',      val: 5.5,  label:'300+' },
+      { name:'Nobi',           val: 5.0,  label:'22 countries' },
+      { name:'CarePredict',    val: 4.5,  label:'SL chains' },
+      { name:'VirtuSense',     val: 4.0,  label:'100s LTC' },
+      { name:'Lumana',         val: 1.0,  label:'Pilots inbound', lumana:true }
+    ];
+    const deployBars = document.getElementById('deployBars');
+    deployTiers.forEach(t => {
+      const row = el('div', { className: 'score-row' + (t.lumana ? ' hi' : '') });
+      row.appendChild(el('span', { className:'name', text:t.name }));
+      const bar = el('div', { className:'score-bar' });
+      const fill = el('span');
+      fill.style.width = (t.val * 10) + '%';
+      bar.appendChild(fill);
+      row.appendChild(bar);
+      row.appendChild(el('span', { className:'val', text:t.label }));
+      deployBars.appendChild(row);
+    });
+
+    // ── Scroll reveal ────────────────────────────────────────────────────────
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.section-head, .panel, .review-card, .region-card, .quadrant, .comp-wrap, .kpi-strip, .scenario-strip, .model, .persona, .wtp-chart, .nba-table, .sens-grid, .card-dark').forEach(x => {
+      x.classList.add('animate');
+      io.observe(x);
+    });
+
+    // ── In-page section nav: toggle active tab on scroll ────────────────────
+    (function () {
+      const tabs = document.querySelectorAll('.admin-nav .tabs a');
+      const targets = ['competitor', 'pricing']
+        .map(id => document.getElementById(id))
+        .filter(Boolean);
+      if (!tabs.length || !targets.length) return;
+
+      function setActive(id) {
+        tabs.forEach(a => {
+          const match = a.getAttribute('href') === '#' + id;
+          a.classList.toggle('active', match);
+        });
+      }
+
+      const navIO = new IntersectionObserver((entries) => {
+        // Pick the entry with the largest intersection ratio that is intersecting.
+        let best = null;
+        entries.forEach(e => {
+          if (e.isIntersecting && (!best || e.intersectionRatio > best.intersectionRatio)) {
+            best = e;
+          }
+        });
+        if (best && best.target.id) setActive(best.target.id);
+      }, {
+        // Account for fixed topnav (68px) + sticky admin-nav (~52px). Trigger when a section
+        // crosses roughly the upper third of the viewport.
+        rootMargin: '-140px 0px -55% 0px',
+        threshold: [0, 0.1, 0.5, 1]
+      });
+
+      targets.forEach(t => navIO.observe(t));
+    })();
+  </script>
+</body>
+</html>

@@ -32,6 +32,9 @@ WIP_REPOS=(
   "elitez-site-supervisor:site-supervisor"
   "Elitez-Events:events"
   "ELIX-resume:elix-resume"
+  "Lumana:lumana"
+  "market-tracker-research:market-tracker-research"
+  "flashcart-research:flashcart-research"
 )
 
 for entry in "${WIP_REPOS[@]}"; do
