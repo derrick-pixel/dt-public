@@ -210,6 +210,9 @@
     .nav-logo { font-weight: 700; font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted2); }
 
     /* ── TETHER STATION HUD strip (literal space-elevator scene) ── */
+    /* Layout:  [Earth═══════════════[climber]═══════════════ISS]   TEXT TEXT  [☾]
+       Scene now occupies the LEFT half of the bar; text labels and the
+       theme toggle live in nav-right on the far right. */
     .nav-hud {
       display: flex; align-items: center; gap: 14px;
       font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -218,6 +221,9 @@
       text-transform: uppercase;
       color: var(--muted2);
       position: relative; z-index: 2;
+      flex: 1;          /* scene container stretches to fill the available width */
+      min-width: 0;
+      max-width: 60vw;  /* but never more than ~60% of the viewport */
     }
 
     /* ───── Space-elevator scene ─────
@@ -227,7 +233,8 @@
     .space-elevator {
       display: flex; align-items: center;
       gap: 0;
-      flex-shrink: 0;
+      flex: 1;            /* fill the .nav-hud parent width */
+      min-width: 0;
     }
     .se-earth {
       width: 26px; height: 26px;
@@ -249,10 +256,12 @@
       to   { background-position: 130% 50%; }
     }
 
-    /* The cable holds the climber so absolute positioning is bounded. */
+    /* The cable holds the climber so absolute positioning is bounded.
+       Flex-grow so the cable stretches across most of the bar. */
     .se-tether {
       position: relative;
-      width: 130px;
+      flex: 1;
+      min-width: 120px;
       height: 26px;
       display: flex; align-items: center;
       margin: 0 -1px;            /* tuck under Earth and ISS so the cable visually anchors */
@@ -372,13 +381,17 @@
     }
     .nav-right { position: relative; z-index: 2; display: flex; align-items: center; gap: 14px; }
 
-    /* Progressive collapse — protect the scene + label at all sizes */
-    @media (max-width: 1100px) { .nav-hud .opt-met { display: none; } }
-    @media (max-width: 880px)  { .nav-hud .opt-alt { display: none; } }
-    @media (max-width: 720px)  { .nav-hud .opt-led { display: none; } }
-    @media (max-width: 560px) {
-      .nav-hud .nav-label { display: none; }
-      .se-tether { width: 64px; }
+    /* Progressive collapse — protect the scene at all sizes;
+       hide telemetry chips on narrow viewports first. */
+    @media (max-width: 1100px) { .nav-right .opt-met { display: none; } }
+    @media (max-width: 920px)  { .nav-right .opt-alt { display: none; } }
+    @media (max-width: 760px)  { .nav-right .opt-led { display: none; } }
+    @media (max-width: 600px) {
+      .nav-right .nav-label { display: none; }
+      .nav-hud { max-width: 70vw; }
+    }
+    @media (max-width: 420px) {
+      .se-tether { min-width: 60px; }
     }
     /* Soft palette swap on light theme */
     :root[data-theme="light"] .se-earth {
@@ -720,13 +733,9 @@
 <nav>
   <div class="stars-twinkle" aria-hidden="true"></div>
 
-  <div class="nav-hud" aria-label="Tether-station scene + telemetry">
-
-    <!-- Literal space-elevator scene:
-         Earth ─── bold cable + shuttling climber ─── ISS
-         Earth image: Apollo 17 Blue Marble (NASA, public domain).
-         ISS image: post-STS-132 photograph (NASA, public domain).
-         Climber shuttles fast (1.4s/direction) along the cable. -->
+  <!-- Scene: Earth ─── bold cable + shuttling climber ─── ISS
+       Now stretches across the full left side of the bar. -->
+  <div class="nav-hud" aria-label="Space-elevator scene">
     <div class="space-elevator" aria-label="Space-elevator scene · Earth surface to GEO tether anchor">
       <span class="se-earth" role="img" aria-label="Earth (Blue Marble)"></span>
       <span class="se-tether">
@@ -735,7 +744,9 @@
       </span>
       <a class="se-iss" href="https://en.wikipedia.org/wiki/International_Space_Station" target="_blank" rel="noopener" aria-label="International Space Station (Wikipedia)" title="ISS · 408 km · 27,600 km/h"></a>
     </div>
+  </div>
 
+  <div class="nav-right">
     <span class="nav-label">TETHER STATION SIN·1</span>
 
     <span class="nav-sep opt-alt">·</span>
@@ -746,8 +757,6 @@
 
     <span class="nav-sep opt-led">·</span>
     <span class="nav-led opt-led">Transmitting</span>
-  </div>
-  <div class="nav-right">
 
     <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle theme" title="Toggle light / dark">
       <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
