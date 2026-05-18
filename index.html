@@ -236,24 +236,21 @@
       flex: 1;            /* fill the .nav-hud parent width */
       min-width: 0;
     }
+    /* ─── Earth (stylized SVG globe, rotates on its axis) ─── */
     .se-earth {
-      width: 26px; height: 26px;
-      border-radius: 50%;
-      background-image: url('img/space/earth-blue-marble.jpg');
-      background-size: cover;
-      background-position: 30% 50%;
-      box-shadow:
-        0 0 14px rgba(56,189,248,.55),
-        0 0 28px rgba(56,189,248,.22),
-        inset 4px 0 8px rgba(0,30,80,.65),
-        inset 0 0 1px rgba(255,255,255,.4);
-      animation: earth-spin 50s linear infinite;
+      width: 28px; height: 28px;
       flex-shrink: 0;
       z-index: 2;
+      filter: drop-shadow(0 0 8px rgba(56,189,248,.55))
+              drop-shadow(0 0 16px rgba(56,189,248,.20));
     }
-    @keyframes earth-spin {
-      from { background-position: 30% 50%; }
-      to   { background-position: 130% 50%; }
+    .se-earth .earth-continents {
+      transform-origin: 16px 16px;
+      animation: earth-rotate 30s linear infinite;
+    }
+    @keyframes earth-rotate {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
     }
 
     /* The cable holds the climber so absolute positioning is bounded.
@@ -290,62 +287,36 @@
           transparent 0 7px,
           rgba(255,255,255,.35) 7px 8px);
     }
+    /* ─── Climber (detailed SVG carriage with grip + windows) ─── */
     .se-climber {
       position: absolute;
       top: 50%; left: 0;
-      width: 14px; height: 10px;
+      width: 30px; height: 18px;
       transform: translate(0, -50%);
-      background: linear-gradient(180deg, #fff 0%, var(--accent2) 50%, var(--accent) 100%);
-      border: 1px solid #fff;
-      border-radius: 2px;
-      box-shadow:
-        0 0 10px var(--accent),
-        0 0 20px rgba(0,212,255,.6),
-        inset 0 1px 0 rgba(255,255,255,.7);
-      animation: climber-shuttle 1.4s cubic-bezier(.42,0,.58,1) infinite alternate;
+      animation: climber-shuttle 2.8s cubic-bezier(.42,0,.58,1) infinite alternate;
       z-index: 3;
-    }
-    /* contrasting "hatch" detail on the climber capsule */
-    .se-climber::after {
-      content: ''; position: absolute;
-      top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 6px; height: 2px;
-      background: var(--bg);
-      border-radius: 1px;
-      opacity: .85;
-    }
-    /* soft halo around the climber so it glows regardless of direction */
-    .se-climber::before {
-      content: ''; position: absolute;
-      inset: -3px -8px;
-      border-radius: 4px;
-      background: radial-gradient(ellipse at center,
-        rgba(0,212,255,.6) 0%,
-        rgba(0,212,255,.25) 45%,
-        transparent 75%);
-      filter: blur(2px);
-      pointer-events: none;
-      z-index: -1;
+      filter:
+        drop-shadow(0 0 6px rgba(0,212,255,.65))
+        drop-shadow(0 0 14px rgba(0,212,255,.35));
     }
     @keyframes climber-shuttle {
       0%   { left: 0;                  }
-      100% { left: calc(100% - 14px);  }
+      100% { left: calc(100% - 30px);  }
     }
 
+    /* ─── ISS (custom SVG: truss + solar panels + modules) ─── */
     .se-iss {
-      width: 38px; height: 22px;
-      background-image: url('img/space/iss.jpg');
-      background-size: cover;
-      background-position: center;
-      border-radius: 2px;
-      box-shadow: 0 0 10px rgba(0,212,255,.45);
-      filter: brightness(1.1) contrast(1.15);
+      width: 56px; height: 24px;
       flex-shrink: 0;
       z-index: 2;
-      transition: opacity .25s ease, transform .25s ease;
+      filter: drop-shadow(0 0 8px rgba(0,212,255,.45));
+      transition: transform .25s ease, filter .25s ease;
       cursor: pointer;
     }
-    .se-iss:hover { transform: scale(1.06); box-shadow: 0 0 14px rgba(0,212,255,.7); }
+    .se-iss:hover {
+      transform: scale(1.06);
+      filter: drop-shadow(0 0 12px rgba(0,212,255,.75));
+    }
 
     .nav-label {
       color: var(--accent);
