@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design Audit — Elitez Events</title>
+  <link rel="icon" href="../assets/img/logo-mark.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/site.css">
+<style>
+    /* ─── Last-edited stamp · injected ─── */
+    .last-edited-strip {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+      padding: 5px 14px; text-align: right;
+      font-family: ui-monospace, "Share Tech Mono", monospace;
+      font-size: 0.72rem; letter-spacing: 0.05em;
+      color: rgba(140,140,140,0.85);
+      background: rgba(0,0,0,0.03);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .last-edited-strip strong { color: rgba(60,60,60,0.85); font-weight: 500; }
+    #last-edited { color: #d06010; font-weight: 600; }
+    #last-edited.fresh { color: #0a8a4a; }
+    #last-edited.stale { color: #c82040; }
+</style>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body class="admin-page">
+  <nav class="ee-nav" id="ee-nav">
+    <a href="../index.html" class="brand" aria-label="Elitez Events — home">
+      <img src="../assets/img/logo-wordmark.png" alt="Elitez" class="logo-wordmark">
+      <span class="events-tag">Events</span>
+    </a>
+    <div class="links">
+      <a href="../services.html">Expertise</a>
+      <a href="../work.html">Work</a>
+      <a href="../about.html">About</a>
+      <a href="index.html" class="active">Market Intel</a>
+      <a href="../contact.html">Contact</a>
+    </div>
+    <a href="../contact.html" class="cta">Plan an event</a>
+  </nav>
+
+<div class="last-edited-strip" role="status" aria-live="polite">
+  <strong>Page last edited:</strong> <span id="last-edited" data-edited="2026-04-29T15:47:01+08:00">checking…</span>
+</div>
+
+
+  <nav class="admin-nav">
+    <a href="index.html">Competitors</a>
+    <a href="insights.html">Market &amp; Pricing</a>
+    <a href="whitespace.html">Whitespace Atlas</a>
+    <a href="design-audit.html" class="active">Design Audit</a>
+    <a href="competitor-analytics.html">Analytics</a>
+    <a href="report.html">Report</a>
+  </nav>
+
+  <main class="container-wide">
+    <h1>Website design audit</h1>
+    <p style="max-width: 820px; color: var(--ee-muted);">
+      Each audited competitor scored on 5 dimensions (typography, hierarchy, signal density, conversion clarity, mobile polish) — summed to a 0-25 score. Higher is sharper. The bottom-20 of the 35-competitor set has not been audited; their design posture is captured qualitatively elsewhere.
+    </p>
+
+    <div class="design-sort-bar">
+      <label for="sort-select" style="font-weight: 600;">Sort by</label>
+      <select id="sort-select">
+        <option value="score-desc">Score (high to low)</option>
+        <option value="score-asc">Score (low to high)</option>
+        <option value="name">Name (A→Z)</option>
+        <option value="category">Category</option>
+      </select>
+      <span class="summary" id="summary"></span>
+    </div>
+
+    <section>
+      <h2 style="margin-top: 8px;">Audited competitors</h2>
+      <div id="gallery-audited" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 22px; margin-top: 16px;"></div>
+    </section>
+
+    <section style="margin-top: 56px;">
+      <h2>Not yet audited</h2>
+      <p style="color: var(--ee-muted);">Lower-priority competitors not visited for the rubric pass — included here as a reference roster.</p>
+      <div id="gallery-unaudited" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 16px;"></div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { loadAppData, mountSampleBanner } from '../assets/js/app.js';
+    import { h, mount } from '../assets/js/dom.js';
+
+    const { competitors } = await loadAppData();
+    mountSampleBanner();
+
+    const all = competitors.competitors;
+    const audited = all.filter(c => c.website_design_rating != null);
+    const unaudited = all.filter(c => c.website_design_rating == null);
+
+    document.getElementById('summary').textContent =
+      `${audited.length} of ${all.length} audited · scale 0-25 (sum of 5 dimensions)`;
+
+    // 0-25 scale tier thresholds
+    function scoreTier(r) {
+      if (r == null) return 'tier-na';
+      if (r >= 20) return 'tier-high';
+      if (r >= 14) return 'tier-mid';
+      return 'tier-low';
+    }
+    function tierLabel(r) {
+      if (r == null) return 'Not audited';
+      if (r >= 20) return 'Strong';
+      if (r >= 14) return 'Adequate';
+      return 'Weak';
+    }
+
+    function buildAuditedCard(c) {
+      let screenshot = null;
+      if (c.website_screenshot_path) {
+        screenshot = h('img', {
+          class: 'screenshot',
+          src: `../${c.website_screenshot_path}`,
+          alt: `${c.name} homepage screenshot`,
+          loading: 'lazy'
+        });
+        // Hide if the file doesn't exist (screenshots dir may be missing).
+        screenshot.addEventListener('error', () => { screenshot.style.display = 'none'; });
+      }
+      return h('div', { class: 'design-card' },
+        h('div', { class: 'row-top' },
+          h('div', {},
+            h('p', { class: 'name' }, c.name),
+            h('p', { class: 'url' }, c.url)
+          ),
+          h('span', { class: `score-pill ${scoreTier(c.website_design_rating)}` },
+            `${c.website_design_rating}/25`
+          )
+        ),
+        h('div', { style: { display: 'flex', gap: '6px', flexWrap: 'wrap' } },
+          h('span', { class: 'badge badge-orange' }, c.category),
+          h('span', { class: `badge ${
+            c.website_design_rating >= 20 ? 'badge-success' :
+            c.website_design_rating >= 14 ? 'badge-amber' : 'badge-orange'
+          }` }, tierLabel(c.website_design_rating))
+        ),
+        screenshot,
+        c.website_design_notes
+          ? h('p', { class: 'notes' }, c.website_design_notes)
+          : h('p', { class: 'notes', style: { fontStyle: 'italic' } }, 'No notes provided.')
+      );
+    }
+
+    function buildUnauditedCard(c) {
+      return h('div', { class: 'design-card unaudited' },
+        h('div', { class: 'row-top' },
+          h('div', {},
+            h('p', { class: 'name' }, c.name),
+            h('p', { class: 'url' }, c.url)
+          ),
+          h('span', { class: 'score-pill tier-na' }, 'Not audited')
+        ),
+        h('div', {},
+          h('span', { class: 'badge badge-muted' }, c.category),
+          ' ',
+          h('span', { class: 'badge badge-muted' }, c.hq_region)
+        )
+      );
+    }
+
+    const auditedRoot = document.getElementById('gallery-audited');
+    const unauditedRoot = document.getElementById('gallery-unaudited');
+
+    function renderGalleries(sortKey) {
+      const sortedAudit = [...audited];
+      const sortedUnaudit = [...unaudited];
+      if (sortKey === 'score-desc') sortedAudit.sort((a, b) => b.website_design_rating - a.website_design_rating);
+      else if (sortKey === 'score-asc') sortedAudit.sort((a, b) => a.website_design_rating - b.website_design_rating);
+      else if (sortKey === 'name') {
+        sortedAudit.sort((a, b) => a.name.localeCompare(b.name));
+        sortedUnaudit.sort((a, b) => a.name.localeCompare(b.name));
+      } else if (sortKey === 'category') {
+        sortedAudit.sort((a, b) => a.category.localeCompare(b.category) || (b.website_design_rating - a.website_design_rating));
+        sortedUnaudit.sort((a, b) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name));
+      }
+      mount(auditedRoot, ...sortedAudit.map(buildAuditedCard));
+      mount(unauditedRoot, ...sortedUnaudit.map(buildUnauditedCard));
+    }
+
+    document.getElementById('sort-select').addEventListener('change', e => renderGalleries(e.target.value));
+    renderGalleries('score-desc');
+  </script>
+
+<script>
+(function () {
+  const el = document.getElementById('last-edited');
+  if (!el) return;
+  const iso = el.dataset.edited;
+  if (!iso) { el.textContent = '—'; return; }
+  const d = new Date(iso);
+  const fmt = d.toLocaleDateString('en-SG', { year: 'numeric', month: 'short', day: 'numeric' });
+  const ago = Math.floor((Date.now() - d.getTime()) / 86400000);
+  let suffix;
+  if (ago === 0) suffix = 'today';
+  else if (ago === 1) suffix = 'yesterday';
+  else if (ago < 14) suffix = ago + ' days ago';
+  else if (ago < 60) suffix = Math.floor(ago/7) + ' weeks ago';
+  else suffix = Math.floor(ago/30) + ' months ago';
+  el.textContent = fmt + ' · ' + suffix;
+  if (ago <= 7) el.classList.add('fresh');
+  else if (ago > 14) el.classList.add('stale');
+})();
+</script>
+
+</body>
+</html>

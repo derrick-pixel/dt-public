@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELIX-Resume — Competitor Analytics</title>
+  <meta name="description" content="ELIX-Resume competitor analytics dashboard — market landscape, feature comparisons, and strategic insights." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Lato:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* ── RESET & VARIABLES ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #0c0a1a;
+      --surface: #13102a;
+      --card:    #1a1535;
+      --border:  rgba(167,139,250,0.08);
+      --border2: rgba(167,139,250,0.18);
+      --text:    #ede9fe;
+      --muted:   #7c6f9b;
+      --muted2:  #a89ec4;
+      --accent:  #a78bfa;
+      --accent2: #f59e0b;
+      --green:   #34d399;
+      --red:     #f87171;
+      --glow:    rgba(167,139,250,0.12);
+      --glow2:   rgba(245,158,11,0.10);
+      --nav-h:   64px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Lato', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── TYPOGRAPHY ────────────────────────────────────────────────────── */
+    h1, h2, h3 { font-family: 'Playfair Display', serif; }
+    h1 { font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.08; }
+    h2 { font-size: clamp(1.5rem, 3.5vw, 2.4rem); font-weight: 700; letter-spacing: -0.01em; }
+    h3 { font-size: clamp(1.1rem, 2vw, 1.5rem); font-weight: 600; }
+    .label {
+      font-family: 'Lato', sans-serif;
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent2);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    /* ── NAV ───────────────────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: var(--nav-h);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+      background: rgba(12,10,26,0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 800; font-size: 1rem; letter-spacing: -0.01em;
+    }
+    .nav-logo .elix { color: var(--accent); }
+    .nav-logo .dash { color: var(--accent2); }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a {
+      font-size: 0.72rem; font-weight: 600; color: var(--muted);
+      transition: color 0.2s; cursor: pointer; letter-spacing: 0.04em;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-cta {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: var(--bg); padding: 8px 20px; border-radius: 8px;
+      font-size: 0.72rem; font-weight: 700; transition: all 0.2s;
+      cursor: pointer; border: none; font-family: inherit;
+      display: inline-block;
+    }
+    .nav-cta:hover { filter: brightness(1.15); transform: translateY(-1px); }
+
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+    .hamburger span { display: block; width: 20px; height: 2px; background: var(--text); transition: all 0.3s; }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .mobile-menu {
+        display: none; position: fixed; top: var(--nav-h); left: 0; right: 0; z-index: 199;
+        background: rgba(12,10,26,0.97); backdrop-filter: blur(16px);
+        padding: 20px 24px; border-bottom: 1px solid var(--border);
+        flex-direction: column; gap: 16px;
+      }
+      .mobile-menu.open { display: flex; }
+      .mobile-menu a { font-size: 0.85rem; color: var(--muted2); cursor: pointer; }
+    }
+
+    /* ── LAYOUT ────────────────────────────────────────────────────────── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 80px 0; }
+    @media (max-width: 768px) { section { padding: 48px 0; } }
+
+    /* ── HERO BANNER ───────────────────────────────────────────────────── */
+    .hero-banner {
+      position: relative;
+      padding: calc(var(--nav-h) + 60px) 0 60px;
+      overflow: hidden;
+      text-align: center;
+    }
+    .hero-banner::before {
+      content: '';
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 600px 400px at 20% 30%, rgba(167,139,250,0.12), transparent),
+        radial-gradient(ellipse 500px 350px at 80% 60%, rgba(245,158,11,0.08), transparent);
+    }
+    .hero-banner h1 { margin-bottom: 12px; position: relative; }
+    .hero-banner p { color: var(--muted2); font-size: 1.05rem; max-width: 600px; margin: 0 auto; position: relative; }
+
+    /* ── STAT CARDS ─────────────────────────────────────────────────────── */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px; margin-top: 40px; position: relative;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .stat-card:hover { transform: translateY(-6px); box-shadow: 0 12px 40px rgba(167,139,250,0.08); }
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .stat-label { color: var(--muted); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.06em; margin-top: 4px; }
+
+    /* ── SECTION HEADERS ───────────────────────────────────────────────── */
+    .section-head { text-align: center; margin-bottom: 40px; }
+    .section-head .label { margin-bottom: 8px; display: block; }
+    .section-head p { color: var(--muted2); max-width: 560px; margin: 8px auto 0; font-size: 0.95rem; }
+
+    /* ── COMPETITOR TABLE ───────────────────────────────────────────────── */
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--card);
+    }
+    .comp-table {
+      width: 100%; border-collapse: collapse; min-width: 900px;
+    }
+    .comp-table thead { background: var(--surface); }
+    .comp-table th {
+      padding: 14px 16px; text-align: left;
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent);
+      border-bottom: 1px solid var(--border2);
+      white-space: nowrap;
+    }
+    .comp-table td {
+      padding: 12px 16px; font-size: 0.82rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted2);
+      vertical-align: middle;
+    }
+    .comp-table tbody tr { transition: background 0.2s; }
+    .comp-table tbody tr:hover { background: rgba(167,139,250,0.04); }
+    .comp-table td:first-child { color: var(--text); font-weight: 600; }
+    .comp-table a { color: var(--accent); text-decoration: underline; text-decoration-color: rgba(167,139,250,0.3); }
+    .comp-table a:hover { text-decoration-color: var(--accent); }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .badge-free { background: rgba(52,211,153,0.12); color: var(--green); }
+    .badge-freemium { background: rgba(167,139,250,0.12); color: var(--accent); }
+    .badge-paid { background: rgba(245,158,11,0.12); color: var(--accent2); }
+
+    .stars { color: var(--accent2); font-size: 0.78rem; letter-spacing: 1px; }
+
+    .dark-yes { color: var(--green); font-weight: 600; }
+    .dark-no { color: var(--red); font-weight: 600; }
+    .dark-partial { color: var(--accent2); font-weight: 600; }
+
+    /* ── TABLE FILTER ──────────────────────────────────────────────────── */
+    .table-controls {
+      display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center;
+    }
+    .filter-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted2);
+      padding: 7px 18px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: rgba(167,139,250,0.1);
+      border-color: var(--accent);
+      color: var(--text);
+    }
+    .search-input {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-family: inherit;
+      outline: none;
+      width: 220px;
+      transition: border-color 0.2s;
+    }
+    .search-input::placeholder { color: var(--muted); }
+    .search-input:focus { border-color: var(--accent); }
+
+    /* ── RADAR CHART ───────────────────────────────────────────────────── */
+    .chart-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 32px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .chart-card:hover { transform: translateY(-6px); box-shadow: 0 12px 40px rgba(167,139,250,0.08); }
+    .chart-container { max-width: 560px; margin: 0 auto; }
+
+    /* ── STRENGTHS & WEAKNESSES ─────────────────────────────────────────── */
+    .sw-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .sw-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .sw-card:hover { transform: translateY(-6px); box-shadow: 0 12px 40px rgba(167,139,250,0.08); }
+    .sw-card h3 { margin-bottom: 16px; font-size: 1.1rem; }
+    .sw-card ul { list-style: none; padding: 0; }
+    .sw-card li {
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--muted2);
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .sw-card li:last-child { border-bottom: none; }
+    .sw-icon {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; font-weight: 700;
+      margin-top: 2px;
+    }
+    .sw-icon.strength { background: rgba(52,211,153,0.12); color: var(--green); }
+    .sw-icon.weakness { background: rgba(248,113,113,0.12); color: var(--red); }
+    .sw-category {
+      display: inline-block;
+      font-size: 0.65rem; font-weight: 700;
+      color: var(--accent); letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    /* ── BORROWED / IMPROVED ───────────────────────────────────────────── */
+    .bi-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 768px) { .bi-grid { grid-template-columns: 1fr; } }
+    .bi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .bi-card:hover { transform: translateY(-6px); box-shadow: 0 12px 40px rgba(167,139,250,0.08); }
+    .bi-card h3 { margin-bottom: 16px; }
+    .bi-item {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+    .bi-item:last-child { border-bottom: none; }
+    .bi-item strong { color: var(--text); display: block; margin-bottom: 2px; }
+    .bi-item span { color: var(--muted2); }
+    .bi-source {
+      font-size: 0.68rem; color: var(--muted);
+      font-style: italic; margin-top: 2px; display: block;
+    }
+
+    /* ── DESIGN RATIONALE ──────────────────────────────────────────────── */
+    .rationale-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+    .rationale-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .rationale-card:hover { transform: translateY(-6px); box-shadow: 0 12px 40px rgba(167,139,250,0.08); }
+    .rationale-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(167,139,250,0.15), rgba(245,158,11,0.1));
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 1.4rem;
+    }
+    .rationale-card h3 { font-size: 1rem; margin-bottom: 8px; }
+    .rationale-card p { color: var(--muted2); font-size: 0.82rem; }
+
+    /* ── SEA LANDSCAPE ─────────────────────────────────────────────────── */
+    .sea-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+    .sea-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .sea-card:hover { transform: translateY(-6px); box-shadow: 0 12px 40px rgba(167,139,250,0.08); }
+    .sea-card h3 { font-size: 1rem; margin-bottom: 12px; }
+    .sea-card p, .sea-card li { color: var(--muted2); font-size: 0.85rem; }
+    .sea-card ul { list-style: none; padding: 0; }
+    .sea-card li { padding: 6px 0; border-bottom: 1px solid var(--border); display: flex; gap: 8px; align-items: flex-start; }
+    .sea-card li:last-child { border-bottom: none; }
+    .sea-bullet {
+      flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); margin-top: 7px;
+    }
+    .sea-highlight {
+      background: rgba(167,139,250,0.08);
+      border-left: 3px solid var(--accent);
+      padding: 16px 20px;
+      border-radius: 0 10px 10px 0;
+      margin-top: 16px;
+    }
+    .sea-highlight p { font-size: 0.82rem; color: var(--muted2); }
+    .sea-highlight strong { color: var(--text); }
+
+    /* ── SCROLL REVEAL ─────────────────────────────────────────────────── */
+    .reveal {
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── TOAST ──────────────────────────────────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--card); border: 1px solid var(--border2);
+      border-radius: 12px; padding: 14px 22px;
+      font-size: 0.82rem; color: var(--text);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      z-index: 999;
+      transform: translateY(100px); opacity: 0;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ── FOOTER ─────────────────────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    /* ── SCROLLBAR ──────────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+  </style>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+
+<!-- ────────────────────── NAV ────────────────────── -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <span class="elix">ELIX</span><span class="dash">-</span>Resume
+  </a>
+  <div class="nav-links">
+    <a href="admin.html" class="active">Competitors</a>
+    <a href="admin-insights.html">Market Insights</a>
+    <a href="index.html">Back to App</a>
+    <a href="index.html" class="nav-cta">Launch Editor</a>
+  </div>
+  <button class="hamburger" onclick="this.classList.toggle('open'); document.querySelector('.mobile-menu').classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-menu">
+  <a href="admin.html">Competitors</a>
+  <a href="admin-insights.html">Market Insights</a>
+  <a href="index.html">Back to App</a>
+  <a href="index.html" class="nav-cta" style="text-align:center;">Launch Editor</a>
+</div>
+
+<!-- ────────────────────── HERO BANNER ────────────────────── -->
+<header class="hero-banner">
+  <div class="container">
+    <span class="label">Admin Dashboard</span>
+    <h1>Competitor <span class="gradient-text">Analytics</span></h1>
+    <p>Strategic intelligence on 31 resume builders. Know the landscape, own the edge.</p>
+
+    <div class="stats-row reveal">
+      <div class="stat-card">
+        <div class="stat-number">31</div>
+        <div class="stat-label">Competitors Tracked</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">7</div>
+        <div class="stat-label">Feature Axes Compared</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">680M+</div>
+        <div class="stat-label">SEA Addressable Users</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">$4.2B</div>
+        <div class="stat-label">Global Market Size (2025)</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ────────────────────── COMPETITOR TABLE ────────────────────── -->
+<section id="competitors">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="label">Competitor Intelligence</span>
+      <h2>Full Landscape Table</h2>
+      <p>31 resume builders benchmarked across pricing, features, design, and differentiation.</p>
+    </div>
+
+    <div class="table-controls reveal">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="Free">Free</button>
+      <button class="filter-btn" data-filter="Freemium">Freemium</button>
+      <button class="filter-btn" data-filter="Paid">Paid</button>
+      <input type="text" class="search-input" placeholder="Search competitors..." id="tableSearch" />
+    </div>
+
+    <div class="table-wrap reveal">
+      <table class="comp-table" id="compTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>URL</th>
+            <th>Type</th>
+            <th>Layout Pattern</th>
+            <th>Dark Theme</th>
+            <th>Key Differentiator</th>
+            <th>Rating</th>
+          </tr>
+        </thead>
+        <tbody id="compBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────── RADAR CHART ────────────────────── -->
+<section id="radar">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="label">Feature Comparison</span>
+      <h2>ELIX vs Top 3 Competitors</h2>
+      <p>Head-to-head radar analysis across seven critical feature dimensions.</p>
+    </div>
+    <div class="chart-card reveal">
+      <div class="chart-container">
+        <canvas id="radarChart"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────── STRENGTHS & WEAKNESSES ────────────────────── -->
+<section id="sw">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="label">Market Analysis</span>
+      <h2>Strengths & Weaknesses</h2>
+      <p>What competitors do well and where they fall short, organized by category.</p>
+    </div>
+
+    <div class="sw-grid">
+      <!-- Strengths -->
+      <div class="sw-card reveal">
+        <h3 style="color: var(--green);">Industry Strengths</h3>
+        <ul>
+          <li>
+            <div class="sw-icon strength">+</div>
+            <div>
+              <span class="sw-category">AI Integration</span>
+              <div>Rezi, Teal, and Kickresume offer AI-generated bullet points and job-matching suggestions, setting user expectations for smart assistance.</div>
+            </div>
+          </li>
+          <li>
+            <div class="sw-icon strength">+</div>
+            <div>
+              <span class="sw-category">Template Volume</span>
+              <div>Canva (10,000+ templates) and Zety (20+ ATS-optimized layouts) provide massive variety that appeals to non-designers.</div>
+            </div>
+          </li>
+          <li>
+            <div class="sw-icon strength">+</div>
+            <div>
+              <span class="sw-category">ATS Optimization</span>
+              <div>Jobscan and Wozber focus specifically on ATS compatibility scoring, helping users tailor resumes per job listing.</div>
+            </div>
+          </li>
+          <li>
+            <div class="sw-icon strength">+</div>
+            <div>
+              <span class="sw-category">Multi-format Export</span>
+              <div>Resume.io and Novoresume support PDF, DOCX, and direct sharing links. VisualCV offers hosted online resumes.</div>
+            </div>
+          </li>
+          <li>
+            <div class="sw-icon strength">+</div>
+            <div>
+              <span class="sw-category">Ecosystem Play</span>
+              <div>Indeed and LinkedIn bundle resume builders into their job platform, capturing users who are already in job-hunt mode.</div>
+            </div>
+          </li>
+          <li>
+            <div class="sw-icon strength">+</div>
+            <div>
+              <span class="sw-category">Brand Trust</span>
+              <div>Established names like LiveCareer and MyPerfectResume have deep SEO moats and millions of monthly visits from organic search.</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Weaknesses -->
+      <div class="sw-card reveal">
+        <h3 style="color: var(--red);">Industry Weaknesses</h3>
+        <ul>
+          <li>
+            <div class="sw-icon weakness">-</div>
+            <div>
+              <span class="sw-category">Dark Patterns</span>
+              <div>Zety and ResumeGenius use deceptive UX: free to build but paywall on download. Users feel tricked after investing time.</div>
+            </div>
+          </li>
+          <li>
+            <div class="sw-icon weakness">-</div>
+            <div>
+              <span class="sw-category">Privacy Concerns</span>
+              <div>Most SaaS builders store resumes server-side with vague data policies. Users unknowingly feed personal data into ad-targeting pipelines.</div>
+            </div>
+          </li>
+          <li>
+            <div class="sw-icon weakness">-</div>
+            <div>
+              <span class="sw-category">Vendor Lock-in</span>
+              <div>Proprietary formats make it impossible to migrate. If you cancel, your resume data is effectively hostage.</div>
+            </div>
+          </li>
+          <li>
+            <div class="sw-icon weakness">-</div>
+            <div>
+              <span class="sw-category">Mobile Experience</span>
+              <div>Complex drag-and-drop editors (Canva, Enhancv) are nearly unusable on mobile devices, frustrating the 60%+ mobile-first demographic.</div>
+            </div>
+          </li>
+          <li>
+            <div class="sw-icon weakness">-</div>
+            <div>
+              <span class="sw-category">Subscription Fatigue</span>
+              <div>Monthly fees of $5-$25/mo for a tool used 2-3 times per year creates terrible unit economics for the user.</div>
+            </div>
+          </li>
+          <li>
+            <div class="sw-icon weakness">-</div>
+            <div>
+              <span class="sw-category">Design Stagnation</span>
+              <div>90% of builders use the same white-background, blue-accent visual identity. Zero personality, zero brand differentiation.</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────── BORROWED / IMPROVED ────────────────────── -->
+<section id="borrowed">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="label">Strategic Decisions</span>
+      <h2>Borrowed Ideas & Our Improvements</h2>
+      <p>We studied the best and fixed the worst. Here is exactly what we took and what we made better.</p>
+    </div>
+
+    <div class="bi-grid">
+      <div class="bi-card reveal">
+        <h3 style="color: var(--accent);">What We Borrowed</h3>
+        <div class="bi-item">
+          <strong>Live side-by-side preview</strong>
+          <span>Real-time rendering while editing, so users see changes instantly.</span>
+          <span class="bi-source">Inspired by Reactive Resume, FlowCV</span>
+        </div>
+        <div class="bi-item">
+          <strong>Section drag-reorder</strong>
+          <span>Drag handle to re-sequence resume sections without copy-pasting.</span>
+          <span class="bi-source">Inspired by Novoresume, Enhancv</span>
+        </div>
+        <div class="bi-item">
+          <strong>JSON data portability</strong>
+          <span>Export/import resume data as structured JSON for backup and migration.</span>
+          <span class="bi-source">Inspired by JSONResume, Reactive Resume</span>
+        </div>
+        <div class="bi-item">
+          <strong>Minimal onboarding flow</strong>
+          <span>Get to the editor in one click, no multi-step wizards or tutorials.</span>
+          <span class="bi-source">Inspired by Resumake, Standard Resume</span>
+        </div>
+        <div class="bi-item">
+          <strong>ATS-safe typography</strong>
+          <span>Clean, parseable font stacks that pass through applicant tracking systems.</span>
+          <span class="bi-source">Inspired by Wozber, Jobscan best practices</span>
+        </div>
+        <div class="bi-item">
+          <strong>Multi-template system</strong>
+          <span>One data set, multiple visual output templates to choose from.</span>
+          <span class="bi-source">Inspired by Canva, Kickresume</span>
+        </div>
+      </div>
+
+      <div class="bi-card reveal">
+        <h3 style="color: var(--green);">What We Improved</h3>
+        <div class="bi-item">
+          <strong>Zero sign-up required</strong>
+          <span>No email, no account, no OAuth. Competitors gate downloads behind registration; we ship open.</span>
+          <span class="bi-source">Fixes: Zety, Resume.io, Novoresume account walls</span>
+        </div>
+        <div class="bi-item">
+          <strong>100% client-side privacy</strong>
+          <span>All data stays in-browser (localStorage). No server, no tracking, no data mining.</span>
+          <span class="bi-source">Fixes: industry-wide server-side data retention</span>
+        </div>
+        <div class="bi-item">
+          <strong>True dark-theme-first design</strong>
+          <span>Not a toggled afterthought. Our entire UI/UX is built around dark mode from day one.</span>
+          <span class="bi-source">Fixes: light-only defaults across 90% of competitors</span>
+        </div>
+        <div class="bi-item">
+          <strong>Honest free tier</strong>
+          <span>Build AND download for free. No bait-and-switch paywalls at the export step.</span>
+          <span class="bi-source">Fixes: Zety, ResumeGenius, ResumeNerd deceptive UX</span>
+        </div>
+        <div class="bi-item">
+          <strong>No subscription model</strong>
+          <span>Resume editing is an infrequent need. We respect that by not charging monthly.</span>
+          <span class="bi-source">Fixes: $5-25/mo subscriptions from Resume.io, Rezi, Teal</span>
+        </div>
+        <div class="bi-item">
+          <strong>Lightweight performance</strong>
+          <span>Single HTML file, no framework bloat. Loads in under 1 second on any connection.</span>
+          <span class="bi-source">Fixes: React/Angular bundle sizes in CakeResume, Enhancv</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────── DESIGN RATIONALE ────────────────────── -->
+<section id="rationale">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="label">Why ELIX Wins</span>
+      <h2>Design Rationale</h2>
+      <p>Five strategic pillars that position ELIX-Resume uniquely in a saturated market.</p>
+    </div>
+
+    <div class="rationale-grid">
+      <div class="rationale-card reveal">
+        <div class="rationale-icon">&#127752;</div>
+        <h3>Dark Theme First</h3>
+        <p>While every competitor defaults to blinding white UIs, ELIX embraces a rich violet-dark palette that reduces eye strain and feels premium. It is not a toggle; it is the identity.</p>
+      </div>
+      <div class="rationale-card reveal">
+        <div class="rationale-icon">&#128274;</div>
+        <h3>Privacy by Architecture</h3>
+        <p>Zero server. Zero database. All resume data lives in the browser's localStorage. Under PDPA and GDPR, this is the safest possible architecture since we never collect data at all.</p>
+      </div>
+      <div class="rationale-card reveal">
+        <div class="rationale-icon">&#128230;</div>
+        <h3>JSON Portability</h3>
+        <p>Export your resume as a structured JSON file. Import it anywhere, back it up, version-control it. No vendor lock-in, ever. Compatible with the JSONResume open standard.</p>
+      </div>
+      <div class="rationale-card reveal">
+        <div class="rationale-icon">&#9995;</div>
+        <h3>Drag Reorder</h3>
+        <p>Intuitive drag handles let users resequence resume sections in real time. No competitor in the free/open-source tier offers this with the same fluidity.</p>
+      </div>
+      <div class="rationale-card reveal">
+        <div class="rationale-icon">&#9889;</div>
+        <h3>Zero Friction</h3>
+        <p>No sign-up. No email. No paywall. Click and start editing in under 2 seconds. We deliberately removed every barrier that competitors use to capture lead data.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────── SG & SEA LANDSCAPE ────────────────────── -->
+<section id="sea">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="label">Regional Intelligence</span>
+      <h2>Singapore & SEA Landscape</h2>
+      <p>Market dynamics, cultural factors, and regulatory context for resume tools in Southeast Asia.</p>
+    </div>
+
+    <div class="sea-grid">
+      <!-- Market Size -->
+      <div class="sea-card reveal">
+        <h3 class="gradient-text">Market Size & Growth</h3>
+        <ul>
+          <li><span class="sea-bullet"></span><span>Southeast Asia has 680M+ population with 440M+ internet users (2025), growing at 8% YoY.</span></li>
+          <li><span class="sea-bullet"></span><span>Singapore's white-collar workforce (~2.3M employed) shows 72% digital tool adoption for job applications.</span></li>
+          <li><span class="sea-bullet"></span><span>Resume builder SaaS market in APAC is projected at $1.1B by 2027, growing 11.2% CAGR.</span></li>
+          <li><span class="sea-bullet"></span><span>SEA's gig economy boom (Grab, GoTo, Sea Group) is driving demand for portable, multi-format CVs.</span></li>
+        </ul>
+        <div class="sea-highlight">
+          <p><strong>Key Insight:</strong> The region is under-served by localized resume tools. Most users default to Canva or generic global platforms with zero SEA customization.</p>
+        </div>
+      </div>
+
+      <!-- Regional Players -->
+      <div class="sea-card reveal">
+        <h3 class="gradient-text">Key Regional Players</h3>
+        <ul>
+          <li><span class="sea-bullet"></span><span><strong>JobStreet (SEEK)</strong> -- Dominant in SG, MY, PH, ID. Built-in resume builder tied to job applications. Basic editor, no export flexibility.</span></li>
+          <li><span class="sea-bullet"></span><span><strong>LinkedIn</strong> -- 85%+ professional penetration in Singapore. PDF resume export from profile, but rigid single-column layout.</span></li>
+          <li><span class="sea-bullet"></span><span><strong>Glints</strong> -- Popular in SG, ID, VN for entry-level. Resume guidance integrated into career coaching.</span></li>
+          <li><span class="sea-bullet"></span><span><strong>Kalibrr</strong> -- Philippines-focused. Combines ATS with resume builder. Limited design options.</span></li>
+          <li><span class="sea-bullet"></span><span><strong>Bossjob</strong> -- SG and PH. Chat-first hiring with profile-as-resume model. No standalone builder.</span></li>
+        </ul>
+      </div>
+
+      <!-- Cultural Factors -->
+      <div class="sea-card reveal">
+        <h3 class="gradient-text">Cultural & Localization Factors</h3>
+        <ul>
+          <li><span class="sea-bullet"></span><span><strong>Photo requirement:</strong> Resumes in SG, MY, TH, VN, and ID typically include a headshot. Western tools omit this by default.</span></li>
+          <li><span class="sea-bullet"></span><span><strong>Multi-language needs:</strong> Bilingual resumes are common (English + Mandarin in SG, English + Bahasa in MY/ID, English + Thai in TH).</span></li>
+          <li><span class="sea-bullet"></span><span><strong>NRIC/IC fields:</strong> Some countries expect national ID references on CVs, which Western builders never accommodate.</span></li>
+          <li><span class="sea-bullet"></span><span><strong>Age and marital status:</strong> Still commonly included in SEA resumes despite being taboo in Western markets.</span></li>
+          <li><span class="sea-bullet"></span><span><strong>Reference culture:</strong> Referees section is expected in SG, PH. Most global builders treat it as optional/hidden.</span></li>
+        </ul>
+      </div>
+
+      <!-- Regulatory -->
+      <div class="sea-card reveal">
+        <h3 class="gradient-text">Regulatory Considerations</h3>
+        <ul>
+          <li><span class="sea-bullet"></span><span><strong>Singapore PDPA:</strong> Personal Data Protection Act requires consent for collection, use, and disclosure. Cloud resume builders that store data must comply or risk fines up to S$1M.</span></li>
+          <li><span class="sea-bullet"></span><span><strong>Malaysia PDPA 2010:</strong> Similar consent-based framework. Cross-border data transfer restrictions apply to Malaysian user data.</span></li>
+          <li><span class="sea-bullet"></span><span><strong>Thailand PDPA:</strong> Enacted 2022. Strict consent and data minimization requirements. Fines up to THB 5M.</span></li>
+          <li><span class="sea-bullet"></span><span><strong>Philippines DPA:</strong> National Privacy Commission enforces. Requires data protection officers for processors handling Filipino PII.</span></li>
+          <li><span class="sea-bullet"></span><span><strong>Indonesia PDP Law:</strong> Signed 2022. Requires data localization for certain categories. Penalties include up to 2% of annual revenue.</span></li>
+        </ul>
+        <div class="sea-highlight">
+          <p><strong>ELIX Advantage:</strong> Because we process zero data server-side, we are automatically compliant with every data protection law in the region. This is not just a feature -- it is a regulatory moat.</p>
+        </div>
+      </div>
+
+      <!-- Adoption Patterns -->
+      <div class="sea-card reveal">
+        <h3 class="gradient-text">Adoption & Digital Literacy</h3>
+        <ul>
+          <li><span class="sea-bullet"></span><span><strong>Mobile-first:</strong> 73% of SEA internet users access primarily via mobile. Resume builders must be responsive or lose the majority.</span></li>
+          <li><span class="sea-bullet"></span><span><strong>Low willingness to pay:</strong> Purchasing power parity means $10/mo (standard US pricing) is prohibitive. Free tools dominate adoption.</span></li>
+          <li><span class="sea-bullet"></span><span><strong>Social sharing:</strong> WhatsApp and Telegram are primary channels for sharing career tools in SG and MY. OG preview cards drive viral loops.</span></li>
+          <li><span class="sea-bullet"></span><span><strong>University pipelines:</strong> NUS, NTU, SMU in SG and UP, Ateneo in PH have career centers that recommend specific tools. Partnership opportunity.</span></li>
+          <li><span class="sea-bullet"></span><span><strong>Government programmes:</strong> Singapore's WSG (Workforce Singapore) and SkillsFuture actively promote digital career tools. Potential integration channel.</span></li>
+        </ul>
+      </div>
+
+      <!-- Opportunity -->
+      <div class="sea-card reveal">
+        <h3 class="gradient-text">The ELIX-Resume Opportunity</h3>
+        <ul>
+          <li><span class="sea-bullet"></span><span>No major competitor offers a free, privacy-first, dark-themed builder with SEA cultural localization.</span></li>
+          <li><span class="sea-bullet"></span><span>The client-side architecture means zero infrastructure cost to scale across all 11 SEA markets.</span></li>
+          <li><span class="sea-bullet"></span><span>Adding photo upload, bilingual sections, and NRIC fields would make ELIX the first SEA-native modern resume builder.</span></li>
+          <li><span class="sea-bullet"></span><span>GitHub Pages hosting + no server = no PDPA compliance burden, instantly deployable in any country.</span></li>
+        </ul>
+        <div class="sea-highlight">
+          <p><strong>Strategic play:</strong> Position ELIX-Resume as the open, privacy-respecting alternative that understands Asian resume conventions. Win the SEA market that global players ignore.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────── FOOTER ────────────────────── -->
+<footer>
+  <div class="container">
+    <span class="elix" style="color:var(--accent); font-family:'Playfair Display',serif; font-weight:800;">ELIX</span><span style="color:var(--accent2); font-family:'Playfair Display',serif; font-weight:800;">-</span><span style="font-family:'Playfair Display',serif; font-weight:800;">Resume</span>
+    &nbsp;&middot;&nbsp; Competitor Analytics Dashboard &nbsp;&middot;&nbsp; Internal Use
+  </div>
+</footer>
+
+<!-- ────────────────────── TOAST ────────────────────── -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════ COMPETITOR DATA ═══════════════════════ */
+const competitors = [
+  { name:"Reactive Resume", url:"rxresu.me", type:"Free", layout:"Side-by-side editor", dark:"Yes", diff:"Fully open-source, self-hostable, multi-language", rating:5 },
+  { name:"FlowCV", url:"flowcv.io", type:"Freemium", layout:"Side-by-side editor", dark:"Yes", diff:"Clean real-time preview, generous free tier", rating:4 },
+  { name:"Resume.io", url:"resume.io", type:"Paid", layout:"Step wizard + preview", dark:"No", diff:"Polished templates, strong SEO-driven acquisition", rating:4 },
+  { name:"Canva Resume", url:"canva.com", type:"Freemium", layout:"Drag-and-drop canvas", dark:"No", diff:"10,000+ templates, full graphic design ecosystem", rating:4 },
+  { name:"Zety", url:"zety.com", type:"Paid", layout:"Step wizard", dark:"No", diff:"AI writing tips, but paywall-on-download dark pattern", rating:3 },
+  { name:"Novoresume", url:"novoresume.com", type:"Freemium", layout:"Side-by-side editor", dark:"No", diff:"Content optimizer, professional layout options", rating:4 },
+  { name:"ResumeGenius", url:"resumegenius.com", type:"Paid", layout:"Step wizard", dark:"No", diff:"Expert tips per section, strong content library", rating:3 },
+  { name:"Kickresume", url:"kickresume.com", type:"Freemium", layout:"Side-by-side editor", dark:"No", diff:"AI resume writer, website builder included", rating:4 },
+  { name:"VisualCV", url:"visualcv.com", type:"Freemium", layout:"Editor + hosted page", dark:"No", diff:"Online hosted resume with analytics tracking", rating:3 },
+  { name:"Standard Resume", url:"standardresume.co", type:"Freemium", layout:"Minimal form", dark:"No", diff:"Ultra-minimal, opinionated single-column design", rating:3 },
+  { name:"Resumake", url:"resumake.io", type:"Free", layout:"Form + live preview", dark:"Partial", diff:"Open-source, LaTeX output support", rating:3 },
+  { name:"JSONResume", url:"jsonresume.org", type:"Free", layout:"JSON schema + themes", dark:"Partial", diff:"Open standard, developer-focused, extensible themes", rating:3 },
+  { name:"CakeResume", url:"cakeresume.com", type:"Freemium", layout:"Block editor", dark:"No", diff:"Portfolio-style, popular in Taiwan/APAC job market", rating:4 },
+  { name:"Enhancv", url:"enhancv.com", type:"Paid", layout:"Side-by-side editor", dark:"No", diff:"Data visualization sections, infographic resume", rating:4 },
+  { name:"Resume.com", url:"resume.com", type:"Free", layout:"Step wizard", dark:"No", diff:"Indeed-owned, basic but truly free with PDF export", rating:3 },
+  { name:"Hiration", url:"hiration.com", type:"Freemium", layout:"Side-by-side editor", dark:"No", diff:"AI review, LinkedIn integration, job board bundled", rating:3 },
+  { name:"MyPerfectResume", url:"myperfectresume.com", type:"Paid", layout:"Step wizard", dark:"No", diff:"Massive SEO traffic, pre-written content library", rating:3 },
+  { name:"LiveCareer", url:"livecareer.com", type:"Paid", layout:"Step wizard", dark:"No", diff:"Cover letter builder, career resources ecosystem", rating:3 },
+  { name:"Indeed Resume", url:"indeed.com/create-resume", type:"Free", layout:"Form-based", dark:"No", diff:"Direct integration with Indeed job applications", rating:3 },
+  { name:"Rezi", url:"rezi.ai", type:"Freemium", layout:"Side-by-side editor", dark:"No", diff:"AI-powered ATS optimization, keyword targeting", rating:4 },
+  { name:"Teal", url:"tealhq.com", type:"Freemium", layout:"Dashboard + editor", dark:"No", diff:"Job tracking CRM + resume builder in one platform", rating:4 },
+  { name:"Resumonk", url:"resumonk.com", type:"Freemium", layout:"Form-based", dark:"No", diff:"Quick import from LinkedIn, clean output", rating:3 },
+  { name:"CVmaker", url:"cvmaker.com", type:"Paid", layout:"Step wizard", dark:"No", diff:"European-focused, multi-language, photo support", rating:3 },
+  { name:"Overleaf CV", url:"overleaf.com", type:"Freemium", layout:"LaTeX editor", dark:"Partial", diff:"LaTeX typesetting, academic/research CV focus", rating:4 },
+  { name:"OpenResume", url:"open-resume.com", type:"Free", layout:"Side-by-side editor", dark:"No", diff:"Open-source, privacy-focused, modern React UI", rating:4 },
+  { name:"ResumeNerd", url:"resumenerd.com", type:"Paid", layout:"Step wizard", dark:"No", diff:"Quick 4-step process, but aggressive upselling", rating:2 },
+  { name:"ResumeLab", url:"resumelab.com", type:"Paid", layout:"Step wizard", dark:"No", diff:"Sister site of Zety, same engine different brand", rating:3 },
+  { name:"ResumeCoach", url:"resumecoach.com", type:"Paid", layout:"Step wizard", dark:"No", diff:"Video tutorials, coaching content integrated", rating:3 },
+  { name:"Jobscan", url:"jobscan.co", type:"Freemium", layout:"ATS scanner + editor", dark:"No", diff:"ATS match-rate scoring, keyword gap analysis", rating:4 },
+  { name:"Wozber", url:"wozber.com", type:"Freemium", layout:"Side-by-side editor", dark:"No", diff:"ATS-friendly guarantee, free ATS scan included", rating:4 },
+  { name:"CVwizard", url:"cvwizard.com", type:"Freemium", layout:"Step wizard", dark:"No", diff:"European market focus, GDPR-compliant, multi-language", rating:3 }
+];
+
+/* ═══════════════════════ RENDER TABLE ═══════════════════════ */
+function starsHTML(n) {
+  let s = '';
+  for (let i = 0; i < 5; i++) s += i < n ? '\u2605' : '\u2606';
+  return s;
+}
+function badgeClass(type) {
+  if (type === 'Free') return 'badge-free';
+  if (type === 'Freemium') return 'badge-freemium';
+  return 'badge-paid';
+}
+function darkClass(d) {
+  if (d === 'Yes') return 'dark-yes';
+  if (d === 'No') return 'dark-no';
+  return 'dark-partial';
+}
+
+function renderTable(data) {
+  const body = document.getElementById('compBody');
+  body.innerHTML = data.map((c, i) => `
+    <tr data-type="${c.type}">
+      <td>${i + 1}</td>
+      <td>${c.name}</td>
+      <td><a href="https://${c.url}" target="_blank" rel="noopener">${c.url}</a></td>
+      <td><span class="badge ${badgeClass(c.type)}">${c.type}</span></td>
+      <td>${c.layout}</td>
+      <td><span class="${darkClass(c.dark)}">${c.dark}</span></td>
+      <td>${c.diff}</td>
+      <td><span class="stars">${starsHTML(c.rating)}</span></td>
+    </tr>
+  `).join('');
+}
+renderTable(competitors);
+
+/* ═══════════════════════ TABLE FILTER ═══════════════════════ */
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const f = btn.dataset.filter;
+    const filtered = f === 'all' ? competitors : competitors.filter(c => c.type === f);
+    renderTable(filtered);
+    showToast(`Showing ${filtered.length} ${f === 'all' ? '' : f + ' '}competitors`);
+  });
+});
+
+document.getElementById('tableSearch').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  const filtered = competitors.filter(c =>
+    c.name.toLowerCase().includes(q) ||
+    c.diff.toLowerCase().includes(q) ||
+    c.layout.toLowerCase().includes(q)
+  );
+  renderTable(filtered);
+});
+
+/* ═══════════════════════ RADAR CHART ═══════════════════════ */
+const ctx = document.getElementById('radarChart').getContext('2d');
+new Chart(ctx, {
+  type: 'radar',
+  data: {
+    labels: ['Live Preview', 'Privacy', 'Export Options', 'Customization', 'Mobile UX', 'Price', 'Ease of Use'],
+    datasets: [
+      {
+        label: 'ELIX-Resume',
+        data: [9, 10, 7, 8, 7, 10, 9],
+        borderColor: '#a78bfa',
+        backgroundColor: 'rgba(167,139,250,0.15)',
+        borderWidth: 2,
+        pointBackgroundColor: '#a78bfa',
+        pointRadius: 4
+      },
+      {
+        label: 'Reactive Resume',
+        data: [9, 8, 8, 9, 6, 10, 7],
+        borderColor: '#34d399',
+        backgroundColor: 'rgba(52,211,153,0.1)',
+        borderWidth: 2,
+        pointBackgroundColor: '#34d399',
+        pointRadius: 4
+      },
+      {
+        label: 'FlowCV',
+        data: [8, 5, 7, 7, 7, 7, 8],
+        borderColor: '#f59e0b',
+        backgroundColor: 'rgba(245,158,11,0.1)',
+        borderWidth: 2,
+        pointBackgroundColor: '#f59e0b',
+        pointRadius: 4
+      },
+      {
+        label: 'Resume.io',
+        data: [7, 4, 8, 8, 8, 4, 9],
+        borderColor: '#f87171',
+        backgroundColor: 'rgba(248,113,113,0.1)',
+        borderWidth: 2,
+        pointBackgroundColor: '#f87171',
+        pointRadius: 4
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: true,
+    scales: {
+      r: {
+        beginAtZero: true,
+        max: 10,
+        ticks: {
+          stepSize: 2,
+          color: '#7c6f9b',
+          backdropColor: 'transparent',
+          font: { size: 11, family: 'Lato' }
+        },
+        grid: { color: 'rgba(167,139,250,0.1)' },
+        angleLines: { color: 'rgba(167,139,250,0.1)' },
+        pointLabels: {
+          color: '#a89ec4',
+          font: { size: 12, family: 'Lato', weight: '600' }
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          color: '#ede9fe',
+          font: { size: 12, family: 'Lato' },
+          padding: 20,
+          usePointStyle: true,
+          pointStyle: 'circle'
+        }
+      }
+    }
+  }
+});
+
+/* ═══════════════════════ SCROLL REVEAL ═══════════════════════ */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+/* ═══════════════════════ TOAST ═══════════════════════ */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+/* Initial toast */
+setTimeout(() => showToast('Competitor data loaded -- 31 entries'), 800);
+</script>
+
+</body>
+</html>

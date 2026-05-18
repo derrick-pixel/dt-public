@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELIX-Resume — Craft Your Story</title>
+  <meta name="description" content="ELIX-Resume — a dark-themed, distraction-free resume editor with live preview. Build, edit, and export your professional resume instantly." />
+
+  <!-- Open Graph / WhatsApp preview -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://derrick-pixel.github.io/ELIX-resume/" />
+  <meta property="og:title" content="ELIX-Resume — Craft Your Story" />
+  <meta property="og:description" content="A dark-themed, distraction-free resume editor with live preview. Build, edit, and export instantly — no sign-up." />
+  <meta property="og:image" content="https://derrick-pixel.github.io/ELIX-resume/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ELIX-Resume — Craft Your Story" />
+  <meta name="twitter:description" content="A dark-themed, distraction-free resume editor with live preview. Build, edit, and export instantly — no sign-up." />
+  <meta name="twitter:image" content="https://derrick-pixel.github.io/ELIX-resume/og-image.png" />
+
+  <!-- Fonts — Playfair Display (headlines) + Lato (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Lato:wght@300;400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── RESET & VARIABLES ─────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:       #0c0a1a;
+      --surface:  #13102a;
+      --card:     #1a1535;
+      --border:   rgba(167,139,250,0.08);
+      --border2:  rgba(167,139,250,0.18);
+      --text:     #ede9fe;
+      --muted:    #7c6f9b;
+      --muted2:   #a89ec4;
+      --accent:   #a78bfa;
+      --accent2:  #f59e0b;
+      --green:    #34d399;
+      --red:      #f87171;
+      --glow:     rgba(167,139,250,0.12);
+      --glow2:    rgba(245,158,11,0.10);
+      --nav-h:    64px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Lato', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ── TYPOGRAPHY ────────────────────────────────────────────────────────── */
+    h1, h2, h3 { font-family: 'Playfair Display', serif; }
+    h1 { font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.08; }
+    h2 { font-size: clamp(1.5rem, 3.5vw, 2.4rem); font-weight: 700; letter-spacing: -0.01em; }
+    h3 { font-size: clamp(1.1rem, 2vw, 1.5rem); font-weight: 600; }
+    .label {
+      font-family: 'Lato', sans-serif;
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent2);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    /* ── NAV ───────────────────────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: var(--nav-h);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+      background: rgba(12,10,26,0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 800; font-size: 1rem; letter-spacing: -0.01em;
+    }
+    .nav-logo .elix { color: var(--accent); }
+    .nav-logo .dash { color: var(--accent2); }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a {
+      font-size: 0.72rem; font-weight: 600; color: var(--muted);
+      transition: color 0.2s; cursor: pointer; letter-spacing: 0.04em;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-cta {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: var(--bg); padding: 8px 20px; border-radius: 8px;
+      font-size: 0.72rem; font-weight: 700; transition: all 0.2s;
+      cursor: pointer; border: none; font-family: inherit;
+    }
+    .nav-cta:hover { filter: brightness(1.15); transform: translateY(-1px); }
+
+    /* Hamburger */
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+    .hamburger span { display: block; width: 20px; height: 2px; background: var(--text); transition: all 0.3s; }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .mobile-menu {
+        display: none; position: fixed; top: var(--nav-h); left: 0; right: 0; z-index: 199;
+        background: rgba(12,10,26,0.97); backdrop-filter: blur(16px);
+        padding: 20px 24px; border-bottom: 1px solid var(--border);
+        flex-direction: column; gap: 16px;
+      }
+      .mobile-menu.open { display: flex; }
+      .mobile-menu a { font-size: 0.85rem; color: var(--muted2); cursor: pointer; }
+    }
+
+    /* ── LAYOUT ────────────────────────────────────────────────────────────── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 80px 0; }
+    @media (max-width: 768px) { section { padding: 48px 0; } }
+
+    /* ── HERO ──────────────────────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding-top: var(--nav-h);
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    }
+    .hero-orb {
+      position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.5;
+      animation: orbFloat 12s ease-in-out infinite alternate;
+    }
+    .hero-orb-1 {
+      width: 500px; height: 500px; top: -10%; right: -5%;
+      background: radial-gradient(circle, rgba(167,139,250,0.35), transparent 70%);
+    }
+    .hero-orb-2 {
+      width: 400px; height: 400px; bottom: -5%; left: -10%;
+      background: radial-gradient(circle, rgba(245,158,11,0.2), transparent 70%);
+      animation-delay: -4s;
+    }
+    .hero-orb-3 {
+      width: 300px; height: 300px; top: 40%; left: 50%;
+      background: radial-gradient(circle, rgba(167,139,250,0.15), transparent 70%);
+      animation-delay: -8s;
+    }
+    @keyframes orbFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(30px, -20px) scale(1.1); }
+    }
+    .hero .container {
+      position: relative; z-index: 1;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;
+    }
+    .hero-content { max-width: 520px; }
+    .hero-label { margin-bottom: 16px; }
+    .hero h1 { margin-bottom: 20px; }
+    .hero-desc { font-size: 1.05rem; color: var(--muted2); line-height: 1.75; margin-bottom: 32px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .hero-stats {
+      display: flex; gap: 32px; margin-top: 40px;
+    }
+    .hero-stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem; font-weight: 800; color: var(--accent);
+    }
+    .hero-stat-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* Hero resume mockup */
+    .hero-mockup {
+      background: #ffffff; border-radius: 14px; padding: 32px;
+      color: #1a1a1a; font-size: 12px; line-height: 1.5;
+      box-shadow: 0 24px 80px rgba(167,139,250,0.15), 0 0 0 1px rgba(167,139,250,0.1);
+      transform: perspective(800px) rotateY(-4deg) rotateX(2deg);
+      transition: transform 0.4s ease;
+      position: relative;
+    }
+    .hero-mockup:hover { transform: perspective(800px) rotateY(0deg) rotateX(0deg); }
+    .hero-mockup::before {
+      content: ''; position: absolute; inset: -1px; border-radius: 15px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      z-index: -1; opacity: 0.3;
+    }
+    .mockup-name { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 800; color: #0c0a1a; }
+    .mockup-title { font-size: 0.78rem; color: #666; margin-bottom: 6px; }
+    .mockup-bar { height: 3px; border-radius: 2px; margin: 10px 0; }
+    .mockup-bar-1 { width: 100%; background: linear-gradient(90deg, #a78bfa, #f59e0b); }
+    .mockup-bar-2 { width: 75%; background: #e5e7eb; }
+    .mockup-bar-3 { width: 90%; background: #e5e7eb; }
+    .mockup-bar-4 { width: 60%; background: #e5e7eb; }
+    .mockup-section { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #a78bfa; margin: 12px 0 6px; }
+    .mockup-line { height: 6px; background: #f3f4f6; border-radius: 3px; margin: 5px 0; }
+    .mockup-line-short { width: 65%; }
+    .mockup-line-med { width: 80%; }
+    .mockup-skills { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+    .mockup-skill { padding: 2px 8px; background: #f0ecff; border-radius: 100px; font-size: 0.55rem; color: #7c3aed; font-weight: 600; }
+
+    @media (max-width: 1024px) {
+      .hero .container { grid-template-columns: 1fr; text-align: center; }
+      .hero-content { max-width: 100%; }
+      .hero-actions { justify-content: center; }
+      .hero-stats { justify-content: center; }
+      .hero-mockup { max-width: 400px; margin: 0 auto; transform: none; }
+    }
+
+    /* ── CARDS ─────────────────────────────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      transition: all 0.25s ease;
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: var(--border2);
+      box-shadow: 0 16px 40px rgba(167,139,250,0.08);
+    }
+
+    /* ── BUTTONS ───────────────────────────────────────────────────────────── */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: var(--bg); padding: 12px 24px; border: none; border-radius: 8px;
+      font-family: inherit; font-size: 0.78rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-primary:hover { filter: brightness(1.15); transform: translateY(-1px); }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: var(--muted2);
+      padding: 12px 24px; border: 1.5px solid var(--border2); border-radius: 8px;
+      font-family: inherit; font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-danger {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: var(--red);
+      padding: 8px 16px; border: 1.5px solid rgba(248,113,113,0.25); border-radius: 8px;
+      font-family: inherit; font-size: 0.72rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-danger:hover { background: rgba(248,113,113,0.08); border-color: var(--red); }
+    .btn-sm { padding: 8px 16px; font-size: 0.72rem; }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: transparent; color: var(--muted2);
+      padding: 8px 14px; border: none; border-radius: 8px;
+      font-family: inherit; font-size: 0.72rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-ghost:hover { background: rgba(167,139,250,0.08); color: var(--accent); }
+
+    /* ── BADGES ────────────────────────────────────────────────────────────── */
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 100px;
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .badge-violet { background: rgba(167,139,250,0.12); color: #a78bfa; }
+    .badge-amber  { background: rgba(245,158,11,0.12);  color: #f59e0b; }
+    .badge-green  { background: rgba(52,211,153,0.12);  color: #34d399; }
+
+    /* ── TOAST ─────────────────────────────────────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--surface); border: 1px solid var(--border2);
+      padding: 10px 20px; border-radius: 8px;
+      font-size: 0.78rem; color: var(--text);
+      opacity: 0; transition: all 0.3s; z-index: 600; pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── SCROLL ANIMATION ─────────────────────────────────────────────────── */
+    .animate { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .animate.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── FOOTER ────────────────────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    /* ── TAB SYSTEM ───────────────────────────────────────────────────────── */
+    .tabs {
+      display: flex; gap: 4px; padding: 4px;
+      background: var(--bg); border-radius: 10px;
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      padding: 10px 18px; border: none; border-radius: 8px;
+      background: transparent; color: var(--muted);
+      font-family: inherit; font-size: 0.72rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s; white-space: nowrap;
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: var(--bg);
+    }
+    .tab-btn:not(.active):hover { color: var(--text); background: rgba(167,139,250,0.06); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── EDITOR LAYOUT ────────────────────────────────────────────────────── */
+    .editor-section {
+      padding-top: calc(var(--nav-h) + 32px);
+      min-height: 100vh;
+      background: linear-gradient(180deg, var(--bg) 0%, #0e0b20 50%, var(--bg) 100%);
+    }
+    .editor-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+    @media (max-width: 1024px) {
+      .editor-grid { grid-template-columns: 1fr; }
+    }
+    .editor-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+    }
+
+    /* ── FORM FIELDS ──────────────────────────────────────────────────────── */
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted2); margin-bottom: 6px;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%; padding: 10px 14px;
+      background: var(--bg); border: 1px solid var(--border2);
+      border-radius: 8px; color: var(--text);
+      font-family: inherit; font-size: 0.85rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--glow);
+    }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 640px) { .form-row { grid-template-columns: 1fr; } }
+
+    /* ── ENTRY CARDS (experience, education) ──────────────────────────────── */
+    .entry-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 12px;
+      position: relative;
+      cursor: grab;
+      transition: all 0.2s;
+    }
+    .entry-card:hover { border-color: var(--border2); }
+    .entry-card.dragging { opacity: 0.5; border-color: var(--accent); }
+    .entry-card h4 { font-family: 'Lato', sans-serif; font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; }
+    .entry-card p { font-size: 0.78rem; color: var(--muted2); }
+    .entry-actions {
+      position: absolute; top: 12px; right: 12px;
+      display: flex; gap: 6px;
+    }
+    .entry-actions button {
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: 0.78rem; transition: color 0.2s;
+      padding: 4px;
+    }
+    .entry-actions button:hover { color: var(--accent); }
+    .entry-actions button.del:hover { color: var(--red); }
+    .drag-handle { color: var(--muted); font-size: 0.78rem; margin-right: 8px; cursor: grab; user-select: none; }
+
+    /* ── PREVIEW PANEL ────────────────────────────────────────────────────── */
+    .preview-panel {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 40px;
+      color: #1a1a1a;
+      font-family: 'Lato', sans-serif;
+      font-size: 13px;
+      line-height: 1.55;
+      position: sticky;
+      top: calc(var(--nav-h) + 32px);
+      max-height: calc(100vh - var(--nav-h) - 64px);
+      overflow-y: auto;
+      box-shadow: 0 16px 60px rgba(167,139,250,0.12), 0 0 0 1px rgba(167,139,250,0.08);
+    }
+    .preview-panel::-webkit-scrollbar { width: 4px; }
+    .preview-panel::-webkit-scrollbar-thumb { background: #d4d0e8; border-radius: 4px; }
+    .preview-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem; font-weight: 800; color: #0c0a1a;
+      letter-spacing: -0.02em; margin-bottom: 2px;
+    }
+    .preview-title { font-size: 0.85rem; color: #666; margin-bottom: 8px; }
+    .preview-contact { font-size: 0.72rem; color: #888; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 12px; }
+    .preview-contact span { display: flex; align-items: center; gap: 4px; }
+    .preview-divider {
+      border: none; height: 2px; margin: 16px 0;
+      background: linear-gradient(90deg, #a78bfa, #f59e0b, transparent);
+    }
+    .preview-section-title {
+      font-family: 'Lato', sans-serif;
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: #7c3aed; margin-bottom: 10px;
+    }
+    .preview-entry { margin-bottom: 14px; }
+    .preview-entry-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; }
+    .preview-entry-header h4 { font-family: 'Lato', sans-serif; font-size: 0.85rem; font-weight: 700; color: #1a1a1a; }
+    .preview-entry-header .date { font-size: 0.72rem; color: #888; }
+    .preview-entry-sub { font-size: 0.78rem; color: #555; margin-bottom: 4px; }
+    .preview-entry p { font-size: 0.78rem; color: #444; }
+    .preview-skills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .preview-skill {
+      display: inline-block; padding: 3px 10px; border-radius: 100px;
+      font-size: 0.65rem; font-weight: 600;
+      background: #f0ecff; color: #7c3aed;
+    }
+    .preview-summary { font-size: 0.82rem; color: #444; line-height: 1.65; }
+    .preview-empty { color: #bbb; font-style: italic; font-size: 0.82rem; }
+
+    @media (max-width: 1024px) {
+      .preview-panel { position: static; max-height: none; }
+    }
+
+    /* ── FEATURES SECTION ─────────────────────────────────────────────────── */
+    .features-section {
+      background: var(--surface);
+      position: relative;
+      overflow: hidden;
+    }
+    .features-section::before {
+      content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(167,139,250,0.06), transparent 70%);
+      pointer-events: none;
+    }
+    .features-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+      position: relative; z-index: 1;
+    }
+    @media (max-width: 1024px) { .features-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 768px) { .features-grid { grid-template-columns: 1fr; } }
+    .feature-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; margin-bottom: 16px;
+    }
+
+    /* ── MODAL ─────────────────────────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(12,10,26,0.75); backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--card); border: 1px solid var(--border2); border-radius: 14px;
+      padding: 28px; max-width: 560px; width: 100%;
+      transform: translateY(12px); transition: transform 0.2s;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal h3 { margin-bottom: 20px; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+    /* ── EDITOR TOOLBAR ───────────────────────────────────────────────────── */
+    .editor-toolbar {
+      display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;
+      align-items: center;
+    }
+    .toolbar-divider { width: 1px; height: 28px; background: var(--border2); margin: 0 4px; }
+
+    /* ── HOW IT WORKS ─────────────────────────────────────────────────────── */
+    .steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+    @media (max-width: 1024px) { .steps-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .steps-grid { grid-template-columns: 1fr; } }
+    .step-card { text-align: center; }
+    .step-num {
+      width: 48px; height: 48px; border-radius: 50%; margin: 0 auto 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: var(--bg);
+    }
+
+    /* ── TEMPLATE SELECTOR ─────────────────────────────────────────────────── */
+    .tpl-select {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--bg); border: 1px solid var(--border2); border-radius: 8px;
+      padding: 6px 12px; color: var(--text); font-family: inherit; font-size: 0.72rem;
+      font-weight: 600; cursor: pointer; outline: none; appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23a89ec4'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center;
+      padding-right: 28px;
+    }
+    .tpl-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--glow); }
+
+    /* ── PHOTO UPLOAD ─────────────────────────────────────────────────────── */
+    .photo-upload-area {
+      display: flex; align-items: center; gap: 16px; margin-bottom: 16px;
+      padding: 16px; background: var(--bg); border: 1px dashed var(--border2);
+      border-radius: 10px;
+    }
+    .photo-preview {
+      width: 72px; height: 72px; border-radius: 50%; overflow: hidden;
+      background: var(--surface); border: 2px solid var(--border2);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .photo-preview svg { width: 40px; height: 40px; }
+    .photo-upload-info { flex: 1; }
+    .photo-upload-info p { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+
+    /* ── ELON MUSK TEMPLATE PREVIEW ───────────────────────────────────────── */
+    .em-resume {
+      display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 0;
+      font-family: 'Lato', sans-serif; font-size: 12px; line-height: 1.5;
+    }
+    .em-left { padding-right: 24px; }
+    .em-right {
+      border-left: 2px solid #e5e7eb; padding-left: 24px;
+    }
+    .em-photo {
+      width: 80px; height: 80px; border-radius: 50%; overflow: hidden;
+      margin-bottom: 12px; border: 3px solid #e85d4a;
+    }
+    .em-photo img { width: 100%; height: 100%; object-fit: cover; }
+    .em-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; font-weight: 800; color: #0c0a1a;
+      letter-spacing: -0.02em; margin-bottom: 2px;
+    }
+    .em-subtitle { font-size: 0.82rem; color: #555; font-style: italic; margin-bottom: 8px; }
+    .em-summary { font-size: 0.78rem; color: #555; margin-bottom: 16px; line-height: 1.6; }
+    .em-section-title {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: #0c0a1a;
+      border-bottom: 2px solid #e85d4a; padding-bottom: 4px;
+      margin: 16px 0 10px;
+    }
+    .em-entry { margin-bottom: 12px; }
+    .em-entry-role { font-size: 0.82rem; font-weight: 700; color: #1a1a1a; }
+    .em-entry-company { font-size: 0.78rem; font-weight: 600; color: #e85d4a; }
+    .em-entry-meta { font-size: 0.68rem; color: #888; margin-bottom: 4px; }
+    .em-entry-desc { font-size: 0.75rem; color: #444; line-height: 1.55; }
+    .em-contact-item {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.72rem; color: #555; margin-bottom: 6px;
+    }
+    .em-contact-icon { color: #e85d4a; font-size: 0.78rem; width: 16px; text-align: center; }
+    .em-skill-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .em-skill-name { font-size: 0.72rem; color: #333; flex: 1; }
+    .em-skill-bar {
+      width: 80px; height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden;
+    }
+    .em-skill-fill { height: 100%; background: #e85d4a; border-radius: 3px; }
+    .em-interest-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .em-interest-tag {
+      padding: 3px 10px; border-radius: 100px; font-size: 0.62rem;
+      font-weight: 600; background: #fde8e4; color: #c0392b;
+    }
+    .em-edu-entry { margin-bottom: 10px; }
+    .em-edu-degree { font-size: 0.78rem; font-weight: 700; color: #1a1a1a; }
+    .em-edu-school { font-size: 0.72rem; color: #555; }
+    .em-edu-meta { font-size: 0.68rem; color: #888; }
+
+    /* ── PRINT STYLES ─────────────────────────────────────────────────────── */
+    @media print {
+      body { background: #fff; }
+      nav, .hamburger, .mobile-menu, .editor-panel, .hero, .features-section,
+      .how-section, footer, .toast, .modal-overlay, .editor-toolbar { display: none !important; }
+      .editor-section { padding-top: 0; background: #fff; }
+      .editor-grid { grid-template-columns: 1fr; }
+      .preview-panel {
+        position: static; max-height: none; box-shadow: none;
+        border-radius: 0; padding: 20px 0;
+      }
+    }
+  </style>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <span class="nav-logo"><span class="elix">ELIX</span><span class="dash">-</span>Resume</span>
+  <div class="nav-links">
+    <a onclick="scrollToSection('hero-section')">Home</a>
+    <a onclick="scrollToSection('editor')">Editor</a>
+    <a onclick="scrollToSection('features')">Features</a>
+    <a onclick="scrollToSection('how')">How It Works</a>
+  </div>
+  <a href="admin.html" class="nav-cta" style="background:transparent;border:1.5px solid var(--border2);color:var(--muted2);margin-right:8px">Admin</a>
+  <button class="nav-cta" onclick="scrollToSection('editor')">Start Building</button>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a onclick="scrollToSection('hero-section'); toggleMenu()">Home</a>
+  <a onclick="scrollToSection('editor'); toggleMenu()">Editor</a>
+  <a onclick="scrollToSection('features'); toggleMenu()">Features</a>
+  <a onclick="scrollToSection('how'); toggleMenu()">How It Works</a>
+  <a href="admin.html">Admin Dashboard</a>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero" id="hero-section">
+  <div class="hero-bg">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
+  </div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="label hero-label">Free Resume Editor</div>
+      <h1>Craft Your <span class="gradient-text">Professional Story</span></h1>
+      <p class="hero-desc">A distraction-free resume editor with live preview. Build, polish, and export — all in your browser, no sign-up required. Your data never leaves your machine.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="scrollToSection('editor')">Start Building</button>
+        <button class="btn-outline" onclick="scrollToSection('features')">See Features</button>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-num" data-count="100">0</div>
+          <div class="hero-stat-label">% Free</div>
+        </div>
+        <div>
+          <div class="hero-stat-num" data-count="0">0</div>
+          <div class="hero-stat-label">Sign-ups needed</div>
+        </div>
+        <div>
+          <div class="hero-stat-num" data-count="5">0</div>
+          <div class="hero-stat-label">Sections</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-mockup animate">
+      <div class="mockup-name">Jane Doe</div>
+      <div class="mockup-title">Senior Product Designer</div>
+      <div class="mockup-bar mockup-bar-1"></div>
+      <div class="mockup-section">Experience</div>
+      <div class="mockup-line"></div>
+      <div class="mockup-line mockup-line-med"></div>
+      <div class="mockup-line mockup-line-short"></div>
+      <div class="mockup-section">Education</div>
+      <div class="mockup-line mockup-line-med"></div>
+      <div class="mockup-line mockup-line-short"></div>
+      <div class="mockup-section">Skills</div>
+      <div class="mockup-skills">
+        <span class="mockup-skill">Figma</span>
+        <span class="mockup-skill">UX Research</span>
+        <span class="mockup-skill">Prototyping</span>
+        <span class="mockup-skill">Design Systems</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── EDITOR ── -->
+<section class="editor-section" id="editor">
+  <div class="container">
+    <div class="editor-toolbar">
+      <button class="btn-primary btn-sm" onclick="saveResume()">Save</button>
+      <button class="btn-outline btn-sm" onclick="exportPDF()">Export PDF</button>
+      <span class="toolbar-divider"></span>
+      <button class="btn-ghost" onclick="exportJSON()">Export JSON</button>
+      <button class="btn-ghost" onclick="document.getElementById('json-import').click()">Import JSON</button>
+      <input type="file" id="json-import" accept=".json" style="display:none" onchange="importJSON(event)" />
+      <span class="toolbar-divider"></span>
+      <button class="btn-ghost" onclick="loadSample()">Load Sample</button>
+      <button class="btn-danger btn-sm" onclick="clearAll()">Clear All</button>
+      <span class="toolbar-divider"></span>
+      <select class="tpl-select" id="tpl-select" onchange="changeTemplate(this.value)">
+        <option value="classic">Classic Template</option>
+        <option value="elonmusk">Elon Musk Template</option>
+      </select>
+    </div>
+    <div class="editor-grid">
+      <!-- LEFT: Editor -->
+      <div class="editor-panel">
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab('personal', this)">Personal</button>
+          <button class="tab-btn" onclick="switchTab('summary', this)">Summary</button>
+          <button class="tab-btn" onclick="switchTab('experience', this)">Experience</button>
+          <button class="tab-btn" onclick="switchTab('education', this)">Education</button>
+          <button class="tab-btn" onclick="switchTab('skills', this)">Skills</button>
+        </div>
+
+        <!-- Personal Info -->
+        <div class="tab-panel active" id="tab-personal">
+          <div class="photo-upload-area">
+            <div class="photo-preview" id="photo-preview">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#7c6f9b" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7"/></svg>
+            </div>
+            <div class="photo-upload-info">
+              <button class="btn-outline btn-sm" onclick="document.getElementById('photo-input').click()">Upload Photo</button>
+              <button class="btn-ghost" onclick="removePhoto()" style="font-size:0.68rem">Remove</button>
+              <p>Optional. If empty, a generic avatar will be used based on your name.</p>
+              <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" id="f-name" placeholder="John Doe" oninput="updatePreview()" />
+            </div>
+            <div class="form-group">
+              <label>Job Title</label>
+              <input type="text" id="f-title" placeholder="Software Engineer" oninput="updatePreview()" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" id="f-email" placeholder="john@example.com" oninput="updatePreview()" />
+            </div>
+            <div class="form-group">
+              <label>Phone</label>
+              <input type="text" id="f-phone" placeholder="+65 9123 4567" oninput="updatePreview()" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Location</label>
+              <input type="text" id="f-location" placeholder="Singapore" oninput="updatePreview()" />
+            </div>
+            <div class="form-group">
+              <label>LinkedIn / Website</label>
+              <input type="text" id="f-website" placeholder="linkedin.com/in/johndoe" oninput="updatePreview()" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="tab-panel" id="tab-summary">
+          <div class="form-group">
+            <label>Professional Summary</label>
+            <textarea id="f-summary" rows="6" placeholder="A brief 2-3 sentence overview of your professional background, key strengths, and career objectives." oninput="updatePreview()"></textarea>
+          </div>
+        </div>
+
+        <!-- Experience -->
+        <div class="tab-panel" id="tab-experience">
+          <div id="exp-list"></div>
+          <button class="btn-outline btn-sm" onclick="openExpModal()" style="margin-top:8px">+ Add Experience</button>
+        </div>
+
+        <!-- Education -->
+        <div class="tab-panel" id="tab-education">
+          <div id="edu-list"></div>
+          <button class="btn-outline btn-sm" onclick="openEduModal()" style="margin-top:8px">+ Add Education</button>
+        </div>
+
+        <!-- Skills -->
+        <div class="tab-panel" id="tab-skills">
+          <div class="form-group">
+            <label>Add Skill</label>
+            <div style="display:flex;gap:8px">
+              <input type="text" id="f-skill-input" placeholder="e.g. JavaScript" onkeydown="if(event.key==='Enter')addSkill()" />
+              <button class="btn-primary btn-sm" onclick="addSkill()">Add</button>
+            </div>
+          </div>
+          <div id="skill-tags" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Live Preview -->
+      <div class="preview-panel" id="preview">
+        <div class="preview-empty">Your resume preview will appear here as you fill in the fields.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ── -->
+<section class="features-section" id="features">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:48px;position:relative;z-index:1">
+      <div class="label" style="margin-bottom:12px">WHY ELIX-RESUME</div>
+      <h2>Everything You Need, <span class="gradient-text">Nothing You Don't</span></h2>
+    </div>
+    <div class="features-grid">
+      <div class="card animate">
+        <div class="feature-icon" style="background:rgba(167,139,250,0.1);color:var(--accent)">&#9998;</div>
+        <h3 style="margin-bottom:8px;font-size:0.95rem">Live Preview</h3>
+        <p style="color:var(--muted2);font-size:0.82rem">See every change reflected instantly in a print-ready resume preview.</p>
+      </div>
+      <div class="card animate">
+        <div class="feature-icon" style="background:rgba(245,158,11,0.1);color:var(--accent2)">&#128196;</div>
+        <h3 style="margin-bottom:8px;font-size:0.95rem">One-Click PDF</h3>
+        <p style="color:var(--muted2);font-size:0.82rem">Export a clean, ATS-friendly PDF directly from your browser.</p>
+      </div>
+      <div class="card animate">
+        <div class="feature-icon" style="background:rgba(52,211,153,0.1);color:var(--green)">&#128274;</div>
+        <h3 style="margin-bottom:8px;font-size:0.95rem">100% Private</h3>
+        <p style="color:var(--muted2);font-size:0.82rem">No accounts, no servers. Your data lives in your browser and nowhere else.</p>
+      </div>
+      <div class="card animate">
+        <div class="feature-icon" style="background:rgba(167,139,250,0.1);color:var(--accent)">&#128190;</div>
+        <h3 style="margin-bottom:8px;font-size:0.95rem">Auto-Save</h3>
+        <p style="color:var(--muted2);font-size:0.82rem">Resume persists in localStorage. Close the tab and come back anytime.</p>
+      </div>
+      <div class="card animate">
+        <div class="feature-icon" style="background:rgba(245,158,11,0.1);color:var(--accent2)">{&thinsp;}</div>
+        <h3 style="margin-bottom:8px;font-size:0.95rem">JSON Portable</h3>
+        <p style="color:var(--muted2);font-size:0.82rem">Export and import your resume as JSON. Back it up, share it, or version-control it.</p>
+      </div>
+      <div class="card animate">
+        <div class="feature-icon" style="background:rgba(52,211,153,0.1);color:var(--green)">&#8693;</div>
+        <h3 style="margin-bottom:8px;font-size:0.95rem">Drag to Reorder</h3>
+        <p style="color:var(--muted2);font-size:0.82rem">Rearrange experience and education entries with drag-and-drop.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="how-section" id="how">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:48px">
+      <div class="label" style="margin-bottom:12px">HOW IT WORKS</div>
+      <h2>Four Steps to <span class="gradient-text">Your Resume</span></h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card animate">
+        <div class="step-num">1</div>
+        <h3 style="font-size:0.95rem;margin-bottom:6px">Fill In Details</h3>
+        <p style="color:var(--muted2);font-size:0.82rem">Enter your personal info, summary, experience, education, and skills.</p>
+      </div>
+      <div class="step-card animate">
+        <div class="step-num">2</div>
+        <h3 style="font-size:0.95rem;margin-bottom:6px">Preview Live</h3>
+        <p style="color:var(--muted2);font-size:0.82rem">Watch your resume take shape in real-time on the right panel.</p>
+      </div>
+      <div class="step-card animate">
+        <div class="step-num">3</div>
+        <h3 style="font-size:0.95rem;margin-bottom:6px">Reorder & Polish</h3>
+        <p style="color:var(--muted2);font-size:0.82rem">Drag entries to reorder. Edit inline. Get it just right.</p>
+      </div>
+      <div class="step-card animate">
+        <div class="step-num">4</div>
+        <h3 style="font-size:0.95rem;margin-bottom:6px">Export & Share</h3>
+        <p style="color:var(--muted2);font-size:0.82rem">Download as PDF or export as JSON for safekeeping.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="container">
+    <p>&copy; 2026 ELIX-Resume &middot; Built by Derrick Teo</p>
+  </div>
+</footer>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<!-- ── EXPERIENCE MODAL ── -->
+<div class="modal-overlay" id="exp-modal">
+  <div class="modal">
+    <h3>Add Experience</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Job Title</label>
+        <input type="text" id="m-exp-title" placeholder="Senior Developer" />
+      </div>
+      <div class="form-group">
+        <label>Company</label>
+        <input type="text" id="m-exp-company" placeholder="Acme Corp" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Start Date</label>
+        <input type="text" id="m-exp-start" placeholder="Jan 2022" />
+      </div>
+      <div class="form-group">
+        <label>End Date</label>
+        <input type="text" id="m-exp-end" placeholder="Present" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="m-exp-desc" rows="4" placeholder="Key responsibilities and achievements..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-outline btn-sm" onclick="closeModal('exp-modal')">Cancel</button>
+      <button class="btn-primary btn-sm" onclick="saveExp()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── EDUCATION MODAL ── -->
+<div class="modal-overlay" id="edu-modal">
+  <div class="modal">
+    <h3>Add Education</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Degree</label>
+        <input type="text" id="m-edu-degree" placeholder="B.Sc. Computer Science" />
+      </div>
+      <div class="form-group">
+        <label>Institution</label>
+        <input type="text" id="m-edu-school" placeholder="NUS" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Start Year</label>
+        <input type="text" id="m-edu-start" placeholder="2018" />
+      </div>
+      <div class="form-group">
+        <label>End Year</label>
+        <input type="text" id="m-edu-end" placeholder="2022" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Details (optional)</label>
+      <textarea id="m-edu-details" rows="3" placeholder="Honours, GPA, relevant coursework..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-outline btn-sm" onclick="closeModal('edu-modal')">Cancel</button>
+      <button class="btn-primary btn-sm" onclick="saveEdu()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── State ────────────────────────────────────────────────────────────────────
+let resume = {
+  name: '', title: '', email: '', phone: '', location: '', website: '',
+  summary: '',
+  experience: [],
+  education: [],
+  skills: [],
+  photo: ''
+};
+let editingExpIdx = -1;
+let editingEduIdx = -1;
+let dragSrcIdx = null;
+let dragType = null;
+let currentTemplate = 'classic';
+
+// ── Escape HTML ──────────────────────────────────────────────────────────────
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── Menu Toggle ──────────────────────────────────────────────────────────────
+function toggleMenu() {
+  document.getElementById('mobile-menu').classList.toggle('open');
+  document.getElementById('hamburger').classList.toggle('open');
+}
+
+// ── Toast ────────────────────────────────────────────────────────────────────
+function showToast(msg, duration = 2200) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ── Scroll ───────────────────────────────────────────────────────────────────
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── Tab Switching ────────────────────────────────────────────────────────────
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+// ── Modals ───────────────────────────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function openExpModal(idx) {
+  editingExpIdx = idx !== undefined ? idx : -1;
+  if (editingExpIdx >= 0) {
+    const e = resume.experience[editingExpIdx];
+    document.getElementById('m-exp-title').value = e.title;
+    document.getElementById('m-exp-company').value = e.company;
+    document.getElementById('m-exp-start').value = e.start;
+    document.getElementById('m-exp-end').value = e.end;
+    document.getElementById('m-exp-desc').value = e.desc;
+  } else {
+    ['m-exp-title','m-exp-company','m-exp-start','m-exp-end','m-exp-desc'].forEach(id => document.getElementById(id).value = '');
+  }
+  openModal('exp-modal');
+}
+
+function saveExp() {
+  const entry = {
+    title: document.getElementById('m-exp-title').value.trim(),
+    company: document.getElementById('m-exp-company').value.trim(),
+    start: document.getElementById('m-exp-start').value.trim(),
+    end: document.getElementById('m-exp-end').value.trim(),
+    desc: document.getElementById('m-exp-desc').value.trim()
+  };
+  if (!entry.title || !entry.company) { showToast('Title and Company are required'); return; }
+  if (editingExpIdx >= 0) resume.experience[editingExpIdx] = entry;
+  else resume.experience.push(entry);
+  closeModal('exp-modal');
+  renderExpList();
+  updatePreview();
+  showToast(editingExpIdx >= 0 ? 'Experience updated' : 'Experience added');
+}
+
+function deleteExp(i) {
+  resume.experience.splice(i, 1);
+  renderExpList();
+  updatePreview();
+  showToast('Experience removed');
+}
+
+function renderExpList() {
+  const el = document.getElementById('exp-list');
+  if (!resume.experience.length) { el.innerHTML = '<p style="color:var(--muted);font-size:0.82rem">No experience added yet.</p>'; return; }
+  el.innerHTML = resume.experience.map((e, i) => `
+    <div class="entry-card" draggable="true" data-type="exp" data-idx="${i}"
+         ondragstart="dragStart(event)" ondragover="dragOver(event)" ondrop="drop(event)" ondragend="dragEnd(event)">
+      <div class="entry-actions">
+        <button onclick="openExpModal(${i})" title="Edit">&#9998;</button>
+        <button class="del" onclick="deleteExp(${i})" title="Delete">&#10005;</button>
+      </div>
+      <span class="drag-handle">&#9776;</span>
+      <h4 style="display:inline">${esc(e.title)}</h4>
+      <p>${esc(e.company)} &middot; ${esc(e.start)} — ${esc(e.end)}</p>
+    </div>
+  `).join('');
+}
+
+function openEduModal(idx) {
+  editingEduIdx = idx !== undefined ? idx : -1;
+  if (editingEduIdx >= 0) {
+    const e = resume.education[editingEduIdx];
+    document.getElementById('m-edu-degree').value = e.degree;
+    document.getElementById('m-edu-school').value = e.school;
+    document.getElementById('m-edu-start').value = e.start;
+    document.getElementById('m-edu-end').value = e.end;
+    document.getElementById('m-edu-details').value = e.details;
+  } else {
+    ['m-edu-degree','m-edu-school','m-edu-start','m-edu-end','m-edu-details'].forEach(id => document.getElementById(id).value = '');
+  }
+  openModal('edu-modal');
+}
+
+function saveEdu() {
+  const entry = {
+    degree: document.getElementById('m-edu-degree').value.trim(),
+    school: document.getElementById('m-edu-school').value.trim(),
+    start: document.getElementById('m-edu-start').value.trim(),
+    end: document.getElementById('m-edu-end').value.trim(),
+    details: document.getElementById('m-edu-details').value.trim()
+  };
+  if (!entry.degree || !entry.school) { showToast('Degree and Institution are required'); return; }
+  if (editingEduIdx >= 0) resume.education[editingEduIdx] = entry;
+  else resume.education.push(entry);
+  closeModal('edu-modal');
+  renderEduList();
+  updatePreview();
+  showToast(editingEduIdx >= 0 ? 'Education updated' : 'Education added');
+}
+
+function deleteEdu(i) {
+  resume.education.splice(i, 1);
+  renderEduList();
+  updatePreview();
+  showToast('Education removed');
+}
+
+function renderEduList() {
+  const el = document.getElementById('edu-list');
+  if (!resume.education.length) { el.innerHTML = '<p style="color:var(--muted);font-size:0.82rem">No education added yet.</p>'; return; }
+  el.innerHTML = resume.education.map((e, i) => `
+    <div class="entry-card" draggable="true" data-type="edu" data-idx="${i}"
+         ondragstart="dragStart(event)" ondragover="dragOver(event)" ondrop="drop(event)" ondragend="dragEnd(event)">
+      <div class="entry-actions">
+        <button onclick="openEduModal(${i})" title="Edit">&#9998;</button>
+        <button class="del" onclick="deleteEdu(${i})" title="Delete">&#10005;</button>
+      </div>
+      <span class="drag-handle">&#9776;</span>
+      <h4 style="display:inline">${esc(e.degree)}</h4>
+      <p>${esc(e.school)} &middot; ${esc(e.start)} — ${esc(e.end)}</p>
+    </div>
+  `).join('');
+}
+
+// ── Drag & Drop Reorder ─────────────────────────────────────────────────────
+function dragStart(e) {
+  dragSrcIdx = parseInt(e.target.closest('.entry-card').dataset.idx);
+  dragType = e.target.closest('.entry-card').dataset.type;
+  e.target.closest('.entry-card').classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+function dragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+}
+function drop(e) {
+  e.preventDefault();
+  const target = e.target.closest('.entry-card');
+  if (!target || target.dataset.type !== dragType) return;
+  const destIdx = parseInt(target.dataset.idx);
+  if (dragSrcIdx === destIdx) return;
+  const arr = dragType === 'exp' ? resume.experience : resume.education;
+  const [item] = arr.splice(dragSrcIdx, 1);
+  arr.splice(destIdx, 0, item);
+  if (dragType === 'exp') renderExpList(); else renderEduList();
+  updatePreview();
+  showToast('Reordered');
+}
+function dragEnd(e) {
+  document.querySelectorAll('.entry-card.dragging').forEach(c => c.classList.remove('dragging'));
+}
+
+// ── Skills ───────────────────────────────────────────────────────────────────
+function addSkill() {
+  const input = document.getElementById('f-skill-input');
+  const skill = input.value.trim();
+  if (!skill) return;
+  if (resume.skills.includes(skill)) { showToast('Skill already added'); return; }
+  resume.skills.push(skill);
+  input.value = '';
+  renderSkillTags();
+  updatePreview();
+}
+
+function removeSkill(i) {
+  resume.skills.splice(i, 1);
+  renderSkillTags();
+  updatePreview();
+}
+
+function renderSkillTags() {
+  const el = document.getElementById('skill-tags');
+  el.innerHTML = resume.skills.map((s, i) => `
+    <span class="badge badge-violet" style="cursor:pointer;padding:5px 12px;font-size:0.72rem" onclick="removeSkill(${i})" title="Click to remove">
+      ${esc(s)} &times;
+    </span>
+  `).join('');
+}
+
+// ── Photo Handling ───────────────────────────────────────────────────────────
+function handlePhotoUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { showToast('Photo must be under 2MB'); return; }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    resume.photo = e.target.result;
+    renderPhotoPreview();
+    updatePreview();
+    showToast('Photo uploaded');
+  };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+
+function removePhoto() {
+  resume.photo = '';
+  renderPhotoPreview();
+  updatePreview();
+}
+
+function renderPhotoPreview() {
+  const el = document.getElementById('photo-preview');
+  if (resume.photo) {
+    el.innerHTML = `<img src="${resume.photo}" alt="Photo" />`;
+  } else {
+    el.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#7c6f9b" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7"/></svg>';
+  }
+}
+
+// ── Gender Inference ─────────────────────────────────────────────────────────
+const FEMALE_NAMES = new Set(['mary','patricia','jennifer','linda','barbara','elizabeth','susan','jessica','sarah','karen','lisa','nancy','betty','margaret','sandra','ashley','dorothy','kimberly','emily','donna','michelle','carol','amanda','melissa','deborah','stephanie','rebecca','sharon','laura','cynthia','kathleen','amy','angela','shirley','anna','brenda','pamela','emma','nicole','helen','samantha','katherine','christine','debra','rachel','carolyn','janet','catherine','maria','heather','diane','ruth','julie','olivia','joyce','virginia','victoria','kelly','lauren','christina','joan','evelyn','judith','megan','andrea','cheryl','hannah','jacqueline','martha','gloria','teresa','ann','sara','madison','frances','kathryn','janice','jean','abigail','alice','julia','judy','sophia','grace','denise','amber','doris','marilyn','danielle','beverly','isabella','theresa','diana','natalie','brittany','charlotte','marie','kayla','alexis','lori','ava','chloe','mei','ling','xin','yan','hui','jing','min','fang','ying','wei','chen','li','yu','zhi','hong','xia','ping','siti','nur','nurul','ain','aisyah','fatimah','noor','putri','dewi','sri','ayu','wati','rina','ani','yuni','priya','ananya','shreya','isha','pooja','neha','kavita','sunita','deepa','lakshmi','divya','ngan','thi','hanh','hoa','lan','mai','nga','phuong','thanh','kim','ji','soo','eun','hye','min','yeon','ji','seo','jin']);
+const MALE_NAMES = new Set(['james','robert','john','michael','david','william','richard','joseph','thomas','charles','christopher','daniel','matthew','anthony','mark','donald','steven','paul','andrew','joshua','kenneth','kevin','brian','george','timothy','ronald','edward','jason','jeffrey','ryan','jacob','gary','nicholas','eric','jonathan','stephen','larry','justin','scott','brandon','benjamin','samuel','raymond','gregory','frank','alexander','patrick','jack','dennis','jerry','tyler','aaron','jose','adam','nathan','henry','douglas','zachary','peter','kyle','ethan','jeremy','harold','keith','christian','roger','noah','gerald','carl','terry','sean','austin','arthur','lawrence','jesse','dylan','bryan','joe','jordan','billy','bruce','albert','willie','gabriel','logan','alan','ralph','eugene','russell','bobby','mason','philip','louis','ahmad','muhammad','ali','omar','hassan','hussein','ibrahim','abdullah','mohamed','yusuf','ismail','wei','ming','jian','hao','jun','yi','cheng','zhi','lei','tao','bin','raj','arjun','vikram','sanjay','rahul','amit','ravi','suresh','kumar','anil','vijay','van','duc','minh','nam','hung','tuan','long','son','thanh','bao','seung','hyun','jae','woo','dong','sung','ho','young','jun','sang']);
+
+function inferGender(name) {
+  if (!name) return 'unknown';
+  const first = name.trim().split(/\s+/)[0].toLowerCase();
+  if (FEMALE_NAMES.has(first)) return 'female';
+  if (MALE_NAMES.has(first)) return 'male';
+  return 'unknown';
+}
+
+function getAvatarSVG(gender) {
+  if (gender === 'female') {
+    return `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+      <rect width="80" height="80" rx="40" fill="#e0e7ff"/>
+      <circle cx="40" cy="30" r="14" fill="#a78bfa"/>
+      <ellipse cx="40" cy="68" rx="22" ry="18" fill="#a78bfa"/>
+      <circle cx="40" cy="30" r="12" fill="#fde8d8"/>
+      <path d="M28 26c0-8 6-16 12-16s12 8 12 16" fill="#5b4a3f" opacity="0.85"/>
+      <circle cx="36" cy="30" r="1.2" fill="#333"/>
+      <circle cx="44" cy="30" r="1.2" fill="#333"/>
+      <path d="M37 35q3 3 6 0" stroke="#c9887a" stroke-width="1" fill="none"/>
+    </svg>`;
+  } else if (gender === 'male') {
+    return `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+      <rect width="80" height="80" rx="40" fill="#dbeafe"/>
+      <circle cx="40" cy="30" r="14" fill="#60a5fa"/>
+      <ellipse cx="40" cy="68" rx="22" ry="18" fill="#60a5fa"/>
+      <circle cx="40" cy="30" r="12" fill="#fde8d8"/>
+      <path d="M26 24c2-10 12-14 18-12s10 8 10 14" fill="#3b2f1f" opacity="0.85"/>
+      <circle cx="36" cy="30" r="1.2" fill="#333"/>
+      <circle cx="44" cy="30" r="1.2" fill="#333"/>
+      <path d="M37 35q3 3 6 0" stroke="#c9887a" stroke-width="1" fill="none"/>
+    </svg>`;
+  }
+  return `<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+    <rect width="80" height="80" rx="40" fill="#e5e7eb"/>
+    <circle cx="40" cy="30" r="14" fill="#94a3b8"/>
+    <ellipse cx="40" cy="68" rx="22" ry="18" fill="#94a3b8"/>
+    <circle cx="40" cy="30" r="12" fill="#fde8d8"/>
+    <circle cx="36" cy="30" r="1.2" fill="#333"/>
+    <circle cx="44" cy="30" r="1.2" fill="#333"/>
+    <path d="M37 35q3 3 6 0" stroke="#c9887a" stroke-width="1" fill="none"/>
+  </svg>`;
+}
+
+function getPhotoHTML() {
+  if (resume.photo) {
+    return `<img src="${resume.photo}" alt="Photo" style="width:100%;height:100%;object-fit:cover" />`;
+  }
+  const gender = inferGender(resume.name);
+  return getAvatarSVG(gender);
+}
+
+// ── Template Switching ───────────────────────────────────────────────────────
+function changeTemplate(tpl) {
+  currentTemplate = tpl;
+  updatePreview();
+  showToast(tpl === 'elonmusk' ? 'Elon Musk template active' : 'Classic template active');
+}
+
+// ── Elon Musk Template Renderer ──────────────────────────────────────────────
+function renderElonMusk() {
+  const hasContent = resume.name || resume.title || resume.email || resume.summary ||
+    resume.experience.length || resume.education.length || resume.skills.length;
+
+  if (!hasContent) {
+    return '<div class="preview-empty">Your resume preview will appear here as you fill in the fields.</div>';
+  }
+
+  // Left column: name, subtitle, summary, work experience, education
+  let left = '';
+  if (resume.name) left += `<div class="em-name">${esc(resume.name)}</div>`;
+  if (resume.title) left += `<div class="em-subtitle">${esc(resume.title)}</div>`;
+  if (resume.summary) left += `<div class="em-summary">${esc(resume.summary)}</div>`;
+
+  if (resume.experience.length) {
+    left += `<div class="em-section-title">Work Experience</div>`;
+    resume.experience.forEach(e => {
+      left += `<div class="em-entry">
+        <div class="em-entry-role">${esc(e.title)}</div>
+        <div class="em-entry-company">${esc(e.company)}</div>
+        <div class="em-entry-meta">${esc(e.start)} — ${esc(e.end)}</div>
+        ${e.desc ? `<div class="em-entry-desc">${esc(e.desc)}</div>` : ''}
+      </div>`;
+    });
+  }
+
+  if (resume.education.length) {
+    left += `<div class="em-section-title">Education</div>`;
+    resume.education.forEach(e => {
+      left += `<div class="em-edu-entry">
+        <div class="em-edu-degree">${esc(e.degree)}</div>
+        <div class="em-edu-school">${esc(e.school)}</div>
+        <div class="em-edu-meta">${esc(e.start)} — ${esc(e.end)}</div>
+        ${e.details ? `<div class="em-entry-desc">${esc(e.details)}</div>` : ''}
+      </div>`;
+    });
+  }
+
+  // Right column: photo, contact, skills, interests
+  let right = '';
+  right += `<div class="em-photo">${getPhotoHTML()}</div>`;
+
+  // Contact
+  const contactItems = [];
+  if (resume.email) contactItems.push(`<div class="em-contact-item"><span class="em-contact-icon">&#9993;</span>${esc(resume.email)}</div>`);
+  if (resume.phone) contactItems.push(`<div class="em-contact-item"><span class="em-contact-icon">&#9742;</span>${esc(resume.phone)}</div>`);
+  if (resume.location) contactItems.push(`<div class="em-contact-item"><span class="em-contact-icon">&#9872;</span>${esc(resume.location)}</div>`);
+  if (resume.website) contactItems.push(`<div class="em-contact-item"><span class="em-contact-icon">&#9741;</span>${esc(resume.website)}</div>`);
+  if (contactItems.length) {
+    right += contactItems.join('');
+  }
+
+  // Skills with bars
+  if (resume.skills.length) {
+    right += `<div class="em-section-title">Skills & Competencies</div>`;
+    resume.skills.forEach((s, i) => {
+      const level = Math.max(50, 100 - (i * 8));
+      right += `<div class="em-skill-row">
+        <span class="em-skill-name">${esc(s)}</span>
+        <div class="em-skill-bar"><div class="em-skill-fill" style="width:${level}%"></div></div>
+      </div>`;
+    });
+  }
+
+  // Interests (use skills as tags too for the Musk format)
+  if (resume.skills.length) {
+    right += `<div class="em-section-title">Interests</div>`;
+    right += `<div class="em-interest-tags">`;
+    resume.skills.slice(0, 8).forEach(s => {
+      right += `<span class="em-interest-tag">${esc(s)}</span>`;
+    });
+    right += `</div>`;
+  }
+
+  return `<div class="em-resume"><div class="em-left">${left}</div><div class="em-right">${right}</div></div>`;
+}
+
+// ── Live Preview ─────────────────────────────────────────────────────────────
+function updatePreview() {
+  resume.name = document.getElementById('f-name').value.trim();
+  resume.title = document.getElementById('f-title').value.trim();
+  resume.email = document.getElementById('f-email').value.trim();
+  resume.phone = document.getElementById('f-phone').value.trim();
+  resume.location = document.getElementById('f-location').value.trim();
+  resume.website = document.getElementById('f-website').value.trim();
+  resume.summary = document.getElementById('f-summary').value.trim();
+
+  // Route to template
+  if (currentTemplate === 'elonmusk') {
+    document.getElementById('preview').innerHTML = renderElonMusk();
+    return;
+  }
+
+  // Classic template
+  const hasContent = resume.name || resume.title || resume.email || resume.summary ||
+    resume.experience.length || resume.education.length || resume.skills.length;
+
+  if (!hasContent) {
+    document.getElementById('preview').innerHTML = '<div class="preview-empty">Your resume preview will appear here as you fill in the fields.</div>';
+    return;
+  }
+
+  let html = '';
+  if (resume.name) html += `<div class="preview-name">${esc(resume.name)}</div>`;
+  if (resume.title) html += `<div class="preview-title">${esc(resume.title)}</div>`;
+
+  const contacts = [];
+  if (resume.email) contacts.push(`<span>${esc(resume.email)}</span>`);
+  if (resume.phone) contacts.push(`<span>${esc(resume.phone)}</span>`);
+  if (resume.location) contacts.push(`<span>${esc(resume.location)}</span>`);
+  if (resume.website) contacts.push(`<span>${esc(resume.website)}</span>`);
+  if (contacts.length) html += `<div class="preview-contact">${contacts.join('')}</div>`;
+
+  if (resume.summary) {
+    html += `<hr class="preview-divider"><div class="preview-section-title">Professional Summary</div>`;
+    html += `<div class="preview-summary">${esc(resume.summary)}</div>`;
+  }
+
+  if (resume.experience.length) {
+    html += `<hr class="preview-divider"><div class="preview-section-title">Experience</div>`;
+    resume.experience.forEach(e => {
+      html += `<div class="preview-entry">
+        <div class="preview-entry-header">
+          <h4>${esc(e.title)}</h4>
+          <span class="date">${esc(e.start)} — ${esc(e.end)}</span>
+        </div>
+        <div class="preview-entry-sub">${esc(e.company)}</div>
+        ${e.desc ? `<p>${esc(e.desc)}</p>` : ''}
+      </div>`;
+    });
+  }
+
+  if (resume.education.length) {
+    html += `<hr class="preview-divider"><div class="preview-section-title">Education</div>`;
+    resume.education.forEach(e => {
+      html += `<div class="preview-entry">
+        <div class="preview-entry-header">
+          <h4>${esc(e.degree)}</h4>
+          <span class="date">${esc(e.start)} — ${esc(e.end)}</span>
+        </div>
+        <div class="preview-entry-sub">${esc(e.school)}</div>
+        ${e.details ? `<p>${esc(e.details)}</p>` : ''}
+      </div>`;
+    });
+  }
+
+  if (resume.skills.length) {
+    html += `<hr class="preview-divider"><div class="preview-section-title">Skills</div>`;
+    html += `<div class="preview-skills">${resume.skills.map(s => `<span class="preview-skill">${esc(s)}</span>`).join('')}</div>`;
+  }
+
+  document.getElementById('preview').innerHTML = html;
+}
+
+// ── Save / Load ──────────────────────────────────────────────────────────────
+function saveResume() {
+  updatePreview();
+  localStorage.setItem('elix_resume_data', JSON.stringify(resume));
+  localStorage.setItem('elix_resume_tpl', currentTemplate);
+  showToast('Resume saved');
+}
+
+function loadResume() {
+  const data = localStorage.getItem('elix_resume_data');
+  if (!data) return;
+  try {
+    resume = JSON.parse(data);
+    document.getElementById('f-name').value = resume.name || '';
+    document.getElementById('f-title').value = resume.title || '';
+    document.getElementById('f-email').value = resume.email || '';
+    document.getElementById('f-phone').value = resume.phone || '';
+    document.getElementById('f-location').value = resume.location || '';
+    document.getElementById('f-website').value = resume.website || '';
+    document.getElementById('f-summary').value = resume.summary || '';
+    resume.experience = resume.experience || [];
+    resume.education = resume.education || [];
+    resume.skills = resume.skills || [];
+    resume.photo = resume.photo || '';
+    renderPhotoPreview();
+    renderExpList(); renderEduList(); renderSkillTags();
+    const savedTpl = localStorage.getItem('elix_resume_tpl');
+    if (savedTpl) { currentTemplate = savedTpl; document.getElementById('tpl-select').value = savedTpl; }
+    updatePreview();
+  } catch(e) {}
+}
+
+// ── JSON Import / Export ─────────────────────────────────────────────────────
+function exportJSON() {
+  updatePreview();
+  if (!resume.name) { showToast('Add your name before exporting'); return; }
+  const blob = new Blob([JSON.stringify(resume, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (resume.name.replace(/\s+/g, '_') || 'resume') + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('JSON exported');
+}
+
+function importJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.name && !data.experience) { showToast('Invalid resume JSON'); return; }
+      resume = {
+        name: data.name || '', title: data.title || '', email: data.email || '',
+        phone: data.phone || '', location: data.location || '', website: data.website || '',
+        summary: data.summary || '',
+        experience: Array.isArray(data.experience) ? data.experience : [],
+        education: Array.isArray(data.education) ? data.education : [],
+        skills: Array.isArray(data.skills) ? data.skills : [],
+        photo: data.photo || ''
+      };
+      document.getElementById('f-name').value = resume.name;
+      document.getElementById('f-title').value = resume.title;
+      document.getElementById('f-email').value = resume.email;
+      document.getElementById('f-phone').value = resume.phone;
+      document.getElementById('f-location').value = resume.location;
+      document.getElementById('f-website').value = resume.website;
+      document.getElementById('f-summary').value = resume.summary;
+      renderPhotoPreview();
+      renderExpList(); renderEduList(); renderSkillTags(); updatePreview();
+      showToast('Resume imported from JSON');
+    } catch(err) { showToast('Failed to parse JSON file'); }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// ── Export PDF ────────────────────────────────────────────────────────────────
+function exportPDF() {
+  updatePreview();
+  if (!resume.name) { showToast('Add your name before exporting'); return; }
+  window.print();
+}
+
+// ── Clear All ────────────────────────────────────────────────────────────────
+function clearAll() {
+  if (!confirm('Clear all resume data? This cannot be undone.')) return;
+  resume = { name:'', title:'', email:'', phone:'', location:'', website:'', summary:'', experience:[], education:[], skills:[], photo:'' };
+  ['f-name','f-title','f-email','f-phone','f-location','f-website','f-summary'].forEach(id => document.getElementById(id).value = '');
+  renderPhotoPreview();
+  renderExpList(); renderEduList(); renderSkillTags(); updatePreview();
+  localStorage.removeItem('elix_resume_data');
+  showToast('All data cleared');
+}
+
+// ── Sample Data ──────────────────────────────────────────────────────────────
+function loadSample() {
+  resume = {
+    name: 'Alex Chen',
+    title: 'Full-Stack Software Engineer',
+    email: 'alex.chen@email.com',
+    phone: '+65 9123 4567',
+    location: 'Singapore',
+    website: 'linkedin.com/in/alexchen',
+    summary: 'Full-stack engineer with 5+ years of experience building scalable web applications. Passionate about clean code, user experience, and shipping products that make a difference.',
+    experience: [
+      { title: 'Senior Software Engineer', company: 'TechCorp Pte Ltd', start: 'Mar 2022', end: 'Present', desc: 'Led a team of 4 engineers to rebuild the core platform, reducing page load time by 60%. Implemented CI/CD pipelines and introduced code review practices.' },
+      { title: 'Software Engineer', company: 'StartupXYZ', start: 'Jun 2019', end: 'Feb 2022', desc: 'Built RESTful APIs serving 100K+ daily requests. Developed real-time dashboards using WebSocket and Chart.js.' }
+    ],
+    education: [
+      { degree: 'B.Comp. in Computer Science', school: 'National University of Singapore', start: '2015', end: '2019', details: "Dean's List 2018. Final year project on distributed systems." }
+    ],
+    skills: ['JavaScript', 'TypeScript', 'Python', 'React', 'Node.js', 'PostgreSQL', 'AWS', 'Docker', 'Git', 'Figma'],
+    photo: ''
+  };
+  document.getElementById('f-name').value = resume.name;
+  document.getElementById('f-title').value = resume.title;
+  document.getElementById('f-email').value = resume.email;
+  document.getElementById('f-phone').value = resume.phone;
+  document.getElementById('f-location').value = resume.location;
+  document.getElementById('f-website').value = resume.website;
+  document.getElementById('f-summary').value = resume.summary;
+  renderPhotoPreview();
+  renderExpList(); renderEduList(); renderSkillTags(); updatePreview();
+  showToast('Sample resume loaded');
+}
+
+// ── Scroll Reveal ────────────────────────────────────────────────────────────
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.animate').forEach(el => observer.observe(el));
+
+// ── Counter Animation ────────────────────────────────────────────────────────
+function animateCounter(el, target, suffix = '') {
+  const duration = 1800;
+  const start = performance.now();
+  function tick(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(target * eased) + suffix;
+    if (progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !e.target.dataset.counted) {
+      e.target.dataset.counted = 'true';
+      animateCounter(e.target, parseInt(e.target.dataset.count));
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('[data-count]').forEach(el => counterObserver.observe(el));
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+loadResume();
+renderExpList();
+renderEduList();
+</script>
+</body>
+</html>

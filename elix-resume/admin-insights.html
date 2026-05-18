@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ELIX-Resume — Market &amp; Pricing Insights</title>
+  <meta name="description" content="Market intelligence dashboard for ELIX-Resume: pricing strategies, user segments, willingness to pay, and competitive alternatives." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Lato:wght@300;400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* ── RESET & VARIABLES ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:       #0c0a1a;
+      --surface:  #13102a;
+      --card:     #1a1535;
+      --border:   rgba(167,139,250,0.08);
+      --border2:  rgba(167,139,250,0.18);
+      --text:     #ede9fe;
+      --muted:    #7c6f9b;
+      --muted2:   #a89ec4;
+      --accent:   #a78bfa;
+      --accent2:  #f59e0b;
+      --green:    #34d399;
+      --red:      #f87171;
+      --glow:     rgba(167,139,250,0.12);
+      --glow2:    rgba(245,158,11,0.10);
+      --nav-h:    64px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Lato', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ── TYPOGRAPHY ────────────────────────────────────────────────────── */
+    h1, h2, h3 { font-family: 'Playfair Display', serif; }
+    h1 { font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.08; }
+    h2 { font-size: clamp(1.5rem, 3.5vw, 2.4rem); font-weight: 700; letter-spacing: -0.01em; }
+    h3 { font-size: clamp(1.1rem, 2vw, 1.5rem); font-weight: 600; }
+    .label {
+      font-family: 'Lato', sans-serif;
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent2);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    /* ── NAV ───────────────────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: var(--nav-h);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+      background: rgba(12,10,26,0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 800; font-size: 1rem; letter-spacing: -0.01em;
+    }
+    .nav-logo .elix { color: var(--accent); }
+    .nav-logo .dash { color: var(--accent2); }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a {
+      font-size: 0.72rem; font-weight: 600; color: var(--muted);
+      transition: color 0.2s; cursor: pointer; letter-spacing: 0.04em;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .nav-cta {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: var(--bg); padding: 8px 20px; border-radius: 8px;
+      font-size: 0.72rem; font-weight: 700; transition: all 0.2s;
+      cursor: pointer; border: none; font-family: inherit;
+    }
+    .nav-cta:hover { filter: brightness(1.15); transform: translateY(-1px); }
+
+    /* Hamburger */
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+    .hamburger span { display: block; width: 20px; height: 2px; background: var(--text); transition: all 0.3s; }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .mobile-menu {
+        display: none; position: fixed; top: var(--nav-h); left: 0; right: 0; z-index: 199;
+        background: rgba(12,10,26,0.97); backdrop-filter: blur(16px);
+        padding: 20px 24px; border-bottom: 1px solid var(--border);
+        flex-direction: column; gap: 16px;
+      }
+      .mobile-menu.open { display: flex; }
+      .mobile-menu a { font-size: 0.85rem; color: var(--muted2); cursor: pointer; }
+    }
+
+    /* ── LAYOUT ────────────────────────────────────────────────────────── */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 80px 0; }
+    @media (max-width: 768px) { section { padding: 48px 0; } }
+
+    /* ── HERO ──────────────────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      padding-top: calc(var(--nav-h) + 60px);
+      padding-bottom: 60px;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    }
+    .hero-orb {
+      position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.5;
+      animation: orbFloat 12s ease-in-out infinite alternate;
+    }
+    .hero-orb-1 {
+      width: 500px; height: 500px; top: -10%; right: -5%;
+      background: radial-gradient(circle, rgba(167,139,250,0.35), transparent 70%);
+    }
+    .hero-orb-2 {
+      width: 400px; height: 400px; bottom: -5%; left: -10%;
+      background: radial-gradient(circle, rgba(245,158,11,0.2), transparent 70%);
+      animation-delay: -4s;
+    }
+    @keyframes orbFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(30px, -20px) scale(1.1); }
+    }
+    .hero .container { position: relative; z-index: 1; text-align: center; }
+    .hero h1 { margin-bottom: 16px; }
+    .hero-desc { font-size: 1.05rem; color: var(--muted2); line-height: 1.75; margin-bottom: 24px; max-width: 640px; margin-left: auto; margin-right: auto; }
+    .hero-stats { display: flex; gap: 32px; justify-content: center; margin-top: 32px; flex-wrap: wrap; }
+    .hero-stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem; font-weight: 800; color: var(--accent);
+    }
+    .hero-stat-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* ── CARDS ─────────────────────────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      transition: all 0.25s ease;
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: var(--border2);
+      box-shadow: 0 16px 40px rgba(167,139,250,0.08);
+    }
+
+    /* ── BADGES ────────────────────────────────────────────────────────── */
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 100px;
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .badge-violet { background: rgba(167,139,250,0.12); color: #a78bfa; }
+    .badge-amber  { background: rgba(245,158,11,0.12);  color: #f59e0b; }
+    .badge-green  { background: rgba(52,211,153,0.12);  color: #34d399; }
+    .badge-red    { background: rgba(248,113,113,0.12);  color: #f87171; }
+    .badge-blue   { background: rgba(96,165,250,0.12);  color: #60a5fa; }
+    .badge-pink   { background: rgba(244,114,182,0.12); color: #f472b6; }
+
+    /* ── BUTTONS ───────────────────────────────────────────────────────── */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: var(--bg); padding: 12px 24px; border: none; border-radius: 8px;
+      font-family: inherit; font-size: 0.78rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-primary:hover { filter: brightness(1.15); transform: translateY(-1px); }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: var(--muted2);
+      padding: 12px 24px; border: 1.5px solid var(--border2); border-radius: 8px;
+      font-family: inherit; font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── TOAST ─────────────────────────────────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--surface); border: 1px solid var(--border2);
+      padding: 10px 20px; border-radius: 8px;
+      font-size: 0.78rem; color: var(--text);
+      opacity: 0; transition: all 0.3s; z-index: 600; pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── SCROLL ANIMATION ─────────────────────────────────────────────── */
+    .animate { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .animate.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── FOOTER ────────────────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    /* ── SECTION HEADERS ──────────────────────────────────────────────── */
+    .section-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .section-header .label { margin-bottom: 12px; display: block; }
+    .section-header h2 { margin-bottom: 12px; }
+    .section-header p { color: var(--muted2); max-width: 600px; margin: 0 auto; font-size: 0.92rem; }
+
+    /* ── GRID LAYOUTS ─────────────────────────────────────────────────── */
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    @media (max-width: 1024px) { .grid-3 { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 768px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    /* ── PRICING CARD ─────────────────────────────────────────────────── */
+    .pricing-card .card-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; margin-bottom: 16px;
+      background: var(--glow);
+    }
+    .pricing-card h3 { margin-bottom: 8px; font-size: 1.15rem; }
+    .pricing-card .card-desc { color: var(--muted2); font-size: 0.82rem; margin-bottom: 16px; line-height: 1.6; }
+    .pricing-card .pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    .pricing-card .pros-cons ul { list-style: none; padding: 0; }
+    .pricing-card .pros-cons li {
+      font-size: 0.75rem; color: var(--muted2); padding: 3px 0;
+      padding-left: 16px; position: relative;
+    }
+    .pricing-card .pros-cons li::before {
+      position: absolute; left: 0; font-size: 0.7rem;
+    }
+    .pricing-card .pros li::before { content: '+'; color: var(--green); font-weight: 700; }
+    .pricing-card .cons li::before { content: '-'; color: var(--red); font-weight: 700; }
+    .pricing-card .revenue-est {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px; border-radius: 8px;
+      background: rgba(167,139,250,0.06);
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+    .pricing-card .revenue-est .rev-label {
+      font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--muted);
+    }
+    .pricing-card .revenue-est .rev-value {
+      font-family: 'Playfair Display', serif; font-weight: 700;
+      font-size: 0.95rem; color: var(--green);
+    }
+    .pricing-card .examples {
+      font-size: 0.72rem; color: var(--muted);
+    }
+    .pricing-card .examples strong { color: var(--muted2); }
+
+    /* ── PERSONA CARD ─────────────────────────────────────────────────── */
+    .persona-card { position: relative; overflow: hidden; }
+    .persona-card .persona-icon {
+      width: 52px; height: 52px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; margin-bottom: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+    }
+    .persona-card h3 { margin-bottom: 4px; font-size: 1.1rem; }
+    .persona-card .persona-demo { font-size: 0.72rem; color: var(--muted); margin-bottom: 12px; }
+    .persona-card .persona-section-title {
+      font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--accent2); margin: 12px 0 6px;
+    }
+    .persona-card ul { list-style: none; padding: 0; }
+    .persona-card li {
+      font-size: 0.78rem; color: var(--muted2); padding: 2px 0;
+      padding-left: 14px; position: relative;
+    }
+    .persona-card li::before {
+      content: ''; position: absolute; left: 0; top: 10px;
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--accent); opacity: 0.5;
+    }
+    .persona-card .wtp {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px; border-radius: 8px; margin-top: 10px;
+      background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.15);
+      font-size: 0.72rem; font-weight: 600; color: var(--green);
+    }
+
+    /* ── TABLE ─────────────────────────────────────────────────────────── */
+    .table-wrap {
+      overflow-x: auto; border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--card);
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead { background: var(--surface); }
+    th {
+      padding: 12px 16px; text-align: left;
+      font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--accent2);
+      border-bottom: 1px solid var(--border2);
+    }
+    td {
+      padding: 12px 16px; font-size: 0.8rem; color: var(--muted2);
+      border-bottom: 1px solid var(--border);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(167,139,250,0.03); }
+
+    /* ── CHART CONTAINER ──────────────────────────────────────────────── */
+    .chart-container {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 28px;
+      margin-top: 32px;
+    }
+    .chart-container canvas { max-height: 400px; }
+
+    /* ── MATRIX ────────────────────────────────────────────────────────── */
+    .matrix-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px 20px;
+    }
+    .matrix-card h4 {
+      font-family: 'Playfair Display', serif; font-size: 0.9rem;
+      font-weight: 600; margin-bottom: 6px;
+    }
+    .matrix-card p { font-size: 0.78rem; color: var(--muted2); }
+    .matrix-card .price-tag {
+      font-family: 'Playfair Display', serif; font-size: 1.3rem;
+      font-weight: 800; color: var(--accent); margin: 8px 0;
+    }
+
+    /* ── ALTERNATIVE CARD ─────────────────────────────────────────────── */
+    .alt-card .alt-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .alt-card .alt-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; background: var(--glow);
+    }
+    .alt-card h3 { font-size: 1rem; }
+    .alt-card .alt-desc { font-size: 0.82rem; color: var(--muted2); margin-bottom: 12px; line-height: 1.6; }
+    .alt-card .switching-row {
+      display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px;
+    }
+    .switching-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 10px; border-radius: 6px; font-size: 0.65rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .switch-low  { background: rgba(52,211,153,0.1); color: var(--green); }
+    .switch-med  { background: rgba(245,158,11,0.1); color: var(--accent2); }
+    .switch-high { background: rgba(248,113,113,0.1); color: var(--red); }
+
+    .friction-list { list-style: none; padding: 0; margin-top: 8px; }
+    .friction-list li {
+      font-size: 0.75rem; color: var(--muted2); padding: 3px 0 3px 16px; position: relative;
+    }
+    .friction-list li::before {
+      content: ''; position: absolute; left: 0; top: 10px;
+      width: 6px; height: 2px; background: var(--accent); border-radius: 1px;
+    }
+
+    /* ── MISC ──────────────────────────────────────────────────────────── */
+    .divider { height: 1px; background: var(--border); margin: 16px 0; }
+    .section-anchor { scroll-margin-top: calc(var(--nav-h) + 20px); }
+    .highlight-bar {
+      width: 40px; height: 3px; border-radius: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      margin-bottom: 16px;
+    }
+    .section-nav {
+      display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 24px;
+    }
+    .section-nav a {
+      padding: 8px 18px; border-radius: 8px; font-size: 0.72rem; font-weight: 600;
+      color: var(--muted2); border: 1px solid var(--border); transition: all 0.2s;
+    }
+    .section-nav a:hover { border-color: var(--accent); color: var(--accent); background: rgba(167,139,250,0.06); }
+
+    /* Recommendation highlight */
+    .recommend-card {
+      position: relative;
+      border-color: var(--accent) !important;
+    }
+    .recommend-card::after {
+      content: 'RECOMMENDED';
+      position: absolute; top: -1px; right: 20px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: var(--bg); padding: 3px 12px; border-radius: 0 0 6px 6px;
+      font-size: 0.55rem; font-weight: 800; letter-spacing: 0.08em;
+    }
+  </style>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+
+  <!-- ═══ NAV ═══════════════════════════════════════════════════════════ -->
+  <nav>
+    <a href="index.html" class="nav-logo">
+      <span class="elix">ELIX</span><span class="dash">-</span>Resume
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="admin.html">Competitors</a>
+      <a href="admin-insights.html" class="active">Market Insights</a>
+      <a href="index.html" class="nav-cta">Open Editor</a>
+    </div>
+    <button class="hamburger" onclick="this.classList.toggle('open');document.getElementById('mob').classList.toggle('open');">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+  <div class="mobile-menu" id="mob">
+    <a href="index.html">Home</a>
+    <a href="admin.html">Competitors</a>
+    <a href="admin-insights.html">Market Insights</a>
+    <a href="index.html">Open Editor</a>
+  </div>
+
+  <!-- ═══ HERO ══════════════════════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="hero-orb hero-orb-1"></div>
+      <div class="hero-orb hero-orb-2"></div>
+    </div>
+    <div class="container">
+      <span class="label">Admin Dashboard</span>
+      <h1>Market &amp; Pricing <span class="gradient-text">Insights</span></h1>
+      <p class="hero-desc">
+        Deep-dive into pricing strategies, target personas, willingness to pay, and competitive alternatives for ELIX-Resume.
+      </p>
+      <div class="section-nav">
+        <a href="#pricing">Pricing Strategies</a>
+        <a href="#segments">User Segments</a>
+        <a href="#wtp">Willingness to Pay</a>
+        <a href="#alternatives">Alternatives</a>
+      </div>
+      <div class="hero-stats">
+        <div><div class="hero-stat-num">6</div><div class="hero-stat-label">Pricing Models</div></div>
+        <div><div class="hero-stat-num">6</div><div class="hero-stat-label">User Personas</div></div>
+        <div><div class="hero-stat-num">12+</div><div class="hero-stat-label">Competitors Benchmarked</div></div>
+        <div><div class="hero-stat-num">4</div><div class="hero-stat-label">Alternative Categories</div></div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ SECTION 1: PRICING STRATEGIES ═════════════════════════════════ -->
+  <section id="pricing" class="section-anchor">
+    <div class="container">
+      <div class="section-header animate">
+        <span class="label">Section 1</span>
+        <h2>Pricing <span class="gradient-text">Strategies</span></h2>
+        <p>Six monetization models evaluated for the resume builder market, with pros, cons, revenue estimates, and real-world examples.</p>
+      </div>
+
+      <div class="grid-2">
+
+        <!-- Freemium -->
+        <div class="card pricing-card animate recommend-card">
+          <div class="card-icon">&#9733;</div>
+          <span class="badge badge-green">High Potential</span>
+          <h3>Freemium</h3>
+          <p class="card-desc">Offer a fully functional free editor with basic templates. Monetize through premium templates, AI writing assistance, advanced ATS scoring, and priority PDF exports.</p>
+          <div class="pros-cons">
+            <div class="pros"><strong style="font-size:0.65rem;color:var(--green);text-transform:uppercase;letter-spacing:0.08em;">Pros</strong>
+              <ul>
+                <li>Lowest barrier to entry — maximizes signups</li>
+                <li>Viral growth through free usage</li>
+                <li>Upsell at the moment of need (export, templates)</li>
+                <li>Large funnel for B2B conversion</li>
+              </ul>
+            </div>
+            <div class="cons"><strong style="font-size:0.65rem;color:var(--red);text-transform:uppercase;letter-spacing:0.08em;">Cons</strong>
+              <ul>
+                <li>High server costs from free users</li>
+                <li>Low conversion rates (2-5% typical)</li>
+                <li>Must balance free vs. paid value carefully</li>
+                <li>Support burden from non-paying users</li>
+              </ul>
+            </div>
+          </div>
+          <div class="revenue-est">
+            <div><div class="rev-label">Est. Monthly Revenue (10K users)</div><div class="rev-value">$2,000 - $5,000</div></div>
+          </div>
+          <div class="examples"><strong>Used by:</strong> Canva, Resume.io (free basic + paid premium), Novoresume</div>
+        </div>
+
+        <!-- Tiered Subscription -->
+        <div class="card pricing-card animate">
+          <div class="card-icon">&#9670;</div>
+          <span class="badge badge-violet">Scalable</span>
+          <h3>Tiered Subscription</h3>
+          <p class="card-desc">Basic ($5/mo), Pro ($12/mo), Enterprise ($29/mo). Each tier unlocks more templates, AI features, cover letter builder, and analytics.</p>
+          <div class="pros-cons">
+            <div class="pros"><strong style="font-size:0.65rem;color:var(--green);text-transform:uppercase;letter-spacing:0.08em;">Pros</strong>
+              <ul>
+                <li>Predictable recurring revenue (MRR)</li>
+                <li>Clear value ladder encourages upgrades</li>
+                <li>Higher LTV than one-time purchases</li>
+                <li>Easier financial planning and forecasting</li>
+              </ul>
+            </div>
+            <div class="cons"><strong style="font-size:0.65rem;color:var(--red);text-transform:uppercase;letter-spacing:0.08em;">Cons</strong>
+              <ul>
+                <li>Subscription fatigue — users have too many</li>
+                <li>Higher churn for seasonal job seekers</li>
+                <li>Requires continuous feature development</li>
+                <li>Price comparison is easy for competitors</li>
+              </ul>
+            </div>
+          </div>
+          <div class="revenue-est">
+            <div><div class="rev-label">Est. Monthly Revenue (10K users)</div><div class="rev-value">$4,000 - $12,000</div></div>
+          </div>
+          <div class="examples"><strong>Used by:</strong> Resume.io ($2.95-$24.95/mo), Zety ($2.70-$24.70/mo), Kickresume ($5-$25/mo)</div>
+        </div>
+
+        <!-- Pay-per-download -->
+        <div class="card pricing-card animate">
+          <div class="card-icon">&#8681;</div>
+          <span class="badge badge-amber">Transactional</span>
+          <h3>Pay-per-Download</h3>
+          <p class="card-desc">Free editor with unlimited editing. Charge $2-$5 per PDF export. Optional bundle pricing (e.g., 5 exports for $8).</p>
+          <div class="pros-cons">
+            <div class="pros"><strong style="font-size:0.65rem;color:var(--green);text-transform:uppercase;letter-spacing:0.08em;">Pros</strong>
+              <ul>
+                <li>Users invest time before paying — sunk cost locks them in</li>
+                <li>Low perceived risk for users</li>
+                <li>Revenue at the highest-intent moment</li>
+                <li>Simple pricing — easy to explain</li>
+              </ul>
+            </div>
+            <div class="cons"><strong style="font-size:0.65rem;color:var(--red);text-transform:uppercase;letter-spacing:0.08em;">Cons</strong>
+              <ul>
+                <li>Users feel "trapped" — can damage trust</li>
+                <li>Screenshot/print workarounds bypass paywall</li>
+                <li>No recurring revenue — one-time per resume</li>
+                <li>Negative reviews from frustrated free users</li>
+              </ul>
+            </div>
+          </div>
+          <div class="revenue-est">
+            <div><div class="rev-label">Est. Monthly Revenue (10K users)</div><div class="rev-value">$3,000 - $8,000</div></div>
+          </div>
+          <div class="examples"><strong>Used by:</strong> Zety (paywall at download), Resume Genius, MyPerfectResume</div>
+        </div>
+
+        <!-- One-time Purchase -->
+        <div class="card pricing-card animate">
+          <div class="card-icon">&#8734;</div>
+          <span class="badge badge-blue">Lifetime</span>
+          <h3>One-Time Purchase</h3>
+          <p class="card-desc">Lifetime access for a flat fee ($29-$79). Includes all current templates and features, with optional paid add-ons for future premium content.</p>
+          <div class="pros-cons">
+            <div class="pros"><strong style="font-size:0.65rem;color:var(--green);text-transform:uppercase;letter-spacing:0.08em;">Pros</strong>
+              <ul>
+                <li>Strong appeal — "no subscription needed"</li>
+                <li>Higher upfront revenue per user</li>
+                <li>Differentiator vs. subscription-heavy competitors</li>
+                <li>Lower churn concern</li>
+              </ul>
+            </div>
+            <div class="cons"><strong style="font-size:0.65rem;color:var(--red);text-transform:uppercase;letter-spacing:0.08em;">Cons</strong>
+              <ul>
+                <li>No recurring revenue — feast-or-famine</li>
+                <li>Must continuously acquire new customers</li>
+                <li>Lifetime users expect lifetime support</li>
+                <li>Difficult to justify ongoing development costs</li>
+              </ul>
+            </div>
+          </div>
+          <div class="revenue-est">
+            <div><div class="rev-label">Est. Monthly Revenue (10K users)</div><div class="rev-value">$1,500 - $6,000</div></div>
+          </div>
+          <div class="examples"><strong>Used by:</strong> VisualCV (lifetime plan), some indie resume tools on AppSumo</div>
+        </div>
+
+        <!-- Donation / Tip -->
+        <div class="card pricing-card animate">
+          <div class="card-icon">&#9825;</div>
+          <span class="badge badge-pink">Community</span>
+          <h3>Donation / Tip Model</h3>
+          <p class="card-desc">Fully free and open-source. Monetize through GitHub Sponsors, Buy Me a Coffee, or optional tips during export. Rely on community goodwill.</p>
+          <div class="pros-cons">
+            <div class="pros"><strong style="font-size:0.65rem;color:var(--green);text-transform:uppercase;letter-spacing:0.08em;">Pros</strong>
+              <ul>
+                <li>Maximum adoption and community trust</li>
+                <li>Great for building open-source reputation</li>
+                <li>Zero friction — attracts the most users</li>
+                <li>PR and word-of-mouth marketing</li>
+              </ul>
+            </div>
+            <div class="cons"><strong style="font-size:0.65rem;color:var(--red);text-transform:uppercase;letter-spacing:0.08em;">Cons</strong>
+              <ul>
+                <li>Revenue is unpredictable and low</li>
+                <li>Donor fatigue — most users never pay</li>
+                <li>Not sustainable as a primary business model</li>
+                <li>Difficult to fund a team or infrastructure</li>
+              </ul>
+            </div>
+          </div>
+          <div class="revenue-est">
+            <div><div class="rev-label">Est. Monthly Revenue (10K users)</div><div class="rev-value">$200 - $1,000</div></div>
+          </div>
+          <div class="examples"><strong>Used by:</strong> Reactive Resume (open source + donations), OpenResume, JsonResume</div>
+        </div>
+
+        <!-- B2B / Enterprise -->
+        <div class="card pricing-card animate">
+          <div class="card-icon">&#9879;</div>
+          <span class="badge badge-amber">Enterprise</span>
+          <h3>B2B / Enterprise</h3>
+          <p class="card-desc">White-label or bulk licensing for university career centers, recruitment agencies, and outplacement firms. Per-seat pricing ($3-$10/user/mo) or annual contracts.</p>
+          <div class="pros-cons">
+            <div class="pros"><strong style="font-size:0.65rem;color:var(--green);text-transform:uppercase;letter-spacing:0.08em;">Pros</strong>
+              <ul>
+                <li>High-value contracts ($5K-$50K+/year)</li>
+                <li>Sticky customers with long renewal cycles</li>
+                <li>Bulk usage drives product validation</li>
+                <li>Institutions market the tool for you</li>
+              </ul>
+            </div>
+            <div class="cons"><strong style="font-size:0.65rem;color:var(--red);text-transform:uppercase;letter-spacing:0.08em;">Cons</strong>
+              <ul>
+                <li>Long B2B sales cycle (3-12 months)</li>
+                <li>Requires enterprise features (SSO, admin panel)</li>
+                <li>Custom support and SLA requirements</li>
+                <li>Procurement processes are slow and complex</li>
+              </ul>
+            </div>
+          </div>
+          <div class="revenue-est">
+            <div><div class="rev-label">Est. Monthly Revenue (per client)</div><div class="rev-value">$500 - $4,000</div></div>
+          </div>
+          <div class="examples"><strong>Used by:</strong> VMock (university partnerships), Resume.com (Indeed's enterprise), Jobscan (career center licensing)</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ SECTION 2: TARGET USER SEGMENTS ═══════════════════════════════ -->
+  <section id="segments" class="section-anchor" style="background: var(--surface);">
+    <div class="container">
+      <div class="section-header animate">
+        <span class="label">Section 2</span>
+        <h2>Target User <span class="gradient-text">Segments</span></h2>
+        <p>Six detailed personas covering the full spectrum of resume builder users, from fresh graduates to enterprise HR teams.</p>
+      </div>
+
+      <div class="grid-3">
+
+        <!-- Persona 1: Fresh Graduate -->
+        <div class="card persona-card animate">
+          <div class="persona-icon">&#127891;</div>
+          <span class="badge badge-green">High Volume</span>
+          <h3>Fresh Graduate</h3>
+          <p class="persona-demo">Age 21-25 | Entry-level | Budget-conscious | Tech-savvy</p>
+          <div class="persona-section-title">Key Needs</div>
+          <ul>
+            <li>Professional-looking template for first resume</li>
+            <li>Guidance on what sections to include</li>
+            <li>ATS-friendly formatting for online applications</li>
+            <li>Quick to create — short attention span</li>
+          </ul>
+          <div class="persona-section-title">Pain Points</div>
+          <ul>
+            <li>No work experience to showcase</li>
+            <li>Overwhelmed by too many template choices</li>
+            <li>Cannot afford paid tools on student budget</li>
+            <li>Uncertain about resume best practices</li>
+          </ul>
+          <div class="persona-section-title">Behavior</div>
+          <ul>
+            <li>Searches "free resume builder" on Google</li>
+            <li>Tries 2-3 tools before committing</li>
+            <li>Shares tools with classmates if satisfied</li>
+          </ul>
+          <div class="wtp">Willingness to pay: $0 - $5/mo</div>
+        </div>
+
+        <!-- Persona 2: Mid-Career Switcher -->
+        <div class="card persona-card animate">
+          <div class="persona-icon">&#128259;</div>
+          <span class="badge badge-violet">High Intent</span>
+          <h3>Mid-Career Switcher</h3>
+          <p class="persona-demo">Age 28-40 | 5-12 years experience | Switching industries</p>
+          <div class="persona-section-title">Key Needs</div>
+          <ul>
+            <li>Flexible formatting to highlight transferable skills</li>
+            <li>Multiple resume versions for different roles</li>
+            <li>Skills-based (functional) resume templates</li>
+            <li>Cover letter generation support</li>
+          </ul>
+          <div class="persona-section-title">Pain Points</div>
+          <ul>
+            <li>Difficulty framing experience for new industry</li>
+            <li>Existing resumes feel outdated or irrelevant</li>
+            <li>Needs to tailor each application differently</li>
+            <li>Limited time alongside current job</li>
+          </ul>
+          <div class="persona-section-title">Behavior</div>
+          <ul>
+            <li>Willing to pay for time-saving features</li>
+            <li>Reads reviews and comparisons before buying</li>
+            <li>Values AI suggestions for rewording experience</li>
+          </ul>
+          <div class="wtp">Willingness to pay: $5 - $15/mo</div>
+        </div>
+
+        <!-- Persona 3: Senior Professional -->
+        <div class="card persona-card animate">
+          <div class="persona-icon">&#128188;</div>
+          <span class="badge badge-amber">High Value</span>
+          <h3>Senior Professional</h3>
+          <p class="persona-demo">Age 40-55 | Director/VP level | Premium expectations</p>
+          <div class="persona-section-title">Key Needs</div>
+          <ul>
+            <li>Executive-level templates (2-3 page support)</li>
+            <li>ATS optimization with keyword analysis</li>
+            <li>LinkedIn profile sync or import</li>
+            <li>Polished, understated design aesthetic</li>
+          </ul>
+          <div class="persona-section-title">Pain Points</div>
+          <ul>
+            <li>Templates feel too "junior" or generic</li>
+            <li>Too much experience to fit cleanly</li>
+            <li>Privacy concerns with uploading resume data</li>
+            <li>Expects premium quality at every touchpoint</li>
+          </ul>
+          <div class="persona-section-title">Behavior</div>
+          <ul>
+            <li>Less price-sensitive — values polish and speed</li>
+            <li>May use alongside a career coach</li>
+            <li>Prefers one-time purchase over subscription</li>
+          </ul>
+          <div class="wtp">Willingness to pay: $15 - $50 (one-time)</div>
+        </div>
+
+        <!-- Persona 4: Freelancer/Creative -->
+        <div class="card persona-card animate">
+          <div class="persona-icon">&#127912;</div>
+          <span class="badge badge-pink">Niche</span>
+          <h3>Freelancer / Creative</h3>
+          <p class="persona-demo">Age 25-40 | Designers, writers, developers | Portfolio-focused</p>
+          <div class="persona-section-title">Key Needs</div>
+          <ul>
+            <li>Visually unique, portfolio-style resume layouts</li>
+            <li>Custom color schemes and typography options</li>
+            <li>Link embedding for portfolio, GitHub, Dribbble</li>
+            <li>PDF and web-hosted resume options</li>
+          </ul>
+          <div class="persona-section-title">Pain Points</div>
+          <ul>
+            <li>Standard templates feel restrictive and boring</li>
+            <li>ATS formatting conflicts with creative design</li>
+            <li>Need both a creative version and ATS version</li>
+            <li>Frequent updates as projects change</li>
+          </ul>
+          <div class="persona-section-title">Behavior</div>
+          <ul>
+            <li>Design-conscious — judges tool by its own UI</li>
+            <li>Active on design communities (Dribbble, Behance)</li>
+            <li>Willing to pay for customization features</li>
+          </ul>
+          <div class="wtp">Willingness to pay: $8 - $20/mo</div>
+        </div>
+
+        <!-- Persona 5: International Job Seeker -->
+        <div class="card persona-card animate">
+          <div class="persona-icon">&#127758;</div>
+          <span class="badge badge-blue">Growing</span>
+          <h3>International Job Seeker</h3>
+          <p class="persona-demo">Age 22-45 | Cross-border applications | Multi-format needs</p>
+          <div class="persona-section-title">Key Needs</div>
+          <ul>
+            <li>Country-specific templates (EU photo CV, US no-photo)</li>
+            <li>Multi-language support and localization</li>
+            <li>Europass and other regional format compliance</li>
+            <li>Date format, address format flexibility</li>
+          </ul>
+          <div class="persona-section-title">Pain Points</div>
+          <ul>
+            <li>Confused by different resume standards per country</li>
+            <li>Most tools are US-centric</li>
+            <li>Translation quality of AI tools varies</li>
+            <li>Visa/work permit sections not supported</li>
+          </ul>
+          <div class="persona-section-title">Behavior</div>
+          <ul>
+            <li>Applies to 50-100+ jobs across multiple countries</li>
+            <li>Needs bulk export and version management</li>
+            <li>Price-sensitive but willing to pay for localization</li>
+          </ul>
+          <div class="wtp">Willingness to pay: $3 - $12/mo</div>
+        </div>
+
+        <!-- Persona 6: HR/Recruiter -->
+        <div class="card persona-card animate">
+          <div class="persona-icon">&#128101;</div>
+          <span class="badge badge-amber">B2B</span>
+          <h3>HR / Recruiter</h3>
+          <p class="persona-demo">Age 28-50 | Talent acquisition | Bulk needs | Enterprise buyer</p>
+          <div class="persona-section-title">Key Needs</div>
+          <ul>
+            <li>Bulk resume formatting for candidate submissions</li>
+            <li>Branded/white-label templates for agency use</li>
+            <li>Candidate self-service portal</li>
+            <li>Integration with ATS systems (Greenhouse, Lever)</li>
+          </ul>
+          <div class="persona-section-title">Pain Points</div>
+          <ul>
+            <li>Reformatting candidate resumes is tedious</li>
+            <li>Inconsistent formatting across candidates</li>
+            <li>Need team collaboration and admin controls</li>
+            <li>Compliance and data privacy requirements</li>
+          </ul>
+          <div class="persona-section-title">Behavior</div>
+          <ul>
+            <li>Evaluates tools based on team features and scale</li>
+            <li>Procurement-driven — needs invoicing, contracts</li>
+            <li>High LTV but long decision cycle</li>
+          </ul>
+          <div class="wtp">Willingness to pay: $10 - $50/seat/mo</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ SECTION 3: WILLINGNESS TO PAY ═════════════════════════════════ -->
+  <section id="wtp" class="section-anchor">
+    <div class="container">
+      <div class="section-header animate">
+        <span class="label">Section 3</span>
+        <h2>Willingness to <span class="gradient-text">Pay</span></h2>
+        <p>Price sensitivity analysis, competitor benchmarks, and recommended price points backed by market data.</p>
+      </div>
+
+      <!-- Price Sensitivity per Segment -->
+      <div class="animate" style="margin-bottom: 48px;">
+        <div class="highlight-bar"></div>
+        <h3 style="margin-bottom: 20px;">Price Sensitivity by Segment</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Segment</th>
+                <th>Free Threshold</th>
+                <th>Sweet Spot</th>
+                <th>Max Willingness</th>
+                <th>Price Sensitivity</th>
+                <th>Decision Factors</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color:var(--text);font-weight:600;">Fresh Graduate</td>
+                <td>Must have free tier</td>
+                <td>$0 - $3/mo</td>
+                <td>$5/mo</td>
+                <td><span class="badge badge-red">Very High</span></td>
+                <td>Free first, features second</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text);font-weight:600;">Mid-Career Switcher</td>
+                <td>Expects free trial</td>
+                <td>$8 - $12/mo</td>
+                <td>$20/mo</td>
+                <td><span class="badge badge-amber">Medium</span></td>
+                <td>ROI on time saved</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text);font-weight:600;">Senior Professional</td>
+                <td>Not required</td>
+                <td>$20 - $40 one-time</td>
+                <td>$79 one-time</td>
+                <td><span class="badge badge-green">Low</span></td>
+                <td>Quality and polish</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text);font-weight:600;">Freelancer / Creative</td>
+                <td>Expects free tier</td>
+                <td>$8 - $15/mo</td>
+                <td>$25/mo</td>
+                <td><span class="badge badge-amber">Medium</span></td>
+                <td>Customization depth</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text);font-weight:600;">International Seeker</td>
+                <td>Expects free tier</td>
+                <td>$5 - $8/mo</td>
+                <td>$15/mo</td>
+                <td><span class="badge badge-red">High</span></td>
+                <td>Multi-format support</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text);font-weight:600;">HR / Recruiter</td>
+                <td>Free trial / demo</td>
+                <td>$15 - $30/seat/mo</td>
+                <td>$50/seat/mo</td>
+                <td><span class="badge badge-green">Low</span></td>
+                <td>Scale, integrations, SLA</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Competitor Pricing Benchmarks -->
+      <div class="animate" style="margin-bottom: 48px;">
+        <div class="highlight-bar"></div>
+        <h3 style="margin-bottom: 20px;">Competitor Pricing Benchmarks</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Competitor</th>
+                <th>Free Tier</th>
+                <th>Basic Plan</th>
+                <th>Pro Plan</th>
+                <th>Model</th>
+                <th>Key Differentiator</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color:var(--text);font-weight:600;">Resume.io</td>
+                <td><span class="badge badge-green">Yes</span></td>
+                <td>$2.95/mo</td>
+                <td>$6.95/mo</td>
+                <td>Subscription</td>
+                <td>Ease of use, templates</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text);font-weight:600;">Zety</td>
+                <td><span class="badge badge-red">No*</span></td>
+                <td>$2.70/14-day</td>
+                <td>$24.70/mo</td>
+                <td>Pay-per-download</td>
+                <td>AI content suggestions</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text);font-weight:600;">Novoresume</td>
+                <td><span class="badge badge-green">Yes</span></td>
+                <td>$0</td>
+                <td>$19.99/mo</td>
+                <td>Freemium</td>
+                <td>Clean design, ATS focus</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text);font-weight:600;">Kickresume</td>
+                <td><span class="badge badge-green">Yes</span></td>
+                <td>$5/mo</td>
+                <td>$25/mo</td>
+                <td>Subscription</td>
+                <td>AI writer, website builder</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text);font-weight:600;">Canva</td>
+                <td><span class="badge badge-green">Yes</span></td>
+                <td>$0</td>
+                <td>$12.99/mo</td>
+                <td>Freemium (broad tool)</td>
+                <td>Design flexibility</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text);font-weight:600;">VisualCV</td>
+                <td><span class="badge badge-green">Yes</span></td>
+                <td>$0</td>
+                <td>$24/mo</td>
+                <td>Freemium</td>
+                <td>Online resume hosting</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text);font-weight:600;">Reactive Resume</td>
+                <td><span class="badge badge-green">Yes</span></td>
+                <td>$0 (OSS)</td>
+                <td>Donations</td>
+                <td>Open Source</td>
+                <td>Privacy, self-hostable</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text);font-weight:600;">FlowCV</td>
+                <td><span class="badge badge-green">Yes</span></td>
+                <td>$0</td>
+                <td>$19/mo</td>
+                <td>Freemium</td>
+                <td>Modern UI, fast editor</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text);font-weight:600;">Resume Genius</td>
+                <td><span class="badge badge-red">No*</span></td>
+                <td>$2.95/14-day</td>
+                <td>$7.95/mo</td>
+                <td>Pay-per-download</td>
+                <td>Guided wizard, templates</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text);font-weight:600;">Teal</td>
+                <td><span class="badge badge-green">Yes</span></td>
+                <td>$0</td>
+                <td>$29/mo</td>
+                <td>Freemium</td>
+                <td>Job tracking + resume</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text);font-weight:600;">Standard Resume</td>
+                <td><span class="badge badge-green">Yes</span></td>
+                <td>$0</td>
+                <td>$8/mo</td>
+                <td>Freemium</td>
+                <td>Minimalist, developer-friendly</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text);font-weight:600;">EnhanCV</td>
+                <td><span class="badge badge-green">Yes</span></td>
+                <td>$0</td>
+                <td>$24.99/mo</td>
+                <td>Freemium</td>
+                <td>Content analyzer</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:0.72rem;color:var(--muted);margin-top:8px;">* Free editor available but PDF export requires payment (pay-per-download model).</p>
+      </div>
+
+      <!-- Chart.js Price Comparison -->
+      <div class="chart-container animate">
+        <h3 style="margin-bottom: 20px;">Competitor Pricing Comparison</h3>
+        <canvas id="priceChart"></canvas>
+      </div>
+
+      <!-- Pricing Recommendation Matrix -->
+      <div class="animate" style="margin-top: 48px;">
+        <div class="highlight-bar"></div>
+        <h3 style="margin-bottom: 20px;">Recommended Price Points for ELIX-Resume</h3>
+        <div class="grid-3">
+          <div class="matrix-card">
+            <span class="badge badge-green" style="margin-bottom:8px;">Free Tier</span>
+            <h4>Core Editor</h4>
+            <div class="price-tag">$0</div>
+            <p>Unlimited editing, 3 basic templates, PDF export with watermark. Goal: maximize signups and word-of-mouth.</p>
+          </div>
+          <div class="matrix-card" style="border-color: var(--accent);">
+            <span class="badge badge-violet" style="margin-bottom:8px;">Recommended</span>
+            <h4>Pro Plan</h4>
+            <div class="price-tag">$8/mo</div>
+            <p>All templates, AI writing assistant, ATS score checker, watermark-free PDF, cover letter builder. Undercuts most competitors at $12-$25/mo.</p>
+          </div>
+          <div class="matrix-card">
+            <span class="badge badge-amber" style="margin-bottom:8px;">Lifetime</span>
+            <h4>One-Time Purchase</h4>
+            <div class="price-tag">$39</div>
+            <p>Everything in Pro, forever. Appeals to senior professionals and subscription-fatigued users. Equivalent to ~5 months of Pro.</p>
+          </div>
+          <div class="matrix-card">
+            <span class="badge badge-blue" style="margin-bottom:8px;">Student</span>
+            <h4>Student Discount</h4>
+            <div class="price-tag">$3/mo</div>
+            <p>Pro features at 62% discount with .edu email verification. Builds loyalty, converts to full price post-graduation.</p>
+          </div>
+          <div class="matrix-card">
+            <span class="badge badge-pink" style="margin-bottom:8px;">Team</span>
+            <h4>B2B / Enterprise</h4>
+            <div class="price-tag">$5/seat/mo</div>
+            <p>Bulk pricing for career centers and agencies. Minimum 50 seats. Admin dashboard, branded templates, SSO.</p>
+          </div>
+          <div class="matrix-card">
+            <span class="badge badge-green" style="margin-bottom:8px;">Justification</span>
+            <h4>Why These Prices</h4>
+            <div class="price-tag" style="font-size:1rem;">Strategy</div>
+            <p>Positioned below Resume.io ($7/mo) and Novoresume ($20/mo) to capture price-sensitive users while maintaining perceived quality through the dark-theme premium UX.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ SECTION 4: NEXT BEST ALTERNATIVES ═════════════════════════════ -->
+  <section id="alternatives" class="section-anchor" style="background: var(--surface);">
+    <div class="container">
+      <div class="section-header animate">
+        <span class="label">Section 4</span>
+        <h2>Next Best <span class="gradient-text">Alternatives</span></h2>
+        <p>What users turn to if they do not choose ELIX-Resume — with friction analysis and switching cost ratings for each category.</p>
+      </div>
+
+      <!-- Comparison Table -->
+      <div class="animate" style="margin-bottom: 48px;">
+        <div class="highlight-bar"></div>
+        <h3 style="margin-bottom: 20px;">Alternative Landscape Overview</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Examples</th>
+                <th>Switching Cost</th>
+                <th>User Effort</th>
+                <th>Quality</th>
+                <th>Cost to User</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color:var(--text);font-weight:600;">Direct Competitors</td>
+                <td>Resume.io, Zety, Novoresume, Kickresume</td>
+                <td><span class="badge badge-green">Low</span></td>
+                <td>Low — similar workflow</td>
+                <td><span class="badge badge-green">High</span></td>
+                <td>$0 - $25/mo</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text);font-weight:600;">DIY Templates</td>
+                <td>Google Docs, Word, LaTeX, Overleaf</td>
+                <td><span class="badge badge-amber">Medium</span></td>
+                <td>Medium — manual formatting</td>
+                <td><span class="badge badge-amber">Variable</span></td>
+                <td>$0 (free tools)</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text);font-weight:600;">Manual / Human</td>
+                <td>Resume writers, career coaches</td>
+                <td><span class="badge badge-red">High</span></td>
+                <td>Low — someone else does it</td>
+                <td><span class="badge badge-green">High</span></td>
+                <td>$100 - $500+</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text);font-weight:600;">Adjacent Tools</td>
+                <td>LinkedIn, Canva, Figma, Notion</td>
+                <td><span class="badge badge-amber">Medium</span></td>
+                <td>Medium — not purpose-built</td>
+                <td><span class="badge badge-amber">Medium</span></td>
+                <td>$0 - $13/mo</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Detailed Cards -->
+      <div class="grid-2">
+
+        <!-- Direct Competitors -->
+        <div class="card alt-card animate">
+          <div class="alt-header">
+            <div class="alt-icon">&#9876;</div>
+            <div>
+              <h3>Direct Competitors</h3>
+              <span class="badge badge-green">Low Switching Cost</span>
+            </div>
+          </div>
+          <p class="alt-desc">Other resume builders with similar features. Users can switch with near-zero friction since resume data is typically re-entered or imported via LinkedIn.</p>
+          <div class="persona-section-title">Key Players</div>
+          <ul class="friction-list">
+            <li><strong>Resume.io</strong> — Most polished UX, strong SEO presence, low prices. Threat: highest mindshare.</li>
+            <li><strong>Zety / Resume Genius</strong> — Aggressive pay-per-download. Users often feel tricked. Opportunity: position ELIX as the transparent alternative.</li>
+            <li><strong>Reactive Resume</strong> — Open source, privacy-focused. Threat: developer audience overlap. Opportunity: better UX and AI features.</li>
+            <li><strong>Novoresume / FlowCV</strong> — Clean freemium models. Moderate threat — similar positioning.</li>
+          </ul>
+          <div class="persona-section-title">Friction Analysis</div>
+          <ul class="friction-list">
+            <li>No data portability standard — users must rebuild resumes</li>
+            <li>Familiarity bias — "I already know how this tool works"</li>
+            <li>Sunk cost if they have paid for a subscription elsewhere</li>
+          </ul>
+          <div class="switching-row">
+            <span class="switching-badge switch-low">Switching Cost: Low</span>
+            <span class="switching-badge switch-low">User Effort: Low</span>
+          </div>
+        </div>
+
+        <!-- DIY Solutions -->
+        <div class="card alt-card animate">
+          <div class="alt-header">
+            <div class="alt-icon">&#128196;</div>
+            <div>
+              <h3>DIY Solutions</h3>
+              <span class="badge badge-amber">Medium Switching Cost</span>
+            </div>
+          </div>
+          <p class="alt-desc">Using word processors, document templates, or markup languages to build resumes from scratch. The default option for many job seekers.</p>
+          <div class="persona-section-title">Key Tools</div>
+          <ul class="friction-list">
+            <li><strong>Google Docs</strong> — Free, familiar, collaborative. But: limited design options, manual formatting, no ATS guidance.</li>
+            <li><strong>Microsoft Word</strong> — Industry standard. Has templates but they look dated. Requires license ($70+/yr or free online).</li>
+            <li><strong>LaTeX / Overleaf</strong> — Popular with developers and academics. High quality output but steep learning curve.</li>
+            <li><strong>Notion / Markdown</strong> — Emerging option for tech workers. Poor PDF export and no standard resume formatting.</li>
+          </ul>
+          <div class="persona-section-title">Friction Analysis</div>
+          <ul class="friction-list">
+            <li>Users already own these tools — no incremental cost</li>
+            <li>"Good enough" syndrome — hard to convince someone to switch</li>
+            <li>Formatting is tedious but they have already invested time</li>
+            <li>No ATS optimization — key ELIX differentiator opportunity</li>
+          </ul>
+          <div class="switching-row">
+            <span class="switching-badge switch-med">Switching Cost: Medium</span>
+            <span class="switching-badge switch-med">User Effort: Medium</span>
+          </div>
+        </div>
+
+        <!-- Manual / Human -->
+        <div class="card alt-card animate">
+          <div class="alt-header">
+            <div class="alt-icon">&#128100;</div>
+            <div>
+              <h3>Manual / Human Services</h3>
+              <span class="badge badge-red">High Switching Cost</span>
+            </div>
+          </div>
+          <p class="alt-desc">Hiring professional resume writers or career coaches for a fully hands-off experience. Premium option for high-stakes job searches.</p>
+          <div class="persona-section-title">Options</div>
+          <ul class="friction-list">
+            <li><strong>Professional resume writers</strong> — $100-$400 per resume. High quality but expensive, slow (3-7 day turnaround), and one-and-done.</li>
+            <li><strong>Career coaches</strong> — $150-$500/session. Resume review is part of broader career strategy. Not scalable for multiple versions.</li>
+            <li><strong>Fiverr/Upwork freelancers</strong> — $20-$100. Variable quality, communication overhead, still requires review cycles.</li>
+          </ul>
+          <div class="persona-section-title">Friction Analysis</div>
+          <ul class="friction-list">
+            <li>High cost creates buyer's remorse if result is mediocre</li>
+            <li>No ability to quickly iterate or update later</li>
+            <li>Users lose control and must communicate preferences</li>
+            <li>ELIX opportunity: "AI writer quality at self-service speed"</li>
+          </ul>
+          <div class="switching-row">
+            <span class="switching-badge switch-high">Switching Cost: High</span>
+            <span class="switching-badge switch-low">User Effort: Low</span>
+          </div>
+        </div>
+
+        <!-- Adjacent Tools -->
+        <div class="card alt-card animate">
+          <div class="alt-header">
+            <div class="alt-icon">&#128279;</div>
+            <div>
+              <h3>Adjacent Tools</h3>
+              <span class="badge badge-amber">Medium Switching Cost</span>
+            </div>
+          </div>
+          <p class="alt-desc">Tools not built for resumes but increasingly used as substitutes: design tools, professional profiles, and AI assistants.</p>
+          <div class="persona-section-title">Key Tools</div>
+          <ul class="friction-list">
+            <li><strong>LinkedIn Profile</strong> — Many recruiters skip resumes entirely. LinkedIn's "Easy Apply" reduces resume need. But: not suitable for formal applications.</li>
+            <li><strong>Canva</strong> — Beautiful templates, massive template library. But: not ATS-friendly, no resume-specific features like skills matching.</li>
+            <li><strong>Figma</strong> — Designers use it for pixel-perfect resumes. But: overkill for most users, no PDF optimization.</li>
+            <li><strong>ChatGPT / AI assistants</strong> — Can generate resume content. But: no formatting, layout, or PDF export. Complementary rather than competitive.</li>
+          </ul>
+          <div class="persona-section-title">Friction Analysis</div>
+          <ul class="friction-list">
+            <li>LinkedIn reduces resume urgency for some job types</li>
+            <li>Canva is a serious threat — strong brand, free tier, familiar UX</li>
+            <li>AI tools are complementary — integrate rather than compete</li>
+            <li>Opportunity: position ELIX as the "best of all worlds" solution</li>
+          </ul>
+          <div class="switching-row">
+            <span class="switching-badge switch-med">Switching Cost: Medium</span>
+            <span class="switching-badge switch-med">User Effort: Medium</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ FOOTER ════════════════════════════════════════════════════════ -->
+  <footer>
+    <div class="container">
+      <span class="elix" style="color:var(--accent);font-family:'Playfair Display',serif;font-weight:800;">ELIX</span><span style="color:var(--accent2);font-family:'Playfair Display',serif;font-weight:800;">-</span><span style="font-family:'Playfair Display',serif;font-weight:800;">Resume</span>
+      &nbsp;&mdash;&nbsp; Market &amp; Pricing Insights &nbsp;&bull;&nbsp; Internal Dashboard
+    </div>
+  </footer>
+
+  <!-- ═══ TOAST ═════════════════════════════════════════════════════════ -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ═══ SCRIPTS ═══════════════════════════════════════════════════════ -->
+  <script>
+    /* ── Scroll Reveal ──────────────────────────────────────────────── */
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.animate').forEach(el => io.observe(el));
+
+    /* ── Toast ──────────────────────────────────────────────────────── */
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2400);
+    }
+
+    /* ── Chart.js — Competitor Pricing ──────────────────────────────── */
+    document.addEventListener('DOMContentLoaded', () => {
+      const ctx = document.getElementById('priceChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: [
+            'Resume.io', 'Zety', 'Novoresume', 'Kickresume', 'Canva',
+            'VisualCV', 'FlowCV', 'Resume Genius', 'Teal', 'Standard Resume',
+            'EnhanCV', 'ELIX (proposed)'
+          ],
+          datasets: [
+            {
+              label: 'Free / Basic ($)',
+              data: [2.95, 2.70, 0, 5, 0, 0, 0, 2.95, 0, 0, 0, 0],
+              backgroundColor: 'rgba(167,139,250,0.6)',
+              borderColor: 'rgba(167,139,250,1)',
+              borderWidth: 1,
+              borderRadius: 4
+            },
+            {
+              label: 'Pro / Premium ($)',
+              data: [6.95, 24.70, 19.99, 25, 12.99, 24, 19, 7.95, 29, 8, 24.99, 8],
+              backgroundColor: 'rgba(245,158,11,0.6)',
+              borderColor: 'rgba(245,158,11,1)',
+              borderWidth: 1,
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              labels: { color: '#a89ec4', font: { family: 'Lato', size: 12 } }
+            },
+            tooltip: {
+              backgroundColor: '#1a1535',
+              titleColor: '#ede9fe',
+              bodyColor: '#a89ec4',
+              borderColor: 'rgba(167,139,250,0.18)',
+              borderWidth: 1,
+              callbacks: {
+                label: function(ctx) {
+                  return ctx.dataset.label + ': $' + ctx.parsed.y.toFixed(2) + '/mo';
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: '#7c6f9b', font: { family: 'Lato', size: 11 }, maxRotation: 45 },
+              grid: { color: 'rgba(167,139,250,0.06)' }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: '#7c6f9b',
+                font: { family: 'Lato', size: 11 },
+                callback: function(v) { return '$' + v; }
+              },
+              grid: { color: 'rgba(167,139,250,0.06)' }
+            }
+          }
+        }
+      });
+
+      showToast('Market insights loaded');
+    });
+  </script>
+
+</body>
+</html>

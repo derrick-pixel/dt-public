@@ -28,6 +28,10 @@ WIP_REPOS=(
   "competitor-intel-self:competitor-intel"
   "Elitez-ESOP:esop"
   "dt-site-creator:dt-site-creator"
+  "elitezshelf-frontage:elitezshelf-frontage"
+  "elitez-site-supervisor:site-supervisor"
+  "Elitez-Events:events"
+  "ELIX-resume:elix-resume"
 )
 
 for entry in "${WIP_REPOS[@]}"; do

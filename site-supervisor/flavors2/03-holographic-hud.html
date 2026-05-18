@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Holographic HUD — Elitez Site Supervisor (Flavour 03·F)</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;700&family=Geist+Mono:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #050B1A;
+      --bg-deep: #020610;
+      --glass: rgba(13, 35, 64, 0.55);
+      --glass-line: rgba(0, 229, 255, 0.22);
+      --glass-line-strong: rgba(0, 229, 255, 0.55);
+      --paper: #F0F8FF;
+      --cyan: #00E5FF;
+      --cyan-soft: #6FD8E8;
+      --ink-soft: rgba(240, 248, 255, 0.62);
+      --ink-mute: rgba(240, 248, 255, 0.38);
+      --warn: #FFB347;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--paper);
+      font-family: 'Geist', -apple-system, system-ui, sans-serif;
+      font-weight: 300;
+      font-size: 15px;
+      line-height: 1.55;
+      letter-spacing: 0.005em;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 18% 18%, rgba(0, 229, 255, 0.16), transparent 70%),
+        radial-gradient(ellipse 60% 50% at 82% 88%, rgba(0, 229, 255, 0.10), transparent 70%);
+    }
+    body::after {
+      content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(2, 6, 16, 0.6) 100%);
+    }
+    a { color: var(--cyan); text-decoration: none; }
+    a:hover { color: var(--paper); text-shadow: 0 0 8px var(--cyan); }
+    .mono { font-family: 'Geist Mono', ui-monospace, monospace; }
+
+    .layer { position: relative; z-index: 1; }
+
+    /* ── HUD frame brackets (drawn in SVG-like CSS) ──────── */
+    .hud-frame {
+      position: fixed; inset: 24px;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .hud-frame .bk {
+      position: absolute; width: 28px; height: 28px;
+      border: 1px solid var(--cyan);
+      filter: drop-shadow(0 0 6px var(--cyan));
+    }
+    .hud-frame .bk.tl { top: 0; left: 0; border-right: none; border-bottom: none; }
+    .hud-frame .bk.tr { top: 0; right: 0; border-left: none; border-bottom: none; }
+    .hud-frame .bk.bl { bottom: 0; left: 0; border-right: none; border-top: none; }
+    .hud-frame .bk.br { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+    /* ── Top heads-up bar ──────────────────────────────── */
+    .topbar {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 32px;
+      padding: 18px 36px;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-line);
+    }
+    .marque {
+      display: flex; align-items: center; gap: 14px;
+      font-family: 'Geist', sans-serif;
+      font-weight: 500;
+      font-size: 0.92rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+    .marque .crc {
+      width: 28px; height: 28px;
+      border: 1px solid var(--cyan);
+      border-radius: 50%;
+      position: relative;
+      display: inline-block;
+      box-shadow: 0 0 8px rgba(0, 229, 255, 0.4) inset, 0 0 12px rgba(0, 229, 255, 0.25);
+    }
+    .marque .crc::before {
+      content: ""; position: absolute; inset: 4px;
+      border: 1px solid var(--cyan);
+      border-radius: 50%;
+      opacity: 0.6;
+    }
+    .marque .crc::after {
+      content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--cyan); transform: translateX(-50%);
+      opacity: 0.4;
+    }
+    .marque .a { font-weight: 700; }
+    .marque .dim { color: var(--ink-mute); }
+
+    .telemetry {
+      display: flex; gap: 28px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      color: var(--ink-soft);
+      text-transform: uppercase;
+    }
+    .telemetry .v { color: var(--cyan); }
+    .telemetry .v.ok { color: #5BFF8B; }
+    .telemetry .v.warn { color: var(--warn); }
+
+    .nav {
+      display: flex; gap: 4px; align-items: center;
+    }
+    .nav a {
+      padding: 8px 16px;
+      font-family: 'Geist', sans-serif;
+      font-weight: 500;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      color: var(--ink-soft);
+      border: 1px solid transparent;
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+    .nav a:hover { color: var(--cyan); border-color: var(--glass-line); background: rgba(0, 229, 255, 0.05); text-shadow: none; }
+    .nav a.cta {
+      background: rgba(0, 229, 255, 0.12);
+      color: var(--cyan);
+      border-color: var(--glass-line-strong);
+    }
+    .nav a.cta:hover { background: rgba(0, 229, 255, 0.2); }
+    @media (max-width: 1024px) { .telemetry { display: none; } }
+    @media (max-width: 768px) { .topbar { grid-template-columns: 1fr; gap: 12px; padding: 14px 20px; } }
+
+    .page { max-width: 1320px; margin: 0 auto; padding: 0 36px; }
+    @media (max-width: 768px) { .page { padding: 0 20px; } }
+
+    /* ── Hero ────────────────────────────────────────────── */
+    .hero {
+      padding: 80px 0 96px 0;
+      display: grid;
+      grid-template-columns: 7fr 5fr;
+      gap: 56px;
+      align-items: center;
+      position: relative;
+    }
+    .hero .kicker {
+      display: flex; align-items: center; gap: 14px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.74rem;
+      letter-spacing: 0.22em;
+      color: var(--cyan);
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+    .hero .kicker::before { content: ""; width: 24px; height: 1px; background: var(--cyan); display: block; box-shadow: 0 0 6px var(--cyan); }
+    .hero h1 {
+      font-family: 'Geist', sans-serif;
+      font-weight: 200;
+      font-size: clamp(2.6rem, 6.4vw, 6.4rem);
+      letter-spacing: -0.045em;
+      line-height: 0.98;
+      margin: 0;
+      color: var(--paper);
+    }
+    .hero h1 .glow { color: var(--cyan); text-shadow: 0 0 24px rgba(0, 229, 255, 0.5), 0 0 8px rgba(0, 229, 255, 0.3); font-weight: 500; }
+    .hero h1 strong { font-weight: 700; }
+    .hero .lede {
+      max-width: 56ch;
+      margin: 36px 0 0 0;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: var(--ink-soft);
+    }
+    .hero .lede em { font-style: normal; color: var(--paper); font-weight: 500; }
+    .hero .lede .cyan { color: var(--cyan); font-weight: 500; }
+
+    .hero-actions {
+      display: flex; gap: 12px; margin-top: 40px;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 22px;
+      font-family: 'Geist', sans-serif;
+      font-weight: 500;
+      font-size: 0.84rem;
+      letter-spacing: 0.04em;
+      border-radius: 2px;
+      transition: all 0.22s;
+    }
+    .btn-fill {
+      background: var(--cyan); color: var(--bg-deep);
+      box-shadow: 0 0 24px rgba(0, 229, 255, 0.45), 0 0 1px var(--cyan) inset;
+    }
+    .btn-fill:hover { box-shadow: 0 0 36px rgba(0, 229, 255, 0.65); transform: translateY(-1px); text-shadow: none; }
+    .btn-line {
+      background: transparent; color: var(--paper);
+      border: 1px solid var(--glass-line-strong);
+      box-shadow: 0 0 0 inset;
+    }
+    .btn-line:hover { background: rgba(0, 229, 255, 0.08); color: var(--cyan); border-color: var(--cyan); text-shadow: none; }
+
+    /* Right side: radar + readout ─────────────────── */
+    .hero-readout {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      max-width: 480px;
+      margin: 0 0 0 auto;
+    }
+    .hero-readout .radar {
+      position: absolute; inset: 0;
+      border: 1px solid var(--glass-line);
+      border-radius: 50%;
+      box-shadow: 0 0 32px rgba(0, 229, 255, 0.15) inset, 0 0 16px rgba(0, 229, 255, 0.18);
+      background:
+        radial-gradient(circle, transparent 0%, rgba(0, 229, 255, 0.04) 100%);
+    }
+    .hero-readout .radar::before {
+      content: ""; position: absolute; inset: 18%;
+      border: 1px dashed var(--glass-line);
+      border-radius: 50%;
+    }
+    .hero-readout .radar::after {
+      content: ""; position: absolute; inset: 38%;
+      border: 1px solid var(--glass-line-strong);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--cyan) inset;
+    }
+    .hero-readout .sweep {
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, rgba(0, 229, 255, 0.32) 0%, transparent 14%, transparent 100%);
+      animation: sweep 4s linear infinite;
+    }
+    @keyframes sweep { to { transform: rotate(360deg); } }
+    .hero-readout .pip {
+      position: absolute; width: 8px; height: 8px;
+      background: var(--cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 12px var(--cyan), 0 0 24px var(--cyan);
+    }
+    .hero-readout .pip.p1 { top: 26%; left: 36%; animation: pip 2.4s ease-in-out infinite; }
+    .hero-readout .pip.p2 { top: 60%; left: 68%; animation: pip 3.2s ease-in-out infinite 0.6s; }
+    .hero-readout .pip.p3 { top: 72%; left: 28%; animation: pip 2.8s ease-in-out infinite 1.2s; }
+    @keyframes pip { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.6); opacity: 0.4; } }
+
+    .hero-readout .data {
+      position: absolute; right: -32px; top: -12px;
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-line-strong);
+      padding: 14px 18px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      color: var(--paper);
+      line-height: 1.85;
+      min-width: 200px;
+    }
+    .hero-readout .data .row { display: grid; grid-template-columns: 1fr auto; padding: 2px 0; }
+    .hero-readout .data .k { color: var(--ink-mute); }
+    .hero-readout .data .v { color: var(--cyan); }
+    .hero-readout .data .v.go { color: #5BFF8B; }
+
+    .hero-readout .data.b {
+      right: auto; top: auto;
+      left: -32px; bottom: 12px;
+    }
+    .hero-readout .data.b .k { color: var(--ink-mute); }
+    .hero-readout .data.b .v { color: var(--warn); }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; gap: 64px; }
+      .hero-readout { max-width: 380px; margin: 0 auto; }
+    }
+
+    /* ── Section header ────────────────────────────── */
+    .sec-head {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 24px;
+      padding: 20px 0;
+      border-top: 1px solid var(--glass-line);
+      margin-top: 64px;
+      margin-bottom: 40px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.74rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .sec-head .num {
+      color: var(--cyan);
+      font-weight: 500;
+    }
+    .sec-head .title {
+      color: var(--paper);
+      font-family: 'Geist', sans-serif;
+      font-weight: 500;
+      font-size: 1.05rem;
+      letter-spacing: 0.04em;
+    }
+    .sec-head .meta {
+      color: var(--ink-soft);
+      font-size: 0.7rem;
+    }
+
+    /* ── Stat panels (glass cards) ───────────────── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+    .scell {
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-line);
+      padding: 26px 24px;
+      position: relative;
+      transition: border-color 0.2s, transform 0.22s;
+    }
+    .scell:hover { border-color: var(--cyan); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0, 229, 255, 0.18); }
+    .scell::before {
+      content: ""; position: absolute; top: 0; left: 0; width: 28px; height: 1px;
+      background: var(--cyan);
+      box-shadow: 0 0 8px var(--cyan);
+    }
+    .scell .id {
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--cyan);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 14px;
+    }
+    .scell .num {
+      font-family: 'Geist', sans-serif;
+      font-weight: 200;
+      font-size: clamp(2rem, 3.6vw, 3rem);
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: var(--paper);
+      display: block;
+    }
+    .scell .num em { font-style: normal; color: var(--cyan); font-weight: 500; }
+    .scell .lbl {
+      margin-top: 16px;
+      font-size: 0.92rem;
+      color: var(--ink-soft);
+      line-height: 1.5;
+      display: block;
+      max-width: 28ch;
+    }
+    .scell .src {
+      margin-top: 12px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.16em;
+      color: var(--ink-mute);
+      text-transform: uppercase;
+      display: block;
+    }
+    @media (max-width: 900px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .stat-grid { grid-template-columns: 1fr; } }
+
+    /* ── Trajectory ─────────────────────────────── */
+    .traj {
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-line);
+      padding: 36px 40px;
+      position: relative;
+    }
+    .traj::before, .traj::after {
+      content: ""; position: absolute; width: 16px; height: 16px;
+      border: 1px solid var(--cyan);
+      filter: drop-shadow(0 0 4px var(--cyan));
+    }
+    .traj::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+    .traj::after { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+    .traj h2 {
+      font-family: 'Geist', sans-serif;
+      font-weight: 200;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      letter-spacing: -0.02em;
+      margin: 0 0 28px 0;
+      color: var(--paper);
+    }
+    .traj h2 em { font-style: normal; color: var(--cyan); font-weight: 500; text-shadow: 0 0 16px rgba(0, 229, 255, 0.45); }
+    .traj ul { list-style: none; padding: 0; margin: 0; }
+    .traj ul li {
+      display: grid; grid-template-columns: 9em 1fr auto;
+      gap: 18px;
+      padding: 14px 0;
+      border-top: 1px solid var(--glass-line);
+      align-items: baseline;
+    }
+    .traj ul li:last-child { border-bottom: 1px solid var(--glass-line); }
+    .traj .when {
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--cyan);
+      letter-spacing: 0.08em;
+    }
+    .traj .what { color: var(--paper); font-size: 0.96rem; }
+    .traj .what em { color: var(--cyan); font-style: normal; font-weight: 500; }
+    .traj .stat-flag {
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      color: var(--ink-mute);
+      text-transform: uppercase;
+    }
+    .traj li.now .when {
+      color: var(--bg-deep); background: var(--cyan);
+      padding: 2px 8px; border-radius: 1px;
+      box-shadow: 0 0 16px rgba(0, 229, 255, 0.6);
+    }
+    .traj li.now .stat-flag { color: var(--cyan); }
+    @media (max-width: 768px) { .traj ul li { grid-template-columns: 1fr; gap: 4px; } .traj .stat-flag { display: none; } }
+
+    /* ── Modules ─────────────────────────────────── */
+    .mod-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+    .mod {
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-line);
+      padding: 32px 28px;
+      position: relative;
+      transition: all 0.25s;
+    }
+    .mod:hover { border-color: var(--cyan); box-shadow: 0 8px 28px rgba(0, 229, 255, 0.18); }
+    .mod::before {
+      content: ""; position: absolute; top: 0; right: 0;
+      width: 24px; height: 24px;
+      border: 1px solid var(--cyan);
+      border-left: none; border-bottom: none;
+      filter: drop-shadow(0 0 6px var(--cyan));
+    }
+    .mod .id-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-bottom: 18px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .mod .id-row .id { color: var(--cyan); }
+    .mod .id-row .num {
+      font-family: 'Geist', sans-serif;
+      font-weight: 200;
+      font-size: 2.4rem;
+      letter-spacing: -0.04em;
+      color: var(--paper);
+      text-shadow: 0 0 12px rgba(0, 229, 255, 0.3);
+      line-height: 1;
+    }
+    .mod h3 {
+      font-family: 'Geist', sans-serif;
+      font-weight: 300;
+      font-size: 2rem;
+      letter-spacing: -0.04em;
+      margin: 0 0 14px 0;
+      color: var(--paper);
+    }
+    .mod p {
+      color: var(--ink-soft);
+      font-size: 0.94rem;
+      line-height: 1.55;
+      margin: 0 0 20px 0;
+    }
+    .mod ul {
+      list-style: none; padding: 0; margin: 0 0 22px 0;
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.78rem;
+    }
+    .mod ul li {
+      padding: 8px 0;
+      border-top: 1px solid var(--glass-line);
+      color: var(--paper);
+      display: grid; grid-template-columns: 22px 1fr; gap: 8px;
+    }
+    .mod ul li::before { content: "→"; color: var(--cyan); }
+    .mod .for {
+      padding-top: 16px;
+      border-top: 1px solid var(--glass-line-strong);
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      color: var(--cyan);
+      text-transform: uppercase;
+    }
+    @media (max-width: 768px) { .mod-grid { grid-template-columns: 1fr; } }
+
+    /* ── Pull ───────────────────────────────── */
+    .pull {
+      margin-top: 96px;
+      padding: 80px 56px;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-line);
+      border-left: 4px solid var(--cyan);
+      position: relative;
+      box-shadow: 0 0 64px rgba(0, 229, 255, 0.08);
+    }
+    .pull blockquote {
+      max-width: 60ch;
+      font-family: 'Geist', sans-serif;
+      font-weight: 200;
+      font-size: clamp(1.4rem, 2.6vw, 2.2rem);
+      letter-spacing: -0.025em;
+      line-height: 1.3;
+      margin: 0;
+      color: var(--paper);
+    }
+    .pull blockquote em { color: var(--cyan); font-style: normal; font-weight: 500; text-shadow: 0 0 24px rgba(0, 229, 255, 0.35); }
+    .pull cite {
+      display: block;
+      margin-top: 28px;
+      font-family: 'Geist Mono', monospace;
+      font-style: normal;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cyan);
+    }
+    @media (max-width: 768px) { .pull { padding: 56px 24px; } }
+
+    /* ── Footer ──────────────────────────────── */
+    .foot {
+      margin-top: 64px;
+      padding: 32px 0 48px 0;
+      border-top: 1px solid var(--glass-line);
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      color: var(--ink-mute);
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hud-frame">
+    <span class="bk tl"></span><span class="bk tr"></span><span class="bk bl"></span><span class="bk br"></span>
+  </div>
+
+  <div class="layer">
+
+    <header class="topbar">
+      <div class="marque">
+        <span class="crc"></span>
+        <span class="a">ELITEZ</span>
+        <span class="dim">/</span>
+        <span>SITE SUPERVISOR</span>
+      </div>
+      <div class="telemetry">
+        <span>SYS<span class="v ok"> // ONLINE</span></span>
+        <span>NET<span class="v"> // SG-01</span></span>
+        <span>T<span class="v warn"> // -21M</span></span>
+      </div>
+      <nav class="nav">
+        <a href="#why">Why now</a>
+        <a href="#traj">Trajectory</a>
+        <a href="#mod">Modules</a>
+        <a href="../contact.html" class="cta">Engage →</a>
+      </nav>
+    </header>
+
+    <main class="page">
+
+      <!-- Hero ────────────────────────────────────────── -->
+      <section class="hero">
+        <div>
+          <div class="kicker">// REGULATED TALENT SUPPLY · ELITEZ GROUP</div>
+          <h1>
+            Singapore's<br>
+            <span class="glow">licensed</span> site<br>
+            supervision <strong>firm</strong> —<br>
+            built before <span class="glow">2028</span>.
+          </h1>
+          <p class="lede">
+            On <em>3 September 2025</em>, BCA announced firm-based licensing — mandatory <em>2028</em> for projects above S$75M. Elitez files for SAC accreditation in <span class="cyan">2026</span> and BCA licence by <span class="cyan">Q1–Q2 2028</span> — under the platform of Elitez Group, with Adept Academy as the WSQ-funded training engine.
+          </p>
+          <div class="hero-actions">
+            <a href="../services.html" class="btn btn-fill">View Services →</a>
+            <a href="../compliance.html" class="btn btn-line">Licence Track</a>
+          </div>
+        </div>
+        <div class="hero-readout">
+          <div class="radar">
+            <div class="sweep"></div>
+            <span class="pip p1"></span>
+            <span class="pip p2"></span>
+            <span class="pip p3"></span>
+          </div>
+          <div class="data">
+            <div style="color: var(--cyan); margin-bottom: 6px;">// MISSION READOUT</div>
+            <div class="row"><span class="k">callsign</span><span class="v">ESS-001</span></div>
+            <div class="row"><span class="k">filing</span><span class="v go">2027-Q3</span></div>
+            <div class="row"><span class="k">licence</span><span class="v go">2028-Q1</span></div>
+            <div class="row"><span class="k">status</span><span class="v go">NOMINAL</span></div>
+          </div>
+          <div class="data b">
+            <div style="color: var(--warn); margin-bottom: 6px;">// CONTACTS</div>
+            <div class="row"><span class="k">tier-3</span><span class="v">5</span></div>
+            <div class="row"><span class="k">tier-2</span><span class="v">5</span></div>
+            <div class="row"><span class="k">tier-1</span><span class="v">5</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stats ──────────────────────────────────── -->
+      <div class="sec-head" id="why">
+        <span class="num">[01]</span>
+        <span class="title">Demand telemetry · Singapore construction</span>
+        <span class="meta">SAMPLE Q1 2026</span>
+      </div>
+      <section class="stat-grid">
+        <div class="scell">
+          <span class="id">// DEM-001</span>
+          <span class="num">S$50<em>B</em></span>
+          <span class="lbl">2026 contract-value midpoint</span>
+          <span class="src">SRC // BCA · Jan 2026</span>
+        </div>
+        <div class="scell">
+          <span class="id">// DEM-002</span>
+          <span class="num">11.6<em>–</em>13.4<em>B</em></span>
+          <span class="lbl">Civil engineering 2026 — record vs. S$9.3B</span>
+          <span class="src">SRC // BCA forecast</span>
+        </div>
+        <div class="scell">
+          <span class="id">// DEM-003</span>
+          <span class="num">110<em>–</em>170<em>M</em></span>
+          <span class="lbl">Outsourced site-supervision TAM (S$)</span>
+          <span class="src">SRC // Triangulated</span>
+        </div>
+        <div class="scell">
+          <span class="id">// DEM-004</span>
+          <span class="num">200<em>–</em>300</span>
+          <span class="lbl">Year-3 deployed-headcount target</span>
+          <span class="src">SRC // V4 base case</span>
+        </div>
+      </section>
+
+      <!-- Trajectory ─────────────────────────── -->
+      <div class="sec-head" id="traj">
+        <span class="num">[02]</span>
+        <span class="title">Flight trajectory · BCA licence-track</span>
+        <span class="meta">REV 0.1</span>
+      </div>
+      <section class="traj">
+        <h2>A <em>twelve-to-eighteen month</em> head-start window.</h2>
+        <ul>
+          <li><span class="when">2025-09-03</span><span class="what">BCA announces firm-based licensing regime architecture.</span><span class="stat-flag">[CMPLT]</span></li>
+          <li class="now"><span class="when">NOW · 2026</span><span class="what">SAC accreditation scheme opens — <em>first-mover window active.</em></span><span class="stat-flag">▶ ACTIVE</span></li>
+          <li><span class="when">2026-Q4</span><span class="what">BCA voluntary licence applications open.</span><span class="stat-flag">[QUEUED]</span></li>
+          <li><span class="when">2027-Q3</span><span class="what">Elitez files SAC accreditation · ISO 17020 mock audit.</span><span class="stat-flag">[STAGED]</span></li>
+          <li><span class="when">2028-Q1/Q2</span><span class="what"><em>Elitez BCA licence target</em> — six months ahead of mandatory.</span><span class="stat-flag">[STAGED]</span></li>
+          <li><span class="when">2028-01-01</span><span class="what">Mandatory: building projects &gt; S$75M require licensed firm.</span><span class="stat-flag">[EXTERNAL]</span></li>
+        </ul>
+      </section>
+
+      <!-- Modules ────────────────────────────── -->
+      <div class="sec-head" id="mod">
+        <span class="num">[03]</span>
+        <span class="title">Service modules · four packaged offerings</span>
+        <span class="meta">CFG ESS-A</span>
+      </div>
+      <section class="mod-grid">
+        <article class="mod">
+          <div class="id-row"><span class="id">// MOD/SUPPLY</span><span class="num">01</span></div>
+          <h3>Supply</h3>
+          <p>Time-and-attendance supply of accredited REs and RTOs. Client owns the QP(S).</p>
+          <ul>
+            <li><span></span><span>JAC accreditation maintained</span></li>
+            <li><span></span><span>Replacement-on-demand SLA</span></li>
+            <li><span></span><span>MOM compliance · payroll · levy</span></li>
+            <li><span></span><span>PI insurance scaling</span></li>
+          </ul>
+          <div class="for">// FOR · TIER 1–3 · MAIN CONTRACTORS</div>
+        </article>
+        <article class="mod">
+          <div class="id-row"><span class="id">// MOD/MANAGE</span><span class="num">02</span></div>
+          <h3>Manage</h3>
+          <p>Full team led by deployed RE. Seconded QP(S) signs off. Single accountable point.</p>
+          <ul>
+            <li><span></span><span>Weekly digital reporting</span></li>
+            <li><span></span><span>Structured NCR escalation</span></li>
+            <li><span></span><span>Repeat-assignment matching</span></li>
+            <li><span></span><span>S$10–75M project band</span></li>
+          </ul>
+          <div class="for">// FOR · MID DEVELOPERS</div>
+        </article>
+        <article class="mod">
+          <div class="id-row"><span class="id">// MOD/CERTIFY</span><span class="num">03</span></div>
+          <h3>Certify</h3>
+          <p>BCA-licensed firm services from 2027/28. For projects above S$75M.</p>
+          <ul>
+            <li><span></span><span>ISO/IEC 17020 framework</span></li>
+            <li><span></span><span>Site Supervision Plan</span></li>
+            <li><span></span><span>SAC-calibrated equipment</span></li>
+            <li><span></span><span>Specialist (PPVC/MET/façade)</span></li>
+          </ul>
+          <div class="for">// FOR · MAJORS · PUBLIC SECTOR</div>
+        </article>
+        <article class="mod">
+          <div class="id-row"><span class="id">// MOD/TRAIN</span><span class="num">04</span></div>
+          <h3>Train</h3>
+          <p>WSQ-funded supervisor training via Adept Academy. The structural moat.</p>
+          <ul>
+            <li><span></span><span>BCSS-aligned conversion</span></li>
+            <li><span></span><span>JAC-recognised CPD</span></li>
+            <li><span></span><span>50–90% SSG funding</span></li>
+            <li><span></span><span>SCTP / CCP funded reskill</span></li>
+          </ul>
+          <div class="for">// FOR · CONSTRUCTION FIRMS</div>
+        </article>
+      </section>
+
+      <!-- Pull ─────────────────────────────── -->
+      <section class="pull">
+        <blockquote>
+          Site supervision is, in effect, <em>Aviation 2.0</em> with a different regulator. The same playbook — regulated talent pool, government-scheme alignment, overseas mass-recruitment infrastructure, long-tenure deployment — transferred into the BCA firm-based regime.
+        </blockquote>
+        <cite>// Strategy Office · v4 Proposal · May 2026</cite>
+      </section>
+
+      <footer class="foot">
+        <span>// ELITEZ ESS-001 · v0.1 DRAFT · 2026.05.08</span>
+        <span><a href="index.html">← Back to selection</a> · <a href="../index.html">Public site</a></span>
+      </footer>
+
+    </main>
+
+  </div>
+
+</body>
+</html>

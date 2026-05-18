@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Competitor Analytics — Elitez Events</title>
+  <link rel="icon" href="../assets/img/logo-mark.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/site.css">
+  <script src="../assets/vendor/chart.umd.js"></script>
+  <style>
+    /* ── Competitor Analytics — re-skinned to Elitez Events tokens ── */
+    .ca-body { max-width: 1340px; margin: 0 auto; padding: 32px 28px 80px; }
+
+    .ca-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
+    .ca-tag { font-family: var(--font-display); font-size: 0.74rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ee-orange); margin-bottom: 8px; font-weight: 800; }
+    .ca-title { font-family: var(--font-display); font-size: clamp(1.7rem, 3.5vw, 2.5rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.12; color: var(--ee-black); }
+    .ca-title .dim { color: var(--ee-muted); font-weight: 400; font-family: var(--font-serif); font-style: italic; letter-spacing: 0; }
+    .ca-meta { font-size: 0.78rem; color: var(--ee-muted); text-align: right; font-family: var(--font-mono); letter-spacing: 0.04em; }
+
+    /* KPIs */
+    .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 32px; }
+    .kpi { background: var(--ee-paper); border: 1px solid var(--ee-border); border-radius: var(--radius-md); padding: 18px 20px; border-top: 4px solid var(--ee-orange); }
+    .kpi:nth-child(2) { border-top-color: var(--ee-black); }
+    .kpi:nth-child(3) { border-top-color: var(--ee-orange-deep); }
+    .kpi:nth-child(4) { border-top-color: var(--ee-amber); }
+    .kpi-val { font-family: var(--font-display); font-size: 2rem; font-weight: 800; color: var(--ee-black); letter-spacing: -0.02em; line-height: 1; }
+    .kpi-val.orange { color: var(--ee-orange); }
+    .kpi-val.deep { color: var(--ee-orange-deep); }
+    .kpi-val.amber { color: var(--ee-orange-deep); }
+    .kpi-lbl { font-family: var(--font-display); font-size: 0.7rem; color: var(--ee-muted); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; margin-top: 8px; }
+
+    /* Artifact card */
+    .artifact { background: var(--ee-paper); border: 1px solid var(--ee-border); border-radius: var(--radius-md); padding: 26px 28px; margin-bottom: 22px; }
+    .art-num { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ee-orange); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+    .art-title { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: var(--ee-black); letter-spacing: -0.01em; margin-bottom: 8px; }
+    .art-desc { font-size: 0.92rem; color: var(--ee-muted); max-width: 880px; line-height: 1.6; margin-bottom: 22px; }
+
+    /* Radar */
+    .chart-wrap { background: var(--ee-cream); border: 1px solid var(--ee-border); border-radius: var(--radius-md); padding: 18px; }
+    #radar-chart { width: 100% !important; max-width: 720px; height: 460px !important; margin: 0 auto; display: block; }
+
+    /* Filter bar */
+    .comp-controls { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+    .comp-search, .comp-filter { padding: 10px 14px; border: 1.5px solid var(--ee-border2); background: var(--ee-cream); color: var(--ee-black); font-family: var(--font-display); font-size: 0.88rem; border-radius: var(--radius-sm); outline: none; }
+    .comp-search:focus, .comp-filter:focus { border-color: var(--ee-orange); }
+    .comp-search { flex: 1; min-width: 220px; }
+    .comp-count { font-size: 0.78rem; color: var(--ee-muted); font-family: var(--font-mono); letter-spacing: 0.04em; }
+
+    /* Competitor cards */
+    .comp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; }
+    .comp-card { background: var(--ee-cream); border: 1px solid var(--ee-border); border-radius: var(--radius-md); padding: 20px 22px; display: flex; flex-direction: column; gap: 12px; transition: border-color 0.15s ease; }
+    .comp-card:hover { border-color: var(--ee-orange); }
+    .comp-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+    .comp-name { font-family: var(--font-display); font-size: 1.05rem; font-weight: 800; color: var(--ee-black); letter-spacing: -0.01em; line-height: 1.25; }
+    .comp-url { display: block; font-size: 0.74rem; color: var(--ee-orange-deep); text-decoration: none; margin-top: 4px; word-break: break-all; }
+    .comp-url:hover { text-decoration: underline; }
+    .comp-target { font-size: 0.78rem; color: var(--ee-muted); line-height: 1.55; }
+
+    .badge-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .ca-badge { display: inline-block; padding: 3px 9px; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; font-family: var(--font-mono); border-radius: var(--radius-pill); border: 1px solid var(--ee-border2); background: rgba(255,247,238,0.6); color: var(--ee-charcoal); }
+    .ca-badge.cat-global_incumbent { background: rgba(10,6,4,0.06); color: var(--ee-black); border-color: rgba(10,6,4,0.3); }
+    .ca-badge.cat-regional_challenger { background: rgba(255,106,0,0.12); color: var(--ee-orange-deep); border-color: rgba(255,106,0,0.4); }
+    .ca-badge.cat-sg_local { background: rgba(255,179,102,0.18); color: var(--ee-orange-deep); border-color: rgba(209,74,0,0.4); }
+    .ca-badge.cat-diy_alternative { background: rgba(107,92,77,0.14); color: var(--ee-charcoal); border-color: var(--ee-muted); }
+    .ca-badge.cat-adjacent { background: rgba(139,124,109,0.14); color: var(--ee-muted); border-color: var(--ee-muted2); }
+    .ca-badge.cat-big_si { background: rgba(255,106,0,0.08); color: var(--ee-orange-deep); border-color: rgba(255,106,0,0.3); }
+
+    .ca-badge.flag-public { background: rgba(58,122,80,0.14); color: #2f6440; border-color: #3a7a50; }
+    .ca-badge.flag-partial { background: rgba(255,179,102,0.22); color: var(--ee-orange-deep); border-color: var(--ee-orange-deep); }
+    .ca-badge.flag-hidden_estimated { background: rgba(139,32,32,0.10); color: #8b2020; border-color: #8b2020; }
+
+    .ca-badge.threat-5 { background: rgba(139,32,32,0.12); color: #8b2020; border-color: #8b2020; }
+    .ca-badge.threat-4 { background: rgba(176,112,32,0.16); color: #8b5500; border-color: #b07020; }
+    .ca-badge.threat-3 { background: rgba(255,179,102,0.18); color: var(--ee-orange-deep); border-color: var(--ee-orange-deep); }
+    .ca-badge.threat-2 { background: rgba(58,122,80,0.10); color: #2f6440; border-color: #3a7a50; }
+    .ca-badge.threat-1 { background: rgba(123,123,116,0.14); color: var(--ee-muted); border-color: var(--ee-muted); }
+
+    .price-strip { font-size: 0.82rem; color: var(--ee-charcoal); padding: 8px 12px; background: rgba(255,179,102,0.10); border-radius: var(--radius-sm); border: 1px solid var(--ee-border); line-height: 1.45; }
+    .price-strip b { color: var(--ee-black); font-family: var(--font-display); font-weight: 700; }
+
+    .score-row { display: grid; grid-template-columns: 90px 1fr 38px; gap: 10px; align-items: center; font-size: 0.78rem; }
+    .score-lbl { color: var(--ee-muted); text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.66rem; font-weight: 800; font-family: var(--font-display); }
+    .score-bar { height: 8px; background: rgba(20,17,13,0.08); border-radius: 4px; overflow: hidden; position: relative; }
+    .score-bar-fill { height: 100%; background: linear-gradient(90deg, var(--ee-orange), var(--ee-orange-deep)); border-radius: 4px; transition: width 0.4s ease; }
+    .score-num { font-family: var(--font-mono); font-weight: 700; color: var(--ee-black); text-align: right; font-size: 0.74rem; }
+
+    .lists-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 540px) { .lists-wrap { grid-template-columns: 1fr; } }
+    .list-block h4 { font-family: var(--font-mono); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ee-orange); margin: 0 0 6px; }
+    .list-block ul { list-style: none; padding: 0; margin: 0; }
+    .list-block li { font-size: 0.78rem; color: var(--ee-charcoal); padding: 4px 0 4px 14px; position: relative; line-height: 1.5; }
+    .list-block li::before { content: '◆'; color: var(--ee-orange); position: absolute; left: 0; top: 4px; font-size: 0.62rem; }
+    .list-block.weak li::before { color: #8b2020; }
+    .list-block.strong li::before { color: #3a7a50; }
+
+    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 760px) { .insight-grid { grid-template-columns: 1fr; } }
+    .insight-block { background: var(--ee-cream); border: 1px solid var(--ee-border); border-radius: var(--radius-sm); padding: 16px 18px; }
+    .insight-block h4 { font-family: var(--font-display); font-size: 0.95rem; font-weight: 800; color: var(--ee-black); margin-bottom: 10px; }
+    .insight-block ul { list-style: none; padding: 0; margin: 0; }
+    .insight-block li { font-size: 0.84rem; color: var(--ee-charcoal); padding: 5px 0 5px 16px; position: relative; line-height: 1.55; }
+    .insight-block li::before { content: '◆'; color: var(--ee-orange); position: absolute; left: 0; top: 6px; font-size: 0.7rem; }
+
+    .loading { color: var(--ee-muted); font-size: 0.86rem; padding: 32px; text-align: center; font-family: var(--font-mono); grid-column: 1 / -1; }
+
+    /* Artifact 04 — Sourced evidence (event-industry) */
+    .ev-anchor { background: linear-gradient(135deg, rgba(255,106,0,0.08), rgba(255,179,102,0.04)); border: 1.5px solid var(--ee-orange); border-radius: var(--radius-md); padding: 22px 24px; margin-bottom: 22px; }
+    .ev-anchor-tag { font-family: var(--font-mono); font-size: 0.66rem; color: var(--ee-orange); letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
+    .ev-anchor h3 { font-family: var(--font-display); font-size: 1.15rem; font-weight: 800; color: var(--ee-black); margin-bottom: 10px; line-height: 1.3; }
+    .ev-anchor p { font-size: 0.86rem; color: var(--ee-charcoal); line-height: 1.6; margin-bottom: 12px; }
+    .ev-anchor-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin: 14px 0; }
+    .ev-anchor-stat { background: var(--ee-paper); border: 1px solid var(--ee-border); border-radius: var(--radius-sm); padding: 12px 14px; }
+    .ev-stat-num { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; color: var(--ee-orange-deep); line-height: 1.1; letter-spacing: -0.01em; }
+    .ev-stat-cap { font-size: 0.72rem; color: var(--ee-muted); margin-top: 4px; line-height: 1.4; }
+    .ev-anchor-cite { font-size: 0.78rem; color: var(--ee-charcoal); margin-top: 4px; }
+    .ev-anchor-cite a { color: var(--ee-orange-deep); text-decoration: none; word-break: break-all; }
+    .ev-anchor-cite a:hover { text-decoration: underline; }
+
+    .ev-section-h { font-family: var(--font-display); font-size: 1.05rem; font-weight: 800; color: var(--ee-black); margin: 8px 0 12px; letter-spacing: -0.01em; }
+
+    .ev-table-wrap { overflow-x: auto; border: 1px solid var(--ee-border); border-radius: var(--radius-sm); margin-bottom: 22px; background: var(--ee-paper); }
+    .ev-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; min-width: 760px; }
+    .ev-table thead { background: var(--ee-cream); }
+    .ev-table th { font-family: var(--font-mono); font-size: 0.64rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ee-orange); padding: 11px 14px; text-align: left; border-bottom: 1.5px solid var(--ee-border2); }
+    .ev-table td { padding: 11px 14px; border-bottom: 1px solid var(--ee-border); color: var(--ee-charcoal); line-height: 1.5; vertical-align: top; }
+    .ev-table tr:last-child td { border-bottom: none; }
+    .ev-table .ev-prov { font-family: var(--font-display); font-weight: 700; color: var(--ee-black); white-space: nowrap; }
+    .ev-table .ev-fig { font-family: var(--font-mono); font-weight: 700; color: var(--ee-black); white-space: nowrap; }
+    .ev-table .ev-cred { display: inline-block; font-size: 0.62rem; padding: 2px 8px; border-radius: var(--radius-pill); border: 1px solid var(--ee-border2); font-family: var(--font-mono); letter-spacing: 0.06em; white-space: nowrap; font-weight: 700; }
+    .ev-cred-high { background: rgba(58,122,80,0.12); color: #2f6440; border-color: #3a7a50; }
+    .ev-cred-med { background: rgba(176,112,32,0.14); color: #8b5500; border-color: #b07020; }
+    .ev-cred-low { background: rgba(123,123,116,0.14); color: var(--ee-muted); border-color: var(--ee-muted); }
+    .ev-cred-gov { background: rgba(42,80,128,0.10); color: #2a5080; border-color: #2a5080; }
+    .ev-table a { color: var(--ee-orange-deep); text-decoration: none; word-break: break-word; }
+    .ev-table a:hover { text-decoration: underline; }
+
+    .ev-themes { list-style: none; padding: 0; margin: 0 0 22px; counter-reset: themecount; }
+    .ev-themes li { background: var(--ee-cream); border: 1px solid var(--ee-border); border-radius: var(--radius-sm); padding: 12px 16px 12px 42px; margin-bottom: 8px; font-size: 0.86rem; color: var(--ee-charcoal); line-height: 1.55; position: relative; counter-increment: themecount; }
+    .ev-themes li::before { content: counter(themecount); position: absolute; left: 14px; top: 11px; font-family: var(--font-display); font-size: 1rem; font-weight: 800; color: var(--ee-orange); }
+    .ev-themes li b { color: var(--ee-black); }
+
+    .ev-sourcelib { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+    .ev-sourcecat { background: var(--ee-cream); border: 1px solid var(--ee-border); border-radius: var(--radius-sm); padding: 14px 16px; }
+    .ev-sourcecat h4 { font-family: var(--font-mono); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ee-orange); margin: 0 0 10px; }
+    .ev-sourcecat ul { list-style: none; padding: 0; margin: 0; }
+    .ev-sourcecat li { font-size: 0.78rem; padding: 5px 0 5px 16px; position: relative; line-height: 1.45; }
+    .ev-sourcecat li::before { content: '↗'; color: var(--ee-orange); position: absolute; left: 0; top: 5px; font-size: 0.78rem; }
+    .ev-sourcecat a { color: var(--ee-charcoal); text-decoration: none; word-break: break-word; }
+    .ev-sourcecat a:hover { color: var(--ee-orange-deep); text-decoration: underline; }
+    .ev-sourcecat .ev-date { color: var(--ee-muted); font-size: 0.7rem; margin-left: 4px; font-family: var(--font-mono); }
+
+    /* Login overlay */
+    #login-screen { position: fixed; inset: 0; z-index: 200; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--ee-black); }
+    .login-box { background: var(--ee-paper); border-radius: var(--radius-md); padding: 42px 36px; width: 100%; max-width: 380px; box-shadow: 0 24px 48px rgba(0,0,0,0.4); border-top: 4px solid var(--ee-orange); }
+    .login-logo { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; color: var(--ee-black); letter-spacing: 0.04em; margin-bottom: 4px; text-align: center; }
+    .login-logo span { color: var(--ee-orange); }
+    .login-sub { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ee-muted); letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 28px; text-align: center; }
+    .login-box label { display: block; font-family: var(--font-display); font-size: 0.7rem; font-weight: 800; color: var(--ee-charcoal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; margin-top: 14px; }
+    .login-box input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--ee-border2); border-radius: var(--radius-sm); font-size: 0.95rem; font-family: var(--font-display); outline: none; transition: border-color 0.2s; background: var(--ee-cream); color: var(--ee-black); }
+    .login-box input:focus { border-color: var(--ee-orange); }
+    .login-btn { margin-top: 18px; width: 100%; padding: 12px 18px; background: var(--ee-orange); color: var(--ee-black); border: none; border-radius: var(--radius-pill); font-family: var(--font-display); font-size: 0.84rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
+    .login-btn:hover { background: var(--ee-orange-bright); }
+    .login-error { display: none; margin-top: 12px; padding: 10px 12px; background: rgba(139,32,32,0.08); color: #8b2020; font-size: 0.82rem; border-radius: var(--radius-sm); text-align: center; font-family: var(--font-display); }
+    .login-error.show { display: block; }
+
+    .logout-btn { margin-left: auto; border: 1px solid rgba(255,247,238,0.3); color: rgba(255,247,238,0.78); cursor: pointer; background: transparent; font-family: var(--font-display); font-size: 0.78rem; font-weight: 600; padding: 6px 12px; border-radius: var(--radius-sm); }
+    .logout-btn:hover { background: rgba(255,106,0,0.16); color: var(--ee-orange); }
+
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+      .ca-body { padding: 20px 14px 60px; }
+      .ca-top { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .ca-meta { text-align: left; }
+      .kpi-strip { grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 20px; }
+      .kpi { padding: 14px 16px; }
+      .kpi-val { font-size: 1.4rem; }
+      .kpi-lbl { font-size: 0.6rem; }
+      .artifact { padding: 18px 16px; margin-bottom: 14px; }
+      .art-title { font-size: 1.1rem; }
+      .art-desc { font-size: 0.82rem; margin-bottom: 14px; }
+      #radar-chart { height: 320px !important; }
+      .chart-wrap { padding: 14px; }
+      .comp-search { width: 100%; min-width: 100%; }
+      .comp-filter { flex: 1 1 calc(50% - 4px); min-width: calc(50% - 4px); }
+      .comp-grid { grid-template-columns: 1fr; }
+      .ev-anchor { padding: 16px 14px; }
+      .ev-anchor h3 { font-size: 1rem; }
+      .ev-anchor-stats { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .ev-table { font-size: 0.74rem; min-width: 640px; }
+      .ev-sourcelib { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 420px) {
+      .kpi-strip { grid-template-columns: 1fr; }
+      .comp-filter { flex: 1 1 100%; min-width: 100%; }
+    }
+  
+    /* ─── Last-edited stamp · injected ─── */
+    .last-edited-strip {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+      padding: 5px 14px; text-align: right;
+      font-family: ui-monospace, "Share Tech Mono", monospace;
+      font-size: 0.72rem; letter-spacing: 0.05em;
+      color: rgba(140,140,140,0.85);
+      background: rgba(0,0,0,0.03);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .last-edited-strip strong { color: rgba(60,60,60,0.85); font-weight: 500; }
+    #last-edited { color: #d06010; font-weight: 600; }
+    #last-edited.fresh { color: #0a8a4a; }
+    #last-edited.stale { color: #c82040; }
+  </style>
+</head>
+<body class="admin-page">
+
+<!-- Login overlay -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">ELITEZ <span>EVENTS</span></div>
+    <div class="login-sub">Competitor Analytics</div>
+    <form id="login-form" onsubmit="return false;">
+      <label for="un">Username</label>
+      <input id="un" type="text" placeholder="Username" autocomplete="username" />
+      <label for="pw">Password</label>
+      <input id="pw" type="password" placeholder="Password" autocomplete="current-password" />
+      <button type="submit" class="login-btn" onclick="doLogin(event)">Enter analytics</button>
+      <p class="login-error" id="login-err">Incorrect username or password.</p>
+    </form>
+  </div>
+</div>
+
+<!-- Public Elitez nav -->
+<nav class="ee-nav" id="ee-nav">
+  <a href="../index.html" class="brand" aria-label="Elitez Events — home">
+    <img src="../assets/img/logo-wordmark.png" alt="Elitez" class="logo-wordmark">
+    <span class="events-tag">Events</span>
+  </a>
+  <div class="links">
+    <a href="../services.html">Expertise</a>
+    <a href="../work.html">Work</a>
+    <a href="../about.html">About</a>
+    <a href="index.html" class="active">Market Intel</a>
+    <a href="../contact.html">Contact</a>
+  </div>
+  <a href="../contact.html" class="cta">Plan an event</a>
+</nav>
+
+<div class="last-edited-strip" role="status" aria-live="polite">
+  <strong>Page last edited:</strong> <span id="last-edited" data-edited="2026-04-29T15:47:01+08:00">checking…</span>
+</div>
+
+
+<!-- Analytics sub-nav -->
+<nav class="admin-nav">
+  <a href="index.html">Competitors</a>
+  <a href="insights.html">Market &amp; Pricing</a>
+  <a href="whitespace.html">Whitespace Atlas</a>
+  <a href="design-audit.html">Design Audit</a>
+  <a href="competitor-analytics.html" class="active">Analytics</a>
+  <a href="report.html">Report</a>
+  <button class="logout-btn" onclick="doLogout()">Sign out</button>
+</nav>
+
+<div id="dashboard">
+  <main class="ca-body">
+
+    <div class="ca-top">
+      <div>
+        <div class="ca-tag">◆ Competitor Analytics · v1</div>
+        <h1 class="ca-title">SG corporate events is contested.<br/><span class="dim">Here's the 35-strong roster — and where Elitez Events stands.</span></h1>
+      </div>
+      <div class="ca-meta">
+        <div>Refreshed <span id="refresh-date">—</span></div>
+        <div><span id="comp-count-hdr">—</span> competitors mapped</div>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-strip">
+      <div class="kpi"><div class="kpi-val orange" id="kpi-total">—</div><div class="kpi-lbl">Competitors mapped</div></div>
+      <div class="kpi"><div class="kpi-val" id="kpi-design">—</div><div class="kpi-lbl">Avg design score (10)</div></div>
+      <div class="kpi"><div class="kpi-val deep" id="kpi-hidden">—</div><div class="kpi-lbl">% with hidden pricing</div></div>
+      <div class="kpi"><div class="kpi-val amber" id="kpi-threats">—</div><div class="kpi-lbl">High threats (≥4/5)</div></div>
+    </div>
+
+    <!-- Radar -->
+    <section class="artifact">
+      <div class="art-num">Artifact 01</div>
+      <h2 class="art-title">Top-5 Threat Radar</h2>
+      <p class="art-desc">Five most-direct competitors plotted across five dimensions: scale, threat level, pricing transparency, digital polish, and defensibility (inverted beatability). Elitez Events is overlaid as the reference. The wedge we own is the combination of ecosystem manpower depth and warm editorial brand against agencies who out-scale us but can't match group P&amp;L economics.</p>
+      <div class="chart-wrap">
+        <canvas id="radar-chart" width="720" height="460"></canvas>
+      </div>
+    </section>
+
+    <!-- Insights -->
+    <section class="artifact">
+      <div class="art-num">Artifact 02</div>
+      <h2 class="art-title">Strategic Insights</h2>
+      <p class="art-desc">What the landscape tells us — common weaknesses across the field, Elitez Events' deck-grounded advantages, and the design lessons we borrow vs improve on.</p>
+      <div class="insight-grid">
+        <div class="insight-block">
+          <h4>Common competitor weaknesses</h4>
+          <ul id="weaknesses-list"></ul>
+        </div>
+        <div class="insight-block">
+          <h4>Elitez Events advantages (deck-grounded)</h4>
+          <ul id="advantages-list"></ul>
+        </div>
+        <div class="insight-block">
+          <h4>Design — borrowed from</h4>
+          <ul id="borrowed-list"></ul>
+        </div>
+        <div class="insight-block">
+          <h4>Design — improved on</h4>
+          <ul id="improved-list"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Competitor cards -->
+    <section class="artifact">
+      <div class="art-num">Artifact 03</div>
+      <h2 class="art-title">Competitor Deep-dive</h2>
+      <p class="art-desc">All <span id="comp-count-inline">—</span> competitors with category, pricing posture, threat &amp; beatability scores, design rating, strengths and weaknesses.</p>
+      <div class="comp-controls">
+        <input type="search" id="comp-search" class="comp-search" placeholder="Search name, target market, strengths…" />
+        <select id="comp-cat" class="comp-filter"><option value="">All categories</option></select>
+        <select id="comp-threat" class="comp-filter">
+          <option value="">All threats</option>
+          <option value="5">5 — Critical</option>
+          <option value="4">4 — High</option>
+          <option value="3">3 — Medium</option>
+          <option value="2">2 — Low</option>
+          <option value="1">1 — Minimal</option>
+        </select>
+        <select id="comp-flag" class="comp-filter">
+          <option value="">All pricing flags</option>
+          <option value="public">Public</option>
+          <option value="partial">Partial</option>
+          <option value="hidden_estimated">Hidden / estimated</option>
+        </select>
+        <span class="comp-count" id="comp-count-tbl">—</span>
+      </div>
+      <div class="comp-grid" id="comp-grid">
+        <div class="loading">Loading competitor data…</div>
+      </div>
+    </section>
+
+    <!-- Artifact 04 — Sourced Evidence (event industry) -->
+    <section class="artifact">
+      <div class="art-num">Artifact 04</div>
+      <h2 class="art-title">Sourced Pricing &amp; Market Evidence</h2>
+      <p class="art-desc">Where the SG corporate-events numbers actually come from. Cited data points from the Singapore Tourism Board (STB), Singapore Department of Statistics (SingStat), operator-published guides, mainstream journalism, and Reddit/forum sources — replacing modelled estimates with named sources you can click through and verify.</p>
+
+      <!-- Primary anchor: STB MICE -->
+      <div class="ev-anchor">
+        <div class="ev-anchor-tag">◆ Primary anchor · Government tourism board · 2024 visitor stats</div>
+        <h3>STB International Visitor Arrivals &amp; Singapore Tourism Statistics — MICE / business-travel segment</h3>
+        <p>The Singapore Tourism Board publishes quarterly tourism-receipt and MICE arrivals data that anchors Elitez Events' SAM derivation. Combined with SingStat household income and corporate L&amp;D spend filings, this is the most defensible cite stack — government-backed, methodologically rigorous, and quotable in any public-facing claim.</p>
+        <div class="ev-anchor-stats">
+          <div class="ev-anchor-stat">
+            <div class="ev-stat-num">~ S$3.2B</div>
+            <div class="ev-stat-cap">SG MICE / business-events tourism receipts (STB, FY2023 published)</div>
+          </div>
+          <div class="ev-anchor-stat">
+            <div class="ev-stat-num">~ S$50K</div>
+            <div class="ev-stat-cap">Median SG D&amp;D outlay for 600 PAX, GO Events &amp; PartyMojo guides 2025</div>
+          </div>
+          <div class="ev-anchor-stat">
+            <div class="ev-stat-num">SGD 80–250</div>
+            <div class="ev-stat-cap">Per-pax band on D&amp;D, published by GO Events 2025/2026 cost guide</div>
+          </div>
+          <div class="ev-anchor-stat">
+            <div class="ev-stat-num">25 of 35</div>
+            <div class="ev-stat-cap">competitors keep pricing hidden / estimated — 71% opacity rate</div>
+          </div>
+        </div>
+        <div class="ev-anchor-cite">Source: <a href="https://www.stb.gov.sg/about-stb/statistics-and-market-insights/tourism-statistics/" target="_blank" rel="noopener noreferrer">stb.gov.sg/about-stb/statistics-and-market-insights/tourism-statistics</a> · <a href="https://www.singstat.gov.sg" target="_blank" rel="noopener noreferrer">singstat.gov.sg</a></div>
+      </div>
+
+      <!-- Themes -->
+      <h3 class="ev-section-h">Five themes that emerge from the data</h3>
+      <ol class="ev-themes">
+        <li><b>71% of SG event agencies hide their pricing.</b> Of 35 competitors, 25 publish only "contact us" or estimated bands. Only PartyMojo and a handful of DIY routes (hotel banquet menus, Klook for Business) publish per-pax or per-station numbers a corporate buyer can self-qualify against. The transparency wedge is wide open.</li>
+        <li><b>The S$80-250 / pax D&amp;D band is the lived benchmark, not the agency claim.</b> Get Out! Events, Cohesion and PartyMojo publish per-pax figures consistently in this range. Premium global incumbents (Jack Morton, GPJ, Pico) anchor at S$300+ per pax for executive offsites and brand activations. Nobody publishes the cheap floor — DIY hotel banquet teams quietly hold it at S$100-180 / pax.</li>
+        <li><b>Group P&amp;L economics (manpower + payroll + security under one roof) is the genuine moat.</b> Pure agencies subcontract crew, promoters, security and pay the principal-vs-employer levy delta. Elitez Group's ecosystem (security agency + temp staffing arm + payroll/levy compliance) compresses 6-8% of every PAX-heavy event into in-house margin. Competitors literally cannot match this without acquiring an MOM-licensed manpower company.</li>
+        <li><b>ESG / ISO 20121 is unclaimed white space at the SG-local tier.</b> Only the global incumbents (Jack Morton, MCI, GPJ) reference ISO 20121 or EcoVadis. Every SG-local agency has zero published ESG posture. With WSG / EnterpriseSG sustainability grants live, this is a buyer-mandate trend (RFPs from MNCs increasingly require ISO 20121 or equivalent) — and the first SG-local agency to lock the cert wins by default.</li>
+        <li><b>DIY routes (hotel banquet teams, Eventbrite + freelance) take ~30% of mid-market spend.</b> The biggest competitor isn't another agency — it's the corporate communications team who builds in-house with hotel banquet sales support. Beating DIY requires (a) transparent pricing that proves the agency premium, and (b) the ecosystem playbook the in-house team cannot replicate (compliant promoters, security, post-event amplification).</li>
+      </ol>
+
+      <!-- Sourced data points table -->
+      <h3 class="ev-section-h">Sourced price points &amp; market signals</h3>
+      <div class="ev-table-wrap">
+        <table class="ev-table">
+          <thead>
+            <tr>
+              <th>Source</th>
+              <th>What is being priced</th>
+              <th>S$ figure</th>
+              <th>Link</th>
+              <th>Quality</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="ev-prov">STB (statutory)</td>
+              <td>SG MICE tourism receipts, full year</td>
+              <td class="ev-fig">~ S$3.2B</td>
+              <td><a href="https://www.stb.gov.sg/about-stb/statistics-and-market-insights/tourism-statistics/" target="_blank" rel="noopener noreferrer">stb.gov.sg — Tourism statistics</a></td>
+              <td><span class="ev-cred ev-cred-gov">Gov</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">SingStat (statutory)</td>
+              <td>SG corporate L&amp;D / events budget proxy</td>
+              <td class="ev-fig">SingStat tables</td>
+              <td><a href="https://www.singstat.gov.sg/find-data" target="_blank" rel="noopener noreferrer">singstat.gov.sg — find-data</a></td>
+              <td><span class="ev-cred ev-cred-gov">Gov</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Get Out! Events (operator)</td>
+              <td>D&amp;D 600-PAX per-pax range, 2025/2026 cost guide</td>
+              <td class="ev-fig">SGD 80 – 250 / pax</td>
+              <td><a href="https://getout.sg" target="_blank" rel="noopener noreferrer">getout.sg — published cost guide</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Get Out! Events (operator)</td>
+              <td>Family day, full package</td>
+              <td class="ev-fig">SGD 5,000 – 30,000</td>
+              <td><a href="https://getout.sg" target="_blank" rel="noopener noreferrer">getout.sg — cost guide</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Get Out! Events (operator)</td>
+              <td>Corporate event, full package</td>
+              <td class="ev-fig">SGD 25,000 – 70,000</td>
+              <td><a href="https://getout.sg" target="_blank" rel="noopener noreferrer">getout.sg — cost guide</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">PartyMojo (operator)</td>
+              <td>Per-station &amp; entertainment package list (only public price grid)</td>
+              <td class="ev-fig">Per-station from S$200</td>
+              <td><a href="https://www.partymojo.com.sg" target="_blank" rel="noopener noreferrer">partymojo.com.sg — published pricing</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Klook for Business</td>
+              <td>Activity-style team building, public catalogue</td>
+              <td class="ev-fig">Per-pax from S$60</td>
+              <td><a href="https://www.klook.com/business" target="_blank" rel="noopener noreferrer">klook.com/business</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">RWS Convention Centre</td>
+              <td>Venue + F&amp;B starting band, banquet pages</td>
+              <td class="ev-fig">From S$120 / pax</td>
+              <td><a href="https://www.rwsentosa.com" target="_blank" rel="noopener noreferrer">rwsentosa.com — convention centre</a></td>
+              <td><span class="ev-cred ev-cred-high">Operator-published</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Pico Singapore (HKEX:752)</td>
+              <td>Listed parent FY23 revenue</td>
+              <td class="ev-fig">HK$5.3B</td>
+              <td><a href="https://www.pico.com" target="_blank" rel="noopener noreferrer">pico.com — investor relations</a></td>
+              <td><span class="ev-cred ev-cred-high">Listed-co filing</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">EnterpriseSG / WSG</td>
+              <td>PSG / Career Conversion Programme grants applicable to event sector</td>
+              <td class="ev-fig">Up to 50–70% subsidy</td>
+              <td><a href="https://www.enterprisesg.gov.sg" target="_blank" rel="noopener noreferrer">enterprisesg.gov.sg</a></td>
+              <td><span class="ev-cred ev-cred-gov">Gov</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">Mothership.sg</td>
+              <td>Coverage of SG corporate D&amp;D &amp; family-day spending norms</td>
+              <td class="ev-fig">Editorial</td>
+              <td><a href="https://mothership.sg" target="_blank" rel="noopener noreferrer">mothership.sg — search 'D&amp;D / family day'</a></td>
+              <td><span class="ev-cred ev-cred-med">Editorial</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">r/singapore (Reddit)</td>
+              <td>Anonymous SG corporate D&amp;D budget chatter</td>
+              <td class="ev-fig">~ S$120-200 / pax (community)</td>
+              <td><a href="https://www.reddit.com/r/singapore/" target="_blank" rel="noopener noreferrer">r/singapore — search 'D&amp;D budget'</a></td>
+              <td><span class="ev-cred ev-cred-low">Anecdotal</span></td>
+            </tr>
+            <tr>
+              <td class="ev-prov">HardwareZone forums</td>
+              <td>SG corporate event vendor recs &amp; horror stories</td>
+              <td class="ev-fig">Verbatim quotes</td>
+              <td><a href="https://forums.hardwarezone.com.sg" target="_blank" rel="noopener noreferrer">forums.hardwarezone.com.sg</a></td>
+              <td><span class="ev-cred ev-cred-low">Anecdotal</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Source library -->
+      <h3 class="ev-section-h">Full source library (clickable)</h3>
+      <div class="ev-sourcelib">
+
+        <div class="ev-sourcecat">
+          <h4>Regulator &amp; government</h4>
+          <ul>
+            <li><a href="https://www.stb.gov.sg/about-stb/statistics-and-market-insights/tourism-statistics/" target="_blank" rel="noopener noreferrer">STB — Tourism statistics &amp; market insights</a></li>
+            <li><a href="https://www.singstat.gov.sg/find-data" target="_blank" rel="noopener noreferrer">SingStat — Find data (corporate, household)</a></li>
+            <li><a href="https://www.enterprisesg.gov.sg" target="_blank" rel="noopener noreferrer">EnterpriseSG — PSG &amp; sustainability grants</a></li>
+            <li><a href="https://www.wsg.gov.sg" target="_blank" rel="noopener noreferrer">WSG — Workforce Singapore (CCP / WSQ)</a></li>
+            <li><a href="https://www.mom.gov.sg" target="_blank" rel="noopener noreferrer">MOM — Tripartite Standards / employer levy framework</a></li>
+          </ul>
+        </div>
+
+        <div class="ev-sourcecat">
+          <h4>Operator-published price guides</h4>
+          <ul>
+            <li><a href="https://getout.sg" target="_blank" rel="noopener noreferrer">Get Out! Events — D&amp;D / family-day cost guide 2025/2026</a></li>
+            <li><a href="https://www.partymojo.com.sg" target="_blank" rel="noopener noreferrer">PartyMojo — published per-station price grid</a></li>
+            <li><a href="https://www.cohesion.com.sg" target="_blank" rel="noopener noreferrer">Cohesion Singapore — programme tiers</a></li>
+            <li><a href="https://www.klook.com/business" target="_blank" rel="noopener noreferrer">Klook for Business — published team-building catalogue</a></li>
+            <li><a href="https://www.rwsentosa.com" target="_blank" rel="noopener noreferrer">RWS Convention Centre — banquet F&amp;B starter</a></li>
+            <li><a href="https://www.marinabaysands.com" target="_blank" rel="noopener noreferrer">Marina Bay Sands — Expo &amp; banquet pages</a></li>
+          </ul>
+        </div>
+
+        <div class="ev-sourcecat">
+          <h4>Mainstream &amp; longform journalism</h4>
+          <ul>
+            <li><a href="https://www.businesstimes.com.sg" target="_blank" rel="noopener noreferrer">Business Times — MICE / corporate-events coverage</a></li>
+            <li><a href="https://www.straitstimes.com" target="_blank" rel="noopener noreferrer">The Straits Times — D&amp;D / family-day coverage</a></li>
+            <li><a href="https://www.channelnewsasia.com" target="_blank" rel="noopener noreferrer">CNA — SG MICE recovery &amp; tourism receipts</a></li>
+            <li><a href="https://www.ricemedia.co" target="_blank" rel="noopener noreferrer">RICE Media — SG corporate culture features</a></li>
+            <li><a href="https://mothership.sg" target="_blank" rel="noopener noreferrer">Mothership.sg — SG D&amp;D / family-day editorial</a></li>
+            <li><a href="https://dollarsandsense.sg" target="_blank" rel="noopener noreferrer">DollarsAndSense — SG corporate budget guides</a></li>
+          </ul>
+        </div>
+
+        <div class="ev-sourcecat">
+          <h4>Industry / trade bodies</h4>
+          <ul>
+            <li><a href="https://www.iccaworld.org" target="_blank" rel="noopener noreferrer">ICCA — International Congress &amp; Convention Association</a></li>
+            <li><a href="https://www.saceos.org.sg" target="_blank" rel="noopener noreferrer">SACEOS — SG Association of Convention &amp; Exhibition Organisers</a></li>
+            <li><a href="https://www.iso.org/standard/54552.html" target="_blank" rel="noopener noreferrer">ISO 20121 — Sustainable event management standard</a></li>
+            <li><a href="https://ecovadis.com" target="_blank" rel="noopener noreferrer">EcoVadis — Sustainability ratings</a></li>
+          </ul>
+        </div>
+
+        <div class="ev-sourcecat">
+          <h4>Forums &amp; community</h4>
+          <ul>
+            <li><a href="https://www.reddit.com/r/singapore/" target="_blank" rel="noopener noreferrer">r/singapore — search 'D&amp;D budget' / 'family day cost'</a></li>
+            <li><a href="https://www.reddit.com/r/asksingapore/" target="_blank" rel="noopener noreferrer">r/asksingapore — corporate event horror stories</a></li>
+            <li><a href="https://forums.hardwarezone.com.sg" target="_blank" rel="noopener noreferrer">HardwareZone — D&amp;D / family-day vendor threads</a></li>
+            <li><a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn — SG event-pro community posts</a></li>
+          </ul>
+        </div>
+
+        <div class="ev-sourcecat">
+          <h4>Listed-company filings (incumbent context)</h4>
+          <ul>
+            <li><a href="https://www.pico.com" target="_blank" rel="noopener noreferrer">Pico Far East Holdings (HKEX:752) — IR / annual reports</a></li>
+            <li><a href="https://www.cityneon.net" target="_blank" rel="noopener noreferrer">Cityneon — corporate IR (post-buyout)</a></li>
+            <li><a href="https://www.mci-group.com" target="_blank" rel="noopener noreferrer">MCI Group — global engagement-marketing org</a></li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // ── Auth gate (sessionStorage; matches simple admin pattern) ──
+  // Static gate: any non-empty username + password "elitez2026" unlocks.
+  // To rotate, change ADMIN_PASS_HASH below (SHA-256 hex).
+  const ADMIN_PASS_HASH = 'ceab3cf095f685db55771ecf73d57826cace3aa2fe4f5167e5c50d872c6821f6'; // sha256('elitez2026')
+  const AUTH_KEY = 'elitez_events_competitor_auth';
+
+  async function _sha256Hex(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  async function doLogin(e) {
+    if (e) e.preventDefault();
+    const un = document.getElementById('un').value.trim();
+    const pw = document.getElementById('pw').value;
+    if (!un) {
+      document.getElementById('login-err').classList.add('show');
+      return false;
+    }
+    const pwH = await _sha256Hex(pw);
+    if (pwH === ADMIN_PASS_HASH) {
+      sessionStorage.setItem(AUTH_KEY, '1');
+      showDashboard();
+    } else {
+      document.getElementById('login-err').classList.add('show');
+    }
+    return false;
+  }
+
+  function doLogout() {
+    sessionStorage.removeItem(AUTH_KEY);
+    location.reload();
+  }
+
+  function showDashboard() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    initAnalytics();
+  }
+
+  document.getElementById('login-form').addEventListener('submit', doLogin);
+  document.getElementById('pw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(e); });
+
+  // If already authed this session, skip login
+  if (sessionStorage.getItem(AUTH_KEY) === '1') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', showDashboard);
+    } else {
+      setTimeout(showDashboard, 0);
+    }
+  }
+</script>
+
+<script>
+// ── Analytics renderer ──
+const STATE = { competitors: [], categories: [], filtered: [] };
+
+function el(tag, opts) {
+  const e = document.createElement(tag);
+  if (!opts) return e;
+  if (opts.cls) e.className = opts.cls;
+  if (opts.text != null) e.textContent = String(opts.text);
+  if (opts.attrs) for (const [k,v] of Object.entries(opts.attrs)) e.setAttribute(k, v);
+  if (opts.children) for (const c of opts.children) if (c) e.appendChild(c);
+  return e;
+}
+
+function initAnalytics() {
+  fetch('../data/competitors.json')
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(data => {
+      STATE.competitors = Array.isArray(data.competitors) ? data.competitors : [];
+      STATE.categories = Array.from(new Set(STATE.competitors.map(c => c.category).filter(Boolean))).sort();
+      STATE.filtered = STATE.competitors.slice();
+      document.getElementById('refresh-date').textContent = (data.meta && data.meta.research_date) || '—';
+      renderKPIs();
+      renderCategoryFilter();
+      renderInsights();
+      renderRadar();
+      attachFilterHandlers();
+      renderCards();
+    })
+    .catch(err => {
+      console.error(err);
+      const grid = document.getElementById('comp-grid');
+      grid.textContent = '';
+      grid.appendChild(el('div', { cls: 'loading', text: 'Failed to load competitor data: ' + err.message }));
+    });
+}
+
+function pricingFlagToScore(flag) {
+  return ({ public: 5, partial: 3, hidden_estimated: 1 })[flag] || 1;
+}
+
+function categoryScale(cat) {
+  // Bigger = more global reach / bigger P&L
+  return ({
+    global_incumbent: 5,
+    big_si: 4,
+    regional_challenger: 4,
+    sg_local: 2,
+    adjacent: 2,
+    diy_alternative: 1
+  })[cat] || 2;
+}
+
+function designOutOf10(rating25) {
+  if (rating25 == null) return 5; // unknown → median assumption
+  return Math.max(0, Math.min(10, Math.round((rating25 / 25) * 10)));
+}
+
+function renderKPIs() {
+  const total = STATE.competitors.length;
+  const auditedRatings = STATE.competitors.map(c => c.website_design_rating).filter(r => r != null);
+  const avg10 = auditedRatings.length ? (auditedRatings.reduce((a,b) => a + b, 0) / auditedRatings.length) / 2.5 : 0;
+  const hidden = STATE.competitors.filter(c => c.pricing_flag === 'hidden_estimated').length;
+  const threats = STATE.competitors.filter(c => Number(c.threat_level) >= 4).length;
+
+  document.getElementById('kpi-total').textContent = String(total);
+  document.getElementById('kpi-design').textContent = avg10 ? avg10.toFixed(1) : '—';
+  document.getElementById('kpi-hidden').textContent = total ? Math.round((hidden / total) * 100) + '%' : '—';
+  document.getElementById('kpi-threats').textContent = String(threats);
+  document.getElementById('comp-count-hdr').textContent = String(total);
+  document.getElementById('comp-count-inline').textContent = String(total);
+}
+
+function renderCategoryFilter() {
+  const sel = document.getElementById('comp-cat');
+  while (sel.options.length > 1) sel.remove(1);
+  STATE.categories.forEach(k => {
+    const opt = el('option', { attrs: { value: k }, text: k.replace(/_/g, ' ') });
+    sel.appendChild(opt);
+  });
+}
+
+function renderInsights() {
+  // Hard-coded deck-grounded insights (can be sourced from data/competitors.json.insights later)
+  const weaknesses = [
+    "71% of SG event agencies hide pricing behind 'contact us' — buyers can't self-qualify",
+    "Pure-agency P&L: subcontracted crew, promoters, security — no payroll/levy compliance arbitrage",
+    "Brochure-ware websites; few self-serve calculators or transparent tier pricing",
+    "Zero published ESG / ISO 20121 posture across every SG-local competitor",
+    "Heavy reliance on 'Google reviews' and logo strips with no audited engagement data"
+  ];
+  const advantages = [
+    "Group P&L: in-house security agency + temp staffing arm + payroll/levy compliance under one roof",
+    "Compliant promoter pool + payroll-as-employer-of-record — sub-grant pricing competitors cannot match",
+    "Editorial brand layering (Manrope + Playfair + warm orange palette) vs generic SG-agency stack",
+    "Market Intel admin cluster (35-competitor analytics, whitespace atlas, design audit) credibly signals analyst rigour",
+    "JR+ / WSG / EnterpriseSG funding ecosystem fluency — sub-grant per-pax pricing for qualifying SMEs"
+  ];
+  const borrowed = [
+    "Get Out! Events — KPI badges in hero (1,000+ events / 13 yrs / 4.9★) for instant credibility",
+    "Cohesion Singapore — 'play-first' editorial tone + warm action photography",
+    "MCI Group (SG) — analyst-rigour content layer + global-network framing",
+    "Jack Morton — Singapore-skyline hero + agency-of-the-year award chips"
+  ];
+  const improved = [
+    "Transparent pricing — published tier bands replace 'contact us' opacity",
+    "ESG / ISO 20121 roadmap surfaced upfront — first SG-local agency to claim this lane",
+    "Group ecosystem framing — security + temp staffing + payroll under one admin nav",
+    "Self-serve Market Intel — 35-competitor analytics + whitespace atlas live on the public-admin path"
+  ];
+  const fill = (id, list) => {
+    const ul = document.getElementById(id);
+    ul.textContent = '';
+    list.forEach(item => ul.appendChild(el('li', { text: item })));
+  };
+  fill('weaknesses-list', weaknesses);
+  fill('advantages-list', advantages);
+  fill('borrowed-list', borrowed);
+  fill('improved-list', improved);
+}
+
+function renderRadar() {
+  const ctx = document.getElementById('radar-chart');
+  if (!ctx || typeof Chart === 'undefined') return;
+
+  // Pick top-5 most direct threats: highest threat_level then highest design rating
+  const sorted = STATE.competitors.slice().sort((a,b) => {
+    const t = (Number(b.threat_level) || 0) - (Number(a.threat_level) || 0);
+    if (t !== 0) return t;
+    return (Number(b.website_design_rating) || 0) - (Number(a.website_design_rating) || 0);
+  });
+  const top5 = sorted.slice(0, 5);
+
+  const dims = ['Scale & footprint', 'Threat to Elitez', 'Pricing transparency', 'Digital polish', 'Defensibility'];
+
+  function row(c) {
+    return [
+      categoryScale(c.category),                                  // Scale
+      Math.max(0, Math.min(5, Number(c.threat_level) || 0)),       // Threat
+      pricingFlagToScore(c.pricing_flag),                          // Pricing transparency
+      Math.round(designOutOf10(c.website_design_rating) / 2),      // Digital polish (0-10 → 0-5)
+      Math.max(0, Math.min(5, 6 - (Number(c.beatability) || 3)))   // Defensibility (inverse beatability)
+    ];
+  }
+
+  const elitezRow = {
+    label: 'Elitez Events (us)',
+    data: [3, 0, 4, 4, 4],   // SG-local scale, self-threat 0, transparent published tiers (target), strong design, strong defensibility from group P&L
+    backgroundColor: 'rgba(255,106,0,0.18)',
+    borderColor: '#FF6A00',
+    borderWidth: 2.5,
+    pointBackgroundColor: '#FF6A00',
+    pointBorderColor: '#FF6A00'
+  };
+
+  const palette = ['#8b2020', '#b07020', '#2a5080', '#5a3878', '#3a7a50'];
+  const datasets = [elitezRow];
+  top5.forEach((c, i) => {
+    datasets.push({
+      label: c.name,
+      data: row(c),
+      backgroundColor: 'rgba(20,17,13,0.05)',
+      borderColor: palette[i % palette.length],
+      borderWidth: 1.5,
+      pointBackgroundColor: palette[i % palette.length]
+    });
+  });
+
+  // eslint-disable-next-line no-undef
+  new Chart(ctx, {
+    type: 'radar',
+    data: { labels: dims, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { family: 'Manrope', size: 11 }, color: '#2A211A' } },
+        tooltip: { backgroundColor: '#0A0604', padding: 10, titleFont: { family: 'Manrope' }, bodyFont: { family: 'Manrope' } }
+      },
+      scales: {
+        r: {
+          min: 0,
+          max: 5,
+          ticks: { stepSize: 1, color: '#6B5C4D', backdropColor: 'transparent', font: { size: 10 } },
+          pointLabels: { font: { family: 'Manrope', size: 11, weight: '600' }, color: '#2A211A' },
+          grid: { color: 'rgba(20,17,13,0.10)' },
+          angleLines: { color: 'rgba(20,17,13,0.10)' }
+        }
+      }
+    }
+  });
+}
+
+function attachFilterHandlers() {
+  const search = document.getElementById('comp-search');
+  const cat = document.getElementById('comp-cat');
+  const thr = document.getElementById('comp-threat');
+  const flag = document.getElementById('comp-flag');
+  [search, cat, thr, flag].forEach(elx => elx.addEventListener('input', applyFilters));
+}
+
+function applyFilters() {
+  const q = (document.getElementById('comp-search').value || '').toLowerCase().trim();
+  const cat = document.getElementById('comp-cat').value;
+  const thr = document.getElementById('comp-threat').value;
+  const flag = document.getElementById('comp-flag').value;
+
+  STATE.filtered = STATE.competitors.filter(c => {
+    if (cat && c.category !== cat) return false;
+    if (thr && String(c.threat_level) !== thr) return false;
+    if (flag && c.pricing_flag !== flag) return false;
+    if (q) {
+      const targetMarket = Array.isArray(c.target_market) ? c.target_market.join(' ') : (c.target_market || '');
+      const blob = [
+        c.name, targetMarket, c.primary_value_prop || '',
+        (c.strengths || []).join(' '),
+        (c.weaknesses || []).join(' '),
+        (c.features || []).join(' ')
+      ].join(' ').toLowerCase();
+      if (!blob.includes(q)) return false;
+    }
+    return true;
+  });
+  renderCards();
+}
+
+function renderCards() {
+  const grid = document.getElementById('comp-grid');
+  grid.textContent = '';
+  document.getElementById('comp-count-tbl').textContent =
+    STATE.filtered.length + ' / ' + STATE.competitors.length + ' shown';
+
+  if (!STATE.filtered.length) {
+    grid.appendChild(el('div', { cls: 'loading', text: 'No competitors match the current filters.' }));
+    return;
+  }
+  STATE.filtered.forEach(c => grid.appendChild(buildCard(c)));
+}
+
+function buildCard(c) {
+  const card = el('div', { cls: 'comp-card' });
+
+  const head = el('div', { cls: 'comp-card-head' });
+  const nameWrap = el('div');
+  nameWrap.appendChild(el('div', { cls: 'comp-name', text: c.name || '—' }));
+  if (c.url) {
+    const a = el('a', { cls: 'comp-url', text: c.url, attrs: { href: c.url, target: '_blank', rel: 'noopener noreferrer' } });
+    nameWrap.appendChild(a);
+  }
+  head.appendChild(nameWrap);
+  const tl = Number(c.threat_level) || 0;
+  head.appendChild(el('span', { cls: 'ca-badge threat-' + tl, text: 'Threat ' + tl + '/5' }));
+  card.appendChild(head);
+
+  // Target market (array → joined)
+  const tm = Array.isArray(c.target_market) ? c.target_market.join(' · ') : (c.target_market || '');
+  if (tm) card.appendChild(el('div', { cls: 'comp-target', text: tm }));
+
+  // Badges
+  const badges = el('div', { cls: 'badge-row' });
+  if (c.category) badges.appendChild(el('span', { cls: 'ca-badge cat-' + c.category, text: c.category.replace(/_/g, ' ') }));
+  if (c.pricing_flag) badges.appendChild(el('span', { cls: 'ca-badge flag-' + c.pricing_flag, text: c.pricing_flag.replace(/_/g, ' ') }));
+  if (c.hq_region) badges.appendChild(el('span', { cls: 'ca-badge', text: c.hq_region }));
+  card.appendChild(badges);
+
+  // Pricing strip
+  if (c.pricing_range_published) {
+    const strip = el('div', { cls: 'price-strip' });
+    strip.appendChild(el('b', { text: 'Pricing: ' }));
+    strip.appendChild(document.createTextNode(c.pricing_range_published));
+    card.appendChild(strip);
+  }
+
+  // Score bars: design (0-10), threat (0-5 → render /10), beatability (0-5 → render /10)
+  const scores = el('div');
+  scores.appendChild(scoreRow('Design', designOutOf10(c.website_design_rating), 10));
+  scores.appendChild(scoreRow('Threat', Number(c.threat_level) || 0, 5));
+  scores.appendChild(scoreRow('Beatable', Number(c.beatability) || 0, 5));
+  card.appendChild(scores);
+
+  // Strengths + weaknesses
+  const lists = el('div', { cls: 'lists-wrap' });
+  if (Array.isArray(c.strengths) && c.strengths.length) lists.appendChild(listBlock('Strengths', c.strengths.slice(0, 3), 'strong'));
+  if (Array.isArray(c.weaknesses) && c.weaknesses.length) lists.appendChild(listBlock('Weaknesses', c.weaknesses.slice(0, 3), 'weak'));
+  card.appendChild(lists);
+
+  return card;
+}
+
+function scoreRow(label, val, max) {
+  const v = Math.max(0, Math.min(max, Number(val || 0)));
+  const pct = (v / max) * 100;
+  const row = el('div', { cls: 'score-row' });
+  row.appendChild(el('div', { cls: 'score-lbl', text: label }));
+  const bar = el('div', { cls: 'score-bar' });
+  const fill = el('div', { cls: 'score-bar-fill' });
+  fill.style.width = pct + '%';
+  bar.appendChild(fill);
+  row.appendChild(bar);
+  row.appendChild(el('div', { cls: 'score-num', text: v + '/' + max }));
+  return row;
+}
+
+function listBlock(title, items, kind) {
+  const block = el('div', { cls: 'list-block ' + (kind || '') });
+  block.appendChild(el('h4', { text: title }));
+  const ul = el('ul');
+  items.forEach(it => ul.appendChild(el('li', { text: it })));
+  block.appendChild(ul);
+  return block;
+}
+</script>
+
+
+<script>
+(function () {
+  const el = document.getElementById('last-edited');
+  if (!el) return;
+  const iso = el.dataset.edited;
+  if (!iso) { el.textContent = '—'; return; }
+  const d = new Date(iso);
+  const fmt = d.toLocaleDateString('en-SG', { year: 'numeric', month: 'short', day: 'numeric' });
+  const ago = Math.floor((Date.now() - d.getTime()) / 86400000);
+  let suffix;
+  if (ago === 0) suffix = 'today';
+  else if (ago === 1) suffix = 'yesterday';
+  else if (ago < 14) suffix = ago + ' days ago';
+  else if (ago < 60) suffix = Math.floor(ago/7) + ' weeks ago';
+  else suffix = Math.floor(ago/30) + ' months ago';
+  el.textContent = fmt + ' · ' + suffix;
+  if (ago <= 7) el.classList.add('fresh');
+  else if (ago > 14) el.classList.add('stale');
+})();
+</script>
+
+</body>
+</html>

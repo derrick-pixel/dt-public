@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Five Institutional Flavours · Elitez Site Supervisor</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Spectral:wght@300;400;500;600&family=Roboto+Slab:wght@500;700;900&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Cormorant+SC:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Source+Serif+4:wght@400;500;600&family=DM+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #FAFAF7;
+      --paper: #FFFFFF;
+      --ink: #0A2540;
+      --ink-soft: #2A3D5C;
+      --muted: #6E6450;
+      --gold: #B8945F;
+      --gold-deep: #856B41;
+      --rule: #E5E1D8;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Inter Tight', system-ui, sans-serif;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 1.6;
+      letter-spacing: -0.005em;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    .head {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 56px 36px 36px 36px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: 32px;
+      border-bottom: 1px solid var(--ink);
+    }
+    .head .marque {
+      display: flex; align-items: center; gap: 14px;
+      font-family: 'Lora', serif;
+      font-weight: 600;
+      font-size: 0.92rem;
+      letter-spacing: -0.005em;
+      color: var(--gold-deep);
+      margin-bottom: 22px;
+      text-transform: uppercase;
+    }
+    .head .marque .crest {
+      width: 22px; height: 22px;
+      border: 1.5px solid var(--gold);
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .head .marque .crest::before {
+      content: ""; width: 6px; height: 6px;
+      background: var(--gold);
+      transform: rotate(45deg);
+    }
+    .head h1 {
+      font-family: 'Lora', serif;
+      font-weight: 500;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      letter-spacing: -0.025em;
+      line-height: 1.05;
+      margin: 0;
+      color: var(--ink);
+    }
+    .head h1 em { font-style: italic; color: var(--gold-deep); font-weight: 500; }
+    .head p {
+      max-width: 600px;
+      margin: 18px 0 0 0;
+      color: var(--ink-soft);
+      font-size: 1.04rem;
+      line-height: 1.65;
+      font-family: 'Lora', serif;
+    }
+    .head .meta {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: right;
+      line-height: 1.85;
+    }
+    .head .meta .v { color: var(--ink); font-weight: 600; }
+    @media (max-width: 768px) { .head { grid-template-columns: 1fr; padding: 32px 20px 24px 20px; } .head .meta { text-align: left; } }
+
+    .grid {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 48px 36px 96px 36px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+    }
+    @media (max-width: 768px) { .grid { padding: 32px 20px 64px 20px; grid-template-columns: 1fr; gap: 20px; } }
+
+    .card {
+      position: relative;
+      display: block;
+      border-radius: 0;
+      overflow: hidden;
+      transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.4s;
+      aspect-ratio: 4 / 3;
+      box-shadow: 0 4px 16px rgba(10, 37, 64, 0.06);
+      border: 1px solid var(--rule);
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 24px 56px rgba(10, 37, 64, 0.12); }
+    .card-inner { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 36px 32px; }
+    .card .meta-row { display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.7rem; opacity: 0.8; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 18px; }
+    .card .open-arrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.74rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-top: 10px;
+      transition: gap 0.22s, opacity 0.22s;
+    }
+    .card:hover .open-arrow { gap: 14px; opacity: 1; }
+
+    /* ── 01 Institutional white paper ── */
+    .f01 {
+      background: #FFFFFF;
+      color: #0A2540;
+    }
+    .f01::before {
+      content: ""; position: absolute; top: 0; left: 36px; width: 64px; height: 4px;
+      background: #B8945F;
+    }
+    .f01 .lab {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      color: #856B41;
+      text-transform: uppercase;
+    }
+    .f01 h2 {
+      font-family: 'Lora', serif;
+      font-weight: 500;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      margin: 18px 0 0 0;
+      color: #0A2540;
+    }
+    .f01 h2 em { font-style: italic; color: #856B41; font-weight: 500; }
+    .f01 .meta-row { font-family: 'Inter', sans-serif; color: #5A6378; }
+
+    /* ── 02 Private bank ── */
+    .f02 {
+      background: #F5EFE3;
+      color: #0E1F38;
+      grid-row: span 2;
+      aspect-ratio: 4 / 6;
+    }
+    .f02::before {
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 6px;
+      background: linear-gradient(90deg, #B8945F 33%, #0E1F38 33%, #0E1F38 66%, #B8945F 66%);
+    }
+    .f02 .crest {
+      width: 56px; height: 56px;
+      border: 1.5px solid #B8945F;
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 24px;
+    }
+    .f02 .crest::before {
+      content: ""; width: 32px; height: 32px;
+      background: transparent;
+      border: 1px solid #B8945F;
+      border-radius: 50%;
+    }
+    .f02 .crest::after {
+      content: "E";
+      position: absolute;
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 1.4rem;
+      color: #856B41;
+    }
+    .f02 .lab {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 0.7rem;
+      letter-spacing: 0.32em;
+      color: #856B41;
+      text-transform: uppercase;
+    }
+    .f02 h2 {
+      font-family: 'EB Garamond', serif;
+      font-weight: 500;
+      font-size: clamp(2rem, 3.6vw, 3.4rem);
+      letter-spacing: -0.025em;
+      line-height: 1.05;
+      margin: 18px 0 0 0;
+      color: #0E1F38;
+    }
+    .f02 h2 em { font-family: 'EB Garamond', serif; font-style: italic; color: #856B41; font-weight: 400; }
+    .f02 .est {
+      margin-top: 24px;
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 1.2rem;
+      color: #856B41;
+    }
+    .f02 .meta-row { font-family: 'Spectral', serif; color: #6E6450; font-style: italic; text-transform: none; letter-spacing: 0.04em; font-size: 0.86rem; }
+    @media (max-width: 768px) { .f02 { grid-row: auto; aspect-ratio: 4 / 3; } }
+
+    /* ── 03 FT broadsheet ── */
+    .f03 {
+      background: #FCEEDC;
+      color: #1A1410;
+    }
+    .f03::before {
+      content: ""; position: absolute; top: 36px; left: 32px; right: 32px; height: 0;
+      border-top: 4px double #1A1410;
+    }
+    .f03 .lab {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      color: #C8102E;
+      text-transform: uppercase;
+      font-weight: 700;
+      padding-top: 20px;
+    }
+    .f03 h2 {
+      font-family: 'Roboto Slab', serif;
+      font-weight: 900;
+      font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin: 18px 0 0 0;
+      color: #1A1410;
+      text-transform: uppercase;
+    }
+    .f03 h2 em { font-family: 'Newsreader', serif; font-style: italic; font-weight: 400; color: #C8102E; text-transform: none; }
+    .f03 .meta-row { font-family: 'JetBrains Mono', monospace; color: #6E6450; }
+
+    /* ── 04 Heritage law firm ── */
+    .f04 {
+      background: #F4EFE7;
+      color: #2A1F1A;
+      text-align: center;
+    }
+    .f04 .card-inner { padding: 48px 40px; }
+    .f04 .seal {
+      width: 56px; height: 56px;
+      margin: 0 auto 20px auto;
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .f04 .seal::before {
+      content: ""; position: absolute; inset: 0;
+      border: 1.5px solid #A4843E;
+      border-radius: 50%;
+    }
+    .f04 .seal::after {
+      content: ""; position: absolute; inset: 6px;
+      border: 1px solid #A4843E;
+      border-radius: 50%;
+    }
+    .f04 .seal .e {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: #722F37;
+    }
+    .f04 .lab {
+      font-family: 'Cormorant SC', serif;
+      font-weight: 500;
+      font-size: 0.74rem;
+      letter-spacing: 0.36em;
+      color: #722F37;
+      text-transform: uppercase;
+    }
+    .f04 h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 500;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      letter-spacing: -0.005em;
+      line-height: 1.15;
+      margin: 18px auto 0 auto;
+      max-width: 18ch;
+      color: #2A1F1A;
+    }
+    .f04 h2 em { font-style: italic; color: #722F37; font-weight: 500; }
+    .f04 .ornament {
+      margin: 18px auto 0 auto;
+      display: flex; align-items: center; justify-content: center; gap: 14px;
+      color: #A4843E;
+    }
+    .f04 .ornament .lined { width: 36px; height: 1px; background: #A4843E; }
+    .f04 .meta-row { font-family: 'Cormorant SC', serif; color: #7A6E5E; justify-content: center; letter-spacing: 0.18em; }
+
+    /* ── 05 Engineering consultancy ── */
+    .f05 {
+      background: #FFFFFF;
+      color: #0F2A33;
+      grid-column: 1 / -1;
+      aspect-ratio: 16 / 7;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding: 0;
+    }
+    .f05 .left {
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .f05 .right {
+      background: linear-gradient(160deg, #0F4C5C 0%, #082A36 100%);
+      color: #FFFFFF;
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+    .f05 .right::before {
+      content: ""; position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .f05 .right::after {
+      content: ""; position: absolute; bottom: -80px; right: -40px;
+      width: 240px; height: 240px;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 50%;
+    }
+    .f05 .lab {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      color: #0F4C5C;
+      text-transform: uppercase;
+    }
+    .f05 .right .lab { color: #B89968; position: relative; z-index: 1; }
+    .f05 h2 {
+      font-family: 'Source Serif 4', serif;
+      font-weight: 500;
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      margin: 18px 0 0 0;
+      color: #0F2A33;
+    }
+    .f05 h2 em { font-style: italic; color: #0F4C5C; font-weight: 500; }
+    .f05 .right h2 {
+      color: #FFFFFF;
+      position: relative; z-index: 1;
+    }
+    .f05 .right h2 em { color: #B89968; }
+    .f05 .meta-row { font-family: 'JetBrains Mono', monospace; color: #6B7D85; }
+    .f05 .right .open-arrow { color: #B89968; position: relative; z-index: 1; }
+    @media (max-width: 768px) {
+      .f05 { grid-column: 1 / -1; aspect-ratio: 4 / 3; grid-template-columns: 1fr; }
+      .f05 .right { display: none; }
+    }
+
+    /* footer */
+    footer {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 36px 36px 64px 36px;
+      border-top: 1px solid var(--rule);
+      display: flex; justify-content: space-between;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 0.74rem;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      text-transform: uppercase;
+      flex-wrap: wrap; gap: 16px;
+    }
+    footer a { color: var(--gold-deep); border-bottom: 1px solid var(--gold); padding-bottom: 1px; }
+    footer a:hover { color: var(--ink); border-color: var(--ink); }
+  </style>
+</head>
+<body>
+
+  <header class="head">
+    <div>
+      <div class="marque">
+        <span class="crest"></span>
+        <span>Elitez · Site Supervisor</span>
+      </div>
+      <h1>Five institutional <em>profiles.</em></h1>
+      <p>The same hero content — Singapore's BCA-licensed site supervision firm under Elitez Group — rendered across five reputable institutional registers. From McKinsey-grade white paper to private-bank annual report, FT broadsheet, heritage law firm, and engineering consultancy datasheet. Pick the institution this venture should be perceived as.</p>
+    </div>
+    <div class="meta">
+      Document <span class="v">v0.1 · Draft</span><br>
+      Strategy Office<br>
+      <span class="v">May 2026</span>
+    </div>
+  </header>
+
+  <main class="grid">
+
+    <a class="card f01" href="01-institutional-whitepaper.html">
+      <div class="card-inner">
+        <div>
+          <div class="lab">Flavour 01 · Institutional White Paper</div>
+          <h2>Singapore's <em>licensed</em> site supervision firm.</h2>
+        </div>
+        <div>
+          <div class="meta-row">
+            <span>McKinsey · BCG-coded</span><span>Lora · Inter Tight</span><span>White · navy · gold</span>
+          </div>
+          <div class="open-arrow">Open ⟶</div>
+        </div>
+      </div>
+    </a>
+
+    <a class="card f02" href="02-private-bank.html">
+      <div class="card-inner">
+        <div>
+          <div class="crest"></div>
+          <div class="lab">Flavour 02 · Private Bank · Annual Report</div>
+          <h2>Singapore's <em>licensed</em> firm — <em>established</em> under Elitez Group.</h2>
+          <div class="est">— MMXI ⟶ MMXXVI —</div>
+        </div>
+        <div>
+          <div class="meta-row">
+            <span>Goldman · JPM · Julius Baer</span><span>EB Garamond · Spectral</span><span>Cream · oxford navy · gold</span>
+          </div>
+          <div class="open-arrow">Open ⟶</div>
+        </div>
+      </div>
+    </a>
+
+    <a class="card f03" href="03-ft-broadsheet.html">
+      <div class="card-inner">
+        <div>
+          <div class="lab">// Flavour 03 · The Elitez Supervisor</div>
+          <h2>Singapore's licensed site supervision <em>firm.</em></h2>
+        </div>
+        <div>
+          <div class="meta-row">
+            <span>FT · WSJ-coded</span><span>Roboto Slab · Newsreader</span><span>Salmon · crimson · ink</span>
+          </div>
+          <div class="open-arrow">Open ⟶</div>
+        </div>
+      </div>
+    </a>
+
+    <a class="card f04" href="04-heritage-law-firm.html">
+      <div class="card-inner">
+        <div>
+          <div class="seal"><span class="e">E</span></div>
+          <div class="lab">— Flavour 04 —</div>
+          <h2>Singapore's <em>licensed</em> site supervision firm.</h2>
+          <div class="ornament">
+            <span class="lined"></span><span>❦</span><span class="lined"></span>
+          </div>
+        </div>
+        <div>
+          <div class="meta-row">
+            <span>Allen &amp; Gledhill</span><span>Cormorant SC · Lora</span><span>Cream · oxblood · gold</span>
+          </div>
+          <div class="open-arrow">Open ⟶</div>
+        </div>
+      </div>
+    </a>
+
+    <a class="card f05" href="05-engineering-consultancy.html">
+      <div class="left">
+        <div>
+          <div class="lab">// Flavour 05 · Engineering Consultancy</div>
+          <h2>Singapore's <em>licensed</em> site supervision firm — built before 2028.</h2>
+        </div>
+        <div>
+          <div class="meta-row">
+            <span>Arup · Mott MacDonald</span><span>Source Serif 4 · DM Sans</span><span>White · teal · brass</span>
+          </div>
+          <div class="open-arrow">Open ⟶</div>
+        </div>
+      </div>
+      <div class="right">
+        <div class="lab">// PROJECT ESS-001 · STATUS NOMINAL</div>
+        <h2>BCA-licensed <em>firm</em> by Q1–Q2 2028.</h2>
+        <div>
+          <div class="open-arrow">Open ⟶</div>
+        </div>
+      </div>
+    </a>
+
+  </main>
+
+  <footer>
+    <span>// Elitez Site Supervisor · institutional design selection · v0.1</span>
+    <span>
+      <a href="../flavors/index.html">Editorial set</a> ·
+      <a href="../flavors2/index.html">Futurist set</a> ·
+      <a href="../index.html">Canonical site</a>
+    </span>
+  </footer>
+
+</body>
+</html>

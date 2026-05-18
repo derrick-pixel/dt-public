@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Singapore Modernist — Elitez Site Supervisor (Flavour 03)</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200;12..96,400;12..96,500;12..96,700;12..96,800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #FAF6EC;
+      --bg-deep: #F0EAD8;
+      --ink: #0F0E0D;
+      --ink-soft: #2D2A26;
+      --gold: #C28C39;
+      --green: #2D5A3D;
+      --rule: #1F1B16;
+      --hairline: rgba(15, 14, 13, 0.18);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: 17px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--ink); text-decoration: none; }
+    .display { font-family: 'Bricolage Grotesque', sans-serif; }
+    .serif { font-family: 'Newsreader', Georgia, serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    .page { max-width: 1320px; margin: 0 auto; padding: 0 36px; }
+    @media (max-width: 768px) { .page { padding: 0 20px; } }
+
+    /* ── Top — masthead ─────────────────────────────── */
+    .mast {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      padding: 24px 0 18px 0;
+      border-bottom: 3px double var(--rule);
+      gap: 24px;
+    }
+    .mast .marque {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800;
+      font-variation-settings: "wdth" 100, "opsz" 96;
+      font-size: 1.6rem;
+      letter-spacing: -0.025em;
+    }
+    .mast .marque .acc { color: var(--gold); }
+    .mast .stripe {
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold) 0%, var(--gold) 28%, var(--green) 28%, var(--green) 64%, var(--ink) 64%);
+    }
+    .mast .nav { display: flex; gap: 22px; font-size: 0.86rem; font-weight: 600; }
+    .mast .nav a { padding-bottom: 1px; border-bottom: 1px solid transparent; transition: border-color 0.2s, color 0.2s; }
+    .mast .nav a:hover { color: var(--gold); border-color: var(--gold); }
+    @media (max-width: 768px) { .mast { grid-template-columns: 1fr; } .mast .stripe { display: none; } .mast .nav { flex-wrap: wrap; gap: 14px; font-size: 0.8rem; } }
+
+    .meta-line {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--hairline);
+      display: flex; justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+    .meta-line .ed { color: var(--green); }
+
+    /* ── Hero — newspaper-grade display ───────────────── */
+    .hero {
+      padding: 64px 0 48px 0;
+      border-bottom: 1px solid var(--hairline);
+      position: relative;
+    }
+    .hero .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 32px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .hero .eyebrow::before, .hero .eyebrow::after {
+      content: ""; flex: 0 0 auto; width: 32px; height: 1px; background: var(--gold);
+    }
+    .hero .eyebrow::after { flex: 1; }
+    .hero h1 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800;
+      font-variation-settings: "opsz" 96, "wdth" 110;
+      font-size: clamp(3.6rem, 9vw, 9rem);
+      letter-spacing: -0.05em;
+      line-height: 0.88;
+      margin: 0;
+      color: var(--ink);
+    }
+    .hero h1 em {
+      font-family: 'Newsreader', serif;
+      font-style: italic;
+      font-weight: 400;
+      font-variation-settings: "opsz" 72;
+      color: var(--gold);
+    }
+    .hero h1 .green { color: var(--green); }
+    .hero-deck {
+      display: grid;
+      grid-template-columns: 6fr 4fr;
+      gap: 64px;
+      margin-top: 56px;
+      align-items: end;
+    }
+    .hero-deck p {
+      font-family: 'Newsreader', serif;
+      font-size: 1.18rem;
+      line-height: 1.55;
+      color: var(--ink-soft);
+      margin: 0;
+      max-width: 56ch;
+    }
+    .hero-deck p .pull { color: var(--ink); font-weight: 600; font-style: italic; }
+    .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 16px 24px;
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 700;
+      font-size: 0.84rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: transform 0.22s, background 0.22s;
+    }
+    .btn-fill { background: var(--ink); color: var(--bg); }
+    .btn-fill:hover { background: var(--gold); transform: translateY(-2px); }
+    .btn-line { background: transparent; color: var(--ink); border-bottom: 2px solid var(--gold); padding: 8px 0; }
+    .btn-line:hover { color: var(--gold); }
+    @media (max-width: 900px) { .hero-deck { grid-template-columns: 1fr; gap: 36px; } }
+
+    /* ── Big numeric pull ─────────────────────────────── */
+    .numeric-row {
+      padding: 88px 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .numeric-cell {
+      padding: 0 28px 0 0;
+      border-right: 1px solid var(--hairline);
+      position: relative;
+    }
+    .numeric-cell:last-child { border-right: none; }
+    .numeric-cell:nth-child(n+2) { padding-left: 28px; }
+    .numeric-cell .num {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800;
+      font-variation-settings: "opsz" 96, "wdth" 95;
+      font-size: clamp(2.6rem, 4.8vw, 4.4rem);
+      letter-spacing: -0.04em;
+      line-height: 0.92;
+      color: var(--ink);
+      display: block;
+    }
+    .numeric-cell .num em {
+      font-family: 'Newsreader', serif;
+      font-style: italic;
+      color: var(--gold);
+      font-weight: 400;
+      font-variation-settings: "opsz" 96;
+    }
+    .numeric-cell .lbl {
+      font-family: 'Newsreader', serif;
+      font-size: 0.95rem;
+      color: var(--ink-soft);
+      margin-top: 18px;
+      display: block;
+      max-width: 26ch;
+      line-height: 1.5;
+    }
+    .numeric-cell .src {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-top: 14px;
+      display: block;
+    }
+    @media (max-width: 900px) {
+      .numeric-row { grid-template-columns: repeat(2, 1fr); gap: 32px 0; padding: 56px 0; }
+      .numeric-cell { padding: 0 18px !important; border-right: none !important; }
+    }
+    @media (max-width: 560px) { .numeric-row { grid-template-columns: 1fr; } }
+
+    /* ── Inflection feature ─────────────────────────── */
+    .inflection {
+      padding: 96px 0 88px 0;
+      display: grid;
+      grid-template-columns: 5fr 7fr;
+      gap: 64px;
+      border-bottom: 1px solid var(--hairline);
+      align-items: start;
+    }
+    .inflection .col-1 { position: sticky; top: 32px; }
+    .inflection .ed {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 200;
+      font-variation-settings: "opsz" 96, "wdth" 105;
+      font-size: clamp(2.4rem, 5vw, 4.4rem);
+      letter-spacing: -0.04em;
+      line-height: 0.92;
+      color: var(--ink);
+      margin: 0 0 24px 0;
+    }
+    .inflection .ed em {
+      font-family: 'Newsreader', serif;
+      font-style: italic;
+      font-weight: 700;
+      color: var(--green);
+    }
+    .inflection p {
+      font-family: 'Newsreader', serif;
+      font-size: 1.05rem;
+      line-height: 1.65;
+      color: var(--ink-soft);
+      margin: 0 0 16px 0;
+      max-width: 60ch;
+    }
+    .inflection .timeline {
+      list-style: none; padding: 0; margin: 32px 0 0 0;
+    }
+    .inflection .timeline li {
+      padding: 16px 0;
+      display: grid;
+      grid-template-columns: 7em 1fr;
+      gap: 18px;
+      border-top: 1px solid var(--hairline);
+      align-items: baseline;
+    }
+    .inflection .timeline li:last-child { border-bottom: 1px solid var(--hairline); }
+    .inflection .timeline .when {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800;
+      font-variation-settings: "wdth" 95;
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+    .inflection .timeline .what {
+      font-family: 'Newsreader', serif;
+      font-size: 1rem;
+      color: var(--ink);
+      line-height: 1.5;
+    }
+    .inflection .timeline .what em { font-style: italic; color: var(--green); font-weight: 700; }
+    .inflection .timeline li.now .when { color: var(--bg); background: var(--green); padding: 2px 8px; display: inline-block; }
+    @media (max-width: 900px) { .inflection { grid-template-columns: 1fr; } .inflection .col-1 { position: static; } }
+
+    /* ── Tier blocks — bold geometric ─────────────────── */
+    .tiers {
+      padding: 96px 0;
+      border-bottom: 3px double var(--rule);
+    }
+    .tiers-head {
+      display: grid;
+      grid-template-columns: 5fr 7fr;
+      gap: 64px;
+      margin-bottom: 56px;
+      align-items: end;
+    }
+    .tiers h2 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800;
+      font-variation-settings: "opsz" 96, "wdth" 100;
+      font-size: clamp(2.8rem, 5.6vw, 5rem);
+      letter-spacing: -0.04em;
+      line-height: 0.92;
+      margin: 0;
+    }
+    .tiers h2 em { font-family: 'Newsreader', serif; font-style: italic; font-weight: 400; color: var(--gold); }
+    .tiers-head p {
+      font-family: 'Newsreader', serif;
+      font-size: 1.05rem;
+      color: var(--ink-soft);
+      max-width: 56ch;
+      margin: 0;
+    }
+    .tier-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--ink);
+      border: 1px solid var(--ink);
+    }
+    .tier {
+      background: var(--bg);
+      padding: 36px 28px 32px 28px;
+      transition: background 0.25s;
+      position: relative;
+    }
+    .tier:hover { background: var(--bg-deep); }
+    .tier .lab {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 18px;
+      display: flex; justify-content: space-between;
+    }
+    .tier .lab .n {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--green);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .tier h3 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800;
+      font-variation-settings: "opsz" 72, "wdth" 105;
+      font-size: 2.2rem;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin: 0 0 18px 0;
+      color: var(--ink);
+    }
+    .tier p {
+      font-family: 'Newsreader', serif;
+      font-size: 0.96rem;
+      line-height: 1.55;
+      color: var(--ink-soft);
+      margin: 0 0 18px 0;
+    }
+    .tier ul {
+      list-style: none; padding: 0; margin: 0 0 22px 0;
+      font-family: 'Newsreader', serif;
+      font-size: 0.92rem;
+    }
+    .tier ul li {
+      padding: 8px 0; border-top: 1px solid var(--hairline);
+      color: var(--ink-soft);
+      display: grid; grid-template-columns: 18px 1fr;
+    }
+    .tier ul li::before { content: "→"; color: var(--gold); font-weight: 700; }
+    .tier .for {
+      padding-top: 16px;
+      border-top: 1px solid var(--ink);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+    @media (max-width: 900px) { .tier-grid { grid-template-columns: repeat(2, 1fr); } .tiers-head { grid-template-columns: 1fr; gap: 24px; } }
+    @media (max-width: 560px) { .tier-grid { grid-template-columns: 1fr; } }
+
+    /* ── Pull quote ──────────────────────────────────── */
+    .pull {
+      padding: 96px 0;
+      background: var(--ink);
+      color: var(--bg);
+      margin: 0 -200px;
+      padding-left: 200px;
+      padding-right: 200px;
+    }
+    @media (max-width: 1320px) { .pull { margin: 0 -36px; padding-left: 36px; padding-right: 36px; } }
+    @media (max-width: 768px) { .pull { margin: 0 -20px; padding-left: 20px; padding-right: 20px; } }
+    .pull-inner {
+      max-width: 1320px; margin: 0 auto;
+      display: grid;
+      grid-template-columns: 5fr 7fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .pull-inner .lead {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 200;
+      font-variation-settings: "opsz" 96;
+      font-size: 1.05rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .pull-inner blockquote {
+      font-family: 'Newsreader', serif;
+      font-style: italic;
+      font-weight: 400;
+      font-variation-settings: "opsz" 96;
+      font-size: clamp(1.6rem, 3vw, 2.6rem);
+      line-height: 1.32;
+      letter-spacing: -0.015em;
+      margin: 0;
+      color: var(--bg);
+    }
+    .pull-inner blockquote em { font-style: normal; color: var(--gold); font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; }
+    .pull-inner cite {
+      display: block;
+      margin-top: 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(250, 246, 236, 0.5);
+      font-style: normal;
+    }
+    @media (max-width: 900px) { .pull-inner { grid-template-columns: 1fr; gap: 24px; } }
+
+    /* ── Footer ─────────────────────────────────────── */
+    .foot {
+      padding: 56px 0 48px 0;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 32px;
+      font-family: 'Newsreader', serif;
+      font-size: 0.92rem;
+      color: var(--ink-soft);
+    }
+    .foot h4 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800;
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin: 0 0 14px 0;
+    }
+    .foot ul { list-style: none; padding: 0; margin: 0; line-height: 1.85; }
+    .foot a { border-bottom: 1px solid transparent; transition: border-color 0.2s, color 0.2s; }
+    .foot a:hover { color: var(--gold); border-color: var(--gold); }
+    @media (max-width: 768px) { .foot { grid-template-columns: 1fr 1fr; } }
+
+    .stripe-bot { height: 6px; background: linear-gradient(90deg, var(--gold) 0%, var(--gold) 33%, var(--green) 33%, var(--green) 66%, var(--ink) 66%); }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+
+    <header class="mast">
+      <div class="marque">Elitez<span class="acc"> · </span>Site Supervisor</div>
+      <div class="stripe"></div>
+      <nav class="nav">
+        <a href="#why">Why now</a>
+        <a href="#tiers">Tiers</a>
+        <a href="../about.html">About</a>
+        <a href="../contact.html">Engage</a>
+      </nav>
+    </header>
+
+    <div class="meta-line">
+      <span>Vol. 01 · Strategic Profile</span>
+      <span class="ed">Edition v0.1 · May 2026 · Singapore</span>
+    </div>
+
+    <!-- Hero ────────────────────────────────────────── -->
+    <header class="hero">
+      <div class="eyebrow">A regulated talent-supply vertical of Elitez Group</div>
+      <h1>
+        The licensed <em>firm.</em><br>
+        Built before <span class="green">2028.</span>
+      </h1>
+      <div class="hero-deck">
+        <p>
+          On <span class="pull">3 September 2025</span>, BCA announced that all building projects above S$75M must engage a BCA-licensed Site Supervision Firm from 2028. The body-shop era ends. We are filing for SAC accreditation in 2026 and BCA licence by Q1–Q2 2028 — under the platform of Elitez Group, with Adept Academy as the WSQ-funded training engine.
+        </p>
+        <div class="hero-cta">
+          <a href="../services.html" class="btn btn-fill">View Services →</a>
+          <a href="../compliance.html" class="btn btn-line">2028 Licence Track</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Numeric row ──────────────────────────────── -->
+    <section class="numeric-row" id="why">
+      <div class="numeric-cell">
+        <span class="num">S$50<em>B</em></span>
+        <span class="lbl">2026 contract-value midpoint, Singapore construction</span>
+        <span class="src">— BCA · January 2026</span>
+      </div>
+      <div class="numeric-cell">
+        <span class="num">11.6<em>–</em>13.4<em>B</em></span>
+        <span class="lbl">Civil engineering 2026 (S$). Record vs. S$9.3B in 2025.</span>
+        <span class="src">— BCA forecast</span>
+      </div>
+      <div class="numeric-cell">
+        <span class="num">110<em>–</em>170<em>M</em></span>
+        <span class="lbl">Outsourced site-supervision TAM (S$)</span>
+        <span class="src">— Triangulated</span>
+      </div>
+      <div class="numeric-cell">
+        <span class="num">200<em>–</em>300</span>
+        <span class="lbl">Year-3 deployed-headcount target</span>
+        <span class="src">— v4 base case</span>
+      </div>
+    </section>
+
+    <!-- Inflection ──────────────────────────────────── -->
+    <section class="inflection">
+      <div class="col-1">
+        <h2 class="ed">A <em>twelve-to-eighteen month</em> head-start window.</h2>
+      </div>
+      <div>
+        <p>
+          Three independent timelines converge between now and 2028. Firms that file SAC accreditation early hold a defensible competitive position. Pure body shops lose access to the largest segment of the market. The risk is not whether the opportunity exists — it is execution velocity. That risk is meaningfully reduced when the venture sits inside Elitez Group rather than as a startup.
+        </p>
+        <ul class="timeline">
+          <li><span class="when">3 Sep 2025</span><span class="what">BCA announces firm-based licensing regime architecture.</span></li>
+          <li class="now"><span class="when">Now · 2026</span><span class="what">SAC accreditation scheme opens — <em>first-mover window.</em></span></li>
+          <li><span class="when">Late 2026</span><span class="what">BCA voluntary phase begins; lift &amp; escalator firm licensing becomes mandatory in 2027.</span></li>
+          <li><span class="when">Q3 2027</span><span class="what">Elitez files SAC accreditation. ISO/IEC 17020 inspection-body framework certified.</span></li>
+          <li><span class="when">Q1–Q2 2028</span><span class="what"><em>Elitez BCA licence target</em> — six months ahead of mandatory deadline.</span></li>
+          <li><span class="when">2028</span><span class="what">Mandatory: all building projects &gt; S$75M must engage a BCA-licensed firm.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Tiers ───────────────────────────────────────── -->
+    <section class="tiers" id="tiers">
+      <div class="tiers-head">
+        <h2>Four <em>packaged</em> offerings.</h2>
+        <p>
+          Calibrated to procurement preference. The Train tier — WSQ-funded supervisor upskilling delivered through Adept Academy — is structurally distinct from any Tier-3 competitor. None operates an in-house WSQ school.
+        </p>
+      </div>
+      <div class="tier-grid">
+
+        <article class="tier">
+          <div class="lab"><span>Tier 01 / Supply</span><span class="n">01</span></div>
+          <h3>Supply</h3>
+          <p>Time-and-attendance supply of accredited REs and RTOs. Client owns the QP(S).</p>
+          <ul>
+            <li><span></span><span>JAC accreditation maintained</span></li>
+            <li><span></span><span>Replacement-on-demand SLA</span></li>
+            <li><span></span><span>MOM compliance · payroll · levy</span></li>
+          </ul>
+          <div class="for">For Tier 1–3 consultancies · main contractors</div>
+        </article>
+
+        <article class="tier">
+          <div class="lab"><span>Tier 02 / Manage</span><span class="n">02</span></div>
+          <h3>Manage</h3>
+          <p>Full team led by deployed RE; seconded QP(S) signs off. Single point of accountability.</p>
+          <ul>
+            <li><span></span><span>Weekly reporting dashboard</span></li>
+            <li><span></span><span>Structured NCR escalation</span></li>
+            <li><span></span><span>Repeat-assignment matching</span></li>
+          </ul>
+          <div class="for">For mid developers · institutional owners</div>
+        </article>
+
+        <article class="tier">
+          <div class="lab"><span>Tier 03 / Certify</span><span class="n">03</span></div>
+          <h3>Certify</h3>
+          <p>Full BCA-licensed firm services from 2027/28. For projects above S$75M.</p>
+          <ul>
+            <li><span></span><span>ISO/IEC 17020 framework</span></li>
+            <li><span></span><span>Site Supervision Plan authorship</span></li>
+            <li><span></span><span>PPVC · MET · façade · datacentre</span></li>
+          </ul>
+          <div class="for">For majors · public sector · specialist projects</div>
+        </article>
+
+        <article class="tier">
+          <div class="lab"><span>Tier 04 / Train</span><span class="n">04</span></div>
+          <h3>Train</h3>
+          <p>WSQ-funded supervisor training via Adept Academy. The structural moat.</p>
+          <ul>
+            <li><span></span><span>BCSS-aligned conversion</span></li>
+            <li><span></span><span>JAC-recognised CPD</span></li>
+            <li><span></span><span>50–90% SSG funding</span></li>
+          </ul>
+          <div class="for">For construction firms · recruitment funnel</div>
+        </article>
+
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Pull quote (full bleed) ───────────────────────── -->
+  <section class="pull">
+    <div class="pull-inner">
+      <div class="lead">v4 Proposal · §5.2 — The Aviation Precedent</div>
+      <div>
+        <blockquote>
+          Site Supervision is, in effect, <em>Aviation 2.0</em> with a different regulator. The same playbook — regulated talent pool, government-scheme alignment, overseas mass-recruitment infrastructure, long-tenure deployment — transferred into the BCA firm-based regime.
+          <cite>— Strategy Office · May 2026</cite>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <div class="page">
+    <footer class="foot">
+      <div>
+        <h4>Elitez · Site Supervisor</h4>
+        <p style="margin: 0;">A regulated talent-supply vertical of Elitez Group. Filing for SAC accreditation 2026 / BCA licence Q1–Q2 2028.</p>
+      </div>
+      <div>
+        <h4>Tiers</h4>
+        <ul>
+          <li><a href="../services.html#supply">Supply</a></li>
+          <li><a href="../services.html#manage">Manage</a></li>
+          <li><a href="../services.html#certify">Certify</a></li>
+          <li><a href="../train.html">Train</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="../about.html">About</a></li>
+          <li><a href="../compliance.html">Compliance</a></li>
+          <li><a href="../sectors.html">Sectors</a></li>
+          <li><a href="../contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>This flavour</h4>
+        <ul>
+          <li>03 · Singapore Modernist</li>
+          <li><a href="index.html">← Back to selection</a></li>
+        </ul>
+      </div>
+    </footer>
+  </div>
+
+  <div class="stripe-bot"></div>
+
+</body>
+</html>

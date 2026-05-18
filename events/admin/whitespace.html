@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Whitespace Atlas — Elitez Events</title>
+  <meta name="description" content="Whitespace atlas for Elitez Events: strategy-canvas radar across eight competitor dimensions, segment×need heatmap of 35 competitors, and four ranked attack plans where the SG corporate-event category is open to bespoke entry.">
+  <link rel="icon" href="../assets/img/logo-mark.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/site.css">
+  <link rel="stylesheet" href="../assets/css/intel-refresh.css">
+  <script src="../assets/vendor/chart.umd.js"></script>
+<style>
+    /* ─── Last-edited stamp · injected ─── */
+    .last-edited-strip {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+      padding: 5px 14px; text-align: right;
+      font-family: ui-monospace, "Share Tech Mono", monospace;
+      font-size: 0.72rem; letter-spacing: 0.05em;
+      color: rgba(140,140,140,0.85);
+      background: rgba(0,0,0,0.03);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .last-edited-strip strong { color: rgba(60,60,60,0.85); font-weight: 500; }
+    #last-edited { color: #d06010; font-weight: 600; }
+    #last-edited.fresh { color: #0a8a4a; }
+    #last-edited.stale { color: #c82040; }
+</style>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body class="admin-page">
+  <nav class="ee-nav" id="ee-nav">
+    <a href="../index.html" class="brand" aria-label="Elitez Events — home">
+      <img src="../assets/img/logo-wordmark.png" alt="Elitez" class="logo-wordmark">
+      <span class="events-tag">Events</span>
+    </a>
+    <div class="links">
+      <a href="../services.html">Expertise</a>
+      <a href="../work.html">Work</a>
+      <a href="../about.html">About</a>
+      <a href="index.html" class="active">Market Intel</a>
+      <a href="../contact.html">Contact</a>
+    </div>
+    <a href="../contact.html" class="cta">Plan an event</a>
+  </nav>
+
+<div class="last-edited-strip" role="status" aria-live="polite">
+  <strong>Page last edited:</strong> <span id="last-edited" data-edited="2026-05-02T09:27:11+08:00">checking…</span>
+</div>
+
+
+  <nav class="admin-nav">
+    <a href="index.html">Competitors</a>
+    <a href="insights.html">Market &amp; Pricing</a>
+    <a href="whitespace.html" class="active">Whitespace Atlas</a>
+    <a href="design-audit.html">Design Audit</a>
+    <a href="competitor-analytics.html">Analytics</a>
+    <a href="report.html">Report</a>
+  </nav>
+
+  <main class="container-wide">
+    <span class="eyebrow">Artefact 06</span>
+    <h1>Whitespace Atlas</h1>
+    <p style="max-width:880px;line-height:1.6;color:var(--ee-muted);font-size:0.98rem;">Three artefacts work together to identify where the SG corporate-event category is open and where Elitez can win. The strategy-canvas radar plots existing competitors against the dimensions buyers evaluate; flat patches signal differentiation opportunities. The segment&times;need heatmap counts how many competitors genuinely serve each pair (score &ge; 3) — green is whitespace, amber is contested, red is crowded; click any cell for the player list. The four ranked attack plans translate findings into concrete go-to-market specs (ICP, TAM, gap thesis, why-we-win, channel, pitch, pricing, content). Cross-link to <a href="index.html">competitors</a>, <a href="insights.html">market &amp; pricing</a>, <a href="design-audit.html">design audit</a>, the <a href="report.html">printable report</a>, or the parent <a href="../index.html">Elitez Events site</a>.</p>
+    <p id="projection-note" style="color: var(--ee-muted); max-width: 880px; font-size: 0.9rem; font-style: italic;"></p>
+
+    <section style="padding: 16px 0 32px;">
+      <div class="radar-container">
+        <span class="artefact-label">Strategy canvas</span>
+        <h2>Eight axes vs. 35 competitors</h2>
+        <p class="radar-thesis" id="thesis"></p>
+        <div style="height: 540px; min-width: 0;"><canvas id="radar-canvas" aria-label="Radar chart of strategic dimensions versus competitors"></canvas></div>
+      </div>
+    </section>
+
+    <section style="padding: 16px 0 32px;">
+      <span class="artefact-label">Heatmap</span>
+      <h2 id="heatmap-title">Segment &times; Need</h2>
+      <p style="max-width: 820px; color: var(--ee-muted); font-size: 0.9rem; line-height: 1.55;">
+        Each cell shows two numbers: count of competitors genuinely serving that pair (score &ge; 3), and Elitez's own capability score (out of 5). Click any cell for the pair-specific competitor breakdown.
+      </p>
+      <div class="heatmap-wrap"><div id="heatmap"></div></div>
+      <div class="legend">
+        <span><span class="legend-swatch" style="background: rgba(31,107,79,0.10); border: 1px solid #1F6B4F;"></span>Green &le; 1 — whitespace, attack</span>
+        <span><span class="legend-swatch" style="background: rgba(182,90,31,0.12); border: 1px solid #B65A1F;"></span>Amber 2-3 — contested</span>
+        <span><span class="legend-swatch" style="background: rgba(138,31,31,0.10); border: 1px solid #8A1F1F;"></span>Red &ge; 4 — crowded</span>
+      </div>
+      <div id="cell-detail" class="cell-detail" style="display: none;"></div>
+    </section>
+
+    <section style="padding: 16px 0 56px;">
+      <span class="artefact-label">Attack plans · Top 4</span>
+      <h2>Where Elitez Events attacks first</h2>
+      <p style="max-width: 760px; color: var(--ee-muted); font-size: 0.9rem; line-height: 1.55;">Ranked by win probability &times; addressable size. Each plan binds to a green or low-amber cell on the heatmap above.</p>
+      <div id="attack-plans" class="attack-grid" style="margin-top: 18px;"></div>
+    </section>
+  </main>
+
+  <footer style="padding:24px 28px;border-top:1px solid var(--ee-border);font-size:13px;color:var(--ee-muted);max-width:1400px;margin:48px auto 0;">
+    <p>Elitez Events intel pack · sourced from <a href="../index.html">elitez-events.com</a> public-site evidence and the <a href="../README.md">competitor-research repo</a>.</p>
+  </footer>
+
+  <script type="module">
+    import { loadAppData, mountSampleBanner } from '../assets/js/app.js';
+    import { renderRadar } from '../assets/js/viz/radar.js';
+    import { renderHeatmap, renderCellDetail } from '../assets/js/viz/heatmap.js';
+    import { h, mount } from '../assets/js/dom.js';
+
+    const data = await loadAppData('../data');
+    mountSampleBanner();
+
+    const ws = data.whitespace;
+    document.getElementById('thesis').textContent = ws.strategy_canvas.headline_thesis || '';
+
+    if (ws.meta?.our_score_projection_note) {
+      document.getElementById('projection-note').textContent = '⚠ ' + ws.meta.our_score_projection_note;
+    }
+
+    renderRadar({
+      canvas: document.getElementById('radar-canvas'),
+      dimensions: ws.strategy_canvas.dimensions,
+      scores: ws.strategy_canvas.scores
+    });
+
+    document.getElementById('heatmap-title').textContent =
+      `Segment × Need — ${ws.heatmap.segments.length} × ${ws.heatmap.needs.length}`;
+
+    const panel = document.getElementById('cell-detail');
+    renderHeatmap({
+      container: document.getElementById('heatmap'),
+      segments: ws.heatmap.segments,
+      needs: ws.heatmap.needs,
+      cells: ws.heatmap.cells,
+      onCellClick: detail => {
+        panel.style.display = 'block';
+        renderCellDetail(panel, detail);
+        panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+
+    // Attack-plan niche cards (left-rail rank/TAM + right body)
+    const fmtTam = n => {
+      const v = Number(n);
+      if (!Number.isFinite(v)) return '—';
+      if (v >= 1_000_000) return 'S$' + (v / 1_000_000).toFixed(v >= 10_000_000 ? 0 : 1) + 'M';
+      if (v >= 1_000) return 'S$' + (v / 1_000).toFixed(0) + 'K';
+      return 'S$' + v.toLocaleString();
+    };
+    const pad2 = n => String(n).padStart(2, '0');
+
+    const niche = p => h('div', { class: 'niche' },
+      h('div', { class: 'niche-rail' },
+        h('div', {},
+          h('div', { class: 'niche-rank-tag' }, 'Attack plan'),
+          h('div', { class: 'niche-rank-num' }, h('span', {}, '#'), pad2(p.rank))
+        ),
+        h('div', { class: 'niche-tam-block' },
+          h('div', { class: 'niche-tam-label' }, 'Addressable TAM'),
+          h('div', { class: 'niche-tam-value' }, fmtTam(p.tam_estimate_sgd)),
+          h('div', { class: 'niche-tam-suffix' }, 'annual / SG')
+        )
+      ),
+      h('div', { class: 'niche-body' },
+        h('h3', { class: 'niche-name' }, p.niche_name),
+        h('div', { class: 'niche-icp' },
+          h('div', { class: 'label' }, 'ICP'),
+          h('div', { class: 'text' }, p.icp)
+        ),
+        h('div', { class: 'niche-strategy' },
+          h('div', { class: 'niche-strat-card gap' },
+            h('div', { class: 'head' }, h('span', { class: 'glyph' }, '!'), 'Why the gap exists'),
+            h('div', { class: 'body' }, p.why_gap)
+          ),
+          h('div', { class: 'niche-strat-card win' },
+            h('div', { class: 'head' }, h('span', { class: 'glyph' }, '✓'), 'Why we win'),
+            h('div', { class: 'body' }, p.why_we_win)
+          )
+        ),
+        h('div', { class: 'niche-tam-logic' },
+          h('strong', {}, 'TAM derivation'), p.tam_reasoning
+        ),
+        h('div', { class: 'niche-gtm' },
+          h('div', { class: 'niche-gtm-title' }, 'Go-to-market plays'),
+          h('div', { class: 'niche-gtm-rows' },
+            ...[
+              ['Pricing', p.gtm.pricing, 'pricing'],
+              ['Channel', p.gtm.channel, ''],
+              ['Pitch',   p.gtm.pitch, ''],
+              ['Content', p.gtm.content, '']
+            ].map(([k, v, mod]) =>
+              h('div', { class: 'niche-gtm-row ' + mod },
+                h('div', { class: 'k' }, k),
+                h('div', { class: 'v' }, v)
+              )
+            )
+          )
+        )
+      )
+    );
+
+    mount(document.getElementById('attack-plans'), ...ws.attack_plans.map(niche));
+  </script>
+
+<script>
+(function () {
+  const el = document.getElementById('last-edited');
+  if (!el) return;
+  const iso = el.dataset.edited;
+  if (!iso) { el.textContent = '—'; return; }
+  const d = new Date(iso);
+  const fmt = d.toLocaleDateString('en-SG', { year: 'numeric', month: 'short', day: 'numeric' });
+  const ago = Math.floor((Date.now() - d.getTime()) / 86400000);
+  let suffix;
+  if (ago === 0) suffix = 'today';
+  else if (ago === 1) suffix = 'yesterday';
+  else if (ago < 14) suffix = ago + ' days ago';
+  else if (ago < 60) suffix = Math.floor(ago/7) + ' weeks ago';
+  else suffix = Math.floor(ago/30) + ' months ago';
+  el.textContent = fmt + ' · ' + suffix;
+  if (ago <= 7) el.classList.add('fresh');
+  else if (ago > 14) el.classList.add('stale');
+})();
+</script>
+
+</body>
+</html>

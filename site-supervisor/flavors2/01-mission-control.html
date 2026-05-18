@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mission Control — Elitez Site Supervisor (Flavour 01·F)</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Space+Mono:wght@400;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #050505;
+      --bg-deep: #000;
+      --crt: #FFA040;
+      --crt-soft: #B8702A;
+      --crt-dim: #6B4318;
+      --amber: #FFD66B;
+      --green: #5BFF8B;
+      --red: #FF4646;
+      --paper: #FFCC88;
+      --rule: rgba(255, 160, 64, 0.22);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--crt);
+      font-family: 'Space Mono', ui-monospace, monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      letter-spacing: 0.02em;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      text-shadow: 0 0 1px rgba(255, 160, 64, 0.6);
+    }
+    body::before {
+      content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 1;
+      background: repeating-linear-gradient(0deg,
+        rgba(0,0,0,0) 0,
+        rgba(0,0,0,0) 2px,
+        rgba(0,0,0,0.18) 2px,
+        rgba(0,0,0,0.18) 3px);
+    }
+    body::after {
+      content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 2;
+      background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.55) 100%);
+    }
+    a { color: var(--amber); text-decoration: none; }
+    a:hover { color: var(--green); }
+
+    .crt { position: relative; z-index: 3; }
+    .vt { font-family: 'VT323', 'Space Mono', monospace; font-size: 1.35em; line-height: 1; }
+
+    /* ── Telemetry header ─────────────────────────── */
+    .telemetry {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      align-items: center;
+      gap: 24px;
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--crt);
+      font-size: 0.78rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+    .telemetry .marque {
+      font-family: 'VT323', monospace;
+      font-size: 1.6rem;
+      letter-spacing: 0.04em;
+      color: var(--crt);
+    }
+    .telemetry .marque .blink::after {
+      content: "_"; animation: blink 1s steps(2, start) infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+    .telemetry .stat {
+      display: flex; gap: 8px; color: var(--crt-soft); font-size: 0.7rem;
+    }
+    .telemetry .stat .v { color: var(--amber); }
+    .telemetry .stat .v.go { color: var(--green); }
+    .telemetry .stat::before {
+      content: "●"; color: var(--green); font-size: 0.6rem; align-self: center;
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+    @keyframes pulse { 50% { opacity: 0.3; } }
+    .telemetry .nav { display: flex; gap: 14px; font-size: 0.7rem; color: var(--crt-soft); }
+    .telemetry .nav a:hover { color: var(--green); }
+    @media (max-width: 768px) { .telemetry { grid-template-columns: 1fr; gap: 8px; } }
+
+    /* ── Console layout ───────────────────────────── */
+    .console {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 28px;
+    }
+
+    .panel {
+      border: 1px solid var(--crt);
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      background: rgba(255, 160, 64, 0.03);
+      position: relative;
+    }
+    .panel::before {
+      content: "";
+      position: absolute; top: -1px; left: 18px;
+      width: 8px; height: 3px;
+      background: var(--green);
+    }
+    .panel-head {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-bottom: 12px;
+      margin-bottom: 18px;
+      border-bottom: 1px dashed var(--rule);
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .panel-head .id { color: var(--green); }
+    .panel-head .lbl { color: var(--crt-soft); }
+    .panel-head .ts { color: var(--amber); }
+
+    /* ── Hero terminal ────────────────────────────── */
+    .hero {
+      display: grid;
+      grid-template-columns: 7fr 5fr;
+      gap: 32px;
+      padding: 48px 24px 48px 24px;
+    }
+    .hero h1 {
+      font-family: 'Orbitron', monospace;
+      font-weight: 900;
+      font-size: clamp(2.4rem, 5.6vw, 5rem);
+      letter-spacing: -0.005em;
+      line-height: 0.95;
+      margin: 0;
+      color: var(--paper);
+      text-shadow: 0 0 8px rgba(255, 160, 64, 0.4), 0 0 24px rgba(255, 160, 64, 0.15);
+    }
+    .hero h1 .o { color: var(--crt); }
+    .hero h1 .g { color: var(--green); text-shadow: 0 0 8px rgba(91, 255, 139, 0.4); }
+    .hero .prelude {
+      font-family: 'VT323', monospace;
+      font-size: 1.4rem;
+      color: var(--green);
+      margin-bottom: 24px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .hero .prelude .arrow::after { content: ">"; color: var(--amber); }
+
+    .hero-readout {
+      border: 1px solid var(--crt);
+      padding: 18px 22px;
+      font-size: 0.78rem;
+      line-height: 1.85;
+      background: rgba(0, 0, 0, 0.5);
+    }
+    .hero-readout h3 {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.74rem;
+      letter-spacing: 0.16em;
+      color: var(--green);
+      margin: 0 0 14px 0;
+      text-transform: uppercase;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .hero-readout .row {
+      display: grid; grid-template-columns: 9em 1fr;
+      padding: 4px 0;
+      border-bottom: 1px dashed var(--rule);
+    }
+    .hero-readout .row:last-child { border-bottom: none; }
+    .hero-readout .k { color: var(--crt-soft); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; padding-top: 2px; }
+    .hero-readout .v { color: var(--paper); }
+    .hero-readout .v.go { color: var(--green); }
+    .hero-readout .v.go::before { content: "[GO] "; }
+
+    .hero .runway {
+      margin-top: 36px;
+      display: flex; align-items: stretch; gap: 0;
+      border-top: 1px solid var(--crt);
+      padding-top: 18px;
+    }
+    .hero .runway .mode {
+      display: flex; align-items: center; gap: 8px;
+      font-family: 'VT323', monospace;
+      font-size: 1.2rem;
+      letter-spacing: 0.04em;
+      padding: 8px 16px 8px 0;
+      color: var(--crt-soft);
+      border-right: 1px solid var(--rule);
+    }
+    .hero .runway .mode .led {
+      width: 8px; height: 8px;
+      background: var(--crt-dim);
+      border-radius: 50%;
+      box-shadow: 0 0 4px var(--crt-dim) inset;
+    }
+    .hero .runway .mode.active { color: var(--green); padding-left: 16px; }
+    .hero .runway .mode.active .led { background: var(--green); box-shadow: 0 0 8px var(--green), 0 0 1px var(--green) inset; }
+    .hero .runway .mode:first-child { padding-left: 0; }
+    .hero .runway .mode:last-child { border-right: none; }
+    @media (max-width: 900px) { .hero { grid-template-columns: 1fr; } .hero .runway { flex-wrap: wrap; gap: 8px; } }
+
+    /* ── Telemetry stat grid ─────────────────────── */
+    .telemetry-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--crt);
+      border: 1px solid var(--crt);
+    }
+    .tcell {
+      background: var(--bg-deep);
+      padding: 22px 20px;
+      position: relative;
+    }
+    .tcell .id {
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      color: var(--green);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 12px;
+    }
+    .tcell .num {
+      font-family: 'VT323', monospace;
+      font-size: clamp(1.8rem, 3.4vw, 2.8rem);
+      letter-spacing: 0.02em;
+      color: var(--amber);
+      line-height: 1;
+      display: block;
+      text-shadow: 0 0 8px rgba(255, 214, 107, 0.3);
+    }
+    .tcell .lbl {
+      margin-top: 14px;
+      font-size: 0.74rem;
+      color: var(--paper);
+      line-height: 1.5;
+      display: block;
+      max-width: 28ch;
+    }
+    .tcell .src {
+      margin-top: 12px;
+      font-size: 0.62rem;
+      letter-spacing: 0.16em;
+      color: var(--crt-soft);
+      text-transform: uppercase;
+      display: block;
+    }
+    @media (max-width: 900px) { .telemetry-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .telemetry-grid { grid-template-columns: 1fr; } }
+
+    /* ── Trajectory timeline ─────────────────────── */
+    .traj {
+      display: grid;
+      grid-template-columns: 12em 1fr 1fr;
+      gap: 0;
+      font-size: 0.84rem;
+    }
+    .traj > div { padding: 12px 18px; border-bottom: 1px solid var(--rule); }
+    .traj .head-row { color: var(--green); font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; padding-bottom: 8px; border-bottom: 1px solid var(--crt); }
+    .traj .when { color: var(--amber); font-family: 'VT323', monospace; font-size: 1.1rem; letter-spacing: 0.06em; }
+    .traj .ev { color: var(--paper); }
+    .traj .ev em { color: var(--green); font-style: normal; font-weight: 700; }
+    .traj .stat-cell { color: var(--crt-soft); font-size: 0.74rem; }
+    .traj .now-row .when { color: var(--green); }
+    .traj .now-row .stat-cell { color: var(--green); }
+    .traj .now-row .stat-cell::before { content: "▶ "; }
+    @media (max-width: 768px) { .traj { grid-template-columns: 1fr; } .traj > div { padding: 6px 12px; } }
+
+    /* ── Tier pads (mission modules) ──────────────── */
+    .modules {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .module {
+      border: 1px solid var(--crt);
+      padding: 24px;
+      position: relative;
+      transition: background 0.25s, border-color 0.25s;
+      background: rgba(255, 160, 64, 0.02);
+    }
+    .module:hover { border-color: var(--green); background: rgba(91, 255, 139, 0.04); }
+    .module::before {
+      content: "";
+      position: absolute; top: 8px; right: 8px;
+      width: 8px; height: 8px;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+      border-radius: 50%;
+    }
+    .module .id-row {
+      display: flex; justify-content: space-between; padding-bottom: 10px;
+      border-bottom: 1px dashed var(--rule);
+      font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--green);
+    }
+    .module .id-row .num {
+      font-family: 'VT323', monospace; font-size: 1rem; color: var(--amber);
+    }
+    .module h3 {
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 1.6rem;
+      letter-spacing: 0.04em;
+      margin: 18px 0 16px 0;
+      color: var(--paper);
+      text-shadow: 0 0 8px rgba(255, 204, 136, 0.3);
+      text-transform: uppercase;
+    }
+    .module p { color: var(--crt); font-size: 0.86rem; line-height: 1.55; margin: 0 0 18px 0; }
+    .module ul {
+      list-style: none; padding: 0; margin: 0;
+      font-size: 0.78rem;
+    }
+    .module ul li {
+      padding: 7px 0; border-top: 1px dashed var(--rule);
+      color: var(--paper);
+      display: grid; grid-template-columns: 22px 1fr; gap: 8px;
+    }
+    .module ul li::before { content: "→"; color: var(--green); }
+    .module .for {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--crt);
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--green);
+    }
+    @media (max-width: 768px) { .modules { grid-template-columns: 1fr; } }
+
+    /* ── Footer terminal line ─────────────────── */
+    .term {
+      margin-top: 24px;
+      padding: 14px 28px;
+      border-top: 1px solid var(--crt);
+      font-family: 'VT323', monospace;
+      font-size: 1.1rem;
+      color: var(--green);
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+    }
+    .term .prompt::after { content: "_"; animation: blink 1s steps(2, start) infinite; }
+  </style>
+</head>
+<body>
+
+  <div class="crt">
+
+    <header class="telemetry">
+      <div class="marque">ELITEZ&middot;ESS<span class="blink"></span></div>
+      <div class="stat"><span class="lbl">SYS:</span><span class="v go">NOMINAL</span></div>
+      <div class="stat"><span class="lbl">TLM:</span><span class="v">T-21M</span></div>
+      <nav class="nav">
+        <a href="#why">[01] WHY-NOW</a>
+        <a href="#traj">[02] TRAJECTORY</a>
+        <a href="#mod">[03] MODULES</a>
+        <a href="../index.html">[← HOME]</a>
+      </nav>
+    </header>
+
+    <main class="console">
+
+      <!-- Hero ─────────────────────────────────── -->
+      <section class="panel">
+        <div class="panel-head">
+          <span class="id">[A] HERO · MISSION BRIEF</span>
+          <span class="lbl">CHANNEL // STRATEGY-OFFICE</span>
+          <span class="ts">2026-05-08 · 14:22 SGT</span>
+        </div>
+        <div class="hero">
+          <div>
+            <div class="prelude vt"><span class="arrow"></span> INITIALISE :: CONSTRUCTION-SUPERVISION FIRM</div>
+            <h1>
+              <span class="o">SINGAPORE'S</span><br>
+              LICENSED<br>
+              SITE SUPERVISION<br>
+              <span class="g">FIRM_</span>
+            </h1>
+
+            <div class="runway">
+              <div class="mode active"><span class="led"></span><span>Track 1 · Cash Now</span></div>
+              <div class="mode active"><span class="led"></span><span>Track 2 · Licence 2028</span></div>
+              <div class="mode"><span class="led"></span><span>Track 3 · Region Y4+</span></div>
+            </div>
+          </div>
+
+          <aside class="hero-readout">
+            <h3>// MISSION READOUT</h3>
+            <div class="row"><span class="k">callsign</span><span class="v">ESS-001</span></div>
+            <div class="row"><span class="k">regulator</span><span class="v">BCA · BLDG ENG GRP</span></div>
+            <div class="row"><span class="k">announce</span><span class="v">2025-09-03</span></div>
+            <div class="row"><span class="k">mandatory</span><span class="v">2028-Q1 · &gt; S$75M</span></div>
+            <div class="row"><span class="k">scheme</span><span class="v">SAC ISO/IEC 17020</span></div>
+            <div class="row"><span class="k">filing target</span><span class="v go">2027-Q3</span></div>
+            <div class="row"><span class="k">licence target</span><span class="v go">2028-Q1/Q2</span></div>
+            <div class="row"><span class="k">platform</span><span class="v">ELITEZ GROUP · VISION 2027</span></div>
+            <div class="row"><span class="k">precedent</span><span class="v">AVIATION · ALSS · 2025</span></div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- Telemetry stats ───────────────────────── -->
+      <section class="panel" id="why">
+        <div class="panel-head">
+          <span class="id">[B] DEMAND TELEMETRY · SG CONSTRUCTION</span>
+          <span class="lbl">FRAME 02 OF 04</span>
+          <span class="ts">SAMPLE WINDOW · Q1 2026</span>
+        </div>
+        <div class="telemetry-grid">
+          <div class="tcell">
+            <span class="id">DEM-001</span>
+            <span class="num">S$50B</span>
+            <span class="lbl">2026 contract-value midpoint</span>
+            <span class="src">SRC // BCA · JAN 2026</span>
+          </div>
+          <div class="tcell">
+            <span class="id">DEM-002</span>
+            <span class="num">$11.6-13.4B</span>
+            <span class="lbl">Civil engineering 2026 — record</span>
+            <span class="src">SRC // BCA FORECAST</span>
+          </div>
+          <div class="tcell">
+            <span class="id">DEM-003</span>
+            <span class="num">$110-170M</span>
+            <span class="lbl">Outsourced site-supervision TAM</span>
+            <span class="src">SRC // TRIANGULATED</span>
+          </div>
+          <div class="tcell">
+            <span class="id">DEM-004</span>
+            <span class="num">200-300</span>
+            <span class="lbl">Year-3 deployed-headcount target</span>
+            <span class="src">SRC // V4 BASE-CASE</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Trajectory ────────────────────────────── -->
+      <section class="panel" id="traj">
+        <div class="panel-head">
+          <span class="id">[C] FLIGHT TRAJECTORY · LICENCE-TRACK</span>
+          <span class="lbl">FRAME 03 OF 04</span>
+          <span class="ts">REV 0.1 · DRAFT</span>
+        </div>
+        <div class="traj">
+          <div class="head-row">// T &amp; T</div>
+          <div class="head-row">// EVENT</div>
+          <div class="head-row">// STATUS</div>
+
+          <div class="when">2025-09-03</div>
+          <div class="ev">BCA announces firm-based licensing regime architecture</div>
+          <div class="stat-cell">[CMPLT] · ARCHIVED</div>
+
+          <div class="now-row when">NOW · 2026</div>
+          <div class="now-row ev">SAC accreditation scheme opens — <em>first-mover window active</em></div>
+          <div class="now-row stat-cell">ACTIVE · NOMINAL</div>
+
+          <div class="when">2026-Q4</div>
+          <div class="ev">BCA voluntary licence applications open</div>
+          <div class="stat-cell">[QUEUED]</div>
+
+          <div class="when">2027-Q3</div>
+          <div class="ev">Elitez files SAC accreditation · ISO 17020 mock audit</div>
+          <div class="stat-cell">[STAGED · T-15M]</div>
+
+          <div class="when">2028-Q1/Q2</div>
+          <div class="ev">Elitez BCA licence target · 6 months ahead of mandatory</div>
+          <div class="stat-cell">[STAGED · T-21M]</div>
+
+          <div class="when">2028-01-01</div>
+          <div class="ev">MANDATORY: building projects &gt; S$75M require licensed firm</div>
+          <div class="stat-cell">EXTERNAL DEADLINE</div>
+        </div>
+      </section>
+
+      <!-- Modules ───────────────────────────────── -->
+      <section class="panel" id="mod">
+        <div class="panel-head">
+          <span class="id">[D] MISSION MODULES · 4 PACKAGED OFFERINGS</span>
+          <span class="lbl">FRAME 04 OF 04</span>
+          <span class="ts">CONFIGURATION · ESS-CFG-A</span>
+        </div>
+
+        <div class="modules">
+
+          <article class="module">
+            <div class="id-row"><span>MOD/SUPPLY</span><span class="num">[01]</span></div>
+            <h3>SUPPLY</h3>
+            <p>// T&amp;A supply of accredited REs and RTOs. Client owns the QP(S).</p>
+            <ul>
+              <li><span></span><span>JAC accreditation maintained</span></li>
+              <li><span></span><span>Replacement-on-demand SLA</span></li>
+              <li><span></span><span>MOM compliance · payroll · levy</span></li>
+              <li><span></span><span>PI insurance scaling</span></li>
+            </ul>
+            <div class="for">[FOR] TIER 1-3 CONSULTANCIES · MAIN CONTRACTORS</div>
+          </article>
+
+          <article class="module">
+            <div class="id-row"><span>MOD/MANAGE</span><span class="num">[02]</span></div>
+            <h3>MANAGE</h3>
+            <p>// Full team led by deployed RE. Seconded QP(S) signs off.</p>
+            <ul>
+              <li><span></span><span>Single accountable point</span></li>
+              <li><span></span><span>Weekly digital reporting</span></li>
+              <li><span></span><span>NCR escalation</span></li>
+              <li><span></span><span>Repeat-assignment matching</span></li>
+            </ul>
+            <div class="for">[FOR] MID DEVELOPERS · INSTITUTIONAL OWNERS</div>
+          </article>
+
+          <article class="module">
+            <div class="id-row"><span>MOD/CERTIFY</span><span class="num">[03]</span></div>
+            <h3>CERTIFY</h3>
+            <p>// Full BCA-licensed firm services from 2027/28 — projects &gt; S$75M.</p>
+            <ul>
+              <li><span></span><span>ISO/IEC 17020 framework</span></li>
+              <li><span></span><span>Site Supervision Plan authorship</span></li>
+              <li><span></span><span>SAC-calibrated equipment</span></li>
+              <li><span></span><span>Specialist disciplines (PPVC/MET/façade)</span></li>
+            </ul>
+            <div class="for">[FOR] MAJORS · PUBLIC SECTOR · SPECIALIST</div>
+          </article>
+
+          <article class="module">
+            <div class="id-row"><span>MOD/TRAIN</span><span class="num">[04]</span></div>
+            <h3>TRAIN</h3>
+            <p>// WSQ-funded supervisor training via Adept Academy. Structural moat.</p>
+            <ul>
+              <li><span></span><span>BCSS-aligned conversion</span></li>
+              <li><span></span><span>JAC-recognised CPD</span></li>
+              <li><span></span><span>50–90% SSG funding</span></li>
+              <li><span></span><span>SCTP / CCP funded reskill</span></li>
+            </ul>
+            <div class="for">[FOR] CONSTRUCTION FIRMS · RECRUITMENT FUNNEL</div>
+          </article>
+
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="term">
+      <span class="prompt">elitez:~$ session.terminate --status=nominal --next-poll=2026-05-09</span>
+      <span><a href="index.html">[BACK TO SELECTION]</a> · <a href="../index.html">[PUBLIC SITE]</a></span>
+    </footer>
+
+  </div>
+
+</body>
+</html>

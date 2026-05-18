@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Five Futuristic Flavours · Elitez Site Supervisor</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;400;500;700&family=Geist+Mono:wght@400;500&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;700&family=VT323&family=Space+Mono:wght@400;700&family=Caladea:ital,wght@0,400;0,700;1,400&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #050505;
+      color: #FAFAFA;
+      font-family: 'Geist', system-ui, sans-serif;
+      font-weight: 300;
+      font-size: 15px;
+      line-height: 1.5;
+      letter-spacing: -0.005em;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 18% 18%, rgba(0, 229, 255, 0.10), transparent 60%),
+        radial-gradient(ellipse 60% 40% at 82% 82%, rgba(189, 138, 255, 0.10), transparent 60%);
+    }
+    a { color: inherit; text-decoration: none; }
+
+    .layer { position: relative; z-index: 1; }
+
+    .head {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 64px 36px 36px 36px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: 32px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .head h1 {
+      font-family: 'Geist', sans-serif;
+      font-weight: 200;
+      font-size: clamp(2rem, 4.4vw, 3.6rem);
+      letter-spacing: -0.045em;
+      line-height: 1;
+      margin: 0;
+      color: #FAFAFA;
+    }
+    .head h1 em {
+      font-style: normal;
+      color: #00E5FF;
+      font-weight: 400;
+      text-shadow: 0 0 24px rgba(0, 229, 255, 0.4);
+    }
+    .head p {
+      max-width: 600px;
+      margin: 18px 0 0 0;
+      color: rgba(255,255,255,0.55);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+    .head .meta {
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      text-align: right;
+      line-height: 1.85;
+    }
+    .head .meta .v { color: #00E5FF; }
+    @media (max-width: 768px) { .head { grid-template-columns: 1fr; padding: 48px 20px 24px 20px; } .head .meta { text-align: left; } }
+
+    .grid {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 48px 36px 96px 36px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+    }
+    @media (max-width: 768px) { .grid { padding: 32px 20px 64px 20px; grid-template-columns: 1fr; gap: 20px; } }
+
+    .card {
+      position: relative;
+      display: block;
+      border-radius: 14px;
+      overflow: hidden;
+      transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.4s;
+      aspect-ratio: 4 / 3;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 24px 56px rgba(0,0,0,0.5); }
+    .card-inner { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 36px 32px; }
+    .card .meta-row { display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.72rem; opacity: 0.7; font-family: 'Geist Mono', monospace; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 18px; }
+    .card .num { font-family: 'Geist Mono', monospace; font-size: 0.74rem; opacity: 0.7; letter-spacing: 0.16em; margin-top: 8px; }
+
+    /* ── 01 Mission Control ── */
+    .f01 {
+      background: #050505;
+      color: #FFA040;
+    }
+    .f01::before {
+      content: ""; position: absolute; inset: 0;
+      background: repeating-linear-gradient(0deg,
+        rgba(0,0,0,0) 0,
+        rgba(0,0,0,0) 2px,
+        rgba(0,0,0,0.18) 2px,
+        rgba(0,0,0,0.18) 3px);
+      pointer-events: none;
+    }
+    .f01 .card-inner { z-index: 2; }
+    .f01 .lab {
+      font-family: 'VT323', monospace;
+      font-size: 1.1rem;
+      letter-spacing: 0.04em;
+      color: #5BFF8B;
+    }
+    .f01 .lab::after { content: "_"; animation: blink 1s steps(2, start) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    .f01 h2 {
+      font-family: 'Orbitron', monospace;
+      font-weight: 900;
+      font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+      letter-spacing: -0.005em;
+      line-height: 0.95;
+      margin: 18px 0 0 0;
+      color: #FFCC88;
+      text-shadow: 0 0 12px rgba(255, 160, 64, 0.4);
+      text-transform: uppercase;
+    }
+    .f01 h2 .g { color: #5BFF8B; text-shadow: 0 0 12px rgba(91, 255, 139, 0.4); }
+
+    /* ── 02 Neo-Tokyo ── */
+    .f02 {
+      background: #06000F;
+      color: #F2E8FF;
+      position: relative;
+    }
+    .f02::before {
+      content: ""; position: absolute; inset: 0;
+      background:
+        linear-gradient(rgba(0, 240, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.06) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+    }
+    .f02::after {
+      content: ""; position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 20%, rgba(255, 26, 138, 0.32), transparent 60%),
+        radial-gradient(ellipse at 80% 80%, rgba(0, 240, 255, 0.22), transparent 60%);
+      pointer-events: none;
+    }
+    .f02 .card-inner { z-index: 2; }
+    .f02 .lab {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      letter-spacing: 0.22em;
+      color: #00F0FF;
+      text-transform: uppercase;
+    }
+    .f02 h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: clamp(1.8rem, 3.4vw, 2.8rem);
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+      margin: 18px 0 0 0;
+      color: #F2E8FF;
+      text-transform: uppercase;
+      text-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
+    }
+    .f02 h2 .m { color: #FF1A8A; text-shadow: 0 0 24px rgba(255, 26, 138, 0.55); }
+
+    /* ── 03 Holographic HUD ── */
+    .f03 {
+      background: #050B1A;
+      color: #F0F8FF;
+    }
+    .f03::before {
+      content: ""; position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 30% 30%, rgba(0, 229, 255, 0.18), transparent 70%);
+    }
+    .f03 .card-inner { z-index: 2; }
+    .f03 .lab {
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      color: #00E5FF;
+      text-transform: uppercase;
+    }
+    .f03 h2 {
+      font-family: 'Geist', sans-serif;
+      font-weight: 200;
+      font-size: clamp(1.8rem, 3.6vw, 3rem);
+      letter-spacing: -0.045em;
+      line-height: 1;
+      margin: 18px 0 0 0;
+      color: #F0F8FF;
+    }
+    .f03 h2 em { font-style: normal; color: #00E5FF; font-weight: 500; text-shadow: 0 0 24px rgba(0, 229, 255, 0.5); }
+    .f03 .ring {
+      position: absolute; bottom: 36px; right: 36px;
+      width: 110px; height: 110px;
+      border: 1px solid rgba(0, 229, 255, 0.3);
+      border-radius: 50%;
+    }
+    .f03 .ring::before {
+      content: ""; position: absolute; inset: 14px;
+      border: 1px solid rgba(0, 229, 255, 0.4);
+      border-radius: 50%;
+    }
+    .f03 .ring::after {
+      content: ""; position: absolute; inset: 32px;
+      border: 1px solid #00E5FF;
+      box-shadow: 0 0 8px #00E5FF inset;
+      border-radius: 50%;
+    }
+
+    /* ── 04 Quantum Brutalist ── */
+    .f04 {
+      background: #000;
+      color: #FAFAFA;
+      position: relative;
+    }
+    .f04::before {
+      content: ""; position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 50% 30% at 30% 100%, rgba(189, 138, 255, 0.18), transparent 70%);
+    }
+    .f04 .card-inner { z-index: 2; }
+    .f04 .lab {
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      color: #BD8AFF;
+      text-transform: uppercase;
+    }
+    .f04 h2 {
+      font-family: 'Geist', sans-serif;
+      font-weight: 100;
+      font-size: clamp(2rem, 3.8vw, 3.4rem);
+      letter-spacing: -0.06em;
+      line-height: 0.95;
+      margin: 18px 0 0 0;
+      color: #FAFAFA;
+    }
+    .f04 h2 em { font-style: normal; color: #BD8AFF; font-weight: 300; text-shadow: 0 0 32px rgba(189, 138, 255, 0.45); }
+    .f04 .sigil {
+      position: absolute; bottom: 36px; right: 36px;
+      width: 24px; height: 24px;
+      background: #BD8AFF;
+      transform: rotate(45deg);
+      box-shadow: 0 0 24px rgba(189, 138, 255, 0.6);
+    }
+
+    /* ── 05 Solarpunk ── */
+    .f05 {
+      background: #0E1F17;
+      color: #F5F0DC;
+      position: relative;
+      grid-column: 1 / -1;
+      aspect-ratio: 16 / 7;
+    }
+    .f05::before {
+      content: ""; position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 50% 40% at 75% 50%, rgba(93, 255, 156, 0.22), transparent 60%),
+        radial-gradient(ellipse 60% 40% at 25% 100%, rgba(245, 201, 126, 0.10), transparent 60%);
+    }
+    .f05 .card-inner { z-index: 2; }
+    .f05 .lab {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      letter-spacing: 0.18em;
+      color: #5DFF9C;
+      text-transform: uppercase;
+    }
+    .f05 h2 {
+      font-family: 'Caladea', serif;
+      font-weight: 400;
+      font-size: clamp(2.2rem, 4.4vw, 3.6rem);
+      letter-spacing: -0.025em;
+      line-height: 1;
+      margin: 18px 0 0 0;
+      color: #F5F0DC;
+      max-width: 18ch;
+    }
+    .f05 h2 em { font-family: 'Caladea', serif; font-style: italic; font-weight: 400; color: #5DFF9C; text-shadow: 0 0 32px rgba(93, 255, 156, 0.4); }
+    .f05 .orb {
+      position: absolute; bottom: 28px; right: 36px;
+      width: 140px; height: 140px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(93, 255, 156, 0.5), transparent 60%),
+        radial-gradient(circle at 70% 70%, rgba(245, 201, 126, 0.18), transparent 60%);
+      box-shadow: 0 0 96px rgba(93, 255, 156, 0.3), 0 0 32px rgba(93, 255, 156, 0.18) inset;
+    }
+    .f05 .orb::before {
+      content: ""; position: absolute; inset: 18%;
+      border: 1px solid rgba(184, 219, 168, 0.4);
+      border-radius: 50%;
+    }
+    .f05 .orb::after {
+      content: ""; position: absolute; inset: 38%;
+      border: 1px solid #5DFF9C;
+      border-radius: 50%;
+      box-shadow: 0 0 12px #5DFF9C inset;
+    }
+    @media (max-width: 768px) {
+      .f05 { aspect-ratio: 4 / 3; }
+      .f05 .orb { width: 90px; height: 90px; bottom: 20px; right: 20px; }
+    }
+
+    .open-arrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.74rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      opacity: 0.7;
+      transition: gap 0.22s, opacity 0.22s;
+    }
+    .card:hover .open-arrow { gap: 14px; opacity: 1; }
+
+    /* footer */
+    footer {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 32px 36px 64px 36px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex; justify-content: space-between;
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.45);
+      text-transform: uppercase;
+      flex-wrap: wrap; gap: 16px;
+    }
+    footer a { color: #00E5FF; border-bottom: 1px solid rgba(0, 229, 255, 0.4); padding-bottom: 1px; }
+    footer a:hover { color: #BD8AFF; border-color: #BD8AFF; }
+  </style>
+</head>
+<body>
+
+  <div class="layer">
+
+    <header class="head">
+      <div>
+        <h1>Five futures, <em>one venture.</em></h1>
+        <p>The same hero content — Singapore's BCA-licensed site supervision firm under Elitez Group — rendered across five distinct futurisms. From Apollo-era Mission Control to a 2050 ecological optimism. Pick the future that fits the brand.</p>
+      </div>
+      <div class="meta">
+        Document v0.1 · Draft<br>
+        Strategy Office<br>
+        <span class="v">2026-05-08</span>
+      </div>
+    </header>
+
+    <main class="grid">
+
+      <a class="card f01" href="01-mission-control.html">
+        <div class="card-inner">
+          <div>
+            <div class="lab">FLAVOUR 01 · MISSION CONTROL</div>
+            <h2>SINGAPORE'S<br>LICENSED<br>SITE SUPERVISION<br><span class="g">FIRM_</span></h2>
+          </div>
+          <div>
+            <div class="meta-row">
+              <span>Apollo-era retro-future</span><span>VT323 · Space Mono</span><span>Black · Amber CRT</span>
+            </div>
+            <div class="open-arrow">OPEN ⟶</div>
+          </div>
+        </div>
+      </a>
+
+      <a class="card f02" href="02-neo-tokyo.html">
+        <div class="card-inner">
+          <div>
+            <div class="lab">// FLAVOUR 02 · NEO-TOKYO</div>
+            <h2>BUILT<br><span class="m">LICENSED</span><br>BEFORE 2028.</h2>
+          </div>
+          <div>
+            <div class="meta-row">
+              <span>Cyberpunk neon</span><span>Orbitron · Rajdhani</span><span>Magenta · Cyan · Sodium</span>
+            </div>
+            <div class="open-arrow">OPEN ⟶</div>
+          </div>
+        </div>
+      </a>
+
+      <a class="card f03" href="03-holographic-hud.html">
+        <div class="card-inner">
+          <div>
+            <div class="lab">// FLAVOUR 03 · HOLOGRAPHIC HUD</div>
+            <h2>Singapore's<br><em>licensed</em> site<br>supervision firm.</h2>
+          </div>
+          <div class="ring"></div>
+          <div>
+            <div class="meta-row">
+              <span>F-35 cockpit / Vision OS</span><span>Geist · Geist Mono</span><span>Cobalt · Cyan</span>
+            </div>
+            <div class="open-arrow">OPEN ⟶</div>
+          </div>
+        </div>
+      </a>
+
+      <a class="card f04" href="04-quantum-brutalist.html">
+        <div class="card-inner">
+          <div>
+            <div class="lab">[FLAVOUR 04 · QUANTUM BRUTALIST]</div>
+            <h2>Singapore's<br><em>licensed</em><br>site supervision<br>firm.</h2>
+          </div>
+          <div class="sigil"></div>
+          <div>
+            <div class="meta-row">
+              <span>Linear-tier minimal future</span><span>Geist · Geist Mono</span><span>Pure black · Electric violet</span>
+            </div>
+            <div class="open-arrow">OPEN ⟶</div>
+          </div>
+        </div>
+      </a>
+
+      <a class="card f05" href="05-solarpunk.html">
+        <div class="card-inner">
+          <div>
+            <div class="lab">// FLAVOUR 05 · SOLARPUNK</div>
+            <h2>Singapore's <em>licensed</em><br>site supervision firm —<br><em>grown</em> before 2028.</h2>
+          </div>
+          <div class="orb"></div>
+          <div>
+            <div class="meta-row">
+              <span>2050 ecological optimism</span><span>Caladea · Inter Tight</span><span>Forest · Bio-green · Cream</span>
+            </div>
+            <div class="open-arrow">OPEN ⟶</div>
+          </div>
+        </div>
+      </a>
+
+    </main>
+
+    <footer>
+      <span>// Elitez Site Supervisor · v0.1 · futurist design selection</span>
+      <span><a href="../flavors/index.html">First five flavours</a> · <a href="../index.html">Canonical site</a></span>
+    </footer>
+
+  </div>
+
+</body>
+</html>

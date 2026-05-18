@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Engineering Consultancy — Elitez Site Supervisor (Flavour 05·R)</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #FFFFFF;
+      --bg-soft: #F7F6F3;
+      --bg-deep: #ECEAE5;
+      --ink: #0F2A33;
+      --ink-soft: #2D4F5A;
+      --teal: #0F4C5C;
+      --teal-deep: #082A36;
+      --steel: #6B7D85;
+      --muted: #8A958C;
+      --warm: #B89968;
+      --rule: #DDD9D0;
+      --hairline: rgba(15, 42, 51, 0.08);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 1.6;
+      letter-spacing: -0.005em;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--teal); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--warm); }
+    .serif { font-family: 'Source Serif 4', Georgia, serif; }
+
+    .page { max-width: 1320px; margin: 0 auto; padding: 0 56px; }
+    @media (max-width: 768px) { .page { padding: 0 24px; } }
+
+    /* ── Top utility band ──────────────────────── */
+    .top-utility {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 0.74rem;
+      letter-spacing: 0.04em;
+      color: var(--steel);
+      gap: 24px;
+    }
+    .top-utility .meta { display: flex; gap: 24px; }
+    .top-utility .meta .v { color: var(--ink); font-weight: 500; }
+    @media (max-width: 768px) { .top-utility { display: none; } }
+
+    /* ── Top bar ─────────────────────────── */
+    .topbar {
+      padding: 22px 0;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 32px;
+      border-bottom: 1px solid var(--ink);
+    }
+    .marque {
+      display: flex; align-items: center; gap: 14px;
+      font-family: 'Source Serif 4', serif;
+      font-weight: 600;
+      font-size: 1.4rem;
+      letter-spacing: -0.015em;
+      color: var(--ink);
+    }
+    .marque .stamp {
+      width: 36px; height: 36px;
+      background: var(--teal);
+      color: var(--bg);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: -0.02em;
+    }
+    .marque .div { color: var(--warm); margin: 0 4px; font-weight: 400; }
+    .marque .small { font-family: 'DM Sans', sans-serif; font-weight: 400; font-size: 0.7rem; letter-spacing: 0.18em; color: var(--steel); text-transform: uppercase; }
+
+    .nav { display: flex; gap: 28px; align-items: center; }
+    .nav a {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 0.86rem;
+      letter-spacing: -0.005em;
+      color: var(--ink-soft);
+      padding: 4px 0;
+      border-bottom: 1px solid transparent;
+      transition: all 0.2s;
+    }
+    .nav a:hover { color: var(--teal); border-color: var(--teal); }
+    .nav a.cta {
+      padding: 11px 18px;
+      background: var(--teal);
+      color: var(--bg);
+      border: none;
+      font-weight: 500;
+    }
+    .nav a.cta:hover { background: var(--teal-deep); border: none; }
+    @media (max-width: 768px) { .topbar { grid-template-columns: 1fr; gap: 12px; } .nav { flex-wrap: wrap; gap: 18px; } }
+
+    /* ── Hero ──────────────────────────── */
+    .hero {
+      padding: 80px 0 0 0;
+      display: grid;
+      grid-template-columns: 7fr 5fr;
+      gap: 64px;
+      align-items: end;
+      padding-bottom: 80px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .hero .doc-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      letter-spacing: 0.18em;
+      color: var(--teal);
+      text-transform: uppercase;
+      margin-bottom: 32px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .hero .doc-id::before { content: ""; width: 28px; height: 1px; background: var(--teal); }
+    .hero h1 {
+      font-family: 'Source Serif 4', serif;
+      font-weight: 500;
+      font-size: clamp(2.6rem, 6vw, 5.4rem);
+      letter-spacing: -0.025em;
+      line-height: 1.05;
+      margin: 0;
+      color: var(--ink);
+    }
+    .hero h1 em { font-style: italic; font-weight: 500; color: var(--teal); }
+    .hero .lede {
+      font-size: 1.1rem;
+      line-height: 1.65;
+      color: var(--ink-soft);
+      margin: 32px 0 0 0;
+      max-width: 56ch;
+    }
+    .hero .lede strong { color: var(--ink); font-weight: 500; }
+    .hero-actions { display: flex; gap: 12px; margin-top: 36px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 22px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 0.86rem;
+      letter-spacing: -0.005em;
+      transition: all 0.22s;
+    }
+    .btn-fill { background: var(--teal); color: var(--bg); }
+    .btn-fill:hover { background: var(--teal-deep); transform: translateY(-1px); }
+    .btn-line { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+    .btn-line:hover { background: var(--ink); color: var(--bg); }
+
+    /* Hero side: project showcase tile */
+    .hero-tile {
+      aspect-ratio: 4 / 5;
+      background: linear-gradient(160deg, var(--teal) 0%, var(--teal-deep) 100%);
+      position: relative;
+      overflow: hidden;
+      color: var(--bg);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 36px 32px;
+    }
+    .hero-tile::before {
+      content: ""; position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+    }
+    .hero-tile::after {
+      content: ""; position: absolute; bottom: -100px; right: -50px;
+      width: 320px; height: 320px;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .hero-tile .id-row {
+      position: relative; z-index: 1;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      color: var(--warm);
+      text-transform: uppercase;
+    }
+    .hero-tile h2 {
+      position: relative; z-index: 1;
+      font-family: 'Source Serif 4', serif;
+      font-weight: 500;
+      font-size: clamp(1.8rem, 2.8vw, 2.4rem);
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      margin: 32px 0 0 0;
+      color: var(--bg);
+      max-width: 14ch;
+    }
+    .hero-tile h2 em { font-style: italic; color: var(--warm); font-weight: 500; }
+    .hero-tile .stats {
+      position: relative; z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.18);
+    }
+    .hero-tile .stats .num {
+      font-family: 'Source Serif 4', serif;
+      font-weight: 500;
+      font-size: 1.8rem;
+      letter-spacing: -0.025em;
+      line-height: 1;
+      color: var(--bg);
+      display: block;
+    }
+    .hero-tile .stats .num em { font-style: italic; color: var(--warm); }
+    .hero-tile .stats .lbl {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.74rem;
+      color: rgba(255,255,255,0.7);
+      margin-top: 6px;
+      display: block;
+    }
+    @media (max-width: 900px) { .hero { grid-template-columns: 1fr; gap: 48px; padding-bottom: 56px; } .hero-tile { aspect-ratio: 16 / 9; } }
+
+    /* ── Section ────────────────────────── */
+    .section { padding: 80px 0; border-bottom: 1px solid var(--rule); }
+    .sec-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: 32px;
+      margin-bottom: 48px;
+      padding-bottom: 24px;
+      border-bottom: 2px solid var(--ink);
+    }
+    .sec-head h2 {
+      font-family: 'Source Serif 4', serif;
+      font-weight: 500;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      margin: 0;
+      max-width: 22ch;
+      color: var(--ink);
+    }
+    .sec-head h2 em { font-style: italic; color: var(--teal); }
+    .sec-head .num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      letter-spacing: 0.18em;
+      color: var(--warm);
+      text-transform: uppercase;
+    }
+    .sec-head .num strong { color: var(--ink); display: block; font-family: 'Source Serif 4', serif; font-weight: 500; font-size: 2.4rem; letter-spacing: -0.025em; }
+
+    /* ── Capabilities tiles ───────────────── */
+    .capabilities {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--rule);
+      border: 1px solid var(--rule);
+    }
+    .cap {
+      background: var(--bg-soft);
+      padding: 28px 24px;
+      transition: background 0.25s;
+    }
+    .cap:hover { background: var(--bg-deep); }
+    .cap .id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      letter-spacing: 0.18em;
+      color: var(--teal);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 14px;
+    }
+    .cap .num {
+      font-family: 'Source Serif 4', serif;
+      font-weight: 500;
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      letter-spacing: -0.025em;
+      line-height: 1;
+      color: var(--ink);
+      display: block;
+    }
+    .cap .num em { font-style: italic; color: var(--teal); }
+    .cap .lbl {
+      margin-top: 14px;
+      font-size: 0.92rem;
+      color: var(--ink-soft);
+      line-height: 1.5;
+      display: block;
+      max-width: 26ch;
+    }
+    .cap .src {
+      margin-top: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.16em;
+      color: var(--steel);
+      text-transform: uppercase;
+      display: block;
+    }
+    @media (max-width: 900px) { .capabilities { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .capabilities { grid-template-columns: 1fr; } }
+
+    /* ── Approach ────────────────────────── */
+    .approach {
+      display: grid;
+      grid-template-columns: 5fr 7fr;
+      gap: 56px;
+      align-items: start;
+    }
+    .approach .col-text p {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.04rem;
+      line-height: 1.75;
+      color: var(--ink);
+      margin: 0 0 20px 0;
+      max-width: 64ch;
+    }
+    .approach .col-text p strong { color: var(--ink); font-weight: 500; }
+    .approach .col-text p em { color: var(--teal); font-style: italic; font-weight: 500; }
+
+    .approach .col-image {
+      aspect-ratio: 1 / 1.1;
+      background:
+        linear-gradient(rgba(15, 76, 92, 0.85), rgba(15, 76, 92, 0.55)),
+        radial-gradient(ellipse at top right, rgba(184, 153, 104, 0.15), transparent 60%),
+        var(--teal-deep);
+      position: relative;
+      color: var(--bg);
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+    .approach .col-image::before {
+      content: "";
+      position: absolute;
+      inset: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      pointer-events: none;
+    }
+    .approach .col-image .lab {
+      position: relative; z-index: 1;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      color: var(--warm);
+      text-transform: uppercase;
+    }
+    .approach .col-image .quote {
+      position: relative; z-index: 1;
+      font-family: 'Source Serif 4', serif;
+      font-style: italic;
+      font-weight: 500;
+      font-size: clamp(1.4rem, 2.4vw, 2rem);
+      letter-spacing: -0.005em;
+      line-height: 1.35;
+      color: var(--bg);
+      max-width: 26ch;
+    }
+    .approach .col-image .quote em { font-style: normal; color: var(--warm); font-weight: 600; }
+    .approach .col-image .src {
+      position: relative; z-index: 1;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      color: rgba(255, 255, 255, 0.7);
+      text-transform: uppercase;
+    }
+
+    .timeline-rail {
+      margin-top: 32px;
+      list-style: none; padding: 0;
+    }
+    .timeline-rail li {
+      display: grid;
+      grid-template-columns: 9em 1fr;
+      gap: 24px;
+      padding: 14px 0;
+      border-top: 1px solid var(--rule);
+      align-items: baseline;
+    }
+    .timeline-rail li:last-child { border-bottom: 1px solid var(--rule); }
+    .timeline-rail .when {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      letter-spacing: 0.14em;
+      color: var(--teal);
+      text-transform: uppercase;
+    }
+    .timeline-rail .what { font-size: 0.96rem; color: var(--ink); line-height: 1.55; }
+    .timeline-rail .what em { color: var(--teal); font-style: italic; font-weight: 500; }
+    .timeline-rail li.now .when { color: var(--bg); background: var(--teal); padding: 2px 8px; }
+    @media (max-width: 900px) { .approach { grid-template-columns: 1fr; gap: 36px; } .approach .col-image { aspect-ratio: 16 / 9; } }
+
+    /* ── Tier — datasheet ───────────────── */
+    .datasheet {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: var(--rule);
+      border: 1px solid var(--rule);
+    }
+    .ds-item {
+      background: var(--bg);
+      padding: 36px 32px;
+      transition: background 0.25s;
+      border-left: 3px solid var(--teal);
+    }
+    .ds-item:hover { background: var(--bg-soft); border-left-color: var(--warm); }
+    .ds-item .id-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-bottom: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+    .ds-item .id-row .id { color: var(--teal); }
+    .ds-item .id-row .num {
+      font-family: 'Source Serif 4', serif;
+      font-weight: 500;
+      font-size: 1.6rem;
+      color: var(--warm);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .ds-item h3 {
+      font-family: 'Source Serif 4', serif;
+      font-weight: 500;
+      font-size: 2rem;
+      letter-spacing: -0.025em;
+      margin: 0 0 14px 0;
+      color: var(--ink);
+    }
+    .ds-item .desc { color: var(--ink-soft); font-size: 0.96rem; line-height: 1.6; margin: 0 0 20px 0; }
+    .ds-item .schedule {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+    }
+    .ds-item .schedule td {
+      padding: 8px 0;
+      border-top: 1px dashed var(--rule);
+      color: var(--ink);
+      vertical-align: top;
+    }
+    .ds-item .schedule td:first-child { color: var(--steel); width: 50%; }
+    .ds-item .schedule td:last-child { text-align: right; font-family: 'JetBrains Mono', monospace; color: var(--teal); font-size: 0.82rem; }
+    .ds-item .for {
+      margin-top: 22px;
+      padding-top: 14px;
+      border-top: 2px solid var(--ink);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      color: var(--ink);
+      text-transform: uppercase;
+    }
+    @media (max-width: 768px) { .datasheet { grid-template-columns: 1fr; } }
+
+    /* ── Reference projects (selected works) ──── */
+    .references {
+      margin-top: 56px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .ref {
+      background: var(--bg-soft);
+      padding: 28px 24px;
+      border-top: 3px solid var(--warm);
+    }
+    .ref h3 {
+      font-family: 'Source Serif 4', serif;
+      font-weight: 500;
+      font-size: 1.2rem;
+      letter-spacing: -0.005em;
+      margin: 0 0 12px 0;
+      color: var(--ink);
+    }
+    .ref .meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      letter-spacing: 0.16em;
+      color: var(--steel);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex; gap: 14px; flex-wrap: wrap;
+    }
+    .ref .meta .v { color: var(--teal); }
+    .ref p {
+      font-size: 0.92rem;
+      color: var(--ink-soft);
+      line-height: 1.6;
+      margin: 0;
+    }
+    @media (max-width: 900px) { .references { grid-template-columns: 1fr; } }
+
+    /* ── Credentials ─────────────── */
+    .credentials {
+      padding: 80px 0;
+      border-bottom: 2px solid var(--ink);
+    }
+    .credentials h3 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      letter-spacing: 0.22em;
+      color: var(--teal);
+      text-transform: uppercase;
+      margin: 0 0 36px 0;
+      text-align: center;
+    }
+    .creds-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+    }
+    .creds-grid .cred {
+      padding: 24px 14px;
+      text-align: center;
+      border-right: 1px solid var(--rule);
+      font-family: 'Source Serif 4', serif;
+      font-weight: 500;
+      font-size: 0.92rem;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+    .creds-grid .cred:last-child { border-right: none; }
+    .creds-grid .cred .sub {
+      display: block;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      font-size: 0.66rem;
+      letter-spacing: 0.16em;
+      color: var(--steel);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    @media (max-width: 1024px) { .creds-grid { grid-template-columns: repeat(4, 1fr); } .creds-grid .cred { border-bottom: 1px solid var(--rule); } .creds-grid .cred:nth-child(4n) { border-right: none; } }
+    @media (max-width: 560px) { .creds-grid { grid-template-columns: repeat(2, 1fr); } .creds-grid .cred:nth-child(2n) { border-right: none; } }
+
+    /* ── Footer ─────────────────────── */
+    .foot {
+      padding: 64px 0 56px 0;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      font-size: 0.92rem;
+      color: var(--ink-soft);
+    }
+    .foot .marque-foot {
+      font-family: 'Source Serif 4', serif;
+      font-weight: 600;
+      font-size: 1.4rem;
+      color: var(--ink);
+      margin-bottom: 14px;
+      display: block;
+      letter-spacing: -0.015em;
+    }
+    .foot h4 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      color: var(--teal);
+      margin: 0 0 14px 0;
+      text-transform: uppercase;
+    }
+    .foot ul { list-style: none; padding: 0; margin: 0; line-height: 2; }
+    .foot a { color: var(--ink-soft); }
+    .foot a:hover { color: var(--teal); }
+    .foot .copy {
+      grid-column: 1 / -1;
+      padding-top: 28px;
+      margin-top: 16px;
+      border-top: 1px solid var(--rule);
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      color: var(--steel);
+      text-transform: uppercase;
+    }
+    @media (max-width: 768px) { .foot { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+
+    <div class="top-utility">
+      <div class="meta">
+        <span>ESS-001 · Strategic Profile <span class="v">v0.1 / Draft</span></span>
+        <span>Document classification · <span class="v">Confidential</span></span>
+      </div>
+      <div>Singapore · MAY 2026</div>
+    </div>
+
+    <header class="topbar">
+      <a href="../index.html" class="marque">
+        <span class="stamp">E</span>
+        <div>
+          <span>Elitez</span>
+          <span class="div">/</span>
+          <span>Site Supervisor</span>
+          <div class="small">Engineering · Compliance · Talent</div>
+        </div>
+      </a>
+      <nav class="nav">
+        <a href="#why">Practice</a>
+        <a href="#approach">Approach</a>
+        <a href="#tiers">Services</a>
+        <a href="#references">Selected works</a>
+        <a href="../about.html">Leadership</a>
+        <a href="../contact.html" class="cta">Engage Us</a>
+      </nav>
+      <div></div>
+    </header>
+
+    <!-- Hero ────────────────────────── -->
+    <section class="hero">
+      <div>
+        <div class="doc-id">// Strategic Profile · ESS-001 · v0.1</div>
+        <h1>Singapore's <em>licensed</em> site supervision firm — built before the 2028 deadline.</h1>
+        <p class="lede">
+          On <strong>3 September 2025</strong>, the Building &amp; Construction Authority announced firm-based licensing for site supervision — mandatory <strong>2028</strong> for all building projects above S$75M. We are filing for SAC accreditation in 2026 and BCA licence by Q1–Q2 2028, six months ahead of mandatory. Under the platform of Elitez Group — a 15-year-old regulated talent-supply institution.
+        </p>
+        <div class="hero-actions">
+          <a href="../services.html" class="btn btn-fill">View Service Catalogue</a>
+          <a href="../compliance.html" class="btn btn-line">Compliance Framework</a>
+        </div>
+      </div>
+      <aside class="hero-tile">
+        <div class="id-row">// PROJECT ESS-001 · STATUS NOMINAL</div>
+        <h2>BCA-licensed <em>firm</em><br>by Q1–Q2 2028.</h2>
+        <div class="stats">
+          <div>
+            <span class="num">15<em>yr</em></span>
+            <span class="lbl">Group operating history</span>
+          </div>
+          <div>
+            <span class="num">~2<em>k</em></span>
+            <span class="lbl">Manpower deployed</span>
+          </div>
+          <div>
+            <span class="num">6,228</span>
+            <span class="lbl">Historical placements</span>
+          </div>
+          <div>
+            <span class="num">311<em>k</em></span>
+            <span class="lbl">Payrolls processed</span>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- Section 01 — Practice ──────────── -->
+    <section class="section" id="why">
+      <div class="sec-head">
+        <h2>The macro environment is at a multi-decade <em>structural high.</em></h2>
+        <div class="num">— Section 01<strong>Practice</strong></div>
+      </div>
+
+      <div class="capabilities">
+        <div class="cap">
+          <span class="id">// 01.1 Demand</span>
+          <span class="num">S$50<em>B</em></span>
+          <span class="lbl">2026 contract-value midpoint, Singapore construction.</span>
+          <span class="src">SRC // BCA Jan 2026</span>
+        </div>
+        <div class="cap">
+          <span class="id">// 01.2 Civil eng.</span>
+          <span class="num">11.6<em>–</em>13.4<em>B</em></span>
+          <span class="lbl">Civil engineering 2026 — record vs. S$9.3B in 2025.</span>
+          <span class="src">SRC // BCA forecast</span>
+        </div>
+        <div class="cap">
+          <span class="id">// 01.3 TAM</span>
+          <span class="num">110<em>–</em>170<em>M</em></span>
+          <span class="lbl">Outsourced site-supervision total addressable market.</span>
+          <span class="src">SRC // Triangulated</span>
+        </div>
+        <div class="cap">
+          <span class="id">// 01.4 Target</span>
+          <span class="num">200<em>–</em>300</span>
+          <span class="lbl">Year-3 deployed-headcount target.</span>
+          <span class="src">SRC // v4 base case</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 02 — Approach ────────── -->
+    <section class="section" id="approach">
+      <div class="sec-head">
+        <h2>A regulatory inflection — and a <em>head-start</em> window we know how to operate in.</h2>
+        <div class="num">— Section 02<strong>Approach</strong></div>
+      </div>
+
+      <div class="approach">
+        <div class="col-text">
+          <p>
+            BCA's 3 September 2025 announcement restructures site supervision around <strong>licensed firms</strong>. Three pillars: ISO/IEC 17020 firm systems, key personnel including a permanent core of 1 RE plus 3 RTOs employed for at least twelve consecutive months, and SAC-accredited measurement equipment.
+          </p>
+          <p>
+            For Elitez, the marginal cost is roughly half the greenfield equivalent (S$1.2M+ over 18 months). The platform exists for other reasons — <em>Adept Academy</em> SSG-approved Training Organisation, ISO 9001 / 27001 / EcoVadis Silver, IHRP exclusive partnership, ACES advisory committee seat (which co-administers JAC), and the operating playbook of Elitez Aviation under the Aerospace Labour Supply Scheme.
+          </p>
+          <p>
+            Two senior Surbana Jurong professionals are joining as co-founders on a <strong>4-year vest with 1-year cliff</strong>. The Board has approved S$740K phased equity plus a S$1M revolving working-capital facility, with a hard go/no-go review at Month 12.
+          </p>
+          <ul class="timeline-rail">
+            <li><span class="when">3 Sep 2025</span><span class="what">BCA announces firm-based regime architecture.</span></li>
+            <li class="now"><span class="when">Now · 2026</span><span class="what">SAC scheme opens — <em>first-mover window active.</em></span></li>
+            <li><span class="when">Q3 2027</span><span class="what">Elitez files SAC accreditation. ISO 17020 mock audit complete.</span></li>
+            <li><span class="when">Q1–Q2 2028</span><span class="what"><em>Elitez BCA licence target</em> — six months ahead of mandatory.</span></li>
+            <li><span class="when">2028</span><span class="what">Mandatory: building projects &gt; S$75M require licensed firm.</span></li>
+          </ul>
+        </div>
+
+        <aside class="col-image">
+          <div class="lab">// METHOD · v4 PROPOSAL · §5.2</div>
+          <p class="quote">Site supervision is, in effect, <em>Aviation 2.0</em> with a different regulator. The same playbook — transferred into the BCA firm-based regime.</p>
+          <div class="src">— Strategy Office, Elitez Group · May 2026</div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Section 03 — Services datasheet ── -->
+    <section class="section" id="tiers">
+      <div class="sec-head">
+        <h2>Four packaged offerings — calibrated to procurement <em>preference.</em></h2>
+        <div class="num">— Section 03<strong>Services</strong></div>
+      </div>
+
+      <div class="datasheet">
+
+        <article class="ds-item">
+          <div class="id-row"><span class="id">// 03.1 SUPPLY</span><span class="num">01</span></div>
+          <h3>Supply</h3>
+          <p class="desc">Time-and-attendance supply of accredited Resident Engineers and Resident Technical Officers. Client retains the QP(S).</p>
+          <table class="schedule">
+            <tr><td>Senior RTO benchmark</td><td>S$9,200 / mo</td></tr>
+            <tr><td>Senior RE benchmark</td><td>S$15,500 / mo</td></tr>
+            <tr><td>Replacement SLA</td><td>2-week target</td></tr>
+            <tr><td>PI insurance</td><td>S$5–50M scaling</td></tr>
+          </table>
+          <div class="for">// FOR · TIER 1–3 CONSULTANCIES · MAIN CONTRACTORS</div>
+        </article>
+
+        <article class="ds-item">
+          <div class="id-row"><span class="id">// 03.2 MANAGE</span><span class="num">02</span></div>
+          <h3>Manage</h3>
+          <p class="desc">Full site supervision team led by deployed RE; seconded QP(S) — a Senior PE — signs off. Single accountable point.</p>
+          <table class="schedule">
+            <tr><td>Project band</td><td>S$10–75M</td></tr>
+            <tr><td>Reporting cadence</td><td>Weekly digital</td></tr>
+            <tr><td>NCR escalation</td><td>Structured to TD</td></tr>
+            <tr><td>Repeat-assignment</td><td>Available</td></tr>
+          </table>
+          <div class="for">// FOR · MID DEVELOPERS · INSTITUTIONAL OWNERS</div>
+        </article>
+
+        <article class="ds-item">
+          <div class="id-row"><span class="id">// 03.3 CERTIFY</span><span class="num">03</span></div>
+          <h3>Certify</h3>
+          <p class="desc">BCA-licensed firm services from 2027/28 — applicable for projects above S$75M.</p>
+          <table class="schedule">
+            <tr><td>Inspection-body framework</td><td>ISO/IEC 17020</td></tr>
+            <tr><td>Document retention</td><td>7 yr · redundant</td></tr>
+            <tr><td>Calibration</td><td>SAC-accredited</td></tr>
+            <tr><td>Specialist competencies</td><td>PPVC · MET · façade</td></tr>
+          </table>
+          <div class="for">// FOR · MAJORS · PUBLIC SECTOR</div>
+        </article>
+
+        <article class="ds-item">
+          <div class="id-row"><span class="id">// 03.4 TRAIN</span><span class="num">04</span></div>
+          <h3>Train</h3>
+          <p class="desc">WSQ-funded supervisor training delivered through Adept Academy. The structural moat — no Tier-3 competitor operates an in-house WSQ school.</p>
+          <table class="schedule">
+            <tr><td>Conversion programme</td><td>BCSS-aligned</td></tr>
+            <tr><td>CPD modules</td><td>JAC-recognised</td></tr>
+            <tr><td>SSG funding</td><td>50–90%</td></tr>
+            <tr><td>SCTP / CCP support</td><td>Up to 90% salary</td></tr>
+          </table>
+          <div class="for">// FOR · CONSTRUCTION FIRMS · RECRUITMENT FUNNEL</div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Section 04 — Selected works ────── -->
+    <section class="section" id="references">
+      <div class="sec-head">
+        <h2>Group <em>track record</em> across regulated talent-supply.</h2>
+        <div class="num">— Section 04<strong>Selected works</strong></div>
+      </div>
+
+      <div class="references">
+        <article class="ref">
+          <div class="meta"><span>2025</span><span class="v">ALSS</span><span>Aerospace</span></div>
+          <h3>Elitez Aviation · Aerospace Labour Supply Scheme</h3>
+          <p>Exclusive supplier of certified aerospace technicians under MOM's Aerospace Labour Supply Scheme. Regulated talent pool, government-scheme alignment, overseas mass-recruitment infrastructure across Indonesia, India, Philippines.</p>
+        </article>
+        <article class="ref">
+          <div class="meta"><span>2023</span><span class="v">SSIA Award</span><span>Security</span></div>
+          <h3>Elitez Security · SSIA 2023 awarded SG agency</h3>
+          <p>Singapore Security Industry Association award. PWM-aligned guarding services. Long-tenure deployment economics carried through to the Site Supervision business model.</p>
+        </article>
+        <article class="ref">
+          <div class="meta"><span>2011→</span><span class="v">SSG ATO</span><span>Training</span></div>
+          <h3>Adept Academy · SSG-approved Training Organisation</h3>
+          <p>WSQ-funded curriculum infrastructure. Already runs WSQ Retail and HR frameworks at 50–90% government subsidy; extending to a Built Environment supervisor track is curriculum work, not capability build.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Credentials ─────────────────────── -->
+    <section class="credentials">
+      <h3>// Group accreditations &amp; affiliations</h3>
+      <div class="creds-grid">
+        <div class="cred">ISO 9001<span class="sub">: 2015 · Quality</span></div>
+        <div class="cred">ISO 27001<span class="sub">Information Security</span></div>
+        <div class="cred">Cyber Essentials<span class="sub">CSA Mark</span></div>
+        <div class="cred">SQC<span class="sub">SG Quality Class</span></div>
+        <div class="cred">DPTM<span class="sub">Data Protection</span></div>
+        <div class="cred">EcoVadis<span class="sub">Silver Sustainability</span></div>
+        <div class="cred">CPLC<span class="sub">Carbon Pricing Coalition</span></div>
+        <div class="cred">Champion of Good<span class="sub">NVPC</span></div>
+      </div>
+    </section>
+
+    <!-- Footer ──────────────────────── -->
+    <footer class="foot">
+      <div>
+        <span class="marque-foot">Elitez Site Supervisor</span>
+        <p style="margin: 0; line-height: 1.7;">A regulated talent-supply vertical of Elitez Group Pte. Ltd. Engineering, compliance and talent infrastructure for Singapore's BCA firm-based site supervision regime.</p>
+      </div>
+      <div>
+        <h4>// Services</h4>
+        <ul>
+          <li><a href="../services.html#supply">Supply</a></li>
+          <li><a href="../services.html#manage">Manage</a></li>
+          <li><a href="../services.html#certify">Certify</a></li>
+          <li><a href="../train.html">Train</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>// Practice</h4>
+        <ul>
+          <li><a href="../about.html">Leadership</a></li>
+          <li><a href="../compliance.html">Compliance</a></li>
+          <li><a href="../sectors.html">Sectors</a></li>
+          <li><a href="../contact.html">Engage</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>// Document</h4>
+        <ul>
+          <li>Flavour 05 · Engineering</li>
+          <li><a href="index.html">Selection</a></li>
+        </ul>
+      </div>
+      <div class="copy">
+        <span>// © 2026 Elitez Site Supervisor · Singapore · Confidential</span>
+        <span>// ESS-001 · STRATEGIC PROFILE · v0.1 DRAFT</span>
+      </div>
+    </footer>
+
+  </div>
+
+</body>
+</html>

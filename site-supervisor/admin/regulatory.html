@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regulatory Map · Admin · Elitez Site Supervisor</title>
+  <meta name="description" content="Comprehensive regulatory map for a Singapore site-supervision firm — 15 authorities × 44 regulations, sourced to official government releases. Internal admin only.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@400;600;700;800&family=Archivo+Black&family=Archivo:wght@400;500;600;700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function(){try{var t=localStorage.getItem('ess-theme');if(t==='dark')document.documentElement.classList.add('theme-dark');}catch(e){}})();
+  </script>
+  <link rel="stylesheet" href="assets/css/site.css">
+  <script src="assets/js/auth.js"></script>
+
+  <style>
+    :root {
+      --doc-bg: #F2EEE8;
+      --doc-bg-deep: #E5DED2;
+      --doc-surface: #FFFFFF;
+      --doc-border: rgba(26, 24, 21, 0.12);
+      --doc-border-2: rgba(26, 24, 21, 0.24);
+      --doc-text: #1A1815;
+      --doc-text-soft: #2D2A24;
+      --doc-muted: #5C5A56;
+      --doc-accent: #1A1815;
+      --doc-accent-2: #FF6A1A;
+    }
+    html.theme-dark {
+      --doc-bg: #1B1A1B;
+      --doc-bg-deep: #0F0E0F;
+      --doc-surface: #2A2828;
+      --doc-border: rgba(245, 242, 238, 0.12);
+      --doc-border-2: rgba(245, 242, 238, 0.24);
+      --doc-text: #F5F2EE;
+      --doc-text-soft: #C8C2BA;
+      --doc-muted: rgba(245, 242, 238, 0.6);
+      --doc-accent: #F5F2EE;
+      --doc-accent-2: #FF6A1A;
+    }
+
+    body { background: var(--doc-bg); color: var(--doc-text); font-family: 'Inter', sans-serif; }
+
+    main.compliance-page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 56px 32px 96px 32px;
+    }
+
+    .page-head {
+      margin-bottom: 48px;
+    }
+    .page-head .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--doc-accent-2);
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 18px;
+    }
+    .page-head .eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--doc-accent-2); }
+    .page-head h1 {
+      font-family: 'Saira Condensed', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      margin: 0 0 16px 0;
+      color: var(--doc-text);
+    }
+    .page-head p {
+      font-size: 1.04rem;
+      line-height: 1.65;
+      color: var(--doc-text-soft);
+      max-width: 70ch;
+      margin: 0;
+    }
+    .page-head p strong { color: var(--doc-text); font-weight: 600; }
+
+    .compliance-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 2px solid var(--doc-accent);
+      border-bottom: 1px solid var(--doc-border);
+      margin-top: 48px;
+    }
+    .compliance-stats .cell {
+      padding: 28px 24px;
+      border-right: 1px solid var(--doc-border);
+    }
+    .compliance-stats .cell:last-child { border-right: none; }
+    .compliance-stats .num {
+      font-family: 'Saira Condensed', sans-serif;
+      font-size: clamp(2rem, 3.4vw, 2.8rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1;
+      color: var(--doc-accent);
+      display: block;
+    }
+    .compliance-stats .lbl {
+      margin-top: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--doc-muted);
+      display: block;
+    }
+    @media (max-width: 768px) { .compliance-stats { grid-template-columns: repeat(2, 1fr); } .compliance-stats .cell:nth-child(2) { border-right: none; } }
+
+    .section { margin-top: 64px; }
+    .section h2 {
+      font-family: 'Saira Condensed', sans-serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      margin: 0 0 6px 0;
+      color: var(--doc-text);
+    }
+    .section .lede { color: var(--doc-muted); font-size: 0.95rem; margin: 0 0 24px 0; max-width: 70ch; }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+    @media (max-width: 1024px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .grid-4 { grid-template-columns: 1fr; } }
+
+    .authority-card {
+      display: block;
+      padding: 22px 20px;
+      background: var(--doc-surface);
+      border: 1px solid var(--doc-border);
+      border-radius: 10px;
+      transition: all 0.22s ease;
+      text-decoration: none;
+      color: inherit;
+    }
+    .authority-card:hover { border-color: var(--doc-accent); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(20, 33, 61, 0.08); }
+    .authority-card .auth-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      color: var(--doc-accent-2);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 12px;
+    }
+    .authority-card h4 {
+      font-family: 'Saira Condensed', sans-serif;
+      font-size: 1.02rem;
+      font-weight: 700;
+      letter-spacing: -0.005em;
+      margin: 0 0 8px 0;
+      color: var(--doc-text);
+    }
+    .authority-card p {
+      font-size: 0.84rem;
+      line-height: 1.5;
+      color: var(--doc-muted);
+      margin: 0;
+    }
+
+    .reg-filter {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .reg-filter-btn {
+      padding: 8px 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: var(--doc-surface);
+      color: var(--doc-text);
+      border: 1px solid var(--doc-border);
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .reg-filter-btn:hover { border-color: var(--doc-accent); }
+    .reg-filter-btn.active { background: var(--doc-accent); color: #FFF; border-color: var(--doc-accent); }
+
+    .reg-section { margin-bottom: 36px; }
+    .reg-auth-head {
+      font-family: 'Saira Condensed', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: -0.005em;
+      margin: 0 0 12px 0;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--doc-accent);
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+    .reg-auth-head .count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      color: var(--doc-muted);
+      font-weight: 400;
+    }
+
+    details.reg-item {
+      background: var(--doc-surface);
+      border: 1px solid var(--doc-border);
+      border-radius: 10px;
+      margin-bottom: 10px;
+      overflow: hidden;
+      transition: border-color 0.18s, box-shadow 0.22s;
+    }
+    details.reg-item[open] {
+      border-color: var(--doc-accent);
+      box-shadow: 0 1px 0 rgba(20, 33, 61, 0.04), 0 1px 3px rgba(20, 33, 61, 0.06);
+    }
+    details.reg-item summary {
+      display: grid;
+      grid-template-columns: 1fr auto auto auto;
+      gap: 16px;
+      align-items: center;
+      padding: 16px 20px;
+      cursor: pointer;
+      list-style: none;
+    }
+    details.reg-item summary::-webkit-details-marker { display: none; }
+    details.reg-item summary:hover { background: var(--doc-bg-deep); }
+    details.reg-item summary::after {
+      content: "+";
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      color: var(--doc-muted);
+    }
+    details.reg-item[open] summary::after { content: "−"; }
+    .reg-title {
+      font-family: 'Saira Condensed', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.005em;
+      color: var(--doc-text);
+    }
+    .reg-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      color: var(--doc-muted);
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+    @media (max-width: 768px) {
+      details.reg-item summary { grid-template-columns: 1fr auto auto; gap: 8px; }
+      .reg-date { display: none; }
+    }
+
+    .status-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .status-badge.in_force { background: rgba(31, 122, 58, 0.10); color: #1B6630; }
+    .status-badge.phased_in_progress { background: rgba(183, 121, 31, 0.12); color: #8E5E18; }
+    .status-badge.announced_pending { background: rgba(20, 57, 101, 0.10); color: var(--doc-accent); }
+    .status-badge.voluntary_track { background: var(--doc-bg-deep); color: var(--doc-muted); border: 1px solid var(--doc-border); }
+
+    .reg-body {
+      padding: 4px 20px 24px 20px;
+      border-top: 1px dashed var(--doc-border);
+    }
+    .reg-body h5 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      color: var(--doc-accent-2);
+      text-transform: uppercase;
+      margin: 18px 0 10px 0;
+    }
+    .reg-body p { color: var(--doc-text-soft); font-size: 0.94rem; line-height: 1.6; margin: 14px 0 0 0; }
+    .reg-body p strong { color: var(--doc-text); }
+    .reg-body ul { margin: 8px 0 0 0; padding-left: 20px; font-size: 0.92rem; line-height: 1.65; color: var(--doc-text-soft); }
+    .reg-body ul li { padding: 3px 0; }
+    .reg-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+      padding: 14px 16px;
+      background: var(--doc-bg-deep);
+      border-radius: 6px;
+    }
+    .reg-meta-grid .item .k {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.16em;
+      color: var(--doc-muted);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 3px;
+    }
+    .reg-meta-grid .item .v {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.84rem;
+      color: var(--doc-text);
+    }
+    @media (max-width: 640px) { .reg-meta-grid { grid-template-columns: 1fr; } }
+    .reg-urls a {
+      display: inline-block;
+      margin-right: 16px;
+      margin-top: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--doc-accent);
+      border-bottom: 1px solid var(--doc-accent);
+      padding-bottom: 1px;
+      text-decoration: none;
+    }
+    .reg-urls a:hover { color: var(--doc-accent-2); border-color: var(--doc-accent-2); }
+
+    /* Vertical compliance timeline */
+    .ctimeline {
+      position: relative;
+      padding-left: 32px;
+    }
+    .ctimeline::before {
+      content: "";
+      position: absolute;
+      left: 8px; top: 12px; bottom: 12px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--doc-accent) 0%, var(--doc-accent-2) 50%, var(--doc-border-2) 100%);
+    }
+    .ctimeline-row {
+      position: relative;
+      padding: 12px 0;
+      border-top: 1px solid var(--doc-border);
+    }
+    .ctimeline-row:first-child { border-top: none; }
+    .ctimeline-row::before {
+      content: "";
+      position: absolute;
+      left: -28px;
+      top: 18px;
+      width: 10px; height: 10px;
+      background: var(--doc-surface);
+      border: 2px solid var(--doc-accent);
+      border-radius: 50%;
+    }
+    .ctimeline-row.future::before { border-color: var(--doc-accent-2); background: var(--doc-accent-2); }
+    .ctimeline-row .when {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.74rem;
+      letter-spacing: 0.08em;
+      color: var(--doc-accent-2);
+      font-weight: 600;
+      display: inline-block;
+      min-width: 110px;
+      margin-right: 14px;
+    }
+    .ctimeline-row .what {
+      font-size: 0.95rem;
+      color: var(--doc-text);
+      line-height: 1.5;
+    }
+    .ctimeline-row .cat {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.16em;
+      color: var(--doc-muted);
+      text-transform: uppercase;
+      margin-left: 8px;
+    }
+    @media (max-width: 640px) {
+      .ctimeline-row .when { display: block; min-width: 0; margin-bottom: 4px; }
+    }
+
+    .sources-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px 24px;
+    }
+    .sources-list a {
+      display: block;
+      padding: 8px 0;
+      font-size: 0.85rem;
+      color: var(--doc-accent);
+      border-bottom: 1px dashed var(--doc-border);
+      text-decoration: none;
+    }
+    .sources-list a:hover { color: var(--doc-accent-2); border-color: var(--doc-accent-2); }
+    @media (max-width: 768px) { .sources-list { grid-template-columns: 1fr; } }
+
+    .compliance-loading {
+      padding: 48px 0;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--doc-muted);
+    }
+  
+    /* ─── Last-edited stamp · Site Office adaptive ─── */
+    .last-edited-strip {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+      padding: 6px 14px; text-align: right;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.7rem; letter-spacing: 0.12em;
+      color: rgba(26, 24, 21, 0.65);
+      background: rgba(255, 255, 255, 0.92);
+      border-top: 1px solid rgba(26, 24, 21, 0.12);
+      backdrop-filter: blur(8px);
+    }
+    .last-edited-strip strong { color: rgba(26, 24, 21, 0.85); font-weight: 600; }
+    #last-edited { color: #C24800; font-weight: 700; }
+    #last-edited.fresh { color: #1F7A3A; }
+    #last-edited.stale { color: #B23A3A; }
+  </style>
+</head>
+<body class="theme-light">
+  <div class="hazard"></div>
+  <header>
+  <nav class="admin-nav">
+    <a href="index.html">Competitors</a>
+    <a href="insights.html">Market &amp; Pricing</a>
+    <a href="whitespace.html">Whitespace Atlas</a>
+    <a href="regulatory.html" class="active">Regulatory</a>
+    <a href="design-audit.html">Design Audit</a>
+    <a href="report.html">Report</a>
+        <button class="admin-theme-toggle" type="button" aria-label="Toggle theme" onclick="(function(){var r=document.documentElement;var d=r.classList.toggle('theme-dark');try{localStorage.setItem('ess-theme',d?'dark':'light');}catch(e){}})()">
+      <span class="swatch" aria-hidden="true"></span>
+      <span class="label-light">Site Office</span>
+      <span class="label-dark">Steel Mode</span>
+    </button>
+    <a href="../index.html" style="margin-left: auto;">← Back to public site</a>
+  </nav>
+
+<div class="last-edited-strip" role="status" aria-live="polite">
+  <strong>Page last edited:</strong> <span id="last-edited" data-edited="2026-05-10T14:53:27+08:00">checking…</span>
+</div>
+
+  </header>
+
+  <main class="compliance-page">
+
+    <header class="page-head">
+      <div class="eyebrow">Comprehensive regulatory map · 15 authorities × 44 regulations</div>
+      <h1>Every authority. Every regulation. Every link to source.</h1>
+      <p>The full compliance surface area for a Singapore site-supervision firm. Each entry is sourced to the official government release. Status, effective dates, and the existing Elitez Group asset that addresses it are flagged. Last refreshed <time id="research-date">2026-05-09</time>.</p>
+    </header>
+
+    <div id="compliance-summary"></div>
+
+    <!-- Authorities directory -->
+    <section class="section">
+      <h2>Regulators</h2>
+      <p class="lede">The 15 authorities whose remit touches a Singapore site-supervision firm. Click through to each regulator's source.</p>
+      <div id="authorities-grid" class="grid-4">
+        <div class="compliance-loading">Loading regulators…</div>
+      </div>
+    </section>
+
+    <!-- Regulation map -->
+    <section class="section">
+      <h2>Regulation map</h2>
+      <p class="lede">Click any entry to expand. Filter by status — <strong>in force</strong> means currently mandatory; <strong>phased</strong> is partial/transition; <strong>announced</strong> is published but not yet mandatory; <strong>voluntary</strong> is opt-in or scoring-relevant.</p>
+      <div id="reg-filter" class="reg-filter">
+        <button class="reg-filter-btn active" data-status="">All</button>
+        <button class="reg-filter-btn" data-status="in_force">In force</button>
+        <button class="reg-filter-btn" data-status="phased_in_progress">Phased</button>
+        <button class="reg-filter-btn" data-status="announced_pending">Announced</button>
+        <button class="reg-filter-btn" data-status="voluntary_track">Voluntary</button>
+      </div>
+      <div id="regulations">
+        <div class="compliance-loading">Loading regulations…</div>
+      </div>
+    </section>
+
+    <!-- Unified timeline -->
+    <section class="section">
+      <h2>Regulatory timeline</h2>
+      <p class="lede">From the 2009 JAC mandatory accreditation start through the 2028 firm-licensing deadline and the 2027–2030 macro horizon.</p>
+      <div id="ctimeline" class="ctimeline">
+        <div class="compliance-loading">Loading timeline…</div>
+      </div>
+    </section>
+
+    <!-- Sources -->
+    <section class="section" style="padding-top: 32px; border-top: 1px solid var(--doc-border);">
+      <h5 style="font-family: 'JetBrains Mono', monospace; font-size: 0.74rem; letter-spacing: 0.16em; color: var(--doc-accent-2); text-transform: uppercase; margin: 0 0 18px 0;">Primary sources</h5>
+      <p style="color: var(--doc-muted); font-size: 0.86rem; margin: 0 0 18px 0;">Every regulation entry above carries its own source URL list. The list below indexes the master sources researched for this map.</p>
+      <div id="sources-list" class="sources-list"></div>
+    </section>
+
+  </main>
+
+  <footer style="padding:24px 32px;border-top:1px solid var(--doc-border);font-size:12px;color:var(--doc-muted);background:var(--doc-bg);">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <p style="margin: 0;">Internal admin · Confidential · Data refreshed <span id="footer-date">2026-05-09</span> · <a href="../index.html" style="color: var(--doc-accent); border-bottom: 1px solid var(--doc-accent); text-decoration: none;">Back to public site</a></p>
+    </div>
+  </footer>
+
+  <script>
+    // ── Comprehensive compliance map renderer ──────────────────────────
+    // Uses safe DOM methods (createElement / textContent) — no innerHTML.
+    (async function () {
+      const STATUS_LABEL = {
+        in_force: 'In force',
+        phased_in_progress: 'Phased',
+        announced_pending: 'Announced',
+        voluntary_track: 'Voluntary',
+        sunset: 'Sunset'
+      };
+
+      function h(tag, attrs, ...children) {
+        const el = document.createElement(tag);
+        if (attrs) {
+          for (const [k, v] of Object.entries(attrs)) {
+            if (v == null || v === false) continue;
+            if (k === 'class') el.className = v;
+            else if (k === 'style' && typeof v === 'object') Object.assign(el.style, v);
+            else if (k.startsWith('on') && typeof v === 'function') el.addEventListener(k.slice(2).toLowerCase(), v);
+            else if (k === 'data') for (const [dk, dv] of Object.entries(v)) el.dataset[dk] = dv;
+            else el.setAttribute(k, v);
+          }
+        }
+        for (const child of children) {
+          if (child == null || child === false) continue;
+          if (Array.isArray(child)) child.forEach(c => c != null && el.append(c));
+          else if (child instanceof Node) el.append(child);
+          else el.append(document.createTextNode(String(child)));
+        }
+        return el;
+      }
+      function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
+      function fmtDate(iso) { return iso ? String(iso).replace(/-Q(\d)/, ' Q$1') : null; }
+
+      let data;
+      try {
+        const res = await fetch('data/compliance.json', { cache: 'no-cache' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        data = await res.json();
+      } catch (err) {
+        const tgt = document.getElementById('regulations');
+        clear(tgt);
+        tgt.append(h('p', { style: { color: 'var(--doc-muted)' } }, 'Unable to load compliance data: ' + err.message));
+        return;
+      }
+
+      if (data.meta && data.meta.research_date) {
+        document.getElementById('research-date').textContent = data.meta.research_date;
+        const f = document.getElementById('footer-date');
+        if (f) f.textContent = data.meta.research_date;
+      }
+
+      // Status counts
+      const counts = data.regulations.reduce((acc, r) => { acc[r.status] = (acc[r.status]||0)+1; return acc; }, {});
+      const summary = document.getElementById('compliance-summary');
+      clear(summary);
+      summary.append(
+        h('div', { class: 'compliance-stats' },
+          ['in_force', 'phased_in_progress', 'announced_pending', 'voluntary_track'].map(s =>
+            h('div', { class: 'cell' },
+              h('span', { class: 'num' }, String(counts[s] || 0)),
+              h('span', { class: 'lbl' },
+                s === 'in_force' ? 'In force today'
+                : s === 'phased_in_progress' ? 'Phased / transition'
+                : s === 'announced_pending' ? 'Announced / pending'
+                : 'Voluntary / scoring'
+              )
+            )
+          )
+        )
+      );
+
+      // Authorities grid
+      const authsGrid = document.getElementById('authorities-grid');
+      clear(authsGrid);
+      data.authorities.forEach(a => {
+        authsGrid.append(
+          h('a', { class: 'authority-card', href: a.url || '#', target: '_blank', rel: 'noopener' },
+            h('span', { class: 'auth-id' }, (a.id || '').toUpperCase()),
+            h('h4', null, a.name || ''),
+            h('p', null, a.role || '')
+          )
+        );
+      });
+
+      // Group regulations by authority order
+      const byAuth = {};
+      data.regulations.forEach(r => { (byAuth[r.authority_id] = byAuth[r.authority_id] || []).push(r); });
+
+      function regItem(r) {
+        const headlineDate = r.mandatory_date || r.voluntary_phase_start || r.announced_date || '';
+        const meta = [
+          ['Announced', fmtDate(r.announced_date)],
+          ['Voluntary phase', fmtDate(r.voluntary_phase_start)],
+          ['Mandatory', fmtDate(r.mandatory_date)],
+          ['Sunset', fmtDate(r.sunset_date)],
+          ['Category', r.category]
+        ].filter(([, v]) => v);
+
+        return h('details', { class: 'reg-item', data: { status: r.status || '' } },
+          h('summary', null,
+            h('span', { class: 'reg-title' }, r.title || ''),
+            h('span', { class: 'status-badge ' + (r.status || '') }, STATUS_LABEL[r.status] || r.status || ''),
+            h('span', { class: 'reg-date' }, fmtDate(headlineDate) || '')
+          ),
+          h('div', { class: 'reg-body' },
+            r.summary && h('p', null, r.summary),
+            r.applies_to && h('p', null, h('strong', null, 'Applies to: '), r.applies_to),
+            meta.length > 0 && h('div', { class: 'reg-meta-grid' },
+              meta.map(([k, v]) => h('div', { class: 'item' },
+                h('span', { class: 'k' }, k),
+                h('span', { class: 'v' }, v)
+              ))
+            ),
+            (r.details || []).length > 0 && h('h5', null, 'What it requires'),
+            (r.details || []).length > 0 && h('ul', null, r.details.map(d => h('li', null, d))),
+            r.elitez_implication && h('h5', null, 'Implication for Elitez Site Supervisor'),
+            r.elitez_implication && h('p', null, r.elitez_implication),
+            (r.official_urls || []).length > 0 && h('div', { class: 'reg-urls' },
+              h('h5', null, 'Sources'),
+              r.official_urls.map(u =>
+                h('a', { href: u.url, target: '_blank', rel: 'noopener' }, (u.label || u.url) + ' →')
+              )
+            )
+          )
+        );
+      }
+
+      const regsContainer = document.getElementById('regulations');
+      clear(regsContainer);
+      data.authorities.forEach(a => {
+        const regs = byAuth[a.id] || [];
+        if (regs.length === 0) return;
+        regsContainer.append(
+          h('div', { class: 'reg-section', data: { auth: a.id } },
+            h('h4', { class: 'reg-auth-head' },
+              a.name || '', ' ',
+              h('span', { class: 'count' }, `${regs.length} ${regs.length === 1 ? 'regulation' : 'regulations'}`)
+            ),
+            h('div', { class: 'reg-list' }, regs.map(regItem))
+          )
+        );
+      });
+
+      // Filter wiring
+      const filterButtons = document.querySelectorAll('.reg-filter-btn');
+      filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const status = btn.dataset.status;
+          document.querySelectorAll('.reg-item').forEach(item => {
+            item.style.display = !status || item.dataset.status === status ? '' : 'none';
+          });
+          document.querySelectorAll('.reg-section').forEach(sec => {
+            const anyVisible = sec.querySelectorAll('.reg-item:not([style*="display: none"])').length > 0;
+            sec.style.display = anyVisible ? '' : 'none';
+          });
+        });
+      });
+
+      // Timeline
+      const today = new Date().toISOString().slice(0, 10);
+      const sortedTimeline = [...data.timeline].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+      const tlEl = document.getElementById('ctimeline');
+      clear(tlEl);
+      sortedTimeline.forEach(t => {
+        const future = (t.date || '') > today;
+        tlEl.append(
+          h('div', { class: 'ctimeline-row' + (future ? ' future' : '') },
+            h('span', { class: 'when' }, fmtDate(t.date) || '—'),
+            h('span', { class: 'what' }, t.event || ''),
+            t.category && h('span', { class: 'cat' }, '// ' + t.category)
+          )
+        );
+      });
+
+      // Sources
+      const sources = (data.meta && data.meta.sources) || [];
+      const srcEl = document.getElementById('sources-list');
+      clear(srcEl);
+      sources.forEach(s => {
+        srcEl.append(h('a', { href: s.url, target: '_blank', rel: 'noopener' }, (s.title || s.url) + ' →'));
+      });
+    })();
+  </script>
+
+<script>
+(function () {
+  const el = document.getElementById('last-edited');
+  if (!el) return;
+  const iso = el.dataset.edited;
+  if (!iso) { el.textContent = '—'; return; }
+  const d = new Date(iso);
+  const fmt = d.toLocaleDateString('en-SG', { year: 'numeric', month: 'short', day: 'numeric' });
+  const ago = Math.floor((Date.now() - d.getTime()) / 86400000);
+  let suffix;
+  if (ago === 0) suffix = 'today';
+  else if (ago === 1) suffix = 'yesterday';
+  else if (ago < 14) suffix = ago + ' days ago';
+  else if (ago < 60) suffix = Math.floor(ago/7) + ' weeks ago';
+  else suffix = Math.floor(ago/30) + ' months ago';
+  el.textContent = fmt + ' · ' + suffix;
+  if (ago <= 7) el.classList.add('fresh');
+  else if (ago > 14) el.classList.add('stale');
+})();
+</script>
+
+  <div class="hazard"></div>
+</body>
+</html>
