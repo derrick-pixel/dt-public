@@ -209,9 +209,9 @@
     }
     .nav-logo { font-weight: 700; font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted2); }
 
-    /* ── TETHER STATION HUD strip (real Earth + ISS imagery) ── */
+    /* ── TETHER STATION HUD strip (literal space-elevator scene) ── */
     .nav-hud {
-      display: flex; align-items: center; gap: 11px;
+      display: flex; align-items: center; gap: 14px;
       font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
       font-size: .66rem;
       letter-spacing: .14em;
@@ -219,35 +219,124 @@
       color: var(--muted2);
       position: relative; z-index: 2;
     }
-    /* Real Blue Marble photo (NASA/Apollo 17, public domain via Wikimedia,
-       resized + recompressed to /img/space/earth-blue-marble.jpg ≈ 5 KB). */
-    .nav-earth {
+
+    /* ───── Space-elevator scene ─────
+       Earth (left) ─ bold cable ─ climber-elevator shuttle ─ ISS (right)
+       The climber animates fast (1.4s one-way) between the two end-stops.
+       Both Earth & ISS are real NASA photos served locally. */
+    .space-elevator {
+      display: flex; align-items: center;
+      gap: 0;
+      flex-shrink: 0;
+    }
+    .se-earth {
       width: 26px; height: 26px;
       border-radius: 50%;
       background-image: url('img/space/earth-blue-marble.jpg');
       background-size: cover;
       background-position: 30% 50%;
       box-shadow:
-        0 0 12px rgba(56,189,248,.55),
-        0 0 32px rgba(56,189,248,.25),
-        inset 4px 0 8px rgba(0,30,80,.6),       /* terminator/night shadow */
+        0 0 14px rgba(56,189,248,.55),
+        0 0 28px rgba(56,189,248,.22),
+        inset 4px 0 8px rgba(0,30,80,.65),
         inset 0 0 1px rgba(255,255,255,.4);
-      animation: earth-spin 60s linear infinite;
+      animation: earth-spin 50s linear infinite;
       flex-shrink: 0;
-      position: relative;
-    }
-    /* Orbital ring around the Earth thumb */
-    .nav-earth::after {
-      content: ''; position: absolute; inset: -5px;
-      border-radius: 50%;
-      border: 1px dashed rgba(0,212,255,.45);
-      animation: earth-ring-spin 24s linear infinite reverse;
+      z-index: 2;
     }
     @keyframes earth-spin {
       from { background-position: 30% 50%; }
       to   { background-position: 130% 50%; }
     }
-    @keyframes earth-ring-spin { to { transform: rotate(360deg); } }
+
+    /* The cable holds the climber so absolute positioning is bounded. */
+    .se-tether {
+      position: relative;
+      width: 130px;
+      height: 26px;
+      display: flex; align-items: center;
+      margin: 0 -1px;            /* tuck under Earth and ISS so the cable visually anchors */
+    }
+    .se-cable {
+      flex: 1;
+      height: 4px;
+      border-radius: 2px;
+      background:
+        linear-gradient(180deg,
+          rgba(255,255,255,.5) 0%,
+          var(--accent2)       30%,
+          var(--accent)        50%,
+          var(--accent2)       70%,
+          rgba(255,255,255,.5) 100%);
+      box-shadow:
+        0 0 6px var(--accent),
+        0 0 12px rgba(0,212,255,.5);
+      position: relative;
+    }
+    /* faint travel-guide ticks on the cable */
+    .se-cable::before {
+      content: ''; position: absolute; inset: 0;
+      background-image:
+        repeating-linear-gradient(90deg,
+          transparent 0 7px,
+          rgba(255,255,255,.35) 7px 8px);
+    }
+    .se-climber {
+      position: absolute;
+      top: 50%; left: 0;
+      width: 14px; height: 10px;
+      transform: translate(0, -50%);
+      background: linear-gradient(180deg, #fff 0%, var(--accent2) 50%, var(--accent) 100%);
+      border: 1px solid #fff;
+      border-radius: 2px;
+      box-shadow:
+        0 0 10px var(--accent),
+        0 0 20px rgba(0,212,255,.6),
+        inset 0 1px 0 rgba(255,255,255,.7);
+      animation: climber-shuttle 1.4s cubic-bezier(.42,0,.58,1) infinite alternate;
+      z-index: 3;
+    }
+    /* contrasting "hatch" detail on the climber capsule */
+    .se-climber::after {
+      content: ''; position: absolute;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 6px; height: 2px;
+      background: var(--bg);
+      border-radius: 1px;
+      opacity: .85;
+    }
+    /* soft halo around the climber so it glows regardless of direction */
+    .se-climber::before {
+      content: ''; position: absolute;
+      inset: -3px -8px;
+      border-radius: 4px;
+      background: radial-gradient(ellipse at center,
+        rgba(0,212,255,.6) 0%,
+        rgba(0,212,255,.25) 45%,
+        transparent 75%);
+      filter: blur(2px);
+      pointer-events: none;
+      z-index: -1;
+    }
+    @keyframes climber-shuttle {
+      0%   { left: 0;                  }
+      100% { left: calc(100% - 14px);  }
+    }
+
+    .se-iss {
+      width: 38px; height: 22px;
+      background-image: url('img/space/iss.jpg');
+      background-size: cover;
+      background-position: center;
+      border-radius: 2px;
+      box-shadow: 0 0 10px rgba(0,212,255,.45);
+      filter: brightness(1.1) contrast(1.15);
+      flex-shrink: 0;
+      z-index: 2;
+      transition: opacity .25s ease, transform .25s ease;
+      cursor: pointer;
+    }
+    .se-iss:hover { transform: scale(1.06); box-shadow: 0 0 14px rgba(0,212,255,.7); }
 
     .nav-label {
       color: var(--accent);
@@ -265,7 +354,7 @@
       color: var(--muted); font-weight: 500;
       margin-right: 4px; letter-spacing: .14em;
     }
-    .nav-readout .num { color: var(--accent2); }   /* chrome-gold numerals */
+    .nav-readout .num { color: var(--accent2); }
     .nav-led {
       color: var(--green);
       font-weight: 700;
@@ -281,41 +370,25 @@
       0%, 100% { opacity: 1; filter: drop-shadow(0 0 4px var(--green)); }
       50%      { opacity: .55; filter: drop-shadow(0 0 12px var(--green)); }
     }
-    /* ISS silhouette photo on the right (NASA/STS-132 photograph
-       via Wikimedia Commons, public domain). Tiny ~28x18 strip. */
-    .nav-iss {
-      width: 36px; height: 22px;
-      background-image: url('img/space/iss.jpg');
-      background-size: cover;
-      background-position: center;
-      border-radius: 2px;
-      box-shadow: 0 0 8px rgba(0,212,255,.4);
-      filter: brightness(1.1) contrast(1.15);
-      flex-shrink: 0;
-      opacity: .85;
-      transition: opacity .25s ease, transform .25s ease;
-    }
-    .nav-iss:hover { opacity: 1; transform: scale(1.08); }
-    .nav-iss-trail {
-      width: 60px; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      box-shadow: 0 0 6px var(--accent);
-      flex-shrink: 0;
-      opacity: .6;
-      align-self: center;
-    }
     .nav-right { position: relative; z-index: 2; display: flex; align-items: center; gap: 14px; }
-    /* Progressive collapse */
-    @media (max-width: 1024px) { .nav-hud .opt-met { display: none; } }
-    @media (max-width: 820px)  { .nav-hud .opt-alt, .nav-iss-trail { display: none; } }
-    @media (max-width: 640px)  { .nav-hud .opt-led, .nav-iss { display: none; } }
+
+    /* Progressive collapse — protect the scene + label at all sizes */
+    @media (max-width: 1100px) { .nav-hud .opt-met { display: none; } }
+    @media (max-width: 880px)  { .nav-hud .opt-alt { display: none; } }
+    @media (max-width: 720px)  { .nav-hud .opt-led { display: none; } }
+    @media (max-width: 560px) {
+      .nav-hud .nav-label { display: none; }
+      .se-tether { width: 64px; }
+    }
     /* Soft palette swap on light theme */
-    :root[data-theme="light"] .nav-earth {
+    :root[data-theme="light"] .se-earth {
       box-shadow:
         0 0 8px rgba(2,132,199,.4),
         0 0 18px rgba(2,132,199,.2),
         inset 4px 0 8px rgba(0,30,80,.5);
     }
+    :root[data-theme="light"] .se-cable { box-shadow: 0 0 6px var(--accent); }
+    :root[data-theme="light"] .se-climber { box-shadow: 0 0 10px var(--accent); }
     :root[data-theme="light"] .nav-label { text-shadow: 0 0 4px rgba(2,132,199,.25); }
     :root[data-theme="light"] nav::before, :root[data-theme="light"] nav .stars-twinkle { opacity: .2; }
     :root[data-theme="light"] nav::after  { box-shadow: 0 0 10px var(--accent); }
@@ -647,11 +720,21 @@
 <nav>
   <div class="stars-twinkle" aria-hidden="true"></div>
 
-  <div class="nav-hud" aria-label="Tether-station telemetry">
-    <!-- Rotating Blue Marble: NASA/Apollo 17 photograph, public domain
-         via Wikimedia Commons, resized to /img/space/earth-blue-marble.jpg.
-         Slow horizontal background-position animation simulates rotation. -->
-    <span class="nav-earth" role="img" aria-label="Earth (Blue Marble, Apollo 17)"></span>
+  <div class="nav-hud" aria-label="Tether-station scene + telemetry">
+
+    <!-- Literal space-elevator scene:
+         Earth ─── bold cable + shuttling climber ─── ISS
+         Earth image: Apollo 17 Blue Marble (NASA, public domain).
+         ISS image: post-STS-132 photograph (NASA, public domain).
+         Climber shuttles fast (1.4s/direction) along the cable. -->
+    <div class="space-elevator" aria-label="Space-elevator scene · Earth surface to GEO tether anchor">
+      <span class="se-earth" role="img" aria-label="Earth (Blue Marble)"></span>
+      <span class="se-tether">
+        <span class="se-cable"></span>
+        <span class="se-climber" aria-label="Tether climber (elevator car)"></span>
+      </span>
+      <a class="se-iss" href="https://en.wikipedia.org/wiki/International_Space_Station" target="_blank" rel="noopener" aria-label="International Space Station (Wikipedia)" title="ISS · 408 km · 27,600 km/h"></a>
+    </div>
 
     <span class="nav-label">TETHER STATION SIN·1</span>
 
@@ -665,8 +748,6 @@
     <span class="nav-led opt-led">Transmitting</span>
   </div>
   <div class="nav-right">
-    <span class="nav-iss-trail" aria-hidden="true"></span>
-    <a class="nav-iss" href="https://en.wikipedia.org/wiki/International_Space_Station" target="_blank" rel="noopener" aria-label="International Space Station (Wikipedia)" title="ISS · 408 km · 27,600 km/h"></a>
 
     <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle theme" title="Toggle light / dark">
       <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
