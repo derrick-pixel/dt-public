@@ -238,11 +238,13 @@
     }
     /* ─── Earth (stylized SVG globe, rotates on its axis) ─── */
     .se-earth {
+      display: block;
       width: 28px; height: 28px;
       flex-shrink: 0;
       z-index: 2;
       filter: drop-shadow(0 0 8px rgba(56,189,248,.55))
               drop-shadow(0 0 16px rgba(56,189,248,.20));
+      overflow: visible;
     }
     .se-earth .earth-continents {
       transform-origin: 16px 16px;
@@ -289,6 +291,7 @@
     }
     /* ─── Climber (detailed SVG carriage with grip + windows) ─── */
     .se-climber {
+      display: block;
       position: absolute;
       top: 50%; left: 0;
       width: 30px; height: 18px;
@@ -306,13 +309,16 @@
 
     /* ─── ISS (custom SVG: truss + solar panels + modules) ─── */
     .se-iss {
+      display: inline-block;
       width: 56px; height: 24px;
       flex-shrink: 0;
       z-index: 2;
+      line-height: 0;
       filter: drop-shadow(0 0 8px rgba(0,212,255,.45));
       transition: transform .25s ease, filter .25s ease;
       cursor: pointer;
     }
+    .se-iss svg { display: block; width: 100%; height: 100%; }
     .se-iss:hover {
       transform: scale(1.06);
       filter: drop-shadow(0 0 12px rgba(0,212,255,.75));
@@ -710,7 +716,7 @@
     <div class="space-elevator" aria-label="Space-elevator scene · Earth surface to GEO tether anchor">
 
       <!-- Earth: stylized SVG globe with rotating continents + atmospheric limb -->
-      <svg class="se-earth" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-label="Earth">
+      <svg class="se-earth" width="28" height="28" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-label="Earth">
         <defs>
           <radialGradient id="se-ocean" cx="35%" cy="30%" r="68%">
             <stop offset="0%"   stop-color="#7bd2ff"/>
@@ -768,7 +774,7 @@
         <span class="se-cable"></span>
 
         <!-- Climber: detailed SVG carriage with grip rollers + lit windows -->
-        <svg class="se-climber" viewBox="0 0 30 18" xmlns="http://www.w3.org/2000/svg" aria-label="Tether climber">
+        <svg class="se-climber" width="30" height="18" viewBox="0 0 30 18" xmlns="http://www.w3.org/2000/svg" aria-label="Tether climber">
           <defs>
             <linearGradient id="se-cl-body" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%"   stop-color="#eef0f4"/>
@@ -812,7 +818,7 @@
 
       <!-- ISS: detailed SVG (truss + solar panels + hab modules + comms dish) -->
       <a class="se-iss" href="https://en.wikipedia.org/wiki/International_Space_Station" target="_blank" rel="noopener" title="ISS · 408 km · 27,600 km/h">
-        <svg viewBox="0 0 80 28" xmlns="http://www.w3.org/2000/svg" aria-label="International Space Station">
+        <svg width="56" height="24" viewBox="0 0 80 28" xmlns="http://www.w3.org/2000/svg" aria-label="International Space Station">
           <defs>
             <linearGradient id="se-iss-panel" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%"   stop-color="#3963a8"/>
