@@ -419,9 +419,31 @@
       border-right: 1px solid var(--border);
       padding: 24px 20px;
       display: flex; flex-direction: column; gap: 20px;
-      scrollbar-width: none;
+      /* Darker overlay so the space-photo backdrop doesn't bleed
+         through and wash out the muted text. */
+      background: linear-gradient(180deg, rgba(7,10,16,.94), rgba(4,6,11,.94));
+      backdrop-filter: blur(6px);
+      /* Firefox thin red scrollbar */
+      scrollbar-width: thin;
+      scrollbar-color: var(--stark) transparent;
     }
-    .sidebar::-webkit-scrollbar { display: none; }
+    /* WebKit thin red scrollbar (Chrome / Safari) — same Stark-red
+       tone as the card trim, ~4px so it reads as a thin line. */
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .sidebar::-webkit-scrollbar-thumb {
+      background: var(--stark);
+      border-radius: 2px;
+    }
+    .sidebar::-webkit-scrollbar-thumb:hover {
+      background: #e63250;
+      box-shadow: 0 0 6px rgba(196,30,58,.6);
+    }
+    /* Light theme override */
+    :root[data-theme="light"] .sidebar {
+      background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(248,250,252,.95));
+      backdrop-filter: blur(6px);
+    }
 
     h1.sb-name, h2.main-title { margin: 0; padding: 0; }
     .sb-name {
