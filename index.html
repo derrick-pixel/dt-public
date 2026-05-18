@@ -489,10 +489,36 @@
       display: flex; flex-direction: column;
       background: var(--card);
       border: 1px solid var(--border);
+      border-left: 2px solid var(--stark);   /* thin Stark-red trim */
       border-radius: 8px;
       padding: 10px;
       position: relative; overflow: hidden;
       transition: border-color .2s, transform .2s, box-shadow .2s;
+    }
+    .project-card:hover { border-left-color: var(--stark); }   /* keep red trim through hover */
+
+    /* ── Atomic-structure mark next to each section title ──
+       3 elliptical orbits (cyan / gold / Stark-red) at 0°/60°/120°
+       baseline tilts, each rotating around the nucleus at different
+       speeds + one reversed direction. The Stark-red nucleus ties to
+       the red trim on the cards below it. */
+    .section-atom {
+      width: 22px; height: 22px;
+      flex-shrink: 0;
+      display: inline-block;
+      vertical-align: middle;
+      filter: drop-shadow(0 0 4px rgba(0,212,255,.4));
+    }
+    .section-atom .orbit { transform-origin: 12px 12px; }
+    .section-atom .o1 { color: var(--accent);  animation: atom-o1 7s linear infinite; }
+    .section-atom .o2 { color: var(--gold);    animation: atom-o2 5s linear infinite reverse; }
+    .section-atom .o3 { color: var(--stark);   animation: atom-o3 9s linear infinite; }
+    .section-atom .nucleus { fill: var(--stark); }
+    @keyframes atom-o1 { from { transform: rotate(0deg);   } to { transform: rotate(360deg); } }
+    @keyframes atom-o2 { from { transform: rotate(60deg);  } to { transform: rotate(420deg); } }
+    @keyframes atom-o3 { from { transform: rotate(120deg); } to { transform: rotate(480deg); } }
+    .main-header-left {
+      display: flex; align-items: center; gap: 8px;
     }
 
     /* ── Racing-light card hover (clockwise neon trace) ── */
@@ -1004,7 +1030,15 @@
   <main class="main" id="projects">
 
     <div class="main-header">
-      <h2 class="main-title">Live</h2>
+      <div class="main-header-left">
+        <svg class="section-atom" width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g class="orbit o1"><ellipse cx="12" cy="12" rx="10" ry="3.8" stroke="currentColor" fill="none" stroke-width=".7"/><circle cx="22" cy="12" r="1.4" fill="currentColor"/></g>
+          <g class="orbit o2"><ellipse cx="12" cy="12" rx="10" ry="3.8" stroke="currentColor" fill="none" stroke-width=".7"/><circle cx="22" cy="12" r="1.4" fill="currentColor"/></g>
+          <g class="orbit o3"><ellipse cx="12" cy="12" rx="10" ry="3.8" stroke="currentColor" fill="none" stroke-width=".7"/><circle cx="22" cy="12" r="1.4" fill="currentColor"/></g>
+          <circle class="nucleus" cx="12" cy="12" r="2"/>
+        </svg>
+        <h2 class="main-title">Live</h2>
+      </div>
       <span class="main-count">In market</span>
     </div>
 
@@ -1072,7 +1106,15 @@
     </div>
 
     <div class="main-header main-header-next">
-      <h2 class="main-title">Preview</h2>
+      <div class="main-header-left">
+        <svg class="section-atom" width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g class="orbit o1"><ellipse cx="12" cy="12" rx="10" ry="3.8" stroke="currentColor" fill="none" stroke-width=".7"/><circle cx="22" cy="12" r="1.4" fill="currentColor"/></g>
+          <g class="orbit o2"><ellipse cx="12" cy="12" rx="10" ry="3.8" stroke="currentColor" fill="none" stroke-width=".7"/><circle cx="22" cy="12" r="1.4" fill="currentColor"/></g>
+          <g class="orbit o3"><ellipse cx="12" cy="12" rx="10" ry="3.8" stroke="currentColor" fill="none" stroke-width=".7"/><circle cx="22" cy="12" r="1.4" fill="currentColor"/></g>
+          <circle class="nucleus" cx="12" cy="12" r="2"/>
+        </svg>
+        <h2 class="main-title">Preview</h2>
+      </div>
       <span class="main-count">Snapshots · refreshed weekly</span>
     </div>
 
@@ -1188,7 +1230,15 @@
     </div>
 
     <div class="main-header main-header-next">
-      <h2 class="main-title">WIP</h2>
+      <div class="main-header-left">
+        <svg class="section-atom" width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g class="orbit o1"><ellipse cx="12" cy="12" rx="10" ry="3.8" stroke="currentColor" fill="none" stroke-width=".7"/><circle cx="22" cy="12" r="1.4" fill="currentColor"/></g>
+          <g class="orbit o2"><ellipse cx="12" cy="12" rx="10" ry="3.8" stroke="currentColor" fill="none" stroke-width=".7"/><circle cx="22" cy="12" r="1.4" fill="currentColor"/></g>
+          <g class="orbit o3"><ellipse cx="12" cy="12" rx="10" ry="3.8" stroke="currentColor" fill="none" stroke-width=".7"/><circle cx="22" cy="12" r="1.4" fill="currentColor"/></g>
+          <circle class="nucleus" cx="12" cy="12" r="2"/>
+        </svg>
+        <h2 class="main-title">WIP</h2>
+      </div>
       <span class="main-count">In development · not yet public</span>
     </div>
 
