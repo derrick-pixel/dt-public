@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.open-meteo.com https://api.nasa.gov; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" />
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <title>Derrick Teo — CEO, Elitez Group | Selected Works</title>
@@ -359,10 +359,11 @@
     .nav-right { position: relative; z-index: 2; display: flex; align-items: center; gap: 14px; }
 
     /* Progressive collapse — protect the scene at all sizes;
-       hide telemetry chips on narrow viewports first. */
-    @media (max-width: 1100px) { .nav-right .opt-met { display: none; } }
-    @media (max-width: 920px)  { .nav-right .opt-alt { display: none; } }
-    @media (max-width: 760px)  { .nav-right .opt-led { display: none; } }
+       drop the right-most telemetry chips first as viewport narrows. */
+    @media (max-width: 1280px) { .nav-right .opt-neo     { display: none; } }
+    @media (max-width: 1080px) { .nav-right .opt-weather { display: none; } }
+    @media (max-width: 920px)  { .nav-right .opt-date    { display: none; } }
+    @media (max-width: 760px)  { .nav-right .opt-led     { display: none; } }
     @media (max-width: 600px) {
       .nav-right .nav-label { display: none; }
       .nav-hud { max-width: 70vw; }
@@ -891,11 +892,14 @@
   <div class="nav-right">
     <span class="nav-label">TETHER STATION SIN·1</span>
 
-    <span class="nav-sep opt-alt">·</span>
-    <span class="nav-readout opt-alt"><small>ALT</small><span class="num">35,786</span> KM</span>
+    <span class="nav-sep opt-date">·</span>
+    <span class="nav-readout opt-date"><small>DATE</small><span class="num" id="nav-date">—</span></span>
 
-    <span class="nav-sep opt-met">·</span>
-    <span class="nav-readout opt-met"><small>MET</small><span class="num" id="nav-uptime">T+16Y</span></span>
+    <span class="nav-sep opt-weather">·</span>
+    <span class="nav-readout opt-weather" title="Singapore current weather · Open-Meteo"><small>SIN</small><span class="num" id="nav-weather">—</span></span>
+
+    <span class="nav-sep opt-neo">·</span>
+    <span class="nav-readout opt-neo" title="Nearest Near-Earth Object today · NASA NeoWs · LD = Lunar Distance"><small>NEO</small><span class="num" id="nav-neo">—</span></span>
 
     <span class="nav-sep opt-led">·</span>
     <span class="nav-led opt-led">Transmitting</span>
@@ -1422,23 +1426,91 @@
 </script>
 
 <script>
-  // Live uptime ticker for the nav HUD strip — counts years (+months) since
-  // Elitez Group was founded on 2010-01-01. Updates every minute so the
-  // counter advances quietly while the page is open.
+  // ─── Nav HUD live telemetry ───────────────────────────────────────
+  // Three chips: DATE (local), SIN (Singapore weather, Open-Meteo),
+  // NEO (today's closest near-Earth object, NASA NeoWs · DEMO_KEY).
+  // All three cache to sessionStorage so repeat navigations don't
+  // re-hit the APIs unnecessarily.
   (function () {
-    const el = document.getElementById('nav-uptime');
-    if (!el) return;
-    const founded = new Date('2010-01-01T00:00:00+08:00'); // SG time
-    function tick() {
-      const now = new Date();
-      let years = now.getFullYear() - founded.getFullYear();
-      let months = now.getMonth() - founded.getMonth();
-      if (months < 0) { years -= 1; months += 12; }
-      // If we passed the day-of-month anniversary, no adjustment needed
-      el.textContent = months > 0 ? `T+${years}Y ${months}M` : `T+${years}Y`;
+    const $ = id => document.getElementById(id);
+
+    // ── DATE chip (local) ──────────────────────────────────────────
+    const dateEl = $('nav-date');
+    if (dateEl) {
+      const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+      const tickDate = () => {
+        const d = new Date();
+        dateEl.textContent = `${String(d.getDate()).padStart(2,'0')} ${months[d.getMonth()]} ${d.getFullYear()}`;
+      };
+      tickDate();
+      setInterval(tickDate, 60 * 60 * 1000); // re-tick hourly to catch midnight roll
     }
-    tick();
-    setInterval(tick, 60000);
+
+    // ── WEATHER chip (Open-Meteo, Singapore) ───────────────────────
+    const weatherEl = $('nav-weather');
+    if (weatherEl) {
+      const emoji = (code) => {
+        if (code === 0) return '☀';
+        if (code <= 3) return '⛅';
+        if (code === 45 || code === 48) return '🌫';
+        if (code >= 51 && code <= 67) return '🌧';
+        if (code >= 71 && code <= 77) return '❄';
+        if (code >= 80 && code <= 82) return '🌦';
+        if (code >= 95) return '⛈';
+        return '·';
+      };
+      const setWeather = (t, c) => { weatherEl.textContent = `${t}°C ${emoji(c)}`; };
+      const cached = sessionStorage.getItem('nav-weather-v1');
+      if (cached) {
+        try {
+          const { t, c, ts } = JSON.parse(cached);
+          if (Date.now() - ts < 30 * 60 * 1000) setWeather(t, c);
+        } catch (e) {}
+      }
+      fetch('https://api.open-meteo.com/v1/forecast?latitude=1.35&longitude=103.82&current_weather=true&timezone=Asia%2FSingapore')
+        .then(r => r.json())
+        .then(d => {
+          const t = Math.round(d.current_weather.temperature);
+          const c = d.current_weather.weathercode;
+          setWeather(t, c);
+          sessionStorage.setItem('nav-weather-v1', JSON.stringify({ t, c, ts: Date.now() }));
+        })
+        .catch(() => { if (!cached) weatherEl.textContent = '—'; });
+    }
+
+    // ── NEO chip (NASA NeoWs · DEMO_KEY, ~30 req/hr quota) ─────────
+    const neoEl = $('nav-neo');
+    if (neoEl) {
+      const cached = sessionStorage.getItem('nav-neo-v1');
+      if (cached) {
+        try {
+          const { text, ts } = JSON.parse(cached);
+          if (Date.now() - ts < 6 * 60 * 60 * 1000) neoEl.textContent = text;
+        } catch (e) {}
+      }
+      const today = new Date().toISOString().slice(0, 10);
+      fetch(`https://api.nasa.gov/neo/rest/v1/feed?start_date=${today}&end_date=${today}&api_key=DEMO_KEY`)
+        .then(r => r.json())
+        .then(data => {
+          const list = (data.near_earth_objects && data.near_earth_objects[today]) || [];
+          if (!list.length) { neoEl.textContent = 'none today'; return; }
+          let best = null, bestKm = Infinity;
+          for (const obj of list) {
+            const ca = obj.close_approach_data && obj.close_approach_data[0];
+            if (!ca) continue;
+            const km = parseFloat(ca.miss_distance.kilometers);
+            if (km < bestKm) { bestKm = km; best = obj; }
+          }
+          if (!best) { neoEl.textContent = '—'; return; }
+          const ld = parseFloat(best.close_approach_data[0].miss_distance.lunar).toFixed(2);
+          const rawName = (best.name || '').replace(/^\(|\)$/g, '');
+          const name = rawName.length > 14 ? rawName.slice(0, 13) + '…' : rawName;
+          const text = `${name} ${ld}LD`;
+          neoEl.textContent = text;
+          sessionStorage.setItem('nav-neo-v1', JSON.stringify({ text, ts: Date.now() }));
+        })
+        .catch(() => { if (!cached) neoEl.textContent = '—'; });
+    }
   })();
 </script>
 </body>
