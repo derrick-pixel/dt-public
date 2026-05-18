@@ -708,12 +708,177 @@
        Now stretches across the full left side of the bar. -->
   <div class="nav-hud" aria-label="Space-elevator scene">
     <div class="space-elevator" aria-label="Space-elevator scene · Earth surface to GEO tether anchor">
-      <span class="se-earth" role="img" aria-label="Earth (Blue Marble)"></span>
+
+      <!-- Earth: stylized SVG globe with rotating continents + atmospheric limb -->
+      <svg class="se-earth" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-label="Earth">
+        <defs>
+          <radialGradient id="se-ocean" cx="35%" cy="30%" r="68%">
+            <stop offset="0%"   stop-color="#7bd2ff"/>
+            <stop offset="55%"  stop-color="#1c6cb8"/>
+            <stop offset="100%" stop-color="#0a2950"/>
+          </radialGradient>
+          <radialGradient id="se-atmo" cx="50%" cy="50%" r="50%">
+            <stop offset="85%"  stop-color="rgba(125,210,255,0)"/>
+            <stop offset="100%" stop-color="rgba(125,210,255,.85)"/>
+          </radialGradient>
+          <linearGradient id="se-terminator" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%"   stop-color="rgba(0,2,18,.7)"/>
+            <stop offset="50%"  stop-color="rgba(0,2,18,0)"/>
+            <stop offset="100%" stop-color="rgba(0,2,18,0)"/>
+          </linearGradient>
+          <clipPath id="se-globe-clip">
+            <circle cx="16" cy="16" r="12.5"/>
+          </clipPath>
+        </defs>
+
+        <!-- Atmospheric halo -->
+        <circle cx="16" cy="16" r="15" fill="url(#se-atmo)"/>
+
+        <!-- Ocean base -->
+        <circle cx="16" cy="16" r="12.5" fill="url(#se-ocean)"/>
+
+        <!-- Continents (clipped to globe + rotates) -->
+        <g class="earth-continents" clip-path="url(#se-globe-clip)">
+          <!-- Africa + Arabia -->
+          <path d="M 17 7 Q 21 8 22 12 L 22 16 Q 23 19 21 23 Q 19 25 18 25 Q 16 24 15 21 L 14 17 Q 14 12 17 7 Z"
+                fill="#5b8a3a" opacity=".95"/>
+          <!-- Europe -->
+          <path d="M 14 7 Q 17 6 20 7 L 21 9 L 17 9 Z" fill="#5b8a3a" opacity=".9"/>
+          <!-- South America (lower-left, partially visible) -->
+          <path d="M 9 16 Q 12 17 12 21 L 10 25 Q 8 26 7 23 Q 6 19 9 16 Z" fill="#5b8a3a" opacity=".85"/>
+          <!-- Asia hint (right edge, will rotate in/out) -->
+          <path d="M 22 9 Q 26 10 27 14 L 24 14 Q 23 11 22 9 Z" fill="#5b8a3a" opacity=".9"/>
+          <!-- Madagascar -->
+          <ellipse cx="22" cy="20" rx="1" ry="2" fill="#5b8a3a" opacity=".8"/>
+          <!-- Cloud wisps -->
+          <ellipse cx="11" cy="11" rx="3.5" ry="1.2" fill="#fff" opacity=".28"/>
+          <ellipse cx="19" cy="22" rx="3"   ry=".9" fill="#fff" opacity=".22"/>
+          <ellipse cx="24" cy="18" rx="2.5" ry=".8" fill="#fff" opacity=".25"/>
+        </g>
+
+        <!-- Day/night terminator shadow -->
+        <circle cx="16" cy="16" r="12.5" fill="url(#se-terminator)"/>
+
+        <!-- Bright limb highlight on the sunlit side -->
+        <circle cx="16" cy="16" r="12.5" fill="none"
+                stroke="rgba(180,230,255,.5)" stroke-width=".4"/>
+      </svg>
+
       <span class="se-tether">
         <span class="se-cable"></span>
-        <span class="se-climber" aria-label="Tether climber (elevator car)"></span>
+
+        <!-- Climber: detailed SVG carriage with grip rollers + lit windows -->
+        <svg class="se-climber" viewBox="0 0 30 18" xmlns="http://www.w3.org/2000/svg" aria-label="Tether climber">
+          <defs>
+            <linearGradient id="se-cl-body" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#eef0f4"/>
+              <stop offset="50%"  stop-color="#8a93a4"/>
+              <stop offset="100%" stop-color="#393e4a"/>
+            </linearGradient>
+            <linearGradient id="se-cl-glow" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#7be7ff"/>
+              <stop offset="100%" stop-color="#0fb6e6"/>
+            </linearGradient>
+          </defs>
+          <!-- Top grip bracket (roller mount) -->
+          <rect x="11" y="0" width="8" height="2.5" rx=".4" fill="#1f242b" stroke="#fff" stroke-width=".25"/>
+          <circle cx="13.5" cy="1.25" r=".7" fill="#cbd0d8"/>
+          <circle cx="16.5" cy="1.25" r=".7" fill="#cbd0d8"/>
+          <!-- Body shell -->
+          <rect x="1" y="3" width="28" height="12" rx="2"
+                fill="url(#se-cl-body)" stroke="#fff" stroke-width=".5"/>
+          <!-- Top decorative trim -->
+          <rect x="1" y="3" width="28" height="1.5" fill="#1f242b"/>
+          <!-- Bottom decorative trim -->
+          <rect x="1" y="13.5" width="28" height="1.5" fill="#1f242b"/>
+          <!-- Cargo stripe -->
+          <rect x="2.5" y="5.5" width="25" height=".5" fill="#fff" opacity=".45"/>
+          <!-- Windows (5 lit + 2 amber service lights) -->
+          <rect x="3"   y="7.5" width="2.6" height="3" rx=".5" fill="url(#se-cl-glow)"/>
+          <rect x="6.5" y="7.5" width="2.6" height="3" rx=".5" fill="url(#se-cl-glow)"/>
+          <rect x="10"  y="7.5" width="2.6" height="3" rx=".5" fill="url(#se-cl-glow)"/>
+          <rect x="13.5" y="7.5" width="2.6" height="3" rx=".5" fill="url(#se-cl-glow)"/>
+          <rect x="17"  y="7.5" width="2.6" height="3" rx=".5" fill="url(#se-cl-glow)"/>
+          <rect x="20.5" y="7.5" width="2.6" height="3" rx=".5" fill="#facc15" opacity=".9"/>
+          <rect x="24"  y="7.5" width="2.6" height="3" rx=".5" fill="#facc15" opacity=".9"/>
+          <!-- Hatch detail under windows -->
+          <rect x="12" y="11.5" width="6" height="1.2" rx=".3" fill="#1f242b"/>
+          <!-- Bottom grip bracket -->
+          <rect x="11" y="15.5" width="8" height="2.5" rx=".4" fill="#1f242b" stroke="#fff" stroke-width=".25"/>
+          <circle cx="13.5" cy="16.75" r=".7" fill="#cbd0d8"/>
+          <circle cx="16.5" cy="16.75" r=".7" fill="#cbd0d8"/>
+        </svg>
       </span>
-      <a class="se-iss" href="https://en.wikipedia.org/wiki/International_Space_Station" target="_blank" rel="noopener" aria-label="International Space Station (Wikipedia)" title="ISS · 408 km · 27,600 km/h"></a>
+
+      <!-- ISS: detailed SVG (truss + solar panels + hab modules + comms dish) -->
+      <a class="se-iss" href="https://en.wikipedia.org/wiki/International_Space_Station" target="_blank" rel="noopener" title="ISS · 408 km · 27,600 km/h">
+        <svg viewBox="0 0 80 28" xmlns="http://www.w3.org/2000/svg" aria-label="International Space Station">
+          <defs>
+            <linearGradient id="se-iss-panel" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#3963a8"/>
+              <stop offset="50%"  stop-color="#1a3a72"/>
+              <stop offset="100%" stop-color="#0b2046"/>
+            </linearGradient>
+            <linearGradient id="se-iss-truss" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#eaecf0"/>
+              <stop offset="50%"  stop-color="#b8bcc4"/>
+              <stop offset="100%" stop-color="#5a5e68"/>
+            </linearGradient>
+          </defs>
+          <!-- Left solar array (4 panels) -->
+          <g class="iss-arr-left">
+            <rect x="1"  y="4"  width="22" height="4.2" fill="url(#se-iss-panel)" stroke="#c8c8c8" stroke-width=".4"/>
+            <rect x="1"  y="9"  width="22" height="4.2" fill="url(#se-iss-panel)" stroke="#c8c8c8" stroke-width=".4"/>
+            <rect x="1"  y="14" width="22" height="4.2" fill="url(#se-iss-panel)" stroke="#c8c8c8" stroke-width=".4"/>
+            <rect x="1"  y="19" width="22" height="4.2" fill="url(#se-iss-panel)" stroke="#c8c8c8" stroke-width=".4"/>
+            <!-- panel grid lines -->
+            <g stroke="#ffffff" stroke-width=".2" opacity=".4">
+              <line x1="6"  y1="4"  x2="6"  y2="23"/>
+              <line x1="11" y1="4"  x2="11" y2="23"/>
+              <line x1="16" y1="4"  x2="16" y2="23"/>
+              <line x1="20" y1="4"  x2="20" y2="23"/>
+            </g>
+          </g>
+          <!-- Right solar array -->
+          <g class="iss-arr-right">
+            <rect x="57" y="4"  width="22" height="4.2" fill="url(#se-iss-panel)" stroke="#c8c8c8" stroke-width=".4"/>
+            <rect x="57" y="9"  width="22" height="4.2" fill="url(#se-iss-panel)" stroke="#c8c8c8" stroke-width=".4"/>
+            <rect x="57" y="14" width="22" height="4.2" fill="url(#se-iss-panel)" stroke="#c8c8c8" stroke-width=".4"/>
+            <rect x="57" y="19" width="22" height="4.2" fill="url(#se-iss-panel)" stroke="#c8c8c8" stroke-width=".4"/>
+            <g stroke="#ffffff" stroke-width=".2" opacity=".4">
+              <line x1="62" y1="4"  x2="62" y2="23"/>
+              <line x1="67" y1="4"  x2="67" y2="23"/>
+              <line x1="72" y1="4"  x2="72" y2="23"/>
+              <line x1="76" y1="4"  x2="76" y2="23"/>
+            </g>
+          </g>
+          <!-- Central truss (longitudinal beam) -->
+          <rect x="22" y="12" width="36" height="4" fill="url(#se-iss-truss)" stroke="#444" stroke-width=".3"/>
+          <!-- Truss segmentation -->
+          <g stroke="#444" stroke-width=".3" opacity=".7">
+            <line x1="28" y1="12" x2="28" y2="16"/>
+            <line x1="34" y1="12" x2="34" y2="16"/>
+            <line x1="40" y1="12" x2="40" y2="16"/>
+            <line x1="46" y1="12" x2="46" y2="16"/>
+            <line x1="52" y1="12" x2="52" y2="16"/>
+          </g>
+          <!-- Habitation modules (Zarya / Zvezda / Destiny + Node 2) -->
+          <ellipse cx="30" cy="14" rx="3.6" ry="4.8" fill="#dde0e5" stroke="#333" stroke-width=".3"/>
+          <rect x="34.5" y="9.5" width="11" height="9" rx="1.5" fill="#e8ebef" stroke="#333" stroke-width=".3"/>
+          <ellipse cx="50" cy="14" rx="3.6" ry="4.8" fill="#dde0e5" stroke="#333" stroke-width=".3"/>
+          <!-- Module portholes -->
+          <circle cx="30" cy="14" r="1" fill="#00d4ff" opacity=".7"/>
+          <circle cx="38" cy="13" r="1" fill="#00d4ff" opacity=".7"/>
+          <circle cx="42" cy="13" r="1" fill="#facc15" opacity=".7"/>
+          <circle cx="50" cy="14" r="1" fill="#00d4ff" opacity=".7"/>
+          <!-- Communications dish on top of truss -->
+          <line x1="40" y1="7" x2="40" y2="11.5" stroke="#999" stroke-width=".5"/>
+          <ellipse cx="40" cy="6" rx="2.5" ry="1.5" fill="#eee" stroke="#666" stroke-width=".4"/>
+          <!-- Robotic arm below truss -->
+          <line x1="40" y1="16" x2="44" y2="20" stroke="#888" stroke-width=".5"/>
+          <line x1="44" y1="20" x2="48" y2="19" stroke="#888" stroke-width=".5"/>
+        </svg>
+      </a>
     </div>
   </div>
 
