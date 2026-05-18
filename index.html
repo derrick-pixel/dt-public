@@ -157,7 +157,12 @@
     }
     .nav-logo { font-weight: 700; font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted2); }
 
-    /* ── HUD strip (replaces redundant DERRICK TEO logo) ── */
+    /* ── TETHER STATION HUD strip (replaces DERRICK TEO logo) ── */
+    /* Theme: Singapore-anchored geostationary space-elevator observatory.
+       Visual elements: rotating Earth + dashed orbit ring + an orbiting
+       satellite at GEO altitude (35,786 km) connected to Earth by a
+       tether line; live mission-elapsed-time counter; pulsing TRANSMITTING
+       indicator; a sweeping signal pulse along the bottom of the bar. */
     .nav-hud {
       display: flex; align-items: center; gap: 10px;
       font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -166,16 +171,21 @@
       text-transform: uppercase;
       color: var(--muted2);
     }
-    .nav-reactor {
-      width: 18px; height: 18px;
+    .nav-orbit {
+      width: 22px; height: 22px;
       color: var(--accent);
       flex-shrink: 0;
-      filter: drop-shadow(0 0 6px rgba(0,212,255,.5));
+      filter: drop-shadow(0 0 5px rgba(0,212,255,.5));
     }
-    .nav-reactor .r-outer { animation: nav-spin 14s linear infinite; transform-origin: center; }
-    .nav-reactor .r-mid   { animation: nav-spin 8s linear infinite reverse; transform-origin: center; }
-    .nav-reactor .r-tick  { animation: nav-spin 4s linear infinite; transform-origin: center; }
-    @keyframes nav-spin { to { transform: rotate(360deg); } }
+    .nav-orbit .orbit-ring {
+      transform-origin: 16px 16px;
+      animation: tether-orbit 90s linear infinite;
+    }
+    .nav-orbit .satellite-arm {
+      transform-origin: 16px 16px;
+      animation: tether-orbit 18s linear infinite;
+    }
+    @keyframes tether-orbit { to { transform: rotate(360deg); } }
 
     .nav-label {
       color: var(--accent);
@@ -183,12 +193,17 @@
       text-shadow: 0 0 8px rgba(0,212,255,.45);
     }
     .nav-sep { color: var(--muted); opacity: .6; }
-    .nav-uptime {
+    .nav-readout {
       color: var(--text);
       font-weight: 600;
       font-variant-numeric: tabular-nums;
       letter-spacing: .08em;
     }
+    .nav-readout small {
+      color: var(--muted); font-weight: 500;
+      margin-right: 4px; letter-spacing: .14em;
+    }
+    .nav-readout .num { color: var(--accent2); }   /* chrome-gold numerals */
     .nav-led {
       color: var(--green);
       font-weight: 700;
@@ -204,14 +219,14 @@
       0%, 100% { opacity: 1; filter: drop-shadow(0 0 4px var(--green)); }
       50%      { opacity: .55; filter: drop-shadow(0 0 12px var(--green)); }
     }
-    /* Hide secondary chips on narrow viewports */
-    @media (max-width: 720px) {
-      .nav-hud .nav-uptime-wrap, .nav-hud .nav-led-wrap { display: none; }
-    }
+    /* Progressive collapse on narrow viewports */
+    @media (max-width: 960px) { .nav-hud .opt-met { display: none; } }
+    @media (max-width: 760px) { .nav-hud .opt-alt { display: none; } }
+    @media (max-width: 560px) { .nav-hud .opt-led { display: none; } }
     /* Soft palette swap on light theme so the cyan glow isn't overpowering */
-    :root[data-theme="light"] .nav-reactor { filter: drop-shadow(0 0 4px rgba(2,132,199,.4)); }
-    :root[data-theme="light"] .nav-label   { text-shadow: 0 0 4px rgba(2,132,199,.25); }
-    :root[data-theme="light"] nav::after   { box-shadow: 0 0 10px var(--accent); }
+    :root[data-theme="light"] .nav-orbit  { filter: drop-shadow(0 0 4px rgba(2,132,199,.4)); }
+    :root[data-theme="light"] .nav-label  { text-shadow: 0 0 4px rgba(2,132,199,.25); }
+    :root[data-theme="light"] nav::after  { box-shadow: 0 0 10px var(--accent); }
     .nav-right { display: flex; align-items: center; gap: 20px; }
     .nav-right a { font-size: .72rem; font-weight: 500; color: var(--muted); transition: color .15s; }
     .nav-right a:hover { color: var(--text); }
@@ -538,25 +553,47 @@
 
 <header>
 <nav>
-  <div class="nav-hud" aria-label="Operator telemetry">
-    <svg class="nav-reactor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
-      <g class="r-outer">
-        <circle cx="12" cy="12" r="11"/>
+  <div class="nav-hud" aria-label="Tether-station telemetry">
+    <svg class="nav-orbit" viewBox="0 0 32 32" fill="none" stroke="currentColor" aria-hidden="true">
+      <defs>
+        <radialGradient id="nav-earth" cx="35%" cy="32%" r="65%">
+          <stop offset="0%"  stop-color="#7cd4ff"/>
+          <stop offset="55%" stop-color="#1b6cb6"/>
+          <stop offset="100%" stop-color="#08243f"/>
+        </radialGradient>
+      </defs>
+      <!-- background stars -->
+      <circle cx="3"  cy="6"  r=".5" fill="#ffffff" stroke="none" opacity=".7"/>
+      <circle cx="28" cy="4"  r=".4" fill="#ffffff" stroke="none" opacity=".55"/>
+      <circle cx="29" cy="22" r=".4" fill="#ffffff" stroke="none" opacity=".5"/>
+      <circle cx="5"  cy="27" r=".4" fill="#ffffff" stroke="none" opacity=".6"/>
+      <circle cx="22" cy="29" r=".4" fill="#ffffff" stroke="none" opacity=".45"/>
+      <!-- dashed orbit ring (slow counter-rotation gives subtle parallax) -->
+      <g class="orbit-ring">
+        <circle cx="16" cy="16" r="13" stroke-width=".45" stroke-dasharray="1.2 1.6" opacity=".55"/>
       </g>
-      <g class="r-mid">
-        <circle cx="12" cy="12" r="7" stroke-dasharray="2 2"/>
+      <!-- Earth -->
+      <circle cx="16" cy="16" r="5.6" fill="url(#nav-earth)" stroke="currentColor" stroke-width=".35"/>
+      <!-- equator-ish band for depth -->
+      <ellipse cx="16" cy="16" rx="5.6" ry="1.6" fill="none" stroke="#9fdbff" stroke-width=".25" opacity=".5"/>
+      <!-- tether + satellite (orbits slowly) -->
+      <g class="satellite-arm">
+        <line x1="16" y1="10.4" x2="16" y2="3" stroke-width=".4" opacity=".85"/>
+        <circle cx="16" cy="3" r="1.5" fill="currentColor" stroke="none"/>
+        <circle cx="16" cy="3" r="2.6" fill="none" stroke-width=".3" opacity=".5"/>
       </g>
-      <g class="r-tick">
-        <circle cx="12" cy="12" r="4"/>
-        <line x1="12" y1="2" x2="12" y2="5" stroke-width="1.6"/>
-      </g>
-      <circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/>
     </svg>
-    <span class="nav-label">STARK//JARVIS OS</span>
-    <span class="nav-sep">·</span>
-    <span class="nav-uptime-wrap"><span class="nav-uptime" id="nav-uptime">T+16Y</span></span>
-    <span class="nav-sep nav-uptime-wrap">·</span>
-    <span class="nav-led-wrap"><span class="nav-led">NOMINAL</span></span>
+
+    <span class="nav-label">TETHER STATION SIN·1</span>
+
+    <span class="nav-sep opt-alt">·</span>
+    <span class="nav-readout opt-alt"><small>ALT</small><span class="num">35,786</span> KM</span>
+
+    <span class="nav-sep opt-met">·</span>
+    <span class="nav-readout opt-met"><small>MET</small><span class="num" id="nav-uptime">T+16Y</span></span>
+
+    <span class="nav-sep opt-led">·</span>
+    <span class="nav-led opt-led">Transmitting</span>
   </div>
   <div class="nav-right">
     <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle theme" title="Toggle light / dark">
