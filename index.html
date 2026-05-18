@@ -33,7 +33,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <link rel="manifest" href="/site.webmanifest" />
   <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#38bdf8" />
-  <meta name="theme-color" content="#0a0f1e" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#0d1116" media="(prefers-color-scheme: dark)" />
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
   <script type="application/ld+json">
   {
@@ -65,20 +65,24 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg:       #0a0f1e;
-      --surface:  #0f172a;
-      --card:     #111827;
-      --border:   rgba(255,255,255,0.07);
-      --border2:  rgba(255,255,255,0.13);
-      --text:     #f1f5f9;
-      --muted:    #64748b;
-      --muted2:   #94a3b8;
-      --accent:   #38bdf8;
-      --accent2:  #818cf8;
-      --green:    #34d399;
-      --gold:     #f59e0b;
-      --red:      #f87171;
-      --nav-bg:   rgba(10,15,30,0.92);
+      /* === STARK / JARVIS palette === */
+      --bg:       #0d1116;           /* gunmetal */
+      --surface:  #161c25;           /* gunmetal surface */
+      --card:     #1a2230;           /* lifted card */
+      --border:   rgba(0,212,255,0.10);
+      --border2:  rgba(0,212,255,0.22);
+      --text:     #e8edf3;           /* Stark cream-white */
+      --muted:    #5e6a80;
+      --muted2:   #95a0b8;
+      --accent:   #00d4ff;           /* JARVIS cyan */
+      --accent2:  #d4af37;           /* chrome gold */
+      --green:    #4ade80;           /* signal green */
+      --gold:     #d4af37;           /* chrome gold */
+      --red:      #c41e3a;           /* Stark red */
+      --coral:    #ff6b3c;           /* hot Stark coral */
+      --stark:    #c41e3a;
+      --jarvis:   #00d4ff;
+      --nav-bg:   rgba(13,17,22,0.92);
       --shadow:   0 8px 24px rgba(0,0,0,.3);
       --nav-h:    44px;
       --side-w:   224px;
@@ -108,7 +112,7 @@
       min-height: 100vh;
       background-color: var(--bg);
       background-image:
-        linear-gradient(rgba(10,15,30,0.45), rgba(10,15,30,0.75)),
+        linear-gradient(rgba(13,17,22,0.45), rgba(13,17,22,0.75)),
         url('bg-space.jpg');
       background-size: cover;
       background-position: center center;
@@ -190,8 +194,8 @@
       border: 1px solid var(--border2); color: var(--muted2); transition: all .15s;
     }
     .sb-link:hover { color: var(--text); border-color: rgba(255,255,255,.2); }
-    .sb-link.primary { background: var(--accent); color: #0a0f1e; border-color: transparent; }
-    .sb-link.primary:hover { background: #7dd3fc; }
+    .sb-link.primary { background: var(--accent); color: #0d1116; border-color: transparent; }
+    .sb-link.primary:hover { background: #33dffe; }
 
     .sb-divider { height: 1px; background: var(--border); }
 
@@ -249,7 +253,7 @@
       background: linear-gradient(90deg, var(--accent), var(--accent2));
       opacity: 0; transition: opacity .2s;
     }
-    .project-card:hover { border-color: rgba(56,189,248,.25); transform: translateY(-2px); box-shadow: var(--shadow); }
+    .project-card:hover { border-color: rgba(0,212,255,.32); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,212,255,.10), 0 4px 14px rgba(0,0,0,.4); }
     .project-card:hover::after { opacity: 1; }
     .project-card:hover .pc-arrow { color: var(--accent); transform: translateX(2px); }
 
@@ -266,11 +270,12 @@
       font-size: .6rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
       padding: 2px 8px; border-radius: 100px; font-size: .64rem;
     }
-    .tag-blue   { background: rgba(56,189,248,.1);  color: var(--accent); }
-    .tag-purple { background: rgba(129,140,248,.1); color: var(--accent2); }
-    .tag-green  { background: rgba(52,211,153,.1);  color: var(--green); }
-    .tag-gold   { background: rgba(245,158,11,.1);  color: var(--gold); }
-    .tag-red    { background: rgba(248,113,113,.1); color: var(--red); }
+    .tag-blue   { background: rgba(0,212,255,.10);   color: var(--accent); }
+    .tag-purple { background: rgba(157,108,255,.12); color: #b69cff; }
+    .tag-green  { background: rgba(74,222,128,.12);  color: var(--green); }
+    .tag-gold   { background: rgba(212,175,55,.12);  color: var(--gold); }
+    .tag-red    { background: rgba(196,30,58,.16);   color: #f47a8a; }
+    .tag-coral  { background: rgba(255,107,60,.14);  color: var(--coral); }
 
     /* ── Platform badge (auto-injected by JS based on card href) ── */
     .pc-tag-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; align-self: flex-start; }
@@ -283,7 +288,7 @@
     .plat-streamlit { color: #ff4b4b; background: rgba(255,75,75,.08); border-color: rgba(255,75,75,.28); }
     .plat-vercel    { color: var(--text);  background: rgba(127,127,127,.08); border-color: rgba(127,127,127,.25); }
     .plat-web       { color: var(--muted); }
-    .plat-intel     { color: var(--accent2); background: rgba(129,140,248,.08); border-color: rgba(129,140,248,.28); }
+    .plat-intel     { color: #b69cff; background: rgba(157,108,255,.10); border-color: rgba(157,108,255,.32); }
     a.pc-platform   { text-decoration: none; transition: filter .15s, transform .15s; cursor: pointer; }
     a.pc-platform:hover { filter: brightness(1.15); transform: translateY(-1px); }
 
@@ -310,13 +315,13 @@
     .wip-badge {
       font-size: .56rem; font-weight: 700; letter-spacing: .08em;
       padding: 2px 7px; border-radius: 100px;
-      background: rgba(245,158,11,.12); color: var(--gold);
-      border: 1px solid rgba(245,158,11,.28);
+      background: rgba(212,175,55,.12); color: var(--gold);
+      border: 1px solid rgba(212,175,55,.4);
       text-transform: uppercase; flex-shrink: 0;
     }
     .wip-interactive { cursor: pointer; }
     .wip-card.wip-interactive:hover {
-      border-color: rgba(245,158,11,.35);
+      border-color: rgba(212,175,55,.5);
       transform: translateY(-1px);
       box-shadow: var(--shadow);
     }
@@ -324,7 +329,7 @@
     /* ── WIP MODAL ── */
     .wip-modal {
       display: none; position: fixed; inset: 0; z-index: 9999;
-      background: rgba(10,15,30,.82); backdrop-filter: blur(8px);
+      background: rgba(13,17,22,.85); backdrop-filter: blur(8px);
       align-items: center; justify-content: center;
       padding: 24px;
     }
@@ -352,7 +357,7 @@
       display: inline-block;
       font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
       color: var(--gold); padding: 4px 9px; border-radius: 100px;
-      background: rgba(245,158,11,.12); border: 1px solid rgba(245,158,11,.28);
+      background: rgba(212,175,55,.12); border: 1px solid rgba(212,175,55,.4);
       margin-bottom: 14px;
     }
     .wip-modal-desc { font-size: .82rem; color: var(--muted2); line-height: 1.6; margin-bottom: 0; }
@@ -367,7 +372,7 @@
       cursor: pointer; transition: all .15s;
     }
     .wip-modal-cta a.primary {
-      background: var(--accent); color: #0a0f1e; border: 1px solid transparent;
+      background: var(--accent); color: #0d1116; border: 1px solid transparent;
     }
     .wip-modal-cta a.primary:hover { filter: brightness(1.1); }
     .wip-modal-cta button.secondary {
@@ -855,7 +860,7 @@
     <div id="proj-err" style="font-size:.68rem;color:var(--red);margin-top:8px;min-height:14px"></div>
     <div style="display:flex;gap:8px;margin-top:14px">
       <button type="button" id="proj-pass-cancel" style="flex:1;padding:10px;border-radius:7px;background:transparent;border:1px solid var(--border2);color:var(--muted2);font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit">Cancel</button>
-      <button type="button" id="proj-pass-unlock" style="flex:2;padding:10px;border-radius:7px;background:var(--accent);border:none;color:#0a0f1e;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit">Unlock</button>
+      <button type="button" id="proj-pass-unlock" style="flex:2;padding:10px;border-radius:7px;background:var(--accent);border:none;color:#0d1116;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit">Unlock</button>
     </div>
   </div>
 </div>
