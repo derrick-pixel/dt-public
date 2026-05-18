@@ -53,6 +53,26 @@ for entry in "${WIP_REPOS[@]}"; do
   rm -rf "./$folder"
   mv ".tmp-sync" "./$folder"
 
+  # ── Strip internal-only files from the public mirror ──────────
+  # dt-public is a PUBLIC repo. Planning docs, agent configs, specs
+  # and legal briefs must never be published. Admin/intel pages ARE
+  # kept — they are gated by the Supabase OTP overlay
+  # (assets/js/auth-gate.js). Without this step the sync copied every
+  # private repo's docs/, .claude/ and CLAUDE.md straight to the
+  # public site. To add an exclusion, extend the lists below.
+  (
+    cd "./$folder" || exit 0
+    # internal directories, anywhere in the tree
+    find . -type d \( -name docs -o -name .claude -o -name .gstack -o -name superpowers \) \
+      -prune -exec rm -rf {} + 2>/dev/null
+    # internal files at the repo root (root-only, so nested template
+    # content such as dt-site-creator archetype files is left intact)
+    rm -f CLAUDE.md CLAUDE.local.md AGENTS.md AGENT.md GEMINI.md \
+          SESSION-PROMPTS.md .gitleaksignore .env .env.* 2>/dev/null
+    # explicitly-private files, anywhere
+    find . -type f -name '*.private.*' -delete 2>/dev/null
+  ) || true
+
   # SEO: mark every HTML page in the mirror as noindex,nofollow
   # so Google doesn't treat these snapshots as duplicate content of the live sites.
   while IFS= read -r f; do
@@ -79,9 +99,12 @@ for entry in "${WIP_REPOS[@]}"; do
 
 done
 
-# NOTE on Passage admin: the upstream Passage repo ships admin.html with a
-# SHA-256 gate followed by "// Auth removed" code that bypasses it. Fix
-# upstream (derrick-pixel/Passage) — don't rely on this sync script to patch it.
+# NOTE on admin/intel pages: every admin/ and intel/ page across the
+# mirrored repos is now gated by a Supabase email-OTP overlay
+# (assets/js/auth-gate.js), restricted to elitez.asia / dhc.com.sg.
+# The gate controls UI access; data baked into static pages is still
+# readable via page source — moving that data into RLS-gated Supabase
+# tables is a separate, planned effort.
 
 echo ""
 echo "✓ Source sync complete."
