@@ -25,7 +25,7 @@ WIP_REPOS=(
   "XinceAI:xinceai"
   "altru:altru"
   "elitez-pulse:pulse"
-  "competitor-intel-self:competitor-intel"
+  "competitor-intel-template:competitor-intel"
   "Elitez-ESOP:esop"
   "dt-site-creator:dt-site-creator"
   "elitezshelf-frontage:elitezshelf-frontage"
