@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Guest Invites — Elitez Admin</title>
+  <style>
+    :root { --navy:#003a70; --orange:#F26522; --ink:#1f2937; --line:#e5e7eb; --bg:#fafafa; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+           background:var(--bg); color:var(--ink); }
+    .wrap { max-width:760px; margin:0 auto; padding:40px 24px; }
+    h1 { font-size:22px; color:var(--navy); margin:0 0 4px; }
+    p.sub { color:#6b7280; font-size:13px; margin:0 0 28px; }
+    .card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:22px 22px; margin-bottom:20px; }
+    label { display:block; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:#6b7280; margin:0 0 6px; }
+    input,select { width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:8px; font-size:14px; }
+    .row { display:flex; gap:12px; flex-wrap:wrap; }
+    .row > div { flex:1; min-width:160px; }
+    button { background:var(--orange); color:#fff; border:none; border-radius:8px; padding:11px 18px;
+             font-weight:700; font-size:13px; cursor:pointer; }
+    button:disabled { opacity:.5; cursor:not-allowed; }
+    button.link { background:none; color:var(--navy); text-decoration:underline; padding:4px 0; font-weight:600; }
+    table { width:100%; border-collapse:collapse; font-size:13px; }
+    th,td { text-align:left; padding:9px 8px; border-bottom:1px solid var(--line); }
+    th { font-size:11px; letter-spacing:.5px; text-transform:uppercase; color:#6b7280; }
+    .tag { font-size:11px; font-weight:700; padding:2px 8px; border-radius:99px; }
+    .tag.active { background:#dcfce7; color:#15803d; }
+    .tag.expired { background:#fee2e2; color:#b91c1c; }
+    .err { color:#b91c1c; font-size:13px; min-height:18px; }
+    .ok { color:#15803d; font-size:13px; min-height:18px; }
+    #denied { display:none; padding:40px; text-align:center; color:#6b7280; }
+  </style>
+</head>
+<body>
+  <div id="denied">This tool is restricted to the Elitez super-admin.</div>
+
+  <div id="tool" class="wrap" style="display:none">
+    <h1>Guest Invites</h1>
+    <p class="sub">Invite a named external person to view the admin pages. Per-person, time-boxed, revocable.</p>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <label for="g-email">Guest email</label>
+          <input id="g-email" type="email" placeholder="jane@investor.com" autocomplete="off">
+        </div>
+        <div>
+          <label for="g-exp">Access window</label>
+          <select id="g-exp">
+            <option value="7">7 days</option>
+            <option value="14">14 days</option>
+            <option value="30" selected>30 days</option>
+            <option value="90">90 days</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:12px">
+        <label for="g-note">Note (optional)</label>
+        <input id="g-note" type="text" placeholder="e.g. Passage round investor">
+      </div>
+      <div style="margin-top:16px;display:flex;align-items:center;gap:14px">
+        <button id="g-add">Invite guest</button>
+        <span id="g-msg" class="ok"></span>
+      </div>
+      <div id="g-err" class="err"></div>
+    </div>
+
+    <div class="card">
+      <table>
+        <thead><tr><th>Email</th><th>Status</th><th>Expires</th><th>Note</th><th></th></tr></thead>
+        <tbody id="g-list"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="assets/js/auth-gate.js"></script>
+  <script type="module">
+    const SUPER_ADMIN = 'derrick@elitez.asia';
+    const ADMIN_URL = 'https://derrickteo.com/passage/admin/';
+
+    const sb = await window._sbReady;
+    const { data: { user } } = await sb.auth.getUser();
+    const email = (user && user.email || '').toLowerCase();
+
+    if (email !== SUPER_ADMIN) {
+      document.getElementById('denied').style.display = 'block';
+      throw new Error('not super-admin');
+    }
+    document.getElementById('tool').style.display = 'block';
+
+    const $ = (id) => document.getElementById(id);
+    const fmt = (ts) => new Date(ts).toLocaleDateString('en-SG',
+      { year:'numeric', month:'short', day:'numeric' });
+
+    async function refresh() {
+      const { data, error } = await sb.from('guest_invites')
+        .select('*').order('created_at', { ascending:false });
+      const tbody = $('g-list');
+      tbody.textContent = '';
+      if (error) { $('g-err').textContent = 'Could not load list: ' + error.message; return; }
+      const now = Date.now();
+      for (const row of (data || [])) {
+        const expired = new Date(row.expires_at).getTime() <= now;
+        const tr = document.createElement('tr');
+        const cell = (txt) => { const td = document.createElement('td'); td.textContent = txt; return td; };
+        tr.appendChild(cell(row.email));
+        const st = document.createElement('td');
+        const tag = document.createElement('span');
+        tag.className = 'tag ' + (expired ? 'expired' : 'active');
+        tag.textContent = expired ? 'expired' : 'active';
+        st.appendChild(tag); tr.appendChild(st);
+        tr.appendChild(cell(fmt(row.expires_at)));
+        tr.appendChild(cell(row.note || ''));
+        const act = document.createElement('td');
+        if (!expired) {
+          const rv = document.createElement('button');
+          rv.className = 'link'; rv.textContent = 'revoke';
+          rv.onclick = () => revoke(row.email);
+          act.appendChild(rv);
+        }
+        const cp = document.createElement('button');
+        cp.className = 'link'; cp.textContent = 'copy invite'; cp.style.marginLeft = '10px';
+        cp.onclick = () => {
+          navigator.clipboard.writeText(
+            'You have guest access to the Elitez admin pages. Visit ' + ADMIN_URL +
+            ' and sign in with this email (' + row.email + ') — you will get a 6-digit code by email.');
+          cp.textContent = 'copied';
+          setTimeout(() => { cp.textContent = 'copy invite'; }, 1500);
+        };
+        act.appendChild(cp);
+        tr.appendChild(act);
+        tbody.appendChild(tr);
+      }
+    }
+
+    async function revoke(guestEmail) {
+      const { error } = await sb.from('guest_invites')
+        .update({ expires_at: new Date().toISOString() }).eq('email', guestEmail);
+      if (error) { $('g-err').textContent = 'Revoke failed: ' + error.message; return; }
+      refresh();
+    }
+
+    $('g-add').onclick = async () => {
+      $('g-err').textContent = ''; $('g-msg').textContent = '';
+      const guestEmail = ($('g-email').value || '').trim().toLowerCase();
+      if (!guestEmail || guestEmail.indexOf('@') < 1) {
+        $('g-err').textContent = 'Enter a valid email.'; return;
+      }
+      const days = parseInt($('g-exp').value, 10);
+      const expiresAt = new Date(Date.now() + days * 86400000).toISOString();
+      $('g-add').disabled = true;
+      const { error } = await sb.from('guest_invites').upsert({
+        email: guestEmail, expires_at: expiresAt,
+        invited_by: email, note: ($('g-note').value || '').trim() || null
+      });
+      $('g-add').disabled = false;
+      if (error) { $('g-err').textContent = 'Could not invite: ' + error.message; return; }
+      $('g-msg').textContent = 'Invited ' + guestEmail + ' for ' + days + ' days.';
+      $('g-email').value = ''; $('g-note').value = '';
+      refresh();
+    };
+
+    refresh();
+  </script>
+</body>
+</html>
