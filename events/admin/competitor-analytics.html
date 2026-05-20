@@ -216,21 +216,7 @@
 </head>
 <body class="admin-page">
 
-<!-- Login overlay -->
-<div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">ELITEZ <span>EVENTS</span></div>
-    <div class="login-sub">Competitor Analytics</div>
-    <form id="login-form" onsubmit="return false;">
-      <label for="un">Username</label>
-      <input id="un" type="text" placeholder="Username" autocomplete="username" />
-      <label for="pw">Password</label>
-      <input id="pw" type="password" placeholder="Password" autocomplete="current-password" />
-      <button type="submit" class="login-btn" onclick="doLogin(event)">Enter analytics</button>
-      <p class="login-error" id="login-err">Incorrect username or password.</p>
-    </form>
-  </div>
-</div>
+<!-- Auth gate is handled by admin/assets/js/auth-gate.js (Supabase email-OTP, loaded at end of body). -->
 
 <!-- Public Elitez nav -->
 <nav class="ee-nav" id="ee-nav">
@@ -261,7 +247,6 @@
   <a href="design-audit.html">Design Audit</a>
   <a href="competitor-analytics.html" class="active">Analytics</a>
   <a href="report.html">Report</a>
-  <button class="logout-btn" onclick="doLogout()">Sign out</button>
 </nav>
 
 <div id="dashboard">
@@ -576,56 +561,12 @@
 </div>
 
 <script>
-  // ── Auth gate (sessionStorage; matches simple admin pattern) ──
-  // Static gate: any non-empty username + password "elitez2026" unlocks.
-  // To rotate, change ADMIN_PASS_HASH below (SHA-256 hex).
-  const ADMIN_PASS_HASH = 'ceab3cf095f685db55771ecf73d57826cace3aa2fe4f5167e5c50d872c6821f6'; // sha256('elitez2026')
-  const AUTH_KEY = 'elitez_events_competitor_auth';
-
-  async function _sha256Hex(str) {
-    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-  }
-
-  async function doLogin(e) {
-    if (e) e.preventDefault();
-    const un = document.getElementById('un').value.trim();
-    const pw = document.getElementById('pw').value;
-    if (!un) {
-      document.getElementById('login-err').classList.add('show');
-      return false;
-    }
-    const pwH = await _sha256Hex(pw);
-    if (pwH === ADMIN_PASS_HASH) {
-      sessionStorage.setItem(AUTH_KEY, '1');
-      showDashboard();
-    } else {
-      document.getElementById('login-err').classList.add('show');
-    }
-    return false;
-  }
-
-  function doLogout() {
-    sessionStorage.removeItem(AUTH_KEY);
-    location.reload();
-  }
-
-  function showDashboard() {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
-    initAnalytics();
-  }
-
-  document.getElementById('login-form').addEventListener('submit', doLogin);
-  document.getElementById('pw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(e); });
-
-  // If already authed this session, skip login
-  if (sessionStorage.getItem(AUTH_KEY) === '1') {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', showDashboard);
-    } else {
-      setTimeout(showDashboard, 0);
-    }
+  // Analytics auto-init. Auth is handled separately by auth-gate.js (Supabase OTP),
+  // which hides the page until the user is signed in via the canonical Elitez admin gate.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAnalytics);
+  } else {
+    setTimeout(initAnalytics, 0);
   }
 </script>
 
