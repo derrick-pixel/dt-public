@@ -73,10 +73,34 @@
         <tbody id="g-list"></tbody>
       </table>
     </div>
+
+    <div class="card" id="a-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <h2 style="margin:0;font-size:15px;color:var(--navy);letter-spacing:.2px">Admin activity</h2>
+        <div style="display:flex;gap:10px;align-items:center;font-size:11px;color:#6b7280">
+          <span><span id="a-live-dot" style="display:inline-block;width:7px;height:7px;border-radius:99px;background:#9ca3af;margin-right:5px;vertical-align:middle"></span><span id="a-live-count">0</span> live</span>
+          <span>·</span>
+          <span><span id="a-total-count">0</span> sessions / 30 days</span>
+          <span>·</span>
+          <button id="a-refresh" class="link">refresh</button>
+        </div>
+      </div>
+      <p class="sub" style="margin:0 0 12px">Login events into <code style="font-size:12px;background:#f3f4f6;padding:1px 5px;border-radius:4px">admin/</code> pages on derrickteo.com. IP, country, device, browser, OS are captured server-side at login; duration is summed from page-visible time.</p>
+      <div style="overflow-x:auto">
+        <table id="a-table" style="min-width:720px">
+          <thead><tr>
+            <th>Started</th><th>Email</th><th>IP</th><th>Country</th><th>Device</th><th>Browser</th><th>OS</th><th>Page</th><th>Duration</th><th>Status</th>
+          </tr></thead>
+          <tbody id="a-list"></tbody>
+        </table>
+      </div>
+      <div id="a-err" class="err" style="margin-top:8px"></div>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="assets/js/auth-gate.js"></script>
+  <script src="assets/js/activity-tracker.js"></script>
   <script type="module">
     const SUPER_ADMIN = 'derrick@elitez.asia';
     const ADMIN_URL = 'https://derrickteo.com/passage/admin/';
@@ -164,6 +188,92 @@
     };
 
     refresh();
+
+    // ── Admin activity panel ────────────────────────────────────
+    const A_DAYS = 30;
+    const fmtDateTime = (ts) => new Date(ts).toLocaleString('en-SG',
+      { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false });
+    const fmtDuration = (ms) => {
+      if (ms == null) return '—';
+      const s = Math.round(ms / 1000);
+      if (s < 60)   return s + 's';
+      const m = Math.floor(s / 60);
+      if (m < 60)   return m + 'm ' + (s % 60) + 's';
+      const h = Math.floor(m / 60);
+      return h + 'h ' + (m % 60) + 'm';
+    };
+    const flag = (cc) => {
+      if (!cc || cc.length !== 2) return '';
+      return String.fromCodePoint(...[...cc.toUpperCase()].map(c => 0x1F1E6 - 65 + c.charCodeAt(0)));
+    };
+    const shortPath = (p) => {
+      if (!p) return '—';
+      const parts = p.split('/').filter(Boolean);
+      return '/' + (parts.slice(-2).join('/') || '');
+    };
+
+    async function refreshActivity() {
+      $('a-err').textContent = '';
+      const since = new Date(Date.now() - A_DAYS * 86400000).toISOString();
+      const { data, error } = await sb.from('admin_activity_sessions')
+        .select('*')
+        .gte('last_seen_at', since)
+        .order('last_seen_at', { ascending: false })
+        .limit(200);
+      if (error) { $('a-err').textContent = 'Could not load activity: ' + error.message; return; }
+      const rows = data || [];
+      $('a-total-count').textContent = rows.length;
+      const liveRows = rows.filter(r => r.is_live);
+      $('a-live-count').textContent = liveRows.length;
+      $('a-live-dot').style.background = liveRows.length ? '#10b981' : '#9ca3af';
+
+      const tbody = $('a-list');
+      tbody.textContent = '';
+      for (const r of rows) {
+        const tr = document.createElement('tr');
+        const cell = (txt, opts) => {
+          const td = document.createElement('td');
+          td.textContent = txt == null || txt === '' ? '—' : txt;
+          if (opts && opts.mono) td.style.fontFamily = 'ui-monospace, SFMono-Regular, Menlo, monospace';
+          if (opts && opts.size) td.style.fontSize   = opts.size;
+          if (opts && opts.color) td.style.color     = opts.color;
+          return td;
+        };
+        tr.appendChild(cell(fmtDateTime(r.started_at || r.last_seen_at), { size: '12px' }));
+        tr.appendChild(cell(r.actor_email));
+        tr.appendChild(cell(r.ip, { mono: true, size: '12px' }));
+        tr.appendChild(cell((flag(r.country) + ' ' + (r.country || '')).trim()));
+        tr.appendChild(cell(r.device_type));
+        tr.appendChild(cell(r.browser));
+        tr.appendChild(cell(r.os));
+        tr.appendChild(cell(shortPath(r.entry_path), { mono: true, size: '12px' }));
+        // Duration: prefer final_duration_ms, else (last_seen - started)
+        let durMs = r.final_duration_ms;
+        if (durMs == null && r.started_at && r.last_seen_at) {
+          durMs = new Date(r.last_seen_at).getTime() - new Date(r.started_at).getTime();
+        }
+        tr.appendChild(cell(fmtDuration(durMs)));
+        const st = document.createElement('td');
+        const tag = document.createElement('span');
+        tag.className = 'tag ' + (r.is_live ? 'active' : 'expired');
+        tag.textContent = r.is_live ? 'live' : (r.ended ? 'ended' : 'stale');
+        st.appendChild(tag);
+        tr.appendChild(st);
+        tbody.appendChild(tr);
+      }
+      if (rows.length === 0) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 10; td.style.color = '#9ca3af'; td.style.textAlign = 'center'; td.style.padding = '24px';
+        td.textContent = 'No admin activity in the last ' + A_DAYS + ' days yet.';
+        tr.appendChild(td); tbody.appendChild(tr);
+      }
+    }
+
+    $('a-refresh').onclick = refreshActivity;
+    refreshActivity();
+    // Soft auto-refresh every 60s so live sessions surface without manual reload
+    setInterval(refreshActivity, 60 * 1000);
   </script>
 
 <style>
