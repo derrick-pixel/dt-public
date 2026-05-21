@@ -53,6 +53,40 @@ for entry in "${WIP_REPOS[@]}"; do
   rm -rf "./$folder"
   mv ".tmp-sync" "./$folder"
 
+  # ── Build Next.js apps with output:"export" ───────────────────
+  # Pure Next.js repos (no hand-written index.html at the root) need
+  # `pnpm build` to produce the static export in ./out/. Without this
+  # the mirror would ship raw source (app/, components/, next.config.*)
+  # and the deployed site would 404 — exactly what happened to
+  # elitezshelf-frontage before this block existed. Detection requires
+  # BOTH a next.config and an `output: "export"` directive so we don't
+  # try to build hybrid repos that ship plain HTML alongside Next code
+  # (discounter, dt-site-creator). Build failures don't abort the
+  # sync — they leave the source tree in place so the mistake is
+  # visible in the resulting commit.
+  next_cfg=""
+  for cand in "$folder/next.config.ts" "$folder/next.config.js" "$folder/next.config.mjs"; do
+    [ -f "$cand" ] && next_cfg="$cand" && break
+  done
+  if [ -n "$next_cfg" ] && grep -qE 'output:[[:space:]]*["'\'']export["'\'']' "$next_cfg" \
+     && [ ! -f "$folder/index.html" ]; then
+    echo "   ↳ Next.js static export detected — building $folder"
+    if ( cd "./$folder" && NODE_ENV=production pnpm install --frozen-lockfile --silent \
+                        && NODE_ENV=production pnpm build >/dev/null 2>&1 ); then
+      if [ -f "$folder/out/index.html" ]; then
+        # Preserve the built out/ before nuking the source tree.
+        mv "./$folder/out" ".tmp-built"
+        rm -rf "./$folder"
+        mv ".tmp-built" "./$folder"
+        echo "   ↳ ./out/ promoted to ./$folder/ (static export)"
+      else
+        echo "   ⚠ build succeeded but ./out/index.html missing — leaving source in place"
+      fi
+    else
+      echo "   ⚠ pnpm build failed for $folder — leaving source in place (site will 404)"
+    fi
+  fi
+
   # ── Strip internal-only files from the public mirror ──────────
   # dt-public is a PUBLIC repo. Planning docs, agent configs, specs
   # and legal briefs must never be published. Admin/intel pages ARE
