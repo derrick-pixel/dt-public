@@ -199,3 +199,116 @@ body.ez-gate-locked>*:not(#ez-auth-overlay):not(script){display:none!important}'
     otpInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') verifyBtn.click(); });
   }
 })();
+
+/* ════════════════════════════════════════════════════════════════
+   Cross-workspace switcher — appended 2026-05-28
+   Renders a top-right "▦ Workspaces" button on every admin/intel
+   page once the auth-gate has resolved a session. The dropdown
+   lists every Elitez admin/intel destination so an authenticated
+   operator can hop between them in one click.
+   Each destination requires its own login when crossing domains
+   (Supabase session is stored per-origin in localStorage). The
+   switcher is purely navigational — it does not transfer auth.
+   Self-contained: no dependencies on the auth-gate's internal
+   helpers; safe to load before or after auth-gate's IIFE body.
+   ════════════════════════════════════════════════════════════════ */
+(function workspaceSwitcher() {
+  'use strict';
+  var WORKSPACES = [
+    { n: 'DTWS Works',          u: 'https://derrick-pixel.github.io/dtws_works/admin.html', i: '🛠️' },
+    { n: 'derrickteo.com',      u: 'https://derrickteo.com/admin/',                           i: '🏠' },
+    { n: 'Altru',               u: 'https://derrick-pixel.github.io/altru/admin/',            i: '🧧' },
+    { n: 'AEVUM MRI',           u: 'https://derrick-pixel.github.io/Elitez_MRI/admin/',       i: '🏥' },
+    { n: 'Casket (Passage)',    u: 'https://derrick-pixel.github.io/Passage/admin/',          i: '🕊️' },
+    { n: 'Command Center',      u: 'https://derrick-pixel.github.io/elitez-command-center/admin.html', i: '🎛️' },
+    { n: 'Competitor-Intel',    u: 'https://derrick-pixel.github.io/competitor-intel-template/template/admin/', i: '🧭' },
+    { n: 'Discounter',          u: 'https://derrick-pixel.github.io/discounter/admin/',       i: '🛒' },
+    { n: 'Elitez Aviation',     u: 'https://elitezaviation.com/admin/',                        i: '✈️' },
+    { n: 'Elitez Events',       u: 'https://derrick-pixel.github.io/Elitez-Events/admin/',    i: '🎉' },
+    { n: 'Elitez EOR',          u: 'https://derrick-pixel.github.io/elix-eor/admin/',         i: '📝' },
+    { n: 'Elitez ESOP',         u: 'https://derrick-pixel.github.io/Elitez-ESOP/intel/',      i: '📜' },
+    { n: 'Elitez LMS',          u: 'https://lms.elitez.com.sg/admin/',                         i: '🎓' },
+    { n: 'Elitez Pulse',        u: 'https://derrick-pixel.github.io/elitez-pulse/admin/',     i: '📣' },
+    { n: 'Elitez Security',     u: 'https://derrick-pixel.github.io/elitez-security/admin/',  i: '🛡️' },
+    { n: 'Site Supervisor',     u: 'https://derrick-pixel.github.io/elitez-site-supervisor/admin/', i: '🦺' },
+    { n: 'ElitezAI',            u: 'https://derrick-pixel.github.io/elitezai-website/admin/', i: '🤖' },
+    { n: 'ElitezShelf',         u: 'https://derrick-pixel.github.io/elitezshelf-frontage/admin/', i: '🏬' },
+    { n: 'ElixCraft',           u: 'https://derrick-pixel.github.io/ElixCraft/admin/',        i: '⚔️' },
+    { n: 'FlashCart',           u: 'https://derrick-pixel.github.io/flashcart-research/template/admin/', i: '⚡' },
+    { n: 'Lemon Man',           u: 'https://derrick-pixel.github.io/lemon-man/admin/',        i: '🍋' },
+    { n: 'Lumana',              u: 'https://derrick-pixel.github.io/Lumana/admin/',           i: '🌿' },
+    { n: 'Market Tracker',      u: 'https://derrick-pixel.github.io/market-tracker-research/template/admin/', i: '📈' },
+    { n: 'Merchandising',       u: 'https://derrick-pixel.github.io/merchandising/intel/',    i: '🛍️' },
+    { n: 'The Commons',         u: 'https://derrick-pixel.github.io/the-commons/admin/',      i: '🎪' },
+    { n: 'XinceAI',             u: 'https://derrick-pixel.github.io/XinceAI/admin/',          i: '🤖' }
+  ];
+  function build() {
+    if (document.getElementById('elx-ws-switcher-root')) return;
+    var root = document.createElement('div');
+    root.id = 'elx-ws-switcher-root';
+    var btn = document.createElement('button');
+    btn.id = 'elx-ws-switcher-btn';
+    btn.type = 'button';
+    btn.setAttribute('aria-label', 'Switch workspace');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.textContent = '▦';
+    var panel = document.createElement('div');
+    panel.id = 'elx-ws-switcher-panel';
+    panel.hidden = true;
+    var heading = document.createElement('div');
+    heading.className = 'elx-ws-heading';
+    heading.textContent = 'Elitez · workspaces';
+    panel.appendChild(heading);
+    var here = location.origin + location.pathname;
+    WORKSPACES.forEach(function (w) {
+      var a = document.createElement('a');
+      a.href = w.u;
+      a.className = 'elx-ws-item';
+      a.rel = 'noopener';
+      a.innerHTML = '<span class="elx-ws-icon">' + w.i + '</span><span class="elx-ws-name"></span>';
+      a.querySelector('.elx-ws-name').textContent = w.n;
+      if (w.u.indexOf(here) === 0 || here.indexOf(w.u) === 0) a.classList.add('current');
+      panel.appendChild(a);
+    });
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var open = panel.hidden;
+      panel.hidden = !open;
+      btn.setAttribute('aria-expanded', String(open));
+    });
+    document.addEventListener('click', function (e) {
+      if (!root.contains(e.target)) { panel.hidden = true; btn.setAttribute('aria-expanded', 'false'); }
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { panel.hidden = true; btn.setAttribute('aria-expanded', 'false'); }
+    });
+    root.appendChild(btn);
+    root.appendChild(panel);
+    document.body.appendChild(root);
+    var s = document.createElement('style');
+    s.textContent = '#elx-ws-switcher-root{font:13px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;}'
+      + '#elx-ws-switcher-btn{position:fixed;top:12px;right:12px;z-index:2147483647;width:38px;height:38px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(20,24,32,.92);color:#cbd5e1;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:saturate(140%) blur(6px);box-shadow:0 4px 14px rgba(0,0,0,.35);}'
+      + '#elx-ws-switcher-btn:hover{background:rgba(30,36,48,.98);color:#fff;border-color:rgba(0,212,255,.45);}'
+      + '#elx-ws-switcher-panel{position:fixed;top:58px;right:12px;z-index:2147483647;width:280px;max-height:70vh;overflow-y:auto;background:rgba(20,24,32,.98);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px;box-shadow:0 16px 48px rgba(0,0,0,.55);}'
+      + '#elx-ws-switcher-panel .elx-ws-heading{padding:8px 10px 6px;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#94a3b8;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:4px;}'
+      + '#elx-ws-switcher-panel .elx-ws-item{display:flex;align-items:center;gap:8px;padding:7px 10px;color:#d6dce6;text-decoration:none;border-radius:7px;}'
+      + '#elx-ws-switcher-panel .elx-ws-item:hover{background:rgba(255,255,255,.06);color:#fff;}'
+      + '#elx-ws-switcher-panel .elx-ws-item.current{background:rgba(0,212,255,.14);color:#00d4ff;}'
+      + '#elx-ws-switcher-panel .elx-ws-icon{font-size:15px;width:18px;text-align:center;}'
+      + '@media (prefers-color-scheme: light){#elx-ws-switcher-btn{background:#fff;color:#1f2937;border-color:#e5e7eb;}#elx-ws-switcher-panel{background:#fff;color:#0f172a;border-color:#e5e7eb;}#elx-ws-switcher-panel .elx-ws-heading{color:#475569;border-color:#e5e7eb;}#elx-ws-switcher-panel .elx-ws-item{color:#1f2937;}#elx-ws-switcher-panel .elx-ws-item:hover{background:#f1f5f9;}#elx-ws-switcher-panel .elx-ws-item.current{background:rgba(2,132,199,.12);color:#0369a1;}}';
+    document.head.appendChild(s);
+  }
+  function start() {
+    var run = function () {
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', build);
+      } else { build(); }
+    };
+    if (window._sbReady && typeof window._sbReady.then === 'function') {
+      window._sbReady.then(run);
+    } else {
+      run();
+    }
+  }
+  start();
+})();
