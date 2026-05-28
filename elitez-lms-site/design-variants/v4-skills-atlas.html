@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Elitez LMS · Skills Atlas</title>
+<meta name="description" content="A learning platform mapped to Singapore's SWDA Training & Skills Competency framework. Built for L&D leads who need their training to count toward something." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:     #faf8f0;
+    --paper-2:   #f4efe1;
+    --paper-3:   #ebe3d0;
+    --teal:      #1a4d4e;
+    --teal-2:    #2b6566;
+    --teal-3:    #4a8788;
+    --sand:      #c9b78d;
+    --sand-2:    #b09b6b;
+    --crimson:   #983028;
+    --ink:       #1a1614;
+    --ink-2:     #4a443c;
+    --rule:      #d6cbb5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper); color: var(--ink);
+    font-family: "Source Sans 3", sans-serif; font-weight: 400; line-height: 1.62;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(1200px 600px at 100% 0%, rgba(201,183,141,0.16), transparent 60%),
+      radial-gradient(900px 500px at 0% 100%, rgba(26,77,78,0.06), transparent 60%);
+  }
+  /* Paper grain */
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.5;
+    background-image:
+      radial-gradient(circle at 25% 35%, rgba(74,68,60,0.04) 1px, transparent 1px),
+      radial-gradient(circle at 75% 65%, rgba(74,68,60,0.04) 1px, transparent 1px);
+    background-size: 14px 14px, 19px 19px;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 1; }
+  .cs { font-family: "Cormorant SC", serif; letter-spacing: 0.05em; }
+  .cg { font-family: "Cormorant Garamond", serif; }
+  .mn { font-family: "JetBrains Mono", monospace; }
+
+  /* Top rule strip */
+  .strip {
+    background: var(--teal); color: var(--paper); padding: 0.42rem 0;
+    font-family: "JetBrains Mono", monospace; font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .strip .wrap { display: flex; justify-content: space-between; align-items: center; }
+  .strip a { color: var(--sand); text-decoration: none; }
+
+  /* Nav */
+  nav { padding: 1.8rem 0 1.2rem; border-bottom: 2px solid var(--ink); }
+  .nav-row { display: flex; justify-content: space-between; align-items: flex-end; }
+  .brand-block { display: flex; align-items: center; gap: 1rem; }
+  .crest-mark {
+    width: 50px; height: 50px; border: 1.5px solid var(--ink); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--paper); color: var(--teal);
+    font-family: "Cormorant SC", serif; font-weight: 700; font-size: 1.3rem;
+  }
+  .brand-text {
+    font-family: "Cormorant SC", serif; font-weight: 700; font-size: 1.5rem;
+    letter-spacing: 0.18em; color: var(--ink); text-transform: uppercase; line-height: 1;
+  }
+  .brand-text small { display: block; font-family: "JetBrains Mono", monospace; font-size: 0.65rem; color: var(--ink-2); letter-spacing: 0.25em; margin-top: 0.4rem; font-weight: 400; }
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a { font-family: "Source Sans 3", sans-serif; font-weight: 500; font-size: 0.92rem; color: var(--ink); text-decoration: none; letter-spacing: 0.02em; border-bottom: 1px solid transparent; padding-bottom: 0.2rem; transition: all .2s; }
+  .nav-links a:hover { border-bottom-color: var(--crimson); color: var(--crimson); }
+  .nav-cta {
+    font-family: "Cormorant SC", serif; font-size: 0.92rem; padding: 0.7rem 1.4rem;
+    background: var(--teal); color: var(--paper); text-decoration: none;
+    letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600;
+    transition: all .2s;
+  }
+  .nav-cta:hover { background: var(--ink); }
+
+  /* Hero — bordered letterhead style */
+  .hero {
+    padding: 4rem 0 5rem; position: relative;
+    border-bottom: 1px solid var(--rule);
+  }
+  .hero-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 4rem; align-items: center; }
+  .h-folio {
+    font-family: "JetBrains Mono", monospace; font-size: 0.7rem; color: var(--crimson);
+    letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 1.2rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .h-folio::before, .h-folio::after { content: ""; flex: none; width: 30px; height: 1px; background: var(--crimson); }
+  .h-folio::after { flex: 1; }
+  .hero h1 {
+    font-family: "Cormorant Garamond", serif; font-weight: 500;
+    font-size: clamp(2.8rem, 6vw, 5.4rem); line-height: 1.04; color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .hero h1 em { font-style: italic; color: var(--teal); }
+  .hero-lede { font-family: "Cormorant Garamond", serif; font-size: 1.4rem; font-style: italic; color: var(--ink-2); margin-top: 1.6rem; line-height: 1.5; max-width: 36ch; }
+  .hero-meta { font-size: 0.95rem; color: var(--ink); margin-top: 1.8rem; max-width: 48ch; }
+  .hero-actions { margin-top: 2rem; display: flex; gap: 1rem; align-items: center; }
+  .btn-primary {
+    font-family: "Cormorant SC", serif; font-weight: 600; letter-spacing: 0.15em;
+    padding: 0.95rem 1.8rem; background: var(--teal); color: var(--paper); text-decoration: none;
+    text-transform: uppercase; transition: all .2s;
+  }
+  .btn-primary:hover { background: var(--ink); }
+  .btn-ghost {
+    font-family: "Cormorant SC", serif; font-weight: 600; letter-spacing: 0.15em;
+    padding: 0.95rem 1.8rem; color: var(--ink); text-decoration: none; border: 1px solid var(--ink);
+    text-transform: uppercase; transition: all .2s;
+  }
+  .btn-ghost:hover { background: var(--ink); color: var(--paper); }
+
+  /* Compass card on right of hero */
+  .compass {
+    position: relative; aspect-ratio: 1; max-width: 340px; margin: 0 auto;
+    background: radial-gradient(circle, var(--paper-2), var(--paper-3));
+    border: 1px solid var(--sand-2); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .compass::before, .compass::after {
+    content: ""; position: absolute; inset: 12%; border: 1px dashed var(--sand-2); border-radius: 50%;
+  }
+  .compass::after { inset: 24%; }
+  .c-needle {
+    position: absolute; width: 80%; height: 6px; top: calc(50% - 3px); left: 10%;
+    background: linear-gradient(90deg, var(--crimson) 0%, var(--crimson) 50%, var(--ink) 50%, var(--ink) 100%);
+    clip-path: polygon(0 50%, 6% 0, 50% 0, 50% 100%, 6% 100%, 0 50%, 0 50%, 50% 100%, 94% 100%, 100% 50%, 94% 0, 50% 0);
+    transform-origin: center;
+    animation: needle 9s ease-in-out infinite;
+  }
+  @keyframes needle { 0%,100% { transform: rotate(8deg);} 50% { transform: rotate(-12deg);} }
+  .c-cap {
+    width: 18px; height: 18px; background: var(--teal); border: 2px solid var(--paper); border-radius: 50%;
+    box-shadow: 0 0 0 1px var(--ink); z-index: 3;
+  }
+  .c-letter { position: absolute; font-family: "Cormorant SC", serif; font-weight: 700; font-size: 1rem; color: var(--ink); }
+  .c-n { top: 4%; left: 50%; transform: translateX(-50%); }
+  .c-s { bottom: 4%; left: 50%; transform: translateX(-50%); }
+  .c-e { right: 4%; top: 50%; transform: translateY(-50%); }
+  .c-w { left: 4%; top: 50%; transform: translateY(-50%); }
+
+  /* Sections */
+  section { padding: 5.5rem 0; border-bottom: 1px solid var(--rule); }
+  .sec-folio { font-family: "JetBrains Mono", monospace; font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--crimson); }
+  .sec-h { font-family: "Cormorant Garamond", serif; font-weight: 500; font-size: clamp(2rem, 4vw, 3.4rem); margin-top: 0.8rem; line-height: 1.08; max-width: 22ch; }
+  .sec-h em { font-style: italic; color: var(--teal); }
+  .sec-lede { font-family: "Cormorant Garamond", serif; font-style: italic; font-size: 1.2rem; color: var(--ink-2); max-width: 52ch; margin-top: 1.2rem; }
+
+  /* TSC Roadmap — skill ladder */
+  .roadmap { margin-top: 3rem; background: var(--paper); padding: 2rem; border: 1px solid var(--ink); position: relative; }
+  .rm-corners::before, .rm-corners::after {
+    content: ""; position: absolute; width: 14px; height: 14px; border: 2px solid var(--crimson);
+  }
+  .rm-corners::before { top: -2px; left: -2px; border-right: 0; border-bottom: 0; }
+  .rm-corners::after  { bottom: -2px; right: -2px; border-left: 0; border-top: 0; }
+  .rm-head { display: flex; justify-content: space-between; padding-bottom: 1rem; border-bottom: 1px solid var(--rule); margin-bottom: 1.5rem; }
+  .rm-title { font-family: "Cormorant SC", serif; font-weight: 700; font-size: 1.15rem; letter-spacing: 0.1em; text-transform: uppercase; }
+  .rm-ref { font-family: "JetBrains Mono", monospace; font-size: 0.75rem; color: var(--ink-2); letter-spacing: 0.12em; }
+  .rm-row {
+    display: grid; grid-template-columns: 120px 1fr 80px 100px;
+    padding: 1.1rem 0; border-bottom: 1px dashed var(--rule); align-items: center; gap: 1.2rem;
+  }
+  .rm-row:last-child { border-bottom: 0; }
+  .rm-level {
+    background: var(--teal); color: var(--paper); padding: 0.4rem 0.8rem; text-align: center;
+    font-family: "Cormorant SC", serif; font-weight: 600; font-size: 0.85rem; letter-spacing: 0.15em;
+  }
+  .rm-row:nth-child(odd) .rm-level { background: var(--teal-2); }
+  .rm-row:nth-child(even) .rm-level { background: var(--teal-3); }
+  .rm-row:last-child .rm-level { background: var(--crimson); }
+  .rm-skill { font-family: "Cormorant Garamond", serif; font-size: 1.18rem; }
+  .rm-skill small { display: block; font-family: "Source Sans 3", sans-serif; font-size: 0.82rem; color: var(--ink-2); margin-top: 0.2rem; }
+  .rm-hours { font-family: "JetBrains Mono", monospace; font-size: 0.85rem; color: var(--ink); text-align: right; }
+  .rm-stat { text-align: right; font-family: "JetBrains Mono", monospace; font-size: 0.75rem; letter-spacing: 0.12em; }
+  .rm-stat.done   { color: var(--teal); }
+  .rm-stat.prog   { color: var(--sand-2); }
+  .rm-stat.lock   { color: var(--ink-2); }
+
+  /* Two-column scholarly */
+  .two-col { display: grid; grid-template-columns: 1.2fr 1fr; gap: 4rem; margin-top: 3rem; align-items: start; }
+  .panel { padding: 2rem; background: var(--paper-2); border: 1px solid var(--sand-2); }
+  .panel h3 { font-family: "Cormorant SC", serif; font-weight: 600; font-size: 1.15rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--teal); }
+  .panel h3 + p { font-family: "Cormorant Garamond", serif; font-style: italic; margin-top: 0.6rem; color: var(--ink-2); }
+  .badges { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; }
+  .badge {
+    padding: 1rem; background: var(--paper); border: 1px solid var(--rule);
+  }
+  .badge-h { font-family: "Cormorant SC", serif; font-weight: 600; font-size: 0.85rem; color: var(--ink); letter-spacing: 0.08em; text-transform: uppercase; }
+  .badge-s { font-family: "JetBrains Mono", monospace; font-size: 0.72rem; color: var(--ink-2); margin-top: 0.3rem; letter-spacing: 0.1em; }
+
+  /* Pricing — fee schedule */
+  .schedule {
+    margin-top: 3rem; background: var(--paper); border: 1px solid var(--ink);
+  }
+  .sc-row {
+    display: grid; grid-template-columns: 0.8fr 1.4fr 1fr 1fr;
+    padding: 1.3rem 1.5rem; border-bottom: 1px solid var(--rule); align-items: center;
+  }
+  .sc-row.head { background: var(--ink); color: var(--paper); }
+  .sc-row.head .col { color: var(--paper); }
+  .sc-row .col { font-family: "Cormorant Garamond", serif; font-size: 1.05rem; }
+  .sc-row .col.tier { font-family: "Cormorant SC", serif; font-weight: 700; font-size: 1.05rem; letter-spacing: 0.1em; text-transform: uppercase; }
+  .sc-row .col.price { font-family: "Cormorant Garamond", serif; font-size: 1.4rem; font-weight: 500; color: var(--teal); }
+  .sc-row.head .col.tier, .sc-row.head .col.price { font-weight: 600; }
+  .sc-row.head .col { font-family: "JetBrains Mono", monospace; font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; }
+  .sc-foot { padding: 1.2rem 1.5rem; font-family: "Cormorant Garamond", serif; font-style: italic; font-size: 0.95rem; color: var(--ink-2); }
+  .sc-foot strong { font-style: normal; color: var(--crimson); font-weight: 600; }
+
+  /* Footer */
+  footer { padding: 3rem 0 4rem; font-size: 0.88rem; color: var(--ink-2); border-top: 2px solid var(--ink); margin-top: 4rem; }
+  footer .row { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 2rem; }
+  footer a { color: var(--teal); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 4px; }
+  footer .note { font-family: "Cormorant Garamond", serif; font-style: italic; max-width: 50ch; margin-top: 0.4rem; }
+
+  @media (max-width: 900px) {
+    .hero-grid, .two-col { grid-template-columns: 1fr; gap: 2.5rem; }
+    .compass { max-width: 260px; }
+    .nav-links { display: none; }
+    .sc-row { grid-template-columns: 1fr 1fr; row-gap: 0.5rem; }
+    .sc-row .col:nth-child(2), .sc-row .col:nth-child(4) { grid-column: 1 / -1; font-size: 0.95rem; }
+    .rm-row { grid-template-columns: 80px 1fr 80px; }
+    .rm-row .rm-stat { display: none; }
+  }
+</style>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+<link rel="icon" type="image/x-icon" href="../favicon.ico" />
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png" />
+<meta property="og:image" content="https://derrick-pixel.github.io/elitez-lms-site/og-images/for-whom.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:type" content="image/jpeg" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://derrick-pixel.github.io/elitez-lms-site/og-images/for-whom.jpg" />
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+
+<div class="strip">
+  <div class="wrap">
+    <span>VOLUME I · ISSUE I · MMXXVI</span>
+    <span>SWDA PARTNER · TSC ALIGNED · <a href="#">VIEW REGISTRY ↗</a></span>
+  </div>
+</div>
+
+<nav>
+  <div class="wrap nav-row">
+    <div class="brand-block">
+      <div class="crest-mark">E</div>
+      <div class="brand-text">Elitez LMS<small>SKILLS ATLAS · SINGAPORE</small></div>
+    </div>
+    <div class="nav-links">
+      <a href="#atlas">The Atlas</a>
+      <a href="#roadmap">TSC Roadmap</a>
+      <a href="#trust">Partnerships</a>
+      <a href="#fees">Fee Schedule</a>
+      <a href="#" class="nav-cta">Request a Demo</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="h-folio">FOREWORD · 2026 EDITION</div>
+        <h1>A platform for the <em>cartography</em> of skill.</h1>
+        <p class="hero-lede">Elitez LMS is the only Singapore-built learning platform mapped, end to end, to the <strong>SWDA Training &amp; Skills Competency</strong> framework — so the hours your team invests count toward something a regulator can read.</p>
+        <p class="hero-meta">We turn your existing decks into modular training, score progress against TSC levels, and produce the audit-grade transcripts your HR director needs at year-end review. Singapore-hosted. PDPA-aligned. Quiet.</p>
+        <div class="hero-actions">
+          <a href="#fees" class="btn-primary">View Fee Schedule</a>
+          <a href="#roadmap" class="btn-ghost">Open the Roadmap</a>
+        </div>
+      </div>
+      <div>
+        <div class="compass">
+          <div class="c-needle"></div>
+          <div class="c-cap"></div>
+          <span class="c-letter c-n">N</span>
+          <span class="c-letter c-s">S</span>
+          <span class="c-letter c-e">E</span>
+          <span class="c-letter c-w">W</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="atlas">
+  <div class="wrap">
+    <div class="sec-folio">§ I · THE ATLAS</div>
+    <h2 class="sec-h">Plot every skill. Date every certification. <em>Justify every dollar.</em></h2>
+    <p class="sec-lede">Elitez LMS treats your organisation's skill landscape the way an atlas treats geography: as something to survey, label, and revisit. Not a one-off training event — a living map.</p>
+
+    <div class="two-col">
+      <div>
+        <div class="panel">
+          <h3>What the atlas does</h3>
+          <p>Pulls in your existing course library — slides, PDFs, screencasts — and pins each piece to a TSC unit. From day one, your HR director can answer: <em>who is at which level, on which competency, and what's the next certification gap?</em></p>
+          <ul style="margin-top: 1.4rem; padding-left: 1.4rem; font-family: 'Cormorant Garamond', serif; font-size: 1.08rem; line-height: 1.7;">
+            <li>BYO-deck ingestion · PPT, PDF, DOCX</li>
+            <li>Auto-mapping to TSC v3.2 (39 sectoral frameworks)</li>
+            <li>Per-learner transcripts, exportable as PDF or signed CSV</li>
+            <li>Manager dashboard with red/amber/green coverage map</li>
+            <li>Quarterly grant-readiness audit, generated automatically</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="panel">
+          <h3>Where it sits</h3>
+          <p>Between your existing HRIS and the SWDA training registry. We don't replace either — we make them comprehensible to each other.</p>
+          <div class="badges">
+            <div class="badge"><div class="badge-h">SWDA Partner</div><div class="badge-s">REG. 2026/A-118</div></div>
+            <div class="badge"><div class="badge-h">PDPA-Aligned</div><div class="badge-s">PDPC NOTIFIED</div></div>
+            <div class="badge"><div class="badge-h">SkillsFuture</div><div class="badge-s">SFC ELIGIBLE</div></div>
+            <div class="badge"><div class="badge-h">ISO/IEC 27001</div><div class="badge-s">CERT 2026</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="roadmap">
+  <div class="wrap">
+    <div class="sec-folio">§ II · TSC ROADMAP · EXAMPLE</div>
+    <h2 class="sec-h">A worked example. <em>Sales Operations track.</em></h2>
+    <p class="sec-lede">Five Training Skills Competency levels, fourteen units, mapped from "Operate" to "Lead". Below is one learner's actual progression after twelve months on Elitez LMS.</p>
+
+    <div class="roadmap">
+      <span class="rm-corners"></span>
+      <div class="rm-head">
+        <div class="rm-title">Sales Operations · TSC v3.2 · Track SC-OPS-04</div>
+        <div class="rm-ref">REF · SWDA 2026/JAN/v3.2</div>
+      </div>
+
+      <div class="rm-row">
+        <div class="rm-level">Lv 1</div>
+        <div class="rm-skill">Pipeline Hygiene <small>CRM update discipline, opportunity stage gates, weekly review cadence</small></div>
+        <div class="rm-hours">14h</div>
+        <div class="rm-stat done">CERTIFIED · 12 NOV</div>
+      </div>
+      <div class="rm-row">
+        <div class="rm-level">Lv 2</div>
+        <div class="rm-skill">Forecasting Fundamentals <small>3-point estimation, weighted pipeline, variance reporting to FP&amp;A</small></div>
+        <div class="rm-hours">22h</div>
+        <div class="rm-stat done">CERTIFIED · 04 FEB</div>
+      </div>
+      <div class="rm-row">
+        <div class="rm-level">Lv 3</div>
+        <div class="rm-skill">Account Strategy <small>Whitespace mapping, multi-thread engagement, exec sponsor protocols</small></div>
+        <div class="rm-hours">28h</div>
+        <div class="rm-stat done">CERTIFIED · 19 MAR</div>
+      </div>
+      <div class="rm-row">
+        <div class="rm-level">Lv 4</div>
+        <div class="rm-skill">Sales Team Coaching <small>1:1 cadence, pipeline review facilitation, performance-improvement plans</small></div>
+        <div class="rm-hours">36h</div>
+        <div class="rm-stat prog">IN PROGRESS · 62%</div>
+      </div>
+      <div class="rm-row">
+        <div class="rm-level">Lv 5</div>
+        <div class="rm-skill">Commercial Strategy <small>Market segmentation, pricing committees, board-level revenue narratives</small></div>
+        <div class="rm-hours">48h</div>
+        <div class="rm-stat lock">UNLOCKS AFTER LV 4</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="trust">
+  <div class="wrap">
+    <div class="sec-folio">§ III · PARTNERSHIPS &amp; PROVENANCE</div>
+    <h2 class="sec-h">Built with the agencies your auditor recognises.</h2>
+    <p class="sec-lede">Elitez Group has been a Singapore-registered employer-of-record and training partner since 2008. Elitez LMS inherits those relationships, those audit trails, and that conservatism.</p>
+
+    <div class="two-col" style="grid-template-columns: 1fr 1fr;">
+      <div class="panel">
+        <h3>SWDA Continuing Professional Development</h3>
+        <p>Every TSC unit completed on Elitez LMS counts toward CPD hours for SWDA's eight regulated tracks. The certificate carries a verifiable SWDA reference number.</p>
+      </div>
+      <div class="panel">
+        <h3>SkillsFuture Credit eligibility</h3>
+        <p>Selected enterprise modules are SkillsFuture-eligible at 70% subsidy for SMEs. Our admin console flags eligibility per learner per quarter.</p>
+      </div>
+      <div class="panel">
+        <h3>PDPA &amp; data residency</h3>
+        <p>Singapore datacentre (Equinix SG3). All learner data resides locally. Notification protocols filed with PDPC. DPO published.</p>
+      </div>
+      <div class="panel">
+        <h3>BCA / WSG / IRAS interop</h3>
+        <p>Export bundles for BCA CORENET training records, WSG WDG(JR+) substantiation, and IRAS tax-deduction substantiation under §14R.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="fees">
+  <div class="wrap">
+    <div class="sec-folio">§ IV · FEE SCHEDULE · 1 JAN 2026</div>
+    <h2 class="sec-h">A schedule, not a sales page.</h2>
+    <p class="sec-lede">All prices in Singapore Dollars, exclusive of GST. Annual prepayment attracts a 17% adjustment.</p>
+
+    <div class="schedule">
+      <div class="sc-row head">
+        <div class="col tier">Tier</div>
+        <div class="col">Coverage</div>
+        <div class="col">Per learner / month</div>
+        <div class="col">Annual commitment</div>
+      </div>
+      <div class="sc-row">
+        <div class="col tier">Survey</div>
+        <div class="col">Up to 25 learners; 1 TSC track; manager dashboard</div>
+        <div class="col price">S$0.00</div>
+        <div class="col">30 days; no commitment</div>
+      </div>
+      <div class="sc-row">
+        <div class="col tier">Atlas</div>
+        <div class="col">Unlimited learners; all 39 TSC frameworks; quarterly audit pack</div>
+        <div class="col price">S$2.99</div>
+        <div class="col">12 months minimum</div>
+      </div>
+      <div class="sc-row">
+        <div class="col tier">Cartographer</div>
+        <div class="col">Atlas + on-site curriculum cartography days; dedicated DPO liaison</div>
+        <div class="col price">S$4.99</div>
+        <div class="col">24 months minimum</div>
+      </div>
+      <div class="sc-row">
+        <div class="col tier">Crown</div>
+        <div class="col">Multi-entity holding group; consolidated TSC reporting; SLA</div>
+        <div class="col price">On application</div>
+        <div class="col">By engagement letter</div>
+      </div>
+      <div class="sc-foot">
+        <strong>Notes.</strong> All tiers include unlimited deck ingestion, AI-generated quizzes, manager dashboard, and PDF/CSV transcript export. Charity, government, and education-sector pricing available on letter from the principal.
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap row">
+    <div>
+      <div class="brand-text" style="font-size: 1.1rem;">Elitez LMS · Skills Atlas</div>
+      <p class="note">Operated by Elitez Group of Companies, Singapore. SWDA Training Partner Reg. 2026/A-118. PDPC notified. ISO/IEC 27001:2023.</p>
+    </div>
+    <div style="text-align: right;">
+      <a href="../">← Back to canonical site</a><br/>
+      <a href="index.html" style="display: inline-block; margin-top: 0.4rem;">Compare all 7 design variants →</a><br/>
+      <div style="margin-top: 0.6rem; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.18em;">© MMXXVI · DERRICK TEO</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

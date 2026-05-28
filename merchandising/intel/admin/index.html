@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en-SG">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Market Intel · Elitez Merchandising</title>
+  <meta name="description" content="Internal market-intelligence desk for Elitez Merchandising — 43 competitors, TAM/SAM/SOM, persona pricing, whitespace atlas, design audit. Updated 21 May 2026." />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAFAF8" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#003A70" />
+
+  <link rel="icon" type="image/x-icon" href="../../favicon.ico" />
+  <link rel="icon" type="image/png" sizes="16x16" href="../../favicon-16.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../../favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../../assets/css/main.css" />
+  <link rel="stylesheet" href="../../assets/css/components.css" />
+  <style>
+    /* Intel-desk overrides — bolts on top of merchandising's main.css */
+    body { padding-top: var(--nav-height); }
+
+    .restricted-strip {
+      position: fixed; top: var(--nav-height); left: 0; right: 0; z-index: 199;
+      background: var(--accent); color: #fff;
+      font-family: var(--font-mono); font-size: 0.7rem;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      padding: 6px 0;
+    }
+    .restricted-strip__inner { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); }
+    .restricted-strip__chip { display: inline-flex; align-items: center; gap: 8px; }
+    .restricted-strip__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent2); box-shadow: 0 0 0 3px rgba(242,101,34,0.25); }
+
+    /* Intel admin nav lives in the header, replaces the public primary-nav */
+    .admin-nav { display: none; gap: var(--s-5); align-items: center; }
+    @media (min-width: 980px) { .admin-nav { display: flex; } }
+    .admin-nav__link {
+      font-family: var(--font-mono);
+      font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none;
+      padding: 6px 0;
+      border-bottom: 2px solid transparent;
+      transition: color .15s ease, border-color .15s ease;
+    }
+    .admin-nav__link:hover { color: var(--accent); }
+    .admin-nav__link.is-active { color: var(--accent); border-bottom-color: var(--accent2); }
+
+    /* Intel hero */
+    .intel-hero { padding: calc(var(--s-7) + 32px) 0 var(--s-7); border-bottom: 1px solid var(--border); background: linear-gradient(180deg, #FAFAF8 0%, #F4F5F2 100%); }
+    .intel-hero__eyebrow { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
+    .intel-hero__headline { font-family: var(--font-display); font-size: clamp(2rem, 4.2vw, 3.1rem); margin-top: var(--s-3); line-height: 1.1; letter-spacing: -0.015em; max-width: 880px; }
+    .intel-hero__sub { font-size: 1.02rem; line-height: 1.6; color: var(--muted); margin-top: var(--s-5); max-width: 720px; }
+
+    .kpi-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s-5); margin-top: var(--s-7); }
+    @media (min-width: 720px) { .kpi-row { grid-template-columns: repeat(4, 1fr); } }
+    .kpi { padding: var(--s-5) 0; border-top: 2px solid var(--accent); }
+    .kpi__value { font-family: var(--font-display); font-size: 1.95rem; line-height: 1.05; color: var(--text); font-weight: 600; letter-spacing: -0.01em; }
+    .kpi__label { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted2); margin-top: var(--s-2); }
+    .kpi__note { font-size: 0.8rem; color: var(--muted); margin-top: var(--s-2); line-height: 1.5; }
+
+    /* Files grid */
+    .intel-section { padding: var(--s-8) 0; border-bottom: 1px solid var(--border); }
+    .intel-section__header { max-width: 720px; margin-bottom: var(--s-7); }
+    .intel-section__eyebrow { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent2); }
+    .intel-section__heading { font-family: var(--font-display); font-size: clamp(1.5rem, 2.6vw, 2.1rem); margin-top: var(--s-2); line-height: 1.15; }
+    .intel-section__lede { color: var(--muted); margin-top: var(--s-3); line-height: 1.6; }
+
+    .file-grid { display: grid; grid-template-columns: 1fr; gap: var(--s-5); }
+    @media (min-width: 720px) { .file-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1080px) { .file-grid { grid-template-columns: repeat(3, 1fr); } }
+    .file-card {
+      display: flex; flex-direction: column;
+      padding: var(--s-6) var(--s-5);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--accent);
+      border-radius: var(--radius-md);
+      text-decoration: none; color: var(--text);
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      min-height: 220px;
+    }
+    .file-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-top-color: var(--accent2); }
+    .file-card__kicker { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+    .file-card__title { font-family: var(--font-display); font-size: 1.35rem; margin-top: var(--s-3); line-height: 1.25; color: var(--text); }
+    .file-card__lede { color: var(--muted); margin-top: var(--s-3); font-size: 0.92rem; line-height: 1.55; flex: 1; }
+    .file-card__meta { display: flex; justify-content: space-between; align-items: center; padding-top: var(--s-4); margin-top: var(--s-4); border-top: 1px dashed var(--border); font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted2); }
+    .file-card__open { color: var(--accent2); font-weight: 600; }
+
+    /* Findings grid */
+    .finding-grid { display: grid; grid-template-columns: 1fr; gap: var(--s-5); }
+    @media (min-width: 720px) { .finding-grid { grid-template-columns: repeat(2, 1fr); } }
+    .finding {
+      padding: var(--s-5);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius-sm);
+    }
+    .finding:nth-child(2) { border-left-color: var(--accent-teal); }
+    .finding:nth-child(3) { border-left-color: var(--accent-copper); }
+    .finding:nth-child(4) { border-left-color: var(--accent2); }
+    .finding__num { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted2); }
+    .finding__title { font-family: var(--font-display); font-size: 1.1rem; margin-top: var(--s-2); line-height: 1.3; }
+    .finding__body { color: var(--muted); margin-top: var(--s-3); font-size: 0.92rem; line-height: 1.6; }
+
+    /* Top-5 table */
+    .top5 { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
+    .top5 table { width: 100%; border-collapse: collapse; }
+    .top5 th, .top5 td { padding: var(--s-4) var(--s-5); text-align: left; vertical-align: top; border-bottom: 1px solid var(--border); font-size: 0.92rem; }
+    .top5 th { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted2); background: var(--card-hi); }
+    .top5 tr:last-child td { border-bottom: 0; }
+    .top5 .rank { font-family: var(--font-mono); font-weight: 600; color: var(--accent); width: 56px; }
+    .top5 .name { font-family: var(--font-display); font-weight: 600; color: var(--text); width: 26%; }
+    .top5 .why { color: var(--muted); line-height: 1.55; }
+    @media (max-width: 720px) { .top5 .rank { width: 40px; } .top5 .name { width: auto; display: block; } .top5 th { display: none; } .top5 td { display: block; border-bottom: 0; padding: var(--s-2) var(--s-5); } .top5 tr { display: block; border-bottom: 1px solid var(--border); padding: var(--s-4) 0; } .top5 tr:last-child { border-bottom: 0; } }
+
+    /* Freshness ritual */
+    .freshness-grid { display: grid; grid-template-columns: 1fr; gap: var(--s-4); }
+    @media (min-width: 720px) { .freshness-grid { grid-template-columns: repeat(3, 1fr); } }
+    .freshness { padding: var(--s-5); background: var(--card-hi); border-radius: var(--radius-sm); border: 1px solid var(--border); }
+    .freshness__cadence { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+    .freshness__title { font-family: var(--font-display); font-weight: 600; margin-top: var(--s-2); }
+    .freshness__body { font-size: 0.88rem; color: var(--muted); margin-top: var(--s-3); line-height: 1.55; }
+    .freshness__body strong { color: var(--text); }
+
+    /* Last-edited stamp */
+    .last-edited-strip {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+      padding: 5px 14px; text-align: right;
+      font-family: var(--font-mono);
+      font-size: 0.7rem; letter-spacing: 0.05em;
+      color: rgba(11,30,54,0.6);
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(8px);
+      border-top: 1px solid var(--border);
+    }
+    .last-edited-strip strong { color: var(--text); font-weight: 500; }
+    #last-edited { color: var(--accent2); font-weight: 600; }
+    #last-edited.fresh { color: #0a8a4a; }
+    #last-edited.stale { color: #c82040; }
+  </style>
+  <meta property="og:image" content="https://derrick-pixel.github.io/merchandising/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://derrick-pixel.github.io/merchandising/og-image.jpg" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" role="banner">
+    <div class="container site-header__inner">
+      <a href="../../index.html" class="brand-mark" aria-label="Elitez Merchandising — home">
+        <img class="brand-mark__logo" src="../../public/elitez-logo.png" alt="Elitez Group of Companies" width="104" height="36" />
+        <span class="brand-mark__wordmark">Merchandising · Intel</span>
+      </a>
+      <nav class="admin-nav" aria-label="Market intel sections">
+        <a class="admin-nav__link is-active" href="index.html">Overview</a>
+        <a class="admin-nav__link" href="competitors.html">Competitors</a>
+        <a class="admin-nav__link" href="insights.html">Market &amp; Pricing</a>
+        <a class="admin-nav__link" href="whitespace.html">Whitespace</a>
+        <a class="admin-nav__link" href="design-audit.html">Design Audit</a>
+        <a class="admin-nav__link" href="report.html">Report</a>
+      </nav>
+      <a class="btn btn--ghost" href="../../index.html">← Site</a>
+    </div>
+  </header>
+
+  <div class="restricted-strip">
+    <div class="container restricted-strip__inner">
+      <span class="restricted-strip__chip"><span class="restricted-strip__dot"></span>Restricted · Competitive Intelligence</span>
+      <span aria-hidden="true">Internal desk · not in public navigation</span>
+    </div>
+  </div>
+
+  <main id="main">
+
+    <section class="intel-hero">
+      <div class="container">
+        <p class="intel-hero__eyebrow">◆ Classification — internal</p>
+        <h1 class="intel-hero__headline">The market behind <em>Singapore's largest FMCG bench.</em></h1>
+        <p class="intel-hero__sub">Six files — competitor landscape, market intelligence, persona pricing, whitespace atlas, website-design audit, compiled report — produced by the competitor-intel-template orchestra. Refreshed 21 May 2026. Internal-only desk, parked behind the public Merchandising site.</p>
+
+        <div class="kpi-row">
+          <div class="kpi">
+            <div class="kpi__value">43</div>
+            <div class="kpi__label">Competitors mapped</div>
+            <div class="kpi__note">70% SEA-weighted, all six buckets covered.</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi__value">S$320M</div>
+            <div class="kpi__label">TAM, SG FMCG execution</div>
+            <div class="kpi__note">Agency bench + in-house promoters + freelance + SaaS + POSM project spend.</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi__value">S$21M</div>
+            <div class="kpi__label">SOM, 3-year cumulative</div>
+            <div class="kpi__note">From S$168M SAM after channel + grant-tier filters.</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi__value">3</div>
+            <div class="kpi__label">Attack plans, blue ocean</div>
+            <div class="kpi__note">Shared mid-market · beauty multilingual · Group SEA bundle.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="intel-section">
+      <div class="container">
+        <div class="intel-section__header">
+          <p class="intel-section__eyebrow">The intelligence files</p>
+          <h2 class="intel-section__heading">Five analyses, one compiled report.</h2>
+          <p class="intel-section__lede">Each file is produced by a single agent in the intel orchestra and writes to a single JSON file in <code>/intel/data/</code>. Click through to the rendered view; the underlying data is what the report compiles.</p>
+        </div>
+
+        <div class="file-grid">
+          <a class="file-card" href="competitors.html">
+            <div class="file-card__kicker">File 01 — Competitor landscape</div>
+            <h3 class="file-card__title">43 competitors, Top-5 threats, beatability scored.</h3>
+            <p class="file-card__lede">SG-local merchandising houses, global agency incumbents (CDM Smollan, Acosta), retail-tech threats (Trax, ShelfPerfect), DIY anchors (in-house brand team, Excel + WhatsApp) — every record scored on threat × beatability.</p>
+            <div class="file-card__meta"><span>≥30 records · 70% SEA</span><span class="file-card__open">Open file →</span></div>
+          </a>
+
+          <a class="file-card" href="insights.html">
+            <div class="file-card__kicker">File 02 — Market &amp; pricing</div>
+            <h3 class="file-card__title">S$320M TAM · 5 personas · 4-tier ladder.</h3>
+            <p class="file-card__lede">Bottom-up SG TAM from MOM Services employment and ACRA SSIC. Persona NBAs and elasticity bands feeding a four-tier price ladder — Shared 6-Pax, Dedicated, Enterprise, Regional SEA.</p>
+            <div class="file-card__meta"><span>TAM derivation shown</span><span class="file-card__open">Open file →</span></div>
+          </a>
+
+          <a class="file-card" href="whitespace.html">
+            <div class="file-card__kicker">File 03 — Whitespace atlas</div>
+            <h3 class="file-card__title">8-dim canvas, 41-cell heatmap, 3 attack plans.</h3>
+            <p class="file-card__lede">Strategy canvas mapping where Elitez breaks the cluster (bench scale, retention, EMR-Intel, multilingual depth). Heatmap of unoccupied terrain. Three named attack plans with niche, TAM, and beatability.</p>
+            <div class="file-card__meta"><span>3 ranked plans</span><span class="file-card__open">Open file →</span></div>
+          </a>
+
+          <a class="file-card" href="design-audit.html">
+            <div class="file-card__kicker">File 04 — Design audit</div>
+            <h3 class="file-card__title">Public site, audited on a 5-dimension rubric.</h3>
+            <p class="file-card__lede">The live merchandising site graded on hierarchy, typography, motion, mobile, and findability. Three-intent search test. Issues scored and ranked.</p>
+            <div class="file-card__meta"><span>5 rubrics · 3 intents</span><span class="file-card__open">Open file →</span></div>
+          </a>
+
+          <a class="file-card" href="report.html">
+            <div class="file-card__kicker">File 05 — Compiled report</div>
+            <h3 class="file-card__title">The whole picture in one print-ready brief.</h3>
+            <p class="file-card__lede">Executive summary, market, competition, pricing, whitespace, design audit, recommendations, methodology &amp; sources — pre-flight gated against the inter-agent quality contract.</p>
+            <div class="file-card__meta"><span>≤ 8 MB · board-grade</span><span class="file-card__open">Open file →</span></div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="intel-section" style="background: var(--card-hi);">
+      <div class="container">
+        <div class="intel-section__header">
+          <p class="intel-section__eyebrow">The bottom line</p>
+          <h2 class="intel-section__heading">What the intel says — in four findings.</h2>
+        </div>
+        <div class="finding-grid">
+          <div class="finding">
+            <div class="finding__num">Finding 01</div>
+            <h3 class="finding__title">The 350+ bench is the structural moat — defend it before chasing tech.</h3>
+            <p class="finding__body">S$135M agency-deployable bench is the central battlefield. Elitez at 350+ FMCG manpower is the single largest SG bench. CDM-Smollan and DKSH match scale but not SG-purity. Headcount retention &gt;95% is more load-bearing than EMR-Intel features.</p>
+          </div>
+          <div class="finding">
+            <div class="finding__num">Finding 02</div>
+            <h3 class="finding__title">The Shared 6-Pax tier unlocks the S$33M mid-market SAM Dedicated cannot reach.</h3>
+            <p class="finding__body">Indie Series-A-to-C brands (Oatside-tier) cannot justify a 5-pax dedicated commitment but will pay a S$9k/mo shared retainer — and the PSG-pre-approval halves that. The wedge into mid-market that the Top-3 SG players have left open.</p>
+          </div>
+          <div class="finding">
+            <div class="finding__num">Finding 03</div>
+            <h3 class="finding__title">MOM S-Pass / WP quota tightening creates a supply-constrained price floor.</h3>
+            <p class="finding__body">The existing Elitez quota becomes a regulatory moat as the WP quota narrows. New entrants can't recruit the bench at any price; existing bench is supply-constrained. Protects the S$4,500/pax rate from undercut on price alone.</p>
+          </div>
+          <div class="finding">
+            <div class="finding__num">Finding 04</div>
+            <h3 class="finding__title">Y3 EMR-Intel commoditisation is the live downside risk.</h3>
+            <p class="finding__body">Trax, ShelfPerfect, NielsenIQ and Salesforce are closing the field-force-tech gap within 24–36 months. Plan reserves Y3 SOM stack for platform-license harvest before differentiation expires. Doubling down on bench + service execution outlasts the SaaS gap.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="intel-section">
+      <div class="container">
+        <div class="intel-section__header">
+          <p class="intel-section__eyebrow">Top-5 direct threats</p>
+          <h2 class="intel-section__heading">Who to watch most closely.</h2>
+          <p class="intel-section__lede">Pulled from the <code>top_five</code> rationale field of the competitor file. The first two are silent NBAs (the "no deal" alternatives) — together they decide ~60% of MNC pitches by default.</p>
+        </div>
+        <div class="top5">
+          <table>
+            <thead>
+              <tr><th>Rank</th><th>Competitor</th><th>Why they matter</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="rank">01</td><td class="name">DIY — In-house brand team</td><td class="why">The silent NBA. MNCs default to hiring a small internal field roster rather than outsourcing; wins ~60% of theoretical deals before agencies enter the room. Beat with: 350+ shared bench, headcount-quota moat, EMR-Intel data layer.</td></tr>
+              <tr><td class="rank">02</td><td class="name">DIY — Excel + WhatsApp + supervisor</td><td class="why">Status-quo workflow at most SG distributors. EMR-Intel is the wedge — replaces 4-touchpoint paper trail with one app, one dashboard, one auditable record. Cheap and well-understood; sticky on inertia, not value.</td></tr>
+              <tr><td class="rank">03</td><td class="name">FMCG Link</td><td class="why">Direct SG-incorporated competitor with overlapping FairPrice / Watsons / Guardian roster. Same bench category, same retail channels, fights on price and account-mgmt depth.</td></tr>
+              <tr><td class="rank">04</td><td class="name">Trax Retail</td><td class="why">SG-HQ unicorn whose image-recognition replaces audit cycles. Doesn't field merchandisers — threatens the EMR-Intel data layer, not the bench. Watch the Trax-plus-broker pattern.</td></tr>
+              <tr><td class="rank">05</td><td class="name">CDM Smollan Asia</td><td class="why">Global FMCG field-marketing incumbent with deep L'Oréal / Unilever / Reckitt master service agreements. Bench-comparable, beatable on SG-purity and multilingual depth.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="intel-section">
+      <div class="container">
+        <div class="intel-section__header">
+          <p class="intel-section__eyebrow">Freshness ritual</p>
+          <h2 class="intel-section__heading">Intelligence decays — keep it dated.</h2>
+          <p class="intel-section__lede">This desk is a snapshot, not a feed. Every figure is tied to a research date and a named source so a reader always knows how stale it is.</p>
+        </div>
+        <div class="freshness-grid">
+          <div class="freshness">
+            <div class="freshness__cadence">Quarterly</div>
+            <h3 class="freshness__title">Competitor &amp; design rescan</h3>
+            <p class="freshness__body">Re-run Agents 1 and 5 every quarter — competitor positioning and websites change fastest. Next due <strong>Aug 2026</strong>.</p>
+          </div>
+          <div class="freshness">
+            <div class="freshness__cadence">On policy change</div>
+            <h3 class="freshness__title">Market &amp; pricing refresh</h3>
+            <p class="freshness__body">Re-run Agents 2 and 3 on every MOM quota change, PWM step, or PSG cap update. Watch <strong>H2 2026</strong> for the next dependency cluster.</p>
+          </div>
+          <div class="freshness">
+            <div class="freshness__cadence">Annually</div>
+            <h3 class="freshness__title">Full orchestra rerun</h3>
+            <p class="freshness__body">Rebuild TAM/SAM/SOM and the strategy canvas from scratch every May. Next due <strong>May 2027</strong>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer__columns" style="grid-template-columns: 1fr auto;">
+        <div class="site-footer__brand">
+          <span class="site-footer__tagline">Elitez Merchandising · Market Intel</span>
+          <p class="site-footer__attribution">Operated by <a href="https://www.elitez.asia" rel="noopener">Elitez Group of Companies</a>. Internal competitive intelligence — not part of the public navigation.</p>
+        </div>
+        <div class="site-footer__contact-line">
+          <a class="btn btn--ghost" href="../../index.html">← Merchandising site</a>
+        </div>
+      </div>
+      <p class="site-footer__rights">Produced by the competitor-intel-template orchestra · research date 2026-05-21 · sources cited per file.</p>
+    </div>
+  </footer>
+
+  <div class="last-edited-strip" role="status" aria-live="polite">
+    <strong>Page last edited:</strong> <span id="last-edited" data-edited="2026-05-21T17:50:00+08:00">checking…</span>
+  </div>
+  <script>
+  (function () {
+    const el = document.getElementById('last-edited');
+    if (!el) return;
+    const iso = el.dataset.edited;
+    if (!iso) { el.textContent = '—'; return; }
+    const d = new Date(iso);
+    const fmt = d.toLocaleDateString('en-SG', { year: 'numeric', month: 'short', day: 'numeric' });
+    const ago = Math.floor((Date.now() - d.getTime()) / 86400000);
+    let suffix;
+    if (ago === 0) suffix = 'today';
+    else if (ago === 1) suffix = 'yesterday';
+    else if (ago < 14) suffix = ago + ' days ago';
+    else if (ago < 60) suffix = Math.floor(ago/7) + ' weeks ago';
+    else suffix = Math.floor(ago/30) + ' months ago';
+    el.textContent = fmt + ' · ' + suffix;
+    if (ago <= 7) el.classList.add('fresh');
+    else if (ago > 14) el.classList.add('stale');
+  })();
+  </script>
+</body>
+</html>

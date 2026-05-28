@@ -1,0 +1,297 @@
+{
+  "$schema_version": "v3.0.1",
+  "project_name": "elitez-lms-site",
+  "generated_by": "Agent 7 (QA & Pitfall Curator)",
+  "generated_at": "2026-05-22T01:30:00Z",
+  "live_url": "https://derrick-pixel.github.io/elitez-lms-site/",
+  "live_url_status": "200 OK — verified via curl HEAD 2026-05-22T01:18Z",
+  "overall_verdict": "ship-with-warnings",
+  "verdict_rationale": "All 4 BLOCKING v3.0.1 gates PASS (canonical, prefers-reduced-motion N/A, CLS hygiene, semantic ≥80). No critical / serious axe violations. JSON-LD parses cleanly on all 8 indexed pages. Live site reachable. Two ship-blockers gated under 'warnings' because they are NOT v3.0.1 gates but are pre-launch must-fix: (1) contact-form Formspree action is 'PLACEHOLDER_FORM_ID' — every submission will 404; (2) pricing.js renders tier-card CTAs with bare-absolute href='/contact.html#contact-form' which resolves to derrick-pixel.github.io/contact.html (broken — needs './contact.html#contact-form' or 'contact.html#contact-form'). Six secondary findings (heading-skip site-wide, --muted2 / --accent2 contrast borderline, html lang='en' not 'en-SG', 404 thin content, admin-page-stamp missing, FAQ accordion not bound to JSON-LD source-of-truth). None block the v3.0.1 gates. Fix the two ship-blockers, then ship.",
+
+  "blocking_gates_summary": {
+    "canonical_check": { "pass_count": 9, "fail_count": 0, "result": "pass" },
+    "prefers_reduced_motion": { "pass_count": 0, "fail_count": 0, "na_count": 9, "result": "pass", "note": "No production page ships scroll-reveal, count-up, or canvas animation. CSS transitions are state-driven (hover, focus, expand) — out of scope per handbook's animation list. colors.html is the only file with transitions and is internal/transient (sitemap.json should mark internal:true; flagged below)." },
+    "cls_hygiene": { "pass_count": 9, "fail_count": 0, "result": "pass", "note": "Every <img> has explicit width + height. Logos serve at width=120 height=32/36 in nav and footer. No <img> uses loading='lazy' or loading='eager' explicitly, but since logos are above-fold and small (<2KB each), this is acceptable (loading attribute is best-practice but not a v3.0.1 gate)." },
+    "semantic_audit_avg_score": { "average": 94.0, "minimum": 94, "result": "pass", "note": "Floor 80 met by wide margin. Single recurring medium violation across all pages: seo-heading-skip — footer column h4 follows last main h2 with no h3 between (see qa-report.json.semantic_audit[])." }
+  },
+
+  "semantic_audit": [
+    { "page_id": "home", "path": "/index.html", "score": 94, "violations": [ { "id": "seo-heading-skip", "severity": "medium", "evidence": "Last main <h2> ('Fifteen minutes, one screen-share, no deck.') is followed by footer <h4 class=\"site-footer__col-heading\"> with no <h3> in between." } ], "stats": { "h1_count": 1, "h2_count": 9, "h3_count": 19, "h4_count": 3, "images": 2, "internal_links": 25, "main_word_count": 1811, "jsonld_blocks": 3 } },
+    { "page_id": "product", "path": "/product.html", "score": 94, "violations": [ { "id": "seo-heading-skip", "severity": "medium", "evidence": "h2→h4 jump at footer (same site-wide pattern)." } ], "stats": { "h1_count": 1, "h2_count": 8, "h3_count": 23, "h4_count": 3, "images": 2, "internal_links": 22, "main_word_count": 1192, "jsonld_blocks": 3 } },
+    { "page_id": "pricing", "path": "/pricing.html", "score": 94, "violations": [ { "id": "seo-heading-skip", "severity": "medium", "evidence": "h2→h4 jump at footer (same site-wide pattern). Note: tier-card h3 names are rendered by pricing.js client-side, so first paint of the noscript view skips h2→h4 at the tier-grid host too." } ], "stats": { "h1_count": 1, "h2_count": 5, "h3_count": 4, "h4_count": 3, "images": 2, "internal_links": 19, "main_word_count": 880, "jsonld_blocks": 4 } },
+    { "page_id": "for-whom", "path": "/for-whom.html", "score": 94, "violations": [ { "id": "seo-heading-skip", "severity": "medium", "evidence": "h2→h4 jump at footer (same site-wide pattern)." } ], "stats": { "h1_count": 1, "h2_count": 6, "h3_count": 9, "h4_count": 3, "images": 2, "internal_links": 21, "main_word_count": 750, "jsonld_blocks": 3 } },
+    { "page_id": "about", "path": "/about.html", "score": 94, "violations": [ { "id": "seo-heading-skip", "severity": "medium", "evidence": "h2→h4 jump at footer (same site-wide pattern)." } ], "stats": { "h1_count": 1, "h2_count": 5, "h3_count": 16, "h4_count": 3, "images": 2, "internal_links": 20, "main_word_count": 688, "jsonld_blocks": 4 } },
+    { "page_id": "contact", "path": "/contact.html", "score": 94, "violations": [ { "id": "seo-heading-skip", "severity": "medium", "evidence": "h2→h4 jump at footer (same site-wide pattern)." } ], "stats": { "h1_count": 1, "h2_count": 3, "h3_count": 3, "h4_count": 3, "images": 2, "internal_links": 17, "main_word_count": 494, "jsonld_blocks": 4 } },
+    { "page_id": "admin", "path": "/admin.html", "score": 94, "violations": [ { "id": "seo-heading-skip", "severity": "medium", "evidence": "h2→h4 jump at footer. Top-5 cards, competitor table rows, and radar legend are rendered client-side from JSON; h3 nodes are injected by admin.js after first paint." } ], "stats": { "h1_count": 1, "h2_count": 4, "h3_count": 0, "h4_count": 3, "images": 2, "internal_links": 20, "main_word_count": 270, "jsonld_blocks": 1 } },
+    { "page_id": "admin-insights", "path": "/admin-insights.html", "score": 94, "violations": [ { "id": "seo-heading-skip", "severity": "medium", "evidence": "h2→h4 jump at footer. Personas / tiers / attack-plans render client-side from admin-insights.js." } ], "stats": { "h1_count": 1, "h2_count": 10, "h3_count": 0, "h4_count": 3, "images": 2, "internal_links": 20, "main_word_count": 700, "jsonld_blocks": 1 } },
+    { "page_id": "404", "path": "/404.html", "score": 88, "violations": [ { "id": "seo-heading-skip", "severity": "medium", "evidence": "h2→h4 jump at footer." }, { "id": "seo-thin-content", "severity": "medium", "evidence": "Main word count = 62 (handbook floor = 100; ≥300 ideal for content pages). 404 pages are conventionally terse — flagged but accepted." } ], "stats": { "h1_count": 1, "h2_count": 1, "h3_count": 0, "h4_count": 3, "images": 2, "internal_links": 15, "main_word_count": 62, "jsonld_blocks": 0 } }
+  ],
+
+  "prefers_reduced_motion": [
+    { "page_id": "home", "result": "n/a", "note": "No scroll-reveal, count-up, or canvas animation on the page. CSS only ships state-driven transitions (hover/focus) — not in the handbook's animation list. assets/js/nav.js uses scrollIntoView({behavior:'smooth'}) for in-page anchors; modern Chrome/Safari natively respect prefers-reduced-motion for smooth-scroll." },
+    { "page_id": "product", "result": "n/a", "note": "Same as home." },
+    { "page_id": "pricing", "result": "n/a", "note": "Same as home." },
+    { "page_id": "for-whom", "result": "n/a", "note": "Same as home." },
+    { "page_id": "about", "result": "n/a", "note": "Same as home." },
+    { "page_id": "contact", "result": "n/a", "note": "Same as home." },
+    { "page_id": "admin", "result": "n/a", "note": "Same as home." },
+    { "page_id": "admin-insights", "result": "n/a", "note": "Same as home." },
+    { "page_id": "404", "result": "n/a", "note": "Same as home." }
+  ],
+
+  "canonical_check": [
+    { "page_id": "home", "result": "pass", "evidence": "https://derrick-pixel.github.io/elitez-lms-site/" },
+    { "page_id": "product", "result": "pass", "evidence": "https://derrick-pixel.github.io/elitez-lms-site/product.html" },
+    { "page_id": "pricing", "result": "pass", "evidence": "https://derrick-pixel.github.io/elitez-lms-site/pricing.html" },
+    { "page_id": "for-whom", "result": "pass", "evidence": "https://derrick-pixel.github.io/elitez-lms-site/for-whom.html" },
+    { "page_id": "about", "result": "pass", "evidence": "https://derrick-pixel.github.io/elitez-lms-site/about.html" },
+    { "page_id": "contact", "result": "pass", "evidence": "https://derrick-pixel.github.io/elitez-lms-site/contact.html" },
+    { "page_id": "admin", "result": "pass", "evidence": "https://derrick-pixel.github.io/elitez-lms-site/admin.html" },
+    { "page_id": "admin-insights", "result": "pass", "evidence": "https://derrick-pixel.github.io/elitez-lms-site/admin-insights.html" },
+    { "page_id": "404", "result": "pass", "evidence": "https://derrick-pixel.github.io/elitez-lms-site/404.html" }
+  ],
+
+  "cls_hygiene": [
+    { "page_id": "home", "result": "pass", "violations": [], "note": "2 <img> tags (logo in header + footer), both have width=120 height=32/36. No <img> without dimensions site-wide. No loading attribute — acceptable for logos <3KB above-fold." },
+    { "page_id": "product", "result": "pass", "violations": [] },
+    { "page_id": "pricing", "result": "pass", "violations": [] },
+    { "page_id": "for-whom", "result": "pass", "violations": [] },
+    { "page_id": "about", "result": "pass", "violations": [] },
+    { "page_id": "contact", "result": "pass", "violations": [] },
+    { "page_id": "admin", "result": "pass", "violations": [] },
+    { "page_id": "admin-insights", "result": "pass", "violations": [] },
+    { "page_id": "404", "result": "pass", "violations": [] }
+  ],
+
+  "axe_violations": [
+    {
+      "page_id": "site-wide",
+      "rule": "color-contrast",
+      "severity": "moderate",
+      "selector": "var(--muted2) on var(--bg)  —  e.g. .tier-card__what-heading--out, .feature-card__body (small contexts at .compute pages)",
+      "fix_suggestion": "Contrast(--muted2 #6b7785, --bg #fafafa) = 4.37 — fails AA for normal body text (≥4.5 needed). Either darken --muted2 to #6a7480 (4.51) or restrict its usage to large text (≥18.66px or ≥14px bold). Currently used on small UI strings ('What is out', tier card persona caption). Same finding for --accent2 #F26522 used as color: on small UI strings (3.02 contrast)."
+    },
+    {
+      "page_id": "site-wide",
+      "rule": "heading-order",
+      "severity": "moderate",
+      "selector": "footer h4.site-footer__col-heading following main's last h2",
+      "fix_suggestion": "Either promote footer column headings from <h4> to <h3>, or insert a hidden <h3>Site footer</h3> as a contentinfo landmark heading. Site-wide pattern across all 9 pages."
+    }
+  ],
+  "axe_violations_summary": { "critical": 0, "serious": 0, "moderate": 2, "minor": 0 },
+
+  "mobile_checks": {
+    "iphone_13": {
+      "passes": true,
+      "viewport": "390x844",
+      "notes": "Responsive breakpoints @640px / 768px / 920px / 1024px all defined in assets/css. Hamburger (.nav-toggle) shows below 920px and hides above (via @media min-width:920px). Mobile menu (.mobile-nav) is full-width drawer with link list; assets/js/nav.js binds toggle to aria-expanded and closes menu on link click — verified at nav.js:17-22. Hero stack (.hero__visual--grid) becomes single-column below 1024px. FAQ accordion .accordion-item toggles via JS — verified at nav.js:38-46."
+    },
+    "pixel_7": {
+      "passes": true,
+      "viewport": "412x915",
+      "notes": "Same responsive behaviour as iPhone 13. Tap targets: .nav-toggle is 28x28px (the spans inside are 20x2px) — handbook recommends ≥44px. Header CTA .btn--primary has min padding 12px×24px which yields ~44px tap area. Mobile nav links are full-width — ample tap area. .accordion-header is full-width button — ample tap area."
+    },
+    "ipad": {
+      "passes": true,
+      "viewport": "768x1024",
+      "notes": "At 768px, .pricing-grid switches to 2-col (default 1-col below 768), .feature-grid--3 switches to 2-col, and hamburger still shows (because hamburger hides only at ≥920px). Above 1024px, .pricing-grid still 2-col until 1100px (the 5-col breakpoint). No horizontal overflow detected in static markup."
+    },
+    "summary": "All three viewports pass. Hamburger opens/closes via toggle, closes on link click (verified in nav.js source). FAQ accordion expands. Pricing tiers reflow (5-col → 2-col → 1-col). Footer reflows. No >1 H1 per page. No horizontal scroll triggers found in CSS."
+  },
+
+  "performance": {
+    "lighthouse_performance": null,
+    "lighthouse_accessibility": null,
+    "lighthouse_seo": null,
+    "note": "Lighthouse not run in this session — site is live but Chrome/Lighthouse runner not available in the QA environment. Expected scores based on static analysis: Performance ≥90 (vanilla HTML + 2 CSS files + 1 JS per page, no third-party scripts, no large images, OG images 53-93KB), Accessibility ≥95 (1 H1 per page, all images alt+dims, ARIA landmarks present, skip-link present, the 2 moderate color-contrast findings would land here), SEO ≥95 (canonical + sitemap + robots + JSON-LD + per-page OG + meta-description on every page, no noindex on indexable pages)."
+  },
+
+  "json_ld_validation": {
+    "method": "Local JSON.parse + Schema.org required-field spec-conformance check (Python ast). External validators (Google Rich Results, Schema.org, Bing Markup) not run in this session.",
+    "result": "pass",
+    "blocks_parsed": 23,
+    "parse_errors": 0,
+    "required_field_violations": 0,
+    "per_page": {
+      "home": ["Organization", "WebSite", "FAQPage"],
+      "product": ["Organization", "WebSite", "BreadcrumbList"],
+      "pricing": ["Organization", "WebSite", "BreadcrumbList", "@graph[Product×5 with Offer]"],
+      "for-whom": ["Organization", "WebSite", "BreadcrumbList"],
+      "about": ["Organization", "WebSite", "BreadcrumbList", "AboutPage"],
+      "contact": ["Organization", "WebSite", "BreadcrumbList", "ContactPage"],
+      "admin": ["BreadcrumbList"],
+      "admin-insights": ["BreadcrumbList"],
+      "404": []
+    }
+  },
+
+  "copy_data_sanity": {
+    "hero_headline_match": { "result": "pass", "evidence": "copy.json.pages.home.hero_headline = 'Cut your new-consultant ramp from twelve weeks to six.'  ↔  index.html h1.hero__headline = same string verbatim." },
+    "pricing_tier_match": {
+      "result": "pass",
+      "evidence": "All 5 tiers from pricing-strategy.json (via copy.json.pages.pricing.tiers) render with correct price_display + price_unit_label (NOT hard-coded /mo): Starter S$0 / free, up to 10 users; Team S$12 / per user / month; Agency S$8,400 / per year, up to 80 seats; Funded Programme S$6,000 / per 30-learner cohort, 12 weeks; HRMS Bundle From S$200,000 / annual ARR, 5k to 30k seat bands. Verified via parsing the live <script id='tiers-data'> JSON block."
+    },
+    "admin_pages_data": {
+      "result": "pass",
+      "evidence": "admin.js fetches ./data/intel/competitors.json + ./data/intel/whitespace-framework.json (correct relative path — passes loadAppData() default-path pitfall from May-20 sweep). admin-insights.js fetches 3 intel files. Both pages have catch-handler logging on fetch failure. Live HEAD on /data/intel/competitors.json returns 200 OK."
+    },
+    "anti_audience_terms": {
+      "result": "pass",
+      "evidence": "Only 2 matches and both are deliberate negative-positioning (i.e. disclaimer prose): index.html:382 'sized for white-collar office staff, not blue-collar shift workers' (intentional ICP boundary); admin.html:146,172 'frontline microlearning' as a competitor-category label for EdApp/SafetyCulture/Axonify (intentional categorisation of competitors). Source brief.constraints[] and copy.for-whom.anti-audience explicitly want this framing.  No mention of 'dormitory', 'outsourced worker', 'multilingual mobile', or 'SMS-OTP' on any rendered page."
+    },
+    "anti_tone_terms": {
+      "result": "pass",
+      "evidence": "Zero matches for transform / unlock / empower / synergize / seamless / revolutionize / game-change in any production HTML page. Only matches were in colors.html (the internal/transient palette tryout, not in nav, robots-disallowed)."
+    },
+    "emoji_check": { "result": "pass", "evidence": "Python Unicode-block scan (U+1F300-U+1FAFF, U+2700-U+27BF, U+1F600-U+1F64F) returns 0 emoji on every production HTML page." },
+    "exclamation_check": { "result": "pass", "evidence": "Zero exclamation marks in product copy across all 9 pages (the only ! is in CSS !important inside <style> blocks and <!DOCTYPE> / <!-- HTML comments -->)." }
+  },
+
+  "live_url_probe": {
+    "live_url": "https://derrick-pixel.github.io/elitez-lms-site/",
+    "index_status": "200 OK",
+    "pricing_status": "200 OK",
+    "admin_status": "200 OK",
+    "intel_json_status": "200 OK (competitors.json + whitespace-framework.json verified)",
+    "og_image_status": "200 OK (og-images/product.jpg verified)",
+    "last_modified": "Fri, 22 May 2026 01:06:05 GMT",
+    "note": "Live deploy is current; local working tree diffs zero against live for pricing.html."
+  },
+
+  "ship_blockers": [
+    {
+      "id": "contact-form-placeholder",
+      "severity": "critical",
+      "page": "contact.html:182",
+      "evidence": "<form ... action=\"https://formspree.io/f/PLACEHOLDER_FORM_ID\" method=\"POST\">",
+      "impact": "Every contact-form submission will POST to a non-existent Formspree endpoint and 404. Primary lead-capture pathway is broken.",
+      "fix": "Replace PLACEHOLDER_FORM_ID with Derrick's real Formspree form ID (provisioned for derrick@elitez.asia delivery, per brief.json.contact_form_handler='formspree')."
+    },
+    {
+      "id": "pricing-js-broken-cta-href",
+      "severity": "high",
+      "page": "assets/js/pricing.js:59",
+      "evidence": "h('a', { className: 'btn btn--ghost', href: '/contact.html#contact-form' }, t.cta_label)",
+      "impact": "On GitHub Pages (site at /elitez-lms-site/), the bare-absolute href '/contact.html' resolves to derrick-pixel.github.io/contact.html — a 404. All 5 tier-card CTAs (Start a 10-seat trial, Talk to us about Team, Request an Agency quote, Scope a funded cohort, Open a partner conversation) are broken.",
+      "fix": "Change href to 'contact.html#contact-form' (relative — pricing.html sits at the same path level as contact.html). Same fix would work for the canonical custom-domain (lms.elitez.com.sg) since both pages live at root there too."
+    }
+  ],
+
+  "warnings_non_blocking": [
+    {
+      "id": "heading-skip-footer-h4",
+      "severity": "medium",
+      "page": "all 9 pages",
+      "evidence": "<h4 class=\"site-footer__col-heading\"> directly follows main's last <h2> with no <h3> between (e.g., index.html:598,607,616).",
+      "fix": "Either: (a) demote footer column headings from h4 to h3, (b) wrap footer in a <section aria-labelledby='footer-heading'><h2 id='footer-heading' class='sr-only'>Site footer</h2>... with h3 columns, or (c) add a visually-hidden <h3>Site links</h3> at the top of <footer> before the column headings.",
+      "lesson": "Footer is a landmark but its internal headings still participate in the page outline. Crawlers and screen-readers flag the gap."
+    },
+    {
+      "id": "muted2-accent2-contrast-borderline",
+      "severity": "medium",
+      "page": "assets/css/components.css multiple selectors",
+      "evidence": "Contrast(--muted2 #6b7785, --bg #fafafa) = 4.37; AA body requires 4.5. Contrast(--accent2 #F26522, --bg #fafafa) = 3.02; AA large-text requires 3.0, AA body 4.5.",
+      "fix": "Darken --muted2 to #6a7480 (or use --muted #475569 for small UI strings); reserve --accent2 #F26522 for icons / borders / large headings only. Pitfall reference: palette-bad-contrast."
+    },
+    {
+      "id": "html-lang-en-not-en-SG",
+      "severity": "low",
+      "page": "all 9 pages",
+      "evidence": "<html lang=\"en\"> — Singapore-targeted site (brief.target_geo=['SG'], <meta name='geo.region' content='SG'>).",
+      "fix": "Change to <html lang=\"en-SG\"> for SG-targeted SEO + correct screen-reader voice. Pitfall reference: seo-no-lang-attr (extended variant — present-but-non-region-specific)."
+    },
+    {
+      "id": "404-thin-content",
+      "severity": "low",
+      "page": "404.html",
+      "evidence": "Main word count = 62 (handbook floor 100; ideal 300+).",
+      "fix": "Conventionally accepted for 404 pages. Could add a short FAQ pull or top-3-page recommendation list. Not a blocker."
+    },
+    {
+      "id": "admin-page-stamp-missing",
+      "severity": "low",
+      "page": "admin.html, admin-insights.html",
+      "evidence": "Neither admin page has the mandatory 'Page last edited' bottom-fixed stamp per Derrick's /admin-page-stamp skill convention.",
+      "fix": "Apply the admin-page-stamp pattern to both admin pages (date stamp at bottom-fixed position). The skill auto-triggers when editing admin/ paths — apply on next admin-page edit."
+    },
+    {
+      "id": "faq-not-bound-to-jsonld-source",
+      "severity": "low",
+      "page": "index.html, pricing.html, contact.html",
+      "evidence": "FAQ accordion HTML on each page is hand-written, while the FAQPage JSON-LD on index is hand-emitted from copy.json.faq[]. Two sources of truth; if Derrick edits one, the other drifts.",
+      "fix": "Drive both renders from a single inline JSON block (similar to pricing.js + tiers-data pattern) or generate at build time. Pitfall reference: copy-hardcoded-in-html (variant)."
+    },
+    {
+      "id": "sitemap-missing-internal-flag",
+      "severity": "low",
+      "page": "data/sitemap.json",
+      "evidence": "colors.html exists in repo and is robots-disallowed but is NOT declared in sitemap.json.pages[] with internal:true. Agent 7 had to discover it from the directory listing.",
+      "fix": "Add colors.html as an explicit page with 'internal': true in sitemap.json (per FIELD-DICTIONARY.md sitemap.json field notes), or remove the file from the repo since the palette has been chosen ('chosen': 'elitez-institutional-navy')."
+    }
+  ],
+
+  "pitfall_hits": [
+    {
+      "id": "seo-heading-skip",
+      "category": "seo",
+      "severity": "medium",
+      "occurrences": 9,
+      "evidence": "Footer h4 follows main h2 with no intermediate h3 on every page."
+    },
+    {
+      "id": "seo-thin-content",
+      "category": "seo",
+      "severity": "medium",
+      "occurrences": 1,
+      "evidence": "404.html main word count = 62 (under 100 floor)."
+    }
+  ],
+
+  "pitfall_proposals": [
+    {
+      "id": "qa-form-placeholder-action",
+      "category": "qa",
+      "severity": "critical",
+      "phase": "shipping",
+      "story": "elitez-lms-site Agent 5 (or Agent 4) emitted contact.html with action='https://formspree.io/f/PLACEHOLDER_FORM_ID' as a scaffold placeholder. Agent 6 (SEO) didn't audit form actions. Agent 7 caught it in QA — every submission would 404. Same gotcha-shape as 'robots-disallow-everything' (a placeholder slipping into production).",
+      "source_project": "elitez-lms-site",
+      "fix": "Agent 6's deliverable checklist should grep production HTML for the literal token 'PLACEHOLDER' (case-insensitive) across all attribute values and content; any hit fails the shipping gate. Cross-referenced against brief.json.contact_form_handler — if 'formspree', the form action must match the regex ^https://formspree\\.io/f/[a-zA-Z0-9]{8,}$ (8+ char form ID).",
+      "lesson": "Placeholders in shipped HTML are a class of bug. Audit by string, not by intent.",
+      "mechanic": "formspree-form"
+    },
+    {
+      "id": "ui-absolute-href-in-js",
+      "category": "ui",
+      "severity": "high",
+      "phase": "building",
+      "story": "elitez-lms-site assets/js/pricing.js renders tier-card CTAs with href='/contact.html#contact-form'. On GitHub Pages where the site lives at /elitez-lms-site/, the bare-absolute path resolves to a different (non-existent) sub-path. All 5 tier-card CTAs broken. The HTML hand-written hrefs in the same project use 'contact.html' (relative) — only the JS-rendered ones got it wrong because the dev defaulted to root-absolute when reasoning in isolation about a JS template literal.",
+      "source_project": "elitez-lms-site",
+      "fix": "JS that emits hrefs must mirror the relative-path convention of the surrounding HTML, OR derive the base URL at runtime: const BASE = document.querySelector('link[rel=\"canonical\"]').href.replace(/[^/]+$/, ''). Agent 7 to grep assets/js/**/*.js for href= patterns that start with '/' and aren't elitez-lms-site/-prefixed; cross-check against the project's deploy path. Pairs with seo-no-canonical pitfall.",
+      "lesson": "GitHub Pages sub-path deploys + bare-absolute hrefs = silent breakage. Either use canonical-derived base, repo-prefixed absolutes, or pure relatives — pick one and enforce.",
+      "mechanic": null
+    },
+    {
+      "id": "ia-internal-page-flag-undeclared",
+      "category": "ia",
+      "severity": "low",
+      "phase": "planning",
+      "story": "elitez-lms-site shipped with colors.html in the repo (the palette tryout, with transitions and 'transform'/'seamless' anti-tone words). It was correctly robots-disallowed but was NOT declared in sitemap.json.pages[] with internal:true. Agent 7 had to learn it was internal by inspection. Per FIELD-DICTIONARY v3.0.1, internal:true is the canonical signal — but neither Agent 2 (who emits colors.html) nor Agent 3 (who owns sitemap.json) recorded the flag.",
+      "source_project": "elitez-lms-site",
+      "fix": "Agent 3's sitemap.json output must list EVERY HTML file in the repo, with internal:true on files Agent 2/Agent 4 emit as transient. Agent 7's deliverable checklist gets: 'For each *.html on disk that is not in sitemap.json.pages[].path or .admin_pages[].path, log as orphan-page candidate and either flag for inclusion or for deletion.'",
+      "lesson": "If a file is in the deploy, it has to be in the sitemap — either as a real page or as internal:true. 'On disk but not in sitemap' is the silent leak path.",
+      "mechanic": null
+    },
+    {
+      "id": "ia-footer-heading-skip",
+      "category": "ia",
+      "severity": "medium",
+      "phase": "building",
+      "story": "elitez-lms-site shipped with <footer><h4>Product</h4><h4>Company</h4><h4>Reach us</h4>… on every page. Every page's main ends at h2 or h3. The h2→h4 jump is a semantic-html-audit violation on 9 pages. Same convention exists in other Elitez sites (dt-public, elitezsecurity) — likely lifted from a shared scaffold.",
+      "source_project": "elitez-lms-site (plus likely cross-project — to verify on next QA pass)",
+      "fix": "Agent 4's component library `site-footer` template should emit h3 column headings, OR wrap the footer in a sr-only h2 banner ('Site footer') so the h3→h4 jump becomes h2→h3→h4. Update the static-informational archetype CLAUDE.md `Footer` template literal. Agent 7 grep: `<h4` immediately after `</main>` is a heuristic trigger.",
+      "lesson": "Heading structure is page-wide, not section-wide. Footer columns participate in the outline.",
+      "mechanic": null
+    }
+  ]
+}

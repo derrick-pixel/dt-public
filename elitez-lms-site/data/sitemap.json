@@ -1,0 +1,260 @@
+{
+  "$schema_version": "v3.0.1",
+  "project_name": "elitez-lms-site",
+  "archetype": "static-informational",
+  "site_origin": "https://derrick-pixel.github.io/elitez-lms-site/",
+  "ia_decisions": [
+    "Pricing kept as a dedicated page — five tiers, three grant overlays, per-tier price_unit semantics; cannot compress into an index slab without losing the funded-procurement narrative.",
+    "For-whom kept as one segmented page (three ICPs in one scroll) rather than three persona pages — 8-page site footprint stays reasonable and the segments share a CTA.",
+    "FAQ planned on home (compliance/AI/funding flavour, FAQPage JSON-LD-emitting) and on contact (logistics flavour, no JSON-LD to avoid duplicate signals).",
+    "About is its own page — Elitez Group's WSG Human Capital Partner / IHRP exclusive partner / SkillsFuture-approved-training-organisation credentials are too load-bearing to bury inside index.",
+    "404.html scaffolded (not in nav) — required for any GitHub-Pages multi-page site even though Pages will serve it implicitly.",
+    "Admin pages visible in nav per static-informational archetype contract; no password gate initially.",
+    "BreadcrumbList JSON-LD planned for every non-home inner page (Agent 6 implementation); home page emits Organization + WebSite + FAQPage instead.",
+    "consumes_intel set on home (uses pricing-strategy personas + whitespace attack-plan for hero proof points via Agent 5), product (uses whitespace + pricing for module-library framing), pricing (pricing-strategy + market-intel grants), for-whom (pricing-strategy personas + whitespace heatmap segments), admin (competitors + whitespace), admin-insights (market-intel + pricing + whitespace)."
+  ],
+  "pages": [
+    {
+      "id": "home",
+      "path": "/index.html",
+      "title": "Elitez LMS — Singapore-built learning for HR, recruitment and AI literacy",
+      "nav_label": "Home",
+      "nav_order": 0,
+      "admin": false,
+      "auth_gated": false,
+      "og": {
+        "title": "Elitez LMS — Singapore-built learning for HR + recruitment",
+        "description": "56 modules + 1,200 quizzes covering SG HR compliance, EA-agency recruitment craft, AI literacy and cyber hygiene. WSG-funded delivery available.",
+        "image": "/og-image.jpg"
+      },
+      "schema_jsonld_plan": ["Organization", "WebSite", "FAQPage"],
+      "sections": [
+        { "id": "hero", "type": "hero-split" },
+        { "id": "credential-strip", "type": "logo-strip" },
+        { "id": "value-prop", "type": "feature-grid" },
+        { "id": "content-slabs", "type": "step-list" },
+        { "id": "role-tracks", "type": "feature-grid" },
+        { "id": "ai-literacy-band", "type": "cta-band" },
+        { "id": "funded-delivery", "type": "feature-grid" },
+        { "id": "proof-numbers", "type": "stat-row" },
+        { "id": "faq", "type": "faq-accordion" },
+        { "id": "cta", "type": "cta-band" }
+      ],
+      "consumes_intel": ["pricing-strategy.json", "whitespace-framework.json"]
+    },
+    {
+      "id": "product",
+      "path": "/product.html",
+      "title": "Product — 56 modules, role tracks, manager dashboards | Elitez LMS",
+      "nav_label": "Product",
+      "nav_order": 1,
+      "admin": false,
+      "auth_gated": false,
+      "og": {
+        "title": "Inside Elitez LMS — 56 modules + role tracks + dashboards",
+        "description": "The 56-module SG-native library, role-keyed onboarding for Recruiter / BD / AM / HR Ops, manager RAG dashboards, audience-scoped visibility, quiz CMS.",
+        "image": "/og-image-product.jpg"
+      },
+      "schema_jsonld_plan": ["BreadcrumbList", "Product"],
+      "sections": [
+        { "id": "hero", "type": "hero-split" },
+        { "id": "library-overview", "type": "feature-grid" },
+        { "id": "module-catalogue", "type": "data-table" },
+        { "id": "role-tracks", "type": "step-list" },
+        { "id": "manager-dashboards", "type": "feature-grid" },
+        { "id": "ai-literacy-slab", "type": "feature-grid" },
+        { "id": "compliance-reporting", "type": "feature-grid" },
+        { "id": "platform-architecture", "type": "feature-grid" },
+        { "id": "cta", "type": "cta-band" }
+      ],
+      "consumes_intel": ["whitespace-framework.json", "pricing-strategy.json"]
+    },
+    {
+      "id": "pricing",
+      "path": "/pricing.html",
+      "title": "Pricing — Starter, Team, Agency, Funded, HRMS Bundle | Elitez LMS",
+      "nav_label": "Pricing",
+      "nav_order": 2,
+      "admin": false,
+      "auth_gated": false,
+      "og": {
+        "title": "Elitez LMS pricing — five tiers, PSG + WSG funded",
+        "description": "Starter free, Team S$12/user/mo, Agency S$8,400/yr flat, Funded Programme S$6,000/cohort, HRMS Bundle S$200,000/yr white-label. PSG/WSG/SFEC eligible.",
+        "image": "/og-image-pricing.jpg"
+      },
+      "schema_jsonld_plan": ["BreadcrumbList", "Product", "Offer"],
+      "sections": [
+        { "id": "hero", "type": "hero-split" },
+        { "id": "tier-grid", "type": "pricing-grid" },
+        { "id": "tier-detail-comparison", "type": "data-table" },
+        { "id": "grants-explainer", "type": "feature-grid" },
+        { "id": "psg-wsg-callout", "type": "cta-band" },
+        { "id": "tier-faq", "type": "faq-accordion" },
+        { "id": "cta", "type": "cta-band" }
+      ],
+      "consumes_intel": ["pricing-strategy.json", "market-intelligence.json"]
+    },
+    {
+      "id": "for-whom",
+      "path": "/for-whom.html",
+      "title": "For whom — EA agencies, HRMS partners, SG SME prof-services | Elitez LMS",
+      "nav_label": "For whom",
+      "nav_order": 3,
+      "admin": false,
+      "auth_gated": false,
+      "og": {
+        "title": "Built for SG EA agencies, HRMS partners and SME prof-services",
+        "description": "Three ICPs, three use-cases: cut consultant ramp-time, white-label SG content into your HRMS, give your white-collar team SG-anchored onboarding.",
+        "image": "/og-image-for-whom.jpg"
+      },
+      "schema_jsonld_plan": ["BreadcrumbList"],
+      "sections": [
+        { "id": "hero", "type": "hero-split" },
+        { "id": "segment-ea-agencies", "type": "feature-grid" },
+        { "id": "segment-hrms-partners", "type": "feature-grid" },
+        { "id": "segment-sg-sme-prof-svc", "type": "feature-grid" },
+        { "id": "segment-comparison", "type": "data-table" },
+        { "id": "anti-audience", "type": "feature-grid" },
+        { "id": "cta", "type": "cta-band" }
+      ],
+      "consumes_intel": ["pricing-strategy.json", "whitespace-framework.json"]
+    },
+    {
+      "id": "about",
+      "path": "/about.html",
+      "title": "About — Elitez Group, WSG Human Capital Partner | Elitez LMS",
+      "nav_label": "About",
+      "nav_order": 4,
+      "admin": false,
+      "auth_gated": false,
+      "og": {
+        "title": "About Elitez LMS — built by Elitez Group of Companies",
+        "description": "Operated by Elitez Group — WSG Human Capital Partner, IHRP exclusive recruitment partner, SkillsFuture-approved training organisation, SG MOM EA-licensed.",
+        "image": "/og-image-about.jpg"
+      },
+      "schema_jsonld_plan": ["BreadcrumbList", "Organization", "AboutPage"],
+      "sections": [
+        { "id": "hero", "type": "hero-split" },
+        { "id": "parent-story", "type": "step-list" },
+        { "id": "credentials-grid", "type": "feature-grid" },
+        { "id": "operating-context", "type": "feature-grid" },
+        { "id": "leadership", "type": "feature-grid" },
+        { "id": "contact-snapshot", "type": "cta-band" }
+      ],
+      "consumes_intel": []
+    },
+    {
+      "id": "contact",
+      "path": "/contact.html",
+      "title": "Contact — book a 15-min walkthrough | Elitez LMS",
+      "nav_label": "Contact",
+      "nav_order": 5,
+      "admin": false,
+      "auth_gated": false,
+      "og": {
+        "title": "Talk to Elitez LMS — 15-min walkthrough",
+        "description": "Book a 15-min walkthrough with the team. Formspree-routed contact form; replies from derrick@elitez.asia within one working day.",
+        "image": "/og-image-contact.jpg"
+      },
+      "schema_jsonld_plan": ["BreadcrumbList", "ContactPage"],
+      "sections": [
+        { "id": "hero", "type": "hero-split" },
+        { "id": "contact-form", "type": "formspree-form" },
+        { "id": "company-particulars", "type": "feature-grid" },
+        { "id": "contact-faq", "type": "faq-accordion" }
+      ],
+      "consumes_intel": []
+    },
+    {
+      "id": "404",
+      "path": "/404.html",
+      "title": "Page not found | Elitez LMS",
+      "nav_label": "Not found",
+      "nav_order": 999,
+      "admin": false,
+      "auth_gated": false,
+      "og": {
+        "title": "Page not found — Elitez LMS",
+        "description": "That page is not here. Head back to the homepage or browse the product, pricing, or contact pages.",
+        "image": "/og-image.jpg",
+        "inherited": true
+      },
+      "schema_jsonld_plan": [],
+      "sections": [
+        { "id": "hero", "type": "hero-split" },
+        { "id": "back-to-home", "type": "cta-band" }
+      ],
+      "consumes_intel": []
+    }
+  ],
+  "admin_pages": [
+    {
+      "id": "admin",
+      "path": "/admin.html",
+      "title": "Competitor analytics — Elitez LMS market intel",
+      "nav_label": "Competitors",
+      "nav_order": 90,
+      "admin": true,
+      "auth_gated": false,
+      "purpose": "competitor analytics — Top-5 threats + full 35-entity table + 8-D radar + per-competitor detail",
+      "og": {
+        "title": "Elitez LMS — competitor analytics (admin)",
+        "description": "Top-5 threats (Talenox, NTUC LearningHub, JustLogin, DIY SharePoint+WhatsApp, Disprz) plus the full 35-competitor table and 8-D strategy canvas.",
+        "image": "/og-image-admin.jpg"
+      },
+      "schema_jsonld_plan": ["BreadcrumbList"],
+      "sections": [
+        { "id": "hero", "type": "hero-split" },
+        { "id": "top-5-cards", "type": "feature-grid" },
+        { "id": "competitor-table", "type": "data-table" },
+        { "id": "strategy-radar", "type": "strategy-canvas-radar" },
+        { "id": "competitor-detail-panel", "type": "modal-detail" },
+        { "id": "category-breakdown", "type": "feature-grid" }
+      ],
+      "consumes_intel": ["competitors.json", "whitespace-framework.json"]
+    },
+    {
+      "id": "admin-insights",
+      "path": "/admin-insights.html",
+      "title": "Market, pricing and whitespace — Elitez LMS intel",
+      "nav_label": "Insights",
+      "nav_order": 91,
+      "admin": true,
+      "auth_gated": false,
+      "purpose": "market-funnel TAM/SAM/SOM + policies + 5 personas + 5 tiers + grants + 8-D heatmap + 5 attack plans",
+      "og": {
+        "title": "Elitez LMS — market, pricing & whitespace (admin)",
+        "description": "S$120M TAM → S$22M SAM → S$1.1M Y3 SOM funnel, 8 SG policies, 5 personas, 5-tier ladder, PSG/WSG grants, segment-need heatmap, 5 attack plans.",
+        "image": "/og-image-admin-insights.jpg"
+      },
+      "schema_jsonld_plan": ["BreadcrumbList"],
+      "sections": [
+        { "id": "hero", "type": "hero-split" },
+        { "id": "market-funnel", "type": "market-funnel" },
+        { "id": "policies-list", "type": "feature-grid" },
+        { "id": "country-readiness", "type": "data-table" },
+        { "id": "personas", "type": "persona-cards" },
+        { "id": "nba-cards", "type": "feature-grid" },
+        { "id": "tiers", "type": "tier-table" },
+        { "id": "grants", "type": "feature-grid" },
+        { "id": "whitespace-heatmap", "type": "segment-need-heatmap" },
+        { "id": "attack-plans", "type": "step-list" },
+        { "id": "trends", "type": "feature-grid" }
+      ],
+      "consumes_intel": ["market-intelligence.json", "pricing-strategy.json", "whitespace-framework.json"]
+    }
+  ],
+  "footer_links": [
+    { "label": "Product", "href": "/product.html" },
+    { "label": "Pricing", "href": "/pricing.html" },
+    { "label": "For whom", "href": "/for-whom.html" },
+    { "label": "About", "href": "/about.html" },
+    { "label": "Contact", "href": "/contact.html" },
+    { "label": "Competitor analytics", "href": "/admin.html" },
+    { "label": "Market insights", "href": "/admin-insights.html" },
+    { "label": "Elitez Group", "href": "https://www.elitez.asia" },
+    { "label": "Product app — lms.elitez.com.sg", "href": "https://lms.elitez.com.sg" },
+    { "label": "LinkedIn", "href": "https://www.linkedin.com/company/elitezgroup/" },
+    { "label": "GitHub", "href": "https://github.com/derrick-pixel/elitez-lms-site" }
+  ]
+}

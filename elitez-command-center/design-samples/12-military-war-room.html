@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sample 12 — Military War Room · Elitez Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;600;700&family=Share+Tech+Mono&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{ --bg:#060707; --panel:#0f1110; --ink:#d6ddd4; --green:#39ff84; --amber:#ffb74d; --steel:#7f877d; --line:#1d211d; }
+  *{ -webkit-font-smoothing:antialiased; }
+  body{ font-family:'Barlow',sans-serif; background:var(--bg); color:var(--ink); }
+  h1,h2,h3,.disp{ font-family:'Teko',sans-serif; text-transform:uppercase; letter-spacing:.02em; line-height:.92; }
+  .mono{ font-family:'Share Tech Mono',monospace; }
+  .hud{ font-family:'Share Tech Mono',monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; }
+  .green{ color:var(--green); } .amber{ color:var(--amber); }
+  .glow{ text-shadow:0 0 14px rgba(57,255,132,.5); }
+  .board{ background-image:linear-gradient(rgba(57,255,132,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(57,255,132,.06) 1px,transparent 1px);background-size:44px 44px; }
+  .scan{ background-image:repeating-linear-gradient(0deg,rgba(57,255,132,.035) 0 1px,transparent 1px 3px); }
+  .img-ph{ position:relative;background:#0a0c0a;border:1px solid #2a3329;display:flex;align-items:center;justify-content:center; }
+  .img-ph::before{ content:'';position:absolute;inset:0;background:
+     radial-gradient(circle at 50% 50%,transparent 60%,rgba(57,255,132,.06) 100%); }
+  .img-ph span{ position:relative;z-index:2;font-family:'Share Tech Mono';font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+     color:var(--green);border:1px solid #2f5a3c;padding:6px 12px; }
+  .reveal{ opacity:0;transform:translateY(16px);animation:rise .7s steps(9) forwards; }
+  @keyframes rise{ to{ opacity:1;transform:none; } }
+  .d1{animation-delay:.05s}.d2{animation-delay:.12s}.d3{animation-delay:.19s}.d4{animation-delay:.26s}.d5{animation-delay:.33s}
+  .btn-p{ background:var(--green);color:#04140a;font-family:'Teko';font-size:18px;text-transform:uppercase;letter-spacing:.06em;
+     border:1px solid var(--green);transition:background .15s,color .15s; }
+  .btn-p:hover{ background:transparent;color:var(--green); }
+  .btn-s{ border:1px solid #2f5a3c;color:var(--ink);font-family:'Teko';font-size:18px;text-transform:uppercase;letter-spacing:.06em;transition:border-color .15s,color .15s; }
+  .btn-s:hover{ border-color:var(--green);color:var(--green); }
+  .panel{ background:var(--panel);border:1px solid var(--line);transition:border-color .18s; }
+  .panel:hover{ border-color:#2f5a3c; }
+  .panel:hover .pn{ color:var(--green); }
+  .blink{ animation:bl 1.3s steps(1) infinite; } @keyframes bl{ 50%{ opacity:.25; } }
+</style>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png" />
+<meta property="og:image" content="https://derrick-pixel.github.io/elitez-command-center/og/index.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:type" content="image/jpeg" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://derrick-pixel.github.io/elitez-command-center/og/index.jpg" />
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body class="scan">
+
+<div class="bg-[#39ff84] text-[#04140a] hud px-5 py-1.5 text-center font-bold">Design Sample 12 — “Military War Room” · Dark theme</div>
+
+<header class="border-b border-[var(--line)] sticky top-0 z-50 bg-[#060707]/92 backdrop-blur">
+  <div class="hud text-[var(--steel)] text-center py-1 border-b border-[var(--line)]">
+    <span class="green blink">●</span> DEFCON 5 — NOMINAL &nbsp; // &nbsp; SITREP 23:00:00Z &nbsp; // &nbsp; ALL SECTORS NOMINAL
+  </div>
+  <nav class="max-w-[1240px] mx-auto px-6 h-[70px] flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 border border-[var(--green)] grid place-items-center disp font-bold text-2xl green glow">E</div>
+      <div class="leading-none">
+        <div class="disp font-bold text-[22px]">Elitez Command Center</div>
+        <div class="hud text-[var(--steel)]">War Room / Integrated Ops</div>
+      </div>
+    </div>
+    <div class="hidden md:flex items-center gap-6 hud">
+      <a href="#" class="hover:text-[var(--green)]">Services</a><a href="#" class="hover:text-[var(--green)]">Capabilities</a>
+      <a href="#" class="hover:text-[var(--green)]">Manless</a><a href="#" class="hover:text-[var(--green)]">CapEx</a><a href="#" class="hover:text-[var(--green)]">ROI</a>
+    </div>
+    <a href="#" class="btn-p px-5 py-2.5">Request a Walkthrough</a>
+  </nav>
+</header>
+
+<!-- hero -->
+<section class="board border-b border-[var(--line)]">
+  <div class="max-w-[1240px] mx-auto px-6 grid lg:grid-cols-12 gap-10 py-16">
+    <div class="lg:col-span-7">
+      <p class="hud green reveal d1">▣ Operation Brief 12 — Integrated Command</p>
+      <h1 class="reveal d2 mt-5 font-bold text-[clamp(3.4rem,8vw,6.6rem)]">
+        One war room.<br>Every operation<br><span class="green glow">on the board.</span>
+      </h1>
+      <p class="reveal d3 mt-5 text-[15px] text-[var(--steel)] leading-relaxed max-w-[34rem]">
+        A reliable, high-tech command centre that tracks, analyses and directs every field
+        operation from a single situational board — for Elitez business units and external
+        clients alike.
+      </p>
+      <div class="reveal d4 mt-7 flex flex-wrap gap-3">
+        <a href="#" class="btn-p px-7 py-3.5">Request a Walkthrough</a>
+        <a href="#" class="btn-s px-7 py-3.5">Explore Services</a>
+      </div>
+    </div>
+    <div class="lg:col-span-5 reveal d3 flex"><div class="img-ph w-full min-h-[320px]"><span>Image — Situational board / war room</span></div></div>
+  </div>
+</section>
+
+<!-- readout strip -->
+<section class="max-w-[1240px] mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 border-b border-[var(--line)] divide-x divide-[var(--line)]">
+  <div class="p-6 reveal d1"><div class="hud text-[var(--steel)]">SECTORS</div><div class="disp font-bold text-6xl mt-1 green glow">07</div></div>
+  <div class="p-6 reveal d2"><div class="hud text-[var(--steel)]">LIVE FEEDS</div><div class="disp font-bold text-6xl mt-1">200</div></div>
+  <div class="p-6 reveal d3"><div class="hud text-[var(--steel)]">SLA</div><div class="disp font-bold text-6xl mt-1">99.98%</div></div>
+  <div class="p-6 reveal d4"><div class="hud text-[var(--steel)]">COST DELTA</div><div class="disp font-bold text-6xl mt-1 amber">-60%</div></div>
+</section>
+
+<!-- services -->
+<section class="max-w-[1240px] mx-auto px-6 py-14">
+  <p class="hud green">▣ FORCE ELEMENTS — SERVICE ROSTER</p>
+  <h2 class="disp font-bold text-[3.4rem] mt-1">Six operational units</h2>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-7">
+    <div class="panel p-6"><div class="pn hud text-[var(--steel)]">UNIT-01</div><h3 class="disp font-semibold text-3xl mt-1">Remote Site Monitoring</h3><p class="text-[var(--steel)] text-[14px] mt-1">24/7 virtual operations from a central video wall.</p></div>
+    <div class="panel p-6"><div class="pn hud text-[var(--steel)]">UNIT-02</div><h3 class="disp font-semibold text-3xl mt-1">AI Video Analytics</h3><p class="text-[var(--steel)] text-[14px] mt-1">Intrusion, PPE and crowd-density detection live.</p></div>
+    <div class="panel p-6"><div class="pn hud text-[var(--steel)]">UNIT-03</div><h3 class="disp font-semibold text-3xl mt-1">Mobile Dispatch</h3><p class="text-[var(--steel)] text-[14px] mt-1">Geo-routed tactical response to the nearest officer.</p></div>
+    <div class="panel p-6"><div class="pn hud text-[var(--steel)]">UNIT-04</div><h3 class="disp font-semibold text-3xl mt-1">IoT Remote Control</h3><p class="text-[var(--steel)] text-[14px] mt-1">EM-lock release, gantry strike, two-way SIP audio.</p></div>
+    <div class="panel p-6"><div class="pn hud text-[var(--steel)]">UNIT-05</div><h3 class="disp font-semibold text-3xl mt-1">Automated Reporting</h3><p class="text-[var(--steel)] text-[14px] mt-1">Compliance-ready reports for clients and regulators.</p></div>
+    <div class="panel p-6"><div class="pn hud text-[var(--steel)]">UNIT-06</div><h3 class="disp font-semibold text-3xl mt-1">CCaaS White-Label</h3><p class="text-[var(--steel)] text-[14px] mt-1">Command-centre infrastructure for boutique agencies.</p></div>
+  </div>
+</section>
+
+<!-- cta -->
+<section class="board border-y border-[var(--line)]">
+  <div class="max-w-[1240px] mx-auto px-6 py-14">
+    <p class="hud green">▣ AWAITING ORDERS</p>
+    <div class="mt-2 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+      <h2 class="disp font-bold text-[clamp(2.8rem,6vw,5rem)]">Bring every operation<br>onto the board.</h2>
+      <a href="#" class="btn-p px-10 py-4 shrink-0 text-xl">Request a Walkthrough →</a>
+    </div>
+  </div>
+</section>
+<footer>
+  <div class="max-w-[1240px] mx-auto px-6 py-6 flex flex-wrap justify-between gap-3 hud text-[var(--steel)]">
+    <span>ELITEZ GROUP — COMMAND CENTER</span><span>RELIABLE / HIGH-TECH / CUTTING-EDGE</span>
+  </div>
+</footer>
+
+</body>
+</html>

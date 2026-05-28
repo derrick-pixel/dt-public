@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Elitez LMS · Pan-Asia Platform</title>
+<meta name="description" content="One LMS, eight Southeast Asian markets. Local-language, local-currency, locally-hosted where regulators require it." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,500;0,700;1,400&family=Noto+Sans:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Sans+TC:wght@500;700&family=Noto+Serif+JP:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper:     #faf3e9;
+    --paper-2:   #f3eadb;
+    --paper-3:   #e7dbc2;
+    --jade:      #1a5e4a;
+    --jade-2:    #2c7c64;
+    --jade-3:    #459379;
+    --vermillion:#c7372a;
+    --vermillion-2: #a82920;
+    --bamboo:    #8a9b6e;
+    --ink:       #1a1812;
+    --ink-2:     #4a443c;
+    --gold:      #b88f3d;
+    --rule:      #d4c4a0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper); color: var(--ink);
+    font-family: "Noto Sans", sans-serif; font-weight: 400; line-height: 1.65;
+    overflow-x: hidden;
+  }
+  /* Background topographic suggestion */
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 80% 20%, rgba(26,94,74,0.06), transparent 65%),
+      radial-gradient(ellipse 60% 40% at 10% 80%, rgba(199,55,42,0.04), transparent 60%);
+  }
+  /* Vertical rule on left edge */
+  body::after {
+    content: ""; position: fixed; top: 0; bottom: 0; left: 0; width: 6px;
+    background: linear-gradient(180deg, var(--vermillion), var(--jade) 30%, var(--gold) 70%, var(--vermillion));
+    z-index: 100;
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 1; }
+  .serif { font-family: "Noto Serif", serif; }
+  .cn { font-family: "Noto Sans SC", "Noto Sans TC", sans-serif; }
+  .ja { font-family: "Noto Serif JP", serif; }
+  .mono { font-family: "JetBrains Mono", monospace; }
+
+  /* Language strip */
+  .lang-strip {
+    background: var(--ink); color: var(--paper); padding: 0.5rem 0;
+    font-family: "JetBrains Mono", monospace; font-size: 0.72rem; letter-spacing: 0.06em;
+  }
+  .lang-strip .wrap { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+  .lang-pills { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .lang-pill { padding: 0.18rem 0.65rem; background: rgba(255,255,255,0.08); color: var(--paper); border-radius: 2px; text-decoration: none; cursor: pointer; transition: all .15s; }
+  .lang-pill:hover, .lang-pill.active { background: var(--vermillion); }
+  .lang-pill.active { font-weight: 600; }
+
+  /* Header */
+  header.site {
+    padding: 2rem 0 1.5rem; border-bottom: 1px solid var(--rule);
+    background: linear-gradient(180deg, var(--paper) 0%, var(--paper-2) 100%);
+  }
+  .h-row { display: flex; justify-content: space-between; align-items: center; }
+  .brand-grp { display: flex; align-items: center; gap: 1.2rem; }
+  .brand-logo {
+    width: 52px; height: 52px; background: var(--jade); color: var(--paper);
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Noto Serif", serif; font-weight: 700; font-size: 1.6rem;
+    border-radius: 4px;
+    position: relative;
+  }
+  .brand-logo::after {
+    content: ""; position: absolute; top: -3px; right: -3px;
+    width: 14px; height: 14px; background: var(--vermillion); border-radius: 50%;
+    border: 2.5px solid var(--paper);
+  }
+  .brand-name { font-family: "Noto Serif", serif; font-weight: 700; font-size: 1.5rem; color: var(--ink); line-height: 1; }
+  .brand-name small { display: block; font-family: "Noto Sans", sans-serif; font-weight: 400; font-size: 0.78rem; color: var(--ink-2); letter-spacing: 0.18em; text-transform: uppercase; margin-top: 0.45rem; }
+  .h-nav { display: flex; gap: 2rem; align-items: center; }
+  .h-nav a { font-family: "Noto Sans", sans-serif; font-weight: 500; font-size: 0.92rem; color: var(--ink); text-decoration: none; transition: color .2s; }
+  .h-nav a:hover { color: var(--vermillion); }
+  .h-cta {
+    font-family: "Noto Sans", sans-serif; font-weight: 600; padding: 0.7rem 1.4rem;
+    background: var(--jade); color: var(--paper); text-decoration: none; border-radius: 3px;
+    transition: all .2s;
+  }
+  .h-cta:hover { background: var(--ink); }
+
+  /* Hero */
+  .hero { padding: 5rem 0 4rem; position: relative; }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 4rem; align-items: center; }
+  .h-script {
+    display: flex; align-items: center; gap: 1rem;
+    font-family: "Noto Sans", sans-serif; font-size: 0.85rem;
+    color: var(--vermillion); text-transform: uppercase; letter-spacing: 0.22em; margin-bottom: 1.5rem;
+  }
+  .h-script::before { content: ""; width: 2.5rem; height: 2px; background: var(--vermillion); }
+  .h-script .cn { color: var(--jade); letter-spacing: 0.1em; }
+  .hero h1 {
+    font-family: "Noto Serif", serif; font-weight: 500;
+    font-size: clamp(2.6rem, 5.4vw, 4.8rem); line-height: 1.05; letter-spacing: -0.01em;
+  }
+  .hero h1 em { font-style: italic; color: var(--jade); }
+  .hero h1 strong { font-family: "Noto Serif", serif; font-weight: 700; color: var(--vermillion); }
+  .hero-cn {
+    margin-top: 1.2rem; font-family: "Noto Sans SC", sans-serif; font-weight: 500;
+    color: var(--jade); font-size: 1.5rem; letter-spacing: 0.05em;
+  }
+  .hero-lede { margin-top: 1.6rem; font-size: 1.15rem; color: var(--ink-2); max-width: 50ch; line-height: 1.6; }
+  .hero-actions { margin-top: 2rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+  .btn { font-family: "Noto Sans", sans-serif; font-weight: 600; padding: 0.95rem 1.8rem; text-decoration: none; font-size: 0.95rem; border-radius: 3px; transition: all .2s; }
+  .btn.primary { background: var(--vermillion); color: var(--paper); }
+  .btn.primary:hover { background: var(--vermillion-2); }
+  .btn.outline { background: transparent; border: 2px solid var(--jade); color: var(--jade); padding: 0.78rem 1.8rem; }
+  .btn.outline:hover { background: var(--jade); color: var(--paper); }
+
+  /* Map visualisation */
+  .sea-map {
+    position: relative; background: var(--paper-2); border: 1px solid var(--rule); padding: 2rem;
+    border-radius: 4px; overflow: hidden;
+    box-shadow: 0 12px 40px rgba(26,94,74,0.08);
+  }
+  .sea-map::before {
+    content: "東南亞 · NUSANTARA · ASEAN-8"; position: absolute; top: 12px; left: 16px;
+    font-family: "JetBrains Mono", monospace; font-size: 0.65rem; letter-spacing: 0.25em; color: var(--ink-2);
+  }
+  .sea-svg { width: 100%; height: 380px; display: block; margin-top: 1rem; }
+  .city-dot { fill: var(--vermillion); stroke: var(--paper); stroke-width: 2; }
+  .city-dot.q { animation: pulse-dot 2.4s ease-in-out infinite; }
+  @keyframes pulse-dot { 50% { r: 7; } }
+  .city-line { stroke: var(--jade); stroke-width: 0.7; stroke-dasharray: 3 3; opacity: 0.5; fill: none; }
+  .country-fill { fill: var(--paper-3); stroke: var(--jade); stroke-width: 0.5; }
+  .country-fill:hover { fill: var(--bamboo); }
+  .map-lbl { font-family: "Noto Sans", sans-serif; font-weight: 600; font-size: 0.7rem; fill: var(--ink); letter-spacing: 0.1em; }
+
+  /* Metrics */
+  .metrics {
+    margin-top: 4rem; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink);
+  }
+  .metrics > div { padding: 1.6rem 1.4rem; border-right: 1px solid var(--rule); }
+  .metrics > div:last-child { border-right: 0; }
+  .m-k { font-family: "JetBrains Mono", monospace; font-size: 0.7rem; color: var(--ink-2); letter-spacing: 0.2em; text-transform: uppercase; }
+  .m-v { font-family: "Noto Serif", serif; font-weight: 700; font-size: 2.2rem; color: var(--jade); margin-top: 0.5rem; line-height: 1; }
+  .m-d { font-family: "Noto Sans", sans-serif; font-size: 0.8rem; color: var(--ink-2); margin-top: 0.4rem; }
+
+  /* Sections */
+  section { padding: 5.5rem 0; border-bottom: 1px solid var(--rule); }
+  .sec-eyebrow { display: flex; gap: 1.2rem; align-items: center; font-family: "Noto Sans", sans-serif; font-size: 0.78rem; color: var(--vermillion); text-transform: uppercase; letter-spacing: 0.22em; }
+  .sec-eyebrow .num { color: var(--jade); font-family: "Noto Serif", serif; font-weight: 700; font-size: 1.4rem; line-height: 1; letter-spacing: 0; }
+  .sec-h { font-family: "Noto Serif", serif; font-weight: 500; font-size: clamp(2.2rem, 4.5vw, 3.6rem); margin-top: 1rem; line-height: 1.1; max-width: 24ch; }
+  .sec-h em { font-style: italic; color: var(--vermillion); }
+  .sec-lede { font-size: 1.1rem; color: var(--ink-2); max-width: 58ch; margin-top: 1.2rem; }
+
+  /* Country cards */
+  .countries { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; margin-top: 3rem; }
+  .country {
+    background: var(--paper); border: 1px solid var(--rule); padding: 1.5rem; position: relative;
+    transition: all .25s;
+  }
+  .country:hover { border-color: var(--jade); transform: translateY(-3px); box-shadow: 0 12px 30px rgba(26,94,74,0.08); }
+  .country .flag {
+    width: 40px; height: 28px; border-radius: 2px; margin-bottom: 1rem;
+    display: flex; align-items: center; justify-content: center; font-size: 1.3rem; line-height: 1;
+    background: var(--paper-2); border: 1px solid var(--rule);
+  }
+  .country .nm { font-family: "Noto Serif", serif; font-weight: 700; font-size: 1.25rem; color: var(--ink); }
+  .country .local { font-size: 1rem; color: var(--jade); margin-top: 0.2rem; font-weight: 500; }
+  .country .stats { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px dashed var(--rule); display: grid; gap: 0.5rem; font-family: "JetBrains Mono", monospace; font-size: 0.78rem; }
+  .country .stats div { display: flex; justify-content: space-between; color: var(--ink-2); }
+  .country .stats div b { color: var(--ink); font-weight: 500; }
+  .country.live::after {
+    content: "LIVE"; position: absolute; top: 12px; right: 14px;
+    font-family: "JetBrains Mono", monospace; font-size: 0.6rem; letter-spacing: 0.18em;
+    background: var(--jade); color: var(--paper); padding: 0.2rem 0.5rem; border-radius: 2px;
+  }
+  .country.beta::after {
+    content: "BETA"; position: absolute; top: 12px; right: 14px;
+    font-family: "JetBrains Mono", monospace; font-size: 0.6rem; letter-spacing: 0.18em;
+    background: var(--gold); color: var(--paper); padding: 0.2rem 0.5rem; border-radius: 2px;
+  }
+  .country.soon::after {
+    content: "Q3 2026"; position: absolute; top: 12px; right: 14px;
+    font-family: "JetBrains Mono", monospace; font-size: 0.6rem; letter-spacing: 0.18em;
+    background: var(--bamboo); color: var(--paper); padding: 0.2rem 0.5rem; border-radius: 2px;
+  }
+
+  /* Feature matrix */
+  .matrix-wrap { margin-top: 3rem; overflow-x: auto; background: var(--paper); border: 1px solid var(--rule); }
+  table.matrix { width: 100%; border-collapse: collapse; min-width: 700px; }
+  .matrix th, .matrix td { padding: 0.9rem 1rem; text-align: left; border-bottom: 1px solid var(--rule); font-size: 0.92rem; }
+  .matrix thead th { background: var(--ink); color: var(--paper); font-family: "JetBrains Mono", monospace; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; }
+  .matrix tbody th { font-family: "Noto Serif", serif; font-weight: 700; color: var(--ink); width: 30%; }
+  .matrix td { text-align: center; font-family: "JetBrains Mono", monospace; }
+  .matrix td.y { color: var(--jade); font-weight: 700; }
+  .matrix td.b { color: var(--gold); font-weight: 600; font-size: 0.78rem; }
+  .matrix td.n { color: var(--rule); }
+
+  /* Pricing — multi-currency */
+  .price-grid { margin-top: 3rem; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .price-card {
+    background: var(--paper); border: 1px solid var(--rule); padding: 1.4rem;
+    text-align: center;
+  }
+  .price-card .ccy { font-family: "JetBrains Mono", monospace; font-size: 0.78rem; color: var(--vermillion); letter-spacing: 0.18em; }
+  .price-card .num { font-family: "Noto Serif", serif; font-weight: 700; font-size: 2.2rem; color: var(--ink); margin: 0.5rem 0 0.2rem; }
+  .price-card .per { font-size: 0.85rem; color: var(--ink-2); }
+  .price-card .ctry { font-family: "Noto Sans", sans-serif; font-weight: 500; font-size: 0.92rem; color: var(--jade); margin-top: 1rem; padding-top: 0.8rem; border-top: 1px dashed var(--rule); }
+
+  .price-note { margin-top: 2rem; font-style: italic; color: var(--ink-2); font-size: 0.95rem; }
+  .price-note strong { font-style: normal; color: var(--vermillion); }
+
+  /* Footer */
+  footer { padding: 3.5rem 0 3rem; background: var(--ink); color: var(--paper); border-top: 4px solid var(--vermillion); margin-top: 4rem; }
+  footer .grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 2.5rem; }
+  footer h5 { font-family: "Noto Serif", serif; font-weight: 700; color: var(--paper); margin-bottom: 0.8rem; font-size: 1rem; }
+  footer ul { list-style: none; }
+  footer li { padding: 0.35rem 0; font-size: 0.92rem; color: var(--paper); opacity: 0.85; }
+  footer a { color: var(--paper); text-decoration: none; }
+  footer a:hover { color: var(--vermillion); opacity: 1; }
+  .scripts { display: flex; gap: 1.5rem; font-family: "Noto Serif", serif; font-weight: 500; font-size: 1.3rem; margin-top: 1rem; color: var(--gold); }
+  .scripts .cn { color: var(--vermillion); }
+  .scripts .ja { color: var(--bamboo); }
+  footer .colophon { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.12); font-family: "JetBrains Mono", monospace; font-size: 0.72rem; letter-spacing: 0.12em; display: flex; justify-content: space-between; opacity: 0.7; }
+
+  @media (max-width: 1000px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .metrics { grid-template-columns: 1fr 1fr; }
+    .countries { grid-template-columns: 1fr 1fr; }
+    .price-grid { grid-template-columns: 1fr 1fr; }
+    footer .grid { grid-template-columns: 1fr 1fr; }
+    .h-nav { display: none; }
+  }
+</style>
+<link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+<link rel="icon" type="image/x-icon" href="../favicon.ico" />
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png" />
+<meta property="og:image" content="https://derrick-pixel.github.io/elitez-lms-site/og-images/for-whom.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:type" content="image/jpeg" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://derrick-pixel.github.io/elitez-lms-site/og-images/for-whom.jpg" />
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+
+<div class="lang-strip">
+  <div class="wrap">
+    <span>ELITEZ LMS · ASEAN-8 · 한국어 · 日本語 · BAHASA · TIẾNG VIỆT</span>
+    <div class="lang-pills">
+      <a class="lang-pill active">EN</a>
+      <a class="lang-pill">中文</a>
+      <a class="lang-pill">BM</a>
+      <a class="lang-pill">VI</a>
+      <a class="lang-pill">TH</a>
+      <a class="lang-pill">TL</a>
+      <a class="lang-pill">日本</a>
+      <a class="lang-pill">한국</a>
+    </div>
+  </div>
+</div>
+
+<header class="site">
+  <div class="wrap h-row">
+    <div class="brand-grp">
+      <div class="brand-logo">E</div>
+      <div class="brand-name">Elitez LMS<small>PAN-ASIA · ASEAN-8</small></div>
+    </div>
+    <div class="h-nav">
+      <a href="#markets">Markets</a>
+      <a href="#capabilities">Capabilities</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#" class="h-cta">Talk to a Regional Lead</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero wrap">
+  <div class="hero-grid">
+    <div>
+      <div class="h-script">PAN-ASIA · <span class="cn">亚太 · ASEAN-8</span></div>
+      <h1>One LMS.<br/><em>Eight markets.</em><br/><strong>Eight currencies.</strong></h1>
+      <div class="hero-cn">学习无界 · Pembelajaran tanpa sempadan</div>
+      <p class="hero-lede">Elitez LMS is built for Singapore-headquartered groups that need a single learning platform across Southeast Asia — without forcing every market to use the same language, currency, or compliance regime. Local-hosted where regulators require it. One consolidated dashboard for HQ.</p>
+      <div class="hero-actions">
+        <a href="#" class="btn primary">Schedule a Regional Briefing</a>
+        <a href="#" class="btn outline">Download the ASEAN-8 Map</a>
+      </div>
+    </div>
+
+    <div class="sea-map">
+      <svg class="sea-svg" viewBox="0 0 480 380" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <!-- Stylised shapes representing SEA -->
+        <!-- Malaysia / Thailand peninsula -->
+        <path class="country-fill" d="M120 60 Q130 80 122 110 Q126 140 132 170 Q140 200 156 215 Q170 222 178 235 Q190 220 200 200 Q200 180 196 160 Q188 140 178 125 Q170 100 168 75 Q150 55 120 60 Z"/>
+        <!-- Singapore dot -->
+        <circle cx="172" cy="232" r="4.5" class="city-dot q"/>
+        <text x="180" y="240" class="map-lbl">SG · sin1</text>
+        <!-- Indonesia -->
+        <path class="country-fill" d="M110 250 Q150 240 200 245 Q260 247 320 250 Q360 254 380 264 Q360 280 320 282 Q260 285 200 282 Q150 280 110 270 Z"/>
+        <circle cx="220" cy="265" r="3.5" class="city-dot"/>
+        <text x="230" y="262" class="map-lbl">JKT</text>
+        <!-- Philippines -->
+        <path class="country-fill" d="M340 100 Q360 110 358 140 Q365 170 358 200 Q345 210 340 220 Q335 200 332 175 Q335 140 340 100 Z"/>
+        <circle cx="345" cy="160" r="3.5" class="city-dot"/>
+        <text x="353" y="158" class="map-lbl">MNL</text>
+        <!-- Vietnam -->
+        <path class="country-fill" d="M232 30 Q244 60 248 100 Q258 140 268 180 Q252 200 240 180 Q226 140 220 100 Q224 60 232 30 Z"/>
+        <circle cx="252" cy="80" r="3.5" class="city-dot"/>
+        <text x="260" y="78" class="map-lbl">HAN</text>
+        <circle cx="260" cy="170" r="3.5" class="city-dot"/>
+        <text x="268" y="175" class="map-lbl">SGN</text>
+        <!-- Thailand -->
+        <path class="country-fill" d="M155 40 Q170 50 175 80 Q172 110 168 125 Q150 130 142 110 Q140 75 145 50 Q150 40 155 40 Z"/>
+        <circle cx="160" cy="85" r="3.5" class="city-dot"/>
+        <text x="125" y="85" class="map-lbl">BKK</text>
+        <!-- Cambodia -->
+        <path class="country-fill" d="M195 105 Q210 115 215 130 Q210 145 200 145 Q188 135 188 120 Q190 110 195 105 Z"/>
+        <circle cx="201" cy="128" r="3" class="city-dot"/>
+        <text x="208" y="126" class="map-lbl">PNH</text>
+        <!-- Myanmar -->
+        <path class="country-fill" d="M105 25 Q120 45 122 85 Q118 115 112 130 Q98 120 96 90 Q98 55 105 25 Z"/>
+        <circle cx="112" cy="80" r="3" class="city-dot"/>
+        <text x="72" y="80" class="map-lbl">RGN</text>
+
+        <!-- Routes -->
+        <path class="city-line" d="M172 232 Q200 200 252 80"/>
+        <path class="city-line" d="M172 232 Q200 220 220 265"/>
+        <path class="city-line" d="M172 232 Q260 220 345 160"/>
+        <path class="city-line" d="M172 232 Q150 160 160 85"/>
+      </svg>
+
+      <div style="margin-top: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--ink-2); letter-spacing: 0.14em;">
+        <span style="color: var(--vermillion);">●</span> SG-HQ · <span style="color: var(--jade);">●</span> LIVE MARKETS · <span style="color: var(--bamboo);">●</span> Q3 ROADMAP
+      </div>
+    </div>
+  </div>
+
+  <div class="metrics">
+    <div><div class="m-k">Active Learners</div><div class="m-v">47,200</div><div class="m-d">+ 18% Q-on-Q</div></div>
+    <div><div class="m-k">Markets Live</div><div class="m-v">6 / 8</div><div class="m-d">MM &amp; KH in beta</div></div>
+    <div><div class="m-k">Languages</div><div class="m-v">11</div><div class="m-d">incl. JP, KR, BM, TH, VI</div></div>
+    <div><div class="m-k">Datacentres</div><div class="m-v">4</div><div class="m-d">SG · ID · PH · VN</div></div>
+  </div>
+</section>
+
+<section id="markets" class="wrap">
+  <div class="sec-eyebrow"><span class="num">01</span> THE EIGHT MARKETS</div>
+  <h2 class="sec-h">Local hosting, local <em>language</em>, local invoicing.</h2>
+  <p class="sec-lede">Every market gets its own subdomain, currency, language pack, and — where regulators require it — its own datacentre region. HQ reporting consolidates into a single SG dashboard.</p>
+
+  <div class="countries">
+    <div class="country live">
+      <div class="flag">🇸🇬</div>
+      <div class="nm">Singapore</div>
+      <div class="local cn">新加坡</div>
+      <div class="stats">
+        <div>Learners <b>14,820</b></div>
+        <div>Languages <b>EN · 中文 · BM · TA</b></div>
+        <div>Host <b>SG · Equinix SG3</b></div>
+        <div>Pricing <b>S$2.99 / mo</b></div>
+      </div>
+    </div>
+    <div class="country live">
+      <div class="flag">🇲🇾</div>
+      <div class="nm">Malaysia</div>
+      <div class="local">Malaysia</div>
+      <div class="stats">
+        <div>Learners <b>9,140</b></div>
+        <div>Languages <b>BM · EN · 中文</b></div>
+        <div>Host <b>SG · cross-border</b></div>
+        <div>Pricing <b>RM 10 / mo</b></div>
+      </div>
+    </div>
+    <div class="country live">
+      <div class="flag">🇮🇩</div>
+      <div class="nm">Indonesia</div>
+      <div class="local">Indonesia</div>
+      <div class="stats">
+        <div>Learners <b>11,560</b></div>
+        <div>Languages <b>ID · EN</b></div>
+        <div>Host <b>ID · Jakarta DC</b></div>
+        <div>Pricing <b>Rp 34,000 / mo</b></div>
+      </div>
+    </div>
+    <div class="country live">
+      <div class="flag">🇻🇳</div>
+      <div class="nm">Vietnam</div>
+      <div class="local">Việt Nam</div>
+      <div class="stats">
+        <div>Learners <b>6,210</b></div>
+        <div>Languages <b>VI · EN</b></div>
+        <div>Host <b>VN · Hanoi DC</b></div>
+        <div>Pricing <b>54,000₫ / mo</b></div>
+      </div>
+    </div>
+    <div class="country live">
+      <div class="flag">🇵🇭</div>
+      <div class="nm">Philippines</div>
+      <div class="local">Pilipinas</div>
+      <div class="stats">
+        <div>Learners <b>3,820</b></div>
+        <div>Languages <b>EN · FIL</b></div>
+        <div>Host <b>PH · Manila DC</b></div>
+        <div>Pricing <b>₱ 128 / mo</b></div>
+      </div>
+    </div>
+    <div class="country live">
+      <div class="flag">🇹🇭</div>
+      <div class="nm">Thailand</div>
+      <div class="local">ประเทศไทย</div>
+      <div class="stats">
+        <div>Learners <b>1,650</b></div>
+        <div>Languages <b>TH · EN</b></div>
+        <div>Host <b>SG · cross-border</b></div>
+        <div>Pricing <b>฿79 / mo</b></div>
+      </div>
+    </div>
+    <div class="country beta">
+      <div class="flag">🇰🇭</div>
+      <div class="nm">Cambodia</div>
+      <div class="local">កម្ពុជា</div>
+      <div class="stats">
+        <div>Learners <b>340 (pilot)</b></div>
+        <div>Languages <b>KH · EN</b></div>
+        <div>Host <b>SG · cross-border</b></div>
+        <div>Pricing <b>US$ 2.49 / mo</b></div>
+      </div>
+    </div>
+    <div class="country soon">
+      <div class="flag">🇲🇲</div>
+      <div class="nm">Myanmar</div>
+      <div class="local">မြန်မာ</div>
+      <div class="stats">
+        <div>Learners <b>—</b></div>
+        <div>Languages <b>MY · EN (planned)</b></div>
+        <div>Host <b>SG · cross-border</b></div>
+        <div>Pricing <b>TBC</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="capabilities" class="wrap">
+  <div class="sec-eyebrow"><span class="num">02</span> REGIONAL CAPABILITY MATRIX</div>
+  <h2 class="sec-h">What's the same everywhere. <em>What's local.</em></h2>
+  <p class="sec-lede">HQ wants one report; markets want their own way of doing things. The matrix below shows which capabilities are uniform across the region, and where we localise.</p>
+
+  <div class="matrix-wrap">
+    <table class="matrix">
+      <thead>
+        <tr><th>Capability</th><th>SG</th><th>MY</th><th>ID</th><th>VN</th><th>PH</th><th>TH</th><th>KH</th><th>MM</th></tr>
+      </thead>
+      <tbody>
+        <tr><th>BYO-deck ingestion</th><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="b">Q3</td></tr>
+        <tr><th>AI-generated quizzes</th><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="b">beta</td><td class="b">Q3</td></tr>
+        <tr><th>Local-language UI</th><td class="y">EN/中/BM</td><td class="y">BM/EN</td><td class="y">ID/EN</td><td class="y">VI/EN</td><td class="y">EN/FIL</td><td class="y">TH/EN</td><td class="y">KH/EN</td><td class="b">MY/EN</td></tr>
+        <tr><th>In-country hosting</th><td class="y">✓</td><td class="n">SG</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">SG</td><td class="n">SG</td><td class="n">SG</td></tr>
+        <tr><th>Local invoice / tax</th><td class="y">SGD/GST</td><td class="y">MYR/SST</td><td class="y">IDR/PPN</td><td class="y">VND/VAT</td><td class="y">PHP/VAT</td><td class="y">THB/VAT</td><td class="y">USD</td><td class="b">Q3</td></tr>
+        <tr><th>Local data regulator</th><td class="y">PDPC</td><td class="y">PDPA-MY</td><td class="y">UU 27</td><td class="y">PDPL</td><td class="y">DPA</td><td class="y">PDPA-TH</td><td class="n">—</td><td class="n">—</td></tr>
+        <tr><th>HQ consolidation report</th><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="b">Q3</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="pricing" class="wrap">
+  <div class="sec-eyebrow"><span class="num">03</span> PRICING · LOCAL CURRENCY</div>
+  <h2 class="sec-h">One product. <em>Eight prices.</em></h2>
+  <p class="sec-lede">Per-learner pricing benchmarked against local market-rate LMS pricing. Singapore Group HQ can be invoiced for the whole region in SGD if preferred.</p>
+
+  <div class="price-grid">
+    <div class="price-card">
+      <div class="ccy">SGD</div>
+      <div class="num">S$2.99</div>
+      <div class="per">/ learner / month</div>
+      <div class="ctry">🇸🇬 Singapore</div>
+    </div>
+    <div class="price-card">
+      <div class="ccy">MYR</div>
+      <div class="num">RM 10</div>
+      <div class="per">/ learner / month</div>
+      <div class="ctry">🇲🇾 Malaysia</div>
+    </div>
+    <div class="price-card">
+      <div class="ccy">IDR</div>
+      <div class="num">Rp 34K</div>
+      <div class="per">/ learner / month</div>
+      <div class="ctry">🇮🇩 Indonesia</div>
+    </div>
+    <div class="price-card">
+      <div class="ccy">VND</div>
+      <div class="num">54K₫</div>
+      <div class="per">/ learner / month</div>
+      <div class="ctry">🇻🇳 Vietnam</div>
+    </div>
+    <div class="price-card">
+      <div class="ccy">PHP</div>
+      <div class="num">₱ 128</div>
+      <div class="per">/ learner / month</div>
+      <div class="ctry">🇵🇭 Philippines</div>
+    </div>
+    <div class="price-card">
+      <div class="ccy">THB</div>
+      <div class="num">฿ 79</div>
+      <div class="per">/ learner / month</div>
+      <div class="ctry">🇹🇭 Thailand</div>
+    </div>
+    <div class="price-card">
+      <div class="ccy">USD</div>
+      <div class="num">US$ 2.49</div>
+      <div class="per">/ learner / month</div>
+      <div class="ctry">🇰🇭 Cambodia</div>
+    </div>
+    <div class="price-card">
+      <div class="ccy">SGD</div>
+      <div class="num">Custom</div>
+      <div class="per">consolidated invoice</div>
+      <div class="ctry">Regional HQ</div>
+    </div>
+  </div>
+
+  <p class="price-note"><strong>For regional HQ.</strong> Consolidated SGD invoice across all eight markets is available; FX-locked annually. Charity, government, and education-sector pricing on letter from the principal.</p>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="grid">
+      <div>
+        <div class="brand-grp">
+          <div class="brand-logo">E</div>
+          <div class="brand-name" style="color: var(--paper);">Elitez LMS<small style="color: var(--gold);">PAN-ASIA · ASEAN-8</small></div>
+        </div>
+        <p style="margin-top: 1.5rem; line-height: 1.6; opacity: 0.85; max-width: 38ch;">A pan-Southeast-Asian learning platform operated by Elitez Group of Companies, Singapore. Local datacentres where regulators require it. Consolidated reporting where headquarters want it.</p>
+        <div class="scripts"><span>Eng</span><span class="cn">中文</span><span>BM</span><span>VI</span><span class="ja">日本</span><span>한국</span></div>
+      </div>
+      <div>
+        <h5>Markets</h5>
+        <ul>
+          <li>🇸🇬 Singapore</li>
+          <li>🇲🇾 Malaysia</li>
+          <li>🇮🇩 Indonesia</li>
+          <li>🇻🇳 Vietnam</li>
+          <li>🇵🇭 Philippines</li>
+          <li>🇹🇭 Thailand</li>
+          <li>🇰🇭 Cambodia · beta</li>
+          <li>🇲🇲 Myanmar · Q3 2026</li>
+        </ul>
+      </div>
+      <div>
+        <h5>Regulators</h5>
+        <ul>
+          <li>PDPC · Singapore</li>
+          <li>PDPA · Malaysia</li>
+          <li>UU 27 · Indonesia</li>
+          <li>PDPL · Vietnam</li>
+          <li>NPC · Philippines</li>
+          <li>PDPC · Thailand</li>
+        </ul>
+      </div>
+      <div>
+        <h5>Contact</h5>
+        <ul>
+          <li><a href="mailto:derrick@elitez.asia">derrick@elitez.asia</a></li>
+          <li><a href="mailto:dpo@elitez.asia">dpo@elitez.asia</a></li>
+          <li>+65 6536 2828</li>
+          <li>2 Kallang Avenue<br/>#03-08 CT Hub<br/>Singapore 339407</li>
+        </ul>
+      </div>
+    </div>
+    <div class="colophon">
+      <span>© 2026 ELITEZ GROUP OF COMPANIES</span>
+      <span><a href="../">← BACK TO CANONICAL</a> · <a href="index.html">COMPARE 7 VARIANTS →</a></span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

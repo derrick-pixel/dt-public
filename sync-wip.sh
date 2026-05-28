@@ -35,6 +35,10 @@ WIP_REPOS=(
   "Lumana:lumana"
   "market-tracker-research:market-tracker-research"
   "flashcart-research:flashcart-research"
+  "elitez-command-center:elitez-command-center"
+  "elitez-lms-site:elitez-lms-site"
+  "lemon-man:lemon-man"
+  "merchandising:merchandising"
 )
 
 for entry in "${WIP_REPOS[@]}"; do

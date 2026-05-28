@@ -1,0 +1,100 @@
+{
+  "$schema_version": "v3.0.1",
+  "version": "2.0.0",
+  "change_log": [
+    {
+      "version": "2.0.0",
+      "date": "2026-05-22",
+      "agent": "04-stitch-ui-composer (second pass)",
+      "summary": "Re-rendered all 9 HTML pages for BYO-deck positioning + new 5-tier pricing ladder. Hero, value-prop, credential strip, content slabs, role tracks, AI literacy band, use-cases (formerly funded-delivery), FAQ all rewritten per copy.json v2.0. Pricing page tier-grid replaced with 5 new tiers; grants-explainer slot repurposed as Pricing principles; psg-wsg-callout repurposed as Partner Channel callout. Combo tier renderer added to pricing.js + admin-insights.js (price_unit === 'platform_flat_plus_per_user' with price_sgd_flat + price_sgd_per_seat). New CSS: .tier-card__price-block--combo + .tier-card__price-line + .tier-card__combo-plus + .tier-card__price--small. admin.js updated for new whitespace 'us' score key (was 'elitez_lms') + new competitor IDs + new category dictionary. admin-insights.js attack-plan renderer handles structured gtm object; grants renderer shows 'empty by design' when array is empty (per recalibrated brief). All grant references (PSG / WSG / WDG(JR+) / SCTP / SFEC / SkillsFuture-approved / WSG Human Capital Partner / IHRP exclusive) stripped from rendered HTML."
+    },
+    {
+      "version": "1.0.0",
+      "date": "2026-05-21",
+      "agent": "04-stitch-ui-composer (first pass)",
+      "summary": "Initial 9-page scaffold. Hero-split, page-hero, feature-grid, step-list, pricing-grid, data-table, faq-accordion, anti-block, credentials-grid, form-card, admin-strip, threat-card, strategy-radar, funnel, persona-card, heatmap, attack-plan."
+    }
+  ],
+  "project_name": "elitez-lms-site",
+  "archetype": "static-informational",
+  "stitch_project_id": "projects/9872023651810035082",
+  "stitch_design_system_id": "assets/13535604185779253715",
+  "stitch_fallback_reason": null,
+  "stitch_notes": "Stitch project + design system created (Source Serif 4 headline, Inter body, IBM Plex Serif label, navy #003A70 primary, orange #F26522 secondary, ROUND_EIGHT). For this institutional B2B site we did not auto-generate per-page screen mockups via Stitch — the brief calls for restraint over hero photography and the merchandising CSS architecture is the structural reference (per memory note feedback_stitch_prompts). Design tokens recorded in Stitch and authoritative in /assets/css/main.css :root.",
+
+  "palette_source": "data/palette.json#elitez-institutional-navy",
+  "font_pairing": {
+    "headline": "Source Serif 4",
+    "body": "Inter",
+    "mono": "IBM Plex Mono"
+  },
+
+  "css_files": [
+    { "path": "assets/css/main.css", "role": "tokens + layout + header/nav/footer + hero + stat-row + cta-band" },
+    { "path": "assets/css/components.css", "role": "feature-grid, step-list, pricing-grid, data-table, faq-accordion, anti-block, credentials-grid, form-card, page-hero, section utilities" },
+    { "path": "assets/css/admin.css", "role": "admin-strip, threat-card, radar SVG, competitor-table filters, modal, funnel, persona cards, heatmap, attack plans" }
+  ],
+
+  "js_files": [
+    { "path": "assets/js/nav.js", "role": "hamburger + smooth-scroll + FAQ accordion (loaded on every page)" },
+    { "path": "assets/js/dom.js", "role": "h() / esc() / fmtSGD() / fmtCompact() — XSS-safe DOM builder for admin pages and pricing" },
+    { "path": "assets/js/pricing.js", "role": "Renders the 5 public-pricing tier cards from inlined JSON" },
+    { "path": "assets/js/admin.js", "role": "Hydrates /admin.html from /data/intel/competitors.json + whitespace-framework.json" },
+    { "path": "assets/js/admin-insights.js", "role": "Hydrates /admin-insights.html from all three intel JSONs" }
+  ],
+
+  "components": [
+    { "id": "site-header", "type": "nav", "stitch_screen_id": null, "html_path": "inlined in every page", "css_classes": [".site-header", ".site-header__inner", ".brand-mark", ".primary-nav", ".nav-toggle", ".mobile-nav"], "notes": "Hamburger at ≤920px (test: open at 768px). Skip-link visible on focus." },
+    { "id": "site-footer", "type": "footer", "stitch_screen_id": null, "html_path": "inlined in every page", "css_classes": [".site-footer", ".site-footer__columns", ".site-footer__brand", ".site-footer__list", ".site-footer__bottom"], "notes": "Carries Elitez logo + 'Operated by Elitez Group of Companies' attribution link to https://www.elitez.asia." },
+    { "id": "hero-split", "type": "hero", "stitch_screen_id": null, "html_path": "inlined where used", "css_classes": [".hero", ".hero__grid", ".hero__headline", ".hero__visual--grid", ".hero__visual--brackets", ".hero-stack"], "notes": "Right-side visual is a data-card stack (no hero photography per brief — institutional B2B register)." },
+    { "id": "page-hero", "type": "hero", "stitch_screen_id": null, "html_path": "inlined where used", "css_classes": [".page-hero", ".page-hero__headline", ".page-hero__lede"], "notes": "Compact hero for inner pages (pricing, contact, 404, admin)." },
+    { "id": "feature-card", "type": "card", "stitch_screen_id": null, "html_path": "inlined", "css_classes": [".feature-card", ".feature-grid", ".feature-grid--numbered"], "notes": "Auto-numbered variant uses :nth-child counter::after." },
+    { "id": "step-list", "type": "list", "stitch_screen_id": null, "html_path": "inlined", "css_classes": [".step-list", ".step-list__item", ".step-list__index"], "notes": "Used for content slabs, role tracks, parent-story timeline." },
+    { "id": "tier-card", "type": "pricing-card", "stitch_screen_id": null, "html_path": "rendered by /assets/js/pricing.js", "css_classes": [".tier-card", ".tier-card--featured", ".tier-card__price-block", ".tier-card__psg", ".tier-card__what"], "notes": "Respects price_unit_label from copy.json — no hard-coded /mo. SGD thousands separator via fmtSGD()." },
+    { "id": "data-table", "type": "table", "stitch_screen_id": null, "html_path": "inlined; admin pages render via h()", "css_classes": [".data-table-wrap", ".data-table"], "notes": "Min-width 640px with horizontal scroll wrap. Used for module catalogue, tier-comparison, segment-fit, country-readiness, competitor table." },
+    { "id": "faq-accordion", "type": "accordion", "stitch_screen_id": null, "html_path": "inlined; JS-driven in nav.js", "css_classes": [".faq-accordion", ".accordion-item", ".accordion-header", ".accordion-body"], "notes": "Single-open not enforced — multiple FAQs can stay open. Arrow rotates on .is-open. Used on home, pricing, contact." },
+    { "id": "cta-band", "type": "cta", "stitch_screen_id": null, "html_path": "inlined", "css_classes": [".cta-band", ".cta-band--navy", ".cta-band__inner", ".cta-band__heading"], "notes": "Orange closer band by default; --navy variant for less-loud in-page bands. Inverts btn colours so primary becomes white-on-orange." },
+    { "id": "form-card", "type": "form", "stitch_screen_id": null, "html_path": "contact.html", "css_classes": [".form-card", ".form-grid", ".form-field"], "notes": "Formspree action set to PLACEHOLDER_FORM_ID — Derrick swaps before launch." },
+    { "id": "credential-chip", "type": "chip", "stitch_screen_id": null, "html_path": "inlined on home + about", "css_classes": [".credential-grid", ".credential-chip"], "notes": "Text-chip fallback for accreditation logos until Agent 6 sources real logo files." },
+    { "id": "anti-block", "type": "callout", "stitch_screen_id": null, "html_path": "for-whom.html", "css_classes": [".anti-block", ".anti-block__list"], "notes": "Anti-audience callout. Dashed border + × bullets." },
+    { "id": "stat-row", "type": "stat-row", "stitch_screen_id": null, "html_path": "home.html", "css_classes": [".stat-row", ".stat-row__grid", ".stat-cell"], "notes": "Rotating accent per cell + M-01..M-04 mono prefix." },
+    { "id": "admin-strip", "type": "nav", "stitch_screen_id": null, "html_path": "admin.html, admin-insights.html", "css_classes": [".admin-strip", ".admin-strip__nav", ".admin-strip__link"], "notes": "Sticky under site-header on admin pages only." },
+    { "id": "threat-card", "type": "card", "stitch_screen_id": null, "html_path": "rendered by admin.js", "css_classes": [".threat-grid", ".threat-card"], "notes": "Top-5 competitor threat cards. Hydrated from competitors.json top_five[]." },
+    { "id": "strategy-radar", "type": "chart", "stitch_screen_id": null, "html_path": "rendered by admin.js (inline SVG)", "css_classes": [".radar-wrap", ".radar-svg", ".radar-legend"], "notes": "SVG octagon, dual series (Elitez vs selected competitor). Dropdown picks competitor overlay." },
+    { "id": "modal", "type": "modal", "stitch_screen_id": null, "html_path": "admin.html (hidden, populated on row click)", "css_classes": [".modal-overlay", ".modal", ".modal__close", ".modal__meta"], "notes": "Backdrop blur. Closes on ESC, click-outside, or × button." },
+    { "id": "funnel", "type": "viz", "stitch_screen_id": null, "html_path": "rendered by admin-insights.js", "css_classes": [".funnel", ".funnel__stage", ".funnel__stage-result", ".funnel__stack"], "notes": "TAM/SAM/SOM 3-stage funnel from market_size.derivation_flow." },
+    { "id": "persona-card", "type": "card", "stitch_screen_id": null, "html_path": "rendered by admin-insights.js", "css_classes": [".persona-grid", ".persona-card", ".persona-card__wtp", ".persona-card__nba"], "notes": "5 personas from pricing-strategy.json personas[]. WTP band shown as low/expected/stretch." },
+    { "id": "heatmap", "type": "viz", "stitch_screen_id": null, "html_path": "rendered by admin-insights.js", "css_classes": [".heatmap-wrap", ".heatmap", ".heatmap-cell", ".heatmap-cell--ours"], "notes": "5 × 6 cells. Score 5 = orange (whitespace win). Title attr surfaces top competitor benchmark per cell." },
+    { "id": "attack-plan", "type": "card", "stitch_screen_id": null, "html_path": "rendered by admin-insights.js", "css_classes": [".attack-plan", ".attack-plan__rank", ".attack-plan__tam"], "notes": "5 plans from whitespace-framework.json attack_plans[]. Rank colour-rotates left-border." }
+  ],
+
+  "mechanics_wired": [
+    "multi-page-scaffold (9 pages: index, product, pricing, for-whom, about, contact, 404, admin, admin-insights)",
+    "og-social-meta (per-page OG tags + Twitter card scaffolded — Agent 6 generates the JPGs)",
+    "favicon (placeholder set via /public/elitez-logo.png — Agent 6 generates the favicon set)",
+    "meta-tags-generator (per-page canonical, description, theme-color, OG meta)",
+    "palette-tryout (transient /colors.html kept; Agent 7 may instruct removal)",
+    "intel-consumer (admin.js + admin-insights.js consume /data/intel/*.json)",
+    "market-funnel (admin-insights.js renders TAM/SAM/SOM)",
+    "strategy-canvas-radar (admin.js renders SVG octagon)",
+    "segment-need-heatmap (admin-insights.js renders 5×6 heatmap)",
+    "persona-cards (admin-insights.js renders 5 personas)",
+    "formspree-form (contact.html with PLACEHOLDER_FORM_ID — Derrick swaps before launch)",
+    "search-filter-vanilla (admin.js — text search + category select on competitor table)"
+  ],
+
+  "blocking_gates_v3_0_1": {
+    "canonical_check": "PASS — every page sets <link rel=\"canonical\" href=\"https://derrick-pixel.github.io/elitez-lms-site/...\">",
+    "prefers_reduced_motion": "PASS — main.css final block disables all animation/transition under prefers-reduced-motion: reduce",
+    "cls_hygiene": "PASS — every <img> has explicit width + height; hero img above-fold uses default load (no lazy); footer logos use width/height",
+    "semantic_audit": "PASS — every page has <main id=\"main\">, skip-link, <header role=\"banner\">, <nav aria-label>, <footer role=\"contentinfo\">"
+  },
+
+  "known_followups_for_agent_5_or_6": [
+    "FAQ on home is sourced from copy.json.faq[] but rendered inline as HTML — Agent 5 may want to migrate to a JSON-LD-emitting JS renderer (Agent 6 owns JSON-LD).",
+    "Module catalogue table on /product.html shows 17 sample rows + a placeholder row for the remaining 39 modules — replace with a real catalogue JSON snapshot when one is exported from lms.elitez.com.sg.",
+    "Credentials grid uses text chips not logo SVGs — Agent 6 should source WSG, IHRP, SkillsFuture, MOM-EA, TPGateway logos and swap.",
+    "Hero photography deliberately omitted (data-card stack used instead). If the brand later wants people imagery, Agent 6 can add a photo variant of .hero__visual.",
+    "About page has 4-step timeline (2017 / 2022 / 2024 / 2026) authored from brief — verify dates with Derrick if any are off."
+  ]
+}

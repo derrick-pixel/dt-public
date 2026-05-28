@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The full simulator — Lemon Man</title>
+<meta name="description" content="The complete Lemon Score engine: all 50 incident types, grouped by category, with the same corroboration multiplier and ripening offsets as the friendly calculator.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<meta property="og:title" content="Lemon Man — the full simulator">
+<meta property="og:description" content="All 50 incident types. One score. Toggle any combination.">
+<meta property="og:url" content="https://derrick-pixel.github.io/lemon-man/simulator.html">
+<meta property="og:image" content="https://derrick-pixel.github.io/lemon-man/assets/img/og-image.png">
+<meta property="og:image:secure_url" content="https://derrick-pixel.github.io/lemon-man/assets/img/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:alt" content="Lemon Man — the candidate lemon platform for Singapore's temp and daily-rated workforce.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lemon Man">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Lemon Man — the full simulator">
+<meta name="twitter:description" content="All 50 incident types. One score. Toggle any combination.">
+<meta name="twitter:image" content="https://derrick-pixel.github.io/lemon-man/assets/img/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="assets/css/lemon.css?v=20">
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <a class="nav__brand" href="index.html">
+    <svg class="nav__mark" viewBox="0 0 32 32" aria-hidden="true">
+      <circle cx="16" cy="16" r="11" fill="#e3a400" stroke="#211d12" stroke-width="2"/>
+      <g stroke="#211d12" stroke-width="1.4" stroke-linecap="round">
+        <line x1="16" y1="16" x2="16" y2="6.5"/><line x1="16" y1="16" x2="24.2" y2="11.2"/>
+        <line x1="16" y1="16" x2="24.2" y2="20.8"/><line x1="16" y1="16" x2="16" y2="25.5"/>
+        <line x1="16" y1="16" x2="7.8" y2="20.8"/><line x1="16" y1="16" x2="7.8" y2="11.2"/>
+      </g>
+      <circle cx="16" cy="16" r="2.6" fill="#211d12"/>
+    </svg>
+    <span>Lemon&nbsp;Man</span>
+  </a>
+  <nav class="nav__links" aria-label="Primary">
+    <a href="how-it-works.html">How it works</a>
+    <a href="for-workers.html">For workers</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="trust.html">The Squeeze</a>
+  </nav>
+  <div class="nav__right">
+    <a class="btn btn--lemon" href="index.html#access">Request access</a>
+    <button class="nav__burger" aria-label="Menu" aria-expanded="false"><span></span></button>
+  </div>
+</header>
+<div class="mobile-menu">
+  <a href="how-it-works.html">How it works</a>
+  <a href="for-workers.html">For workers</a>
+  <a href="pricing.html">Pricing</a>
+  <a href="trust.html">The Squeeze</a>
+  <a class="btn btn--lemon" href="index.html#access">Request access</a>
+</div>
+
+<!-- ===== HEAD ===== -->
+<section class="hero" style="padding-bottom:clamp(2rem,4vw,3rem);">
+  <div class="wrap">
+    <span class="kicker reveal">The complete engine</span>
+    <h1 class="display reveal" data-d="1" style="margin:1.4rem 0 1.4rem;max-width:18ch;">Fifty incidents. <em>One score.</em></h1>
+    <p class="lede reveal" data-d="2" style="max-width:42rem;">The full catalogue every Lemon Man upload maps to — attendance, conduct, credentials, data, theft, safety and performance. Toggle any combination and watch the score move.</p>
+    <p class="reveal" data-d="3" style="margin-top:1rem;font-size:.92rem;color:var(--ink-3);">Looking for the friendly intro version? <a href="how-it-works.html#calculator" style="color:var(--sour);font-weight:700;">The 10-incident calculator is here →</a></p>
+  </div>
+</section>
+
+<!-- ===== SIMULATOR ===== -->
+<section class="section band" id="simulator">
+  <div class="wrap">
+    <div class="head reveal head--mascot">
+      <img class="calc-mascot illo--pop" src="assets/img/lemon-man.webp" alt="Lemon Man">
+      <div>
+        <span class="kicker">The whole catalogue</span>
+        <h2>Build any Lemon Score.</h2>
+        <p class="lede">Every incident type the engine recognises, grouped by category. Same scoring rules as the friendly calculator — base × m(n), the quadratic corroboration multiplier, ripening offsets, clamped to 0–1000.</p>
+      </div>
+    </div>
+    <div class="calc reveal" data-d="1">
+      <div class="calc__panel">
+        <div class="calc__legend"><span>Incident on record</span><span>Employers logged</span><span>Points</span></div>
+        <div id="sim-incidents"></div>
+        <div class="calc__ripen">
+          <h4>🍑 Ripening — earn the score back down</h4>
+          <div class="calc__legend"><span>Positive signal</span><span>Count</span><span>Offset</span></div>
+          <div id="sim-ripen"></div>
+        </div>
+      </div>
+      <aside class="calc__result">
+        <div class="calc__stamp">LEMON SCORE · LIVE</div>
+        <svg class="calc-face" id="sim-face" viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="16" r="15" fill="#fffdf2" stroke="#211d12" stroke-width="2"/>
+          <ellipse class="cf-body" cx="16" cy="17" rx="9" ry="9.3" fill="#e6855c" stroke="#211d12" stroke-width="2"/>
+          <path d="M16 6.6 q2.6 -1.9 4.2 .3 q-1.6 2.6 -4.2 1" fill="#6f9457" stroke="#211d12" stroke-width="1.4" stroke-linejoin="round"/>
+          <circle cx="12.8" cy="16" r="1.7" fill="#211d12"/>
+          <circle cx="19.2" cy="16" r="1.7" fill="#211d12"/>
+          <path class="cf-mouth" d="M12.5 20 Q16 23.6 19.5 20" fill="none" stroke="#211d12" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div class="calc__score"><span id="sim-score">0</span><small> / 1000</small></div>
+        <div class="calc__verdict is-peach" id="sim-verdict">Peach — safe hire</div>
+        <div class="calc__meter"><i></i><i></i><i></i><i></i><span class="calc__pin" id="sim-pin" style="left:0%"></span></div>
+        <div class="calc__break">
+          <span>Raw incident points<b id="sim-raw">0</b></span>
+          <span>Ripening offsets<b id="sim-ripen-total">−0</b></span>
+          <span class="tot">Lemon Score<b id="sim-final">0</b></span>
+        </div>
+        <button class="btn btn--ghost calc__reset" id="sim-reset" type="button">Reset all</button>
+      </aside>
+    </div>
+    <p class="note reveal" data-d="1" style="margin-top:1.5rem;">Same maths as the friendly calculator: each incident scores <strong>base × m(n)</strong>, where <strong>m(n) = 0.25n² + 0.75n</strong> — one report counts ×1, two ×2.5, three ×4.5. Points sum, ripening offsets subtract. Reference band 0–1000; can dip negative for a peachy hire and exceed 1000 for a thoroughly sour one. <a href="how-it-works.html#calculator" style="color:var(--sour);font-weight:700;">Back to the 10-incident version →</a></p>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="section band-lemon cta-band">
+  <div class="wrap" style="max-width:46rem;">
+    <h2 class="reveal">See it run on your own roster.</h2>
+    <p class="lede reveal" data-d="1" style="color:var(--ink-2);">Pilot operators get a walkthrough of the full engine and the incident catalogue — including the categories not on this page yet.</p>
+    <div class="reveal" data-d="2" style="display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;">
+      <a class="btn btn--primary" href="index.html#access">Request pilot access <span class="arrow">→</span></a>
+      <a class="btn btn--ghost" href="trust.html">Read The Squeeze</a>
+    </div>
+  </div>
+</section>
+
+<div class="grove-band" aria-hidden="true"></div>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot__top">
+      <div>
+        <div class="foot__brand">
+          <svg class="nav__mark" viewBox="0 0 32 32" aria-hidden="true">
+            <circle cx="16" cy="16" r="11" fill="#e3a400" stroke="#211d12" stroke-width="2"/>
+            <g stroke="#211d12" stroke-width="1.4" stroke-linecap="round">
+              <line x1="16" y1="16" x2="16" y2="6.5"/><line x1="16" y1="16" x2="24.2" y2="11.2"/>
+              <line x1="16" y1="16" x2="24.2" y2="20.8"/><line x1="16" y1="16" x2="16" y2="25.5"/>
+              <line x1="16" y1="16" x2="7.8" y2="20.8"/><line x1="16" y1="16" x2="7.8" y2="11.2"/>
+            </g>
+            <circle cx="16" cy="16" r="2.6" fill="#211d12"/>
+          </svg>
+          <span>Lemon&nbsp;Man</span>
+        </div>
+        <p class="foot__tag">The candidate lemon platform. Helping Singapore's employers tell a lemon from a peach — before payday.</p>
+        <img loading="lazy" class="foot-wave" src="assets/img/lemon-man-wave.webp" alt="" aria-hidden="true">
+      </div>
+      <div class="foot__col">
+        <h5>Platform</h5>
+        <a href="how-it-works.html">How it works</a>
+        <a href="for-workers.html">For workers</a>
+        <a href="pricing.html">Pricing</a>
+      </div>
+      <div class="foot__col">
+        <h5>Lemon stuff</h5>
+        <a href="trust.html">The Squeeze</a>
+        <a href="how-it-works.html#engine">The Lemon Score</a>
+        <a href="simulator.html">The full simulator</a>
+      </div>
+      <div class="foot__col">
+        <h5>Access</h5>
+        <a href="index.html#access">Request pilot access</a>
+        <a href="pricing.html">Tokens &amp; plans</a>
+      </div>
+    </div>
+    <div class="foot__bottom">
+      <span>© <span data-year>2026</span> Lemon&nbsp;Man · Candidate Lemon Platform</span>
+      <span class="mono">Concept-stage venture — not a live service, offer or regulatory filing.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/lemon.js?v=20"></script>
+</body>
+</html>
