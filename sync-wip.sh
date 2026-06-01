@@ -98,8 +98,29 @@ for entry in "${WIP_REPOS[@]}"; do
   # (assets/js/auth-gate.js). Without this step the sync copied every
   # private repo's docs/, .claude/ and CLAUDE.md straight to the
   # public site. To add an exclusion, extend the lists below.
+  #
+  # The strip pass runs in THREE layers (defense in depth — the CSO
+  # 2026-05-30 orchestra showed a pure named-denylist is allow-by-default
+  # at the folder level, which is how `esop/initial bundle doc/` leaked
+  # the KPMG PDF + Tok Mei Ting ESOP Agreement to derrickteo.com):
+  #
+  #   1. Named-denylist (legacy) — strips folders/files we know about.
+  #   2. Pattern-denylist — strips root-level folders matching
+  #      "initial*", "private*", "internal*", "* prompt *", "legal*",
+  #      "briefs", "specs", "pitch", "dd", "1. *" (numbered planning
+  #      dirs). Recurrence-fix for DT-C1/C2/C3 + DT-H2.
+  #   3. Extension-denylist — strips raw office docs anywhere in the
+  #      tree (*.docx, *.xlsx, *.pptx) plus any *.pdf whose filename
+  #      matches "legal" / "due diligence" / "duediligence" /
+  #      "strategic" / "capital" / "ESOP". HTML/CSS/JS/JSON/MD/PNG/JPG
+  #      content is left intact — those drive the actual mirror.
+  #
+  # Add to (2) or (3) when a new leak surfaces. Do NOT remove layers
+  # without re-reading orchestras/cso/reports/2026-05-30-dt-public.md.
   (
     cd "./$folder" || exit 0
+
+    # Layer 1: legacy named-denylist
     # internal directories, anywhere in the tree
     find . -type d \( -name docs -o -name .claude -o -name .gstack -o -name superpowers \) \
       -prune -exec rm -rf {} + 2>/dev/null
@@ -109,6 +130,45 @@ for entry in "${WIP_REPOS[@]}"; do
           SESSION-PROMPTS.md .gitleaksignore .env .env.* 2>/dev/null
     # explicitly-private files, anywhere
     find . -type f -name '*.private.*' -delete 2>/dev/null
+
+    # Layer 2: pattern-denylist for root-level planning/legal/spec dirs
+    # (root-only so nested data/ and assets/ aren't disturbed)
+    find . -maxdepth 1 -type d \( \
+        -iname 'initial*' \
+        -o -iname 'private*' \
+        -o -iname 'internal*' \
+        -o -iname '* prompt *' \
+        -o -iname 'briefs' \
+        -o -iname 'specs' \
+        -o -iname 'pitch' \
+        -o -iname 'dd' \
+        -o -iname 'legal*' \
+        -o -iname '1. *' \
+        -o -iname '2. *' \
+        -o -iname '3. *' \
+      \) -prune -exec rm -rf {} + 2>/dev/null
+
+    # Layer 3: extension-denylist for raw office docs + sensitive PDFs
+    find . -type f \( \
+        -iname '*.docx' \
+        -o -iname '*.xlsx' \
+        -o -iname '*.pptx' \
+        -o -iname '*.doc' \
+        -o -iname '*.xls' \
+        -o -iname '*.ppt' \
+      \) -delete 2>/dev/null
+    find . -type f -iname '*.pdf' \
+      \( \
+        -iname '*legal*' \
+        -o -iname '*due*diligence*' \
+        -o -iname '*duediligence*' \
+        -o -iname '*strategic*' \
+        -o -iname '*capital*' \
+        -o -iname '*ESOP*' \
+        -o -iname '*kpmg*' \
+        -o -iname '*confidential*' \
+        -o -iname '*proposal*' \
+      \) -delete 2>/dev/null
   ) || true
 
   # SEO: mark every HTML page in the mirror as noindex,nofollow
