@@ -132,8 +132,16 @@ for entry in "${WIP_REPOS[@]}"; do
               s|<script src="https://cdn\.jsdelivr\.net/npm/qrcode\@1\.5\.1/build/qrcode\.min\.js"></script>|<script src="https://cdn.jsdelivr.net/npm/qrcode\@1.5.1/build/qrcode.min.js" integrity="sha384-HGmnkDZJy7mRkoARekrrj0VjEFSh9a0Z8qxGri/kTTAJkgR8hqD1lHsYSh3JdzRi" crossorigin="anonymous"></script>|g;
               s|<script src="https://cdn\.jsdelivr\.net/npm/qrcode\@1\.5\.3/build/qrcode\.min\.js"></script>|<script src="https://cdn.jsdelivr.net/npm/qrcode\@1.5.3/build/qrcode.min.js" integrity="sha384-Izc791esqyEy3BEIC42q7jbE0AaOkACziN+dyyXgYeDmpeMCLz0xA+xYN3aCd5zz" crossorigin="anonymous"></script>|g;
               s|<script src="https://cdn\.jsdelivr\.net/npm/jspdf\@2\.5\.1/dist/jspdf\.umd\.min\.js"></script>|<script src="https://cdn.jsdelivr.net/npm/jspdf\@2.5.1/dist/jspdf.umd.min.js" integrity="sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk" crossorigin="anonymous"></script>|g;
-              s|<script src="https://cdn\.jsdelivr\.net/npm/html2canvas\@1\.4\.1/dist/html2canvas\.min\.js"></script>|<script src="https://cdn.jsdelivr.net/npm/html2canvas\@1.4.1/dist/html2canvas.min.js" integrity="sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H" crossorigin="anonymous"></script>|g' "$f"
+              s|<script src="https://cdn\.jsdelivr\.net/npm/html2canvas\@1\.4\.1/dist/html2canvas\.min\.js"></script>|<script src="https://cdn.jsdelivr.net/npm/html2canvas\@1.4.1/dist/html2canvas.min.js" integrity="sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H" crossorigin="anonymous"></script>|g;
+              s|<script src="https://cdn\.jsdelivr\.net/npm/\@supabase/supabase-js\@2/dist/umd/supabase\.js"></script>|<script src="https://cdn.jsdelivr.net/npm/\@supabase/supabase-js\@2.106.1/dist/umd/supabase.js" integrity="sha384-8A8NbbMug1jd/CYs7b0nSc6FPM4L9GKg/VzKxg6hst+UgTcWTQr0ry7knxGrSOtT" crossorigin="anonymous"></script>|g' "$f"
   done < <(find "./$folder" -name "*.html" -type f)
+
+  # The supabase-js <script> tag also lives inside auth-gate.js as a wiring
+  # comment; pin + SRI it there too so future copy-paste of the gate uses
+  # the hardened version. (CSO 2026-05-30 finding DT-H3.)
+  while IFS= read -r f; do
+    perl -i -pe 's|<script src="https://cdn\.jsdelivr\.net/npm/\@supabase/supabase-js\@2/dist/umd/supabase\.js"></script>|<script src="https://cdn.jsdelivr.net/npm/\@supabase/supabase-js\@2.106.1/dist/umd/supabase.js" integrity="sha384-8A8NbbMug1jd/CYs7b0nSc6FPM4L9GKg/VzKxg6hst+UgTcWTQr0ry7knxGrSOtT" crossorigin="anonymous"></script>|g' "$f"
+  done < <(find "./$folder" -name "auth-gate.js" -type f)
 
 done
 

@@ -6,7 +6,7 @@
 
    Wiring — add these two tags before </body> on every gated page:
 
-     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.106.1/dist/umd/supabase.js" integrity="sha384-8A8NbbMug1jd/CYs7b0nSc6FPM4L9GKg/VzKxg6hst+UgTcWTQr0ry7knxGrSOtT" crossorigin="anonymous"></script>
      <script src="assets/js/auth-gate.js"></script>
 
    It locks the page behind a full-screen OTP overlay until a
