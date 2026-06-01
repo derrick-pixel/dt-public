@@ -2,7 +2,7 @@
 
 ## Overview / Purpose
 
-`dt-public` is the canonical public portfolio repository for Derrick Teo, served at **derrickteo.com** via GitHub Pages + Cloudflare DNS. It is a **one-way downstream mirror**: upstream source repositories (hosted as `derrick-pixel/*` on GitHub) are the authoritative source of truth. `sync-wip.sh` shallow-clones each upstream repo and copies it into a named subfolder; it strips internal docs, agent configs, and private files before committing. The only files edited directly in this repo are the root landing page (`index.html`), site-wide assets, and deploy config.
+`dt-public` is the canonical public portfolio repository for Derrick Teo, served at **derrickteo.com** via a **Cloudflare Static-Assets Worker** (`dt-public`) — NOT GitHub Pages. CF's GitHub-integration auto-build expects `wrangler.jsonc` at the repo root; if it's missing or malformed the Worker silently freezes on the last successful bundle (cache purges do not help — the Worker serves bundled assets, not edge-cached HTML). Fix in that scenario is to restore `wrangler.jsonc` at the root and run `wrangler deploy`. The repo is a **one-way downstream mirror**: upstream source repositories (hosted as `derrick-pixel/*` on GitHub) are the authoritative source of truth. `sync-wip.sh` shallow-clones each upstream repo and copies it into a named subfolder; it strips internal docs, agent configs, and private files before committing. The only files edited directly in this repo are the root landing page (`index.html`), site-wide assets, and deploy config.
 
 The repo aggregates two tiers of content:
 
@@ -17,8 +17,8 @@ Each mirrored subfolder may contain its own full application stack (Next.js, CF 
 
 | Layer | Technology | Version / Notes |
 |---|---|---|
-| Hosting | GitHub Pages | `main` branch → derrickteo.com |
-| CDN / DNS | Cloudflare | DNS-only (orange cloud off); no CF Workers proxy on root site |
+| Hosting | Cloudflare Static-Assets Worker (`dt-public`) | `main` branch → CF auto-builds → derrickteo.com. Needs `wrangler.jsonc` at repo root or auto-build fails silently. |
+| CDN / DNS | Cloudflare | Worker-attached zone; orange cloud effectively on (CF terminates TLS + serves assets) |
 | Custom domain | CNAME | `derrickteo.com` |
 | Root landing page | Vanilla HTML/CSS/JS | Single-file (`index.html`, 1445 lines) |
 | Theme | CSS variables | Dark (JARVIS/Stark) + light toggle; persisted in `localStorage` |
@@ -250,17 +250,20 @@ Internet
     │
     ▼
 ┌──────────────────────────────────────────────────────┐
-│  Cloudflare DNS (DNS-only, orange cloud OFF)          │
-│  derrickteo.com  →  derrick-pixel.github.io           │
+│  Cloudflare DNS + Worker route                        │
+│  derrickteo.com → CF zone → dt-public Static-Assets   │
+│  Worker (auto-built from `main` via GitHub integration│
+│  — needs wrangler.jsonc at repo root)                 │
 └─────────────────────────┬────────────────────────────┘
                           │
                           ▼
 ┌──────────────────────────────────────────────────────┐
-│  GitHub Pages (main branch of dt-public)             │
-│  Serves static files at derrickteo.com               │
+│  Cloudflare Static-Assets Worker `dt-public`         │
+│  Serves bundled assets at derrickteo.com             │
 │  • index.html  (portfolio landing page)              │
 │  • <subfolder>/*.html  (mirrored previews)           │
-│  • robots.txt, sitemap.xml, CNAME                    │
+│  • robots.txt, sitemap.xml, _headers, CNAME          │
+│  • cache purge via .github/workflows/purge.yml       │
 └─────────────────────────┬────────────────────────────┘
                           │
            ┌──────────────┼──────────────┐
@@ -299,7 +302,7 @@ dt-public/<subfolder>/  (downstream mirror — public)
          │
          │  git add -A && git commit && git push
          ▼
-GitHub Pages → derrickteo.com/<subfolder>/
+CF Static-Assets Worker → derrickteo.com/<subfolder>/
 ```
 
 ### Admin / Intel Gate Flow (all gated pages)
@@ -780,9 +783,9 @@ The `auth-gate.js` script has the Supabase URL and anon key **hardcoded** (not e
 
 ### Root site (derrickteo.com)
 
-**Deploy:** Push to `main` branch → GitHub Pages auto-deploys. No build step. Changes are live within ~30 seconds.
+**Deploy:** Push to `main` branch → Cloudflare's GitHub integration auto-builds and deploys the `dt-public` Static-Assets Worker. No build step on this end. Changes are live within ~30 seconds. **Gotcha:** the auto-build requires `wrangler.jsonc` at the repo root; if that file is missing or malformed the build fails silently and the Worker keeps serving the last successful bundle. Cache purges do not help in that scenario — the Worker serves bundled assets, not cached HTML. Fix is to restore `wrangler.jsonc` and run `wrangler deploy` locally.
 
-**Domain:** `CNAME` file set to `derrickteo.com`. DNS managed at Cloudflare (proxy off — orange cloud disabled).
+**Domain:** `CNAME` file set to `derrickteo.com`. DNS managed at Cloudflare; the zone has a Worker route attached to derrickteo.com, so the orange cloud is effectively on for the root site.
 
 ### Weekly sync
 
