@@ -166,7 +166,21 @@
     @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
 
     /* ── HERO ── */
-    .hero { padding: calc(var(--nav-h) + 84px) 0 96px; }
+    .hero { position: relative; overflow: hidden; padding: calc(var(--nav-h) + 96px) 0 100px; }
+    .hero::before { content:''; position: absolute; inset: 0; z-index: 0;
+      background:
+        linear-gradient(90deg, #0b0f14 12%, rgba(11,15,20,.72) 48%, rgba(11,15,20,.20) 100%),
+        url('/img/hero.jpg') center right / cover no-repeat; }
+    .hero > .wrap { position: relative; z-index: 1; }
+    .hero h1, .hero .hero-sub, .hero .hero-sub em { color: #eef3f9; }
+    .hero .stat .n { color: #f2f6fb; }
+    .hero .stat .l { color: #aeb8c8; }
+    .hero .stat { border-left-color: rgba(255,255,255,.20); }
+    .hero .btn-ghost { color: #eef3f9; border-color: rgba(255,255,255,.24); }
+    @media (max-width: 640px) {
+      .hero::before { background:
+        linear-gradient(180deg, rgba(11,15,20,.28) 0%, rgba(11,15,20,.80) 72%, var(--bg) 100%),
+        url('/img/hero-mobile.jpg') center / cover no-repeat; } }
     .eyebrow {
       display: inline-flex; align-items: center; gap: 9px;
       font-size: .72rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
@@ -203,6 +217,10 @@
     .sec-title { font-family: var(--serif); font-weight: 500; font-size: clamp(1.8rem, 3.6vw, 2.7rem); letter-spacing: -0.02em; margin-top: 14px; line-height: 1.12; }
     .sec-lead { margin-top: 16px; color: var(--muted2); font-size: 1.06rem; }
     .divider { height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
+    .sec-banner { width: 100%; display: block; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 44px; object-fit: cover; aspect-ratio: 16 / 6.2; }
+    .sec-banner.tall { aspect-ratio: 16 / 8.5; }
+    .sec-emblem { display: block; margin: -6px auto 36px; width: 100%; max-width: 340px; }
+    .nav-mark { width: 24px; height: 24px; border-radius: 6px; display: inline-block; vertical-align: middle; }
 
     /* ── TRIANGLE ── */
     .triangle { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
@@ -211,8 +229,9 @@
       transition: transform .2s, border-color .2s; position: relative; overflow: hidden;
     }
     .tri-card:hover { transform: translateY(-3px); border-color: var(--border2); }
-    .tri-card .ic { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; font-size: 1.2rem;
-      background: rgba(0,212,255,.1); border: 1px solid var(--border); margin-bottom: 18px; }
+    .tri-card .ic { width: 60px; height: 60px; border-radius: 14px; overflow: hidden; margin-bottom: 18px;
+      border: 1px solid var(--border); background: #0d1116; }
+    .tri-card .ic img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .tri-card h3 { font-size: 1.18rem; font-weight: 700; letter-spacing: -0.01em; }
     .tri-card .tag { font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-top: 4px; }
     .tri-card p { margin-top: 12px; color: var(--muted2); font-size: .95rem; }
@@ -322,11 +341,15 @@
 
     /* ── CTA / CONTACT ── */
     .cta-band {
-      background: linear-gradient(135deg, rgba(0,212,255,.08), rgba(212,175,55,.05));
+      position: relative; overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(0,212,255,.10), rgba(212,175,55,.06)),
+        linear-gradient(0deg, rgba(11,15,20,.80), rgba(11,15,20,.80)),
+        url('/img/cta.jpg') center / cover no-repeat;
       border: 1px solid var(--border); border-radius: 22px; padding: 56px 44px; text-align: center;
     }
-    .cta-band h2 { font-family: var(--serif); font-weight: 500; font-size: clamp(1.7rem, 3.6vw, 2.6rem); letter-spacing: -0.02em; max-width: 22ch; margin: 0 auto; line-height: 1.15; }
-    .cta-band p { margin: 18px auto 0; color: var(--muted2); max-width: 56ch; }
+    .cta-band h2 { font-family: var(--serif); font-weight: 500; font-size: clamp(1.7rem, 3.6vw, 2.6rem); letter-spacing: -0.02em; max-width: 22ch; margin: 0 auto; line-height: 1.15; color: #eef3f9; }
+    .cta-band p { margin: 18px auto 0; color: #c4cdda; max-width: 56ch; }
     .cta-actions { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
 
     footer { border-top: 1px solid var(--border); padding: 40px 0; margin-top: 84px; }
@@ -341,7 +364,7 @@
 <body>
 
   <nav>
-    <a class="nav-logo" href="/"><span class="dot"></span> Derrick Teo</a>
+    <a class="nav-logo" href="/"><img class="nav-mark" src="/img/monogram.png" alt=""> Derrick Teo</a>
     <div class="nav-links" id="navLinks">
       <a href="#story">The Shift</a>
       <a href="#talks">Speaking</a>
@@ -392,19 +415,19 @@
       </div>
       <div class="triangle">
         <div class="tri-card reveal">
-          <div class="ic">🏛️</div>
+          <div class="ic"><img src="/img/pillar-operator.png" alt=""></div>
           <h3>Operator</h3>
           <div class="tag">Earns the right to speak</div>
           <p>16 years running Elitez Group — manpower, recruitment and HR across 9 Asian cities, with a 350-strong corporate HQ and 1,500+ deployed workforce, real P&amp;L. I've lived every constraint a people-business faces.</p>
         </div>
         <div class="tri-card reveal">
-          <div class="ic">⚙️</div>
+          <div class="ic"><img src="/img/pillar-builder.png" alt=""></div>
           <h3>Builder</h3>
           <div class="tag">Proves it's real, not slideware</div>
           <p>20+ working AI systems shipped in under three months — sales intelligence, retail vision, job-redesign tooling, an LMS. Not demos. Running in my own company.</p>
         </div>
         <div class="tri-card reveal">
-          <div class="ic">🤝</div>
+          <div class="ic"><img src="/img/pillar-backed.png" alt=""></div>
           <h3>Backed</h3>
           <div class="tag">De-risks it for everyone else</div>
           <p>IHRP-SP certified. Singapore Polytechnic Advisory Committee. ITE Chairman, Technical Committee (HR). In active conversation with national partners on workforce transformation.</p>
@@ -420,6 +443,7 @@
         <div class="sec-kicker">The shift</div>
         <h2 class="sec-title">I didn't hire consultants. I learned to build.</h2>
       </div>
+      <img class="sec-banner tall reveal" src="/img/shift.jpg" alt="A human hand and an AI hand of light meeting to assemble glowing system blocks">
       <div class="story-grid">
         <div class="story-body reveal">
           <p>For sixteen years I've been in the business of <strong>people</strong> — placing them, managing them, building careers and companies around them. Manpower. Recruitment. HR. The most human industry there is.</p>
@@ -449,6 +473,7 @@
         <h2 class="sec-title">Two talks. One operator who actually did it.</h2>
         <p class="sec-lead">Built for HR leadership forums and SME / business stages. Each can be a keynote, a fireside, or a closed-door leadership session.</p>
       </div>
+      <img class="sec-banner reveal" src="/img/speaking.jpg" alt="A keynote speaker silhouetted on a darkened stage before a glowing data backdrop">
       <div class="talks">
         <div class="talk reveal">
           <div class="track">For HR leaders · IHRP rooms</div>
@@ -484,6 +509,7 @@
         <h2 class="sec-title">Whole-company transformation — organised by what it changed.</h2>
         <p class="sec-lead">A curated selection. Each system runs inside a real operating business. Grouped by the function it transformed.</p>
       </div>
+      <img class="sec-banner reveal" src="/img/lab.jpg" alt="A dark command room of floating translucent dashboards and data visualisations">
 
       <div class="lab-group reveal">
         <div class="lab-group-title"><h3>Transforming HR &amp; Learning</h3><span>the function I know best</span></div>
@@ -620,6 +646,7 @@
         <h2 class="sec-title">Awarded, accredited, and on the record.</h2>
         <p class="sec-lead">National honours and enterprise awards for leadership, sustainability and community — and a decade in Singapore's business press.</p>
       </div>
+      <img class="sec-emblem reveal" src="/img/recognition.jpg" alt="An antique-gold laurel emblem dissolving into cyan particles">
       <div class="awards">
         <a class="award reveal" href="https://www.humanresourcesonline.net/winners-of-the-2022-vendors-of-the-year-awards-singapore" target="_blank" rel="noopener">
           <div class="yr">2022 · Gold</div>
@@ -709,7 +736,7 @@
   <footer>
     <div class="wrap foot">
       <div>
-        <div class="nav-logo" style="margin-bottom:8px;"><span class="dot"></span> Derrick Teo</div>
+        <div class="nav-logo" style="margin-bottom:8px;"><img class="nav-mark" src="/img/monogram.png" alt=""> Derrick Teo</div>
         <div class="copy">Group CEO, Elitez Group · AI workforce transformation, from inside the P&amp;L.</div>
       </div>
       <div class="links">
